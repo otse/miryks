@@ -1,0 +1,9 @@
+{
+    "terminal.integrated.shell.windows": "cmd.exe",
+    "terminal.integrated.shellArgs.windows": [
+        "/k", "F:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat"
+    ],
+    "files.associations": {
+        "iostream": "cpp"
+    },
+}
