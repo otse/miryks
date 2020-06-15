@@ -5,7 +5,7 @@
 
 namespace dark2
 {
-    extern string path_to_skyrim;
+    extern string SKYRIMPATH;
 }
 
 #endif

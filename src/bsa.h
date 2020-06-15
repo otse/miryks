@@ -13,49 +13,41 @@ struct header_t
 
 struct bsa_t
 {
-	bool good = false;
-	string name;
 	vector<unsigned char> data;
 	header_t header;
 };
 
-bsa_t bsa_archive_load(string2_t a)
+bsa_t bsa_load(const string &a)
 {
 	bsa_t bsa;
-	bsa.name = a;
 
-	MAGIC(BSA "archive load ", bsa.name);
+	MAGIC(BSA "load ", a);
 
-	const string file = dark2::path_to_skyrim + "Data/" + bsa.name + ".bsa";
-
-	if (fstat(file) == false)
+	if (fstat(a) == false)
 		EXIT(BSA "archive not found");
 
-	bsa.data = freadbin(file);
+	bsa.data = freadbin(a);
 
 	if (strcmp("BSA\x00", (char *)&bsa.data[0]) != 0)
-		EXIT(BSA "wrong id digits");
+		EXIT(BSA "wrong id");
 
 	memcpy(&bsa.header, &bsa.data[0], sizeof(header_t));
 	if (bsa.header.ver != VER)
-		EXIT(BSA "wrong version");
+		EXIT(BSA "wrong ver");
 
-	MAGIC(BSA "read");
-
-	bsa.good = true;
+	MAGIC(BSA "done");
 
 	return bsa;
 }
 
-void bsa_print_info(bsa_t &bsa)
+void bsa_print(bsa_t &bsa)
 {
 	MAGIC(
-		BSA"print info",
-		"\n name: ", bsa.name,
-		"\n good: ", bsa.good,
+		"--bsa header--",
 		"\n ver: ", bsa.header.ver,
 		"\n offset: ", bsa.header.offset,
 		"\n flags: ", bsa.header.flags,
 		"\n folders: ", bsa.header.folders,
-		"\n files: ", bsa.header.files);
+		"\n files: ", bsa.header.files,
+		"\n--");
 }
