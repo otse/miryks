@@ -4,58 +4,51 @@
 #include <fstream>
 #include <filesystem>
 
-#define NO_SUCH_THING "Inal bad, sorry"
-
 #include "idiom.h"
 
-#define CONCAT(a, b) a##b
-
-#define NAME(y) CONCAT(tse, y)
-
-//Dot fs::path argv0;
-
-inline std::filesystem::path fpath(string2_t a)
+inline bool
+fstat(_string2_ a)
 {
-	return std::filesystem::path(a);
+	struct stat buffer;
+	return (stat(a.c_str(), &buffer) == 0);
 }
 
-inline bool fexists(string2_t a)
+inline _string_
+fread(_string2_ a)
 {
-	return std::filesystem::exists(fpath(a));
+	using namespace std;
+
+	int mode = ifstream::binary | ifstream::ate;
+	ifstream is(a, mode);
+	if (is)
+	{
+		size_t end = is.tellg();
+		_string_ str(end, ' ');
+		is.seekg(0, is.beg);
+		is.read(&str[0], end);
+		return str;
+	}
 }
 
-inline string_t fstem(string2_t a)
+inline std::vector<unsigned char>
+freadbin(_string2_ a)
 {
-	return fpath(a).stem().string();
+	using namespace std;
+	int mode = ifstream::binary;
+	ifstream b(a, mode);
+	std::vector<unsigned char> c(
+		std::istreambuf_iterator<char>(b), {});
+	return c;
 }
 
-inline std::vector<unsigned char> fread2(string2_t a)
+inline void
+fwrite(_string2_ a, _string2_ b)
 {
-	std::ifstream ifs(
-		a, std::ifstream::binary | std::ios::ate);
-	return std::vector<unsigned char>(
-		std::istreambuf_iterator<char>(ifs), {});
-}
-
-inline string_t fread(string2_t a)
-{
-	std::ifstream ifs(
-		a, std::ifstream::binary | std::ios::ate);
-	if (!ifs)
-		return NO_SUCH_THING;
-	size_t end = ifs.tellg();
-	std::string str(end, ' ');
-	ifs.seekg(0, std::ios::beg);
-	ifs.read(&str[0], end);
-	return str;
-}
-
-inline void fwrite(string2_t a, string2_t b)
-{
-	std::ofstream ofs;
-	ofs.open(a.c_str());
-	ofs << b.c_str();
-	ofs.close();
+	using namespace std;
+	ofstream os;
+	os.open(a.c_str());
+	os << b.c_str();
+	os.close();
 }
 
 #endif
