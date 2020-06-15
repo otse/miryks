@@ -1,21 +1,35 @@
 // xx
 
 #include "dark2.h"
-#include "0x68.h"
+
+#include "bsa.h"
 
 //#include <stdio.h>
 #include <iostream>
 
 #include "files.h"
 
+namespace dark2
+{
+    string path_to_skyrim;
+}
+
+using namespace dark2;
+
 int main()
 {
+    MAGIC("dark2 loading");
 
-    std::cout << "dark2 loading" << std::endl;
+    path_to_skyrim = fread("path to skyrim.txt");
 
-    _string_ skyrim_path = "F:/Steam/steamapps/common/Skyrim/";
+    if (path_to_skyrim == "no")
+        EXIT("where is `path to skyrim.txt`");
 
-    bsa_load(skyrim_path + "Data/Skyrim - Interface.bsa");
+    MAGIC("path to skyrim.txt: ", path_to_skyrim);
+
+    bsa_t bsa_interface = bsa_archive_load("Skyrim - Interface");
+
+    bsa_print_info(bsa_interface);
 
     //system("PAUSE");
 

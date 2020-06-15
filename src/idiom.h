@@ -4,15 +4,14 @@
 #include <iostream>
 #include <string>
 
+using namespace std;
+
 #define ERROR_FILE "error.txt"
 
 typedef const std::string &string2_t;
 
 typedef std::string string_t;
 typedef std::basic_string<unsigned char> ustring_t;
-
-#define _string_ string_t
-#define _string2_ string2_t
 
 #define tse_that(this) auto &that = *this;
 
