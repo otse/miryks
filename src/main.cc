@@ -20,12 +20,11 @@ using namespace dark2;
 
 int main()
 {
-    MAGIC("dark2 loading");
+    log_("dark2 loading");
 
     SKYRIMPATH = fread("path to skyrim.txt");
 
-    if (SKYRIMPATH == "no")
-        EXIT("");
+    assert_(SKYRIMPATH != "no", "bad");
 
     bsa_t interface = bsa_load(SKYRIMPATH + DATA + "Skyrim - Interface.bsa");
     bsa_print(interface);

@@ -9,20 +9,20 @@ using namespace std;
 #define ERROR_FILE "error.txt"
 
 template <typename... Args>
-void MAGIC(
+void log_(
     Args &&... args)
 {
       (std::cout << ... << args) << std::endl;
 }
 
-#define ASSERT(e, m)                  \
-      if (e == false)                 \
-      {                               \
-            MAGIC("assert hit: ", m); \
-            fwrite(ERROR_FILE, m);    \
-            exit(1);                  \
+#define assert_(e, m)                \
+      if (!(e))                      \
+      {                              \
+            log_("assert hit: ", m); \
+            fwrite(ERROR_FILE, m);   \
+            exit(1);                 \
       }
 
-#define EXIT(m) ASSERT(false, m)
+#define exit_(m) ASSERT(false, m)
 
 #endif
