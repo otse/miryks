@@ -30,10 +30,10 @@ project "Dark2"
 	defines { "_CRT_SECURE_NO_WARNINGS" }
 	
 	files {
-		"deps/**.h",
-		"deps/**.hpp",
-		"deps/**.c",
-		"deps/**.cpp",
+		"dep/**.h",
+		"dep/**.hpp",
+		"dep/**.c",
+		"dep/**.cpp",
 		"include/**.h",
 		"include/**.hpp",
 		"src/**.c",
@@ -45,7 +45,7 @@ project "Dark2"
 	}
 
 	includedirs {
-		"deps",
+		"dep",
 		"src",
 		"include",
 		"F:/New folder/",

@@ -20,7 +20,7 @@ void log_(
       {                              \
             log_("assert hit: ", m); \
             fwrite(ERROR_FILE, m);   \
-            exit(1);                 \
+            exit(EXIT_FAILURE);      \
       }
 
 #define exit_(m) ASSERT(false, m)
