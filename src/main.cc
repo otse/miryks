@@ -2,16 +2,19 @@
 
 #include "dark2.h"
 
+#include "files.hpp"
+
 #include "oldrim/bsa"
 
-//#include <stdio.h>
-#include <iostream>
+#include "opengl/types"
+#include "opengl/scene"
+#include "opengl/group"
+#include "opengl/geometry"
 
-#include "files.hpp"
 
 namespace dark2
 {
-	string SKYRIM_PATH;
+	string OLDRIM_PATH;
 
 	bsa_t interface;
     bsa_t meshes;
@@ -24,28 +27,33 @@ namespace dark2
 	float delta = 1;
 }
 
-#define PATH_TXT "path to skyrim.txt"
+#define PATH_TXT "path to oldrim.txt"
 
 using namespace dark2;
 
 void load_archives()
 {
-	interface = bsa_load(SKYRIM_PATH + "Data/Skyrim - Interface.bsa");
-	animations = bsa_load(SKYRIM_PATH + "Data/Skyrim - Animations.bsa");
-	meshes = bsa_load(SKYRIM_PATH + "Data/Skyrim - Meshes.bsa");
+	interface = bsa_load(OLDRIM_PATH + "Data/Skyrim - Interface.bsa");
+	animations = bsa_load(OLDRIM_PATH + "Data/Skyrim - Animations.bsa");
+	meshes = bsa_load(OLDRIM_PATH + "Data/Skyrim - Meshes.bsa");
 }
 
 int main()
 {
 	log_("dark2 loading");
 	
-	SKYRIM_PATH = fread(PATH_TXT);
+	OLDRIM_PATH = fread(PATH_TXT);
 	assert_(
-		SKYRIM_PATH != "no", "missing" PATH_TXT);
+		OLDRIM_PATH != "no", "missing" PATH_TXT);
 	load_archives();
 	bsa_print(animations);
 	//system("PAUSE");
 	opengl_go();
+	program_go();
+	group_t *cube = new group_t;
+	cube->geometry = new geometry_t;
+	cube->geometry->SetupMesh();
+	scene->Add(cube);
 	program_loop();
 	return 1;
 }

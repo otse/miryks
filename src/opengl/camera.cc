@@ -27,13 +27,11 @@ void camera_t::Call()
         fyaw += 2 * pif;
 
     fpitch = fmaxf(-pif, fminf(0, fpitch));
-    //fpitch = std::clamp(fpitch, -PI, 0.f);
 
     view = mat4(1.0f);
     view = rotate(view, fpitch, vec3(1, 0, 0));
     view = rotate(view, fyaw, vec3(0, 0, 1));
     view = translate(view, -pos - eye);
-    //view = inverse(view);
 
     using namespace dark2;
 

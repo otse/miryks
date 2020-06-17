@@ -6,6 +6,7 @@
 struct scene_t
 {
 public:
+	vector<group_t *> groups;
 	vector<pointlight_t *> pointlights;
 	
 	vec3 ambient;
@@ -14,9 +15,9 @@ public:
 	~scene_t();
 
 	void Clear();
-	//void Add(group2_t *);
+	void Add(group_t *);
 	void Add(pointlight_t *);
-	//void Remove(group2_t *);
+	void Remove(group_t *);
 	void Remove(pointlight_t *);
 
 	void DrawItems();

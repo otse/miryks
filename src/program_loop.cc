@@ -1,6 +1,7 @@
 #include "dark2.h"
 
 #include "opengl/camera"
+#include "opengl/scene"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -57,7 +58,7 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-void dark2::program_loop()
+void dark2::program_go()
 {
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
@@ -87,6 +88,20 @@ void dark2::program_loop()
 		exit(EXIT_FAILURE);
 	}
 
+	glClearColor(1, 0, 1, 1);
+
+	glEnable(GL_TEXTURE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+	glfwWindowHint(GLFW_SAMPLES, 4);
+}
+
+void dark2::program_loop()
+{
 	glfwSwapInterval(1);
 
 	while (!glfwWindowShouldClose(window))
@@ -96,8 +111,11 @@ void dark2::program_loop()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		do_keys();
-		camera->Move(delta);
+		camera->Move(0.016);
 		camera->Call();
+
+		scene->Order();
+		scene->DrawItems();
 
 		glfwSwapBuffers(window);
 	}

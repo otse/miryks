@@ -10,7 +10,7 @@ struct bsa_header_t
 struct bsa_t
 {
 	bsa_header_t header;
-	ifstream is;
+	std::ifstream is;
 	std::vector<unsigned char> data;
 };
 

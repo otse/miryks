@@ -68,6 +68,11 @@ void scene_t::Remove(pointlight_t *l)
     remove_nullable<pointlight_t *>(l, pointlights);
 }
 
+void scene_t::Add(group_t *gr)
+{
+    add_nullable<group_t *>(gr, groups);
+}
+
 void scene_t::DrawItems()
 {
     CalcLights();
@@ -78,10 +83,10 @@ void scene_t::DrawItems()
     //	item.draw();
     //}
 
-    //for (instance_t ins : instances)
-    //{
-    //	ins->draw_classic();
-    //}
+    for (group_t *gr : groups)
+    {
+    	gr->DrawClassic(mat4(1));
+    }
 }
 
 void scene_t::CalcLights()
