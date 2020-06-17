@@ -2,7 +2,6 @@
 
 #include "dark2.h"
 
-#include "camera.h"
 #include "bsa.h"
 
 //#include <stdio.h>
@@ -46,7 +45,7 @@ int main()
 	load_archives();
 	bsa_print(animations);
 	//system("PAUSE");
-	camera = new camera_t;
+	
 	program_loop();
 	return 1;
 }

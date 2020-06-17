@@ -1,0 +1,25 @@
+#ifndef OPENGL_TEXTURE_H
+#define OPENGL_TEXTURE_H
+
+#include "types"
+
+// https://learnopengl.com/Getting-started/Textures
+
+struct texture_t
+{
+    friend texture_t *get_texture(const string &);
+
+    static std::map<const string, texture_t *> textures;
+
+    GLuint tid;
+
+    const string path;
+
+protected:
+    texture_t(const string &);
+    ~texture_t();
+
+    void load();
+};
+
+#endif

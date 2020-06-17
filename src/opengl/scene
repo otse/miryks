@@ -1,0 +1,29 @@
+#ifndef OPENGL_SCENE_H
+#define OPENGL_SCENE_H
+
+#include "types"
+
+struct scene_t
+{
+public:
+	vector<pointlight_t *> pointlights;
+	
+	vec3 ambient;
+
+	scene_t();
+	~scene_t();
+
+	void Clear();
+	//void Add(group2_t *);
+	void Add(pointlight_t *);
+	//void Remove(group2_t *);
+	void Remove(pointlight_t *);
+
+	void DrawItems();
+	void Order();
+	void CalcLights();
+	void SortLights();
+	void BindLights(shader_t *);
+};
+
+#endif

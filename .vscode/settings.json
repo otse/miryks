@@ -4,6 +4,13 @@
         "/k", "F:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat"
     ],
     "files.associations": {
+        "aabb": "cpp",
+        "camera": "cpp",
+        "geometry": "cpp",
+        "material": "cpp",
+        "texture": "cpp",
+        "scene": "cpp",
+        "shader": "cpp",
         "iostream": "cpp",
         "algorithm": "cpp",
         "cctype": "cpp",
@@ -54,6 +61,8 @@
         "xstddef": "cpp",
         "xstring": "cpp",
         "xtr1common": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "types": "cpp",
+        "xtree": "cpp"
     },
 }

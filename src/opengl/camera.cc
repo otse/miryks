@@ -1,6 +1,7 @@
-#include "camera.h"
+#include "camera"
 
 #include "dark2.h"
+
 
 const float PI = pi<float>();
 

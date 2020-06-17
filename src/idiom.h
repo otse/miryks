@@ -3,6 +3,11 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <map>
+
+#define ONE_SKYRIM_UNIT_IN_CM 1.428f
+
 
 using namespace std;
 

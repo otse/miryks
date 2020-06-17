@@ -1,0 +1,28 @@
+#ifndef OPENGL_GROUP_H
+#define OPENGL_GROUP_H
+
+#include "types"
+//#include "aabb"
+
+// A basic 3d object with a transformation
+
+struct group_t
+{
+	string name; // debug
+
+	mat4 matrix, matrix_world;
+
+	group_t *parent;
+	geometry_t *geometry, *axis;
+
+	vector<group_t *> groups, flat;
+
+	group_t();
+	void add(group_t *);
+	void update();
+	void draw(const mat4 &);
+	void draw_classic(const mat4 &);
+	void flatten(group_t *);
+};
+
+#endif

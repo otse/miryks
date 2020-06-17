@@ -1,0 +1,38 @@
+#ifndef OPENGL_TYPES
+#define OPENGL_TYPES
+
+#include "../idiom.h"
+
+#include <glad/glad.h>
+
+#include <glm/glm.hpp>
+using namespace glm;
+
+struct aabb;
+
+struct geometry_t;
+struct material_t;
+struct camera_t;
+struct scene_t;
+struct group_t;
+struct texture_t;
+struct shader_t;
+struct program_t;
+struct pointlight_t;
+
+
+void detect_glfw_error();
+void detect_opengl_error(const char * = "?");
+
+void opengl_init();
+void opengl_reload_shaders();
+
+extern camera_t *camera;
+extern scene_t *scene;
+
+extern shader_t *sha_basic;
+extern shader_t *sha_simple;
+extern shader_t *sha_fx;
+extern shader_t *sha_pbr;
+
+#endif

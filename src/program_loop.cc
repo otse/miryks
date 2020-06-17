@@ -1,6 +1,6 @@
 #include "dark2.h"
 
-#include "camera.h"
+#include "opengl/camera"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -20,8 +20,6 @@ static void error_callback(int error, const char *description)
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-	using namespace glm;
-
 	static bool F3 = false;
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -32,17 +30,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		F3 = !F3;
 		glfwSetInputMode(window, GLFW_CURSOR, F3 ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 	}
-
-	//if (key == GLFW_KEY_R && action != GLFW_RELEASE)
-	//camera->up_down(0, delta_time);
-
-	//if (glfwGetKey(window, GLFW_KEY_F4))
-	//{
-	//	reload_shaders();
-	//}
 }
 
-static void wasd()
+static void do_keys()
 {
 	camera->w = glfwGetKey(window, GLFW_KEY_W);
 	camera->a = glfwGetKey(window, GLFW_KEY_A);
@@ -53,7 +43,7 @@ static void wasd()
 	camera->shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
 }
 
-void mouse_callback(GLFWwindow *window, double x, double y)
+void cursor_pos_callback(GLFWwindow *window, double x, double y)
 {
 	static double xx = x;
 	static double yy = y;
@@ -77,11 +67,6 @@ void dark2::program_loop()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	window = glfwCreateWindow(width, height, "Dork", NULL, NULL);
-	if (!window)
-	{
-		glfwTerminate();
-		exit(EXIT_FAILURE);
-	}
 
 #if 0
 	auto monitor = glfwGetPrimaryMonitor();
@@ -92,7 +77,7 @@ void dark2::program_loop()
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(window, mouse_callback);
+	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	int er = gladLoadGL();
@@ -110,7 +95,7 @@ void dark2::program_loop()
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		wasd();
+		do_keys();
 		camera->move(delta);
 		camera->call();
 

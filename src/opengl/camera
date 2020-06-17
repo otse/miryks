@@ -1,14 +1,13 @@
-#ifndef CAMERA_H
-#define CAMERA_H
+#ifndef OPENGL_CAMERA_H
+#define OPENGL_CAMERA_H
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
 using namespace glm;
 
-class camera_t
+struct camera_t
 {
-public:
 	vec3 pos, eye;
 	mat4 yaw, pitch, aim, view;
 	mat4 projection;
