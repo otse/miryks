@@ -30,17 +30,8 @@ project "Dark2"
 	defines { "_CRT_SECURE_NO_WARNINGS" }
 	
 	files {
-		"dep/**.h",
-		"dep/**.hpp",
-		"dep/**.c",
-		"dep/**.cpp",
-		"include/**.h",
-		"include/**.hpp",
-		"src/**.c",
-		"src/**.cc",
-		"src/**.cpp",
-		"src/**.h",
-		"src/**.hpp",
+		"dep/**",
+		"include/**",
 		"src/**"
 	}
 

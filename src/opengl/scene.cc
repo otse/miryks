@@ -7,6 +7,7 @@
 #include "shader"
 #include "pointlight"
 
+
 static pointlight_t *black;
 
 scene_t::scene_t()

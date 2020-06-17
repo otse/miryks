@@ -19,7 +19,7 @@ protected:
     texture_t(const string &);
     ~texture_t();
 
-    void load();
+    void Load();
 };
 
 #endif

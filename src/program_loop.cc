@@ -49,7 +49,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 	static double yy = y;
 	xx = x;
 	yy = y;
-	camera->mouse(x - xx, yy - y);
+	camera->Mouse(x - xx, yy - y);
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -96,8 +96,8 @@ void dark2::program_loop()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		do_keys();
-		camera->move(delta);
-		camera->call();
+		camera->Move(delta);
+		camera->Call();
 
 		glfwSwapBuffers(window);
 	}

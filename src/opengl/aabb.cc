@@ -1,7 +1,7 @@
-#include "aabb.h"
+#include "aabb"
 
-#include "geometry.h"
-#include "material.h"
+#include "geometry"
+#include "material"
 
 aabb::aabb(float f)
 {

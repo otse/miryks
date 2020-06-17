@@ -20,15 +20,15 @@ group_t::group_t()
 #endif
 }
 
-void group_t::add(group_t *gr)
+void group_t::Add(group_t *gr)
 {
 	gr->parent = this;
-	gr->update();
+	gr->Update();
 
 	groups.push_back(gr);
 }
 
-void group_t::update()
+void group_t::Update()
 {
 	// Accumulate matrices
 
@@ -41,11 +41,11 @@ void group_t::update()
 
 	for (group_t *gr : groups)
 	{
-		gr->update();
+		gr->Update();
 	}
 }
 
-void group_t::draw(const mat4 &model)
+void group_t::Draw(const mat4 &model)
 {
 	mat4 matrix = model * matrix_world;
 
@@ -59,7 +59,7 @@ void group_t::draw(const mat4 &model)
 		geometry->Draw(matrix);
 }
 
-void group_t::flatten(group_t *root)
+void group_t::Flatten(group_t *root)
 {
 	// Put all childs into root.flat
 
@@ -69,11 +69,11 @@ void group_t::flatten(group_t *root)
 
 	for (group_t *gr : groups)
 	{
-		gr->flatten(root);
+		gr->Flatten(root);
 	}
 }
 
-void group_t::draw_classic(const mat4 &model)
+void group_t::DrawClassic(const mat4 &model)
 {
 	mat4 matrix = model * matrix_world;
 
@@ -84,6 +84,6 @@ void group_t::draw_classic(const mat4 &model)
 
 	for (group_t *gr : groups)
 	{
-		gr->draw_classic(model);
+		gr->DrawClassic(model);
 	}
 }

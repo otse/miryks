@@ -6,6 +6,9 @@
 #include "camera"
 #include "scene"
 
+#include <glad/glad.h>
+
+
 struct shader_t
 {
 	static shader_t *bound;

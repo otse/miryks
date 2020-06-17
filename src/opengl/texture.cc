@@ -7,16 +7,17 @@ extern "C"
 #include <dds.h>
 }
 
+
 texture_t::texture_t(const string &path)
 	: path(path)
 {
-	//tse_log("new texture ", path);
+	//log_("new texture ", path);
 
-	load();
+	Load();
 }
 texture_t::~texture_t() {}
 
-void texture_t::load()
+void texture_t::Load()
 {
 	if (fstat(path) == false)
 	{

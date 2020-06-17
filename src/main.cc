@@ -45,7 +45,7 @@ int main()
 	load_archives();
 	bsa_print(animations);
 	//system("PAUSE");
-	
+	opengl_go();
 	program_loop();
 	return 1;
 }

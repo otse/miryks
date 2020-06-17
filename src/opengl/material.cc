@@ -5,40 +5,38 @@
 #include "shader"
 #include "scene"
 
-int material_t::ids = 0;
 
-material_t *material_t::bound = nullptr;
+int material_t::POOL = 0;
+
+material_t *material_t::BOUND = nullptr;
+
+#define PRETTY_GRAY 17.0f / 255
+
 
 material_t::material_t()
 {
-	id = ids++;
+	id = POOL++;
 
 	shader = sha_simple;
 
-	map = nullptr;
-	normal_map = nullptr;
+	transparent = double_sided = blending = testing = decal = false;
 
-	offset = vec2(0, 0);
-	repeat = vec2(1, 1);
-	center = vec2(0, 0);
+	opacity = 1.f;
+	treshold = 0;
+	shininess = 20.f;
+	glossiness = 1.f;
 	rotation = 0;
 
-	transparent = false;
-	double_sided = false;
-	blending = false;
-	testing = false;
-	decal = false;
-
 	depth_func = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
+
+	emissive = vec3(PRETTY_GRAY);
+
+	compose_uv_transform();
 
 	/*color = vec3(
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX);*/
-	color = vec3(1, 1, 1);
-	specular = vec3(17.0 / 255.0);
-
-	compose_uv_transform();
 }
 
 void material_t::compose_uv_transform()
@@ -73,12 +71,12 @@ void material_t::set_uv_transform_directly(
 		c, f, i);
 }
 
-void material_t::bind()
+void material_t::Bind()
 {
-	if (this == bound)
+	if (this == BOUND)
 		return;
 
-	unbind();
+	Unbind();
 
 	shader->use();
 
@@ -87,7 +85,7 @@ void material_t::bind()
 	shader->setFloat("opacity", opacity);
 	shader->setFloat("shininess", shininess);
 	shader->setFloat("glossiness", glossiness);
-	
+
 	shader->setMat3("uvTransform", uv_transform);
 
 	if (map)
@@ -128,14 +126,14 @@ void material_t::bind()
 		glDisable(GL_CULL_FACE);
 	}
 
-	bound = this;
+	BOUND = this;
 
 	//if (checkGlError) {
 	//	detect_opengl_error("bind material " + name);
 	//}
 }
 
-void material_t::unbind()
+void material_t::Unbind()
 {
 	if (!map)
 	{

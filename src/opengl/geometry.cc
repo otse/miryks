@@ -4,6 +4,7 @@
 #include "camera"
 #include "material"
 
+
 const std::vector<vec3> VERTICES = {
 	vec3(-1.0, -1.0, 1.0),
 	vec3(1.0, -1.0, 1.0),
@@ -38,7 +39,7 @@ geometry_t::geometry_t()
 
 geometry_t::~geometry_t()
 {
-	log_("~~ geometry");
+	log_("delete geometry");
 
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
@@ -64,7 +65,7 @@ void geometry_t::Draw(const mat4 &model)
 
 	if (material)
 	{
-		material->bind();
+		material->Bind();
 
 		material->shader->setMat4("model", model);
 		material->shader->setMat3("normalMatrix", transpose(inverse(mat3(camera->view * model))));

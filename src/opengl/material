@@ -3,40 +3,38 @@
 
 #include "types"
 
+
 struct material_t
 {
+	static int POOL;
+	static material_t *BOUND;
+	
 	int id;
-
 	string name;
 
-	static int ids;
-	static material_t *bound;
-
-	shader_t *shader;
+	texture_t *map = nullptr, *normal_map = nullptr;
+	shader_t *shader = nullptr;
 
 	bool transparent, double_sided, blending, testing, decal;
-
-	float opacity = 1.f, treshold = 0, shininess = 20.f, glossiness = 1.f;
+	float opacity, treshold, shininess, glossiness;
+	float rotation;
 
 	vec3 color, specular, emissive;
-
-	struct depth_func_t {
-		int sfactor, dfactor;
-	} depth_func;
-
 	vec2 offset, repeat, center;
-	float rotation;
 	mat3 uv_transform;
-
-	texture_t *map, *normal_map;
 
 	material_t();
 
 	void compose_uv_transform();
 	void set_uv_transform_directly(float, float, float, float, float, float, float);
 
-	void bind();
-	void unbind();
+	void Bind();
+	void Unbind();
+
+	struct depth_func_t
+	{
+		int sfactor, dfactor;
+	} depth_func;
 };
 
 #endif

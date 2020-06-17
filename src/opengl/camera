@@ -1,10 +1,9 @@
 #ifndef OPENGL_CAMERA_H
 #define OPENGL_CAMERA_H
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include "types"
 
-using namespace glm;
+#include <glm/gtc/matrix_transform.hpp>
 
 struct camera_t
 {
@@ -20,10 +19,10 @@ struct camera_t
 
 	camera_t();
 
-	void mouse(float, float);
-	void move(float);
-	void call();
-	void up_down(const int, float);
+	void Mouse(float, float);
+	void Move(float);
+	void Call();
+	void UpDown(const int, float);
 };
 
 #endif

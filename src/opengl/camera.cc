@@ -2,14 +2,16 @@
 
 #include "dark2.h"
 
+#include <glm/gtc/matrix_transform.hpp>
 
-const float PI = pi<float>();
+
+const float pif = pi<float>();
 
 camera_t::camera_t()
 {
 }
 
-void camera_t::mouse(float x, float y)
+void camera_t::Mouse(float x, float y)
 {
     const float sens = .001f;
 
@@ -17,14 +19,14 @@ void camera_t::mouse(float x, float y)
     fpitch -= y * sens;
 }
 
-void camera_t::call()
+void camera_t::Call()
 {
-    while (fyaw > 2 * PI)
-        fyaw -= 2 * PI;
+    while (fyaw > 2 * pif)
+        fyaw -= 2 * pif;
     while (fyaw < 0)
-        fyaw += 2 * PI;
+        fyaw += 2 * pif;
 
-    fpitch = fmaxf(-PI, fminf(0, fpitch));
+    fpitch = fmaxf(-pif, fminf(0, fpitch));
     //fpitch = std::clamp(fpitch, -PI, 0.f);
 
     view = mat4(1.0f);
@@ -39,7 +41,7 @@ void camera_t::call()
         radians(fzoom), (float)width / (float)height, 0.1f, 10000.0f);
 }
 
-void camera_t::up_down(const int dir, float time)
+void camera_t::UpDown(const int dir, float time)
 {
     float speed = 250 * time;
     if (shift)
@@ -51,7 +53,7 @@ void camera_t::up_down(const int dir, float time)
         pos.z -= speed;
 }
 
-void camera_t::move(float time)
+void camera_t::Move(float time)
 {
     auto forward = [&](float n) {
         pos.x += n * sin(fyaw);
