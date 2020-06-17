@@ -1,4 +1,5 @@
 #include <vector>
+#include <fstream>
 
 struct bsa_header_t
 {
@@ -8,10 +9,11 @@ struct bsa_header_t
 
 struct bsa_t
 {
-	vector<unsigned char> data;
 	bsa_header_t header;
+	ifstream is;
+	std::vector<unsigned char> data;
 };
 
-bsa_t bsa_load(const string &a);
+bsa_t bsa_load(const std::string &a);
 
 void bsa_print(bsa_t &bsa);

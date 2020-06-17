@@ -2,12 +2,12 @@
 
 #include "dark2.h"
 
-#include "bsa.h"
+#include "oldrim/bsa"
 
 //#include <stdio.h>
 #include <iostream>
 
-#include "files.h"
+#include "files.hpp"
 
 namespace dark2
 {

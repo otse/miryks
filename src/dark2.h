@@ -5,7 +5,7 @@ struct bsa_t;
 
 #include "opengl/types"
 
-#include "idiom.h"
+#include "idiom.hpp"
 
 namespace dark2
 {

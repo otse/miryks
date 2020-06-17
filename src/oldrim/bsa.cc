@@ -1,8 +1,8 @@
 #include "dark2.h"
 
-#include "bsa.h"
+#include "bsa"
 
-#include "files.h"
+#include "files.hpp"
 
 #define BSA "BSA - "
 #define VER 104
@@ -10,10 +10,10 @@
 bsa_t bsa_load(const string &a)
 {
 	bsa_t bsa;
-	ifstream is(a, ifstream::binary);
+	bsa.is = ifstream(a, ifstream::binary);
 	assert_(
-		is, BSA "cant open");
-	is.read(
+		bsa.is, BSA "cant open");
+	bsa.is.read(
 		(char *)&bsa.header, sizeof(bsa_header_t));
 	assert_(
 		strcmp(

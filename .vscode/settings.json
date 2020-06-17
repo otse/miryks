@@ -11,6 +11,9 @@
         "texture": "cpp",
         "scene": "cpp",
         "shader": "cpp",
+        "pointlight": "cpp",
+        "group": "cpp",
+        "bsa": "cpp",
         "iostream": "cpp",
         "algorithm": "cpp",
         "cctype": "cpp",
@@ -63,6 +66,7 @@
         "xtr1common": "cpp",
         "xutility": "cpp",
         "types": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "map": "cpp"
     },
 }

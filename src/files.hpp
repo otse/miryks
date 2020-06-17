@@ -4,7 +4,7 @@
 #include <fstream>
 #include <filesystem>
 
-#include "idiom.h"
+#include "idiom.hpp"
 
 inline bool
 fstat(const string &a)
