@@ -5,13 +5,13 @@
 #include "shader"
 #include "scene"
 
-int material_t::POOL = 0;
+int material_t::pool = 0;
 
-material_t *material_t::BOUND = nullptr;
+material_t *material_t::active = nullptr;
 
 material_t::material_t()
 {
-	id = POOL++;
+	id = pool++;
 
 	shader = sha_simple;
 
@@ -68,12 +68,12 @@ void material_t::set_uv_transform_directly(
 		c, f, i);
 }
 
-void material_t::Bind()
+void material_t::Use()
 {
-	if (this == BOUND)
+	if (this == active)
 		return;
 
-	BOUND->Unbind(this);
+	Unuse(active, this);
 
 	shader->Use();
 	shader->setVec3("color", color);
@@ -108,9 +108,12 @@ void material_t::Bind()
 	}
 	if (testing)
 	{
-		shader->setFloat("alphaTest", treshold / 255.f);
 		glDepthFunc(GL_LEQUAL);
+		shader->setFloat("alphaTest", treshold / 255.f);
 	}
+	else
+		shader->setFloat("alphaTest", 0);
+
 	if (transparent)
 	{
 		glDepthMask(GL_FALSE);
@@ -118,59 +121,51 @@ void material_t::Bind()
 	}
 	if (double_sided)
 	{
-		shader->setBool("doubleSided", true);
 		glDisable(GL_CULL_FACE);
+		shader->setBool("doubleSided", true);
 	}
+	else
+		shader->setBool("doubleSided", false);
 
-	BOUND = this;
+	active = this;
 
 	//if (checkGlError) {
 	//	detect_opengl_error("bind material " + name);
 	//}
 }
 
-void material_t::Unbind(material_t *against)
+void material_t::Unuse(material_t *a, material_t *b)
 {
-	if (!against || against->map && !map)
+	if (!a || a->map && !b->map)
 	{
 		glActiveTexture(GL_TEXTURE0 + 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	if (!against || against->normal_map && !normal_map)
+	if (!a || a->normal_map && !b->normal_map)
 	{
 		glActiveTexture(GL_TEXTURE0 + 1);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	if (!against || against->decal && !decal)
+	if (!a || a->decal && !b->decal)
 	{
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(0, 0);
 	}
-	if (!against || against->blending && !blending)
+	if (!a || a->blending && !b->blending)
 	{
 		glDisable(GL_BLEND);
 	}
-	if (!against || against->testing && !testing)
+	if (!a || a->testing && !b->testing)
 	{
-		shader->setFloat("alphaTest", 0);
 		glDepthFunc(GL_LEQUAL);
 	}
-	if (!against || against->transparent && !transparent)
+	if (!a || a->transparent && !b->transparent)
 	{
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
 	}
-	if (!against || against->double_sided && !double_sided)
+	if (!a || a->double_sided && !b->double_sided)
 	{
-		shader->setBool("doubleSided", false);
 		glEnable(GL_CULL_FACE);
-		//glCullFace(GL_BACK);
-		//glFrontFace(GL_CCW);
 	}
-
-	BOUND = nullptr;
-
-	//if (checkGlError) {
-	//	detect_opengl_error("unbind material " + name);
-	//}
 }

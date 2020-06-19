@@ -1,6 +1,6 @@
 #include "shader"
 
-shader_t *shader_t::BOUND = nullptr;
+shader_t *shader_t::active = nullptr;
 
 //shader_t *shader_current;
 
@@ -25,7 +25,7 @@ void shader_t::Reload()
 
 void shader_t::Use()
 {
-	if (this == BOUND)
+	if (this == active)
 		return;
 
 	glUseProgram(id);
@@ -35,7 +35,7 @@ void shader_t::Use()
 	setMat4("view", camera->view);
 	setMat4("projection", camera->projection);
 
-	BOUND = this;
+	active = this;
 }
 
 void shader_t::Load(const string &vert, const string &frag)

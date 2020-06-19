@@ -29,7 +29,7 @@ extern shader_t *sha_fx;
 extern shader_t *sha_pbr;
 
 void detect_glfw_error();
-void detect_opengl_error(const char * = "?");
+void detect_opengl_error(const string = "?");
 
 void opengl_go();
 void opengl_reload_shaders();

@@ -13,7 +13,7 @@
 
 struct shader_t
 {
-	static shader_t *BOUND;
+	static shader_t *active;
 
 	GLuint id;
 

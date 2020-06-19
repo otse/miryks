@@ -36,3 +36,8 @@
 *.vcxproj
 *.pdb
 *.filters
+.vs/Dark2/v16/ipch/AutoPCH/3300e74fe3337582/MATERIAL.ipch
+*.opendb
+*.db
+.vs/Dark2/v16/.suo
+*.log

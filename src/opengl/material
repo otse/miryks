@@ -6,8 +6,8 @@
 
 struct material_t
 {
-	static int POOL;
-	static material_t *BOUND;
+	static int pool;
+	static material_t *active;
 	
 	int id;
 	string name;
@@ -28,8 +28,8 @@ struct material_t
 	void compose_uv_transform();
 	void set_uv_transform_directly(float, float, float, float, float, float, float);
 
-	void Bind();
-	void Unbind(material_t *);
+	void Use();
+	static void Unuse(material_t *, material_t *);
 
 	struct depth_func_t
 	{

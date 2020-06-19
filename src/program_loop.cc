@@ -115,16 +115,16 @@ void dark2::program_loop()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		do_keys();
+		
 		camera->Move(0.016);
 		camera->Call();
 
 		scene->Order();
 		scene->DrawItems();
 
-		dud->Unbind(nullptr);
+		material_t::Unuse(nullptr, nullptr);
 
-		material_t::BOUND = nullptr;
-		shader_t::BOUND = nullptr;
+		shader_t::active = nullptr;
 
 		glfwSwapBuffers(window);
 	}

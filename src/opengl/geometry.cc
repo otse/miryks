@@ -69,8 +69,7 @@ void geometry_t::Draw(const mat4 &model)
 
 	if (material)
 	{
-		material->Bind();
-
+		material->Use();
 		material->shader->setMat4("model", model);
 		material->shader->setMat3("normalMatrix", transpose(inverse(mat3(camera->view * model))));
 	}
