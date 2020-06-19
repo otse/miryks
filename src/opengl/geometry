@@ -15,7 +15,7 @@ struct vertex_t
 	vec3 bitangent;
 };
 
-struct geometry_t
+struct Geometry_t
 {
 	bool created = false;
 	bool lines = false;
@@ -25,15 +25,15 @@ struct geometry_t
 
 	aabb bb;
 	
-	group_t *parent = nullptr;
-	material_t *material = nullptr;
+	Group_t *parent = nullptr;
+	Material_t *material = nullptr;
 	//std::vector<texture_t> textures;
 
 	vector<vertex_t> vertices;
 	vector<GLuint> elements;
 
-	geometry_t();
-	~geometry_t();
+	Geometry_t();
+	~Geometry_t();
 
 	void Draw(const mat4 &);
 

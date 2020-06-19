@@ -39,7 +39,7 @@ struct aabb
 	void geometrize();
 	void draw(const mat4 &);
 	
-	geometry_t *geometry = nullptr;
+	Geometry_t *geometry = nullptr;
 
 };
 

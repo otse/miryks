@@ -8,11 +8,11 @@
 
 const float pif = pi<float>();
 
-camera_t::camera_t()
+Camera_t::Camera_t()
 {
 }
 
-void camera_t::Mouse(float x, float y)
+void Camera_t::Mouse(float x, float y)
 {
 	const float sens = .001f;
 
@@ -20,7 +20,7 @@ void camera_t::Mouse(float x, float y)
 	fpitch -= y * sens;
 }
 
-void camera_t::Call()
+void Camera_t::Call()
 {
 	while (fyaw > 2 * pif)
 		fyaw -= 2 * pif;
@@ -42,7 +42,7 @@ void camera_t::Call()
 	//log_("view ", glm::to_string(view));
 }
 
-void camera_t::UpDown(const int dir, float time)
+void Camera_t::UpDown(const int dir, float time)
 {
 	float speed = 250 * time;
 	if (shift)
@@ -54,7 +54,7 @@ void camera_t::UpDown(const int dir, float time)
 		pos.z -= speed;
 }
 
-void camera_t::Move(float time)
+void Camera_t::Move(float time)
 {
 	auto forward = [&](float n) {
 		pos.x += n * sin(fyaw);

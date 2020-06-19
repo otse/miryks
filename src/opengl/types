@@ -10,23 +10,23 @@ using namespace glm;
 
 struct aabb;
 
-struct geometry_t;
-struct material_t;
-struct camera_t;
-struct scene_t;
-struct group_t;
-struct texture_t;
-struct shader_t;
-struct program_t;
-struct pointlight_t;
+struct Geometry_t;
+struct Material_t;
+struct Camera_t;
+struct Scene_t;
+struct Group_t;
+struct Texture_t;
+struct Shader_t;
+struct Program_t;
+struct Pointlight_t;
 
-extern camera_t *camera;
-extern scene_t *scene;
+extern Camera_t *camera;
+extern Scene_t *scene;
 
-extern shader_t *sha_basic;
-extern shader_t *sha_simple;
-extern shader_t *sha_fx;
-extern shader_t *sha_pbr;
+extern Shader_t *sha_basic;
+extern Shader_t *sha_simple;
+extern Shader_t *sha_fx;
+extern Shader_t *sha_pbr;
 
 void detect_glfw_error();
 void detect_opengl_error(const string = "?");

@@ -8,11 +8,11 @@
 #include "pointlight"
 
 
-static pointlight_t *black;
+static Pointlight_t *black;
 
-scene_t::scene_t()
+Scene_t::Scene_t()
 {
-    black = new pointlight_t;
+    black = new Pointlight_t;
     black->color = vec3(0);
     black->distance = 0;
     black->intensity = 0;
@@ -20,9 +20,9 @@ scene_t::scene_t()
     ambient = vec3(100.f / 255.f, 100.f / 255.f, 100.f / 255.f);
 };
 
-scene_t::~scene_t(){};
+Scene_t::~Scene_t(){};
 
-void scene_t::Clear()
+void Scene_t::Clear()
 {
     //items.clear();
     //groups2.clear();
@@ -58,22 +58,22 @@ bool remove_nullable(T t, std::vector<T> &v)
     return false;
 }
 
-void scene_t::Add(pointlight_t *l)
+void Scene_t::Add(Pointlight_t *l)
 {
-    add_nullable<pointlight_t *>(l, pointlights);
+    add_nullable<Pointlight_t *>(l, pointlights);
 }
 
-void scene_t::Remove(pointlight_t *l)
+void Scene_t::Remove(Pointlight_t *l)
 {
-    remove_nullable<pointlight_t *>(l, pointlights);
+    remove_nullable<Pointlight_t *>(l, pointlights);
 }
 
-void scene_t::Add(group_t *gr)
+void Scene_t::Add(Group_t *gr)
 {
-    add_nullable<group_t *>(gr, groups);
+    add_nullable<Group_t *>(gr, groups);
 }
 
-void scene_t::DrawItems()
+void Scene_t::DrawItems()
 {
     CalcLights();
     SortLights();
@@ -83,23 +83,23 @@ void scene_t::DrawItems()
     //	item.draw();
     //}
 
-    for (group_t *gr : groups)
+    for (Group_t *gr : groups)
     {
     	gr->DrawClassic(mat4(1));
     }
 }
 
-void scene_t::CalcLights()
+void Scene_t::CalcLights()
 {
-    for (pointlight_t *pl : pointlights)
+    for (Pointlight_t *pl : pointlights)
         pl->Calc();
 }
 
 #include <algorithm>
 
-void scene_t::SortLights()
+void Scene_t::SortLights()
 {
-    auto sort_distance = [](const pointlight_t *a, const pointlight_t *b) -> bool {
+    auto sort_distance = [](const Pointlight_t *a, const Pointlight_t *b) -> bool {
         if (a->GetDist() < b->GetDist())
             return true;
         return false;
@@ -108,13 +108,13 @@ void scene_t::SortLights()
     sort(pointlights.begin(), pointlights.end(), sort_distance);
 }
 
-void scene_t::BindLights(shader_t *shader)
+void Scene_t::BindLights(Shader_t *shader)
 {
-    shader->setVec3("ambientLightColor", ambient);
+    shader->SetVec3("ambientLightColor", ambient);
 
     for (int i = 0; i < 9; i++)
     {
-        pointlight_t *l = black;
+        Pointlight_t *l = black;
 
         if (i < pointlights.size())
             l = pointlights[i];
@@ -128,10 +128,10 @@ void scene_t::BindLights(shader_t *shader)
         package[2][1] = l->decay;
         package[2][2] = -1;
 
-        shader->setMat3((index + ".package").c_str(), package);
+        shader->SetMat3((index + ".package").c_str(), package);
     }
 }
 
-void scene_t::Order()
+void Scene_t::Order()
 {
 }

@@ -6,23 +6,23 @@
 
 // A basic 3d object with a transformation
 
-struct group_t
+struct Group_t
 {
 	string name; // debug
 
 	mat4 matrix, matrix_world;
 
-	group_t *parent;
-	geometry_t *geometry, *axis;
+	Group_t *parent;
+	Geometry_t *geometry, *axis;
 
-	vector<group_t *> groups, flat;
+	vector<Group_t *> groups, flat;
 
-	group_t();
-	void Add(group_t *);
+	Group_t();
+	void Add(Group_t *);
 	void Update();
 	void Draw(const mat4 &);
 	void DrawClassic(const mat4 &);
-	void Flatten(group_t *);
+	void Flatten(Group_t *);
 };
 
 #endif

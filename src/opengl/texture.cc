@@ -8,16 +8,16 @@ extern "C"
 }
 
 
-texture_t::texture_t(const string &path)
+Texture_t::Texture_t(const string &path)
 	: path(path)
 {
 	//log_("new texture ", path);
 
 	Load();
 }
-texture_t::~texture_t() {}
+Texture_t::~Texture_t() {}
 
-void texture_t::Load()
+void Texture_t::Load()
 {
 	if (fstat(path) == false)
 	{

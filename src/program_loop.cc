@@ -104,7 +104,7 @@ void dark2::program_go()
 
 void dark2::program_loop()
 {
-	material_t *dud = new material_t;
+	Material_t *dud = new Material_t;
 
 	glfwSwapInterval(1);
 
@@ -122,9 +122,9 @@ void dark2::program_loop()
 		scene->Order();
 		scene->DrawItems();
 
-		material_t::Unuse(nullptr, nullptr);
+		Material_t::Unuse();
 
-		shader_t::active = nullptr;
+		Shader_t::active = nullptr;
 
 		glfwSwapBuffers(window);
 	}

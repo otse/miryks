@@ -10,17 +10,17 @@
 #include "material"
 #include "texture"
 
-shader_t *sha_basic;
-shader_t *sha_simple;
-shader_t *sha_fx;
-shader_t *sha_pbr;
+Shader_t *sha_basic;
+Shader_t *sha_simple;
+Shader_t *sha_fx;
+Shader_t *sha_pbr;
 
-camera_t *camera;
-scene_t *scene;
+Camera_t *camera;
+Scene_t *scene;
 
 bool checkGlError = false;
 
-std::map<const string, texture_t *> texture_t::textures;
+std::map<const string, Texture_t *> Texture_t::textures;
 
 void detect_glfw_error()
 {
@@ -39,17 +39,17 @@ void detect_opengl_error(const string where)
 	}
 }
 
-texture_t *get_texture(const string &path)
+Texture_t *get_texture(const string &path)
 {
-	auto has = texture_t::textures.find(path);
-	if (has != texture_t::textures.end())
+	auto has = Texture_t::textures.find(path);
+	if (has != Texture_t::textures.end())
 	{
 		return has->second;
 	}
 
-	texture_t *texture = new texture_t(path);
+	Texture_t *texture = new Texture_t(path);
 
-	texture_t::textures.emplace(path, texture);
+	Texture_t::textures.emplace(path, texture);
 
 	return texture;
 }
@@ -68,13 +68,13 @@ void opengl_go()
 {
 	log_("opengl go");
 
-	camera = new camera_t;
-	scene = new scene_t;
+	camera = new Camera_t;
+	scene = new Scene_t;
 
-	sha_basic = new shader_t;
-	sha_simple = new shader_t;
-	sha_fx = new shader_t;
-	sha_pbr = new shader_t;
+	sha_basic = new Shader_t;
+	sha_simple = new Shader_t;
+	sha_fx = new Shader_t;
+	sha_pbr = new Shader_t;
 
 	sha_basic->Load("basic.vert", "basic.frag");
 	sha_simple->Load("simple.vert", "simple.frag");

@@ -20,7 +20,7 @@ namespace dark2
 	bsa_t meshes;
 	bsa_t animations;
 
-	camera_t *camera;
+	Camera_t *camera;
 
 	int width = 1920;
 	int height = 1080;
@@ -51,14 +51,14 @@ int main()
 	opengl_go();
 	for (int i = 0; i < 100; i++)
 	{
-		group_t *cube = new group_t;
+		Group_t *cube = new Group_t;
 		vec3 pos = vec3(
 			(float)rand() / RAND_MAX,
 			(float)rand() / RAND_MAX,
 			(float)rand() / RAND_MAX) * 20.f;
 		cube->matrix = glm::translate(mat4(1.0f), pos);
-		cube->geometry = new geometry_t;
-		cube->geometry->material = new material_t;
+		cube->geometry = new Geometry_t;
+		cube->geometry->material = new Material_t;
 		cube->geometry->SetupMesh();
 		cube->Update();
 		scene->Add(cube);

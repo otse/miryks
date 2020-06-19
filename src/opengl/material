@@ -3,17 +3,16 @@
 
 #include "types"
 
-
-struct material_t
+struct Material_t
 {
 	static int pool;
-	static material_t *active;
-	
+	static Material_t *active;
+
 	int id;
 	string name;
 
-	texture_t *map = nullptr, *normal_map = nullptr;
-	shader_t *shader = nullptr;
+	Texture_t *map = nullptr, *normal_map = nullptr;
+	Shader_t *shader = nullptr;
 
 	bool transparent, double_sided, blending, testing, decal;
 	float opacity, treshold, shininess, glossiness;
@@ -23,13 +22,13 @@ struct material_t
 	vec2 offset, repeat, center;
 	mat3 uv_transform;
 
-	material_t();
+	Material_t();
 
 	void compose_uv_transform();
 	void set_uv_transform_directly(float, float, float, float, float, float, float);
 
 	void Use();
-	static void Unuse(material_t *, material_t *);
+	static void Unuse(Material_t * = nullptr, Material_t * = nullptr);
 
 	struct depth_func_t
 	{

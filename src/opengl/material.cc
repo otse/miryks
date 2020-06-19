@@ -5,11 +5,11 @@
 #include "shader"
 #include "scene"
 
-int material_t::pool = 0;
+int Material_t::pool = 0;
 
-material_t *material_t::active = nullptr;
+Material_t *Material_t::active = nullptr;
 
-material_t::material_t()
+Material_t::Material_t()
 {
 	id = pool++;
 
@@ -36,7 +36,7 @@ material_t::material_t()
 		(float)rand() / RAND_MAX);
 }
 
-void material_t::compose_uv_transform()
+void Material_t::compose_uv_transform()
 {
 	set_uv_transform_directly(
 		offset.x, offset.y,
@@ -45,7 +45,7 @@ void material_t::compose_uv_transform()
 		center.x, center.y);
 }
 
-void material_t::set_uv_transform_directly(
+void Material_t::set_uv_transform_directly(
 	float tx, float ty, float sx, float sy, float rotation, float cx, float cy)
 {
 	float x = cos(rotation);
@@ -68,7 +68,7 @@ void material_t::set_uv_transform_directly(
 		c, f, i);
 }
 
-void material_t::Use()
+void Material_t::Use()
 {
 	if (this == active)
 		return;
@@ -76,25 +76,28 @@ void material_t::Use()
 	Unuse(active, this);
 
 	shader->Use();
-	shader->setVec3("color", color);
-	shader->setVec3("specular", specular);
-	shader->setFloat("opacity", opacity);
-	shader->setFloat("shininess", shininess);
-	shader->setFloat("glossiness", glossiness);
+	shader->SetVec3("color", color);
+	shader->SetVec3("specular", specular);
+	shader->SetFloat("opacity", opacity);
+	shader->SetFloat("shininess", shininess);
+	shader->SetFloat("glossiness", glossiness);
 
-	shader->setMat3("uvTransform", uv_transform);
+	shader->SetMat3("uvTransform", uv_transform);
+
+	shader->SetFloat("alphaTest", testing ? treshold / 255.f : 0);
+	shader->SetBool("doubleSided", double_sided);
 
 	if (map)
 	{
 		glActiveTexture(GL_TEXTURE0 + 0);
 		glBindTexture(GL_TEXTURE_2D, map->tid);
-		shader->setInt("map", 0);
+		shader->SetInt("map", 0);
 	}
 	if (normal_map)
 	{
 		glActiveTexture(GL_TEXTURE0 + 1);
 		glBindTexture(GL_TEXTURE_2D, normal_map->tid);
-		shader->setInt("normalMap", 1);
+		shader->SetInt("normalMap", 1);
 	}
 	if (decal)
 	{
@@ -109,11 +112,7 @@ void material_t::Use()
 	if (testing)
 	{
 		glDepthFunc(GL_LEQUAL);
-		shader->setFloat("alphaTest", treshold / 255.f);
 	}
-	else
-		shader->setFloat("alphaTest", 0);
-
 	if (transparent)
 	{
 		glDepthMask(GL_FALSE);
@@ -122,19 +121,12 @@ void material_t::Use()
 	if (double_sided)
 	{
 		glDisable(GL_CULL_FACE);
-		shader->setBool("doubleSided", true);
 	}
-	else
-		shader->setBool("doubleSided", false);
 
 	active = this;
-
-	//if (checkGlError) {
-	//	detect_opengl_error("bind material " + name);
-	//}
 }
 
-void material_t::Unuse(material_t *a, material_t *b)
+void Material_t::Unuse(Material_t *a, Material_t *b)
 {
 	if (!a || a->map && !b->map)
 	{

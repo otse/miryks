@@ -113,10 +113,10 @@ void aabb::geometrize()
 	if (geometry)
 		delete geometry;
 
-	geometry = new geometry_t;
+	geometry = new Geometry_t;
 	geometry->lines = true;
 
-	material_t *material = new material_t;
+	Material_t *material = new Material_t;
 	material->color = vec3(0.4f);
 	material->shader = sha_basic;
 	geometry->material = material;

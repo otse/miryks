@@ -5,19 +5,19 @@
 
 // https://learnopengl.com/Getting-started/Textures
 
-struct texture_t
+struct Texture_t
 {
-    friend texture_t *get_texture(const string &);
+    friend Texture_t *get_texture(const string &);
 
-    static std::map<const string, texture_t *> textures;
+    static std::map<const string, Texture_t *> textures;
 
     GLuint tid;
 
     const string path;
 
 protected:
-    texture_t(const string &);
-    ~texture_t();
+    Texture_t(const string &);
+    ~Texture_t();
 
     void Load();
 };

@@ -4,7 +4,6 @@
 #include "camera"
 #include "material"
 
-
 const std::vector<vec3> VERTICES = {
 	vec3(-1.0, -1.0, 1.0),
 	vec3(1.0, -1.0, 1.0),
@@ -29,19 +28,15 @@ const std::vector<GLuint> ELEMENTS = {
 	3, 2, 6,
 	6, 7, 3};
 
-geometry_t::geometry_t()
+Geometry_t::Geometry_t()
 {
-	for (const vec3 &v : VERTICES) {
-		vertex_t ver;
-		ver.position = v;
-		vertices.push_back(ver);
-		//vertices.push_back(vertex_t{v});
-	}
+	for (const vec3 &v : VERTICES)
+		vertices.push_back(vertex_t{v});
 	elements.insert(
 		elements.end(), ELEMENTS.begin(), ELEMENTS.end());
 }
 
-geometry_t::~geometry_t()
+Geometry_t::~Geometry_t()
 {
 	log_("delete geometry");
 
@@ -50,7 +45,7 @@ geometry_t::~geometry_t()
 	glDeleteVertexArrays(1, &vao);
 }
 
-void geometry_t::Clear(int num_vertices, int num_elements)
+void Geometry_t::Clear(int num_vertices, int num_elements)
 {
 	vertices.clear();
 	elements.clear();
@@ -58,7 +53,7 @@ void geometry_t::Clear(int num_vertices, int num_elements)
 	elements.resize(num_elements);
 }
 
-void geometry_t::Draw(const mat4 &model)
+void Geometry_t::Draw(const mat4 &model)
 {
 	if (!created)
 		return;
@@ -70,8 +65,10 @@ void geometry_t::Draw(const mat4 &model)
 	if (material)
 	{
 		material->Use();
-		material->shader->setMat4("model", model);
-		material->shader->setMat3("normalMatrix", transpose(inverse(mat3(camera->view * model))));
+		material->shader->SetMat4("model", model);
+		material->shader->SetMat3(
+			"normalMatrix",
+			transpose(inverse(mat3(camera->view * model))));
 	}
 
 	if (uses_elements)
@@ -90,14 +87,14 @@ void geometry_t::Draw(const mat4 &model)
 	glActiveTexture(GL_TEXTURE0);
 }
 
-void geometry_t::SetupMesh()
+void Geometry_t::SetupMesh()
 {
 	bool uses_elements = elements.size() > 0;
 
 	bb = aabb(0);
 
-	for (vertex_t &vertex : vertices)
-		bb.extend(vertex.position);
+	for (vertex_t &v : vertices)
+		bb.extend(v.position);
 
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);

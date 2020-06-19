@@ -5,7 +5,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-struct camera_t
+struct Camera_t
 {
 	vec3 pos, eye;
 	mat4 yaw, pitch, aim, view;
@@ -17,7 +17,7 @@ struct camera_t
 	bool r = false, f = false;
 	bool shift = false;
 
-	camera_t();
+	Camera_t();
 
 	void Mouse(float, float);
 	void Move(float);
