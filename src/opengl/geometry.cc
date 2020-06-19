@@ -31,8 +31,12 @@ const std::vector<GLuint> ELEMENTS = {
 
 geometry_t::geometry_t()
 {
-	for (const vec3 &v : VERTICES)
-		vertices.push_back(vertex_t{v});
+	for (const vec3 &v : VERTICES) {
+		vertex_t ver;
+		ver.position = v;
+		vertices.push_back(ver);
+		//vertices.push_back(vertex_t{v});
+	}
 	elements.insert(
 		elements.end(), ELEMENTS.begin(), ELEMENTS.end());
 }
@@ -94,7 +98,6 @@ void geometry_t::SetupMesh()
 	bb = aabb(0);
 
 	for (vertex_t &vertex : vertices)
-
 		bb.extend(vertex.position);
 
 	glGenVertexArrays(1, &vao);
@@ -141,6 +144,8 @@ void geometry_t::SetupMesh()
 		5, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_t), (void *)offsetof(vertex_t, bitangent));
 
 	glBindVertexArray(0);
+
+	log_("created geometry");
 
 	created = true;
 }

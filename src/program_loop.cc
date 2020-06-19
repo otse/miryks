@@ -2,6 +2,8 @@
 
 #include "opengl/camera"
 #include "opengl/scene"
+#include "opengl/material"
+#include "opengl/shader"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -48,9 +50,9 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 {
 	static double xx = x;
 	static double yy = y;
+	camera->Mouse(x - xx, yy - y);
 	xx = x;
 	yy = y;
-	camera->Mouse(x - xx, yy - y);
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
@@ -102,6 +104,8 @@ void dark2::program_go()
 
 void dark2::program_loop()
 {
+	material_t *dud = new material_t;
+
 	glfwSwapInterval(1);
 
 	while (!glfwWindowShouldClose(window))
@@ -116,6 +120,11 @@ void dark2::program_loop()
 
 		scene->Order();
 		scene->DrawItems();
+
+		dud->Unbind(nullptr);
+
+		material_t::BOUND = nullptr;
+		shader_t::BOUND = nullptr;
 
 		glfwSwapBuffers(window);
 	}

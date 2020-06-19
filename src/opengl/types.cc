@@ -58,10 +58,10 @@ void opengl_reload_shaders()
 {
 	log_("reload simple / fx / pbr");
 
-	sha_basic->reload();
-	sha_simple->reload();
-	sha_fx->reload();
-	sha_pbr->reload();
+	sha_basic->Reload();
+	sha_simple->Reload();
+	sha_fx->Reload();
+	sha_pbr->Reload();
 }
 
 void opengl_go()
@@ -76,8 +76,8 @@ void opengl_go()
 	sha_fx = new shader_t;
 	sha_pbr = new shader_t;
 
-	//sha_basic->load("basic.vert", "basic.frag");
-	//sha_simple->load("simple.vert", "simple.frag");
-	//sha_fx->load("fx.vert", "fx.frag");
-	//sha_pbr->load("pbr.vert", "pbr.frag");
+	sha_basic->Load("basic.vert", "basic.frag");
+	sha_simple->Load("simple.vert", "simple.frag");
+	sha_fx->Load("fx.vert", "fx.frag");
+	sha_pbr->Load("pbr.vert", "pbr.frag");
 }

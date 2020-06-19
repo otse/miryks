@@ -29,7 +29,7 @@ struct material_t
 	void set_uv_transform_directly(float, float, float, float, float, float, float);
 
 	void Bind();
-	void Unbind();
+	void Unbind(material_t *);
 
 	struct depth_func_t
 	{

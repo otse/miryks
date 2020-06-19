@@ -68,22 +68,14 @@ void group_t::Flatten(group_t *root)
 	root->flat.push_back(this);
 
 	for (group_t *gr : groups)
-	{
+	
 		gr->Flatten(root);
-	}
 }
 
 void group_t::DrawClassic(const mat4 &model)
 {
-	mat4 matrix = model * matrix_world;
-
-	//axis->Draw(matrix);
-
-	if (geometry)
-		geometry->Draw(matrix);
+	Draw(model);
 
 	for (group_t *gr : groups)
-	{
 		gr->DrawClassic(model);
-	}
 }

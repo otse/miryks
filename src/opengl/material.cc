@@ -5,13 +5,9 @@
 #include "shader"
 #include "scene"
 
-
 int material_t::POOL = 0;
 
 material_t *material_t::BOUND = nullptr;
-
-#define PRETTY_GRAY 17.0f / 255
-
 
 material_t::material_t()
 {
@@ -29,14 +25,15 @@ material_t::material_t()
 
 	depth_func = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
 
-	emissive = vec3(PRETTY_GRAY);
+	repeat = vec2(1);
+	emissive = vec3(17 / 255.f);
 
 	compose_uv_transform();
 
-	/*color = vec3(
+	color = vec3(
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX,
-		(float)rand() / RAND_MAX);*/
+		(float)rand() / RAND_MAX);
 }
 
 void material_t::compose_uv_transform()
@@ -76,10 +73,9 @@ void material_t::Bind()
 	if (this == BOUND)
 		return;
 
-	Unbind();
+	BOUND->Unbind(this);
 
-	shader->use();
-
+	shader->Use();
 	shader->setVec3("color", color);
 	shader->setVec3("specular", specular);
 	shader->setFloat("opacity", opacity);
@@ -133,44 +129,46 @@ void material_t::Bind()
 	//}
 }
 
-void material_t::Unbind()
+void material_t::Unbind(material_t *against)
 {
-	if (!map)
+	if (!against || against->map && !map)
 	{
 		glActiveTexture(GL_TEXTURE0 + 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	if (!normal_map)
+	if (!against || against->normal_map && !normal_map)
 	{
 		glActiveTexture(GL_TEXTURE0 + 1);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
-	if (!decal)
+	if (!against || against->decal && !decal)
 	{
 		glDisable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(0, 0);
 	}
-	if (!blending)
+	if (!against || against->blending && !blending)
 	{
 		glDisable(GL_BLEND);
 	}
-	if (!testing)
+	if (!against || against->testing && !testing)
 	{
 		shader->setFloat("alphaTest", 0);
 		glDepthFunc(GL_LEQUAL);
 	}
-	if (!transparent)
+	if (!against || against->transparent && !transparent)
 	{
 		glDepthMask(GL_TRUE);
 		glDepthFunc(GL_LEQUAL);
 	}
-	if (!double_sided)
+	if (!against || against->double_sided && !double_sided)
 	{
 		shader->setBool("doubleSided", false);
 		glEnable(GL_CULL_FACE);
 		//glCullFace(GL_BACK);
 		//glFrontFace(GL_CCW);
 	}
+
+	BOUND = nullptr;
 
 	//if (checkGlError) {
 	//	detect_opengl_error("unbind material " + name);
