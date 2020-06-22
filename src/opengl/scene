@@ -7,7 +7,7 @@ struct Scene_t
 {
 public:
 	vector<Group_t *> groups;
-	vector<Pointlight_t *> pointlights;
+	vector<PointLight_t *> pointlights;
 	
 	vec3 ambient;
 
@@ -16,9 +16,9 @@ public:
 
 	void Clear();
 	void Add(Group_t *);
-	void Add(Pointlight_t *);
+	void Add(PointLight_t *);
 	void Remove(Group_t *);
-	void Remove(Pointlight_t *);
+	void Remove(PointLight_t *);
 
 	void DrawItems();
 	void Order();

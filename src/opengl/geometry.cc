@@ -102,17 +102,15 @@ void Geometry_t::SetupMesh()
 	glBindVertexArray(vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertex_t), &vertices[0], GL_STATIC_DRAW);
+	glBufferData(
+		GL_ARRAY_BUFFER, vertices.size() * sizeof(vertex_t), &vertices[0], GL_STATIC_DRAW);
 
 	if (uses_elements)
 	{
 		glGenBuffers(1, &ebo);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
 		glBufferData(
-			GL_ELEMENT_ARRAY_BUFFER,
-			elements.size() * sizeof(GLuint),
-			&elements[0],
-			GL_STATIC_DRAW);
+			GL_ELEMENT_ARRAY_BUFFER, elements.size() * sizeof(GLuint), &elements[0], GL_STATIC_DRAW);
 	}
 
 	glEnableVertexAttribArray(0);
@@ -140,8 +138,6 @@ void Geometry_t::SetupMesh()
 		5, 3, GL_FLOAT, GL_FALSE, sizeof(vertex_t), (void *)offsetof(vertex_t, bitangent));
 
 	glBindVertexArray(0);
-
-	log_("created geometry");
 
 	created = true;
 }

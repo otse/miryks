@@ -8,14 +8,14 @@
 
 struct Group_t
 {
-	string name; // debug
+	string name; 
+	vector<Group_t *> groups, flat;
 
-	mat4 matrix, matrix_world;
+	mat4 matrix, matrixWorld;
 
 	Group_t *parent;
-	Geometry_t *geometry, *axis;
 
-	vector<Group_t *> groups, flat;
+	Geometry_t *geometry, *axis;
 
 	Group_t();
 	void Add(Group_t *);

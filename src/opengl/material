@@ -10,25 +10,39 @@ struct Material_t
 
 	int id;
 	string name;
+	Shader_t *shader;
+	Texture_t *map, *normalMap;
 
-	Texture_t *map = nullptr, *normal_map = nullptr;
-	Shader_t *shader = nullptr;
+	bool
+		transparent,
+		doubleSided,
+		blending,
+		testing,
+		decal;
+	float
+		opacity,
+		treshold,
+		shininess,
+		glossiness,
+		rotation;
+	vec2
+		offset,
+		repeat,
+		center;
+	vec3
+		color,
+		specular,
+		emissive;
 
-	bool transparent, double_sided, blending, testing, decal;
-	float opacity, treshold, shininess, glossiness;
-	float rotation;
-
-	vec3 color, specular, emissive;
-	vec2 offset, repeat, center;
-	mat3 uv_transform;
+	mat3 uvTransform;
 
 	Material_t();
 
-	void compose_uv_transform();
-	void set_uv_transform_directly(float, float, float, float, float, float, float);
-
 	void Use();
-	static void Unuse(Material_t * = nullptr, Material_t * = nullptr);
+	static void Unuse(Material_t *, Material_t *);
+
+	void composeUvTransform();
+	void setUvTransformDirectly(float, float, float, float, float, float, float);
 
 	struct depth_func_t
 	{

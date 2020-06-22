@@ -1,0 +1,12 @@
+#ifndef NIIF_NIIF_H
+#define NIIF_NIIF_H
+
+struct niif_t;
+
+struct niif_t
+{
+};
+
+void Make();
+
+#endif

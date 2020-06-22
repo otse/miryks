@@ -118,7 +118,7 @@ void aabb::geometrize()
 
 	Material_t *material = new Material_t;
 	material->color = vec3(0.4f);
-	material->shader = sha_basic;
+	material->shader = shaBasic;
 	geometry->material = material;
 
 	std::vector<vec3> lines = {

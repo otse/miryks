@@ -7,6 +7,18 @@ extern "C"
 #include <dds.h>
 }
 
+static std::map<const string, Texture_t *> textures;
+
+Texture_t *GetTexture(const string &path)
+{
+	if (textures.count(path))
+
+		return textures[path];
+
+	textures.emplace(path, new Texture_t(path));
+	
+	return --textures.end()->second;
+}
 
 Texture_t::Texture_t(const string &path)
 	: path(path)

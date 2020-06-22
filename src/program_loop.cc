@@ -122,7 +122,7 @@ void dark2::program_loop()
 		scene->Order();
 		scene->DrawItems();
 
-		Material_t::Unuse();
+		Material_t::Unuse(nullptr, nullptr);
 
 		Shader_t::active = nullptr;
 

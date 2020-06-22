@@ -41,3 +41,4 @@
 *.db
 .vs/Dark2/v16/.suo
 *.log
+build/obj/Release/Dark2.vcxproj.FileListAbsolute.txt

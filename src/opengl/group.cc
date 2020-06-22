@@ -8,9 +8,10 @@ Group_t::Group_t()
 {
 	parent = nullptr;
 	geometry = nullptr;
+	axis = nullptr;
 
 	matrix = mat4(1.0f);
-	matrix_world = mat4(1.0f);
+	matrixWorld = mat4(1.0f);
 
 #ifdef DRAW_AXIS
 
@@ -28,26 +29,26 @@ void Group_t::Add(Group_t *gr)
 	groups.push_back(gr);
 }
 
+// Accumulate matrices
+// https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L561
 void Group_t::Update()
 {
-	// Accumulate matrices
-
-	// https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L561
-
 	if (parent == nullptr)
-		matrix_world = matrix;
+
+		matrixWorld = matrix;
+
 	else
-		matrix_world = parent->matrix_world * matrix;
+
+		matrixWorld = parent->matrixWorld * matrix;
 
 	for (Group_t *gr : groups)
-	{
+
 		gr->Update();
-	}
 }
 
 void Group_t::Draw(const mat4 &model)
 {
-	mat4 matrix = model * matrix_world;
+	mat4 matrix = model * matrixWorld;
 
 #ifdef DRAW_AXIS
 
@@ -56,6 +57,7 @@ void Group_t::Draw(const mat4 &model)
 #endif
 
 	if (geometry)
+
 		geometry->Draw(matrix);
 }
 
@@ -64,11 +66,13 @@ void Group_t::Flatten(Group_t *root)
 	// Put all childs into root.flat
 
 	if (this == root)
+
 		flat.clear();
+
 	root->flat.push_back(this);
 
 	for (Group_t *gr : groups)
-	
+
 		gr->Flatten(root);
 }
 
@@ -77,5 +81,6 @@ void Group_t::DrawClassic(const mat4 &model)
 	Draw(model);
 
 	for (Group_t *gr : groups)
+
 		gr->DrawClassic(model);
 }

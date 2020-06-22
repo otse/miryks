@@ -8,11 +8,11 @@
 #include "pointlight"
 
 
-static Pointlight_t *black;
+static PointLight_t *black;
 
 Scene_t::Scene_t()
 {
-    black = new Pointlight_t;
+    black = new PointLight_t;
     black->color = vec3(0);
     black->distance = 0;
     black->intensity = 0;
@@ -58,14 +58,14 @@ bool remove_nullable(T t, std::vector<T> &v)
     return false;
 }
 
-void Scene_t::Add(Pointlight_t *l)
+void Scene_t::Add(PointLight_t *l)
 {
-    add_nullable<Pointlight_t *>(l, pointlights);
+    add_nullable<PointLight_t *>(l, pointlights);
 }
 
-void Scene_t::Remove(Pointlight_t *l)
+void Scene_t::Remove(PointLight_t *l)
 {
-    remove_nullable<Pointlight_t *>(l, pointlights);
+    remove_nullable<PointLight_t *>(l, pointlights);
 }
 
 void Scene_t::Add(Group_t *gr)
@@ -91,7 +91,7 @@ void Scene_t::DrawItems()
 
 void Scene_t::CalcLights()
 {
-    for (Pointlight_t *pl : pointlights)
+    for (PointLight_t *pl : pointlights)
         pl->Calc();
 }
 
@@ -99,7 +99,7 @@ void Scene_t::CalcLights()
 
 void Scene_t::SortLights()
 {
-    auto sort_distance = [](const Pointlight_t *a, const Pointlight_t *b) -> bool {
+    auto sort_distance = [](const PointLight_t *a, const PointLight_t *b) -> bool {
         if (a->GetDist() < b->GetDist())
             return true;
         return false;
@@ -114,7 +114,7 @@ void Scene_t::BindLights(Shader_t *shader)
 
     for (int i = 0; i < 9; i++)
     {
-        Pointlight_t *l = black;
+        PointLight_t *l = black;
 
         if (i < pointlights.size())
             l = pointlights[i];

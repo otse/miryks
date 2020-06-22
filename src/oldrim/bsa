@@ -1,19 +1,37 @@
 #include <vector>
 #include <fstream>
 
-struct bsa_header_t
+struct bsa_hedr_t
 {
 	char id[4];
-	unsigned long ver, offset, flags, folders, files, folder_max, file_max, file_flags;
+	unsigned long ver, offset, flags, nfo, nfi, lenfo, lenfi, file_flags;
+};
+
+struct forcd_t {
+	long long hash;
+	unsigned long fcount, offset;
+};
+
+struct fircd_block_t {
+	char name[4];
+	unsigned long size, offset;
+};
+
+struct file_rcd_t {
+	char name[4];
+	unsigned long size, offset;
 };
 
 struct bsa_t
 {
-	bsa_header_t header;
+	bsa_hedr_t hedr;
+	forcd_t *forcds;
 	std::ifstream is;
 	std::vector<unsigned char> data;
 };
 
-bsa_t bsa_load(const std::string &a);
+bsa_t bsa_load(const std::string &);
+void bsa_load_folder_rcd(bsa_t &);
 
-void bsa_print(bsa_t &bsa);
+void bsa_print_hedr(bsa_t &);
+void bsa_print_folder_rcd(bsa_t &, int);

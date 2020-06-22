@@ -18,20 +18,20 @@ struct Group_t;
 struct Texture_t;
 struct Shader_t;
 struct Program_t;
-struct Pointlight_t;
+struct PointLight_t;
 
 extern Camera_t *camera;
 extern Scene_t *scene;
 
-extern Shader_t *sha_basic;
-extern Shader_t *sha_simple;
-extern Shader_t *sha_fx;
-extern Shader_t *sha_pbr;
+extern Shader_t *shaBasic;
+extern Shader_t *shaSimple;
+extern Shader_t *shaFx;
+extern Shader_t *shaPbr;
 
-void detect_glfw_error();
-void detect_opengl_error(const string = "?");
+void detectGlfwError();
+void detectOpenGLError(const string = "?");
 
-void opengl_go();
-void opengl_reload_shaders();
+void oglGo();
+void oglReloadShaders();
 
 #endif

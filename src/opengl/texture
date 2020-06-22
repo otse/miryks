@@ -7,9 +7,7 @@
 
 struct Texture_t
 {
-    friend Texture_t *get_texture(const string &);
-
-    static std::map<const string, Texture_t *> textures;
+    friend Texture_t *GetTexture(const string &);
 
     GLuint tid;
 
