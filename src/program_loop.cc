@@ -11,6 +11,10 @@
 #include <glad/glad.h>
 #include <glm/glm.hpp>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 using namespace dark2;
 using namespace glm;
 
@@ -60,8 +64,35 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+void setupImgui()
+{
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO &io = ImGui::GetIO();
+	(void)io;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	ImGui::StyleColorsLight();
+
+	// Setup Platform/Renderer bindings
+	const char *glsl_version = "#version 130";
+
+	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplOpenGL3_Init(glsl_version);
+
+	io.Fonts->AddFontDefault();
+}
+
+static void glfw_error_callback(int error, const char *description)
+{
+	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
+}
+
 void dark2::program_go()
 {
+	glfwSetErrorCallback(glfw_error_callback);
+
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
@@ -70,6 +101,8 @@ void dark2::program_go()
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	window = glfwCreateWindow(width, height, "Dork", NULL, NULL);
+	glfwMakeContextCurrent(window);
+	glfwSwapInterval(1);
 
 #if 0
 	auto monitor = glfwGetPrimaryMonitor();
@@ -84,11 +117,13 @@ void dark2::program_go()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	int er = gladLoadGL();
-	if (!er)
+	if (er == 0)
 	{
 		log_("glad");
 		exit(EXIT_FAILURE);
 	}
+
+	setupImgui();
 
 	glClearColor(1, 0, 1, 1);
 
@@ -104,18 +139,20 @@ void dark2::program_go()
 
 void dark2::program_loop()
 {
-	Material_t *dud = new Material_t;
-
-	glfwSwapInterval(1);
-
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::ShowDemoWindow();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		do_keys();
-		
+
 		camera->Move(0.016);
 		camera->Call();
 
@@ -126,8 +163,15 @@ void dark2::program_loop()
 
 		Shader_t::active = nullptr;
 
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		glfwSwapBuffers(window);
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();

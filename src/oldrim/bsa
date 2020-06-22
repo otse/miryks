@@ -1,10 +1,12 @@
 #include <vector>
 #include <fstream>
 
+using namespace std;
+
 struct bsa_hedr_t
 {
 	char id[4];
-	unsigned long ver, offset, flags, nfo, nfi, lenfo, lenfi, file_flags;
+	unsigned long ver, offset, flags, fos, fis, fosl, fisl, file_flags;
 };
 
 struct forcd_t {
@@ -17,7 +19,7 @@ struct fircd_block_t {
 	unsigned long size, offset;
 };
 
-struct file_rcd_t {
+struct fircd_t {
 	char name[4];
 	unsigned long size, offset;
 };
@@ -26,12 +28,12 @@ struct bsa_t
 {
 	bsa_hedr_t hedr;
 	forcd_t *forcds;
-	std::ifstream is;
-	std::vector<unsigned char> data;
+	basic_ifstream<char> is;
+	vector<unsigned char> data;
 };
 
-bsa_t bsa_load(const std::string &);
-void bsa_load_folder_rcd(bsa_t &);
+bsa_t bsa_load(const string &);
+void bsa_load_folders(bsa_t &);
 
 void bsa_print_hedr(bsa_t &);
-void bsa_print_folder_rcd(bsa_t &, int);
+void bsa_print_forcd(bsa_t &, int);
