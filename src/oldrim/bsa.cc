@@ -44,38 +44,32 @@ void bsa_read_folder_records(bsa_t &bsa)
 void bsa_read_file_records(bsa_t &bsa)
 {
 	auto start = bsa.is.tellg();
-	int size = sizeof(fircd_t) * hedr.fis;
-	size += hedr.fos + hedr.fosl;
-	bsa.fircds = new fircd_t[size];
-	int n = 0;
-	for (; n < hedr.fos; n++)
+	bsa.fircds = new fircd_t *[hedr.fos];
+	for (int i = 0; i < hedr.fos; i++)
 	{
-		string s;
-		char ch;
-		while ((ch = bsa.is.get()) != '\0')
-		{
-			s += ch;
-		}
-		log_("read ", s);
+		folder_t fo;
+		const int count = bsa.forcds[i].count;
+		bsa.fircds[i] = new fircd_t[count];
+		getline(bsa.is, fo.name, '\0');
 		bsa.is.read(
-			(char *)bsa.fircds, sizeof(fircd_t) * bsa.forcds[n].fcount);
-		log_("fblock was length ", bsa.is.tellg() - start);
+			(char *)bsa.fircds[i], sizeof(fircd_t) * count);
+		bsa.folders.push_back(fo);
+		log_("size ", bsa.is.tellg() - start);
+		//bsa_print_fircd(bsa, i);
+		log_("read: ", fo.name);
 	}
-	//int n = 0;
-	//for (; n < hedr.fis; n++)
-	//bsa_print_fircd(bsa, n);
 }
 
 void bsa_read_file_names(bsa_t &bsa)
 {
-	bsa.finames = new char[hedr.fisl];
-	bsa.is.read((char *)bsa.finames, hedr.fisl);
+	bsa.finames = new char[hedr.fil];
+	bsa.is.read((char *)bsa.finames, hedr.fil);
 	log_("finames: ", bsa.finames);
 }
 
 void bsa_print_fircd(bsa_t &bsa, int n)
 {
-	fircd_t &rcd = bsa.fircds[n];
+	fircd_t &rcd = bsa.fircds[n][0];
 	log_(
 		"--file rcd ", n, "--",
 		"\n long long nameHash: ", rcd.nameHash,
@@ -90,7 +84,7 @@ void bsa_print_forcd(bsa_t &bsa, int n)
 	log_(
 		"--folder rcd ", n, "--",
 		"\n long long hash: ", rcd.hash,
-		"\n fcount: ", rcd.fcount,
+		"\n count: ", rcd.count,
 		"\n offset: ", rcd.offset,
 		"\n--");
 }
@@ -104,8 +98,8 @@ void bsa_print_hedr(bsa_t &bsa)
 		"\n flags: ", hedr.flags,
 		"\n fos: ", hedr.fos,
 		"\n fis: ", hedr.fis,
-		"\n fosl: ", hedr.fosl,
-		"\n fisl: ", hedr.fisl,
+		"\n fol: ", hedr.fol,
+		"\n fil: ", hedr.fil,
 		"\n file_flags: ", hedr.file_flags,
 		"\n sizeof: ", sizeof(hedr),
 		"\n--");
