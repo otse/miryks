@@ -4,6 +4,33 @@
         "/k", "F:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat"
     ],
     "files.associations": {
-        "**/RootDir/src/**/*": "C++"
+        "aabb": "cpp",
+        "camera": "cpp",
+        "geometry": "cpp",
+        "material": "cpp",
+        "texture": "cpp",
+        "scene": "cpp",
+        "shader": "cpp",
+        "pointlight": "cpp",
+        "group": "cpp",
+        "bsa": "cpp",
+        "niif": "cpp",
+        "src/*": "C++",
+        "types": "cpp",
+        "fstream": "cpp",
+        "vector": "cpp",
+        "initializer_list": "cpp",
+        "list": "cpp",
+        "type_traits": "cpp",
+        "xstring": "cpp",
+        "xtree": "cpp",
+        "system_error": "cpp",
+        "xlocale": "cpp",
+        "xutility": "cpp",
+        "istream": "cpp",
+        "ios": "cpp",
+        "ostream": "cpp",
+        "streambuf": "cpp",
+        "xlocbuf": "cpp"
     }
 }

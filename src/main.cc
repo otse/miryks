@@ -5,12 +5,14 @@
 #include "files.hpp"
 
 #include "oldrim/bsa"
+#include "oldrim_interface.hpp"
 
 #include "opengl/types"
 #include "opengl/scene"
 #include "opengl/group"
 #include "opengl/geometry"
 #include "opengl/material"
+
 
 namespace dark2
 {

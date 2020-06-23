@@ -3,6 +3,8 @@
 
 using namespace std;
 
+struct fircd_t;
+
 struct bsa_hedr_t
 {
 	char id[4];
@@ -14,26 +16,43 @@ struct forcd_t {
 	unsigned long fcount, offset;
 };
 
-struct fircd_block_t {
-	char name[4];
+struct fblk_t {
+	long long nameHash;
 	unsigned long size, offset;
 };
 
 struct fircd_t {
-	char name[4];
+	long long nameHash;
 	unsigned long size, offset;
+};
+
+struct folder_t {
+	string name;
+};
+
+struct file_t {
+	string name;
 };
 
 struct bsa_t
 {
 	bsa_hedr_t hedr;
 	forcd_t *forcds;
+	fircd_t *fircds;
+	char *finames, *fonames;
 	basic_ifstream<char> is;
 	vector<unsigned char> data;
+	vector<folder_t> folders;
+	vector<file_t> files;
 };
 
 bsa_t bsa_load(const string &);
-void bsa_load_folders(bsa_t &);
+void bsa_read_folder_records(bsa_t &);
+void bsa_read_file_records(bsa_t &);
+void bsa_read_file_names(bsa_t &);
 
 void bsa_print_hedr(bsa_t &);
 void bsa_print_forcd(bsa_t &, int);
+void bsa_print_fircd(bsa_t &, int);
+
+void bsa_produce_fofi(bsa_t &);
