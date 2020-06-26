@@ -6,8 +6,9 @@
 
 #define BSA "BSA - "
 #define VER 104
+#define VER_SE 105
 
-#define hedr bsa.hedr
+#define _hedr bsa.hdr
 
 bsa_t bsa_load(const string &a)
 {
@@ -16,60 +17,69 @@ bsa_t bsa_load(const string &a)
 	assert_(
 		bsa.is, BSA "cant open");
 	bsa.is.read(
-		(char *)&hedr, sizeof(bsa_hedr_t));
+		(char *)&_hedr, sizeof(bsa_hedr_t));
 	assert_(
 		strcmp(
-			"BSA\x00", &hedr.id[0]) == 0,
+			"BSA\x00", &_hedr.id[0]) == 0,
 		BSA "not a bsa");
 	assert_(
-		hedr.ver == VER, BSA "not 104");
+		_hedr.ver != VER_SE, BSA "this is SE");
+	assert_(
+		_hedr.ver == VER, BSA "not 104");
 	bsa_print_hedr(bsa);
 	bsa_read_folder_records(bsa);
 	bsa_read_file_records(bsa);
 	bsa_read_file_names(bsa);
-	bsa_produce_fofi(bsa);
+	bsa_produce_assets(bsa);
 	return bsa;
 }
 
-void bsa_read_folder_records(bsa_t &bsa)
+void bsa_read_folder_records(bsa_t &b)
 {
-	bsa.forcds = new forcd_t[hedr.fos];
-	bsa.is.read(
-		(char *)bsa.forcds, hedr.fos * sizeof(forcd_t));
+	b.flds =
+		new fld_rcd_t[b.hdr.fos];
+	b.is.read(
+		(char *)b.flds, b.hdr.fos * sizeof(fld_rcd_t));
 	int n = 0;
-	for (; n < hedr.fos; n++)
-		bsa_print_forcd(bsa, n);
+	//for (; n < _hedr.fos; n++)
+		//bsa_print_fld_rcd(b, n);
+	log_("end of flds ", b.is.tellg());
 }
 
-void bsa_read_file_records(bsa_t &bsa)
+void bsa_read_file_records(bsa_t &b)
 {
-	auto start = bsa.is.tellg();
-	bsa.fircds = new fircd_t *[hedr.fos];
-	for (int i = 0; i < hedr.fos; i++)
+	log_("file rcd begin ", b.is.tellg());
+	auto start = b.is.tellg();
+	b.files =
+		new file_rcd_t *[b.hdr.fos];
+	for (int i = 0; i < b.hdr.fos; i++)
 	{
-		folder_t fo;
-		const int count = bsa.forcds[i].count;
-		bsa.fircds[i] = new fircd_t[count];
-		getline(bsa.is, fo.name, '\0');
-		bsa.is.read(
-			(char *)bsa.fircds[i], sizeof(fircd_t) * count);
-		bsa.folders.push_back(fo);
-		log_("size ", bsa.is.tellg() - start);
-		//bsa_print_fircd(bsa, i);
-		log_("read: ", fo.name);
+		fld_t fld;
+		const int c = b.flds[i].count;
+		b.files[i] = new file_rcd_t[c];
+		getline(
+			b.is, fld.name, '\0');
+		b.is.read(
+			(char *)b.files[i], sizeof(file_rcd_t) * c);
+		fld.files = b.files[i];
+		b.folders.push_back(fld);
+		log_("fircd name: ", fld.name);
+		log_("size ", b.is.tellg() - start);
+		bsa_print_fld_rcd(b, i);
+		bsa_print_file_rcd(b, i);
 	}
 }
 
-void bsa_read_file_names(bsa_t &bsa)
+void bsa_read_file_names(bsa_t &b)
 {
-	bsa.finames = new char[hedr.fil];
-	bsa.is.read((char *)bsa.finames, hedr.fil);
-	log_("finames: ", bsa.finames);
+	b.finames = new char[b.hdr.fil];
+	b.is.read((char *)b.finames, b.hdr.fil);
+	log_("finames: ", b.finames);
 }
 
-void bsa_print_fircd(bsa_t &bsa, int n)
+void bsa_print_file_rcd(bsa_t &bsa, int n)
 {
-	fircd_t &rcd = bsa.fircds[n][0];
+	file_rcd_t &rcd = bsa.files[n][0];
 	log_(
 		"--file rcd ", n, "--",
 		"\n long long nameHash: ", rcd.nameHash,
@@ -78,9 +88,9 @@ void bsa_print_fircd(bsa_t &bsa, int n)
 		"\n--");
 }
 
-void bsa_print_forcd(bsa_t &bsa, int n)
+void bsa_print_fld_rcd(bsa_t &bsa, int n)
 {
-	forcd_t &rcd = bsa.forcds[n];
+	fld_rcd_t &rcd = bsa.flds[n];
 	log_(
 		"--folder rcd ", n, "--",
 		"\n long long hash: ", rcd.hash,
@@ -92,29 +102,40 @@ void bsa_print_forcd(bsa_t &bsa, int n)
 void bsa_print_hedr(bsa_t &bsa)
 {
 	log_(
-		"--hedr--",
-		"\n ver: ", hedr.ver,
-		"\n offset: ", hedr.offset,
-		"\n flags: ", hedr.flags,
-		"\n fos: ", hedr.fos,
-		"\n fis: ", hedr.fis,
-		"\n fol: ", hedr.fol,
-		"\n fil: ", hedr.fil,
-		"\n file_flags: ", hedr.file_flags,
-		"\n sizeof: ", sizeof(hedr),
+		"--_hedr--",
+		"\n ver: ", _hedr.ver,
+		"\n offset: ", _hedr.offset,
+		"\n archive flags: ", _hedr.archive_flags,
+		"\n   0x1: ", _hedr.archive_flags & 0x1,
+		"\n   0x2: ", _hedr.archive_flags & 0x2,
+		"\n   0x4: ", _hedr.archive_flags & 0x4,
+		"\n   0x8: ", _hedr.archive_flags & 0x8,
+		"\n   0x10: ", _hedr.archive_flags & 0x10,
+		"\n   0x20: ", _hedr.archive_flags & 0x20,
+		"\n   0x40: ", _hedr.archive_flags & 0x40,
+		"\n   0x80: ", _hedr.archive_flags & 0x80,
+		"\n   0x100: ", _hedr.archive_flags & 0x100,
+		"\n   0x200: ", _hedr.archive_flags & 0x200,
+		"\n   0x400: ", _hedr.archive_flags & 0x400,
+		"\n fos: ", _hedr.fos,
+		"\n fis: ", _hedr.fis,
+		"\n fol: ", _hedr.fol,
+		"\n fil: ", _hedr.fil,
+		"\n file_flags: ", _hedr.file_flags,
+		"\n sizeof: ", sizeof(_hedr),
 		"\n--");
 }
 
-void bsa_produce_fofi(bsa_t &bsa)
+void bsa_produce_assets(bsa_t &bsa)
 {
 	return;
 	int l = 0;
 	int n = 0;
-	for (; n < hedr.fis; n++)
+	for (; n < _hedr.fis; n++)
 	{
 		string s(bsa.finames + l);
 		l += s.length() + 1;
 		log_("file_t ", s);
-		bsa.files.push_back(file_t{s});
+		bsa.assets.push_back(asset_t{s});
 	}
 }

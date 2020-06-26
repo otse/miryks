@@ -7,38 +7,38 @@ struct fircd_t;
 
 struct bsa_hedr_t {
 	char id[4];
-	unsigned long ver, offset, flags, fos, fis, fol, fil, file_flags;
+	unsigned long ver, offset, archive_flags, fos, fis, fol, fil, file_flags;
 };
 
-struct forcd_t {
+struct fld_rcd_t {
 	long long hash;
 	unsigned long count, offset;
 };
 
-struct fircd_t {
+struct file_rcd_t {
 	long long nameHash;
 	unsigned long size, offset;
 };
 
-struct folder_t {
+struct fld_t {
 	string name;
-	forcd_t *forcd;
-	fircd_t *fircd;
+	fld_rcd_t *flds;
+	file_rcd_t *files;
 };
 
-struct file_t {
+struct asset_t {
 	string name;
 };
 
 struct bsa_t {
-	bsa_hedr_t hedr;
-	forcd_t *forcds;
-	fircd_t **fircds;
+	bsa_hedr_t hdr;
+	fld_rcd_t *flds;
+	file_rcd_t **files;
 	char *finames, *fonames;
 	basic_ifstream<char> is;
 	vector<unsigned char> data;
-	vector<folder_t> folders;
-	vector<file_t> files;
+	vector<fld_t> folders;
+	vector<asset_t> assets;
 };
 
 bsa_t bsa_load(const string &);
@@ -47,7 +47,7 @@ void bsa_read_file_records(bsa_t &);
 void bsa_read_file_names(bsa_t &);
 
 void bsa_print_hedr(bsa_t &);
-void bsa_print_forcd(bsa_t &, int);
-void bsa_print_fircd(bsa_t &, int);
+void bsa_print_fld_rcd(bsa_t &, int);
+void bsa_print_file_rcd(bsa_t &, int);
 
-void bsa_produce_fofi(bsa_t &);
+void bsa_produce_assets(bsa_t &);
