@@ -12,7 +12,7 @@ struct bsa_hedr_t {
 
 struct fld_rcd_t {
 	long long hash;
-	unsigned long count, offset;
+	unsigned long num, offset;
 };
 
 struct file_rcd_t {
