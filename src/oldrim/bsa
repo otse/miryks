@@ -22,8 +22,8 @@ struct file_rcd_t {
 
 struct fld_t {
 	string name;
-	fld_rcd_t *flds;
-	file_rcd_t *files;
+	fld_rcd_t *rcd;
+	file_rcd_t *_files;
 };
 
 struct asset_t {
@@ -32,22 +32,24 @@ struct asset_t {
 
 struct bsa_t {
 	bsa_hedr_t hdr;
-	fld_rcd_t *flds;
-	file_rcd_t **files;
-	char *finames, *fonames;
 	basic_ifstream<char> is;
-	vector<unsigned char> data;
-	vector<fld_t> folders;
+	fld_rcd_t *_flds;
+	file_rcd_t **_files;
+	vector<string> filenames;
+	vector<fld_t> flds;
 	vector<asset_t> assets;
 };
 
 bsa_t bsa_load(const string &);
 void bsa_read_folder_records(bsa_t &);
 void bsa_read_file_records(bsa_t &);
-void bsa_read_file_names(bsa_t &);
+void bsa_read_filenames(bsa_t &);
+void bsa_print_tree(bsa_t &);
+
+const char *bsa_get_filename(bsa_t &, int);
 
 void bsa_print_hedr(bsa_t &);
 void bsa_print_fld_rcd(bsa_t &, int);
-void bsa_print_file_rcd(bsa_t &, int);
+void bsa_print_file_rcd(bsa_t &, int, int);
 
 void bsa_produce_assets(bsa_t &);

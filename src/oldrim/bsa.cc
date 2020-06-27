@@ -19,78 +19,102 @@ bsa_t bsa_load(const string &a)
 		(char *)&hedr, sizeof(bsa_hedr_t));
 	assert_(
 		strcmp(
-			"BSA\x00", &hedr.id[0]) == 0,
+			"BSA\x00", (char *)&hedr.id) == 0,
 		BSA "not a bsa");
 	assert_(
-		hedr.ver != VER_SE, BSA "this is SE");
+		hedr.ver != VER_SE, BSA "ver 105 is se");
 	assert_(
 		hedr.ver == VER, BSA "not 104");
 	bsa_print_hedr(bsa);
 	bsa_read_folder_records(bsa);
 	bsa_read_file_records(bsa);
-	bsa_read_file_names(bsa);
+	bsa_read_filenames(bsa);
 	bsa_produce_assets(bsa);
+	bsa_print_tree(bsa);
 	return bsa;
 }
 
 void bsa_read_folder_records(bsa_t &b)
 {
 #define hedr b.hdr
-	b.flds =
+	b._flds =
 		new fld_rcd_t[hedr.fos];
 	b.is.read(
-		(char *)b.flds, hedr.fos * sizeof(fld_rcd_t));
-	int n = 0;
-	log_("end of flds ", b.is.tellg());
+		(char *)b._flds, hedr.fos * sizeof(fld_rcd_t));
 }
 
 void bsa_read_file_records(bsa_t &b)
 {
 #define hedr b.hdr
-	log_("file rcd begin ", b.is.tellg());
-	auto start = b.is.tellg();
-	b.files =
+	b._files =
 		new file_rcd_t *[hedr.fos];
 	for (int i = 0; i < hedr.fos; i++)
 	{
 		fld_t fld;
-		const int num = b.flds[i].num;
-		b.files[i] = new file_rcd_t[num];
+		fld.rcd = &b._flds[i];
+		const int num = fld.rcd->num;
+		b._files[i] =
+			new file_rcd_t[num];
+		b.is.ignore(1); // why?
 		getline(
 			b.is, fld.name, '\0');
 		b.is.read(
-			(char *)b.files[i], sizeof(file_rcd_t) * num);
-		fld.files = b.files[i];
-		b.folders.push_back(fld);
-		log_("files name: ", fld.name);
-		log_("size ", b.is.tellg() - start);
-		bsa_print_fld_rcd(b, i);
-		bsa_print_file_rcd(b, i);
+			(char *)b._files[i], sizeof(file_rcd_t) * num);
+		b.flds.push_back(fld);
 	}
 }
 
-void bsa_read_file_names(bsa_t &b)
+void bsa_read_filenames(bsa_t &b)
 {
 #define hedr b.hdr
-	b.finames = new char[hedr.fil];
-	b.is.read((char *)b.finames, hedr.fil);
-	log_("finames: ", b.finames);
+	char *buf = new char[hedr.fil];
+	b.is.read(buf, hedr.fil);
+	int pos = 0;
+	while (pos < hedr.fil)
+	{
+		string s = string(buf + pos);
+		b.filenames.push_back(s);
+		pos += s.length() + 1;
+	}
 }
 
-void bsa_print_file_rcd(bsa_t &bsa, int n)
+const char *bsa_get_filename(bsa_t &b, int n)
 {
-	file_rcd_t &rcd = bsa.files[n][0];
+	return 0;
+}
+
+void bsa_print_tree(bsa_t &b)
+{
+#define hedr b.hdr
+
+	int f = 0;
+	for (int i = 0; i < hedr.fos; i++)
+	{
+		fld_t &fld = b.flds[i];
+		log_("folder name ", fld.name);
+		bsa_print_fld_rcd(b, i);
+		for (int j = 0; j < fld.rcd->num; j++)
+		{
+			log_("  ", b.filenames[f++]);
+			bsa_print_file_rcd(b, i, j);
+		}
+	}
+}
+
+void bsa_print_file_rcd(bsa_t &b, int i, int j)
+{
+	file_rcd_t &rcd = b._files[i][j];
 	log_(
-		"--file rcd ", n, "--",
-		"\n long long nameHash: ", rcd.nameHash,
-		"\n size: ", rcd.size,
-		"\n offset: ", rcd.offset,
-		"\n--");
+		"  --file rcd ", i, ", ", j, "--",
+		"\n   long long nameHash: ", rcd.nameHash,
+		"\n   size: ", rcd.size,
+		"\n   offset: ", rcd.offset,
+		"\n  --");
 }
 
-void bsa_print_fld_rcd(bsa_t &bsa, int n)
+void bsa_print_fld_rcd(bsa_t &b, int n)
 {
-	fld_rcd_t &rcd = bsa.flds[n];
+	fld_rcd_t &rcd = b._flds[n];
 	log_(
 		"--folder rcd ", n, "--",
 		"\n long long hash: ", rcd.hash,
@@ -99,11 +123,12 @@ void bsa_print_fld_rcd(bsa_t &bsa, int n)
 		"\n--");
 }
 
-void bsa_print_hedr(bsa_t &bsa)
+void bsa_print_hedr(bsa_t &b)
 {
-#define hedr bsa.hdr
+#define hedr b.hdr
 	log_(
 		"--hedr--",
+		"\n id: ", hedr.id,
 		"\n ver: ", hedr.ver,
 		"\n offset: ", hedr.offset,
 		"\n archive flags: ", hedr.archive_flags,
@@ -127,16 +152,16 @@ void bsa_print_hedr(bsa_t &bsa)
 		"\n--");
 }
 
-void bsa_produce_assets(bsa_t &bsa)
+void bsa_produce_assets(bsa_t &b)
 {
-	return;
+	/*return;
 	int l = 0;
 	int n = 0;
 	for (; n < hedr.fis; n++)
 	{
-		string s(bsa.finames + l);
+		string s(b.finames + l);
 		l += s.length() + 1;
 		log_("file_t ", s);
-		bsa.assets.push_back(asset_t{s});
-	}
+		b.assets.push_back(asset_t{s});
+	}*/
 }

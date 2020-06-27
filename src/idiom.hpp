@@ -18,6 +18,7 @@ void log_(
     Args &&... args)
 {
       (std::cout << ... << args) << std::endl;
+      //file << (std::cout << ... << args);
 }
 
 #define assert_(e, m)                \
