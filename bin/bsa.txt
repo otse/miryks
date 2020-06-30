@@ -1,0 +1,1268 @@
+--hedr--
+ id: BSA
+ ver: 104
+ offset: 36
+ archive flags: 3
+   0x1: 1
+   0x2: 2
+   0x4: 0
+   0x8: 0
+   0x10: 0
+   0x20: 0
+   0x40: 0
+   0x80: 0
+   0x100: 0
+   0x200: 0
+   0x400: 0
+ fos: 7
+ fis: 197
+ fol: 136
+ fil: 2945
+ file_flags: 0
+ sizeof: 36
+--
+
+
+
+folder name interface\controls\360
+--folder rcd 0--
+ long long hash: 4451232059261072944
+ num: 3
+ offset: 3093
+--
+  keyboard_english.txt
+  --file rcd 0, 0--
+   long long nameHash: 2295785434553283432
+   size: 2362
+   offset: 6388
+  --
+  gamepad.txt
+  --file rcd 0, 1--
+   long long nameHash: 7851870203649941860
+   size: 535
+   offset: 8750
+  --
+  controlmap.txt
+  --file rcd 0, 2--
+   long long nameHash: 12662062996181901680
+   size: 5479
+   offset: 9285
+  --
+
+
+
+folder name interface\controls\ps3
+--folder rcd 1--
+ long long hash: 4451232321254093619
+ num: 3
+ offset: 3165
+--
+  keyboard_english.txt
+  --file rcd 1, 0--
+   long long nameHash: 2295785434553283432
+   size: 2306
+   offset: 14764
+  --
+  gamepad.txt
+  --file rcd 1, 1--
+   long long nameHash: 7851870203649941860
+   size: 490
+   offset: 17070
+  --
+  controlmap.txt
+  --file rcd 1, 2--
+   long long nameHash: 12662062996181901680
+   size: 5393
+   offset: 17560
+  --
+
+
+
+folder name interface\exported
+--folder rcd 2--
+ long long hash: 5429861347159598436
+ num: 132
+ offset: 3237
+--
+  360_rb.png.dds
+  --file rcd 2, 0--
+   long long nameHash: 30511843664129767
+   size: 1152
+   offset: 22953
+  --
+  hudmenu.gfx
+  --file rcd 2, 1--
+   long long nameHash: 333382587395829365
+   size: 159554
+   offset: 24105
+  --
+  safezone.gfx
+  --file rcd 2, 2--
+   long long nameHash: 564428386173742693
+   size: 908
+   offset: 183659
+  --
+  360_rs.png.dds
+  --file rcd 2, 3--
+   long long nameHash: 633721038106717927
+   size: 1152
+   offset: 184567
+  --
+  360_rt.png.dds
+  --file rcd 2, 4--
+   long long nameHash: 669203931897458407
+   size: 1152
+   offset: 185719
+  --
+  l-alt.png.dds
+  --file rcd 2, 5--
+   long long nameHash: 749255616375680743
+   size: 1152
+   offset: 186871
+  --
+  r-alt.png.dds
+  --file rcd 2, 6--
+   long long nameHash: 749255616476344039
+   size: 1152
+   offset: 188023
+  --
+  l-shift.png.dds
+  --file rcd 2, 7--
+   long long nameHash: 1026754316658798311
+   size: 2176
+   offset: 189175
+  --
+  r-shift.png.dds
+  --file rcd 2, 8--
+   long long nameHash: 1026754316759461607
+   size: 2176
+   offset: 191351
+  --
+  comma.png.dds
+  --file rcd 2, 9--
+   long long nameHash: 1591763504883953383
+   size: 1152
+   offset: 193527
+  --
+  capslock.png.dds
+  --file rcd 2, 10--
+   long long nameHash: 1791034306492952295
+   size: 2176
+   offset: 194679
+  --
+  right.png.dds
+  --file rcd 2, 11--
+   long long nameHash: 1890286787592056551
+   size: 1152
+   offset: 196855
+  --
+  ps3_l3.png.dds
+  --file rcd 2, 12--
+   long long nameHash: 2080277844172926695
+   size: 1152
+   offset: 198007
+  --
+  left.png.dds
+  --file rcd 2, 13--
+   long long nameHash: 2099068278781046503
+   size: 1152
+   offset: 199159
+  --
+  period.png.dds
+  --file rcd 2, 14--
+   long long nameHash: 2765954645536468711
+   size: 1152
+   offset: 200311
+  --
+  space.png.dds
+  --file rcd 2, 15--
+   long long nameHash: 3306513190737276647
+   size: 2176
+   offset: 201463
+  --
+  ps3_lb.png.dds
+  --file rcd 2, 16--
+   long long nameHash: 3747973852337729255
+   size: 1152
+   offset: 203639
+  --
+  ps3_r3.png.dds
+  --file rcd 2, 17--
+   long long nameHash: 3749112718750838503
+   size: 1152
+   offset: 204791
+  --
+  mousemove.png.dds
+  --file rcd 2, 18--
+   long long nameHash: 3860049082551496423
+   size: 2176
+   offset: 205943
+  --
+  360_ltrt.png.dds
+  --file rcd 2, 19--
+   long long nameHash: 3869627777771433703
+   size: 2176
+   offset: 208119
+  --
+  equal.png.dds
+  --file rcd 2, 20--
+   long long nameHash: 4101566045637701351
+   size: 1152
+   offset: 210295
+  --
+  ps3_ls.png.dds
+  --file rcd 2, 21--
+   long long nameHash: 4351183046780317415
+   size: 1152
+   offset: 211447
+  --
+  ps3_lt.png.dds
+  --file rcd 2, 22--
+   long long nameHash: 4386665940571057895
+   size: 1152
+   offset: 212599
+  --
+  ps3_rb.png.dds
+  --file rcd 2, 23--
+   long long nameHash: 5416808726915641063
+   size: 1152
+   offset: 213751
+  --
+  hudmenu_i29e.dds
+  --file rcd 2, 24--
+   long long nameHash: 5598517767894252005
+   size: 8320
+   offset: 214903
+  --
+  hudmenu_i2a1.dds
+  --file rcd 2, 25--
+   long long nameHash: 5598517767894262193
+   size: 16512
+   offset: 223223
+  --
+  hudmenu_i2a7.dds
+  --file rcd 2, 26--
+   long long nameHash: 5598517767894262199
+   size: 8320
+   offset: 239735
+  --
+  hudmenu_i2aa.dds
+  --file rcd 2, 27--
+   long long nameHash: 5598517767894262241
+   size: 16512
+   offset: 248055
+  --
+  hudmenu_i2bb.dds
+  --file rcd 2, 28--
+   long long nameHash: 5598517767894262498
+   size: 8320
+   offset: 264567
+  --
+  hudmenu_i2c1.dds
+  --file rcd 2, 29--
+   long long nameHash: 5598517767894262705
+   size: 16512
+   offset: 272887
+  --
+  hudmenu_i2c7.dds
+  --file rcd 2, 30--
+   long long nameHash: 5598517767894262711
+   size: 8320
+   offset: 289399
+  --
+  hudmenu_i2cd.dds
+  --file rcd 2, 31--
+   long long nameHash: 5598517767894262756
+   size: 16512
+   offset: 297719
+  --
+  mouse.png.dds
+  --file rcd 2, 32--
+   long long nameHash: 5664172630929436391
+   size: 2176
+   offset: 314231
+  --
+  ps3_rs.png.dds
+  --file rcd 2, 33--
+   long long nameHash: 6020017921358229223
+   size: 1152
+   offset: 316407
+  --
+  ps3_rt.png.dds
+  --file rcd 2, 34--
+   long long nameHash: 6055500815148969703
+   size: 1152
+   offset: 317559
+  --
+  tutorialmenu.gfx
+  --file rcd 2, 35--
+   long long nameHash: 6711673192710958709
+   size: 25485
+   offset: 318711
+  --
+  tab.png.dds
+  --file rcd 2, 36--
+   long long nameHash: 6872701150249348839
+   size: 1152
+   offset: 344196
+  --
+  bracketleft.png.dds
+  --file rcd 2, 37--
+   long long nameHash: 6901305271361990375
+   size: 1152
+   offset: 345348
+  --
+  backspace.png.dds
+  --file rcd 2, 38--
+   long long nameHash: 6946128718294019815
+   size: 2176
+   offset: 346500
+  --
+  360_a.png.dds
+  --file rcd 2, 39--
+   long long nameHash: 7747141075986935527
+   size: 1152
+   offset: 348676
+  --
+  360_b.png.dds
+  --file rcd 2, 40--
+   long long nameHash: 7782623969777676007
+   size: 1152
+   offset: 349828
+  --
+  ps3_ltrt.png.dds
+  --file rcd 2, 41--
+   long long nameHash: 7785326759360917223
+   size: 2176
+   offset: 350980
+  --
+  textentry.gfx
+  --file rcd 2, 42--
+   long long nameHash: 7847398198020239993
+   size: 15887
+   offset: 353156
+  --
+  enter.png.dds
+  --file rcd 2, 43--
+   long long nameHash: 8037181347901075175
+   size: 2176
+   offset: 369043
+  --
+  quotesingle.png.dds
+  --file rcd 2, 44--
+   long long nameHash: 8265153539250056935
+   size: 1152
+   offset: 371219
+  --
+  m1m2.png.dds
+  --file rcd 2, 45--
+   long long nameHash: 8524695333388218087
+   size: 2176
+   offset: 372371
+  --
+  360_x.png.dds
+  --file rcd 2, 46--
+   long long nameHash: 8563247633173966567
+   size: 1152
+   offset: 374547
+  --
+  360_y.png.dds
+  --file rcd 2, 47--
+   long long nameHash: 8598730526964707047
+   size: 1152
+   offset: 375699
+  --
+  l-ctrl.png.dds
+  --file rcd 2, 48--
+   long long nameHash: 8868090690379902695
+   size: 1152
+   offset: 376851
+  --
+  r-ctrl.png.dds
+  --file rcd 2, 49--
+   long long nameHash: 8868090690480565991
+   size: 1152
+   offset: 378003
+  --
+  bracketright.png.dds
+  --file rcd 2, 50--
+   long long nameHash: 9146962839432392423
+   size: 1152
+   offset: 379155
+  --
+  ps3_a.png.dds
+  --file rcd 2, 51--
+   long long nameHash: 9213143045838073575
+   size: 1152
+   offset: 380307
+  --
+  ps3_b.png.dds
+  --file rcd 2, 52--
+   long long nameHash: 9248625939628814055
+   size: 1152
+   offset: 381459
+  --
+  mouse1.png.dds
+  --file rcd 2, 53--
+   long long nameHash: 9470948797032623847
+   size: 1152
+   offset: 382611
+  --
+  mouse2.png.dds
+  --file rcd 2, 54--
+   long long nameHash: 9506431690823364327
+   size: 1152
+   offset: 383763
+  --
+  mouse3.png.dds
+  --file rcd 2, 55--
+   long long nameHash: 9541914584614104807
+   size: 1152
+   offset: 384915
+  --
+  mouse4.png.dds
+  --file rcd 2, 56--
+   long long nameHash: 9577397478404845287
+   size: 1152
+   offset: 386067
+  --
+  mouse5.png.dds
+  --file rcd 2, 57--
+   long long nameHash: 9612880372195585767
+   size: 1152
+   offset: 387219
+  --
+  mouse6.png.dds
+  --file rcd 2, 58--
+   long long nameHash: 9648363265986326247
+   size: 1152
+   offset: 388371
+  --
+  mouse7.png.dds
+  --file rcd 2, 59--
+   long long nameHash: 9683846159777066727
+   size: 1152
+   offset: 389523
+  --
+  mouse8.png.dds
+  --file rcd 2, 60--
+   long long nameHash: 9719329053567807207
+   size: 1152
+   offset: 390675
+  --
+  ps3_x.png.dds
+  --file rcd 2, 61--
+   long long nameHash: 10029249603025104615
+   size: 1152
+   offset: 391827
+  --
+  ps3_y.png.dds
+  --file rcd 2, 62--
+   long long nameHash: 10064732496815845095
+   size: 1152
+   offset: 392979
+  --
+  f10.png.dds
+  --file rcd 2, 63--
+   long long nameHash: 10194621537563700967
+   size: 1152
+   offset: 394131
+  --
+  f11.png.dds
+  --file rcd 2, 64--
+   long long nameHash: 10230104431354441447
+   size: 1152
+   offset: 395283
+  --
+  0.png.dds
+  --file rcd 2, 65--
+   long long nameHash: 10234911220407070439
+   size: 1152
+   offset: 396435
+  --
+  1.png.dds
+  --file rcd 2, 66--
+   long long nameHash: 10234911220423847655
+   size: 1152
+   offset: 397587
+  --
+  2.png.dds
+  --file rcd 2, 67--
+   long long nameHash: 10234911220440624871
+   size: 1152
+   offset: 398739
+  --
+  3.png.dds
+  --file rcd 2, 68--
+   long long nameHash: 10234911220457402087
+   size: 1152
+   offset: 399891
+  --
+  4.png.dds
+  --file rcd 2, 69--
+   long long nameHash: 10234911220474179303
+   size: 1152
+   offset: 401043
+  --
+  5.png.dds
+  --file rcd 2, 70--
+   long long nameHash: 10234911220490956519
+   size: 1152
+   offset: 402195
+  --
+  6.png.dds
+  --file rcd 2, 71--
+   long long nameHash: 10234911220507733735
+   size: 1152
+   offset: 403347
+  --
+  7.png.dds
+  --file rcd 2, 72--
+   long long nameHash: 10234911220524510951
+   size: 1152
+   offset: 404499
+  --
+  8.png.dds
+  --file rcd 2, 73--
+   long long nameHash: 10234911220541288167
+   size: 1152
+   offset: 405651
+  --
+  9.png.dds
+  --file rcd 2, 74--
+   long long nameHash: 10234911220558065383
+   size: 1152
+   offset: 406803
+  --
+  a.png.dds
+  --file rcd 2, 75--
+   long long nameHash: 10234911221229154023
+   size: 1152
+   offset: 407955
+  --
+  b.png.dds
+  --file rcd 2, 76--
+   long long nameHash: 10234911221245931239
+   size: 1152
+   offset: 409107
+  --
+  c.png.dds
+  --file rcd 2, 77--
+   long long nameHash: 10234911221262708455
+   size: 1152
+   offset: 410259
+  --
+  d.png.dds
+  --file rcd 2, 78--
+   long long nameHash: 10234911221279485671
+   size: 1152
+   offset: 411411
+  --
+  e.png.dds
+  --file rcd 2, 79--
+   long long nameHash: 10234911221296262887
+   size: 1152
+   offset: 412563
+  --
+  f.png.dds
+  --file rcd 2, 80--
+   long long nameHash: 10234911221313040103
+   size: 1152
+   offset: 413715
+  --
+  g.png.dds
+  --file rcd 2, 81--
+   long long nameHash: 10234911221329817319
+   size: 1152
+   offset: 414867
+  --
+  h.png.dds
+  --file rcd 2, 82--
+   long long nameHash: 10234911221346594535
+   size: 1152
+   offset: 416019
+  --
+  i.png.dds
+  --file rcd 2, 83--
+   long long nameHash: 10234911221363371751
+   size: 1152
+   offset: 417171
+  --
+  j.png.dds
+  --file rcd 2, 84--
+   long long nameHash: 10234911221380148967
+   size: 1152
+   offset: 418323
+  --
+  k.png.dds
+  --file rcd 2, 85--
+   long long nameHash: 10234911221396926183
+   size: 1152
+   offset: 419475
+  --
+  l.png.dds
+  --file rcd 2, 86--
+   long long nameHash: 10234911221413703399
+   size: 1152
+   offset: 420627
+  --
+  m.png.dds
+  --file rcd 2, 87--
+   long long nameHash: 10234911221430480615
+   size: 1152
+   offset: 421779
+  --
+  n.png.dds
+  --file rcd 2, 88--
+   long long nameHash: 10234911221447257831
+   size: 1152
+   offset: 422931
+  --
+  o.png.dds
+  --file rcd 2, 89--
+   long long nameHash: 10234911221464035047
+   size: 1152
+   offset: 424083
+  --
+  p.png.dds
+  --file rcd 2, 90--
+   long long nameHash: 10234911221480812263
+   size: 1152
+   offset: 425235
+  --
+  q.png.dds
+  --file rcd 2, 91--
+   long long nameHash: 10234911221497589479
+   size: 1152
+   offset: 426387
+  --
+  r.png.dds
+  --file rcd 2, 92--
+   long long nameHash: 10234911221514366695
+   size: 1152
+   offset: 427539
+  --
+  s.png.dds
+  --file rcd 2, 93--
+   long long nameHash: 10234911221531143911
+   size: 1152
+   offset: 428691
+  --
+  t.png.dds
+  --file rcd 2, 94--
+   long long nameHash: 10234911221547921127
+   size: 1152
+   offset: 429843
+  --
+  u.png.dds
+  --file rcd 2, 95--
+   long long nameHash: 10234911221564698343
+   size: 1152
+   offset: 430995
+  --
+  v.png.dds
+  --file rcd 2, 96--
+   long long nameHash: 10234911221581475559
+   size: 1152
+   offset: 432147
+  --
+  w.png.dds
+  --file rcd 2, 97--
+   long long nameHash: 10234911221598252775
+   size: 1152
+   offset: 433299
+  --
+  x.png.dds
+  --file rcd 2, 98--
+   long long nameHash: 10234911221615029991
+   size: 1152
+   offset: 434451
+  --
+  y.png.dds
+  --file rcd 2, 99--
+   long long nameHash: 10234911221631807207
+   size: 1152
+   offset: 435603
+  --
+  z.png.dds
+  --file rcd 2, 100--
+   long long nameHash: 10234911221648584423
+   size: 1152
+   offset: 436755
+  --
+  f12.png.dds
+  --file rcd 2, 101--
+   long long nameHash: 10265587325145181927
+   size: 1152
+   offset: 437907
+  --
+  360_back.png.dds
+  --file rcd 2, 102--
+   long long nameHash: 10311006410171543271
+   size: 2176
+   offset: 439059
+  --
+  ps3_lbrb.png.dds
+  --file rcd 2, 103--
+   long long nameHash: 11281310686674480871
+   size: 2176
+   offset: 441235
+  --
+  diamondmarker.dds
+  --file rcd 2, 104--
+   long long nameHash: 11627220437595710962
+   size: 1152
+   offset: 443411
+  --
+  hyphen.png.dds
+  --file rcd 2, 105--
+   long long nameHash: 11898678721710321383
+   size: 1152
+   offset: 444563
+  --
+  esc.png.dds
+  --file rcd 2, 106--
+   long long nameHash: 11914688667522166503
+   size: 1152
+   offset: 445715
+  --
+  f1.png.dds
+  --file rcd 2, 107--
+   long long nameHash: 11973573017059389159
+   size: 1152
+   offset: 446867
+  --
+  f2.png.dds
+  --file rcd 2, 108--
+   long long nameHash: 12009055910850129639
+   size: 1152
+   offset: 448019
+  --
+  f3.png.dds
+  --file rcd 2, 109--
+   long long nameHash: 12044538804640870119
+   size: 1152
+   offset: 449171
+  --
+  f4.png.dds
+  --file rcd 2, 110--
+   long long nameHash: 12080021698431610599
+   size: 1152
+   offset: 450323
+  --
+  f5.png.dds
+  --file rcd 2, 111--
+   long long nameHash: 12115504592222351079
+   size: 1152
+   offset: 451475
+  --
+  f6.png.dds
+  --file rcd 2, 112--
+   long long nameHash: 12150987486013091559
+   size: 1152
+   offset: 452627
+  --
+  f7.png.dds
+  --file rcd 2, 113--
+   long long nameHash: 12186470379803832039
+   size: 1152
+   offset: 453779
+  --
+  f8.png.dds
+  --file rcd 2, 114--
+   long long nameHash: 12221953273594572519
+   size: 1152
+   offset: 454931
+  --
+  f9.png.dds
+  --file rcd 2, 115--
+   long long nameHash: 12257436167385312999
+   size: 1152
+   offset: 456083
+  --
+  tilde.png.dds
+  --file rcd 2, 116--
+   long long nameHash: 12419614179961990887
+   size: 1152
+   offset: 457235
+  --
+  ps3_start.png.dds
+  --file rcd 2, 117--
+   long long nameHash: 13317697472190869223
+   size: 2176
+   offset: 458387
+  --
+  slash.png.dds
+  --file rcd 2, 118--
+   long long nameHash: 13769982022708227815
+   size: 1152
+   offset: 460563
+  --
+  semicolon.png.dds
+  --file rcd 2, 119--
+   long long nameHash: 14099588481702293223
+   size: 1152
+   offset: 461715
+  --
+  up.png.dds
+  --file rcd 2, 120--
+   long long nameHash: 14208995326127697639
+   size: 1152
+   offset: 462867
+  --
+  ps3_back.png.dds
+  --file rcd 2, 121--
+   long long nameHash: 14226705391761026791
+   size: 2176
+   offset: 464019
+  --
+  360_l3.png.dds
+  --file rcd 2, 122--
+   long long nameHash: 15140725034630967015
+   size: 1152
+   offset: 466195
+  --
+  down.png.dds
+  --file rcd 2, 123--
+   long long nameHash: 15590504430280699623
+   size: 1152
+   offset: 467347
+  --
+  racesex_menu.gfx
+  --file rcd 2, 124--
+   long long nameHash: 15814545395147370101
+   size: 32626
+   offset: 468499
+  --
+  360_lb.png.dds
+  --file rcd 2, 125--
+   long long nameHash: 16808421042795769575
+   size: 1152
+   offset: 501125
+  --
+  360_r3.png.dds
+  --file rcd 2, 126--
+   long long nameHash: 16809559909208878823
+   size: 1152
+   offset: 502277
+  --
+  backslash.png.dds
+  --file rcd 2, 127--
+   long long nameHash: 17409597550264970983
+   size: 1152
+   offset: 503429
+  --
+  360_ls.png.dds
+  --file rcd 2, 128--
+   long long nameHash: 17411630237238357735
+   size: 1152
+   offset: 504581
+  --
+  360_lt.png.dds
+  --file rcd 2, 129--
+   long long nameHash: 17447113131029098215
+   size: 1152
+   offset: 505733
+  --
+  quest_journal.gfx
+  --file rcd 2, 130--
+   long long nameHash: 17467390690581111148
+   size: 113668
+   offset: 506885
+  --
+  360_start.png.dds
+  --file rcd 2, 131--
+   long long nameHash: 18291497722828418791
+   size: 2176
+   offset: 620553
+  --
+
+
+
+folder name strings
+--folder rcd 3--
+ long long hash: 5594201102607673203
+ num: 15
+ offset: 5369
+--
+  skyrim_german.strings
+  --file rcd 3, 0--
+   long long nameHash: 407204150456967534
+   size: 926073
+   offset: 622729
+  --
+  skyrim_english.ilstrings
+  --file rcd 3, 1--
+   long long nameHash: 778304653569717096
+   size: 2712390
+   offset: 1548802
+  --
+  skyrim_italian.dlstrings
+  --file rcd 3, 2--
+   long long nameHash: 1095049158685778286
+   size: 2704649
+   offset: 4261192
+  --
+  skyrim_english.strings
+  --file rcd 3, 3--
+   long long nameHash: 1827957839957488488
+   size: 834453
+   offset: 6965841
+  --
+  skyrim_spanish.ilstrings
+  --file rcd 3, 4--
+   long long nameHash: 2005666411091751784
+   size: 2853965
+   offset: 7800294
+  --
+  skyrim_spanish.strings
+  --file rcd 3, 5--
+   long long nameHash: 3055319597479523176
+   size: 906940
+   offset: 10654259
+  --
+  skyrim_italian.ilstrings
+  --file rcd 3, 6--
+   long long nameHash: 3365063503471599982
+   size: 2834816
+   offset: 11561199
+  --
+  skyrim_italian.strings
+  --file rcd 3, 7--
+   long long nameHash: 4414716689859371374
+   size: 886894
+   offset: 14396015
+  --
+  skyrim_french.dlstrings
+  --file rcd 3, 8--
+   long long nameHash: 12639299132910822248
+   size: 2760736
+   offset: 15282909
+  --
+  skyrim_french.ilstrings
+  --file rcd 3, 9--
+   long long nameHash: 14909313477696643944
+   size: 3027687
+   offset: 18043645
+  --
+  skyrim_german.dlstrings
+  --file rcd 3, 10--
+   long long nameHash: 15534280692992926062
+   size: 2842731
+   offset: 21071332
+  --
+  skyrim_french.strings
+  --file rcd 3, 11--
+   long long nameHash: 15958966664084415336
+   size: 917626
+   offset: 23914063
+  --
+  skyrim_english.dlstrings
+  --file rcd 3, 12--
+   long long nameHash: 16955034382493447016
+   size: 2441632
+   offset: 24831689
+  --
+  skyrim_german.ilstrings
+  --file rcd 3, 13--
+   long long nameHash: 17804295037778747758
+   size: 3130220
+   offset: 27273321
+  --
+  skyrim_spanish.dlstrings
+  --file rcd 3, 14--
+   long long nameHash: 18182396140015481704
+   size: 2671487
+   offset: 30403541
+  --
+
+
+
+folder name interface\inventory components
+--folder rcd 4--
+ long long hash: 5938871626649990259
+ num: 4
+ offset: 5618
+--
+  invertedinventorylists.swf
+  --file rcd 4, 0--
+   long long nameHash: 156380293586383987
+   size: 25657
+   offset: 33075028
+  --
+  bottombar.swf
+  --file rcd 4, 1--
+   long long nameHash: 5032553133877322098
+   size: 33065
+   offset: 33100685
+  --
+  inventorylists.swf
+  --file rcd 4, 2--
+   long long nameHash: 16068454343888499827
+   size: 28535
+   offset: 33133750
+  --
+  itemcard.swf
+  --file rcd 4, 3--
+   long long nameHash: 17126258570749833828
+   size: 58109
+   offset: 33162285
+  --
+
+
+
+folder name interface
+--folder rcd 5--
+ long long hash: 16277752665772483429
+ num: 32
+ offset: 5714
+--
+  widgetoverlay.swf
+  --file rcd 5, 0--
+   long long nameHash: 499842733923197305
+   size: 31892
+   offset: 33220394
+  --
+  sleepwaitmenu.swf
+  --file rcd 5, 1--
+   long long nameHash: 1288007938917363317
+   size: 20302
+   offset: 33252286
+  --
+  containermenu.swf
+  --file rcd 5, 2--
+   long long nameHash: 1498978952726539893
+   size: 47153
+   offset: 33272588
+  --
+  fadermenu.swf
+  --file rcd 5, 3--
+   long long nameHash: 1745120925760188021
+   size: 3665
+   offset: 33319741
+  --
+  loadingmenu.swf
+  --file rcd 5, 4--
+   long long nameHash: 2782668064025177717
+   size: 6124
+   offset: 33323406
+  --
+  fonts_console.swf
+  --file rcd 5, 5--
+   long long nameHash: 3044503654134279269
+   size: 14752
+   offset: 33329530
+  --
+  giftmenu.swf
+  --file rcd 5, 6--
+   long long nameHash: 3785236056438763125
+   size: 46047
+   offset: 33344282
+  --
+  sharedcomponents.swf
+  --file rcd 5, 7--
+   long long nameHash: 4119875581650170995
+   size: 79589
+   offset: 33390329
+  --
+  cursormenu.swf
+  --file rcd 5, 8--
+   long long nameHash: 4532618923459898997
+   size: 949
+   offset: 33469918
+  --
+  fonts_en.swf
+  --file rcd 5, 9--
+   long long nameHash: 4633814331598333294
+   size: 417809
+   offset: 33470867
+  --
+  tweenmenu.swf
+  --file rcd 5, 10--
+   long long nameHash: 4754788158808878709
+   size: 23269
+   offset: 33888676
+  --
+  startmenu.swf
+  --file rcd 5, 11--
+   long long nameHash: 5733853750943641205
+   size: 60157
+   offset: 33911945
+  --
+  messagebox.swf
+  --file rcd 5, 12--
+   long long nameHash: 7030817330297466744
+   size: 16416
+   offset: 33972102
+  --
+  bookmenu.swf
+  --file rcd 5, 13--
+   long long nameHash: 7665374331207708277
+   size: 16200
+   offset: 33988518
+  --
+  lockpickingmenu.swf
+  --file rcd 5, 14--
+   long long nameHash: 8237870515332542069
+   size: 26690
+   offset: 34004718
+  --
+  credits.txt
+  --file rcd 5, 15--
+   long long nameHash: 9221633409984984179
+   size: 18247
+   offset: 34031408
+  --
+  levelupmenu.swf
+  --file rcd 5, 16--
+   long long nameHash: 9620361702697299573
+   size: 14324
+   offset: 34049655
+  --
+  creditsmenu.swf
+  --file rcd 5, 17--
+   long long nameHash: 9624319549269306997
+   size: 79525
+   offset: 34063979
+  --
+  credits_french.txt
+  --file rcd 5, 18--
+   long long nameHash: 10214477038179214184
+   size: 18333
+   offset: 34143504
+  --
+  map.swf
+  --file rcd 5, 19--
+   long long nameHash: 10759546961309950320
+   size: 64520
+   offset: 34161837
+  --
+  book.swf
+  --file rcd 5, 20--
+   long long nameHash: 10759547437866839915
+   size: 147487
+   offset: 34226357
+  --
+  magicmenu.swf
+  --file rcd 5, 21--
+   long long nameHash: 10859693469665422965
+   size: 46430
+   offset: 34373844
+  --
+  favoritesmenu.swf
+  --file rcd 5, 22--
+   long long nameHash: 11269810967406276213
+   size: 22774
+   offset: 34420274
+  --
+  statsmenu.swf
+  --file rcd 5, 23--
+   long long nameHash: 12403563839915388533
+   size: 32254
+   offset: 34443048
+  --
+  dialoguemenu.swf
+  --file rcd 5, 24--
+   long long nameHash: 13101113463936937589
+   size: 27202
+   offset: 34475302
+  --
+  titles.swf
+  --file rcd 5, 25--
+   long long nameHash: 14517933758231242099
+   size: 16024
+   offset: 34502504
+  --
+  trainingmenu.swf
+  --file rcd 5, 26--
+   long long nameHash: 14713306550601805429
+   size: 23510
+   offset: 34518528
+  --
+  craftingmenu.swf
+  --file rcd 5, 27--
+   long long nameHash: 14896120110988947061
+   size: 48010
+   offset: 34542038
+  --
+  inventorymenu.swf
+  --file rcd 5, 28--
+   long long nameHash: 16611778461430541941
+   size: 44868
+   offset: 34590048
+  --
+  fontconfig.txt
+  --file rcd 5, 29--
+   long long nameHash: 17713911307696761191
+   size: 1095
+   offset: 34634916
+  --
+  bartermenu.swf
+  --file rcd 5, 30--
+   long long nameHash: 17740996543924301429
+   size: 46590
+   offset: 34636011
+  --
+  console.swf
+  --file rcd 5, 31--
+   long long nameHash: 17898395563352091749
+   size: 5112
+   offset: 34682601
+  --
+
+
+
+folder name interface\controls\pc
+--folder rcd 6--
+ long long hash: 16546993290702319715
+ num: 8
+ offset: 6237
+--
+  keyboard_english.txt
+  --file rcd 6, 0--
+   long long nameHash: 2295785434553283432
+   size: 2383
+   offset: 34687713
+  --
+  keyboard_spanish.txt
+  --file rcd 6, 1--
+   long long nameHash: 3523147192075318120
+   size: 2385
+   offset: 34690096
+  --
+  keyboard_italian.txt
+  --file rcd 6, 2--
+   long long nameHash: 4882544284455166318
+   size: 2375
+   offset: 34692481
+  --
+  gamepad.txt
+  --file rcd 6, 3--
+   long long nameHash: 7851870203649941860
+   size: 533
+   offset: 34694856
+  --
+  keyboard_french.txt
+  --file rcd 6, 4--
+   long long nameHash: 8388348224994239336
+   size: 2381
+   offset: 34695389
+  --
+  mouse.txt
+  --file rcd 6, 5--
+   long long nameHash: 10826585920422376293
+   size: 371
+   offset: 34697770
+  --
+  keyboard_german.txt
+  --file rcd 6, 6--
+   long long nameHash: 11283329785076343150
+   size: 2365
+   offset: 34698141
+  --
+  controlmap.txt
+  --file rcd 6, 7--
+   long long nameHash: 12662062996181901680
+   size: 8382
+   offset: 34700506
+  --

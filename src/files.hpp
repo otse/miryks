@@ -1,5 +1,5 @@
-#ifndef FILES_H
-#define FILES_H
+#ifndef FILES_HPP
+#define FILES_HPP
 
 #include <fstream>
 #include <filesystem>

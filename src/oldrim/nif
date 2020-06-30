@@ -1,0 +1,12 @@
+#ifndef NIF_NIF_H
+#define NIF_NIF_H
+
+struct nif_t;
+
+struct nif_t
+{
+};
+
+void Make();
+
+#endif

@@ -3,53 +3,63 @@
 
 using namespace std;
 
-struct fircd_t;
-
-struct bsa_hedr_t {
+struct bsa_hedr_t
+{
 	char id[4];
 	unsigned long ver, offset, archive_flags, fos, fis, fol, fil, file_flags;
 };
 
-struct fld_rcd_t {
-	long long hash;
+struct rcdf_t
+{
+	unsigned long long hash;
 	unsigned long num, offset;
 };
 
-struct file_rcd_t {
-	long long nameHash;
+struct rcdff_t
+{
+	unsigned long long nameHash;
 	unsigned long size, offset;
 };
 
-struct fld_t {
-	string name;
-	fld_rcd_t *rcd;
-	file_rcd_t *_files;
-};
-
-struct asset_t {
-	string name;
-};
-
-struct bsa_t {
+struct bsa_t
+{
 	bsa_hedr_t hdr;
-	basic_ifstream<char> is;
-	fld_rcd_t *_flds;
-	file_rcd_t **_files;
-	vector<string> filenames;
-	vector<fld_t> flds;
-	vector<asset_t> assets;
+	ifstream is;
+	rcdf_t *rcdsf;
+	rcdff_t **rcdsff;
+	const char **charsf, **charsff;
 };
 
 bsa_t bsa_load(const string &);
 void bsa_read_folder_records(bsa_t &);
 void bsa_read_file_records(bsa_t &);
 void bsa_read_filenames(bsa_t &);
-void bsa_print_tree(bsa_t &);
 
-const char *bsa_get_filename(bsa_t &, int);
+const char *bsa_read_bzstring(bsa_t &);
 
+void bsa_print(bsa_t &);
 void bsa_print_hedr(bsa_t &);
 void bsa_print_fld_rcd(bsa_t &, int);
 void bsa_print_file_rcd(bsa_t &, int, int);
+
+// -----------------------------------------------
+// -----------------------------------------------
+
+struct bsa_folder_t
+{
+	const char *name;
+	void *rcdf, *rcdff;
+};
+
+struct bsa_asset_t
+{
+	string name;
+};
+
+struct bsa_operations_t
+{
+	vector<bsa_folder_t> folders;
+	vector<bsa_asset_t> assets;
+};
 
 void bsa_produce_assets(bsa_t &);

@@ -1,0 +1,6 @@
+#include "nif"
+
+namespace nif
+{
+    
+}

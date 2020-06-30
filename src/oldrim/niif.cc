@@ -1,6 +1,0 @@
-#include "niif"
-
-namespace niif
-{
-    
-}
