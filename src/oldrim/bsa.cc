@@ -16,7 +16,7 @@ bsa_t bsa_load(const string &a)
 	assert_(
 		bsa.is, BSA "cant open");
 	bsa.is.read(
-		(char *)&hedr, sizeof(bsa_hedr_t));
+		(char *)&hedr, sizeof(hedr_t));
 	assert_(
 		strcmp(
 			"BSA\x00", (char *)&hedr.id) == 0,
@@ -35,23 +35,23 @@ bsa_t bsa_load(const string &a)
 void bsa_read_folder_records(bsa_t &b)
 {
 #define hedr b.hdr
-	b.rcdsf = new rcdf_t[hedr.fos];
+	b.folds = new fld_t[hedr.fos];
 	b.is.read(
-		(char *)b.rcdsf, hedr.fos * sizeof(rcdf_t));
+		(char *)b.folds, hedr.fos * sizeof(fld_t));
 }
 
 void bsa_read_file_records(bsa_t &b)
 {
 #define hedr b.hdr
-	b.rcdsff = new rcdff_t *[hedr.fos];
+	b.files = new fle_t *[hedr.fos];
 	b.charsf = new const char *[hedr.fos];
 	for (int i = 0; i < hedr.fos; i++)
 	{
-		const int num = b.rcdsf[i].num;
-		b.rcdsff[i] = new rcdff_t[num];
+		const int num = b.folds[i].num;
+		b.files[i] = new fle_t[num];
 		b.charsf[i] = bsa_read_bzstring(b);
 		b.is.read(
-			(char *)b.rcdsff[i], sizeof(rcdff_t) * num);
+			(char *)b.files[i], sizeof(fle_t) * num);
 	}
 }
 
@@ -80,4 +80,8 @@ const char *bsa_read_bzstring(bsa_t &b)
 	return name;
 }
 
-// -----------------------------------------------
+// api
+
+void bsa_find(bsa_t &b, const char *n) {
+	
+}

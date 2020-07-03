@@ -17,7 +17,7 @@ void _write(
 
 void bsa_print_file_rcd(bsa_t &b, int i, int j)
 {
-	rcdff_t &rcd = b.rcdsff[i][j];
+	fle_t &rcd = b.files[i][j];
 	_write(
 		"  --file rcd ", i, ", ", j, "--",
 		"\n   long long nameHash: ", rcd.nameHash,
@@ -28,7 +28,7 @@ void bsa_print_file_rcd(bsa_t &b, int i, int j)
 
 void bsa_print_fld_rcd(bsa_t &b, int n)
 {
-	rcdf_t &rcd = b.rcdsf[n];
+	fld_t &rcd = b.folds[n];
 	_write(
 		"--folder rcd ", n, "--",
 		"\n long long hash: ", rcd.hash,
@@ -75,7 +75,7 @@ void bsa_print(bsa_t &b)
 	int f = 0;
 	for (int i = 0; i < hedr.fos; i++)
 	{
-		rcdf_t &fld = b.rcdsf[i];
+		fld_t &fld = b.folds[i];
 		_write("\n\n");
 		_write("folder name ", b.charsf[i]);
 		bsa_print_fld_rcd(b, i);

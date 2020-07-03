@@ -3,34 +3,32 @@
 
 using namespace std;
 
-struct bsa_hedr_t
-{
+#define api
+
+struct hedr_t {
 	char id[4];
 	unsigned long ver, offset, archive_flags, fos, fis, fol, fil, file_flags;
 };
 
-struct rcdf_t
-{
+struct fld_t {
 	unsigned long long hash;
 	unsigned long num, offset;
 };
 
-struct rcdff_t
-{
+struct fle_t {
 	unsigned long long nameHash;
 	unsigned long size, offset;
 };
 
-struct bsa_t
-{
-	bsa_hedr_t hdr;
+struct bsa_t {
+	hedr_t hdr;
 	ifstream is;
-	rcdf_t *rcdsf;
-	rcdff_t **rcdsff;
+	fld_t *folds;
+	fle_t **files;
 	const char **charsf, **charsff;
 };
 
-bsa_t bsa_load(const string &);
+api bsa_t bsa_load(const string &);
 void bsa_read_folder_records(bsa_t &);
 void bsa_read_file_records(bsa_t &);
 void bsa_read_filenames(bsa_t &);
@@ -42,24 +40,4 @@ void bsa_print_hedr(bsa_t &);
 void bsa_print_fld_rcd(bsa_t &, int);
 void bsa_print_file_rcd(bsa_t &, int, int);
 
-// -----------------------------------------------
-// -----------------------------------------------
-
-struct bsa_folder_t
-{
-	const char *name;
-	void *rcdf, *rcdff;
-};
-
-struct bsa_asset_t
-{
-	string name;
-};
-
-struct bsa_operations_t
-{
-	vector<bsa_folder_t> folders;
-	vector<bsa_asset_t> assets;
-};
-
-void bsa_produce_assets(bsa_t &);
+api void bsa_find(bsa_t &, const char *);
