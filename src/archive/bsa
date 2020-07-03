@@ -5,6 +5,8 @@ using namespace std;
 
 #define api
 
+struct archive_t;
+
 struct hedr_t {
 	char id[4];
 	unsigned long ver, offset, archive_flags, fos, fis, fol, fil, file_flags;

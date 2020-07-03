@@ -8,11 +8,11 @@
 #define VER 104
 #define VER_SE 105
 
-bsa_t bsa_load(const string &a)
+bsa_t bsa_load(const string &s)
 {
 #define hedr bsa.hdr
 	bsa_t bsa;
-	bsa.is = ifstream(a, ifstream::binary);
+	bsa.is = ifstream(s, ifstream::binary);
 	assert_(
 		bsa.is, BSA "cant open");
 	bsa.is.read(
@@ -22,7 +22,7 @@ bsa_t bsa_load(const string &a)
 			"BSA\x00", (char *)&hedr.id) == 0,
 		BSA "not a bsa");
 	assert_(
-		hedr.ver != VER_SE, BSA "ver 105 is se");
+		hedr.ver != VER_SE, BSA "ver 105 is SE");
 	assert_(
 		hedr.ver == VER, BSA "not 104");
 	bsa_read_folder_records(bsa);
@@ -80,8 +80,11 @@ const char *bsa_read_bzstring(bsa_t &b)
 	return name;
 }
 
-// api
+
+void bsa_assets(bsa_t &b, const char *n) {
+	
+}
 
 void bsa_find(bsa_t &b, const char *n) {
-	
+
 }

@@ -15,6 +15,12 @@
         "group": "cpp",
         "bsa": "cpp",
         "niif": "cpp",
+        "bsa2": "cpp",
+        "bsah": "cpp",
+        "bsaman": "cpp",
+        "bsabasic": "cpp",
+        "bsaworker": "cpp",
+        "archive": "cpp",
         "src/*": "C++",
         "types": "cpp",
         "fstream": "cpp",
@@ -69,6 +75,7 @@
         "xloctime": "cpp",
         "xmemory": "cpp",
         "xstddef": "cpp",
-        "xtr1common": "cpp"
+        "xtr1common": "cpp",
+        "arc": "cpp"
     }
 }
