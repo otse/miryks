@@ -2,7 +2,7 @@
 
 #include "dark2.h"
 
-#include "files.hpp"
+#include "files"
 
 #include <sstream>
 
@@ -16,7 +16,7 @@ void _write(stringstream &ss, Args &&... args)
 
 void bsa_print_file_rcd(bsa_t &b, stringstream &ss, int i, int j)
 {
-	fle_t &rcd = b.bb[i][j];
+	fle_t &rcd = b.fle[i][j];
 	_write(
 		ss,
 		"  --file rcd ", i, ", ", j, "--",
@@ -28,7 +28,7 @@ void bsa_print_file_rcd(bsa_t &b, stringstream &ss, int i, int j)
 
 void bsa_print_fld_rcd(bsa_t &b, stringstream &ss, int n)
 {
-	fld_t &rcd = b.aa[n];
+	fld_t &rcd = b.fld[n];
 	_write(
 		ss,
 		"--folder rcd ", n, "--",
@@ -76,7 +76,7 @@ void bsa_print(bsa_t &b)
 	int f = 0;
 	for (int i = 0; i < hedr.folders; i++)
 	{
-		fld_t &fld = b.aa[i];
+		fld_t &fld = b.fld[i];
 		_write(ss, "\n\n");
 		_write(ss, "folder ", i + 1, " of ", hedr.folders, ", ", b.ca[i]);
 		bsa_print_fld_rcd(b, ss, i);

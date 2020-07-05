@@ -27,7 +27,7 @@ struct fle_t
 
 struct rc_t
 {
-	int n;
+	int i, j, r;
 	fld_t *a;
 	fle_t *b;
 	const char *name, *path;
@@ -37,9 +37,11 @@ struct bsa_t
 {
 	hedr_t hdr;
 	ifstream is;
-	fld_t *aa;
-	fle_t **bb;
+	fld_t *fld;
+	fle_t **fle;
 	rc_t **rc;
+	int **r;
+	int *j;
 	const char **ca;
 	const char **cb;
 };

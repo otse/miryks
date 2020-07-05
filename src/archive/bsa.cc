@@ -2,13 +2,14 @@
 
 #include "dark2.h"
 
-#include "files.hpp"
+#include "files"
 
 #define BSA "BSA - "
 #define VER 104
 #define VER_SE 105
 
-api bsa_t bsa_load(const string &s) {
+api bsa_t bsa_load(const string &s)
+{
 #define hedr bsa.hdr
 	bsa_t bsa;
 	bsa.is = ifstream(s, ifstream::binary);
@@ -31,29 +32,31 @@ api bsa_t bsa_load(const string &s) {
 	return bsa;
 }
 
-void bsa_read_folder_records(bsa_t &b) {
+void bsa_read_folder_records(bsa_t &b)
+{
 #define hedr b.hdr
-	b.aa = new fld_t [hedr.folders];
-	b.is.read(
-		(char *)b.aa, hedr.folders * sizeof(fld_t));
+	b.fld = new fld_t[hedr.folders];
+	b.is.read((char *)b.fld, hedr.folders * sizeof(fld_t));
 }
 
-void bsa_read_file_records(bsa_t &b) {
+void bsa_read_file_records(bsa_t &b)
+{
 #define hedr b.hdr
-	b.bb = new fle_t *[hedr.folders];
-	b.ca = new const char *[hedr.folders];//0
+	b.fle = new fle_t *[hedr.folders];
+	b.ca = new const char *[hedr.folders];
 	for (int i = 0; i < hedr.folders; i++)
 	{
-	const int num = b.aa[i].num;
-	b.bb[i] = new fle_t [num];
+	const int num = b.fld[i].num;
+	b.fle[i] = new fle_t[num];
 	b.ca[i] = bsa_read_bzstring(b);
-	b.is.read((char *)b.bb[i], sizeof(fle_t) * num);
+	b.is.read((char *)b.fle[i], sizeof(fle_t) * num);
 	}
 }
 
-void bsa_read_filenames(bsa_t &b) {
+void bsa_read_filenames(bsa_t &b)
+{
 #define hedr b.hdr
-	char *buf = new char [hedr.filesl];
+	char *buf = new char[hedr.filesl];
 	b.cb = new const char *[hedr.files];
 	b.is.read(buf, hedr.filesl);
 	int i = 0, j = 0, n = 0;
@@ -66,56 +69,79 @@ void bsa_read_filenames(bsa_t &b) {
 	}
 }
 
-char *bsa_read_bzstring(bsa_t &b) {
+char *bsa_read_bzstring(bsa_t &b)
+{
 	int c = 0;
 	b.is.read((char *)&c, 1);
-	char *name = new char [c];
+	char *name = new char[c];
 	b.is.read((char *)name, c);
 	return name;
 }
 
-char *bsa_path(bsa_t &b, int i, int r) {
-	char *path = (char*)malloc(strlen(b.ca[i]) + strlen(b.cb[r]) + 2);
+char *bsa_path(bsa_t &b, int i, int r)
+{
+	char *path = (char *)malloc(strlen(b.ca[i]) + strlen(b.cb[r]) + 2);
 	strcpy(path, b.ca[i]);
-    strcat(path, "\\");
-    strcat(path, b.cb[r]);
+	strcat(path, "\\");
+	strcat(path, b.cb[r]);
 	return path;
 }
 
-void bsa_resources(bsa_t &b) {
+void bsa_resources(bsa_t &b)
+{
 #define hedr b.hdr
 	int r = 0;
 	b.rc = new rc_t *[hedr.files];
-	int i = 0;
-	for (; i < hedr.folders; i++)
+	b.j = new int [hedr.files];
+	for (int i = 0; i < hedr.folders; i++)
 	{
-	fld_t *fld = &b.aa[i];
-	int j = 0;
-	for (; j < fld->num; j++)
+	for (int j = 0; j < b.fld[i].num; j++)
 	{
-	fle_t *fle = &b.bb[i][j];
 	char *path = bsa_path(b, i, r);
-	//log_("bsa_path ", path);
-	rc_t *rc = new rc_t {r, fld, fle, b.cb[r], path};
+	rc_t *rc = new rc_t{i, j, r, &b.fld[i], &b.fle[i][j], b.cb[r], path};
+	b.j[r] = j;
 	b.rc[r] = rc;
 	r++;
 	}
 	}
 }
 
-void bsa_sort(bsa_t &b) {
-
+void bsa_sort(bsa_t &b)
+{
 }
 
-api bool bsa_find(bsa_t &b, const char *path) {
+api bool bsa_find(bsa_t &b, const char *p)
+{
 #define hedr b.hdr
-	int i = 0;
-	for (; i < hedr.files; i++)
+	char *stem = fstem(p);
+	char *name = fname(p);
+	log_("stem ", stem, ", name ", name);
+	int r = 0;
+	for (int i = 0; i < hedr.folders; i++)
 	{
-	rc_t *rc = b.rc[i];
+	int cmp = strcmp(stem, b.ca[i]);
+	if (cmp) {
+	r += b.fld[i].num;
+	continue;
+	}
+	for (int j = 0; j < b.fld[i].num; j++)
+	{
+	int cmp = strcmp(name, b.cb[r]);
+	if (!cmp)
+		return true;
+	r++;
+	}
+	}
+	free(stem);
+
+#if 0
+	for (; r < hedr.files; r++)
+	{
+	rc_t *rc = b.rc[r];
 	int cmp = strcmp(path, rc->path);
 	if (!cmp)
 		return true;
 	}
+#endif
 	return false;
 }

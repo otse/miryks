@@ -6,7 +6,7 @@
 #include "camera"
 #include "scene"
 
-#include "files.hpp"
+#include "files"
 
 #include <glad/glad.h>
 

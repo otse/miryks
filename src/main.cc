@@ -2,7 +2,7 @@
 
 #include "dark2.h"
 
-#include "files.hpp"
+#include "files"
 
 #include "archive/bsa"
 #include "oldrim_interface.hpp"
