@@ -90,16 +90,16 @@ char *bsa_path(bsa_t &b, int i, int r)
 void bsa_resources(bsa_t &b)
 {
 #define hedr b.hdr
-	int r = 0;
 	b.rc = new rc_t *[hedr.files];
-	b.j = new int [hedr.files];
+	b.r = new int [hedr.folders];
+	int r = 0;
 	for (int i = 0; i < hedr.folders; i++)
 	{
+	b.r[i] = r;
 	for (int j = 0; j < b.fld[i].num; j++)
 	{
 	char *path = bsa_path(b, i, r);
 	rc_t *rc = new rc_t{i, j, r, &b.fld[i], &b.fle[i][j], b.cb[r], path};
-	b.j[r] = j;
 	b.rc[r] = rc;
 	r++;
 	}
@@ -116,14 +116,12 @@ api bool bsa_find(bsa_t &b, const char *p)
 	char *stem = fstem(p);
 	char *name = fname(p);
 	log_("stem ", stem, ", name ", name);
-	int r = 0;
 	for (int i = 0; i < hedr.folders; i++)
 	{
 	int cmp = strcmp(stem, b.ca[i]);
-	if (cmp) {
-	r += b.fld[i].num;
-	continue;
-	}
+	if (cmp)
+		continue;
+	int r = b.r[i];
 	for (int j = 0; j < b.fld[i].num; j++)
 	{
 	int cmp = strcmp(name, b.cb[r]);

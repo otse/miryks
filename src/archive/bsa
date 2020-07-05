@@ -40,8 +40,7 @@ struct bsa_t
 	fld_t *fld;
 	fle_t **fle;
 	rc_t **rc;
-	int **r;
-	int *j;
+	int *r;
 	const char **ca;
 	const char **cb;
 };
