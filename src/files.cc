@@ -37,11 +37,11 @@ string fread(const string &a)
 	ifstream is(a, mode);
 	if (is)
 	{
-		size_t end = is.tellg();
-		string str(end, ' ');
-		is.seekg(0, is.beg);
-		is.read(&str[0], end);
-		return str;
+	size_t end = is.tellg();
+	string str(end, ' ');
+	is.seekg(0, is.beg);
+	is.read(&str[0], end);
+	return str;
 	}
 	return "no";
 }

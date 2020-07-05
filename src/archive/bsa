@@ -63,4 +63,5 @@ void bsa_print_hedr(bsa_t &, stringstream &);
 void bsa_print_fld_rcd(bsa_t &, stringstream &, int);
 void bsa_print_file_rcd(bsa_t &, stringstream &, int, int);
 
-api bool bsa_find(bsa_t &, const char *);
+api rc_t *bsa_find(bsa_t &, const char *);
+api const unsigned char *bsa_read(bsa_t &, rc_t *);

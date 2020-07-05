@@ -47,9 +47,11 @@ void bsa_gui()
 				ImGui::Text(hedr.c_str());
 				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("records")) {
 				ImGui::EndTabItem();
 			}
+
 			if (ImGui::BeginTabItem("rc")) {
 				static char rc_str[230] = "meshes\\clutter\\bucket02a.nif";
  				static char rc_str_before[230];
@@ -57,6 +59,17 @@ void bsa_gui()
 				bool find = bsa_find(bsa, rc_str);
 				ImGui::Text(find ? "found!" : "not found!");
 
+				ImGui::EndTabItem();
+			}
+
+			if (ImGui::BeginTabItem("list")) {
+				for (int i = 0; i < bsa.hdr.folders; i++)
+				{
+					if (ImGui::TreeNode(bsa.ca[i])) {
+						ImGui::Text("Woo");
+						ImGui::TreePop();
+					}
+				}
 				ImGui::EndTabItem();
 			}
 	}

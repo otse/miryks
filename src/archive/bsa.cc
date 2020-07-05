@@ -27,8 +27,8 @@ api bsa_t bsa_load(const string &s)
 	bsa_read_folder_records(bsa);
 	bsa_read_file_records(bsa);
 	bsa_read_filenames(bsa);
-	bsa_resources(bsa);
 	bsa_sort(bsa);
+	bsa_resources(bsa);
 	return bsa;
 }
 
@@ -106,16 +106,22 @@ void bsa_resources(bsa_t &b)
 	}
 }
 
+
 void bsa_sort(bsa_t &b)
 {
+#define hedr b.hdr
+	fld_t **a = new fld_t *[hedr.folders];
+	for (int i = 0; i < hedr.folders; i++)
+	{
+
+	}
 }
 
-api bool bsa_find(bsa_t &b, const char *p)
+api rc_t *bsa_find(bsa_t &b, const char *p)
 {
 #define hedr b.hdr
 	char *stem = fstem(p);
 	char *name = fname(p);
-	log_("stem ", stem, ", name ", name);
 	for (int i = 0; i < hedr.folders; i++)
 	{
 	int cmp = strcmp(stem, b.ca[i]);
@@ -126,20 +132,14 @@ api bool bsa_find(bsa_t &b, const char *p)
 	{
 	int cmp = strcmp(name, b.cb[r]);
 	if (!cmp)
-		return true;
+		return b.rc[r];
 	r++;
 	}
 	}
 	free(stem);
+	return nullptr;
+}
 
-#if 0
-	for (; r < hedr.files; r++)
-	{
-	rc_t *rc = b.rc[r];
-	int cmp = strcmp(path, rc->path);
-	if (!cmp)
-		return true;
-	}
-#endif
-	return false;
+api const unsigned char* bsa_read(bsa_t &b, rc_t *rc) {
+	return 0;
 }
