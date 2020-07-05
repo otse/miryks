@@ -4,7 +4,7 @@
 
 #include "files.hpp"
 
-#include "archive/arc"
+#include "archive/bsa"
 #include "oldrim_interface.hpp"
 
 #include "opengl/types"
@@ -18,9 +18,9 @@ namespace dark2
 {
 	string OLDRIM_PATH;
 
-	arc_t interface;
-	arc_t meshes;
-	arc_t animations;
+	bsa_t interface;
+	bsa_t meshes;
+	bsa_t animations;
 
 	Camera_t *camera;
 
@@ -33,11 +33,13 @@ namespace dark2
 
 using namespace dark2;
 
-void load_arcs()
+void load_bsas()
 {
+	bsa_test();
+
 	//interface = bsa_load(OLDRIM_PATH + "Data/Skyrim - Interface.bsa");
 	//animations = bsa_load(OLDRIM_PATH + "Data/Skyrim - Animations.bsa");
-	meshes = arc_load(OLDRIM_PATH + "Data/Skyrim - Meshes.bsa");
+	//meshes = bsa_load(OLDRIM_PATH + "Data/Skyrim - Meshes.bsa");
 }
 
 int main()
@@ -46,8 +48,7 @@ int main()
 	OLDRIM_PATH = fread(PATH_TXT);
 	assert_(
 		OLDRIM_PATH != "no", "missing" PATH_TXT);
-	load_arcs();
-	//bsa_print(animations);
+	load_bsas();
 	//system("PAUSE");
 	program_go();
 	oglGo();

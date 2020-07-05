@@ -4,86 +4,88 @@
 
 #include "files.hpp"
 
+#include <sstream>
+
 #define BSA "BSA - "
 
-ofstream *txt;
-
 template <typename... Args>
-void _write(
-	Args &&... args)
+void _write(stringstream &ss, Args &&... args)
 {
-	(*txt << ... << args) << std::endl;
+	(ss << ... << args);
 }
 
-void bsa_print_file_rcd(bsa_t &b, int i, int j)
+void bsa_print_file_rcd(bsa_t &b, stringstream &ss, int i, int j)
 {
-	fle_t &rcd = b.files[i][j];
+	fle_t &rcd = b.bb[i][j];
 	_write(
+		ss,
 		"  --file rcd ", i, ", ", j, "--",
-		"\n   long long nameHash: ", rcd.nameHash,
-		"\n   size: ", rcd.size,
-		"\n   offset: ", rcd.offset,
-		"\n  --");
+		"\nlong long nameHash: ", rcd.nameHash,
+		"\nsize: ", rcd.size,
+		"\noffset: ", rcd.offset,
+		"\n");
 }
 
-void bsa_print_fld_rcd(bsa_t &b, int n)
+void bsa_print_fld_rcd(bsa_t &b, stringstream &ss, int n)
 {
-	fld_t &rcd = b.folds[n];
+	fld_t &rcd = b.aa[n];
 	_write(
+		ss,
 		"--folder rcd ", n, "--",
-		"\n long long hash: ", rcd.hash,
-		"\n num: ", rcd.num,
-		"\n offset: ", rcd.offset,
-		"\n--");
+		"\nlong long hash: ", rcd.hash,
+		"\nnum: ", rcd.num,
+		"\noffset: ", rcd.offset,
+		"\n");
 }
 
-void bsa_print_hedr(bsa_t &b)
+void bsa_print_hedr(bsa_t &b, stringstream &ss)
 {
 #define hedr b.hdr
 	_write(
-		"--hedr--",
-		"\n id: ", hedr.id,
-		"\n ver: ", hedr.ver,
-		"\n offset: ", hedr.offset,
-		"\n archive flags: ", hedr.archive_flags,
-		"\n   0x1: ", hedr.archive_flags & 0x1,
-		"\n   0x2: ", hedr.archive_flags & 0x2,
-		"\n   0x4: ", hedr.archive_flags & 0x4,
-		"\n   0x8: ", hedr.archive_flags & 0x8,
-		"\n   0x10: ", hedr.archive_flags & 0x10,
-		"\n   0x20: ", hedr.archive_flags & 0x20,
-		"\n   0x40: ", hedr.archive_flags & 0x40,
-		"\n   0x80: ", hedr.archive_flags & 0x80,
-		"\n   0x100: ", hedr.archive_flags & 0x100,
-		"\n   0x200: ", hedr.archive_flags & 0x200,
-		"\n   0x400: ", hedr.archive_flags & 0x400,
-		"\n fos: ", hedr.fos,
-		"\n fis: ", hedr.fis,
-		"\n fol: ", hedr.fol,
-		"\n fil: ", hedr.fil,
-		"\n file_flags: ", hedr.file_flags,
-		"\n sizeof: ", sizeof(hedr),
-		"\n--");
+		ss,
+		"id: ", hedr.id,
+		"\nver: ", hedr.ver,
+		"\noffset: ", hedr.offset,
+		"\narchive flags: ", hedr.archive_flags,
+		"\n  0x1: ", hedr.archive_flags & 0x1,
+		"\n  0x2: ", hedr.archive_flags & 0x2,
+		"\n  0x4: ", hedr.archive_flags & 0x4,
+		"\n  0x8: ", hedr.archive_flags & 0x8,
+		"\n  0x10: ", hedr.archive_flags & 0x10,
+		"\n  0x20: ", hedr.archive_flags & 0x20,
+		"\n  0x40: ", hedr.archive_flags & 0x40,
+		"\n  0x80: ", hedr.archive_flags & 0x80,
+		"\n  0x100: ", hedr.archive_flags & 0x100,
+		"\n  0x200: ", hedr.archive_flags & 0x200,
+		"\n  0x400: ", hedr.archive_flags & 0x400,
+		"\nfolders: ", hedr.folders,
+		"\nfiles: ", hedr.files,
+		"\nfoldersl: ", hedr.foldersl,
+		"\nfilesl: ", hedr.filesl,
+		"\nfile_flags: ", hedr.file_flags,
+		"\nsizeof: ", sizeof(hedr),
+		"\n");
 }
 
 void bsa_print(bsa_t &b)
 {
 #define hedr b.hdr
 	ofstream os("bsa.txt");
-	txt = &os;
-	bsa_print_hedr(b);
+	stringstream ss;
+	bsa_print_hedr(b, ss);
 	int f = 0;
-	for (int i = 0; i < hedr.fos; i++)
+	for (int i = 0; i < hedr.folders; i++)
 	{
-		fld_t &fld = b.folds[i];
-		_write("\n\n");
-		_write("folder name ", b.charsf[i]);
-		bsa_print_fld_rcd(b, i);
+		fld_t &fld = b.aa[i];
+		_write(ss, "\n\n");
+		_write(ss, "folder ", i + 1, " of ", hedr.folders, ", ", b.ca[i]);
+		bsa_print_fld_rcd(b, ss, i);
 		for (int j = 0; j < fld.num; j++)
 		{
-			_write("  ", b.charsff[f++]);
-			bsa_print_file_rcd(b, i, j);
+			_write(ss, "  ", b.cb[f++]);
+			bsa_print_file_rcd(b, ss, i, j);
 		}
 	}
+	os << ss.str();
 	os.close();
 }

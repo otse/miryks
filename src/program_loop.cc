@@ -1,5 +1,7 @@
 #include "dark2.h"
 
+#include "archive/bsa"
+
 #include "opengl/camera"
 #include "opengl/scene"
 #include "opengl/material"
@@ -64,6 +66,91 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
+void Style()
+{
+	ImGuiIO &io = ImGui::GetIO();
+	io.Fonts->AddFontDefault();
+	//io.Fonts->AddFontFromFileTTF("Pelagiad.ttf", 18);
+
+	// merge in icons from Font Awesome
+	/*
+	static const ImWchar icons_ranges[] = {ICON_MIN_FA, ICON_MAX_FA, 0};
+	ImFontConfig icons_config;
+	icons_config.MergeMode = true;
+	icons_config.PixelSnapH = true;
+	io.Fonts->AddFontFromFileTTF(FONT_ICON_FILE_NAME_FAS, 16.0f, &icons_config, icons_ranges);
+	*/
+	// use FONT_ICON_FILE_NAME_FAR if you want regular instead of solid
+
+	ImVec4 *colors = ImGui::GetStyle().Colors;
+	colors[ImGuiCol_Text] = ImVec4(0.77f, 0.77f, 0.77f, 1.00f);
+	colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+	colors[ImGuiCol_WindowBg] = ImVec4(0.23f, 0.23f, 0.23f, 1.00f);
+	colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
+	colors[ImGuiCol_Border] = ImVec4(1.00f, 1.00f, 1.00f, 0.00f);
+	colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	colors[ImGuiCol_FrameBg] = ImVec4(0.40f, 0.40f, 0.40f, 0.46f);
+	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+	colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+	colors[ImGuiCol_TitleBg] = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
+	colors[ImGuiCol_TitleBgActive] = ImVec4(0.27f, 0.27f, 0.27f, 1.00f);
+	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+	colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+	colors[ImGuiCol_ScrollbarBg] = ImVec4(0.43f, 0.43f, 0.43f, 0.00f);
+	colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.71f, 0.71f, 0.71f, 1.00f);
+	colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+	colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
+	colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	colors[ImGuiCol_SliderGrab] = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
+	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	colors[ImGuiCol_Button] = ImVec4(0.00f, 0.25f, 0.57f, 0.55f);
+	colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	colors[ImGuiCol_ButtonActive] = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
+	colors[ImGuiCol_Header] = ImVec4(0.39f, 0.39f, 0.39f, 0.00f);
+	colors[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+	colors[ImGuiCol_HeaderActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	colors[ImGuiCol_Separator] = ImVec4(0.17f, 0.17f, 0.17f, 0.46f);
+	colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
+	colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
+	colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.25f);
+	colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+	colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+	colors[ImGuiCol_Tab] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	colors[ImGuiCol_TabHovered] = ImVec4(0.23f, 0.59f, 1.00f, 0.80f);
+	colors[ImGuiCol_TabActive] = ImVec4(0.40f, 0.40f, 0.40f, 0.00f);
+	colors[ImGuiCol_TabUnfocused] = ImVec4(0.00f, 0.00f, 0.00f, 0.07f);
+	colors[ImGuiCol_TabUnfocusedActive] = ImVec4(1.00f, 1.00f, 1.00f, 0.00f);
+	colors[ImGuiCol_PlotLines] = ImVec4(0.40f, 0.40f, 0.40f, 0.46f);
+	colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+	colors[ImGuiCol_PlotHistogram] = ImVec4(0.00f, 0.50f, 0.00f, 1.00f);
+	colors[ImGuiCol_PlotHistogramHovered] = ImVec4(0.24f, 0.59f, 0.13f, 1.00f);
+	colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+	colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+	colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+
+	colors[ImGuiCol_TitleBg] = colors[ImGuiCol_WindowBg];
+	colors[ImGuiCol_TitleBgActive] = colors[ImGuiCol_WindowBg];
+
+	ImGuiStyle &style = ImGui::GetStyle();
+
+	style.WindowPadding = {10, 10};
+	style.FramePadding = {6, 6};
+	style.ItemSpacing = {9, 12};
+	style.ItemInnerSpacing = {4, 4};
+	style.IndentSpacing = 50;
+	style.WindowRounding = 3;
+	style.WindowBorderSize = 0;
+
+	style.WindowMenuButtonPosition = -1;
+	style.ChildRounding = 6;
+	style.TabRounding = 3;
+	style.ScrollbarRounding = 12;
+}
+
 void setupImgui()
 {
 	IMGUI_CHECKVERSION();
@@ -73,7 +160,8 @@ void setupImgui()
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-	ImGui::StyleColorsLight();
+	ImGui::StyleColorsDark();
+	//Style();
 
 	// Setup Platform/Renderer bindings
 	const char *glsl_version = "#version 130";
@@ -147,6 +235,7 @@ void dark2::program_loop()
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		bsa_gui();
 		//ImGui::ShowDemoWindow();
 		//viewer();
 

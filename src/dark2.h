@@ -1,7 +1,6 @@
 #ifndef DARK2_H
 #define DARK2_H
 
-struct arc_t;
 struct bsa_t;
 
 #include "opengl/types"
@@ -18,9 +17,9 @@ namespace dark2
 
 	extern string OLDRIM_PATH;
 	
-	extern arc_t interface;
-	extern arc_t meshes;
-	extern arc_t animations;
+	extern bsa_t interface;
+	extern bsa_t meshes;
+	extern bsa_t animations;
 
 	
 } // namespace dark2

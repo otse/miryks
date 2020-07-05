@@ -76,6 +76,7 @@
         "xmemory": "cpp",
         "xstddef": "cpp",
         "xtr1common": "cpp",
-        "arc": "cpp"
+        "arc": "cpp",
+        "sstream": "cpp"
     }
 }
