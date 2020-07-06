@@ -77,17 +77,6 @@ char *bsa_read_bzstring(bsa_t &b)
 	return name;
 }
 
-/*
-char *bsa_path(bsa_t &b, int i, int r)
-{
-	char *path = (char *)malloc(strlen(b.ca[i]) + strlen(b.cb[r]) + 2);
-	strcpy(path, b.ca[i]);
-	strcat(path, "\\");
-	strcat(path, b.cb[r]);
-	return path;
-}
-*/
-
 void bsa_resources(bsa_t &b)
 {
 #define hedr b.hdr

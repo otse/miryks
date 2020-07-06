@@ -1,3 +1,6 @@
+#ifndef BSA_BSA_H
+#define BSA_BSA_H
+
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -64,3 +67,5 @@ void bsa_print_rc(bsa_t &, stringstream &, int);
 
 api rc_t *bsa_find(bsa_t &, const char *);
 api char *bsa_read(bsa_t &, rc_t *);
+
+#endif

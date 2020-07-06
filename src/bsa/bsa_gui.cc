@@ -25,7 +25,7 @@ void bsa_gui()
 	static string hedr = "not loaded";
 	static char buf[230] = "Data/Skyrim - Meshes.bsa";
 	static char buf_before[230];
-	ImGui::InputText("#archive", buf, IM_ARRAYSIZE(buf));
+	ImGui::InputText("##archive", buf, IM_ARRAYSIZE(buf));
 	if (strcmp(buf, buf_before) && fstat(OLDRIM_PATH + buf))
 	{
 		log_("bsa gui loading new archive");
@@ -46,15 +46,15 @@ void bsa_gui()
 			ImGui::Text(hedr.c_str());
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("records"))
-		{
-			ImGui::EndTabItem();
-		}
+		//if (ImGui::BeginTabItem("records"))
+		//{
+		//	ImGui::EndTabItem();
+		//}
 		if (ImGui::BeginTabItem("find"))
 		{
 			static char rc_str[230] = "meshes\\clutter\\bucket02a.nif";
 			static char rc_str_before[230];
-			ImGui::InputText("#rc", rc_str, IM_ARRAYSIZE(rc_str));
+			ImGui::InputText("##rc", rc_str, IM_ARRAYSIZE(rc_str));
 			static rc_t *rc;
 			rc = bsa_find(bsa, rc_str);
 			ImGui::Text(rc ? "found!" : "not found!");

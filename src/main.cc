@@ -4,7 +4,7 @@
 
 #include "files"
 
-#include "archive/bsa"
+#include "bsa/bsa"
 #include "oldrim_interface.hpp"
 
 #include "opengl/types"

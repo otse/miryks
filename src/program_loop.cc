@@ -1,6 +1,6 @@
 #include "dark2.h"
 
-#include "archive/bsa"
+#include "bsa/bsa"
 
 #include "opengl/camera"
 #include "opengl/scene"
