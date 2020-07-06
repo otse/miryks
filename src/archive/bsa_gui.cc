@@ -10,6 +10,10 @@ using namespace dark2;
 
 #define BSA_GUI "bsa gui"
 
+#define cls           \
+	ss.str(string()); \
+	ss.clear();
+
 void bsa_gui()
 {
 
@@ -22,78 +26,93 @@ void bsa_gui()
 	static stringstream ss;
 	static string hedr = "not loaded";
 
- 	static char buf[230] = "Data/Skyrim - Meshes.bsa";
- 	static char buf_before[230];
-	 
+	static char buf[230] = "Data/Skyrim - Meshes.bsa";
+	static char buf_before[230];
+
 	ImGui::InputText("#archive", buf, IM_ARRAYSIZE(buf));
 
-	if (strcmp(buf, buf_before) && fstat(OLDRIM_PATH + buf)) {
-		log_("bsa gui loading archive");
+	if (strcmp(buf, buf_before) && fstat(OLDRIM_PATH + buf))
+	{
+		log_("bsa gui loading new archive");
 		memcpy(buf_before, buf, 230);
 		bsa = bsa_load(OLDRIM_PATH + buf);
 		bsa_print_hedr(bsa, ss);
 		good = true;
 		hedr = ss.str();
-		ss.str(string());
-		ss.clear();
+		cls;
 	}
 
 	if (!good)
 		return;
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-	if (ImGui::BeginTabBar("MyTabBar", tabBarFlags)) {
-			if (ImGui::BeginTabItem("hedr")) {
-				ImGui::Text(hedr.c_str());
-				ImGui::EndTabItem();
+	if (ImGui::BeginTabBar("MyTabBar", tabBarFlags))
+	{
+		if (ImGui::BeginTabItem("hedr"))
+		{
+			ImGui::Text(hedr.c_str());
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("records"))
+		{
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("find"))
+		{
+			static char rc_str[230] = "meshes\\clutter\\bucket02a.nif";
+			static char rc_str_before[230];
+			ImGui::InputText("#rc", rc_str, IM_ARRAYSIZE(rc_str));
+			rc_t *rc = bsa_find(bsa, rc_str);
+			ImGui::Text(rc ? "found!" : "not found!");
+
+			if (rc)
+			{
+				ImGui::Separator();
+
+				bsa_print_rc(bsa, ss, rc->r);
+				ImGui::Text(ss.str().c_str());
+				cls;
 			}
 
-			if (ImGui::BeginTabItem("records")) {
-				ImGui::EndTabItem();
-			}
+			ImGui::EndTabItem();
+		}
 
-			if (ImGui::BeginTabItem("rc")) {
-				static char rc_str[230] = "meshes\\clutter\\bucket02a.nif";
- 				static char rc_str_before[230];
-				ImGui::InputText("#rc", rc_str, IM_ARRAYSIZE(rc_str));
-				bool find = bsa_find(bsa, rc_str);
-				ImGui::Text(find ? "found!" : "not found!");
-
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("list")) {
-				ImGui::BeginChildFrame(1, ImVec2(0, 800));
-				for (int i = 0; i < bsa.hdr.folders; i++)
+		if (ImGui::BeginTabItem("list"))
+		{
+			ImGui::BeginChildFrame(1, ImVec2(0, 800));
+			for (int i = 0; i < bsa.hdr.folders; i++)
+			{
+				if (ImGui::TreeNode(bsa.ca[i]))
 				{
-					if (ImGui::TreeNode(bsa.ca[i])) {
 
-						bsa_print_fld_rcd(bsa, ss, i);
-						ImGui::Text(ss.str().c_str());
-						ss.str(string());
-						ss.clear();
+					bsa_print_fld_rcd(bsa, ss, i);
+					ImGui::Text(ss.str().c_str());
+					cls;
 
-						ImGui::Separator();
-						ImGui::Text("Files:");
+					ImGui::Separator();
+					ImGui::Text("Files:");
 
-						int r = bsa.r[i];
-						for (int j = 0; j < bsa.fld[i].num; j++)
+					int r = bsa.r[i];
+					for (int j = 0; j < bsa.fld[i].num; j++)
+					{
+						if (ImGui::TreeNode(bsa.cb[r]))
 						{
-							if (ImGui::TreeNode(bsa.cb[r])) {
-								bsa_print_fle_rcd(bsa, ss, i, j);
-								ImGui::Text(ss.str().c_str());
-								ImGui::TreePop();
-								ss.str(string());
-								ss.clear();
-							}
-							r++;
+							bsa_print_fle_rcd(bsa, ss, i, j);
+							ImGui::Text(ss.str().c_str());
+							ImGui::Separator();
+							ImGui::TreePop();
+							cls;
 						}
-						ImGui::TreePop();
+						r++;
 					}
+					ImGui::TreePop();
 				}
-				ImGui::EndTabItem();
-				ImGui::EndChildFrame();
 			}
+			ImGui::EndTabItem();
+			ImGui::EndChildFrame();
+		}
 	}
 
 	//ImGui::EndTabBar();

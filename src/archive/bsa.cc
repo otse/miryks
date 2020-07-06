@@ -4,7 +4,7 @@
 
 #include "files"
 
-#define BSA "BSA - "
+#define BSA "bsa - "
 #define VER 104
 #define VER_SE 105
 
@@ -14,7 +14,7 @@ api bsa_t bsa_load(const string &s)
 	bsa_t bsa;
 	bsa.is = ifstream(s, ifstream::binary);
 	assert_(
-		bsa.is, BSA "cant open");
+		bsa.is, BSA "cant open? see path to oldrim.txt");
 	bsa.is.read((char *)&hedr, sizeof(hedr_t));
 	assert_(
 		strcmp(
