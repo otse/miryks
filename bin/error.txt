@@ -1,0 +1,1 @@
+bsa - cant open? try path to oldrim.txt

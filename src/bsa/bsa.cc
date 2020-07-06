@@ -1,6 +1,5 @@
-#include "bsa"
-
 #include "dark2.h"
+#include "bsa"
 
 #include "files"
 
@@ -46,7 +45,7 @@ void bsa_read_file_records(bsa_t &b)
 	for (int i = 0; i < hedr.folders; i++)
 	{
 	const int num = b.fld[i].num;
-	b.fle[i] = new fle_t[num];
+	b.fle[i] = new fle_t [num];
 	b.ca[i] = bsa_read_bzstring(b);
 	b.is.read((char *)b.fle[i], sizeof(fle_t) * num);
 	}
@@ -72,9 +71,19 @@ char *bsa_read_bzstring(bsa_t &b)
 {
 	int c = 0;
 	b.is.read((char *)&c, 1);
-	char *name = new char[c];
+	char *name = new char [c];
 	b.is.read((char *)name, c);
 	return name;
+}
+
+char *bsa_path(bsa_t &b, int i, int r)
+{
+#define HACK "\\"
+	char *path = (char *)malloc(strlen(b.ca[i]) + strlen(b.cb[r]) + 2);
+	strcpy(path, b.ca[i]);
+	strcat(path, HACK);
+	strcat(path, b.cb[r]);
+	return path;
 }
 
 void bsa_resources(bsa_t &b)
@@ -88,8 +97,7 @@ void bsa_resources(bsa_t &b)
 	b.r[i] = r;
 	for (int j = 0; j < b.fld[i].num; j++)
 	{
-	rc_t *rc = new rc_t{i, j, r, b.cb[r]};
-	b.rc[r] = rc;
+	b.rc[r] = new rc_t {b, i, j, r, b.cb[r], bsa_path(b, i, j)};
 	r++;
 	}
 	}
@@ -102,15 +110,17 @@ api rc_t *bsa_find(bsa_t &b, const char *p)
 	char *name = fname(p);
 	if (!stem || !name)
 		return nullptr;
+	int cmp;
+	int r;
 	for (int i = 0; i < hedr.folders; i++)
 	{
-	int cmp = strcmp(stem, b.ca[i]);
+	cmp = strcmp(stem, b.ca[i]);
 	if (cmp)
 		continue;
-	int r = b.r[i];
+	r = b.r[i];
 	for (int j = 0; j < b.fld[i].num; j++)
 	{
-	int cmp = strcmp(name, b.cb[r]);
+	cmp = strcmp(name, b.cb[r]);
 	if (!cmp)
 		return b.rc[r];
 	r++;
@@ -121,12 +131,12 @@ api rc_t *bsa_find(bsa_t &b, const char *p)
 	return nullptr;
 }
 
-api char* bsa_read(bsa_t &b, rc_t *rc) {
+api void bsa_read(bsa_t &b, rc_t *rc) {
 	if (!rc)
-		return nullptr;
-	fle_t &fle = *b.fle[rc->r];
-	char *buf = new char [fle.size];
-	b.is.seekg(fle.offset, ios_base::beg);
-	b.is.read(buf, fle.size);
-	return buf;
+		return;
+	fle_t &fe = b.fle[rc->i][rc->j];
+	log_("fe.size ", fe.size);
+	rc->buf = (const unsigned char *)malloc(fe.size);
+	b.is.seekg(fe.offset, ios_base::beg);
+	b.is.read((char *)rc->buf, fe.size);
 }

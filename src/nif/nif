@@ -1,12 +1,21 @@
 #ifndef NIF_NIF_H
 #define NIF_NIF_H
 
-struct nif_t;
+// https://gist.github.com/EmilHernvall/953968
+
+#define api
+
+struct rc_t;
 
 struct nif_t
 {
+    rc_t *rc;
 };
 
-void Make();
+void nif_gui();
+
+api void nif_make(rc_t *, nif_t *);
+api void nif_add(const char *, nif_t *);
+api nif_t *nif_get(const char *);
 
 #endif

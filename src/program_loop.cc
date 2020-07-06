@@ -1,6 +1,7 @@
 #include "dark2.h"
 
 #include "bsa/bsa"
+#include "nif/nif"
 
 #include "opengl/camera"
 #include "opengl/scene"
@@ -236,6 +237,7 @@ void dark2::program_loop()
 		ImGui::NewFrame();
 
 		bsa_gui();
+		nif_gui();
 		//ImGui::ShowDemoWindow();
 		//viewer();
 

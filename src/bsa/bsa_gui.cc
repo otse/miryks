@@ -8,7 +8,7 @@ using namespace dark2;
 
 #include <imgui.h>
 
-#define BSA_GUI "bsa gui"
+#define BSA_GUI "bsa"
 
 #define cls           \
 	ss.str(string()); \
@@ -55,8 +55,7 @@ void bsa_gui()
 			static char rc_str[230] = "meshes\\clutter\\bucket02a.nif";
 			static char rc_str_before[230];
 			ImGui::InputText("##rc", rc_str, IM_ARRAYSIZE(rc_str));
-			static rc_t *rc;
-			rc = bsa_find(bsa, rc_str);
+			rc_t *rc = bsa_find(bsa, rc_str);
 			ImGui::Text(rc ? "found!" : "not found!");
 			if (rc)
 			{
@@ -85,7 +84,6 @@ void bsa_gui()
 						if (ImGui::TreeNode(bsa.cb[r]))
 						{
 							bsa_print_fle_rcd(bsa, ss, i, j);
-
 							ImGui::Text(ss.str().c_str());
 							ImGui::Separator();
 							ImGui::TreePop();

@@ -5,6 +5,7 @@
 #include "files"
 
 #include "bsa/bsa"
+#include "nif/nif"
 #include "oldrim_interface.hpp"
 
 #include "opengl/types"
@@ -35,11 +36,11 @@ using namespace dark2;
 
 void load_bsas()
 {
-	bsa_test();
+	//bsa_test();
 
 	//interface = bsa_load(OLDRIM_PATH + "Data/Skyrim - Interface.bsa");
 	//animations = bsa_load(OLDRIM_PATH + "Data/Skyrim - Animations.bsa");
-	//meshes = bsa_load(OLDRIM_PATH + "Data/Skyrim - Meshes.bsa");
+	meshes = bsa_load(OLDRIM_PATH + "Data/Skyrim - Meshes.bsa");
 }
 
 int main()
@@ -54,19 +55,24 @@ int main()
 	oglGo();
 	for (int i = 0; i < 100; i++)
 	{
-		Group_t *cube = new Group_t;
-		vec3 pos = vec3(
-			(float)rand() / RAND_MAX,
-			(float)rand() / RAND_MAX,
-			(float)rand() / RAND_MAX);
-		pos *= 20;
-		cube->matrix = glm::translate(mat4(1.0f), pos);
-		cube->geometry = new Geometry_t;
-		cube->geometry->material = new Material_t;
-		cube->geometry->SetupMesh();
-		cube->Update();
-		scene->Add(cube);
+	Group_t *cube = new Group_t;
+	vec3 pos = vec3(
+		(float)rand() / RAND_MAX,
+		(float)rand() / RAND_MAX,
+		(float)rand() / RAND_MAX);
+	pos *= 20;
+	cube->matrix = glm::translate(mat4(1.0f), pos);
+	cube->geometry = new Geometry_t;
+	cube->geometry->material = new Material_t;
+	cube->geometry->SetupMesh();
+	cube->Update();
+	scene->Add(cube);
 	}
+	nif_t *bucket;
+	rc_t *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
+	assert_(rc, "cant find bucket");
+	bsa_read(meshes, rc);
+	nif_make(rc, bucket);
 	program_loop();
 	return 1;
 }
