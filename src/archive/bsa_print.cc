@@ -14,13 +14,13 @@ void _write(stringstream &ss, Args &&... args)
 	(ss << ... << args);
 }
 
-void bsa_print_file_rcd(bsa_t &b, stringstream &ss, int i, int j)
+void bsa_print_fle_rcd(bsa_t &b, stringstream &ss, int i, int j)
 {
 	fle_t &rcd = b.fle[i][j];
 	_write(
 		ss,
-		"  --file rcd ", i, ", ", j, "--",
-		"\nlong long nameHash: ", rcd.nameHash,
+		"rcd ", i, ", ", j,
+		"\nhash: ", rcd.hash,
 		"\nsize: ", rcd.size,
 		"\noffset: ", rcd.offset,
 		"\n");
@@ -31,8 +31,8 @@ void bsa_print_fld_rcd(bsa_t &b, stringstream &ss, int n)
 	fld_t &rcd = b.fld[n];
 	_write(
 		ss,
-		"--folder rcd ", n, "--",
-		"\nlong long hash: ", rcd.hash,
+		"rcd ", n,
+		"\nhash: ", rcd.hash,
 		"\nnum: ", rcd.num,
 		"\noffset: ", rcd.offset,
 		"\n");
@@ -67,9 +67,11 @@ void bsa_print_hedr(bsa_t &b, stringstream &ss)
 		"\n");
 }
 
+
 void bsa_print(bsa_t &b)
 {
 #define hedr b.hdr
+#if 0
 	ofstream os("bsa.txt");
 	stringstream ss;
 	bsa_print_hedr(b, ss);
@@ -79,13 +81,15 @@ void bsa_print(bsa_t &b)
 		fld_t &fld = b.fld[i];
 		_write(ss, "\n\n");
 		_write(ss, "folder ", i + 1, " of ", hedr.folders, ", ", b.ca[i]);
+		_write(ss, "\n");
 		bsa_print_fld_rcd(b, ss, i);
 		for (int j = 0; j < fld.num; j++)
 		{
 			_write(ss, "  ", b.cb[f++]);
-			bsa_print_file_rcd(b, ss, i, j);
+			bsa_print_fle_rcd(b, ss, i, j);
 		}
 	}
 	os << ss.str();
 	os.close();
+#endif
 }

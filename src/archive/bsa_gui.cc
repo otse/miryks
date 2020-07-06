@@ -63,14 +63,36 @@ void bsa_gui()
 			}
 
 			if (ImGui::BeginTabItem("list")) {
+				ImGui::BeginChildFrame(1, ImVec2(0, 800));
 				for (int i = 0; i < bsa.hdr.folders; i++)
 				{
 					if (ImGui::TreeNode(bsa.ca[i])) {
-						ImGui::Text("Woo");
+
+						bsa_print_fld_rcd(bsa, ss, i);
+						ImGui::Text(ss.str().c_str());
+						ss.str(string());
+						ss.clear();
+
+						ImGui::Separator();
+						ImGui::Text("Files:");
+
+						int r = bsa.r[i];
+						for (int j = 0; j < bsa.fld[i].num; j++)
+						{
+							if (ImGui::TreeNode(bsa.cb[r])) {
+								bsa_print_fle_rcd(bsa, ss, i, j);
+								ImGui::Text(ss.str().c_str());
+								ImGui::TreePop();
+								ss.str(string());
+								ss.clear();
+							}
+							r++;
+						}
 						ImGui::TreePop();
 					}
 				}
 				ImGui::EndTabItem();
+				ImGui::EndChildFrame();
 			}
 	}
 

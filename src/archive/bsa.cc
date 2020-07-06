@@ -27,7 +27,6 @@ api bsa_t bsa_load(const string &s)
 	bsa_read_folder_records(bsa);
 	bsa_read_file_records(bsa);
 	bsa_read_filenames(bsa);
-	bsa_sort(bsa);
 	bsa_resources(bsa);
 	return bsa;
 }
@@ -103,17 +102,6 @@ void bsa_resources(bsa_t &b)
 	b.rc[r] = rc;
 	r++;
 	}
-	}
-}
-
-
-void bsa_sort(bsa_t &b)
-{
-#define hedr b.hdr
-	fld_t **a = new fld_t *[hedr.folders];
-	for (int i = 0; i < hedr.folders; i++)
-	{
-
 	}
 }
 
