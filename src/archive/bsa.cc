@@ -14,7 +14,7 @@ api bsa_t bsa_load(const string &s)
 	bsa_t bsa;
 	bsa.is = ifstream(s, ifstream::binary);
 	assert_(
-		bsa.is, BSA "cant open? see path to oldrim.txt");
+		bsa.is, BSA "cant open? try path to oldrim.txt");
 	bsa.is.read((char *)&hedr, sizeof(hedr_t));
 	assert_(
 		strcmp(
@@ -77,6 +77,7 @@ char *bsa_read_bzstring(bsa_t &b)
 	return name;
 }
 
+/*
 char *bsa_path(bsa_t &b, int i, int r)
 {
 	char *path = (char *)malloc(strlen(b.ca[i]) + strlen(b.cb[r]) + 2);
@@ -85,6 +86,7 @@ char *bsa_path(bsa_t &b, int i, int r)
 	strcat(path, b.cb[r]);
 	return path;
 }
+*/
 
 void bsa_resources(bsa_t &b)
 {
@@ -97,8 +99,7 @@ void bsa_resources(bsa_t &b)
 	b.r[i] = r;
 	for (int j = 0; j < b.fld[i].num; j++)
 	{
-	char *path = bsa_path(b, i, r);
-	rc_t *rc = new rc_t{i, j, r, &b.fld[i], &b.fle[i][j], b.cb[r], path};
+	rc_t *rc = new rc_t{i, j, r, b.cb[r]};
 	b.rc[r] = rc;
 	r++;
 	}
@@ -110,6 +111,8 @@ api rc_t *bsa_find(bsa_t &b, const char *p)
 #define hedr b.hdr
 	char *stem = fstem(p);
 	char *name = fname(p);
+	if (!stem || !name)
+		return nullptr;
 	for (int i = 0; i < hedr.folders; i++)
 	{
 	int cmp = strcmp(stem, b.ca[i]);
@@ -125,9 +128,16 @@ api rc_t *bsa_find(bsa_t &b, const char *p)
 	}
 	}
 	free(stem);
+	free(name);
 	return nullptr;
 }
 
-api const unsigned char* bsa_read(bsa_t &b, rc_t *rc) {
-	return 0;
+api char* bsa_read(bsa_t &b, rc_t *rc) {
+	if (!rc)
+		return nullptr;
+	fle_t &fle = *b.fle[rc->r];
+	char *buf = new char [fle.size];
+	b.is.seekg(fle.offset, ios_base::beg);
+	b.is.read(buf, fle.size);
+	return buf;
 }

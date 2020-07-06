@@ -28,9 +28,7 @@ struct fle_t
 struct rc_t
 {
 	int i, j, r;
-	fld_t *a;
-	fle_t *b;
-	const char *name, *path;
+	const char *name;
 };
 
 struct bsa_t
@@ -40,7 +38,6 @@ struct bsa_t
 	fld_t *fld;
 	fle_t **fle;
 	rc_t **rc;
-	int *sort;
 	int *r;
 	const char **ca;
 	const char **cb;
@@ -66,4 +63,4 @@ void bsa_print_fle_rcd(bsa_t &, stringstream &, int, int);
 void bsa_print_rc(bsa_t &, stringstream &, int);
 
 api rc_t *bsa_find(bsa_t &, const char *);
-api const unsigned char *bsa_read(bsa_t &, rc_t *);
+api char *bsa_read(bsa_t &, rc_t *);

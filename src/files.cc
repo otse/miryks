@@ -8,6 +8,8 @@
 char *fstem(const char *p, char delim)
 {
 	const char *c = strrchr(p, delim);
+	if (!c)
+		return nullptr;
 	int l = c - p + 1;
 	char *d = (char *)malloc(l);
 	memcpy(d, p, l-1);
@@ -17,7 +19,10 @@ char *fstem(const char *p, char delim)
 
 char *fname(const char *p, char delim)
 {
-	const char *c = strrchr(p, delim) + 1;
+	const char *c = strrchr(p, delim);
+	if (!c)
+		return nullptr;
+	c+=1;
 	int l = strlen(p) - (c - p);
 	char *d = (char *)malloc(l + 1);
 	memcpy(d, c, l);
