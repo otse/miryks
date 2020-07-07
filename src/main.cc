@@ -40,7 +40,7 @@ void load_bsas()
 
 	//interface = bsa_load(OLDRIM_PATH + "Data/Skyrim - Interface.bsa");
 	//animations = bsa_load(OLDRIM_PATH + "Data/Skyrim - Animations.bsa");
-	meshes = bsa_load(OLDRIM_PATH + "Data/Skyrim - Meshes.bsa");
+	meshes = bsa_load((OLDRIM_PATH + "Data/Skyrim - Meshes.bsa").c_str());
 }
 
 int main()
@@ -68,9 +68,11 @@ int main()
 	cube->Update();
 	scene->Add(cube);
 	}
-	nif_t *bucket;
 	rc_t *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	assert_(rc, "cant find bucket");
+	nif_t *bucket = new nif_t;
+	bucket->path = rc->path;
+	bucket->buf = rc->buf;
 	bsa_read(meshes, rc);
 	nif_make(rc, bucket);
 	program_loop();

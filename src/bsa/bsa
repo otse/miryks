@@ -1,7 +1,6 @@
 #ifndef BSA_BSA_H
 #define BSA_BSA_H
 
-#include <vector>
 #include <fstream>
 #include <sstream>
 
@@ -42,7 +41,8 @@ struct rc_t
 struct bsa_t
 {
 	hedr_t hdr;
-	ifstream is;
+	void *stream;
+	//unsigned pos;
 	fld_t *fld;
 	fle_t **fle;
 	rc_t **rc;
@@ -51,7 +51,7 @@ struct bsa_t
 	const char **cb;
 };
 
-api bsa_t bsa_load(const string &);
+api bsa_t bsa_load(const char *);
 void bsa_read_folder_records(bsa_t &);
 void bsa_read_file_records(bsa_t &);
 void bsa_read_filenames(bsa_t &);

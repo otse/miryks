@@ -1,20 +1,33 @@
-#include "dark2.h"
 #include "bsa"
 
 #include "files"
+
+#include <stdio.h>
+
 
 #define BSA "bsa - "
 #define VER 104
 #define VER_SE 105
 
-api bsa_t bsa_load(const string &s)
+static int read(bsa_t &b, void *data, unsigned size) {
+	unsigned res = fread(data, 1, size, (FILE *)b.stream);
+	assert_(res == size, "res != size");
+}
+
+static int seek(bsa_t &b, unsigned offset) {
+	unsigned res = fseek((FILE *)b.stream, offset, SEEK_SET);
+	assert_(!res, "!seek");
+}
+
+api bsa_t bsa_load(const char *s)
 {
 #define hedr bsa.hdr
 	bsa_t bsa;
-	bsa.is = ifstream(s, ifstream::binary);
+	//bsa.pos = 0;
+	bsa.stream = fopen(s, "rb");
 	assert_(
-		bsa.is, BSA "cant open? try path to oldrim.txt");
-	bsa.is.read((char *)&hedr, sizeof(hedr_t));
+		bsa.stream, BSA "cant open? try path to oldrim.txt");
+	read(bsa, &hedr, sizeof(hedr_t));
 	assert_(
 		strcmp(
 			"BSA\x00", (char *)&hedr.id) == 0,
@@ -34,7 +47,7 @@ void bsa_read_folder_records(bsa_t &b)
 {
 #define hedr b.hdr
 	b.fld = new fld_t[hedr.folders];
-	b.is.read((char *)b.fld, hedr.folders * sizeof(fld_t));
+	read(b, b.fld, hedr.folders * sizeof(fld_t));
 }
 
 void bsa_read_file_records(bsa_t &b)
@@ -47,7 +60,7 @@ void bsa_read_file_records(bsa_t &b)
 	const int num = b.fld[i].num;
 	b.fle[i] = new fle_t [num];
 	b.ca[i] = bsa_read_bzstring(b);
-	b.is.read((char *)b.fle[i], sizeof(fle_t) * num);
+	read(b, b.fle[i], sizeof(fle_t) * num);
 	}
 }
 
@@ -56,7 +69,7 @@ void bsa_read_filenames(bsa_t &b)
 #define hedr b.hdr
 	char *buf = new char[hedr.filesl];
 	b.cb = new const char *[hedr.files];
-	b.is.read(buf, hedr.filesl);
+	read(b, buf, hedr.filesl);
 	int i = 0, j = 0, n = 0;
 	while (i++ < hedr.filesl)
 	{
@@ -70,9 +83,9 @@ void bsa_read_filenames(bsa_t &b)
 char *bsa_read_bzstring(bsa_t &b)
 {
 	int c = 0;
-	b.is.read((char *)&c, 1);
+	read(b, &c, 1);
 	char *name = new char [c];
-	b.is.read((char *)name, c);
+	read(b, name, c);
 	return name;
 }
 
@@ -97,7 +110,7 @@ void bsa_resources(bsa_t &b)
 	b.r[i] = r;
 	for (int j = 0; j < b.fld[i].num; j++)
 	{
-	b.rc[r] = new rc_t {b, i, j, r, b.cb[r], bsa_path(b, i, j)};
+	b.rc[r] = new rc_t {b, i, j, r, b.cb[r], bsa_path(b, i, r)};
 	r++;
 	}
 	}
@@ -137,6 +150,6 @@ api void bsa_read(bsa_t &b, rc_t *rc) {
 	fle_t &fe = b.fle[rc->i][rc->j];
 	log_("fe.size ", fe.size);
 	rc->buf = (const unsigned char *)malloc(fe.size);
-	b.is.seekg(fe.offset, ios_base::beg);
-	b.is.read((char *)rc->buf, fe.size);
+	seek(b, fe.offset);
+	read(b, (void *)rc->buf, fe.size);
 }

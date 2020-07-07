@@ -14,23 +14,25 @@ using namespace dark2;
 	ss.str(string()); \
 	ss.clear();
 
+static bsa_t bsa;
+static bool good = true;
+static stringstream ss;
+static string hedr = "not loaded";
+static char buf[230] = "Data/Skyrim - Meshes.bsa";
+static char buf_before[230];
+
 void bsa_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
 	ImGui::SetNextWindowSize(ImVec2(400, 0));
 	ImGui::Begin(BSA_GUI, nullptr, flags);
-	static bsa_t bsa;
-	static bool good = true;
-	static stringstream ss;
-	static string hedr = "not loaded";
-	static char buf[230] = "Data/Skyrim - Meshes.bsa";
-	static char buf_before[230];
+	
 	ImGui::InputText("##archive", buf, IM_ARRAYSIZE(buf));
 	if (strcmp(buf, buf_before) && fstat(OLDRIM_PATH + buf))
 	{
 		log_("bsa gui loading new archive");
 		memcpy(buf_before, buf, 230);
-		bsa = bsa_load(OLDRIM_PATH + buf);
+		bsa = bsa_load((OLDRIM_PATH + buf).c_str());
 		bsa_print_hedr(bsa, ss);
 		good = true;
 		hedr = ss.str();
@@ -39,7 +41,7 @@ void bsa_gui()
 	if (!good)
 		return;
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-	if (ImGui::BeginTabBar("MyTabBar", tabBarFlags))
+	if (ImGui::BeginTabBar("tabs", tabBarFlags))
 	{
 		if (ImGui::BeginTabItem("hedr"))
 		{
