@@ -3,10 +3,7 @@
 
 #include "idiom.hpp"
 
-char *fstem(const char *, char = '\\');
-char *fname(const char *, char = '\\');
 void fwrite(const string &, const string &);
-bool fstat(const string &);
 string fread(const string &);
 vector<unsigned char> freadbin(const string &);
 

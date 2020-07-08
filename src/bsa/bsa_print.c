@@ -1,47 +1,42 @@
-#include "dark2.h"
-#include "bsa"
+#include "bsa.h"
+#include "../c/files.h"
 
-#include "files"
-
-#include <sstream>
-
-
-void bsa_print_rc(bsa_t &b, stringstream &ss, int r)
+char *bsa_print_rc(bsa_t *b, int r)
 {
-	rc_t &rc = *b.rc[r];
-	ss <<
+	rc_t *rc = b->rc[r];
+	/*ss <<
 		"^" << r <<
 		"\nfilename: " << rc.name <<
-		"\nfolder: " << b.ca[rc.i] <<
-		"\n";
+		"\nfolder: " << b->ca[rc.i] <<
+		"\n";*/
 }
 
-void bsa_print_fle_rcd(bsa_t &b, stringstream &ss, int i, int j)
+char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
 {
-	fle_t &rcd = b.fle[i][j];
-	ss <<
-		"^" << b.r[i] + j <<
+	fle_t *rcd = &b->fle[i][j];
+	/*ss <<
+		"^" << b->r[i] + j <<
 		"\nhash: " << rcd.hash <<
 		"\nsize: " << rcd.size <<
 		"\noffset: " << rcd.offset <<
-		"\n";
+		"\n";*/
 }
 
-void bsa_print_fld_rcd(bsa_t &b, stringstream &ss, int n)
+char *bsa_print_fld_rcd(bsa_t *b, int n)
 {
-	fld_t &rcd = b.fld[n];
-	ss <<
+	fld_t *rcd = &b->fld[n];
+	/*ss <<
 		"^" << n <<
 		"\nhash: " << rcd.hash <<
 		"\nnum: " << rcd.num <<
 		"\noffset: " << rcd.offset <<
-		"\n";
+		"\n";*/
 }
 
-void bsa_print_hedr(bsa_t &b, stringstream &ss)
+char *bsa_print_hedr(bsa_t *b)
 {
-#define hedr b.hdr
-	ss <<
+#define hedr b->hdr
+	/*ss <<
 		"id: " << hedr.id <<
 		"\nver: " << hedr.ver <<
 		"\noffset: " << hedr.offset <<
@@ -63,28 +58,28 @@ void bsa_print_hedr(bsa_t &b, stringstream &ss)
 		"\nfilesl: " << hedr.filesl <<
 		"\nfile_flags: " << hedr.file_flags <<
 		"\nsizeof: " << sizeof(hedr) <<
-		"\n";
+		"\n";*/
 }
 
 
-void bsa_print(bsa_t &b)
+void bsa_print(bsa_t *b)
 {
 #if 0
-#define hedr b.hdr
+#define hedr b->hdr
 	ofstream os("bsa.txt");
 	stringstream ss;
 	bsa_print_hedr(b, ss);
 	int f = 0;
 	for (int i = 0; i < hedr.folders; i++)
 	{
-		fld_t &fld = b.fld[i];
+		fld_t &fld = b->fld[i];
 		_write(ss, "\n\n");
-		_write(ss, "folder ", i + 1, " of ", hedr.folders, ", ", b.ca[i]);
+		_write(ss, "folder ", i + 1, " of ", hedr.folders, ", ", b->ca[i]);
 		_write(ss, "\n");
 		bsa_print_fld_rcd(b, ss, i);
 		for (int j = 0; j < fld.num; j++)
 		{
-			_write(ss, "  ", b.cb[f++]);
+			_write(ss, "  ", b->cb[f++]);
 			bsa_print_fle_rcd(b, ss, i, j);
 		}
 	}

@@ -5,37 +5,6 @@
 
 #include "idiom.hpp"
 
-char *fstem(const char *p, char delim)
-{
-	const char *c = strrchr(p, delim);
-	if (!c)
-		return nullptr;
-	int l = c - p + 1;
-	char *d = (char *)malloc(l);
-	memcpy(d, p, l-1);
-	d[l-1] = '\0';
-	return d;
-}
-
-char *fname(const char *p, char delim)
-{
-	const char *c = strrchr(p, delim);
-	if (!c)
-		return nullptr;
-	c+=1;
-	int l = strlen(p) - (c - p);
-	char *d = (char *)malloc(l + 1);
-	memcpy(d, c, l);
-	d[l] = '\0';
-	return d;
-}
-
-bool fstat(const string &a)
-{
-	struct stat buffer;
-	return (stat(a.c_str(), &buffer) == 0);
-}
-
 string fread(const string &a)
 {
 	int mode = ifstream::binary | ifstream::ate;

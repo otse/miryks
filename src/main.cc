@@ -4,8 +4,11 @@
 
 #include "files"
 
-#include "bsa/bsa"
-#include "nif/nif"
+extern "C" {
+#include "bsa/bsa.h"
+}
+#include "nif/nif.h"
+
 #include "oldrim_interface.hpp"
 
 #include "opengl/types"
@@ -68,13 +71,13 @@ int main()
 	cube->Update();
 	scene->Add(cube);
 	}
-	rc_t *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
+	/*rc_t *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	assert_(rc, "cant find bucket");
 	nif_t *bucket = new nif_t;
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;
 	bsa_read(meshes, rc);
-	nif_make(rc, bucket);
+	nif_make(rc, bucket);*/
 	program_loop();
 	return 1;
 }

@@ -1,7 +1,9 @@
 #include "dark2.h"
 
-#include "bsa/bsa"
-#include "nif/nif"
+extern "C" {
+#include "bsa/bsa.h"
+}
+#include "nif/nif.h"
 
 #include "opengl/camera"
 #include "opengl/scene"

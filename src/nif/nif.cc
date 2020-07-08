@@ -1,6 +1,6 @@
 #include <cstring>
 
-#include "nif"
+#include "nif.h"
 
 nmap_t nmap[1000];
 int nifs = 0;

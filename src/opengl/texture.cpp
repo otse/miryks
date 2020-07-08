@@ -4,6 +4,7 @@
 
 extern "C"
 {
+#include "../c/files.h"
 #include <dds.h>
 }
 
@@ -31,7 +32,7 @@ Texture_t::~Texture_t() {}
 
 void Texture_t::Load()
 {
-	if (fstat(path) == false)
+	if (fchec(path.c_str()))
 	{
 		log_("texture cant find ", path, "");
 		return;

@@ -1,6 +1,5 @@
 #include "dark2.h"
-
-#include "nif"
+#include "nif.h"
 
 #include "files"
 

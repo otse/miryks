@@ -1,11 +1,13 @@
-#include "bsa"
-
 #include "dark2.h"
 
-#include "files"
+extern "C" {
+#include "bsa.h"
+#include "../c/files.h"
+}
 
 using namespace dark2;
 
+#include <sstream>
 #include <imgui.h>
 
 #define BSA_GUI "bsa"
@@ -28,12 +30,12 @@ void bsa_gui()
 	ImGui::Begin(BSA_GUI, nullptr, flags);
 	
 	ImGui::InputText("##archive", buf, IM_ARRAYSIZE(buf));
-	if (strcmp(buf, buf_before) && fstat(OLDRIM_PATH + buf))
+	if (strcmp(buf, buf_before) && fchec((OLDRIM_PATH + buf).c_str()))
 	{
 		log_("bsa gui loading new archive");
 		memcpy(buf_before, buf, 230);
 		bsa = bsa_load((OLDRIM_PATH + buf).c_str());
-		bsa_print_hedr(bsa, ss);
+		bsa_print_hedr(&bsa);
 		good = true;
 		hedr = ss.str();
 		cls;
@@ -41,7 +43,7 @@ void bsa_gui()
 	if (!good)
 		return;
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-	if (ImGui::BeginTabBar("tabs", tabBarFlags))
+	if (ImGui::BeginTabBar("BsaTabs", tabBarFlags))
 	{
 		if (ImGui::BeginTabItem("hedr"))
 		{
@@ -57,11 +59,11 @@ void bsa_gui()
 			static char rc_str[230] = "meshes\\clutter\\bucket02a.nif";
 			static char rc_str_before[230];
 			ImGui::InputText("##rc", rc_str, IM_ARRAYSIZE(rc_str));
-			rc_t *rc = bsa_find(bsa, rc_str);
+			rc_t *rc = bsa_find(&bsa, rc_str);
 			ImGui::Text(rc ? "found!" : "not found!");
 			if (rc)
 			{
-				bsa_print_rc(bsa, ss, rc->r);
+				bsa_print_rc(&bsa, rc->r);
 				ImGui::Separator();
 				ImGui::Text(ss.str().c_str());
 				cls;
@@ -75,7 +77,7 @@ void bsa_gui()
 			{
 				if (ImGui::TreeNode(bsa.ca[i]))
 				{
-					bsa_print_fld_rcd(bsa, ss, i);
+					bsa_print_fld_rcd(&bsa, i);
 					ImGui::Text(ss.str().c_str());
 					ImGui::Separator();
 					cls;
@@ -85,7 +87,7 @@ void bsa_gui()
 					{
 						if (ImGui::TreeNode(bsa.cb[r]))
 						{
-							bsa_print_fle_rcd(bsa, ss, i, j);
+							bsa_print_fle_rcd(&bsa, i, j);
 							ImGui::Text(ss.str().c_str());
 							ImGui::Separator();
 							ImGui::TreePop();
@@ -99,9 +101,9 @@ void bsa_gui()
 			ImGui::EndTabItem();
 			ImGui::EndChildFrame();
 		}
-	}
 
-	//ImGui::EndTabBar();
+		ImGui::EndTabBar();
+	}
 
 	ImGui::End();
 }
