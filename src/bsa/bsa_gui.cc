@@ -63,10 +63,11 @@ void bsa_gui()
 			ImGui::Text(rc ? "found!" : "not found!");
 			if (rc)
 			{
-				bsa_print_rc(&bsa, rc->r);
+				char *s = bsa_print_rc(&bsa, rc->r);
 				ImGui::Separator();
-				ImGui::Text(ss.str().c_str());
-				cls;
+				ImGui::Text(s);
+				free(s);
+				//cls;
 			}
 			ImGui::EndTabItem();
 		}
@@ -87,8 +88,9 @@ void bsa_gui()
 					{
 						if (ImGui::TreeNode(bsa.cb[r]))
 						{
-							bsa_print_fle_rcd(&bsa, i, j);
-							ImGui::Text(ss.str().c_str());
+							char *s = bsa_print_fle_rcd(&bsa, i, j);
+							ImGui::Text(s);
+							free(s);
 							ImGui::Separator();
 							ImGui::TreePop();
 							cls;

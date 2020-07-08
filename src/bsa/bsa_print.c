@@ -1,9 +1,14 @@
+#include <stdlib.h>
+
 #include "bsa.h"
 #include "../c/files.h"
 
 char *bsa_print_rc(bsa_t *b, int r)
 {
 	rc_t *rc = b->rc[r];
+	char *buf = malloc(sizeof(char) * 100);
+	int w = snprintf(buf, 100, "rc");
+	return buf;
 	/*ss <<
 		"^" << r <<
 		"\nfilename: " << rc.name <<
@@ -14,12 +19,11 @@ char *bsa_print_rc(bsa_t *b, int r)
 char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
 {
 	fle_t *rcd = &b->fle[i][j];
-	/*ss <<
-		"^" << b->r[i] + j <<
-		"\nhash: " << rcd.hash <<
-		"\nsize: " << rcd.size <<
-		"\noffset: " << rcd.offset <<
-		"\n";*/
+	char *buf = malloc(sizeof(char) * 100);
+	int w = snprintf(buf, 100,
+					 "^%i\nhash: %llu\nsize: %lu\noffset: %lu",
+					 b->r[i] + j, rcd->hash, rcd->size, rcd->offset);
+	return buf;
 }
 
 char *bsa_print_fld_rcd(bsa_t *b, int n)
@@ -61,7 +65,6 @@ char *bsa_print_hedr(bsa_t *b)
 		"\n";*/
 }
 
-
 void bsa_print(bsa_t *b)
 {
 #if 0
@@ -80,7 +83,7 @@ void bsa_print(bsa_t *b)
 		for (int j = 0; j < fld.num; j++)
 		{
 			_write(ss, "  ", b->cb[f++]);
-			bsa_print_fle_rcd(b, ss, i, j);
+			bsa_print_fle_rcd(b, ss, i, j); 
 		}
 	}
 	os << ss.str();

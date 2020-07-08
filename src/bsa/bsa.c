@@ -1,10 +1,10 @@
+#include <stdlib.h>
+#include <stdio.h>
+
 #include "bsa.h"
 
 #include "c/hamburger helper.h"
 #include "c/files.h"
-
-#include <stdlib.h>
-#include <stdio.h>
 
 #define BSA "bsa - "
 #define VER 104
