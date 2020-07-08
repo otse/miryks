@@ -114,7 +114,7 @@ void bsa_resources(bsa_t *b)
 	for (int j = 0; j < b->fld[i].num; j++)
 	{
 	b->rc[r] = malloc(sizeof(rc_t));
-	//b->rc[r] = {&b, i, j, r, b->cb[r], bsa_path(b, i, r)};
+	*b->rc[r] = (rc_t){&b, i, j, r, b->cb[r], bsa_path(b, i, r)};
 	r++;
 	}
 	}
@@ -155,7 +155,7 @@ api void bsa_read(bsa_t *b, rc_t *rc) {
 	if (!rc)
 		return;
 	fle_t *f = &b->fle[rc->i][rc->j];
-	rc->buf = (const unsigned char *)malloc(f->size);
+	rc->buf = malloc(f->size);
 	seek(b, f->offset);
 	read(b, (void *)rc->buf, f->size);
 }
