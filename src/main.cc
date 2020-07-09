@@ -1,21 +1,19 @@
-// xx
-
 #include "dark2.h"
 
 #include "files"
 
 extern "C" {
-#include "bsa/bsa.h"
+#include "c/bsa/bsa.h"
+#include "c/nif/nif.h"
 }
-#include "nif/nif.h"
 
 #include "oldrim_interface.hpp"
 
-#include "opengl/types"
-#include "opengl/scene"
-#include "opengl/group"
-#include "opengl/geometry"
-#include "opengl/material"
+#include "cpp/opengl/types"
+#include "cpp/opengl/scene"
+#include "cpp/opengl/group"
+#include "cpp/opengl/geometry"
+#include "cpp/opengl/material"
 
 
 namespace dark2
@@ -26,7 +24,7 @@ namespace dark2
 	bsa_t meshes;
 	bsa_t animations;
 
-	Camera_t *camera;
+	Camera *camera;
 
 	int width = 1920;
 	int height = 1080;
@@ -58,26 +56,22 @@ int main()
 	oglGo();
 	for (int i = 0; i < 100; i++)
 	{
-	Group_t *cube = new Group_t;
+	Group *cube = new Group;
 	vec3 pos = vec3(
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX);
 	pos *= 20;
 	cube->matrix = glm::translate(mat4(1.0f), pos);
-	cube->geometry = new Geometry_t;
-	cube->geometry->material = new Material_t;
+	cube->geometry = new Geometry;
+	cube->geometry->material = new Material;
 	cube->geometry->SetupMesh();
 	cube->Update();
 	scene->Add(cube);
 	}
-	/*rc_t *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
-	assert_(rc, "cant find bucket");
-	nif_t *bucket = new nif_t;
-	bucket->path = rc->path;
-	bucket->buf = rc->buf;
-	bsa_read(meshes, rc);
-	nif_make(rc, bucket);*/
+
+	nif_test(&meshes);
+
 	program_loop();
 	return 1;
 }

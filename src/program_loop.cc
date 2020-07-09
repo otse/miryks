@@ -1,14 +1,14 @@
 #include "dark2.h"
 
 extern "C" {
-#include "bsa/bsa.h"
+#include "c/bsa/bsa.h"
+#include "c/nif/nif.h"
 }
-#include "nif/nif.h"
 
-#include "opengl/camera"
-#include "opengl/scene"
-#include "opengl/material"
-#include "opengl/shader"
+#include "cpp/opengl/camera"
+#include "cpp/opengl/scene"
+#include "cpp/opengl/material"
+#include "cpp/opengl/shader"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -253,9 +253,9 @@ void dark2::program_loop()
 		scene->Order();
 		scene->DrawItems();
 
-		Material_t::Unuse(nullptr, nullptr);
+		Material::Unuse(nullptr, nullptr);
 
-		Shader_t::active = nullptr;
+		Shader::active = nullptr;
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

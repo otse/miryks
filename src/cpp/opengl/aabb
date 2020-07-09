@@ -1,0 +1,46 @@
+#ifndef OGL_AABB_H
+#define OGL_AABB_H
+
+#include "types"
+
+struct aabb
+{
+	enum INTERSECTION
+	{
+		OUTSIDE,
+		INSIDE,
+		INTERSECT
+	};
+
+	INTERSECTION intersect(const aabb &) const;
+
+	static aabb mult(const aabb &, const mat4 &);
+
+	aabb(float = 0);
+	~aabb();
+	vec3 min, max;
+
+	inline bool is_zero()
+	{
+		return min == vec3(0) && max == vec3(0);
+	};
+
+	void extend(const float);
+	void extend(const vec3 &);
+	void extend(const aabb &);
+	void translate(const vec3 &);
+
+	vec3 diagional() const;
+	vec3 center() const;
+
+	bool contains_vec(const vec3 &v) const;
+	float radius2() const;
+
+	void geometrize();
+	void draw(const mat4 &);
+	
+	Geometry *geometry = nullptr;
+
+};
+
+#endif

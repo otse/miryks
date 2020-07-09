@@ -3,7 +3,7 @@
 
 struct bsa_t;
 
-#include "opengl/types"
+#include "cpp/opengl/types"
 
 #include "idiom.hpp"
 

@@ -1,0 +1,53 @@
+#ifndef OPENGL_MATERIAL_H
+#define OPENGL_MATERIAL_H
+
+#include "types"
+
+struct Material
+{
+	static int pool;
+	static Material *active;
+
+	int id;
+	string name;
+	Shader *shader;
+	Texture *map, *normalMap;
+
+	bool
+		transparent,
+		doubleSided,
+		blending,
+		testing,
+		decal;
+	float
+		opacity,
+		treshold,
+		shininess,
+		glossiness,
+		rotation;
+	vec2
+		offset,
+		repeat,
+		center;
+	vec3
+		color,
+		specular,
+		emissive;
+
+	mat3 uvTransform;
+
+	Material();
+
+	void Use();
+	static void Unuse(Material *, Material *);
+
+	void composeUvTransform();
+	void setUvTransformDirectly(float, float, float, float, float, float, float);
+
+	struct depth_func_t
+	{
+		int sfactor, dfactor;
+	} depth_func;
+};
+
+#endif

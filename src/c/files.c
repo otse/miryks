@@ -39,5 +39,7 @@ char *fname(const char *p, char delim)
 char *fout(const char *n, const char *m)
 {
 	FILE *stream = fopen(n, "wb");
+	fputs(m, stream);
+	fclose(stream);
 	return 0;
 }

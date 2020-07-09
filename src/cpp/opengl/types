@@ -1,0 +1,37 @@
+#ifndef OPENGL_TYPES
+#define OPENGL_TYPES
+
+#include "../../idiom.hpp"
+
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+using namespace glm;
+
+struct aabb;
+
+struct Geometry;
+struct Material;
+struct Camera;
+struct Scene;
+struct Group;
+struct Texture;
+struct Shader;
+struct Program;
+struct PointLight;
+
+extern Camera *camera;
+extern Scene *scene;
+
+extern Shader *shaBasic;
+extern Shader *shaSimple;
+extern Shader *shaFx;
+extern Shader *shaPbr;
+
+void detectGlfwError();
+void detectOpenGLError(const string = "?");
+
+void oglGo();
+void oglReloadShaders();
+
+#endif

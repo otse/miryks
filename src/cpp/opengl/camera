@@ -1,0 +1,28 @@
+#ifndef OPENGL_CAMERA_H
+#define OPENGL_CAMERA_H
+
+#include "types"
+
+#include <glm/gtc/matrix_transform.hpp>
+
+struct Camera
+{
+	vec3 pos, eye;
+	mat4 yaw, pitch, aim, view;
+	mat4 projection;
+
+	float fyaw = 0, fpitch = -glm::pi<float>() / 2;
+	float fzoom = 45;
+	bool w = false, a = false, s = false, d = false;
+	bool r = false, f = false;
+	bool shift = false;
+
+	Camera();
+
+	void Mouse(float, float);
+	void Move(float);
+	void Call();
+	void UpDown(const int, float);
+};
+
+#endif
