@@ -30,6 +30,7 @@ api bsa_t bsa_load(const char *s)
 	cassert_(
 		bsa.stream, BSA "can't open");
 	read(&bsa, &hedr, sizeof(bsa_hedr_t));
+	printf(bsa_print_hedr(&bsa));
 	cassert_(
 		strcmp(
 			"BSA\x00", (char *)&hedr.id) == 0,
@@ -41,7 +42,6 @@ api bsa_t bsa_load(const char *s)
 	bsa_read_folder_records(&bsa);
 	bsa_read_file_records(&bsa);
 	bsa_read_filenames(&bsa);
-	printf(bsa_print_hedr(&bsa));
 	bsa_resources(&bsa);
 	log_("loaded bsa");
 	bsa.magic = 654;
@@ -60,7 +60,7 @@ void bsa_read_file_records(bsa_t *b)
 #define hedr b->hdr
 	b->fle = malloc(sizeof(bsa_fle_t *) * hedr.folders);
 	b->ca = malloc(sizeof(char *) * hedr.folders);
-	for (uns_t i = 0; i < hedr.folders; i++)
+	for (int i = 0; i < hedr.folders; i++)
 	{
 	const int num = b->fld[i].num;
 	b->fle[i] = malloc(sizeof(bsa_fle_t) * num);
@@ -75,13 +75,15 @@ void bsa_read_filenames(bsa_t *b)
 	char *buf = malloc(sizeof(char) * hedr.filesl);
 	b->cb = malloc(sizeof(char *) * hedr.files);
 	read(b, buf, hedr.filesl);
-	uns_t i = 0, j = 0, n = 0;
+	int i = 0, j = 0, n = 0;
 	while (i++ < hedr.filesl)
 	{
 	if (buf[i] != '\0')
 		continue;
 	b->cb[n++] = &buf[j];
 	j = i + 1;
+	if (n >= hedr.files)
+		break;
 	}
 }
 
@@ -110,10 +112,10 @@ void bsa_resources(bsa_t *b)
 	b->rc = malloc(sizeof(rc_t *) * hedr.files);
 	b->r = malloc(sizeof(int) * hedr.folders);
 	int r = 0;
-	for (uns_t i = 0; i < hedr.folders; i++)
+	for (int i = 0; i < hedr.folders; i++)
 	{
 	b->r[i] = r;
-	for (uns_t j = 0; j < b->fld[i].num; j++)
+	for (int j = 0; j < b->fld[i].num; j++)
 	{
 	b->rc[r] = malloc(sizeof(rc_t));
 	*b->rc[r] = (rc_t){b, i, j, r, b->cb[r], bsa_path(b, i, r)};
@@ -133,12 +135,12 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 	int cmp;
 	int r;
 	rc_t *rc = 0;
-	for (uns_t i = 0; i < hedr.folders; i++)
+	for (int i = 0; i < hedr.folders; i++)
 	{
 	cmp = strcmp(stem, b->ca[i]);
 	if (cmp) continue;
 	r = b->r[i];
-	for (uns_t j = 0; j < b->fld[i].num; j++)
+	for (int j = 0; j < b->fld[i].num; j++)
 	{
 	cmp = strcmp(name, b->cb[r]);
 	if (!cmp) {
