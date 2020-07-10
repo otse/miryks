@@ -3,6 +3,7 @@
 #include "files"
 
 extern "C" {
+#include "c/c.h"
 #include "c/bsa/bsa.h"
 #include "c/nif/nif.h"
 }
@@ -37,18 +38,22 @@ using namespace dark2;
 
 void load_bsas()
 {
+	log_("load bsas");
+
 	//bsa_test();
 
 	//interface = bsa_load(OLDRIM_PATH + "Data/Skyrim - Interface.bsa");
 	//animations = bsa_load(OLDRIM_PATH + "Data/Skyrim - Animations.bsa");
 	meshes = bsa_load((OLDRIM_PATH + "Data/Skyrim - Meshes.bsa").c_str());
+
+	log_("got bsas");
 }
 
 int main()
 {
 	log_("dark2 loading");
 	OLDRIM_PATH = fread(PATH_TXT);
-	assert_(
+	cassert_(
 		OLDRIM_PATH != "no", "missing" PATH_TXT);
 	load_bsas();
 	//system("PAUSE");
@@ -70,7 +75,7 @@ int main()
 	scene->Add(cube);
 	}
 
-	nif_test(&meshes);
+	//nif_test(&meshes);
 
 	program_loop();
 	return 1;

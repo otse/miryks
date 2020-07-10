@@ -5,7 +5,7 @@ workspace "Dark2"
 project "Dark2"
 	kind "ConsoleApp"
 	language "C++"
-	architecture "x86_64"
+	architecture "x86"
 	
 	--targetdir "bin/%{cfg.buildcfg}"
 	targetdir "bin/"
@@ -19,11 +19,17 @@ project "Dark2"
 		-- We want debug symbols in our debug config
 		defines { "DEBUG" }
 		symbols "On"
+		links {
+			"zlibstaticd"
+		}
 	
 	filter { "configurations:Release" }
 		-- Release should be optimized
 		defines { "NDEBUG" }
 		optimize "On"
+		links {
+			"zlibstatic"
+		}
 	
 	filter {}
 
@@ -46,11 +52,11 @@ project "Dark2"
 	}
 	
 	libdirs {
-		"F:/New folder/glfw-3.3-made/src/%{cfg.longname}",
-		"F:/New folder/zlib-1.2.11-made/%{cfg.longname}"
+		"F:/New folder/glfw-3.3-32/src/%{cfg.longname}",
+		"F:/New folder/zlib-1.2.11-32/%{cfg.longname}"
 	}
 
 	links {
-		"glfw3",
-		"zlib"
+		"glfw3"
+	--	"zlibstatic"
 	}

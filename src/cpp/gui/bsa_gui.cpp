@@ -1,8 +1,9 @@
 #include "dark2.h"
 
 extern "C" {
-#include "../../c/bsa/bsa.h"
-#include "../../c/files.h"
+#include "c/c.h"
+#include "c/files.h"
+#include "c/bsa/bsa.h"
 }
 
 using namespace dark2;
@@ -62,7 +63,12 @@ void bsa_gui()
 			ImGui::Text(rc ? "found!" : "not found!");
 			if (rc)
 			{
-				char *s = bsa_print_rc(&bsa, rc->r);
+				char *s;
+				s = bsa_print_rc(&bsa, rc->r);
+				ImGui::Separator();
+				ImGui::Text(s);
+				free(s);
+				s = bsa_print_fle_rcd(&bsa, rc->i, rc->j);
 				ImGui::Separator();
 				ImGui::Text(s);
 				free(s);
@@ -73,7 +79,7 @@ void bsa_gui()
 		if (ImGui::BeginTabItem("list"))
 		{
 			ImGui::BeginChildFrame(1, ImVec2(0, 800));
-			for (int i = 0; i < bsa.hdr.folders; i++)
+			for (uns_t i = 0; i < bsa.hdr.folders; i++)
 			{
 				if (ImGui::TreeNode(bsa.ca[i]))
 				{
@@ -84,7 +90,7 @@ void bsa_gui()
 					//cls;
 					ImGui::Text("Files:");
 					int r = bsa.r[i];
-					for (int j = 0; j < bsa.fld[i].num; j++)
+					for (uns_t j = 0; j < bsa.fld[i].num; j++)
 					{
 						if (ImGui::TreeNode(bsa.cb[r]))
 						{
@@ -100,8 +106,8 @@ void bsa_gui()
 					ImGui::TreePop();
 				}
 			}
-			ImGui::EndTabItem();
 			ImGui::EndChildFrame();
+			ImGui::EndTabItem();
 		}
 
 		ImGui::EndTabBar();

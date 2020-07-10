@@ -21,7 +21,7 @@ char *bsa_print_rc(bsa_t *b, int r)
 
 char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
 {
-	fle_t *rcd = &b->fle[i][j];
+	bsa_fle_t *rcd = &b->fle[i][j];
 	char *buf = malloc(sizeof(char) * 100);
 	int w = snprintf(
 		buf, 100,
@@ -39,7 +39,7 @@ char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
 
 char *bsa_print_fld_rcd(bsa_t *b, int n)
 {
-	fld_t *rcd = &b->fld[n];
+	bsa_fld_t *rcd = &b->fld[n];
 	char *buf = malloc(sizeof(char) * 200);
 	int w = snprintf(
 		buf, 200,
@@ -104,30 +104,4 @@ id: %s\
 		sizeof(bsa_hedr_t)
 		);
 	return buf;
-}
-
-void bsa_print(bsa_t *b)
-{
-#if 0
-#define hedr b->hdr
-	ofstream os("bsa.txt");
-	stringstream ss;
-	bsa_print_hedr(b, ss);
-	int f = 0;
-	for (int i = 0; i < hedr.folders; i++)
-	{
-		fld_t &fld = b->fld[i];
-		_write(ss, "\n\n");
-		_write(ss, "folder ", i + 1, " of ", hedr.folders, ", ", b->ca[i]);
-		_write(ss, "\n");
-		bsa_print_fld_rcd(b, ss, i);
-		for (int j = 0; j < fld.num; j++)
-		{
-			_write(ss, "  ", b->cb[f++]);
-			bsa_print_fle_rcd(b, ss, i, j); 
-		}
-	}
-	os << ss.str();
-	os.close();
-#endif
 }

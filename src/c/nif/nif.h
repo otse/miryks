@@ -35,7 +35,7 @@ void nif_test(void *);
 api nif_t *nif_alloc();
 api void nif_make(void *, nif_t *);
 api void nif_add(void *, nif_t *);
-api nif_t *nif_get_stored(const char *);
+api nif_t *nif_get_stored(void *);
 
 api char *nif_print_hedr(nif_t *);
 
