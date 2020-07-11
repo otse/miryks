@@ -1,5 +1,6 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #ifndef HAMBURGER_HELPER_H
 #define HAMBURGER_HELPER_H

@@ -12,10 +12,14 @@ char *bsa_print_rc(bsa_t *b, int r)
 "\
 ^%i\
 \nfilename: %s\
-\nfolder: %s",
+\nfolder: %s\
+\nbuf: %p\
+\ninf: %p",
 		r,
 		rc->name,
-		b->ca[rc->i]);
+		b->ca[rc->i],
+		rc->buf,
+		rc->inf);
 	return buf;
 }
 

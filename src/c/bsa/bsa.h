@@ -34,7 +34,7 @@ struct rc_t
 	int i, j, r;
 	const char *name;
 	const char *path;
-	const unsigned char *buf;
+	const unsigned char *buf, *inf;
 };
 
 struct bsa_t

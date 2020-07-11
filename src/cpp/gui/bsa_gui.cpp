@@ -72,6 +72,11 @@ void bsa_gui()
 				ImGui::Separator();
 				ImGui::Text(s);
 				free(s);
+				if (!rc->buf)
+					bsa_read(&bsa, rc);
+				ImGui::Separator();
+				ImGui::Text("Contents:");
+				ImGui::Text((char *)rc->buf);
 				//cls;
 			}
 			ImGui::EndTabItem();

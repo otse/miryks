@@ -118,7 +118,7 @@ void bsa_resources(bsa_t *b)
 	for (int j = 0; j < b->fld[i].num; j++)
 	{
 	b->rc[r] = malloc(sizeof(rc_t));
-	*b->rc[r] = (rc_t){b, i, j, r, b->cb[r], bsa_path(b, i, r)};
+	*b->rc[r] = (rc_t){b, i, j, r, b->cb[r], bsa_path(b, i, r), NULL, NULL};
 	r++;
 	}
 	}
@@ -126,15 +126,13 @@ void bsa_resources(bsa_t *b)
 
 api rc_t *bsa_find(bsa_t *b, const char *p)
 {
-#undef HACK
-#define HACK '\\'
 #define hedr b->hdr
-	char *stem = fstem(p, HACK);
-	char *name = fname(p, HACK);
+	rc_t *rc = NULL;
+	char *stem = fstem(p, '\\');
+	char *name = fname(p, '\\');
 	if (!stem || !name) goto end;
 	int cmp;
 	int r;
-	rc_t *rc = 0;
 	for (int i = 0; i < hedr.folders; i++)
 	{
 	cmp = strcmp(stem, b->ca[i]);
@@ -156,17 +154,15 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 	return rc;
 }
 
-static int zinf(const void *, int, void *, int);
-
-char *decomp(char *src, int size)
+char *raise(char *src, size_t size)
 {
-	void *adr = &src[size - 4];
-	unsigned int len = *((unsigned int *)adr);
-	printf("size %i len %u\n", size, len);
-	char *dest = malloc(len * sizeof(char));
-	int ret = zinf(src, size, dest, len);
-	printf("ret %i\n", ret);
-	cassert_(ret == Z_OK, "decomp");
+	uint32_t u = *(uint32_t *)&src[0];
+	printf("uint32_t %lu\n", u);
+	char *dest = malloc(u * sizeof(char));
+	size -= sizeof(uint32_t);
+	int ret = uncompress(dest, (uLongf*)&u, src + sizeof(uint32_t), size);
+	printf("uncompress %i", ret);
+	cassert_(ret == Z_OK, "! Z_OK");
 	return dest;
 }
 
@@ -174,53 +170,11 @@ api int bsa_read(bsa_t *b, rc_t *rc) {
 	if (!rc)
 		return 0;
 	bsa_fle_t *f = &b->fle[rc->i][rc->j];
-	char *buf, *dest;
-	dest = buf = malloc(sizeof(char) * f->size);
+	rc->buf = malloc(f->size * sizeof(char));
 	seek(b, f->offset);
-	read(b, (void *)buf, f->size);
+	read(b, (void *)rc->buf, f->size);
 	if (hedr.archive_flags & 0x4) {
-		printf("deflate this\n");
-		dest = decomp(buf, f->size);
+		rc->inf = raise(rc->buf, f->size);
 	}
-	rc->buf = dest;
 	return 1;
-}
-
-static int zinf(const void *src, int srcLen, void *dst, int dstLen)
-{
-	z_stream strm = {0};
-	strm.total_in = strm.avail_in = srcLen;
-	strm.total_out = strm.avail_out = dstLen;
-	strm.next_in = (Bytef *)src;
-	strm.next_out = (Bytef *)dst;
-
-	strm.zalloc = Z_NULL;
-	strm.zfree = Z_NULL;
-	strm.opaque = Z_NULL;
-
-	int err = -1;
-	int ret = -1;
-
-	ret = inflateInit2(&strm, -MAX_WBITS);
-	if (err == Z_OK)
-	{
-		err = inflate(&strm, Z_FINISH);
-		if (err == Z_STREAM_END)
-		{
-			ret = strm.total_out;
-		}
-		else
-		{
-			inflateEnd(&strm);
-			return err;
-		}
-	}
-	else
-	{
-		inflateEnd(&strm);
-		return err;
-	}
-
-	inflateEnd(&strm);
-	return ret;
 }

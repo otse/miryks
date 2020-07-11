@@ -15,7 +15,7 @@ char *fstem(const char *p, char delim)
 {
 	const char *c = strrchr(p, delim);
 	if (!c)
-		return 0;
+		return NULL;
 	int l = (c - p) + 1;
 	char *d = malloc(l * sizeof(char));
 	strncpy(d, p, l);
@@ -27,7 +27,7 @@ char *fname(const char *p, char delim)
 {
 	const char *c = strrchr(p, delim);
 	if (!c)
-		return 0;
+		return NULL;
 	c += 1;
 	int l = strlen(p) - (c - p) + 1;
 	char *d = malloc(l * sizeof(char));

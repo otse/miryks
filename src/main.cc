@@ -75,7 +75,7 @@ int main()
 	scene->Add(cube);
 	}
 
-	//nif_test(&meshes);
+	nif_test(&meshes);
 
 	program_loop();
 	return 1;
