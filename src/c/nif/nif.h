@@ -9,19 +9,33 @@ typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nif_t nif_t;
 typedef struct nmap_t nmap_t;
 
+#define t_short_string char *
+#define t_sized_string char *
+
 struct nif_hedr_t
 {
 	char *header_string;
-	uint32_t unknown_1;
+	unsigned int unknown_1;
 	char *version;
 	unsigned char endian_type;
-	uint32_t user_value;
-	uint32_t num_blocks;
-	uint32_t user_value_2;
+	unsigned int user_value;
+	unsigned int num_blocks;
+	unsigned int user_value_2;
+	// short strings
 	char *author;
 	char *process_script;
 	char *export_script;
-	uint16_t num_block_types;
+	unsigned short num_block_types;
+	// sized strings
+	char **block_types;
+	unsigned short *block_type_index;
+	unsigned int *block_sizes;
+	unsigned int num_strings;
+	unsigned int max_string_length;
+	// sized strings
+	char **strings;
+	unsigned int num_groups;
+	unsigned int groups;
 };
 
 struct nif_t
@@ -44,11 +58,15 @@ void nif_gui();
 void nif_test(void *);
 
 char *nif_read_short_string(nif_t *);
+char *nif_read_sized_string(nif_t *);
 
 void nif_read_header(nif_t *);
 void nif_read_header_string(nif_t *);
-void nif_read_header_tween(nif_t *);
+void nif_read_some_stuff(nif_t *);
 void nif_read_block_types(nif_t *);
+void nif_read_block_type_index(nif_t *);
+void nif_read_block_sizes(nif_t *);
+void nif_read_strings(nif_t *);
 
 api nif_t *nif_alloc();
 

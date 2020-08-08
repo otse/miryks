@@ -1,7 +1,7 @@
 #include "dark2.h"
 
 extern "C" {
-#include "../../c/nif/nif.h"
+	#include "../../c/nif/nif.h"
 }
 
 #include "files"
@@ -49,8 +49,43 @@ void nif_gui()
 				char *s = nif_print_hedr(nif);
 				ImGui::TextWrapped(s);
 				free(s);
+				if (ImGui::TreeNode("Block Types")) {
+					const int n = nif->hdr.num_block_types;
+					for (int i = 0; i < n; i++)
+					{
+						ImGui::Text("%i %s", i, nif->hdr.block_types[i]);
+					}
+					ImGui::TreePop();
+				}
+				if (ImGui::TreeNode("Block Type Index")) {
+					const int n = nif->hdr.num_blocks;
+					for (int i = 0; i < n; i++)
+					{
+						unsigned short h = nif->hdr.block_type_index[i];
+						char *s = nif->hdr.block_types[h];
+						ImGui::Text("%s [%hu]", s, h);
+					}
+					ImGui::TreePop();
+				}
+				if (ImGui::TreeNode("Block Sizes")) {
+					const int n = nif->hdr.num_blocks;
+					for (int i = 0; i < n; i++)
+					{
+						ImGui::Text("%u", nif->hdr.block_sizes[i]);
+					}
+					ImGui::TreePop();
+				}
+				if (ImGui::TreeNode("Strings")) {
+					const int n = nif->hdr.num_strings;
+					for (int i = 0; i < n; i++)
+					{
+						ImGui::Text("%s", nif->hdr.strings[i]);
+					}
+					ImGui::TreePop();
+				}
 				ImGui::Separator();
 				ImGui::TreePop();
+
 			}
 			if (ImGui::TreeNode("Blocks"))
 			{
