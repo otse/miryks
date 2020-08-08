@@ -12,6 +12,7 @@ typedef struct nmap_t nmap_t;
 struct nif_hedr_t
 {
 	char *header_string;
+	uint32_t unknown_1;
 	char *version;
 	unsigned char endian_type;
 	uint32_t user_value;
@@ -20,10 +21,12 @@ struct nif_hedr_t
 	char *author;
 	char *process_script;
 	char *export_script;
+	uint16_t num_block_types;
 };
 
 struct nif_t
 {
+	int pos;
 	nif_hedr_t hdr;
 	int n;
 	const char *path;
@@ -40,11 +43,15 @@ extern int nifs;
 void nif_gui();
 void nif_test(void *);
 
-char *nif_read_short_string(nif_t *, int *);
+char *nif_read_short_string(nif_t *);
+
+void nif_read_header(nif_t *);
+void nif_read_header_string(nif_t *);
+void nif_read_header_tween(nif_t *);
+void nif_read_block_types(nif_t *);
 
 api nif_t *nif_alloc();
-api void nif_read_header(nif_t *);
-api void nif_read_header_string(nif_t *);
+
 api void nif_make(void *, nif_t *);
 api void nif_add(void *, nif_t *);
 api nif_t *nif_get_stored(void *);

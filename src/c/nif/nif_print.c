@@ -4,9 +4,9 @@
 
 char *nif_print_hedr(nif_t *nif)
 {
-	char *buf = malloc(200 * sizeof(char));
+	char *buf = malloc(600 * sizeof(char));
 	int w = snprintf(
-		buf, 200,
+		buf, 600,
 		"\
 header string: %s\
 \nversion: %s\
@@ -17,6 +17,7 @@ header string: %s\
 \nauthor: %s\
 \nprocess script: %s\
 \nexport script: %s\
+\nnum block types: %hi\
 ",
 nif->hdr.header_string,
 nif->hdr.version,
@@ -26,7 +27,8 @@ nif->hdr.num_blocks,
 nif->hdr.user_value_2,
 nif->hdr.author,
 nif->hdr.process_script,
-nif->hdr.export_script
+nif->hdr.export_script,
+nif->hdr.num_block_types
 );
 	return buf;
 }
