@@ -47,7 +47,7 @@ void nif_gui()
 			if (ImGui::TreeNode("Header"))
 			{
 				char *s = nif_print_hedr(nif);
-				ImGui::Text(nif->hdr.str);
+				ImGui::TextWrapped(s);
 				free(s);
 				ImGui::Separator();
 				ImGui::TreePop();

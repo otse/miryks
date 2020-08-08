@@ -4,7 +4,29 @@
 
 char *nif_print_hedr(nif_t *nif)
 {
-	char *buf = malloc(5 * sizeof(char));
-	*buf = "boo0\0";
+	char *buf = malloc(200 * sizeof(char));
+	int w = snprintf(
+		buf, 200,
+		"\
+header string: %s\
+\nversion: %s\
+\nendian type: %u\
+\nuser value: %u\
+\nnum blocks: %u\
+\nuser value 2: %u\
+\nauthor: %s\
+\nprocess script: %s\
+\nexport script: %s\
+",
+nif->hdr.header_string,
+nif->hdr.version,
+nif->hdr.endian_type,
+nif->hdr.user_value,
+nif->hdr.num_blocks,
+nif->hdr.user_value_2,
+nif->hdr.author,
+nif->hdr.process_script,
+nif->hdr.export_script
+);
 	return buf;
 }

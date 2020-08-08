@@ -21,7 +21,6 @@ static stringstream ss;
 
 void opengl_gui()
 {
-
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
 	ImGui::SetNextWindowSize(ImVec2(400, 0));
 	ImGui::Begin(OPENGL_GUI, nullptr, flags);

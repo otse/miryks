@@ -36,8 +36,13 @@ void Camera::Call()
 
 	using namespace dark2;
 
+	float aspect = (float) width / (float) height;
+
 	projection = perspective(
-		radians(fzoom), (float)width / (float)height, 0.1f, 10000.0f);
+		radians(fzoom),
+		aspect,
+		0.1f,
+		10000.0f);
 
 	//log_("view ", glm::to_string(view));
 }
@@ -61,6 +66,7 @@ void Camera::Move(float time)
 		pos.x += n * sin(fyaw);
 		pos.y += n * cos(fyaw);
 	};
+	
 	auto strafe = [&](float n) {
 		pos.x += n * cos(-fyaw);
 		pos.y += n * sin(-fyaw);
