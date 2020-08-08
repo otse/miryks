@@ -8,6 +8,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 using namespace glm;
 
+const float pif = pi<float>();
+
 struct aabb;
 
 struct Geometry;
@@ -31,6 +33,7 @@ extern Shader *shaPbr;
 void detectGlfwError();
 void detectOpenGLError(const string = "?");
 
+void opengl_gui();
 void oglGo();
 void oglReloadShaders();
 

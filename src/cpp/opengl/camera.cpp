@@ -6,10 +6,10 @@
 #include <glm/gtx/string_cast.hpp>
 
 
-const float pif = pi<float>();
-
 Camera::Camera()
 {
+	pos = vec3(0);
+	eye = vec3(0);
 }
 
 void Camera::Mouse(float x, float y)
@@ -44,6 +44,7 @@ void Camera::Call()
 
 void Camera::UpDown(const int dir, float time)
 {
+	return;
 	float speed = 250 * time;
 	if (shift)
 		speed /= 10;

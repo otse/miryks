@@ -8,8 +8,6 @@ extern "C" {
 #include "c/nif/nif.h"
 }
 
-#include "oldrim_interface.hpp"
-
 #include "cpp/opengl/types"
 #include "cpp/opengl/scene"
 #include "cpp/opengl/group"

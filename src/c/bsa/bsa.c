@@ -2,8 +2,10 @@
 
 #include "bsa.h"
 
-#include <zlib.h>
+// based on
+// https://github.com/Ortham/libbsa/blob/master/src/api/tes4bsa.cpp
 
+#include <zlib.h>
 
 #define BSA "bsa - "
 #define VER 104
@@ -30,7 +32,7 @@ api bsa_t bsa_load(const char *s)
 	cassert_(
 		bsa.stream, BSA "can't open");
 	read(&bsa, &hedr, sizeof(bsa_hedr_t));
-	printf(bsa_print_hedr(&bsa));
+	//printf(bsa_print_hedr(&bsa));
 	cassert_(
 		strcmp(
 			"BSA\x00", (char *)&hedr.id) == 0,
@@ -58,14 +60,14 @@ void bsa_read_folder_records(bsa_t *b)
 void bsa_read_file_records(bsa_t *b)
 {
 #define hedr b->hdr
-	b->fle = malloc(sizeof(bsa_fle_t *) * hedr.folders);
+	b->file = malloc(sizeof(bsa_file_t *) * hedr.folders);
 	b->ca = malloc(sizeof(char *) * hedr.folders);
 	for (int i = 0; i < hedr.folders; i++)
 	{
 	const int num = b->fld[i].num;
-	b->fle[i] = malloc(sizeof(bsa_fle_t) * num);
+	b->file[i] = malloc(sizeof(bsa_file_t) * num);
 	b->ca[i] = bsa_read_bzstring(b);
-	read(b, b->fle[i], sizeof(bsa_fle_t) * num);
+	read(b, b->file[i], sizeof(bsa_file_t) * num);
 	}
 }
 
@@ -98,10 +100,9 @@ char *bsa_read_bzstring(bsa_t *b)
 
 char *bsa_path(bsa_t *b, int i, int r)
 {
-#define HACK "\\"
 	char *path = (char *)malloc(strlen(b->ca[i]) + strlen(b->cb[r]) + 2);
 	strcpy(path, b->ca[i]);
-	strcat(path, HACK);
+	strcat(path, "\\");
 	strcat(path, b->cb[r]);
 	return path;
 }
@@ -154,27 +155,26 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 	return rc;
 }
 
-char *raise(char *src, size_t size)
+char *bsa_uncompress(char *data, size_t size)
 {
-	uint32_t u = *(uint32_t *)&src[0];
-	printf("uint32_t %lu\n", u);
-	char *dest = malloc(u * sizeof(char));
+	uint32_t u = *(uint32_t *)&data[0];
 	size -= sizeof(uint32_t);
-	int ret = uncompress(dest, (uLongf*)&u, src + sizeof(uint32_t), size);
-	printf("uncompress %i", ret);
-	cassert_(ret == Z_OK, "! Z_OK");
+	char *dest = malloc(u * sizeof(char));
+	char *src = data + sizeof(uint32_t);
+	int ret = uncompress(dest, (uLongf*)&u, src, size);
+	cassert_(ret == Z_OK, BSA "zlib");
 	return dest;
 }
 
 api int bsa_read(bsa_t *b, rc_t *rc) {
-	if (!rc)
+	if (!rc || rc->buf || rc->inf)
 		return 0;
-	bsa_fle_t *f = &b->fle[rc->i][rc->j];
+	bsa_file_t *f = &b->file[rc->i][rc->j];
 	rc->buf = malloc(f->size * sizeof(char));
 	seek(b, f->offset);
 	read(b, (void *)rc->buf, f->size);
 	if (hedr.archive_flags & 0x4) {
-		rc->inf = raise(rc->buf, f->size);
+		rc->inf = bsa_uncompress(rc->buf, f->size);
 	}
 	return 1;
 }

@@ -3,10 +3,10 @@
 #include "bsa.h"
 #include "../files.h"
 
-char *bsa_print_rc(bsa_t *b, int r)
+api char *bsa_print_rc(bsa_t *b, int r)
 {
 	rc_t *rc = b->rc[r];
-	char *buf = malloc(sizeof(char) * 200);
+	char *buf = malloc(200 * sizeof(char));
 	int w = snprintf(
 		buf, 200,
 "\
@@ -23,10 +23,10 @@ char *bsa_print_rc(bsa_t *b, int r)
 	return buf;
 }
 
-char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
+api char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
 {
-	bsa_fle_t *rcd = &b->fle[i][j];
-	char *buf = malloc(sizeof(char) * 100);
+	bsa_file_t *rcd = &b->file[i][j];
+	char *buf = malloc(100 * sizeof(char));
 	int w = snprintf(
 		buf, 100,
 "\
@@ -41,10 +41,10 @@ char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
 	return buf;
 }
 
-char *bsa_print_fld_rcd(bsa_t *b, int n)
+api char *bsa_print_fld_rcd(bsa_t *b, int n)
 {
 	bsa_fld_t *rcd = &b->fld[n];
-	char *buf = malloc(sizeof(char) * 200);
+	char *buf = malloc(200 * sizeof(char));
 	int w = snprintf(
 		buf, 200,
 "\
@@ -58,10 +58,10 @@ char *bsa_print_fld_rcd(bsa_t *b, int n)
 	return buf;
 }
 
-char *bsa_print_hedr(bsa_t *b)
+api char *bsa_print_hedr(bsa_t *b)
 {
 #define hedr b->hdr
-	char *buf = malloc(sizeof(char) * 500);
+	char *buf = malloc(500 * sizeof(char));
 	int w = snprintf(
 		buf, 500,
 "\

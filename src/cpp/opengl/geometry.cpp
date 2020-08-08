@@ -4,6 +4,8 @@
 #include "camera"
 #include "material"
 
+int Geometry::num = 0;
+
 const std::vector<vec3> VERTICES = {
 	vec3(-1.0, -1.0, 1.0),
 	vec3(1.0, -1.0, 1.0),
@@ -30,6 +32,7 @@ const std::vector<GLuint> ELEMENTS = {
 
 Geometry::Geometry()
 {
+	num++;
 	for (const vec3 &v : VERTICES)
 		vertices.push_back(vertex_t{v});
 	elements.insert(
@@ -38,8 +41,8 @@ Geometry::Geometry()
 
 Geometry::~Geometry()
 {
+	num--;
 	log_("delete geometry");
-
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);

@@ -6,7 +6,7 @@
 typedef struct bsa_t bsa_t;
 typedef struct bsa_hedr_t bsa_hedr_t;
 typedef struct bsa_fld_t bsa_fld_t;
-typedef struct bsa_fle_t bsa_fle_t;
+typedef struct bsa_file_t bsa_file_t;
 
 typedef struct rc_t rc_t;
 
@@ -22,7 +22,7 @@ struct bsa_fld_t
 	unsigned long num, offset;
 };
 
-struct bsa_fle_t
+struct bsa_file_t
 {
 	unsigned long long hash;
 	unsigned long size, offset;
@@ -43,7 +43,7 @@ struct bsa_t
 	void *stream;
 	//unsigned pos;
 	bsa_fld_t *fld;
-	bsa_fle_t **fle;
+	bsa_file_t **file;
 	rc_t **rc;
 	int *r;
 	const char **ca;
@@ -64,11 +64,12 @@ void bsa_bsort(bsa_t *);
 
 char *bsa_path(bsa_t *, int, int);
 char *bsa_read_bzstring(bsa_t *);
+char *bsa_uncompress(char *, size_t);
 
-char *bsa_print_hedr(bsa_t *);
-char *bsa_print_fld_rcd(bsa_t *, int);
-char *bsa_print_fle_rcd(bsa_t *, int, int);
-char *bsa_print_rc(bsa_t *, int);
+api char *bsa_print_hedr(bsa_t *);
+api char *bsa_print_fld_rcd(bsa_t *, int);
+api char *bsa_print_fle_rcd(bsa_t *, int, int);
+api char *bsa_print_rc(bsa_t *, int);
 
 api rc_t *bsa_find(bsa_t *, const char *);
 api int bsa_read(bsa_t *, rc_t *);

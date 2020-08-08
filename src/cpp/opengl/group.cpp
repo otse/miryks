@@ -4,8 +4,11 @@
 
 //#define DRAW_AXIS
 
+int Group::num = 0;
+
 Group::Group()
 {
+	num++;
 	parent = nullptr;
 	geometry = nullptr;
 	axis = nullptr;
@@ -19,6 +22,10 @@ Group::Group()
 	axis->SetupMesh();
 
 #endif
+}
+
+Group::~Group() {
+	num--;
 }
 
 void Group::Add(Group *gr)

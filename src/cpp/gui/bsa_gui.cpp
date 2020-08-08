@@ -66,6 +66,7 @@ void bsa_gui()
 				char *s;
 				s = bsa_print_rc(&bsa, rc->r);
 				ImGui::Separator();
+				//ImGui::Text("Resource:");
 				ImGui::Text(s);
 				free(s);
 				s = bsa_print_fle_rcd(&bsa, rc->i, rc->j);

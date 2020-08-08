@@ -17,6 +17,7 @@ struct vertex_t
 
 struct Geometry
 {
+	static int num;
 	bool created = false;
 	bool lines = false;
 	bool collide = true;
