@@ -5,8 +5,9 @@
 
 #define api
 
-typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nif_t nif_t;
+typedef struct nif_hedr_t nif_hedr_t;
+typedef struct nif_block_t nif_block_t;
 typedef struct nmap_t nmap_t;
 
 #define t_short_string char *
@@ -22,9 +23,7 @@ struct nif_hedr_t
 	unsigned int num_blocks;
 	unsigned int user_value_2;
 	// short strings
-	char *author;
-	char *process_script;
-	char *export_script;
+	char *author, *process_script, *export_script;
 	unsigned short num_block_types;
 	// sized strings
 	char **block_types;
@@ -35,13 +34,20 @@ struct nif_hedr_t
 	// sized strings
 	char **strings;
 	unsigned int num_groups;
-	unsigned int groups;
+	// sized strings
+	char **groups;
+	int end;
+};
+
+struct nif_block_t {
+	int n;
 };
 
 struct nif_t
 {
 	int pos;
 	nif_hedr_t hdr;
+	nif_block_t **blocks;
 	int n;
 	const char *path;
 	const unsigned char *buf;
@@ -67,13 +73,19 @@ void nif_read_block_types(nif_t *);
 void nif_read_block_type_index(nif_t *);
 void nif_read_block_sizes(nif_t *);
 void nif_read_strings(nif_t *);
+void nif_read_groups(nif_t *);
+
+void nif_read_blocks(nif_t *);
+void nif_read_block(nif_t *, int);
 
 api nif_t *nif_alloc();
 
 api void nif_make(void *, nif_t *);
-api void nif_add(void *, nif_t *);
 api nif_t *nif_get_stored(void *);
 
+void nif_add(void *, nif_t *);
+
 api char *nif_print_hedr(nif_t *);
+api char *nif_print_block(nif_t *, int);
 
 #endif

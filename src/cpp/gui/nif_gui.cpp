@@ -89,6 +89,24 @@ void nif_gui()
 			}
 			if (ImGui::TreeNode("Blocks"))
 			{
+				const int n = nif->hdr.num_blocks;
+				for (int i = 0; i < n; i++)
+				{
+					nif_block_t *block = nif->blocks[i];
+					const char *block_type = nif->hdr.block_types[nif->hdr.block_type_index[i]];
+					const char *fmt = to_string(i).c_str();
+					char *buf = (char *)malloc(sizeof(char) * 100);
+					sprintf(buf, "%i %s", i, block_type);
+					if (ImGui::TreeNode(buf))
+					{
+						ImGui::TextDisabled("thanks for clicking me yo");
+						char *s = nif_print_block(nif, i);
+						ImGui::TextWrapped(s);
+						free(s);
+						ImGui::TreePop();
+					}
+					free(buf);
+				}
 				ImGui::Separator();
 				ImGui::TreePop();
 			}

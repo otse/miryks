@@ -35,8 +35,7 @@ api nif_t *nif_get_stored(void *key)
 api void nif_make(void *key, nif_t *nif)
 {
 	cassert_(nif->buf, "nif->buf NULL");
-
 	nif_read_header(nif);
-
+	nif_read_blocks(nif);
 	nif_add(key, nif);
 }

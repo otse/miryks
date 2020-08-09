@@ -25,6 +25,7 @@ header string: %s\
 \nmax string length: %u\
 \nstrings\
 \nnum groups: %u\
+\ngroups\
 ",
 nif->hdr.header_string,
 nif->hdr.version,
@@ -39,6 +40,21 @@ nif->hdr.num_block_types,
 nif->hdr.num_strings,
 nif->hdr.max_string_length,
 nif->hdr.num_groups
+);
+	return buf;
+}
+
+char *nif_print_block(nif_t *nif, int i)
+{
+	char *buf = malloc(600 * sizeof(char));
+	int w = snprintf(
+		buf, 600,
+		"\
+header string: %i\
+\nversion: %i\
+",
+2,
+2
 );
 	return buf;
 }
