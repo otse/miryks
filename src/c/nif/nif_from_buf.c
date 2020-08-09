@@ -2,7 +2,15 @@
 
 #include "nif.h"
 
-#include "buf_helpers.h"
+#include "from_buf_helpers.h"
+
+void read_header_string(nif_t *);
+void read_some_stuff(nif_t *);
+void read_block_types(nif_t *);
+void read_block_type_index(nif_t *);
+void read_block_sizes(nif_t *);
+void read_strings(nif_t *);
+void read_groups(nif_t *);
 
 char *nif_read_short_string(nif_t *nif)
 {
@@ -24,21 +32,21 @@ char *nif_read_sized_string(nif_t *nif)
 	return string;
 }
 
-void nif_read_header(nif_t *nif)
+api void nif_read_header(nif_t *nif)
 {
-	nif_read_header_string(nif);
+	read_header_string(nif);
 	hedr.unknown_1 = from_buf();
 	four();
-	nif_read_some_stuff(nif);
-	nif_read_block_types(nif);
-	nif_read_block_type_index(nif);
-	nif_read_block_sizes(nif);
-	nif_read_strings(nif);
-	nif_read_groups(nif);
+	read_some_stuff(nif);
+	read_block_types(nif);
+	read_block_type_index(nif);
+	read_block_sizes(nif);
+	read_strings(nif);
+	read_groups(nif);
 	hedr.end = pos;
 }
 
-void nif_read_header_string(nif_t *nif)
+void read_header_string(nif_t *nif)
 {
 	// Gamebryo File Format, Version 20.2.0.7\n
 	int n = strchr(buf, '\n') - buf + 1;
@@ -50,7 +58,7 @@ void nif_read_header_string(nif_t *nif)
 	pos += n;
 }
 
-void nif_read_some_stuff(nif_t *nif)
+void read_some_stuff(nif_t *nif)
 {
 	hedr.endian_type = from_buf();
 	one();
@@ -67,7 +75,7 @@ void nif_read_some_stuff(nif_t *nif)
 	two();
 }
 
-void nif_read_block_types(nif_t *nif)
+void read_block_types(nif_t *nif)
 {
 	int n = hedr.num_block_types;
 	hedr.block_types = malloc(n * sizeof(char *));
@@ -77,7 +85,7 @@ void nif_read_block_types(nif_t *nif)
 	}
 }
 
-void nif_read_block_type_index(nif_t *nif)
+void read_block_type_index(nif_t *nif)
 {
 	int size = hedr.num_blocks * sizeof(unsigned short);
 	hedr.block_type_index = malloc(size);
@@ -85,7 +93,7 @@ void nif_read_block_type_index(nif_t *nif)
 	pos += size;
 }
 
-void nif_read_block_sizes(nif_t *nif)
+void read_block_sizes(nif_t *nif)
 {
 	int size = hedr.num_blocks * sizeof(unsigned int);
 	hedr.block_sizes = malloc(size);
@@ -93,7 +101,7 @@ void nif_read_block_sizes(nif_t *nif)
 	pos += size;
 }
 
-void nif_read_strings(nif_t *nif)
+void read_strings(nif_t *nif)
 {
 	hedr.num_strings = from_buf();
 	four();
@@ -107,7 +115,7 @@ void nif_read_strings(nif_t *nif)
 	}
 }
 
-void nif_read_groups(nif_t *nif)
+void read_groups(nif_t *nif)
 {
 	hedr.num_groups = from_buf();
 	four();

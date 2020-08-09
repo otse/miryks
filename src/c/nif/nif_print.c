@@ -2,13 +2,15 @@
 
 #include "nif.h"
 
-#define hedr nif->hdr
+#include "from_buf_helpers.h"
+
+char *print_ni_node(nifn);
 
 char *nif_print_hedr(nif_t *nif)
 {
-	char *buf = malloc(600 * sizeof(char));
+	char *s = malloc(600 * sizeof(char));
 	int w = snprintf(
-		buf, 600,
+		s, 600,
 		"\
 header string: %s\
 \nversion: %s\
@@ -43,14 +45,15 @@ nif->hdr.num_strings,
 nif->hdr.max_string_length,
 nif->hdr.num_groups
 );
-	return buf;
+	return s;
 }
 
-char *nif_print_ni_node(nif_t *nif, int n)
+char *print_ni_node(nifn)
 {
-	char *buf = malloc(600 * sizeof(char));
+	ni_node_t *ni_node = (ni_node_t *)nif->blocks[n];
+	char *s = malloc(600 * sizeof(char));
 	int w = snprintf(
-		buf, 600,
+		s, 600,
 		"\
 ninode type \
 \nstring: %i\
@@ -59,18 +62,18 @@ ninode type \
 2,
 2
 );
-	return buf;
+	return s;
 }
 
 #define type(x) 0 == strcmp(block_type, x)
 
-char *nif_print_block(nif_t *nif, int n)
+char *nif_print_block(nifn)
 {
 	char *s = NULL;
 	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
 	if (0) ;
-	else if (type(NI_NODE)) s = nif_print_ni_node(nif, n);
-	else if (type(BS_LEAF_ANIM_NODE)) s = nif_print_ni_node(nif, n);
-	else if (type(BS_FADE_NODE)) s = nif_print_ni_node(nif, n);
+	else if (type(NI_NODE)) s = print_ni_node(nif, n);
+	else if (type(BS_LEAF_ANIM_NODE)) s = print_ni_node(nif, n);
+	else if (type(BS_FADE_NODE)) s = print_ni_node(nif, n);
 	return s;
 }

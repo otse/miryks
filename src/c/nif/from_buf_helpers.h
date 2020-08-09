@@ -1,3 +1,5 @@
+#define nifn nif_t *nif, int n
+
 #define hedr nif->hdr
 #define buf nif->buf
 #define pos nif->pos

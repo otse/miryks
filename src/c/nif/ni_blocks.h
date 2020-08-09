@@ -1,3 +1,4 @@
+
 #define NI_NODE "NiNode"
 #define BS_LEAF_ANIM_NODE "BSLeafAnimNode"
 #define BS_FADE_NODE "BSFadeNode"
@@ -23,3 +24,9 @@
 #define NI_TRANSFORM_INTERPOLATOR "NiTransformInterpolator"
 #define NI_TRANSFORM_DATA "NiTransformData"
 #define BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA "BSDecalPlacementVectorExtraData"
+
+typedef struct ni_node_t ni_node_t;
+
+struct ni_node_t {
+	ni_block_t base;
+};
