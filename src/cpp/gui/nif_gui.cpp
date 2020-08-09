@@ -99,9 +99,11 @@ void nif_gui()
 					sprintf(buf, "%i %s", i, block_type);
 					if (ImGui::TreeNode(buf))
 					{
-						ImGui::TextDisabled("thanks for clicking me yo");
 						char *s = nif_print_block(nif, i);
-						ImGui::TextWrapped(s);
+						if (s)
+							ImGui::TextWrapped(s);
+						else
+							ImGui::TextDisabled("not printed");
 						free(s);
 						ImGui::TreePop();
 					}

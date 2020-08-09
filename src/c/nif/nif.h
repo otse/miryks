@@ -1,6 +1,8 @@
 #ifndef NIF_NIF_H
 #define NIF_NIF_H
 
+#include "ni_list.h"
+
 // https://gist.github.com/EmilHernvall/953968
 
 #define api
@@ -8,6 +10,7 @@
 typedef struct nif_t nif_t;
 typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nif_block_t nif_block_t;
+typedef struct nif_ni_node_t nif_ni_node_t;
 typedef struct nmap_t nmap_t;
 
 #define t_short_string char *
@@ -87,5 +90,13 @@ void nif_add(void *, nif_t *);
 
 api char *nif_print_hedr(nif_t *);
 api char *nif_print_block(nif_t *, int);
+
+// block types
+
+struct nif_ni_node_t {
+	nif_block_t base;
+	
+};
+
 
 #endif

@@ -2,6 +2,8 @@
 
 #include "nif.h"
 
+#define hedr nif->hdr
+
 char *nif_print_hedr(nif_t *nif)
 {
 	char *buf = malloc(600 * sizeof(char));
@@ -44,17 +46,31 @@ nif->hdr.num_groups
 	return buf;
 }
 
-char *nif_print_block(nif_t *nif, int i)
+char *nif_print_ni_node(nif_t *nif, int n)
 {
 	char *buf = malloc(600 * sizeof(char));
 	int w = snprintf(
 		buf, 600,
 		"\
-header string: %i\
+ninode type \
+\nstring: %i\
 \nversion: %i\
 ",
 2,
 2
 );
 	return buf;
+}
+
+#define type(x) 0 == strcmp(block_type, x)
+
+char *nif_print_block(nif_t *nif, int n)
+{
+	char *s = NULL;
+	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
+	if (0) ;
+	else if (type(NI_NODE)) s = nif_print_ni_node(nif, n);
+	else if (type(BS_LEAF_ANIM_NODE)) s = nif_print_ni_node(nif, n);
+	else if (type(BS_FADE_NODE)) s = nif_print_ni_node(nif, n);
+	return s;
 }
