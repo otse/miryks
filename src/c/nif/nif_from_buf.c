@@ -15,8 +15,8 @@ void read_groups(nif_t *);
 char *nif_read_short_string(nif_t *nif)
 {
 	char len = *(buf + pos);
-	char *string = malloc(len * sizeof(char));
-	strncpy(string, buf + 1 + pos, len);
+	char *string = malloc(sizeof(char) * len);
+	strncpy(string, buf + pos + 1, len);
 	pos += len + 1;
 	return string;
 }
@@ -24,7 +24,7 @@ char *nif_read_short_string(nif_t *nif)
 char *nif_read_sized_string(nif_t *nif)
 {
 	int len = *(buf + pos);
-	char *string = malloc(len + 1 * sizeof(char));
+	char *string = malloc(sizeof(char) * len + 1);
 	strncpy(string, buf + pos + 4, len);
 	string[len] = '\0';
 	four();
@@ -50,7 +50,7 @@ void read_header_string(nif_t *nif)
 {
 	// Gamebryo File Format, Version 20.2.0.7\n
 	int n = strchr(buf, '\n') - buf + 1;
-	char *string = malloc(n * sizeof(char));
+	char *string = malloc(sizeof(char) * n);
 	strncpy(string, buf, n);
 	string[n - 1] = '\0';
 	hedr.header_string = string;
@@ -78,7 +78,7 @@ void read_some_stuff(nif_t *nif)
 void read_block_types(nif_t *nif)
 {
 	int n = hedr.num_block_types;
-	hedr.block_types = malloc(n * sizeof(char *));
+	hedr.block_types = malloc(sizeof(char *) * n);
 	for (int i = 0; i < n; i++)
 	{
 	hedr.block_types[i] = nif_read_sized_string(nif);
@@ -87,7 +87,7 @@ void read_block_types(nif_t *nif)
 
 void read_block_type_index(nif_t *nif)
 {
-	int size = hedr.num_blocks * sizeof(unsigned short);
+	int size = sizeof(unsigned short) * hedr.num_blocks;
 	hedr.block_type_index = malloc(size);
 	memcpy(hedr.block_type_index, buf + pos, size);
 	pos += size;
@@ -95,7 +95,7 @@ void read_block_type_index(nif_t *nif)
 
 void read_block_sizes(nif_t *nif)
 {
-	int size = hedr.num_blocks * sizeof(unsigned int);
+	int size = sizeof(unsigned int) * hedr.num_blocks;
 	hedr.block_sizes = malloc(size);
 	memcpy(hedr.block_sizes, buf + pos, size);
 	pos += size;
@@ -108,7 +108,7 @@ void read_strings(nif_t *nif)
 	hedr.max_string_length = from_buf();
 	four();
 	int n = hedr.num_strings;
-	hedr.strings = malloc(n * sizeof(char *));
+	hedr.strings = malloc(sizeof(char *) * n);
 	for (int i = 0; i < n; i++)
 	{
 	hedr.strings[i] = nif_read_sized_string(nif);

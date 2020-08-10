@@ -28,5 +28,19 @@
 typedef struct ni_node_t ni_node_t;
 
 struct ni_node_t {
-	ni_block_t base;
+	ni_block_t *base;
+	ni_string_t name;
+	char *name_string;
+	unsigned int num_extra_data_list;
+	ni_ref_t *extra_data_list;
+	ni_ref_t controller;
+	unsigned int flags;
+	float translation[3];
+	float rotation[9];
+	float scale;
+	ni_ref_t collision_object;
+	unsigned int num_children;
+	ni_ref_t *children;
+	unsigned int num_effects;
+	ni_ref_t *effects;
 };

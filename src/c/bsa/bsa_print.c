@@ -7,9 +7,7 @@ api char *bsa_print_rc(bsa_t *b, int r)
 {
 	rc_t *rc = b->rc[r];
 	char *buf = malloc(200 * sizeof(char));
-	int w = snprintf(
-		buf, 200,
-		"\
+	int w = snprintf(buf, 200, "\
 ^%i\
 \nfilename: %s\
 \nfolder: %s\
@@ -29,9 +27,7 @@ api char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
 {
 	bsa_file_t *rcd = &b->file[i][j];
 	char *buf = malloc(100 * sizeof(char));
-	int w = snprintf(
-		buf, 100,
-		"\
+	int w = snprintf(buf, 100, "\
 ^%i\
 \nhash: %llu\
 \nsize: %lu\
@@ -49,9 +45,7 @@ api char *bsa_print_fld_rcd(bsa_t *b, int n)
 {
 	bsa_fld_t *rcd = &b->fld[n];
 	char *buf = malloc(200 * sizeof(char));
-	int w = snprintf(
-		buf, 200,
-		"\
+	int w = snprintf(buf, 200, "\
 ^%i\
 \nhash: %llu\
 \nnum: %lu\
@@ -68,9 +62,7 @@ api char *bsa_print_hedr(bsa_t *b)
 {
 	#define hedr b->hdr
 	char *buf = malloc(500 * sizeof(char));
-	int w = snprintf(
-		buf, 500,
-		"\
+	int w = snprintf(buf, 500, "\
 id: %s\
 \nver: %i\
 \noffset: %lu\

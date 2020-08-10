@@ -8,6 +8,8 @@ typedef struct ni_block_t ni_block_t;
 typedef struct nif_t nif_t;
 typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nmap_t nmap_t;
+typedef int ni_ref_t;
+typedef int ni_string_t;
 
 #define t_short_string char *
 #define t_sized_string char *
@@ -36,13 +38,14 @@ struct nif_hedr_t
 
 struct ni_block_t {
 	int n;
+	void *v;
 };
 
 struct nif_t
 {
 	int pos;
 	nif_hedr_t hdr;
-	ni_block_t **blocks;
+	ni_block_t *blocks;
 	int n;
 	const char *path;
 	const unsigned char *buf;

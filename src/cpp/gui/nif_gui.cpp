@@ -21,7 +21,6 @@ static stringstream ss;
 
 void nif_gui()
 {
-
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
 	ImGui::SetNextWindowSize(ImVec2(400, 0));
 	ImGui::Begin(NIF_GUI, nullptr, flags);
@@ -92,7 +91,7 @@ void nif_gui()
 				const int n = nif->hdr.num_blocks;
 				for (int i = 0; i < n; i++)
 				{
-					ni_block_t *block = nif->blocks[i];
+					//ni_block_t *block = &nif->blocks[i];
 					const char *block_type = nif->hdr.block_types[nif->hdr.block_type_index[i]];
 					const char *fmt = to_string(i).c_str();
 					char *buf = (char *)malloc(sizeof(char) * 100);
