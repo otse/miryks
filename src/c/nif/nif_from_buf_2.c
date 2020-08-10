@@ -5,13 +5,25 @@
 #include "from_buf_helpers.h"
 
 void *read_list(nifn, int);
+void *read_vec3(nifn, void *);
+void *read_mat3(nifn, void *);
+void *read_mat4(nifn, void *);
 
 void *read_list(nifn, int size) {
-	if (!size) return NULL;
 	void *mem = malloc(size);
 	memcpy(mem, buf + pos, size);
 	pos += size;
 	return mem;
+}
+
+void *read_vec3(nifn, void *dest) {
+	memcpy(dest, buf + pos, 4 * 3);
+	four() * 3;
+}
+
+void *read_mat3(nifn, void *dest) {
+	memcpy(dest, buf + pos, 4 * (3 * 3));
+	four() * 9;
 }
 
 void read_block(nif_t *, int);
@@ -84,10 +96,8 @@ void read_ni_node(nifn)
 	four();
 	block->flags = uint_from_buf();
 	four();
-	*block->translation = float_from_buf();
-	four() * 3;
-	*block->rotation = float_from_buf();
-	four() * 9;
+	read_vec3(nif, n, &block->translation);
+	read_mat3(nif, n, &block->rotation);
 	block->scale = float_from_buf();
 	four();
 	block->collision_object = int_from_buf();
