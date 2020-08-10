@@ -35,7 +35,7 @@ char *nif_read_sized_string(nif_t *nif)
 api void nif_read_header(nif_t *nif)
 {
 	read_header_string(nif);
-	hedr.unknown_1 = from_buf();
+	hedr.unknown_1 = int_from_buf();
 	four();
 	read_some_stuff(nif);
 	read_block_types(nif);
@@ -44,11 +44,6 @@ api void nif_read_header(nif_t *nif)
 	read_strings(nif);
 	read_groups(nif);
 	hedr.end = pos;
-
-	pos = 0x1D7;
-	int controller = from_buf();
-	printf("controller %i\n", controller);
-	pos = hedr.end;
 }
 
 void read_header_string(nif_t *nif)
@@ -65,18 +60,18 @@ void read_header_string(nif_t *nif)
 
 void read_some_stuff(nif_t *nif)
 {
-	hedr.endian_type = from_buf();
+	hedr.endian_type = byte_from_buf();
 	one();
-	hedr.user_value = from_buf();
+	hedr.user_value = uint_from_buf();
 	four();
-	hedr.num_blocks = from_buf();
+	hedr.num_blocks = uint_from_buf();
 	four();
-	hedr.user_value_2 = from_buf();
+	hedr.user_value_2 = uint_from_buf();
 	four();
 	hedr.author = nif_read_short_string(nif);
 	hedr.process_script = nif_read_short_string(nif);
 	hedr.export_script = nif_read_short_string(nif);
-	hedr.num_block_types = from_buf();
+	hedr.num_block_types = ushort_from_buf();
 	two();
 }
 
@@ -108,9 +103,9 @@ void read_block_sizes(nif_t *nif)
 
 void read_strings(nif_t *nif)
 {
-	hedr.num_strings = from_buf();
+	hedr.num_strings = uint_from_buf();
 	four();
-	hedr.max_string_length = from_buf();
+	hedr.max_string_length = uint_from_buf();
 	four();
 	int n = hedr.num_strings;
 	hedr.strings = malloc(sizeof(char *) * n);
@@ -122,6 +117,6 @@ void read_strings(nif_t *nif)
 
 void read_groups(nif_t *nif)
 {
-	hedr.num_groups = from_buf();
+	hedr.num_groups = uint_from_buf();
 	four();
 }

@@ -4,7 +4,12 @@
 #define buf nif->buf
 #define pos nif->pos
 #define blocks nif->blocks
-#define from_buf() *(buf + pos)
+#define byte_from_buf() *(buf + pos)
+#define int_from_buf() *(int *)(buf + pos)
+#define uint_from_buf() *(unsigned int*)(buf + pos)
+#define float_from_buf() *(float *)(buf + pos)
+#define short_from_buf() *(short *)(buf + pos)
+#define ushort_from_buf() *(unsigned short *)(buf + pos)
 
 #define one() pos += 1
 #define two() pos += 2

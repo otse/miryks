@@ -33,7 +33,7 @@ struct nif_hedr_t
 	char **strings; // sized strings
 	unsigned int num_groups;
 	unsigned int *groups; // sized strings
-	int end;
+	unsigned end;
 };
 
 struct ni_block_t {
@@ -43,12 +43,12 @@ struct ni_block_t {
 
 struct nif_t
 {
-	unsigned int pos;
-	nif_hedr_t hdr;
-	ni_block_t *blocks;
 	int n;
 	const char *path;
 	const unsigned char *buf;
+	unsigned pos;
+	nif_hedr_t hdr;
+	ni_block_t *blocks;
 };
 
 #include "ni_blocks.h"
