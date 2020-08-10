@@ -8,8 +8,8 @@ typedef struct ni_block_t ni_block_t;
 typedef struct nif_t nif_t;
 typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nmap_t nmap_t;
-typedef int ni_ref_t;
-typedef int ni_string_t;
+typedef int32_t ni_ref_t;
+typedef int32_t ni_string_t;
 
 #define t_short_string char *
 #define t_sized_string char *
@@ -32,7 +32,7 @@ struct nif_hedr_t
 	unsigned int max_string_length;
 	char **strings; // sized strings
 	unsigned int num_groups;
-	char **groups; // sized strings
+	unsigned int *groups; // sized strings
 	int end;
 };
 
@@ -43,7 +43,7 @@ struct ni_block_t {
 
 struct nif_t
 {
-	int pos;
+	unsigned int pos;
 	nif_hedr_t hdr;
 	ni_block_t *blocks;
 	int n;
@@ -71,8 +71,8 @@ api void nif_make(void *, nif_t *);
 api void nif_add(void *, nif_t *);
 api nif_t *nif_get_stored(void *);
 
-api char *nif_print_hedr(nif_t *);
-api char *nif_print_block(nif_t *, int);
+api void nif_print_hedr(nif_t *, char *);
+api void nif_print_block(nif_t *, int, char *);
 
 api void nif_read_header(nif_t *);
 api void nif_read_blocks(nif_t *);

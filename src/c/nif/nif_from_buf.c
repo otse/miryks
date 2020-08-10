@@ -44,6 +44,11 @@ api void nif_read_header(nif_t *nif)
 	read_strings(nif);
 	read_groups(nif);
 	hedr.end = pos;
+
+	pos = 0x1D7;
+	int controller = from_buf();
+	printf("controller %i\n", controller);
+	pos = hedr.end;
 }
 
 void read_header_string(nif_t *nif)

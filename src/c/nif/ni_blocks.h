@@ -28,8 +28,7 @@
 typedef struct ni_node_t ni_node_t;
 
 struct ni_node_t {
-	ni_block_t *base;
-	ni_string_t name;
+	int name;
 	char *name_string;
 	unsigned int num_extra_data_list;
 	ni_ref_t *extra_data_list;

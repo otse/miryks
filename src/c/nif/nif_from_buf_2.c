@@ -4,6 +4,16 @@
 
 #include "from_buf_helpers.h"
 
+void *read_list(nifn, int);
+
+void *read_list(nifn, int size) {
+	if (!size) return NULL;
+	void *mem = malloc(size);
+	memcpy(mem, buf + pos, size);
+	pos += size;
+	return mem;
+}
+
 void read_block(nif_t *, int);
 
 void read_ni_node(nifn);
@@ -13,12 +23,13 @@ void read_ni_skin_data(nifn);
 api void nif_read_blocks(nif_t *nif)
 {
 	blocks = malloc(sizeof(ni_block_t) * hedr.num_blocks);
-	for (int i = 0; i < hedr.num_blocks; i++)
+	for (unsigned int i = 0; i < hedr.num_blocks; i++)
 	{
 	blocks[i].n = i;
 	blocks[i].v = NULL;
-	printf("block begin at %i", pos);
+	printf("block begin at %i %04x\n", pos, pos);
 	read_block(nif, i);
+	break;
 	}
 }
 
@@ -58,38 +69,37 @@ void read_block(nif_t *nif, int n)
 void read_ni_node(nifn)
 {
 	unsigned int size;
-	ni_node_t *ni_node = malloc(sizeof(ni_node_t));
-	blocks[n].v = ni_node;
-	ni_node->name = from_buf();
-	ni_node->name_string = NULL;
-	if (-1 != ni_node->name)
-	ni_node->name_string = hedr.strings[ni_node->name];
+	ni_node_t *block = malloc(sizeof(ni_node_t));
+	blocks[n].v = block;
+	block->name = from_buf();
 	four();
-	ni_node->num_extra_data_list = from_buf();
+	block->name_string = NULL;
+	if (-1 != block->name)
+	block->name_string = hedr.strings[block->name];
+	block->num_extra_data_list = from_buf();
 	four();
-	size = sizeof(ni_ref_t) * ni_node->num_extra_data_list;
-	ni_node->extra_data_list = malloc(size);
-	memcpy(ni_node->extra_data_list, buf + pos, size);
-	pos += size;
-	ni_node->controller = from_buf();
-	printf("\ncontroller: %i\n", ni_node->controller);
+	size = sizeof(ni_ref_t) * block->num_extra_data_list;
+	//block->extra_data_list = read_list(nif, n, size);
 	four();
-	ni_node->flags = from_buf();
+	block->controller = from_buf();
+	printf("controller %d %03x %i\n", pos, pos, block->controller);
 	four();
-	//*ni_node->translation = from_buf();
-	memcpy(ni_node->translation, buf + pos, four() * 3);
+	printf("after controller %03x\n", pos);
+	block->flags = from_buf();
+	four();
+	*block->translation = from_buf();
 	four() * 3;
-	*ni_node->rotation = from_buf();
+	*block->rotation = from_buf();
 	four() * 9;
-	ni_node->scale = from_buf();
+	block->scale = from_buf();
 	four();
-	ni_node->collision_object = from_buf();
+	block->collision_object = from_buf();
 	four();
-	ni_node->num_children = from_buf();
+	block->num_children = from_buf();
 	four();
-	size = sizeof(ni_ref_t) * ni_node->num_children;
-	ni_node->children = malloc(size);
-	memcpy(ni_node->children, buf + pos, size);
+	size = sizeof(ni_ref_t) * block->num_children;
+	block->children = malloc(size);
+	memcpy(block->children, buf + pos, size);
 	pos += size;
 }
 

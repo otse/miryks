@@ -45,9 +45,9 @@ void nif_gui()
 			ImGui::Separator();
 			if (ImGui::TreeNode("Header"))
 			{
-				char *s = nif_print_hedr(nif);
+				char s[500];
+				nif_print_hedr(nif, s);
 				ImGui::TextWrapped(s);
-				free(s);
 				if (ImGui::TreeNode("Block Types")) {
 					const int n = nif->hdr.num_block_types;
 					for (int i = 0; i < n; i++)
@@ -94,19 +94,18 @@ void nif_gui()
 					//ni_block_t *block = &nif->blocks[i];
 					const char *block_type = nif->hdr.block_types[nif->hdr.block_type_index[i]];
 					const char *fmt = to_string(i).c_str();
-					char *buf = (char *)malloc(sizeof(char) * 100);
+					char buf[100];
 					sprintf(buf, "%i %s", i, block_type);
 					if (ImGui::TreeNode(buf))
 					{
-						char *s = nif_print_block(nif, i);
-						if (s)
+						char s[600];
+						nif_print_block(nif, i, s);
+						if (s[0] != '\0')
 							ImGui::TextWrapped(s);
 						else
 							ImGui::TextDisabled("not printed");
-						free(s);
 						ImGui::TreePop();
 					}
-					free(buf);
 				}
 				ImGui::Separator();
 				ImGui::TreePop();
