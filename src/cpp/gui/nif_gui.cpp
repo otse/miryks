@@ -22,7 +22,7 @@ static stringstream ss;
 void nif_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
-	ImGui::SetNextWindowSize(ImVec2(400, 0));
+	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::Begin(NIF_GUI, nullptr, flags);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
@@ -98,7 +98,7 @@ void nif_gui()
 					sprintf(buf, "%i %s", i, block_type);
 					if (ImGui::TreeNode(buf))
 					{
-						char s[600];
+						char s[1000];
 						nif_print_block(nif, i, s);
 						if (s[0] != '\0')
 							ImGui::TextWrapped(s);

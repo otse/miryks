@@ -8,6 +8,12 @@ typedef struct ni_block_t ni_block_t;
 typedef struct nif_t nif_t;
 typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nmap_t nmap_t;
+typedef struct vec_2 vec_2;
+typedef struct vec_3 vec_3;
+typedef struct vec_4 vec_4;
+typedef struct mat_3 mat_3;
+typedef struct mat_4 mat_4;
+typedef struct ni_triangle_t ni_triangle_t;
 typedef int32_t ni_ref_t;
 typedef int32_t ni_string_t;
 
@@ -36,7 +42,8 @@ struct nif_hedr_t
 	unsigned end;
 };
 
-struct ni_block_t {
+struct ni_block_t
+{
 	int n;
 	void *v;
 };
@@ -50,6 +57,13 @@ struct nif_t
 	nif_hedr_t hdr;
 	ni_block_t *blocks;
 };
+
+struct vec_2{ float x, y; };
+struct vec_3{ float x, y, z; };
+struct vec_4{ float x, y, z, w; };
+struct mat_3{ float n[9]; };
+struct mat_4{ float n[16]; };
+struct ni_triangle_t{ unsigned short n[3]; };
 
 #include "ni_blocks.h"
 

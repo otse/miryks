@@ -1,4 +1,3 @@
-
 #define NI_NODE "NiNode"
 #define BS_LEAF_ANIM_NODE "BSLeafAnimNode"
 #define BS_FADE_NODE "BSFadeNode"
@@ -25,21 +24,66 @@
 #define NI_TRANSFORM_DATA "NiTransformData"
 #define BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA "BSDecalPlacementVectorExtraData"
 
+typedef struct ni_basic_layout_t ni_basic_layout_t;
 typedef struct ni_node_t ni_node_t;
+typedef struct ni_tri_shape_t ni_tri_shape_t;
+typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
 
-struct ni_node_t {
+struct ni_basic_layout_t {
 	int name;
 	char *name_string;
 	unsigned int num_extra_data_list;
 	ni_ref_t *extra_data_list;
 	ni_ref_t controller;
 	unsigned int flags;
-	float translation[3];
-	float rotation[9];
+	vec_3 translation;
+	mat_3 rotation;
 	float scale;
 	ni_ref_t collision_object;
+};
+
+struct ni_node_t {
+	ni_basic_layout_t basic;
 	unsigned int num_children;
 	ni_ref_t *children;
 	unsigned int num_effects;
 	ni_ref_t *effects;
+};
+
+struct ni_tri_shape_t {
+	ni_basic_layout_t basic;
+	ni_ref_t data;
+	ni_ref_t skin_instance;
+	// skip mateiral for now
+	ni_ref_t shader_property;
+	ni_ref_t alpha_property;
+};
+
+struct ni_tri_shape_data_t {
+	int group_id;
+	unsigned short num_vertices;
+	unsigned char keep_flags;
+	unsigned char compress_flags;
+	int has_vertices;
+	vec_3 *vertices;
+	int bs_vector_flags;
+	unsigned int material_crc;
+	int has_normals;
+	vec_3 *normals;
+	vec_3 *tangents;
+	vec_3 *bitangents;
+	vec_3 center;
+	float radius;
+	int has_vertex_colors;
+	vec_4 *vertex_colors;
+	vec_2 *uv_sets;
+	unsigned short consistency_flags;
+	ni_ref_t additional_data;
+	unsigned short num_triangles;
+	unsigned short num_triangle_points;
+	int has_triangles;
+	ni_triangle_t *triangles;
+	unsigned short num_match_groups;
+	int match_groups;
+	int match_group;
 };
