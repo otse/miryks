@@ -216,7 +216,7 @@ void dark2::program_go()
 
 	setupImgui();
 
-	glClearColor(1, 0, 1, 1);
+	glClearColor(0, 0, 0, 1);
 
 	glEnable(GL_TEXTURE);
 	glEnable(GL_DEPTH_TEST);

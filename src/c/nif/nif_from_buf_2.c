@@ -4,20 +4,30 @@
 
 #include "from_buf_helpers.h"
 
-void *read_list(nifn, int);
-void *read_value(nifn, int, void *);
-
-void *read_list(nifn, int size) {
-	void *mem = malloc(size);
+unsigned char *read_list(nifn, int size) {
+	unsigned char *mem = malloc(size);
 	memcpy(mem, buf + pos, size);
 	pos += size;
 	return mem;
 }
 
-void *read_value(nifn, int size, void *dest) {
+void read_array(nifn, int size, void *dest) {
+	void *mem = malloc(size);
+	memcpy(mem, buf + pos, size);
+	pos += size;
+}
+
+void read_range(nifn, int start, int stop, void *dest) {
+	int size = stop - start;
 	memcpy(dest, buf + pos, size);
 	pos += size;
 }
+
+#define as_byte(d) (unsigned char *)d
+//read_as_array(nif, n, type, block, ni_ref_t, extra_data_list, num_extra_data_list);
+//               a   b   c      d        e             f                 g
+#define read_as_array(a, b, c, d, e, f, g) read_array(a, b, sizeof(e) * *(int *)((as_byte(d) + offsetof(c, g))), as_byte(d) + offsetof(c, f))
+#define read_as_struct(a, b, c, d, e, f) read_range(a, b, offsetof(c, e), offsetof(c, f), as_byte(d) + offsetof(c, e))
 
 void read_block(nif_t *, int);
 
@@ -27,6 +37,7 @@ void read_ni_skin_instance(nifn);
 void read_ni_skin_data(nifn);
 void read_ni_tri_shape(nifn);
 void read_ni_tri_shape_data(nifn);
+void read_bs_lighting_effect_shader_property(nifn);
 
 api void nif_read_blocks(nif_t *nif)
 {
@@ -66,7 +77,7 @@ void read_block(nif_t *nif, int n)
 	else if (is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER)) 0;
 	else if (is_type(NI_FLOAT_INTERPOLATOR)) 0;
 	else if (is_type(NI_FLOAT_DATA)) 0;
-	else if (is_type(BS_LIGHTING_SHADER_PROPERTY)) 0;
+	else if (is_type(BS_LIGHTING_SHADER_PROPERTY)) read_bs_lighting_effect_shader_property(nif, n);
 	else if (is_type(BS_SHADER_TEXTURE_SET)) 0;
 	else if (is_type(NI_CONTROLLER_SEQUENCE)) 0;
 	else if (is_type(NI_TEXT_KEY_EXTRA_DATA)) 0;
@@ -81,9 +92,6 @@ ni_basic_layout_t read_ni_basic_layout(nifn) {
 	ni_basic_layout_t block;
 	block.name = int_from_buf();
 	four();
-	block.name_string = NULL;
-	if (-1 != block.name)
-	block.name_string = hedr.strings[block.name];
 	block.num_extra_data_list = uint_from_buf();
 	four();
 	size = sizeof(ni_ref_t) * block.num_extra_data_list;
@@ -92,13 +100,19 @@ ni_basic_layout_t read_ni_basic_layout(nifn) {
 	four();
 	block.flags = uint_from_buf();
 	four();
-	read_value(nif, n, sizeof(vec_3), &block.translation);
-	read_value(nif, n, sizeof(mat_3), &block.rotation);
+	block.translation = vec_3_from_buf();
+	four() * 3;
+	block.rotation = mat_3_from_buf();
+	four() * 9;
 	block.scale = float_from_buf();
 	four();
 	block.collision_object = int_from_buf();
 	printf("col obj: %i", block.collision_object);
 	four();
+	//
+	block.name_string = NULL;
+	if (-1 != block.name)
+	block.name_string = hedr.strings[block.name];
 	return block;
 }
 
@@ -106,24 +120,19 @@ void read_ni_node(nifn)
 {
 	ni_node_t *block = malloc(sizeof(ni_node_t));
 	blocks[n].v = block;
-	unsigned int size;
 	block->basic = read_ni_basic_layout(nif, n);
 	block->num_children = uint_from_buf();
 	four();
-	size = sizeof(ni_ref_t) * block->num_children;
-	block->children = read_list(nif, n, size);
+	read_as_array(nif, n, ni_node_t, block, ni_ref_t, children, num_children);
+	block->num_effects = uint_from_buf();
 	four();
-	block->num_children = uint_from_buf();
-	four();
-	size = sizeof(ni_ref_t) * block->num_effects;
-	block->effects = read_list(nif, n, size);
+	read_as_array(nif, n, ni_node_t, block, ni_ref_t, effects, num_effects);
 }
 
 void read_ni_tri_shape(nifn)
 {
 	ni_tri_shape_t *block = malloc(sizeof(ni_node_t));
 	blocks[n].v = block;
-	unsigned int size;
 	block->basic = read_ni_basic_layout(nif, n);
 	block->data = int_from_buf();
 	four();
@@ -146,8 +155,8 @@ void read_ni_tri_shape_data(nifn)
 	four();
 	block->num_vertices = ushort_from_buf();
 	two();
-	printf("keep flags %i", pos);
 	block->keep_flags = byte_from_buf();
+	printf("offsetof %i", offsetof(ni_tri_shape_data_t, keep_flags));
 	one();
 	block->compress_flags = byte_from_buf();
 	one();
@@ -187,7 +196,7 @@ void read_ni_tri_shape_data(nifn)
 	four();
 	block->has_triangles = byte_from_buf();
 	one();
-	size = sizeof(ni_triangle_t) * block->num_triangles;
+	size = sizeof(ushort_3) * block->num_triangles;
 	block->triangles = read_list(nif, n, size);
 	block->num_match_groups = ushort_from_buf();
 	two();
@@ -202,4 +211,18 @@ void read_ni_skin_instance(nifn)
 void read_ni_skin_data(nifn)
 {
 
+}
+
+void read_bs_lighting_effect_shader_property(nifn)
+{
+#define type bs_lighting_shader_property_t
+	type *block = malloc(sizeof(type));
+	blocks[n].v = block;
+	unsigned int size;
+	read_as_struct(nif, n, type, block, skyrim_shader_type, extra_data_list);
+	read_as_array(nif, n, type, block, ni_ref_t, extra_data_list, num_extra_data_list);
+	read_as_struct(nif, n, type, block, controller, end);
+	block->name_string = NULL;
+	if (-1!=block->name)
+	block->name_string = hedr.strings[block->name];
 }

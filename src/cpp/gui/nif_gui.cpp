@@ -98,12 +98,13 @@ void nif_gui()
 					sprintf(buf, "%i %s", i, block_type);
 					if (ImGui::TreeNode(buf))
 					{
-						char s[1000];
+						char s[1500];
 						nif_print_block(nif, i, s);
 						if (s[0] != '\0')
 							ImGui::TextWrapped(s);
 						else
 							ImGui::TextDisabled("not printed");
+						ImGui::Separator();
 						ImGui::TreePop();
 					}
 				}

@@ -10,8 +10,11 @@
 #define float_from_buf() *(float *)(buf + pos)
 #define short_from_buf() *(short *)(buf + pos)
 #define ushort_from_buf() *(unsigned short *)(buf + pos)
+#define vec_2_from_buf() *(vec_2 *)(buf + pos)
 #define vec_3_from_buf() *(vec_3 *)(buf + pos)
 #define vec_4_from_buf() *(vec_4 *)(buf + pos)
+#define mat_3_from_buf() *(mat_3 *)(buf + pos)
+#define mat_4_from_buf() *(mat_4 *)(buf + pos)
 
 #define one() pos += 1
 #define two() pos += 2

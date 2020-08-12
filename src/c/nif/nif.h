@@ -13,7 +13,7 @@ typedef struct vec_3 vec_3;
 typedef struct vec_4 vec_4;
 typedef struct mat_3 mat_3;
 typedef struct mat_4 mat_4;
-typedef struct ni_triangle_t ni_triangle_t;
+typedef struct ushort_3 ushort_3;
 typedef int32_t ni_ref_t;
 typedef int32_t ni_string_t;
 
@@ -63,7 +63,7 @@ struct vec_3{ float x, y, z; };
 struct vec_4{ float x, y, z, w; };
 struct mat_3{ float n[9]; };
 struct mat_4{ float n[16]; };
-struct ni_triangle_t{ unsigned short n[3]; };
+struct ushort_3{ unsigned short x, y, z; };
 
 #include "ni_blocks.h"
 

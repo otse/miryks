@@ -28,10 +28,10 @@ typedef struct ni_basic_layout_t ni_basic_layout_t;
 typedef struct ni_node_t ni_node_t;
 typedef struct ni_tri_shape_t ni_tri_shape_t;
 typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
+typedef struct bs_lighting_shader_property_t bs_lighting_shader_property_t;
 
 struct ni_basic_layout_t {
 	int name;
-	char *name_string;
 	unsigned int num_extra_data_list;
 	ni_ref_t *extra_data_list;
 	ni_ref_t controller;
@@ -40,6 +40,8 @@ struct ni_basic_layout_t {
 	mat_3 rotation;
 	float scale;
 	ni_ref_t collision_object;
+	int end;
+	char *name_string;
 };
 
 struct ni_node_t {
@@ -82,8 +84,33 @@ struct ni_tri_shape_data_t {
 	unsigned short num_triangles;
 	unsigned short num_triangle_points;
 	int has_triangles;
-	ni_triangle_t *triangles;
+	ushort_3 *triangles;
 	unsigned short num_match_groups;
 	int match_groups;
 	int match_group;
+};
+
+struct bs_lighting_shader_property_t {
+	unsigned int skyrim_shader_type;
+	int name;
+	unsigned int num_extra_data_list;
+	ni_ref_t *extra_data_list;
+	ni_ref_t controller;
+	unsigned int shader_flags_1;
+	unsigned int shader_flags_2;
+	vec_2 uv_offset;
+	vec_2 uv_scale;
+	ni_ref_t texture_set;
+	vec_3 emissive_color;
+	float emissive_multiple;
+	unsigned int texture_clamp_mode;
+	float alpha;
+	float refraction_strength;
+	float glossiness;
+	vec_3 specular_color;
+	float specular_strength;
+	float lighting_effect_1;
+	float lighting_effect_2;
+	int end;
+	char *name_string;
 };
