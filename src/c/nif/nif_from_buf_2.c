@@ -14,11 +14,11 @@ unsigned char *read_list(nifn, int size) {
 // todo, point struct pointer to buf + pos instead of a memcpy
 
 void read_array(nifn, int element, int num, unsigned char *dest) {
-	printf("read array size %i num %i", element, num);
+	printf("read array to %08d\n", dest);
 	size_t size = element * num;
 	dest = malloc(size);
-	//dest = buf + pos;
-	memcpy(dest, buf + pos, size);
+	dest = buf + pos;
+	//memcpy(dest, buf + pos, size);
 	pos += size;
 }
 
@@ -32,7 +32,7 @@ void read_range(nifn, int start, int stop, void *dest) {
 #define as_byte(x) (unsigned char *)x
 //read_as_array(nif, n, type, block, ni_ref_t, extra_data_list, num_extra_data_list)
 //               a   b   c      d        e             f                 g
-#define read_as_array(a, b, c, d, e, f, g, h) read_array(a, b, sizeof(e), *(int *)((as_byte(d) + offsetof(c, g))), as_byte(d) + offsetof(c, f))
+#define read_as_array(a, b, c, d, e, f, g) read_array(a, b, sizeof(e), *(int *)((as_byte(d) + offsetof(c, g))), as_byte(d) + offsetof(c, f))
 #define read_as_struct(a, b, c, d, e, f) read_range(a, b, offsetof(c, e), offsetof(c, f), as_byte(d) + offsetof(c, e))
 
 void read_block(nif_t *, int);
@@ -154,15 +154,18 @@ void read_ni_tri_shape(nifn)
 
 void read_ni_tri_shape_data(nifn)
 {
+	printf("ni tri shape data\n");
 	unsigned size;
 	ni_tri_shape_data_t *block = malloc(sizeof(ni_tri_shape_data_t));
 	blocks[n].v = block;
+	printf("vertices adr %08d", &block->vertices);
+	printf("vertices offsetof 2 %08d", as_byte(block) + offsetof(ni_tri_shape_data_t, vertices));
 	read_as_struct(nif, n, ni_tri_shape_data_t, block, group_id, vertices);
-	four();
-	block->vertices = malloc(sizeof(vec_3));
-	*block->vertices = vec_3_from_buf();
-	return;
+	size = sizeof(vec_3) * block->num_vertices;
+	//block->vertices = read_list(nif, n, size);
+	//printf("block vertices to %08d\n", block->vertices);
 	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_3, vertices, num_vertices);
+	return;
 	read_as_struct(nif, n, ni_tri_shape_data_t, block, bs_vector_flags, normals);
 	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_3, normals, num_vertices);
 	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_3, tangents, num_vertices);

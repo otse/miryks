@@ -182,7 +182,7 @@ group_id: %i\
 \ncompress_flags: %u\
 \nhas_vertices: %i\
 \nvertices\
-\nvertices 1: %s\
+\nvertices 1: %s \
 ",
 block->group_id,
 block->num_vertices,

@@ -32,7 +32,7 @@ typedef struct ni_tri_shape_t ni_tri_shape_t;
 typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
 typedef struct bs_lighting_shader_property_t bs_lighting_shader_property_t;
 
-#pragma pack(push(1))
+#pragma pack(push, 1)
 
 struct ni_basic_layout_t {
 	int name;
@@ -67,12 +67,10 @@ struct ni_tri_shape_t {
 
 struct ni_tri_shape_data_t {
 	int group_id;
-	unsigned short num_vertices; // 6
+	unsigned short num_vertices;
 	unsigned char keep_flags; 
 	unsigned char compress_flags;
 	unsigned char has_vertices;
-	char padding_1;
-	char padding_2;
 	vec_3 *vertices;
 	unsigned short bs_vector_flags;
 	unsigned int material_crc;
@@ -82,7 +80,7 @@ struct ni_tri_shape_data_t {
 	vec_3 *bitangents;
 	vec_3 center;
 	float radius;
-	int has_vertex_colors;
+	unsigned char has_vertex_colors;
 	vec_4 *vertex_colors;
 	vec_2 *uv_sets;
 	unsigned short consistency_flags;
