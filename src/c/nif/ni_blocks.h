@@ -1,3 +1,5 @@
+// part of nif.h
+
 #define NI_NODE "NiNode"
 #define BS_LEAF_ANIM_NODE "BSLeafAnimNode"
 #define BS_FADE_NODE "BSFadeNode"
@@ -29,6 +31,8 @@ typedef struct ni_node_t ni_node_t;
 typedef struct ni_tri_shape_t ni_tri_shape_t;
 typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
 typedef struct bs_lighting_shader_property_t bs_lighting_shader_property_t;
+
+#pragma pack(push(1))
 
 struct ni_basic_layout_t {
 	int name;
@@ -63,14 +67,16 @@ struct ni_tri_shape_t {
 
 struct ni_tri_shape_data_t {
 	int group_id;
-	unsigned short num_vertices;
-	unsigned char keep_flags;
+	unsigned short num_vertices; // 6
+	unsigned char keep_flags; 
 	unsigned char compress_flags;
-	int has_vertices;
+	unsigned char has_vertices;
+	char padding_1;
+	char padding_2;
 	vec_3 *vertices;
-	int bs_vector_flags;
+	unsigned short bs_vector_flags;
 	unsigned int material_crc;
-	int has_normals;
+	unsigned char has_normals;
 	vec_3 *normals;
 	vec_3 *tangents;
 	vec_3 *bitangents;
@@ -82,12 +88,12 @@ struct ni_tri_shape_data_t {
 	unsigned short consistency_flags;
 	ni_ref_t additional_data;
 	unsigned short num_triangles;
-	unsigned short num_triangle_points;
-	int has_triangles;
+	unsigned int num_triangle_points;
+	unsigned char has_triangles;
 	ushort_3 *triangles;
 	unsigned short num_match_groups;
-	int match_groups;
-	int match_group;
+	int *match_groups;
+	int end;
 };
 
 struct bs_lighting_shader_property_t {
@@ -114,3 +120,5 @@ struct bs_lighting_shader_property_t {
 	int end;
 	char *name_string;
 };
+
+#pragma pack(pop)

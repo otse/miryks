@@ -11,29 +11,33 @@ unsigned char *read_list(nifn, int size) {
 	return mem;
 }
 
-// todo, point struct pointer to buf + pos instead of a memcpy
-
-void read_array(nifn, int element, int num, unsigned char *dest) {
-	printf("read array size %i num %i", element, num);
+void read_array(nifn, size_t element, size_t num, void *dest) {
+	printf("read array %u %u\n", element, num);
 	size_t size = element * num;
-	dest = malloc(size);
+	if (!size) return;
 	//dest = buf + pos;
+	dest = malloc(size);
 	memcpy(dest, buf + pos, size);
 	pos += size;
 }
 
-void read_range(nifn, int start, int stop, void *dest) {
+void read_struct(nifn, int start, int stop, void *dest) {
+	printf("read struct start %i stop %i\n", start, stop);
 	int size = stop - start;
+	if (!size) return;
 	//dest = buf + pos;
+	dest = malloc(size);
 	memcpy(dest, buf + pos, size);
 	pos += size;
 }
 
 #define as_byte(x) (unsigned char *)x
-//read_as_array(nif, n, type, block, ni_ref_t, extra_data_list, num_extra_data_list)
-//               a   b   c      d        e             f                 g
-#define read_as_array(a, b, c, d, e, f, g, h) read_array(a, b, sizeof(e), *(int *)((as_byte(d) + offsetof(c, g))), as_byte(d) + offsetof(c, f))
-#define read_as_struct(a, b, c, d, e, f) read_range(a, b, offsetof(c, e), offsetof(c, f), as_byte(d) + offsetof(c, e))
+
+//read_as_array(nif, n, type, ni_ref_t, block, extra_data_list, num_extra_data_list);
+//               a   b   c      d          e            f               g
+
+#define read_as_array(a, b, c, d, e, f, g) read_array(a, b, sizeof(d), *(int*)((as_byte(e) + offsetof(c, g))), (as_byte(e) + offsetof(c, f)))
+#define read_as_struct(a, b, c, d, e, f) read_struct(a, b, offsetof(c, e), offsetof(c, f), as_byte(d) + offsetof(c, e))
 
 void read_block(nif_t *, int);
 
@@ -129,10 +133,10 @@ void read_ni_node(nifn)
 	block->basic = read_ni_basic_layout(nif, n);
 	block->num_children = uint_from_buf();
 	four();
-	read_as_array(nif, n, ni_node_t, block, ni_ref_t, children, num_children);
+	read_as_array(nif, n, ni_node_t, ni_ref_t, block, children, num_children);
 	block->num_effects = uint_from_buf();
 	four();
-	read_as_array(nif, n, ni_node_t, block, ni_ref_t, effects, num_effects);
+	read_as_array(nif, n, ni_node_t, ni_ref_t, block, effects, num_effects);
 }
 
 void read_ni_tri_shape(nifn)
@@ -154,53 +158,20 @@ void read_ni_tri_shape(nifn)
 
 void read_ni_tri_shape_data(nifn)
 {
-	unsigned size;
+	printf("ni_tri_shape_data pos %i\n", pos);
 	ni_tri_shape_data_t *block = malloc(sizeof(ni_tri_shape_data_t));
 	blocks[n].v = block;
+	return;
+	unsigned int size;
 	read_as_struct(nif, n, ni_tri_shape_data_t, block, group_id, vertices);
-	four();
-	block->vertices = malloc(sizeof(vec_3));
-	*block->vertices = vec_3_from_buf();
-	return;
-	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_3, vertices, num_vertices);
+	printf("shape data vertices pos %i\n", pos);
+	read_as_array(nif, n, ni_tri_shape_data_t, vec_3, block, vertices, num_vertices);
+	printf("first vec 3 %f %f %f", block->vertices[0].x, block->vertices[0].y, block->vertices[0].z);
 	read_as_struct(nif, n, ni_tri_shape_data_t, block, bs_vector_flags, normals);
-	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_3, normals, num_vertices);
-	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_3, tangents, num_vertices);
-	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_3, bitangents, num_vertices);
-	read_as_struct(nif, n, ni_tri_shape_data_t, block, center, vertex_colors);
-	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_4, vertex_colors, num_vertices);
-	read_as_array(nif, n, ni_tri_shape_data_t, block, vec_2, uv_sets, num_vertices);
-	read_as_struct(nif, n, ni_tri_shape_data_t, block, consistency_flags, triangles);
-	//read_as_array(nif, n, ni_tri_shape_data_t, block, ushort_3, triangles, num_triangles);
-	//read_as_struct(nif, n, ni_tri_shape_data_t, block, num_match_groups, match_groups);
-	//read_as_array(nif, n, ni_tri_shape_data_t, block, ni_ref_t, match_groups, num_match_groups);
-
+	read_as_array(nif, n, ni_tri_shape_data_t, vec_3, block, normals, num_vertices);
+	read_as_array(nif, n, ni_tri_shape_data_t, vec_3, block, tangents, num_vertices);
+	read_as_array(nif, n, ni_tri_shape_data_t, vec_3, block, bitangents, num_vertices);
 	return;
-	block->group_id = int_from_buf();
-	four();
-	block->num_vertices = ushort_from_buf();
-	two();
-	block->keep_flags = byte_from_buf();
-	printf("offsetof %i", offsetof(ni_tri_shape_data_t, keep_flags));
-	one();
-	block->compress_flags = byte_from_buf();
-	one();
-	block->has_vertices = byte_from_buf();
-	one();
-	size = sizeof(vec_3) * block->num_vertices;
-	block->vertices = read_list(nif, n, size);
-	block->bs_vector_flags = ushort_from_buf();
-	two();
-	block->material_crc = uint_from_buf();
-	four();
-	block->has_normals = byte_from_buf();
-	one();
-	size = sizeof(vec_3) * block->num_vertices;
-	block->normals = read_list(nif, n, size);
-	size = sizeof(vec_3) * block->num_vertices;
-	block->tangents = read_list(nif, n, size);
-	size = sizeof(vec_3) * block->num_vertices;
-	block->bitangents = read_list(nif, n, size);
 	block->center = vec_3_from_buf();
 	four() * 3;
 	block->radius = float_from_buf();
@@ -225,7 +196,7 @@ void read_ni_tri_shape_data(nifn)
 	block->triangles = read_list(nif, n, size);
 	block->num_match_groups = ushort_from_buf();
 	two();
-	block->match_groups = 0;
+	block->match_group = 0;
 }
 
 void read_ni_skin_instance(nifn)
@@ -240,10 +211,11 @@ void read_ni_skin_data(nifn)
 
 void read_bs_lighting_effect_shader_property(nifn)
 {
+	printf("read_bs_lighting_effect_shader_property pos %i", pos);
 	bs_lighting_shader_property_t *block = malloc(sizeof(bs_lighting_shader_property_t));
 	blocks[n].v = block;
 	read_as_struct(nif, n, bs_lighting_shader_property_t, block, skyrim_shader_type, extra_data_list);
-	read_as_array(nif, n, bs_lighting_shader_property_t, block, ni_ref_t, extra_data_list, num_extra_data_list);
+	read_as_array(nif, n, bs_lighting_shader_property_t, ni_ref_t, block, extra_data_list, num_extra_data_list);
 	read_as_struct(nif, n, bs_lighting_shader_property_t, block, controller, end);
 	block->name_string = NULL;
 	if (-1!=block->name)
