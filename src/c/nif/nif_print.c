@@ -183,13 +183,78 @@ group_id: %i\
 \nhas_vertices: %i\
 \nvertices\
 \nvertices 1: %s \
+\nvertices %i: %s \
+\nbs_vector_flags\
+\nmaterial crc: %i\
+\nhas_normals: %i\
+\nnormals\
+\nnormals 1: %s \
+\nnormals %i: %s \
+\ntangents\
+\ntangents 1: %s \
+\ntangents %i: %s \
+\nbitangents\
+\nbitangents 1: %s\
+\nbitangents %i: %s\
+\ncenter: %s\
+\nradius: %f\
+\nhas_vertex_colors: %i\
+\nvertex_colors\
+\nvertex_colors 1: %s\
+\nvertex_colors: %i: %s\
+\nuv_sets\
+\nuv_sets 1: %s\
+\nuv_sets %i: %s\
+\nconsistency_flags: %hu\
+\nadditional_data: %i\
+\nnum_triangles: %hu\
+\nnum_triangle_points: %hu\
+\nhas_triangles: %i\
+\ntriangles\
+\ntriangles 1: %s\
+\ntriangles %i: %s\
+\nnum_match_groups: %hu\
+\nmatch_groups\
+\nmatch_group: %i\
 ",
 block->group_id,
 block->num_vertices,
 block->keep_flags,
 block->compress_flags,
 block->has_vertices,
-print_vec_3(a, block->vertices[0])
+print_vec_3(a, block->vertices[0]),
+block->num_vertices,
+print_vec_3(b, block->vertices[block->num_vertices-1]),
+block->material_crc,
+block->has_normals,
+print_vec_3(c, block->normals[0]),
+block->num_vertices,
+print_vec_3(d, block->normals[block->num_vertices-1]),
+print_vec_3(e, block->tangents[0]),
+block->num_vertices,
+print_vec_3(f, block->tangents[block->num_vertices-1]),
+print_vec_3(g, block->bitangents[0]),
+block->num_vertices,
+print_vec_3(h, block->bitangents[block->num_vertices-1]),
+print_vec_3(i, block->center),
+block->radius,
+block->has_vertex_colors,
+print_vec_4(j, block->vertex_colors[0]),
+block->num_vertices,
+print_vec_4(k, block->vertex_colors[block->num_vertices-1]),
+print_vec_2(l, block->uv_sets[0]),
+block->num_vertices,
+print_vec_2(m, block->uv_sets[block->num_vertices-1]),
+block->consistency_flags,
+block->additional_data,
+block->num_triangles,
+block->num_triangle_points,
+block->has_triangles,
+print_ushort_3(o, block->triangles[0]),
+block->num_triangles,
+print_ushort_3(p, block->triangles[block->num_triangles-1]),
+block->num_match_groups,
+block->match_groups
 );
 }
 
