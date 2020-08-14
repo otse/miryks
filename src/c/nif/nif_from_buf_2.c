@@ -32,13 +32,6 @@ char *get_hedr_string(nif_t* nif, int i) {
 #define read_as_array(a, b, c, d, e, f, g) read_array(a, b, sizeof(e), offsetof(c, f), offsetof(c, g), d)
 #define read_as_struct(a, b, c, d, e, f) read_range(a, b, offsetof(c, e), offsetof(c, f), d)
 
-#define read_as_array2(a, b, c, d, e, f, g) \
-	read_array( \
-		a, b, \
-		sizeof(e), \
-		*(unsigned *)((as_byte(d) + offsetof(c, g))), \
-		as_byte(d) + offsetof(c, f))
-
 void read_block(nif_t *, int);
 
 ni_basic_layout_t read_ni_basic_layout(nifn);
@@ -48,6 +41,7 @@ void *read_ni_skin_data(nifn);
 void *read_ni_tri_shape(nifn);
 void *read_ni_tri_shape_data(nifn);
 void *read_bs_lighting_effect_shader_property(nifn);
+void *read_bs_shader_texture_set(nifn);
 
 api void nif_read_blocks(nif_t *nif)
 {
@@ -89,7 +83,7 @@ void read_block(nif_t *nif, int n)
 	else if (is_type(NI_FLOAT_INTERPOLATOR)) 0;
 	else if (is_type(NI_FLOAT_DATA)) 0;
 	else if (is_type(BS_LIGHTING_SHADER_PROPERTY)) block = read_bs_lighting_effect_shader_property(nif, n);
-	else if (is_type(BS_SHADER_TEXTURE_SET)) 0;
+	else if (is_type(BS_SHADER_TEXTURE_SET)) block = read_bs_shader_texture_set(nif, n);
 	else if (is_type(NI_CONTROLLER_SEQUENCE)) 0;
 	else if (is_type(NI_TEXT_KEY_EXTRA_DATA)) 0;
 	else if (is_type(NI_STRING_EXTRA_DATA)) 0;
@@ -164,5 +158,16 @@ void *read_bs_lighting_effect_shader_property(nifn)
 	read_as_array(nif, n, bs_lighting_shader_property_t, block, ni_ref_t, extra_data_list, num_extra_data_list);
 	read_as_struct(nif, n, bs_lighting_shader_property_t, block, controller, end);
 	block->name_string = get_hedr_string(nif, block->name);
+	return block;
+}
+
+void *read_bs_shader_texture_set(nifn)
+{
+	bs_shader_texture_set_t *block = malloc(sizeof(bs_shader_texture_set_t));
+	read_as_struct(nif, n, bs_shader_texture_set_t, block, num_textures, textures);
+	block->textures = malloc(sizeof(char *) * block->num_textures);
+	memset(block->textures, '\0', block->num_textures);
+	for (unsigned i = 0; i < block->num_textures; i++)
+	block->textures[i] = nif_read_sized_string(nif);
 	return block;
 }

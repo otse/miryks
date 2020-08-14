@@ -31,6 +31,7 @@ typedef struct ni_node_t ni_node_t;
 typedef struct ni_tri_shape_t ni_tri_shape_t;
 typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
 typedef struct bs_lighting_shader_property_t bs_lighting_shader_property_t;
+typedef struct bs_shader_texture_set_t bs_shader_texture_set_t;
 
 #pragma pack(push, 1)
 
@@ -118,6 +119,12 @@ struct bs_lighting_shader_property_t {
 	float lighting_effect_2;
 	int end;
 	char *name_string;
+};
+
+struct bs_shader_texture_set_t {
+	int num_textures;
+	char **textures; // sized strings
+	int end;
 };
 
 #pragma pack(pop)

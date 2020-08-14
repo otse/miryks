@@ -9,6 +9,7 @@ void print_ni_node(nifn, char *);
 void print_ni_tri_shape(nifn, char *);
 void print_ni_tri_shape_data(nifn, char *);
 void print_bs_lighting_shader_property(nifn, char *);
+void print_bs_shader_texture_set(nifn, char *);
 
 void nif_print_hedr(nif_t *nif, char *s)
 {
@@ -309,6 +310,36 @@ block->lighting_effect_2
 );
 }
 
+void print_bs_shader_texture_set(nifn, char *s)
+{
+	bs_shader_texture_set_t *block = blocks[n].v;
+	snprintf(
+		s, 1500,
+		"\
+num_textures: %i\
+\ntextures 0: %s\
+\ntextures 1: %s\
+\ntextures 2: %s\
+\ntextures 3: %s\
+\ntextures 4: %s\
+\ntextures 5: %s\
+\ntextures 6: %s\
+\ntextures 7: %s\
+\ntextures 8: %s\
+",
+block->num_textures,
+block->textures[0],
+block->textures[1],
+block->textures[2],
+block->textures[3],
+block->textures[4],
+block->textures[5],
+block->textures[6],
+block->textures[7],
+block->textures[8]
+);
+}
+
 #define type(x) 0 == strcmp(block_type, x)
 
 void nif_print_block(nifn, char *s)
@@ -322,4 +353,5 @@ void nif_print_block(nifn, char *s)
 	else if (type(NI_TRI_SHAPE)) print_ni_tri_shape(nif, n, s);
 	else if (type(NI_TRI_SHAPE_DATA)) print_ni_tri_shape_data(nif, n, s);
 	else if (type(BS_LIGHTING_SHADER_PROPERTY)) print_bs_lighting_shader_property(nif, n, s);
+	else if (type(BS_SHADER_TEXTURE_SET)) print_bs_shader_texture_set(nif, n, s);
 }

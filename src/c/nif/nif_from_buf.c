@@ -24,6 +24,7 @@ char *nif_read_short_string(nif_t *nif)
 char *nif_read_sized_string(nif_t *nif)
 {
 	int len = *(buf + pos);
+	printf("sized string len %i", len);
 	char *string = malloc(sizeof(char) * len + 1);
 	strncpy(string, buf + pos + 4, len);
 	string[len] = '\0';
