@@ -63,6 +63,7 @@ struct ni_tri_shape_t {
 	// skip mateiral for now
 	ni_ref_t shader_property;
 	ni_ref_t alpha_property;
+	int end;
 };
 
 struct ni_tri_shape_data_t {
