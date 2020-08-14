@@ -4,8 +4,6 @@
 
 #include "from_buf_helpers.h"
 
-// in the read_as_array macro, we have to use a pointer to a pointer
-// because of the as_byte(x) + offsetof arithmic funny business
 void read_array(nifn, int element, int array, int num, unsigned char *block) {
 	void **dest = block + array;
 	int Num = *(unsigned *)(block + num);
