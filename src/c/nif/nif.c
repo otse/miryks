@@ -40,7 +40,7 @@ api void nif_make(void *key, nif_t *nif)
 	nif_add(key, nif);
 }
 
-// End of Api and Start of Header
+// End of Api, Start of Header
 
 #define nifn nif_t *nif, int n
 
@@ -184,7 +184,7 @@ void read_groups(nif_t *nif)
 	four();
 }
 
-// End of Header and Start of Blocks
+// End of Header, Start of Blocks
 
 void read_array(nifn, int element, int array, int num, unsigned char *block) {
 	void **dest = block + array;
@@ -216,7 +216,7 @@ char *get_hedr_string(nif_t* nif, int i) {
 
 void read_block(nif_t *, int);
 
-ni_basic_layout_t read_ni_basic_layout(nifn);
+ni_common_layout_t read_ni_common_layout(nifn);
 void *read_ni_node(nifn);
 void *read_ni_skin_instance(nifn);
 void *read_ni_skin_data(nifn);
@@ -275,12 +275,12 @@ void read_block(nif_t *nif, int n)
 	blocks[n].v = block;
 }
 
-ni_basic_layout_t read_ni_basic_layout(nifn) {
+ni_common_layout_t read_ni_common_layout(nifn) {
 	unsigned int size;
-	ni_basic_layout_t block;
-	read_as_struct(nif, n, ni_basic_layout_t, &block, name, extra_data_list);
-	read_as_array(nif, n, ni_basic_layout_t, &block, ni_ref_t, extra_data_list, num_extra_data_list);
-	read_as_struct(nif, n, ni_basic_layout_t, &block, controller, end);
+	ni_common_layout_t block;
+	read_as_struct(nif, n, ni_common_layout_t, &block, name, extra_data_list);
+	read_as_array(nif, n, ni_common_layout_t, &block, ni_ref_t, extra_data_list, num_extra_data_list);
+	read_as_struct(nif, n, ni_common_layout_t, &block, controller, end);
 	block.name_string = get_hedr_string(nif, block.name);
 	return block;
 }
@@ -288,7 +288,7 @@ ni_basic_layout_t read_ni_basic_layout(nifn) {
 void *read_ni_node(nifn)
 {
 	ni_node_t *block = malloc(sizeof(ni_node_t));
-	block->basic = read_ni_basic_layout(nif, n);
+	block->common = read_ni_common_layout(nif, n);
 	read_as_struct(nif, n, ni_node_t, block, num_children, children);
 	read_as_array(nif, n, ni_node_t, block, ni_ref_t, children, num_children);
 	read_as_struct(nif, n, ni_node_t, block, num_effects, effects);
@@ -299,7 +299,7 @@ void *read_ni_node(nifn)
 void *read_ni_tri_shape(nifn)
 {
 	ni_tri_shape_t *block = malloc(sizeof(ni_node_t));
-	block->basic = read_ni_basic_layout(nif, n);
+	block->common = read_ni_common_layout(nif, n);
 	read_as_struct(nif, n, ni_tri_shape_t, block, data, material_data);
 	skip(9);
 	read_as_struct(nif, n, ni_tri_shape_t, block, shader_property, end);

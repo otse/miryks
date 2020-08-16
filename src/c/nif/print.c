@@ -10,7 +10,7 @@
 #define blocks nif->blocks
 
 char *print_ni_array(nifn, int);
-char *print_ni_basic_layout(nifn, char *, ni_basic_layout_t *);
+char *print_ni_common_layout(nifn, char *, ni_common_layout_t *);
 void print_ni_node(nifn, char *);
 void print_ni_tri_shape(nifn, char *);
 void print_ni_tri_shape_data(nifn, char *);
@@ -108,7 +108,7 @@ V[12], V[13], V[14], V[15]);
 }
 
 
-char *print_ni_basic_layout(nifn, char *s, ni_basic_layout_t *block)
+char *print_ni_common_layout(nifn, char *s, ni_common_layout_t *block)
 {
 	char x[200], y[200];
 	snprintf(
@@ -149,7 +149,7 @@ void print_ni_node(nifn, char *s)
 \nchildren\
 \nnum_effects: %u\
 ",
-print_ni_basic_layout(nif, n, x, &block->basic),
+print_ni_common_layout(nif, n, x, &block->common),
 block->num_children,
 block->num_effects);
 }
@@ -169,7 +169,7 @@ void print_ni_tri_shape(nifn, char *s)
 \nshader_property: %i\
 \nalpha_property: %i\
 ",
-print_ni_basic_layout(nif, n, x, &block->basic),
+print_ni_common_layout(nif, n, x, &block->common),
 block->data,
 block->skin_instance,
 block->shader_property,

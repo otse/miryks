@@ -26,20 +26,15 @@ struct nif_hedr_t
 	unsigned int unknown_1;
 	char *version;
 	unsigned char endian_type;
-	unsigned int user_value;
-	unsigned int num_blocks;
-	unsigned int user_value_2;
+	unsigned int user_value, num_blocks, user_value_2;
 	char *author, *process_script, *export_script; // short strings
 	unsigned short num_block_types;
 	char **block_types;
 	unsigned short *block_type_index; // sized strings
-	unsigned int *block_sizes;
-	unsigned int num_strings;
-	unsigned int max_string_length;
+	unsigned int *block_sizes, num_strings, max_string_length;
 	char **strings; // sized strings
-	unsigned int num_groups;
-	unsigned int *groups; // sized strings
-	unsigned end;
+	unsigned int num_groups, *groups; // sized strings
+	int end;
 };
 
 struct ni_block_t
@@ -89,6 +84,8 @@ api void nif_print_block(nif_t *, int, char *);
 api void nif_read_header(nif_t *);
 api void nif_read_blocks(nif_t *);
 
+// Blocks
+
 #define NI_NODE "NiNode"
 #define BS_LEAF_ANIM_NODE "BSLeafAnimNode"
 #define BS_FADE_NODE "BSFadeNode"
@@ -115,7 +112,7 @@ api void nif_read_blocks(nif_t *);
 #define NI_TRANSFORM_DATA "NiTransformData"
 #define BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA "BSDecalPlacementVectorExtraData"
 
-typedef struct ni_basic_layout_t ni_basic_layout_t;
+typedef struct ni_common_layout_t ni_common_layout_t;
 typedef struct ni_node_t ni_node_t;
 typedef struct ni_tri_shape_t ni_tri_shape_t;
 typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
@@ -124,11 +121,10 @@ typedef struct bs_shader_texture_set_t bs_shader_texture_set_t;
 
 #pragma pack(push, 1)
 
-struct ni_basic_layout_t {
+struct ni_common_layout_t {
 	int name;
 	unsigned int num_extra_data_list;
-	ni_ref_t *extra_data_list;
-	ni_ref_t controller;
+	ni_ref_t *extra_data_list, controller;
 	unsigned int flags;
 	vec_3 translation;
 	mat_3 rotation;
@@ -139,7 +135,7 @@ struct ni_basic_layout_t {
 };
 
 struct ni_node_t {
-	ni_basic_layout_t basic;
+	ni_common_layout_t common;
 	unsigned int num_children;
 	ni_ref_t *children;
 	unsigned int num_effects;
@@ -147,7 +143,7 @@ struct ni_node_t {
 };
 
 struct ni_tri_shape_t {
-	ni_basic_layout_t basic;
+	ni_common_layout_t common;
 	ni_ref_t data, skin_instance, material_data, shader_property, alpha_property;
 	int end;
 };
@@ -160,8 +156,7 @@ struct ni_tri_shape_data_t {
 	unsigned short bs_vector_flags;
 	unsigned int material_crc;
 	unsigned char has_normals;
-	vec_3 *normals, *tangents, *bitangents;
-	vec_3 center;
+	vec_3 *normals, *tangents, *bitangents, center;
 	float radius;
 	unsigned char has_vertex_colors;
 	vec_4 *vertex_colors;
@@ -181,17 +176,14 @@ struct bs_lighting_shader_property_t {
 	unsigned int skyrim_shader_type;
 	int name;
 	unsigned int num_extra_data_list;
-	ni_ref_t *extra_data_list;
-	ni_ref_t controller;
+	ni_ref_t *extra_data_list, controller;
 	unsigned int shader_flags_1, shader_flags_2;
-	vec_2 uv_offset;
-	vec_2 uv_scale;
+	vec_2 uv_offset, uv_scale;
 	ni_ref_t texture_set;
 	vec_3 emissive_color;
 	float emissive_multiple;
 	unsigned int texture_clamp_mode;
-	float alpha;
-	float refraction_strength, glossiness;
+	float alpha, refraction_strength, glossiness;
 	vec_3 specular_color;
 	float specular_strength, lighting_effect_1, lighting_effect_2;
 	int end;
