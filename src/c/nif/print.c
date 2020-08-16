@@ -2,8 +2,14 @@
 
 #include "nif.h"
 
-#include "from_buf_helpers.h"
+#define nifn nif_t *nif, int n
 
+#define hedr nif->hdr
+#define buf nif->buf
+#define pos nif->pos
+#define blocks nif->blocks
+
+char *print_ni_array(nifn, int);
 char *print_ni_basic_layout(nifn, char *, ni_basic_layout_t *);
 void print_ni_node(nifn, char *);
 void print_ni_tri_shape(nifn, char *);
@@ -259,6 +265,10 @@ block->match_groups
 );
 }
 
+void print_ni_tri_shape_data_arrays(nifn, char *s) {
+
+}
+
 void print_bs_lighting_shader_property(nifn, char *s)
 {
 	char a[200], b[200], c[200], d[200];
@@ -340,6 +350,10 @@ block->textures[8]
 );
 }
 
+char *print_ni_array(nifn, int x) {
+	return 0;
+}
+
 #define type(x) 0 == strcmp(block_type, x)
 
 void nif_print_block(nifn, char *s)
@@ -354,4 +368,9 @@ void nif_print_block(nifn, char *s)
 	else if (type(NI_TRI_SHAPE_DATA)) print_ni_tri_shape_data(nif, n, s);
 	else if (type(BS_LIGHTING_SHADER_PROPERTY)) print_bs_lighting_shader_property(nif, n, s);
 	else if (type(BS_SHADER_TEXTURE_SET)) print_bs_shader_texture_set(nif, n, s);
+}
+
+void nif_print_block_arrays(nifn, char *s)
+{
+	// idea to lighten up the big printfs
 }
