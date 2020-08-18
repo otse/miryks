@@ -7,6 +7,13 @@ int nifs = 0;
 
 //const char *path = "path not set";
 
+api char *nif_get_hedr_string(nif_t *nif, int i) {
+	char *s = NULL;
+	if (i != -1)
+	s = nif->hdr.strings[i];
+	return s;
+}
+
 api nif_t *nif_alloc() {
 	nif_t *bucket = malloc(sizeof(nif_t));
 	bucket->pos = 0;
@@ -34,13 +41,13 @@ api nif_t *nif_get_stored(void *key)
 
 api void nif_make(void *key, nif_t *nif)
 {
-	cassert_(nif->buf, "nif->buf NULL");
+	cassert_(nif->buf, "nif->buf NULL"); // Buy oil not electricality
 	nif_read_header(nif);
 	nif_read_blocks(nif);
 	nif_add(key, nif);
 }
 
-// End of Api, Start of Header
+// defines and macros for struct sink
 
 #define nifn nif_t *nif, int n
 
@@ -48,23 +55,38 @@ api void nif_make(void *key, nif_t *nif)
 #define buf nif->buf
 #define pos nif->pos
 #define blocks nif->blocks
-#define skip(x) pos += x;
-#define byte_from_buf() *(unsigned char *)(buf + pos)
-#define int_from_buf() *(int *)(buf + pos)
-#define uint_from_buf() *(unsigned int*)(buf + pos)
-#define float_from_buf() *(float *)(buf + pos)
-#define short_from_buf() *(short *)(buf + pos)
-#define ushort_from_buf() *(unsigned short *)(buf + pos)
-#define vec_2_from_buf() *(vec_2 *)(buf + pos)
-#define vec_3_from_buf() *(vec_3 *)(buf + pos)
-#define vec_4_from_buf() *(vec_4 *)(buf + pos)
-#define mat_3_from_buf() *(mat_3 *)(buf + pos)
-#define mat_4_from_buf() *(mat_4 *)(buf + pos)
+#define depos (buf + pos)
+#define from_buf(x) *(x*)depos; pos += sizeof(x);
 
-#define one() pos += 1
-#define two() pos += 2
-#define four() pos += 4
-#define eight() pos += 8
+void sink_unpredictable_data(nifn, int, int, int, unsigned char *);
+void sink_predictable_data(nifn, int, int, unsigned char *);
+
+#define read_array(nif, n, c, d, e, f, g) \
+	sink_unpredictable_data(nif, n, sizeof(e), offsetof(c, f), offsetof(c, g), d)
+
+#define read_struct(nif, n, c, d, e, f) \
+	sink_predictable_data(nif, n, offsetof(c, e), offsetof(c, f), d)
+
+void sink_unpredictable_data(nifn, int element, int array, int num, unsigned char *block) {
+	void **dest = block + array;
+	int Num = *(unsigned *)(block + num);
+	size_t size = element * Num;
+	*dest = malloc(size);
+	*dest = depos;
+	//memcpy(dest, buf + pos, size);
+	pos += size;
+}
+
+void sink_predictable_data(nifn, int start, int stop, unsigned char *block) {
+	void *dest = block + start;
+	int size = stop - start;
+	//dest = buf + pos; // requires more hack skills
+	memcpy(dest, depos, size);
+	pos += size;
+}
+
+// now read the header
+// note that blocks have more predictable data and use macros
 
 void read_header_string(nif_t *);
 void read_some_stuff(nif_t *);
@@ -76,21 +98,21 @@ void read_groups(nif_t *);
 
 char *nif_read_short_string(nif_t *nif)
 {
-	char len = *(buf + pos);
+	char len = *depos;
 	char *string = malloc(sizeof(char) * len);
-	strncpy(string, buf + pos + 1, len);
+	strncpy(string, depos + 1, len);
 	pos += len + 1;
 	return string;
 }
 
 char *nif_read_sized_string(nif_t *nif)
 {
-	int len = *(buf + pos);
+	int len = *depos;
 	printf("sized string len %i", len);
 	char *string = malloc(sizeof(char) * len + 1);
-	strncpy(string, buf + pos + 4, len);
+	strncpy(string, depos + 4, len);
 	string[len] = '\0';
-	four();
+	pos += 4;
 	pos += len;
 	return string;
 }
@@ -98,8 +120,7 @@ char *nif_read_sized_string(nif_t *nif)
 api void nif_read_header(nif_t *nif)
 {
 	read_header_string(nif);
-	hedr.unknown_1 = int_from_buf();
-	four();
+	hedr.unknown_1 = from_buf(int);
 	read_some_stuff(nif);
 	read_block_types(nif);
 	read_block_type_index(nif);
@@ -123,19 +144,14 @@ void read_header_string(nif_t *nif)
 
 void read_some_stuff(nif_t *nif)
 {
-	hedr.endian_type = byte_from_buf();
-	one();
-	hedr.user_value = uint_from_buf();
-	four();
-	hedr.num_blocks = uint_from_buf();
-	four();
-	hedr.user_value_2 = uint_from_buf();
-	four();
+	hedr.endian_type = from_buf(unsigned char);
+	hedr.user_value =  from_buf(unsigned int);
+	hedr.num_blocks =  from_buf(unsigned int);
+	hedr.user_value_2 =from_buf(unsigned int);
 	hedr.author = nif_read_short_string(nif);
 	hedr.process_script = nif_read_short_string(nif);
 	hedr.export_script = nif_read_short_string(nif);
-	hedr.num_block_types = ushort_from_buf();
-	two();
+	hedr.num_block_types = from_buf(unsigned short);
 }
 
 void read_block_types(nif_t *nif)
@@ -152,7 +168,7 @@ void read_block_type_index(nif_t *nif)
 {
 	int size = sizeof(unsigned short) * hedr.num_blocks;
 	hedr.block_type_index = malloc(size);
-	memcpy(hedr.block_type_index, buf + pos, size);
+	memcpy(hedr.block_type_index, depos, size);
 	pos += size;
 }
 
@@ -160,16 +176,14 @@ void read_block_sizes(nif_t *nif)
 {
 	int size = sizeof(unsigned int) * hedr.num_blocks;
 	hedr.block_sizes = malloc(size);
-	memcpy(hedr.block_sizes, buf + pos, size);
+	memcpy(hedr.block_sizes, depos, size);
 	pos += size;
 }
 
 void read_strings(nif_t *nif)
 {
-	hedr.num_strings = uint_from_buf();
-	four();
-	hedr.max_string_length = uint_from_buf();
-	four();
+	hedr.num_strings = from_buf(unsigned int);
+	hedr.max_string_length = from_buf(unsigned int);
 	int n = hedr.num_strings;
 	hedr.strings = malloc(sizeof(char *) * n);
 	for (int i = 0; i < n; i++)
@@ -180,39 +194,10 @@ void read_strings(nif_t *nif)
 
 void read_groups(nif_t *nif)
 {
-	hedr.num_groups = uint_from_buf();
-	four();
+	hedr.num_groups = from_buf(unsigned int);
 }
 
-// End of Header, Start of Blocks
-
-void read_dynamic(nifn, int element, int array, int num, unsigned char *block) {
-	void **dest = block + array;
-	int Num = *(unsigned *)(block + num);
-	size_t size = element * Num;
-	*dest = malloc(size);
-	*dest = buf + pos;
-	//memcpy(dest, buf + pos, size);
-	pos += size;
-}
-
-void read_range(nifn, int start, int stop, unsigned char *block) {
-	void *dest = block + start;
-	int size = stop - start;
-	//dest = buf + pos;
-	memcpy(dest, buf + pos, size);
-	pos += size;
-}
-
-char *get_hedr_string(nif_t *nif, int i) {
-	char *s = NULL;
-	if (i != -1)
-	s = hedr.strings[i];
-	return s;
-}
-
-#define read_array(nif, n, c, d, e, f, g) read_dynamic(nif, n, sizeof(e), offsetof(c, f), offsetof(c, g), d)
-#define read_struct(nif, n, c, d, e, f) read_range(nif, n, offsetof(c, e), offsetof(c, f), d)
+/// blocks
 
 void read_block(nif_t *, int);
 
@@ -281,7 +266,7 @@ ni_common_layout_t read_ni_common_layout(nifn) {
 	read_struct(nif, n, ni_common_layout_t, &block, name, extra_data_list);
 	read_array(nif, n, ni_common_layout_t, &block, ni_ref_t, extra_data_list, num_extra_data_list);
 	read_struct(nif, n, ni_common_layout_t, &block, controller, end);
-	block.name_string = get_hedr_string(nif, block.name);
+	block.name_string = nif_get_hedr_string(nif, block.name);
 	return block;
 }
 
@@ -301,7 +286,7 @@ void *read_ni_tri_shape(nifn)
 	ni_tri_shape_t *block = malloc(sizeof(ni_node_t));
 	block->common = read_ni_common_layout(nif, n);
 	read_struct(nif, n, ni_tri_shape_t, block, data, material_data);
-	skip(9);
+	pos += 9;
 	read_struct(nif, n, ni_tri_shape_t, block, shader_property, end);
 	return block;
 }
@@ -341,7 +326,7 @@ void *read_bs_lighting_shader_property(nifn)
 	read_struct(nif, n, bs_lighting_shader_property_t, block, skyrim_shader_type, extra_data_list);
 	read_array(nif, n, bs_lighting_shader_property_t, block, ni_ref_t, extra_data_list, num_extra_data_list);
 	read_struct(nif, n, bs_lighting_shader_property_t, block, controller, end);
-	block->name_string = get_hedr_string(nif, block->name);
+	block->name_string = nif_get_hedr_string(nif, block->name);
 	return block;
 }
 
@@ -357,4 +342,21 @@ void *read_bs_shader_texture_set(nifn)
 	block->textures[i] = nif_read_sized_string(nif);
 	}
 	return block;
+}
+
+///
+
+void nif_bake_links()
+{
+	// just use c++ for this lol
+}
+
+void nif_pointer_to_first_block(int i)
+{
+	
+}
+
+void nif_loop(int i)
+{
+
 }

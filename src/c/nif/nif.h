@@ -77,6 +77,7 @@ api nif_t *nif_alloc();
 api void nif_make(void *, nif_t *);
 api void nif_add(void *, nif_t *);
 api nif_t *nif_get_stored(void *);
+api char *nif_get_hedr_string(nif_t *, int);
 
 api void nif_print_hedr(nif_t *, char *);
 api void nif_print_block(nif_t *, int, char *);
@@ -84,7 +85,7 @@ api void nif_print_block(nif_t *, int, char *);
 api void nif_read_header(nif_t *);
 api void nif_read_blocks(nif_t *);
 
-// Blocks
+///
 
 #define NI_NODE "NiNode"
 #define BS_LEAF_ANIM_NODE "BSLeafAnimNode"
@@ -197,5 +198,9 @@ struct bs_shader_texture_set_t {
 };
 
 #pragma pack(pop)
+
+///
+
+void nif_bake_links();
 
 #endif
