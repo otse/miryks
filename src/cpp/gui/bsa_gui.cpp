@@ -3,7 +3,7 @@
 extern "C" {
 #include "c/c.h"
 #include "c/files.h"
-#include "c/bsa/bsa.h"
+#include "c/bsa.h"
 }
 
 using namespace dark2;

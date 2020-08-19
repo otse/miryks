@@ -1,7 +1,7 @@
 #include "dark2.h"
 
 extern "C" {
-	#include "../../c/nif/nif.h"
+	#include "../../c/nif.h"
 }
 
 #include "files"

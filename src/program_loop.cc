@@ -1,8 +1,8 @@
 #include "dark2.h"
 
 extern "C" {
-#include "c/bsa/bsa.h"
-#include "c/nif/nif.h"
+#include "c/bsa.h"
+#include "c/nif.h"
 }
 
 #include "cpp/opengl/camera"

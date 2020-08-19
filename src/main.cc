@@ -4,8 +4,8 @@
 
 extern "C" {
 #include "c/c.h"
-#include "c/bsa/bsa.h"
-#include "c/nif/nif.h"
+#include "c/bsa.h"
+#include "c/nif.h"
 }
 
 #include "cpp/opengl/types"

@@ -1,7 +1,7 @@
-#include "c/c.h"
+#include "c.h"
 
 #include "nif.h"
-#include "c/bsa/bsa.h"
+#include "bsa.h"
 
 void nif_test(void *bsa)
 {

@@ -1,7 +1,7 @@
 #include "c/c.h"
 
 #include "bsa.h"
-#include "../files.h"
+#include "files.h"
 
 api char *bsa_print_rc(bsa_t *b, int r)
 {
