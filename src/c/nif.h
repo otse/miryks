@@ -77,8 +77,9 @@ void nif_read_header(nif_t *);
 void nif_read_blocks(nif_t *);
 
 api nif_t *nif_alloc();
+api void nif_meshify(nif_t *);
 
-api void nif_make(void *, nif_t *);
+api void nif_read(void *, nif_t *);
 api void nif_add(void *, nif_t *);
 api nif_t *nif_get_stored(void *);
 

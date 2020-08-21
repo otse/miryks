@@ -33,7 +33,7 @@ api nif_t *nif_get_stored(void *key)
 	return 0;
 }
 
-api void nif_make(void *key, nif_t *nif)
+api void nif_read(void *key, nif_t *nif)
 {
 	cassert_(nif->buf, "nif->buf NULL");
 	nif_read_header(nif);
@@ -110,7 +110,6 @@ char *nif_read_short_string(nif_t *nif)
 char *nif_read_sized_string(nif_t *nif)
 {
 	int len = from_buf(int);
-	printf("sized string len %i", len);
 	char *string = malloc(sizeof(char) * len + 1);
 	strncpy(string, depos, len);
 	string[len] = '\0';
@@ -353,25 +352,24 @@ void *read_bs_shader_texture_set(nifr)
 
 // meshify
 
-#define nifm nif_t *nif, ni_block_t *block
+#define nifm nif_t *nif, ni_block_t *block, group_t *group
+
+void meshify_ni_node(nifm);
+
+api void nif_meshify(nif_t *nif)
+{
+	group_t *group = malloc(sizeof(group_t));
+	memset(group, 0, sizeof(group_t));
+	for (int n = 0; n < hedr.num_blocks; n++)
+	{
+	ni_block_t *block = &blocks[n];
+	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
+	if (0) ;
+	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) meshify_ni_node(nif, block, group);
+	}
+}
 
 void meshify_ni_node(nifm)
 {
-
-}
-
-void nif_loop(nif_t *nif)
-{
-	group_t group={0,0,0,0};
-	for (int n = 0; n < hedr.num_blocks; n++)
-	{
-	ni_block_t *block = nif_get_block(nif, n);
-	const char *block_type = nif_get_block_type(nif, n);
-	if (0) ;
-	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
-	meshify_ni_node(nif, block);
-	}
-	/*
-	gr
-	*/
+	printf("meshify ni node\n");
 }

@@ -12,5 +12,6 @@ void nif_test(void *bsa)
 	nif_t *bucket = nif_alloc();
 	bucket->path = rc->path;
 	bucket->buf = rc->inf;
-	nif_make(rc, bucket);
+	nif_read(rc, bucket);
+	nif_meshify(bucket);
 }
