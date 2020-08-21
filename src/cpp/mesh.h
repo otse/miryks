@@ -3,7 +3,6 @@
 #include "files"
 
 extern "C" {
-#include "c/c.h"
 #include "c/bsa.h"
 #include "c/nif.h"
 }
@@ -14,6 +13,14 @@ extern "C" {
 #include "cpp/opengl/geometry"
 #include "cpp/opengl/material"
 
-class Mesh {
 
-}
+class Mesh {
+	Mesh(nif_t *);
+
+	nif_t *nif;
+
+	Group baseGroup;
+
+	void Construct();
+};
+

@@ -1,2 +1,12 @@
-// mesh by running down nif blocks
+#include "mesh.h"
 
+Mesh::Mesh(nif_t *nif) :
+    nif(nif)
+{
+    int l;
+}
+
+void Mesh::Construct()
+{
+
+}

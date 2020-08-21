@@ -7,13 +7,6 @@ int nifs = 0;
 
 //const char *path = "path not set";
 
-api char *nif_get_hedr_string(nif_t *nif, int i) {
-	char *s = NULL;
-	if (i != -1)
-	s = nif->hdr.strings[i];
-	return s;
-}
-
 api nif_t *nif_alloc() {
 	nif_t *bucket = malloc(sizeof(nif_t));
 	bucket->pos = 0;
@@ -42,24 +35,21 @@ api nif_t *nif_get_stored(void *key)
 
 api void nif_make(void *key, nif_t *nif)
 {
-	cassert_(nif->buf, "nif->buf NULL"); // Buy oil not electricality
+	cassert_(nif->buf, "nif->buf NULL");
 	nif_read_header(nif);
 	nif_read_blocks(nif);
 	nif_add(key, nif);
 }
 
-// defines and some macros
+// defines macros:
 
-#define nifn nif_t *nif, int n
+#define nifr nif_t *nif, int n
 #define hedr nif->hdr
 #define buf nif->buf
 #define pos nif->pos
 #define blocks nif->blocks
 #define depos (buf + pos)
 #define from_buf(x) *(x*)depos; pos += sizeof(x);
-
-void sink_array(nif_t *, unsigned char *, int, int, int);
-void sink_struct(nif_t *, unsigned char *, int, int);
 
 #define read_array(nif, c, d, e, f, g) sink_array(nif, d, offsetof(c, f), offsetof(c, g), sizeof(e))
 #define read_struct(nif, c, d, e, f) sink_struct(nif, d, offsetof(c, e), offsetof(c, f))
@@ -80,8 +70,25 @@ void sink_struct(nif_t *nif, unsigned char *base, int start, int stop) {
 	pos += size;
 }
 
-// now read the header
-// note that blocks have more predictable data and use macros
+// getters:
+
+api char *nif_get_string(nif_t *nif, int i) {
+	if (i == -1)
+	return NULL;
+	return hedr.strings[i];
+}
+
+api char *nif_get_block_type(nif_t *nif, int i) {
+	return hedr.block_types[i];
+}
+
+api ni_block_t *nif_get_block(nif_t *nif, int i) {
+	if (i == -1)
+	return NULL;
+	return &blocks[i];
+}
+
+// read header:
 
 void read_header_string(nif_t *);
 void read_some_stuff(nif_t *);
@@ -93,21 +100,20 @@ void read_groups(nif_t *);
 
 char *nif_read_short_string(nif_t *nif)
 {
-	char len = *depos;
+	char len = from_buf(char);
 	char *string = malloc(sizeof(char) * len);
-	strncpy(string, depos + 1, len);
-	pos += len + 1;
+	strncpy(string, depos, len);
+	pos += len;
 	return string;
 }
 
 char *nif_read_sized_string(nif_t *nif)
 {
-	int len = *depos;
+	int len = from_buf(int);
 	printf("sized string len %i", len);
 	char *string = malloc(sizeof(char) * len + 1);
-	strncpy(string, depos + 4, len);
+	strncpy(string, depos, len);
 	string[len] = '\0';
-	pos += 4;
 	pos += len;
 	return string;
 }
@@ -193,18 +199,18 @@ void read_groups(nif_t *nif)
 	hedr.num_groups = from_buf(unsigned int);
 }
 
-/// blocks
+/// read blocks:
 
 void read_block(nif_t *, int);
 
-ni_common_layout_t read_ni_common_layout(nifn);
-void *read_ni_node(nifn);
-void *read_ni_skin_instance(nifn);
-void *read_ni_skin_data(nifn);
-void *read_ni_tri_shape(nifn);
-void *read_ni_tri_shape_data(nifn);
-void *read_bs_lighting_shader_property(nifn);
-void *read_bs_shader_texture_set(nifn);
+ni_common_layout_t read_ni_common_layout(nifr);
+void *read_ni_node(nifr);
+void *read_ni_skin_instance(nifr);
+void *read_ni_skin_data(nifr);
+void *read_ni_tri_shape(nifr);
+void *read_ni_tri_shape_data(nifr);
+void *read_bs_lighting_shader_property(nifr);
+void *read_bs_shader_texture_set(nifr);
 
 api void nif_read_blocks(nif_t *nif)
 {
@@ -212,8 +218,7 @@ api void nif_read_blocks(nif_t *nif)
 	blocks = malloc(sizeof(ni_block_t) * hedr.num_blocks);
 	for (unsigned int i = 0; i < hedr.num_blocks; i++)
 	{
-	blocks[i].n = i;
-	blocks[i].v = 0;
+	blocks[i]=(ni_block_t){i,NULL};
 	//printf("block begin at %i %04x\n", pos, pos);
 	read_block(nif, i);
 	poz += hedr.block_sizes[i];
@@ -222,52 +227,51 @@ api void nif_read_blocks(nif_t *nif)
 }
 
 #define is_type(x) 0 == strcmp(block_type, x)
+#define is_any_type(x, y, z) is_type(x) || (y ? is_type(y) : 0) || (z ? is_type(z) : 0)
 
 void read_block(nif_t *nif, int n)
 {
 	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
 	void *block = NULL;
 	if (0) ;
-	else if (is_type(NI_NODE)) block = read_ni_node(nif, n);
-	else if (is_type(BS_LEAF_ANIM_NODE)) block = read_ni_node(nif, n);
-	else if (is_type(BS_FADE_NODE)) block = read_ni_node(nif, n);
-	else if (is_type(NI_SKIN_INSTANCE)) block = read_ni_skin_instance(nif, n);
-	else if (is_type(BS_DISMEMBER_SKIN_INSTANCE)) block = read_ni_skin_instance(nif, n);
-	else if (is_type(NI_SKIN_DATA)) block = read_ni_skin_data(nif, n);
-	else if (is_type(NI_SKIN_PARTITION)) 0;
-	else if (is_type(BS_TRI_SHAPE)) 0;
-	else if (is_type(BS_DYNAMIC_TRI_SHAPE)) 0;
-	else if (is_type(NI_TRI_SHAPE)) block = read_ni_tri_shape(nif, n);
-	else if (is_type(BS_LOD_TRI_SHAPE)) 0;
-	else if (is_type(NI_ALPHA_PROPERTY)) 0;
-	else if (is_type(NI_TRI_SHAPE_DATA)) block = read_ni_tri_shape_data(nif, n);
-	else if (is_type(BS_EFFECT_SHADER_PROPERTY)) 0;
-	else if (is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER)) 0;
-	else if (is_type(NI_FLOAT_INTERPOLATOR)) 0;
-	else if (is_type(NI_FLOAT_DATA)) 0;
-	else if (is_type(BS_LIGHTING_SHADER_PROPERTY)) block = read_bs_lighting_shader_property(nif, n);
-	else if (is_type(BS_SHADER_TEXTURE_SET)) block = read_bs_shader_texture_set(nif, n);
-	else if (is_type(NI_CONTROLLER_SEQUENCE)) 0;
-	else if (is_type(NI_TEXT_KEY_EXTRA_DATA)) 0;
-	else if (is_type(NI_STRING_EXTRA_DATA)) 0;
-	else if (is_type(NI_TRANSFORM_INTERPOLATOR)) 0;
-	else if (is_type(NI_TRANSFORM_DATA)) 0;
-	else if (is_type(BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA)) 0;
+	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) block = read_ni_node(nif, n);
+	else if ( is_any_type(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) block = read_ni_skin_instance(nif, n);
+	else if ( is_type(NI_SKIN_DATA) ) block = read_ni_skin_data(nif, n);
+	else if ( is_type(NI_SKIN_PARTITION) ) 0;
+	else if ( is_type(BS_TRI_SHAPE) ) 0;
+	else if ( is_type(BS_DYNAMIC_TRI_SHAPE) ) 0;
+	else if ( is_any_type(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) block = read_ni_tri_shape(nif, n);
+	else if ( is_type(NI_ALPHA_PROPERTY) ) 0;
+	else if ( is_type(NI_TRI_SHAPE_DATA) ) block = read_ni_tri_shape_data(nif, n);
+	else if ( is_type(BS_EFFECT_SHADER_PROPERTY) ) 0;
+	else if ( is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) ) 0;
+	else if ( is_type(NI_FLOAT_INTERPOLATOR) ) 0;
+	else if ( is_type(NI_FLOAT_DATA) ) 0;
+	else if ( is_type(BS_LIGHTING_SHADER_PROPERTY) ) block = read_bs_lighting_shader_property(nif, n);
+	else if ( is_type(BS_SHADER_TEXTURE_SET) ) block = read_bs_shader_texture_set(nif, n);
+	else if ( is_type(NI_CONTROLLER_SEQUENCE) ) 0;
+	else if ( is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
+	else if ( is_type(NI_STRING_EXTRA_DATA) ) 0;
+	else if ( is_type(NI_TRANSFORM_INTERPOLATOR) ) 0;
+	else if ( is_type(NI_TRANSFORM_DATA) ) 0;
+	else if ( is_type(BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA) ) 0;
 	blocks[n].v = block;
 }
 
-ni_common_layout_t read_ni_common_layout(nifn) {
+ni_common_layout_t read_ni_common_layout(nifr)
+{
 	unsigned int size;
 	ni_common_layout_t block;
 	read_struct(nif, ni_common_layout_t, &block, name, extra_data_list);
 	read_array(nif, ni_common_layout_t, &block, ni_ref_t, extra_data_list, num_extra_data_list);
 	read_struct(nif, ni_common_layout_t, &block, controller, end);
-	block.name_string = nif_get_hedr_string(nif, block.name);
+	block.name_string = nif_get_string(nif, block.name);
 	return block;
 }
 
-void *read_ni_node(nifn)
+void *read_ni_node(nifr)
 {
+	printf("read ni node\n");
 	ni_node_t *block = malloc(sizeof(ni_node_t));
 	block->common = read_ni_common_layout(nif, n);
 	read_struct(nif, ni_node_t, block, num_children, children);
@@ -277,8 +281,9 @@ void *read_ni_node(nifn)
 	return block;
 }
 
-void *read_ni_tri_shape(nifn)
+void *read_ni_tri_shape(nifr)
 {
+	printf("read ni tri shape\n");
 	ni_tri_shape_t *block = malloc(sizeof(ni_node_t));
 	block->common = read_ni_common_layout(nif, n);
 	read_struct(nif, ni_tri_shape_t, block, data, material_data);
@@ -287,8 +292,9 @@ void *read_ni_tri_shape(nifn)
 	return block;
 }
 
-void *read_ni_tri_shape_data(nifn)
+void *read_ni_tri_shape_data(nifr)
 {
+	printf("read ni tri shape data\n");
 	ni_tri_shape_data_t *block = malloc(sizeof(ni_tri_shape_data_t));
 	read_struct(nif, ni_tri_shape_data_t, block, group_id, vertices);
 	read_array(nif, ni_tri_shape_data_t, block, vec_3, vertices, num_vertices);
@@ -306,28 +312,33 @@ void *read_ni_tri_shape_data(nifn)
 	return block;
 }
 
-void *read_ni_skin_instance(nifn)
+void *read_ni_skin_instance(nifr)
 {
+	//read_block_save(nif, n, block);
 
 }
 
-void *read_ni_skin_data(nifn)
+void *read_ni_skin_data(nifr)
 {
-
+	//read_block_save(nif, n, block);
 }
 
-void *read_bs_lighting_shader_property(nifn)
+void *read_bs_lighting_shader_property(nifr)
 {
+	printf("read bs lighting shader property\n");
+
 	bs_lighting_shader_property_t *block = malloc(sizeof(bs_lighting_shader_property_t));
 	read_struct(nif, bs_lighting_shader_property_t, block, skyrim_shader_type, extra_data_list);
 	read_array(nif, bs_lighting_shader_property_t, block, ni_ref_t, extra_data_list, num_extra_data_list);
 	read_struct(nif, bs_lighting_shader_property_t, block, controller, end);
-	block->name_string = nif_get_hedr_string(nif, block->name);
+	block->name_string = nif_get_string(nif, block->name);
 	return block;
 }
 
-void *read_bs_shader_texture_set(nifn)
+void *read_bs_shader_texture_set(nifr)
 {
+	printf("read bs shader texture set\n");
+
 	bs_shader_texture_set_t *block = malloc(sizeof(bs_shader_texture_set_t));
 	read_struct(nif, bs_shader_texture_set_t, block, num_textures, textures);
 	block->textures = malloc(sizeof(char *) * block->num_textures);
@@ -340,19 +351,27 @@ void *read_bs_shader_texture_set(nifn)
 	return block;
 }
 
-///
+// meshify
 
-void nif_bake_links()
+#define nifm nif_t *nif, ni_block_t *block
+
+void meshify_ni_node(nifm)
 {
-	// just use c++ for this lol
+
 }
 
-void nif_pointer_to_first_block(int i)
+void nif_loop(nif_t *nif)
 {
-	
-}
-
-void nif_loop(int i)
-{
-
+	group_t group={0,0,0,0};
+	for (int n = 0; n < hedr.num_blocks; n++)
+	{
+	ni_block_t *block = nif_get_block(nif, n);
+	const char *block_type = nif_get_block_type(nif, n);
+	if (0) ;
+	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
+	meshify_ni_node(nif, block);
+	}
+	/*
+	gr
+	*/
 }

@@ -73,17 +73,21 @@ void nif_test(void *);
 char *nif_read_short_string(nif_t *);
 char *nif_read_sized_string(nif_t *);
 
+void nif_read_header(nif_t *);
+void nif_read_blocks(nif_t *);
+
 api nif_t *nif_alloc();
+
 api void nif_make(void *, nif_t *);
 api void nif_add(void *, nif_t *);
 api nif_t *nif_get_stored(void *);
-api char *nif_get_hedr_string(nif_t *, int);
+
+api char *nif_get_string(nif_t *, int);
+api char *nif_get_block_type(nif_t *, int);
+api ni_block_t *nif_get_block(nif_t *, int);
 
 api void nif_print_hedr(nif_t *, char *);
 api void nif_print_block(nif_t *, int, char *);
-
-api void nif_read_header(nif_t *);
-api void nif_read_blocks(nif_t *);
 
 ///
 
@@ -201,6 +205,22 @@ struct bs_shader_texture_set_t {
 
 ///
 
+typedef struct group_t group_t;
+typedef struct geometry_t geometry_t;
+
+struct group_t {
+	int groups;
+	group_t *parent;
+	group_t *group[8];
+	geometry_t *geometry;
+	mat_4 matrix;
+};
+
+struct geometry_t {
+	int l;
+};
+
 void nif_bake_links();
+//void nif_mesh
 
 #endif
