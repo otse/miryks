@@ -5,22 +5,12 @@
 nmap_t nmap[1000];
 int nifs = 0;
 
-//const char *path = "path not set";
-
-api nif_t *nif_alloc() {
-	nif_t *bucket = malloc(sizeof(nif_t));
-	bucket->pos = 0;
-	bucket->buf = 0;
-	return bucket;
-}
-
 api void nif_add(void *key, nif_t *nif)
 {
 	nif->n = nifs;
 	nmap[nifs++] = (nmap_t){key, nif};
 }
 
-// todo generalize this container
 api nif_t *nif_get_stored(void *key)
 {
 	for (int i = 0; i < nifs; i++)
@@ -33,14 +23,6 @@ api nif_t *nif_get_stored(void *key)
 	return 0;
 }
 
-api void nif_read(void *key, nif_t *nif)
-{
-	cassert_(nif->buf, "nif->buf NULL");
-	nif_read_header(nif);
-	nif_read_blocks(nif);
-	nif_add(key, nif);
-}
-
 // defines macros:
 
 #define nifr nif_t *nif, int n
@@ -48,6 +30,7 @@ api void nif_read(void *key, nif_t *nif)
 #define buf nif->buf
 #define pos nif->pos
 #define blocks nif->blocks
+#define skips nif->skips
 #define depos (buf + pos)
 #define from_buf(x) *(x*)depos; pos += sizeof(x);
 
@@ -86,6 +69,22 @@ api ni_block_t *nif_get_block(nif_t *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return &blocks[i];
+}
+
+api nif_t *nif_alloc() {
+	nif_t *nif = malloc(sizeof(nif_t));
+	pos = 0;
+	buf = 0;
+	skips = malloc(sizeof(int) * hedr.num_blocks);
+	memset(skips, 0, sizeof(int) * hedr.num_blocks);
+	return nif;
+}
+
+api void nif_read(void *key, nif_t *nif) {
+	cassert_(buf, "buf NULL. have a look at niftest.c");
+	nif_read_header(nif);
+	nif_read_blocks(nif);
+	nif_add(key, nif);
 }
 
 // read header:
@@ -352,24 +351,59 @@ void *read_bs_shader_texture_set(nifr)
 
 // meshify
 
-#define nifm nif_t *nif, ni_block_t *block, group_t *group
+#define nifm nif_t *nif, int n, ni_block_t *block, group_t *group
 
+group_t *group_alloc() {
+	group_t *group = malloc(sizeof(group_t));
+	memset(group, 0, sizeof(group_t));
+	return group;
+}
+
+group_t *group_add(group_t *a, group_t *b) {;
+	a->group[a->groups++] = b;
+	b->parent = a;
+	return b;
+}
+
+void meshify_one(nifm, const char *);
 void meshify_ni_node(nifm);
+void meshify_ni_tri_shape(nifm);
 
 api void nif_meshify(nif_t *nif)
 {
-	group_t *group = malloc(sizeof(group_t));
-	memset(group, 0, sizeof(group_t));
+	group_t *group = group_alloc();
 	for (int n = 0; n < hedr.num_blocks; n++)
 	{
 	ni_block_t *block = &blocks[n];
 	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
-	if (0) ;
-	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) meshify_ni_node(nif, block, group);
+	meshify_one(nif, n, block, group, block_type);
 	}
+}
+
+void meshify_one(nifm, const char *block_type)
+{
+	if (skips[n])
+	return;
+	if (0) ;
+	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) meshify_ni_node(nif, n, block, group);
+	else if ( is_any_type(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) meshify_ni_tri_shape(nif, n, block, group);
+	skips[n] = 1;
 }
 
 void meshify_ni_node(nifm)
 {
 	printf("meshify ni node\n");
+	ni_node_t *cast = (ni_node_t *)block;
+	group_t *c = group_add(group, group_alloc());
+	c->translation = & cast->common.translation;
+	c->rotation = & cast->common.rotation;
+}
+
+void meshify_ni_tri_shape(nifm)
+{
+	printf("meshify ni tri shape\n");
+	ni_tri_shape_t *cast = (ni_tri_shape_t *)block;
+	group_t *c = group_add(group, group_alloc());
+	c->translation = & cast->common.translation;
+	c->rotation = & cast->common.rotation;
 }

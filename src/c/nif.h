@@ -51,6 +51,7 @@ struct nif_t
 	unsigned pos;
 	nif_hedr_t hdr;
 	ni_block_t *blocks;
+	int *skips;
 };
 
 struct vec_2{ float x, y; };
@@ -214,7 +215,8 @@ struct group_t {
 	group_t *parent;
 	group_t *group[8];
 	geometry_t *geometry;
-	mat_4 matrix;
+	vec_3 *translation;
+	mat_3 *rotation;
 };
 
 struct geometry_t {
