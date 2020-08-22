@@ -18,9 +18,10 @@ class Mesh {
 	public:
 	Mesh();
 
-	Group baseGroup;
-	Group *lastGroup;
+	nif_t *nif;
+	Group *base, *front;
 
 	void Construct(nif_t *);
+	Group *Nest(int, int);
 };
 

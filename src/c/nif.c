@@ -66,21 +66,21 @@ api char *nif_get_string(nif_t *nif, int i) {
 }
 
 api char *nif_get_block_type(nif_t *nif, int i) {
-	return hedr.block_types[i];
+	if (i == -1)
+	return NULL;
+	return hedr.block_types[hedr.block_type_index[i]];
 }
 
 api ni_block_t *nif_get_block(nif_t *nif, int i) {
 	if (i == -1)
 	return NULL;
-	return &blocks[i];
+	return blocks[i];
 }
 
 api nif_t *nif_alloc() {
 	nif_t *nif = malloc(sizeof(nif_t));
 	pos = 0;
 	buf = 0;
-	skips = malloc(sizeof(int) * hedr.num_blocks);
-	memset(skips, 0, sizeof(int) * hedr.num_blocks);
 	return nif;
 }
 
@@ -198,6 +198,8 @@ void read_strings(nif_t *nif)
 void read_groups(nif_t *nif)
 {
 	hedr.num_groups = from_buf(unsigned int);
+	skips = malloc(sizeof(int) * hedr.num_blocks);
+	memset(skips, 0, sizeof(int) * hedr.num_blocks);
 }
 
 /// read blocks
@@ -227,35 +229,32 @@ api void nif_read_blocks(nif_t *nif)
 	}
 }
 
-#define is_type(x) 0 == strcmp(block_type, x)
-#define is_any_type(x, y, z) is_type(x) || (y ? is_type(y) : 0) || (z ? is_type(z) : 0)
-
 void read_block(nif_t *nif, int n)
 {
 	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
 	void *block = NULL;
 	if (0) ;
-	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) block = read_ni_node(nif, n);
-	else if ( is_any_type(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) block = read_ni_skin_instance(nif, n);
-	else if ( is_type(NI_SKIN_DATA) ) block = read_ni_skin_data(nif, n);
-	else if ( is_type(NI_SKIN_PARTITION) ) 0;
-	else if ( is_type(BS_TRI_SHAPE) ) 0;
-	else if ( is_type(BS_DYNAMIC_TRI_SHAPE) ) 0;
-	else if ( is_any_type(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) block = read_ni_tri_shape(nif, n);
-	else if ( is_type(NI_ALPHA_PROPERTY) ) 0;
-	else if ( is_type(NI_TRI_SHAPE_DATA) ) block = read_ni_tri_shape_data(nif, n);
-	else if ( is_type(BS_EFFECT_SHADER_PROPERTY) ) 0;
-	else if ( is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) ) 0;
-	else if ( is_type(NI_FLOAT_INTERPOLATOR) ) 0;
-	else if ( is_type(NI_FLOAT_DATA) ) 0;
-	else if ( is_type(BS_LIGHTING_SHADER_PROPERTY) ) block = read_bs_lighting_shader_property(nif, n);
-	else if ( is_type(BS_SHADER_TEXTURE_SET) ) block = read_bs_shader_texture_set(nif, n);
-	else if ( is_type(NI_CONTROLLER_SEQUENCE) ) 0;
-	else if ( is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
-	else if ( is_type(NI_STRING_EXTRA_DATA) ) 0;
-	else if ( is_type(NI_TRANSFORM_INTERPOLATOR) ) 0;
-	else if ( is_type(NI_TRANSFORM_DATA) ) 0;
-	else if ( is_type(BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA) ) 0;
+	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) block = read_ni_node(nif, n);
+	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) block = read_ni_skin_instance(nif, n);
+	else if ( ni_is_type(NI_SKIN_DATA) ) block = read_ni_skin_data(nif, n);
+	else if ( ni_is_type(NI_SKIN_PARTITION) ) 0;
+	else if ( ni_is_type(BS_TRI_SHAPE) ) 0;
+	else if ( ni_is_type(BS_DYNAMIC_TRI_SHAPE) ) 0;
+	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) block = read_ni_tri_shape(nif, n);
+	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) 0;
+	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) block = read_ni_tri_shape_data(nif, n);
+	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) ) 0;
+	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) ) 0;
+	else if ( ni_is_type(NI_FLOAT_INTERPOLATOR) ) 0;
+	else if ( ni_is_type(NI_FLOAT_DATA) ) 0;
+	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) block = read_bs_lighting_shader_property(nif, n);
+	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) block = read_bs_shader_texture_set(nif, n);
+	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) 0;
+	else if ( ni_is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
+	else if ( ni_is_type(NI_STRING_EXTRA_DATA) ) 0;
+	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) 0;
+	else if ( ni_is_type(NI_TRANSFORM_DATA) ) 0;
+	else if ( ni_is_type(BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA) ) 0;
 	blocks[n] = block;
 }
 
@@ -272,7 +271,7 @@ ni_common_layout_t read_ni_common_layout(nifr)
 
 void *read_ni_node(nifr)
 {
-	printf("read ni node\n");
+	//printf("read ni node\n");
 	ni_node_t *block = malloc(sizeof(ni_node_t));
 	block->common = read_ni_common_layout(nif, n);
 	read_struct(nif, ni_node_t, block, num_children, children);
@@ -284,7 +283,7 @@ void *read_ni_node(nifr)
 
 void *read_ni_tri_shape(nifr)
 {
-	printf("read ni tri shape\n");
+	//printf("read ni tri shape\n");
 	ni_tri_shape_t *block = malloc(sizeof(ni_node_t));
 	block->common = read_ni_common_layout(nif, n);
 	read_struct(nif, ni_tri_shape_t, block, data, material_data);
@@ -295,7 +294,7 @@ void *read_ni_tri_shape(nifr)
 
 void *read_ni_tri_shape_data(nifr)
 {
-	printf("read ni tri shape data\n");
+	//printf("read ni tri shape data\n");
 	ni_tri_shape_data_t *block = malloc(sizeof(ni_tri_shape_data_t));
 	read_struct(nif, ni_tri_shape_data_t, block, group_id, vertices);
 	read_array(nif, ni_tri_shape_data_t, block, vec_3, vertices, num_vertices);
@@ -326,8 +325,7 @@ void *read_ni_skin_data(nifr)
 
 void *read_bs_lighting_shader_property(nifr)
 {
-	printf("read bs lighting shader property\n");
-
+	//printf("read bs lighting shader property\n");
 	bs_lighting_shader_property_t *block = malloc(sizeof(bs_lighting_shader_property_t));
 	read_struct(nif, bs_lighting_shader_property_t, block, skyrim_shader_type, extra_data_list);
 	read_array(nif, bs_lighting_shader_property_t, block, ni_ref_t, extra_data_list, num_extra_data_list);
@@ -338,8 +336,7 @@ void *read_bs_lighting_shader_property(nifr)
 
 void *read_bs_shader_texture_set(nifr)
 {
-	printf("read bs shader texture set\n");
-
+	//printf("read bs shader texture set\n");
 	bs_shader_texture_set_t *block = malloc(sizeof(bs_shader_texture_set_t));
 	read_struct(nif, bs_shader_texture_set_t, block, num_textures, textures);
 	block->textures = malloc(sizeof(char *) * block->num_textures);
@@ -354,58 +351,55 @@ void *read_bs_shader_texture_set(nifr)
 
 // visitor
 
-#define nifm nif_t *nif, int parent, int current, void *data, nif_visitor_t *visitor
-
-void visit_factory(nifm);
-void visit_ni_node(nifm);
-void visit_ni_tri_shape(nifm);
-
+void visit(int, int, nif_visitor_t *);
+void visit_dud(int, int, nif_visitor_t *);
 
 api nif_visitor_t *nif_alloc_visitor() {
 	nif_visitor_t *visitor = malloc(sizeof(nif_visitor_t));
 	memset(visitor, 0, sizeof(nif_visitor_t));
-	//*visitor = (nif_visitor_t) {0, NULL, NULL};
+	visitor->callback = visit_dud;
 	return visitor;
 }
 
-api void nif_accept(nif_t *nif, nif_visitor_t *visitor, void *data)
+api void nif_accept(nif_t *nif, nif_visitor_t *visitor)
 {
 	printf("nif accept\n");
+	visitor->nif = nif;
 	for (int n = 0; n < hedr.num_blocks; n++)
 	{
-	visit_factory(nif, -1, n, data, visitor);
+	visit(-1, n, visitor);
 	}
 }
 
-void visit_factory(nifm)
+void visit(int p, int c, nif_visitor_t *visitor)
 {
-	if (-1 == current)
+	//printf("visit %i %i\n", p, c);
+	nif_t *nif = visitor->nif;
+	if (-1 == c)
 	return;
-	const char *block_type = hedr.block_types[hedr.block_type_index[current]];
-	if (skips[current])
+	if (skips[c])
 	return;
+	skips[c] = 1;
+	const char *block_type = hedr.block_types[hedr.block_type_index[c]];
 	if (0) ;
-	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) visit_ni_node(nif, parent, current, data, visitor);
-	else if ( is_any_type(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) visit_ni_tri_shape(nif, parent, current, data, visitor);
-	skips[current] = 1;
-}
-
-void visit_ni_node(nifm)
-{
-	printf("visit ni node\n");
-	ni_node_t *block = blocks[current];
-	if (visitor->ni_node)
-	visitor->ni_node(parent, current, data);
+	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
+	{
+	ni_node_t *block = blocks[c];
+	visitor->callback(p, c, block_type, visitor);
 	for (int i = 0; i < block->num_children; i++)
 	{
-	visit_factory(nif, current, block->children[i], data, visitor);
+	int b = block->children[i];
+	visit(c, b, visitor);
+	}
+	}
+	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
+	{
+	ni_tri_shape_t *block = blocks[c];
+	visitor->callback(p, c, block_type, visitor);
 	}
 }
 
-void visit_ni_tri_shape(nifm)
+void visit_dud(int p, int c, nif_visitor_t *visitor)
 {
-	printf("visit ni tri shape\n");
-	if (visitor->ni_tri_shape)
-		visitor->ni_tri_shape(parent, current, data);
 
 }

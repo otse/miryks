@@ -3,7 +3,7 @@
 #include "nif.h"
 #include "bsa.h"
 
-void test_visit_ni_node(int, int);
+void test_visitor(int, int, nif_visitor_t *);
 
 void nif_test(void *bsa)
 {
@@ -17,10 +17,11 @@ void nif_test(void *bsa)
 	nif_read(bucket);
 	nif_save(rc, bucket);
 	nif_visitor_t *visitor = nif_alloc_visitor();
-    visitor->ni_node = test_visit_ni_node;
+	visitor->nif = bucket;
+    visitor->callback = test_visitor;
 	nif_accept(bucket, visitor, NULL);
 }
 
-void test_visit_ni_node(int parent, int block, void *data) {
+void test_visitor(int parent, int block, nif_visitor_t *visitor) {
 	
 }

@@ -25,9 +25,6 @@ typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
 typedef struct bs_lighting_shader_property_t bs_lighting_shader_property_t;
 typedef struct bs_shader_texture_set_t bs_shader_texture_set_t;
 
-#define t_short_string char *
-#define t_sized_string char *
-
 struct nif_hedr_t
 {
 	char *header_string;
@@ -37,11 +34,11 @@ struct nif_hedr_t
 	unsigned int user_value, num_blocks, user_value_2;
 	char *author, *process_script, *export_script; // short strings
 	unsigned short num_block_types;
-	char **block_types;
-	unsigned short *block_type_index; // sized strings
+	char **block_types; // sized strings
+	unsigned short *block_type_index;
 	unsigned int *block_sizes, num_strings, max_string_length;
 	char **strings; // sized strings
-	unsigned int num_groups, *groups; // sized strings
+	unsigned int num_groups, *groups;
 	int end;
 };
 
@@ -56,11 +53,12 @@ struct nif_t
 	int *skips;
 };
 
-typedef void(ni_block_cb)(int, int, void *);
 struct nif_visitor_t {
 	int x;
-	ni_block_cb *ni_node;
-	ni_block_cb *ni_tri_shape;
+	nif_t *nif;
+	void *data;
+	int parent, current;
+	void(* callback)(int, int, const char *, nif_visitor_t *);
 };
 
 struct vec_2{ float x, y; };
@@ -130,6 +128,9 @@ api void nif_print_block(nif_t *, int, char *);
 #define NI_TRANSFORM_DATA "NiTransformData"
 #define BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA "BSDecalPlacementVectorExtraData"
 
+#define ni_is_type(x) 0 == strcmp(block_type, x)
+#define ni_is_any(x, y, z) ni_is_type(x) || (y ? ni_is_type(y) : 0) || (z ? ni_is_type(z) : 0)
+
 #pragma pack(push, 1)
 
 struct ni_common_layout_t {
@@ -145,6 +146,7 @@ struct ni_common_layout_t {
 	char *name_string;
 };
 
+// ninode, bsleafanimnode, bsfadenode
 struct ni_node_t {
 	ni_common_layout_t common;
 	unsigned int num_children;
@@ -153,9 +155,20 @@ struct ni_node_t {
 	ni_ref_t *effects;
 };
 
+// nitrishape, bslodtrishape
 struct ni_tri_shape_t {
 	ni_common_layout_t common;
 	ni_ref_t data, skin_instance, material_data, shader_property, alpha_property;
+	int end;
+};
+
+// bstrishape, bsdynamictrishape
+struct bs_tri_shape {
+	int end;
+};
+
+// niskininstance, bsdismemberskininstance
+struct ni_skin_instance_t {
 	int end;
 };
 
