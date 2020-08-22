@@ -3,6 +3,8 @@
 #include "nif.h"
 #include "bsa.h"
 
+void test_visit_ni_node(int);
+
 void nif_test(void *bsa)
 {
 	bsa_t *meshes = (bsa_t *)bsa;
@@ -13,5 +15,11 @@ void nif_test(void *bsa)
 	bucket->path = rc->path;
 	bucket->buf = rc->inf;
 	nif_read(rc, bucket);
-	nif_meshify(bucket);
+	nif_visitor_t *visitor = nif_alloc_visitor();
+    visitor->ni_node = test_visit_ni_node;
+	nif_accept(bucket, visitor);
+}
+
+void test_visit_ni_node(int x) {
+	printf("niftest.c visit ni node\n");
 }

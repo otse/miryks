@@ -3,9 +3,10 @@
 
 #define api
 
-typedef struct ni_block_t ni_block_t;
+typedef void ni_block_t;
 
 typedef struct nif_t nif_t;
+typedef struct nif_visitor_t nif_visitor_t;
 typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nmap_t nmap_t;
 typedef struct vec_2 vec_2;
@@ -37,12 +38,6 @@ struct nif_hedr_t
 	int end;
 };
 
-struct ni_block_t
-{
-	int n;
-	void *v;
-};
-
 struct nif_t
 {
 	int n;
@@ -50,8 +45,16 @@ struct nif_t
 	const unsigned char *buf;
 	unsigned pos;
 	nif_hedr_t hdr;
-	ni_block_t *blocks;
+	ni_block_t **blocks;
 	int *skips;
+};
+
+#define blockcb ni_block_t *parent, ni_block_t *block
+typedef void(ni_block_cb)(blockcb);
+struct nif_visitor_t {
+	int x;
+	ni_block_cb *ni_node;
+	ni_block_cb *ni_tri_shape;
 };
 
 struct vec_2{ float x, y; };
@@ -78,7 +81,9 @@ void nif_read_header(nif_t *);
 void nif_read_blocks(nif_t *);
 
 api nif_t *nif_alloc();
-api void nif_meshify(nif_t *);
+
+api nif_visitor_t *nif_alloc_visitor();
+api void nif_accept(nif_t *, nif_visitor_t *);
 
 api void nif_read(void *, nif_t *);
 api void nif_add(void *, nif_t *);
@@ -204,26 +209,5 @@ struct bs_shader_texture_set_t {
 };
 
 #pragma pack(pop)
-
-///
-
-typedef struct group_t group_t;
-typedef struct geometry_t geometry_t;
-
-struct group_t {
-	int groups;
-	group_t *parent;
-	group_t *group[8];
-	geometry_t *geometry;
-	vec_3 *translation;
-	mat_3 *rotation;
-};
-
-struct geometry_t {
-	int l;
-};
-
-void nif_bake_links();
-//void nif_mesh
 
 #endif

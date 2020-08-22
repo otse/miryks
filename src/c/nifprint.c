@@ -139,7 +139,7 @@ block->collision_object);
 void print_ni_node(nifn, char *s)
 {
 	char x[600];
-	ni_node_t *block = blocks[n].v;
+	ni_node_t *block = blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -157,7 +157,7 @@ block->num_effects);
 void print_ni_tri_shape(nifn, char *s)
 {
 	char x[600];
-	ni_tri_shape_t *block = blocks[n].v;
+	ni_tri_shape_t *block = blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -179,7 +179,7 @@ block->alpha_property);
 void print_ni_tri_shape_data(nifn, char *s)
 {
 	char a[200], b[200], c[200], d[200], e[200], f[200], g[200], h[200], i[200], j[200], k[200], l[200], m[200], o[200], p[200];
-	ni_tri_shape_data_t *block = blocks[n].v;
+	ni_tri_shape_data_t *block = blocks[n];
 	snprintf(
 		s, 1500,
 		"\
@@ -272,7 +272,7 @@ void print_ni_tri_shape_data_arrays(nifn, char *s) {
 void print_bs_lighting_shader_property(nifn, char *s)
 {
 	char a[200], b[200], c[200], d[200];
-	bs_lighting_shader_property_t *block = blocks[n].v;
+	bs_lighting_shader_property_t *block = blocks[n];
 	snprintf(
 		s, 1500,
 		"\
@@ -322,7 +322,7 @@ block->lighting_effect_2
 
 void print_bs_shader_texture_set(nifn, char *s)
 {
-	bs_shader_texture_set_t *block = blocks[n].v;
+	bs_shader_texture_set_t *block = blocks[n];
 	snprintf(
 		s, 1500,
 		"\
