@@ -18,6 +18,13 @@ typedef struct ushort_3 ushort_3;
 typedef int32_t ni_ref_t;
 typedef int32_t ni_string_t;
 
+typedef struct ni_common_layout_t ni_common_layout_t;
+typedef struct ni_node_t ni_node_t;
+typedef struct ni_tri_shape_t ni_tri_shape_t;
+typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
+typedef struct bs_lighting_shader_property_t bs_lighting_shader_property_t;
+typedef struct bs_shader_texture_set_t bs_shader_texture_set_t;
+
 #define t_short_string char *
 #define t_sized_string char *
 
@@ -49,8 +56,7 @@ struct nif_t
 	int *skips;
 };
 
-#define blockcb ni_block_t *parent, ni_block_t *block
-typedef void(ni_block_cb)(blockcb);
+typedef void(ni_block_cb)(int, int);
 struct nif_visitor_t {
 	int x;
 	ni_block_cb *ni_node;
@@ -123,13 +129,6 @@ api void nif_print_block(nif_t *, int, char *);
 #define NI_TRANSFORM_INTERPOLATOR "NiTransformInterpolator"
 #define NI_TRANSFORM_DATA "NiTransformData"
 #define BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA "BSDecalPlacementVectorExtraData"
-
-typedef struct ni_common_layout_t ni_common_layout_t;
-typedef struct ni_node_t ni_node_t;
-typedef struct ni_tri_shape_t ni_tri_shape_t;
-typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
-typedef struct bs_lighting_shader_property_t bs_lighting_shader_property_t;
-typedef struct bs_shader_texture_set_t bs_shader_texture_set_t;
 
 #pragma pack(push, 1)
 

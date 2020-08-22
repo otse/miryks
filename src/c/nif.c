@@ -351,16 +351,17 @@ void *read_bs_shader_texture_set(nifr)
 
 ///
 
-#define nifm nif_t *nif, int n, ni_block_t *parent, ni_block_t *block, nif_visitor_t *visitor
+#define nifm nif_t *nif, int parent, int current, nif_visitor_t *visitor
 
-void visit_root(nifm, const char *);
+void visit_factory(nifm, const char *);
 void visit_ni_node(nifm);
 void visit_ni_tri_shape(nifm);
 
 
 api nif_visitor_t *nif_alloc_visitor() {
 	nif_visitor_t *visitor = malloc(sizeof(nif_visitor_t));
-	*visitor = (nif_visitor_t) {0, NULL, NULL};
+	memset(visitor, 0, sizeof(nif_visitor_t));
+	//*visitor = (nif_visitor_t) {0, NULL, NULL};
 	return visitor;
 }
 
@@ -371,31 +372,31 @@ api void nif_accept(nif_t *nif, nif_visitor_t *visitor)
 	{
 	ni_block_t *block = &blocks[n];
 	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
-	visit_root(nif, n, NULL, block, visitor, block_type);
+	visit_factory(nif, -1, n, visitor, block_type);
 	}
 }
 
-void visit_root(nifm, const char *block_type)
+void visit_factory(nifm, const char *block_type)
 {
-	if (skips[n])
+	if (skips[current])
 	return;
 	if (0) ;
-	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) visit_ni_node(nif, n, NULL, block, visitor);
-	else if ( is_any_type(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) visit_ni_tri_shape(nif, n, NULL, block, visitor);
-	skips[n] = 1;
+	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) visit_ni_node(nif, parent, current, visitor);
+	else if ( is_any_type(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) visit_ni_tri_shape(nif, parent, current, visitor);
+	skips[current] = 1;
 }
 
 void visit_ni_node(nifm)
 {
 	printf("visit ni node\n");
 	if (visitor->ni_node)
-	visitor->ni_node(parent, (ni_node_t *)block);
+	visitor->ni_node(parent, current);
 }
 
 void visit_ni_tri_shape(nifm)
 {
 	printf("visit ni tri shape\n");
 	if (visitor->ni_tri_shape)
-	visitor->ni_tri_shape(parent, (ni_tri_shape_t *)block);
+	visitor->ni_tri_shape(parent, current);
 
 }

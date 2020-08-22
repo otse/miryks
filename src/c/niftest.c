@@ -3,7 +3,7 @@
 #include "nif.h"
 #include "bsa.h"
 
-void test_visit_ni_node(int);
+void test_visit_ni_node(int, int);
 
 void nif_test(void *bsa)
 {
@@ -20,6 +20,6 @@ void nif_test(void *bsa)
 	nif_accept(bucket, visitor);
 }
 
-void test_visit_ni_node(int x) {
+void test_visit_ni_node(int parent, int block) {
 	printf("niftest.c visit ni node\n");
 }

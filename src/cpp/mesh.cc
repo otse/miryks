@@ -6,7 +6,7 @@ Mesh::Mesh(nif_t *nif) :
     int l;
 }
 
-void meshify_ni_node(blockcb);
+void meshify_ni_node(int, int);
 
 void Mesh::Construct()
 {
@@ -14,6 +14,6 @@ void Mesh::Construct()
     visitor->ni_node = meshify_ni_node;
 }
 
-void meshify_ni_node(blockcb) {
+void meshify_ni_node(int parent, int block) {
     printf("mesh.cc meshify ni node\n");
 }
