@@ -2,16 +2,18 @@
 
 #include "nif.h"
 
+// sorry ugly container
+
 nmap_t nmap[1000];
 int nifs = 0;
 
-api void nif_add(void *key, nif_t *nif)
+api void nif_save(void *key, nif_t *nif)
 {
 	nif->n = nifs;
 	nmap[nifs++] = (nmap_t){key, nif};
 }
 
-api nif_t *nif_get_stored(void *key)
+api nif_t *nif_saved(void *key)
 {
 	for (int i = 0; i < nifs; i++)
 	{
@@ -23,7 +25,9 @@ api nif_t *nif_get_stored(void *key)
 	return 0;
 }
 
-// defines macros:
+// lets begin
+
+// defines macros
 
 #define nifr nif_t *nif, int n
 #define hedr nif->hdr
@@ -80,14 +84,13 @@ api nif_t *nif_alloc() {
 	return nif;
 }
 
-api void nif_read(void *key, nif_t *nif) {
+api void nif_read(nif_t *nif) {
 	cassert_(buf, "buf not set");
 	nif_read_header(nif);
 	nif_read_blocks(nif);
-	nif_add(key, nif);
 }
 
-// read header:
+// read header
 
 void read_header_string(nif_t *);
 void read_some_stuff(nif_t *);
@@ -197,7 +200,7 @@ void read_groups(nif_t *nif)
 	hedr.num_groups = from_buf(unsigned int);
 }
 
-/// read blocks:
+/// read blocks
 
 void read_block(nif_t *, int);
 
@@ -349,11 +352,11 @@ void *read_bs_shader_texture_set(nifr)
 	return block;
 }
 
-///
+// visitor
 
-#define nifm nif_t *nif, int parent, int current, nif_visitor_t *visitor
+#define nifm nif_t *nif, int parent, int current, void *data, nif_visitor_t *visitor
 
-void visit_factory(nifm, const char *);
+void visit_factory(nifm);
 void visit_ni_node(nifm);
 void visit_ni_tri_shape(nifm);
 
@@ -365,38 +368,44 @@ api nif_visitor_t *nif_alloc_visitor() {
 	return visitor;
 }
 
-api void nif_accept(nif_t *nif, nif_visitor_t *visitor)
+api void nif_accept(nif_t *nif, nif_visitor_t *visitor, void *data)
 {
 	printf("nif accept\n");
 	for (int n = 0; n < hedr.num_blocks; n++)
 	{
-	ni_block_t *block = &blocks[n];
-	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
-	visit_factory(nif, -1, n, visitor, block_type);
+	visit_factory(nif, -1, n, data, visitor);
 	}
 }
 
-void visit_factory(nifm, const char *block_type)
+void visit_factory(nifm)
 {
+	if (-1 == current)
+	return;
+	const char *block_type = hedr.block_types[hedr.block_type_index[current]];
 	if (skips[current])
 	return;
 	if (0) ;
-	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) visit_ni_node(nif, parent, current, visitor);
-	else if ( is_any_type(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) visit_ni_tri_shape(nif, parent, current, visitor);
+	else if ( is_any_type(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) visit_ni_node(nif, parent, current, data, visitor);
+	else if ( is_any_type(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) visit_ni_tri_shape(nif, parent, current, data, visitor);
 	skips[current] = 1;
 }
 
 void visit_ni_node(nifm)
 {
 	printf("visit ni node\n");
+	ni_node_t *block = blocks[current];
 	if (visitor->ni_node)
-	visitor->ni_node(parent, current);
+	visitor->ni_node(parent, current, data);
+	for (int i = 0; i < block->num_children; i++)
+	{
+	visit_factory(nif, current, block->children[i], data, visitor);
+	}
 }
 
 void visit_ni_tri_shape(nifm)
 {
 	printf("visit ni tri shape\n");
 	if (visitor->ni_tri_shape)
-	visitor->ni_tri_shape(parent, current);
+		visitor->ni_tri_shape(parent, current, data);
 
 }

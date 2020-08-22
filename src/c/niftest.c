@@ -14,12 +14,13 @@ void nif_test(void *bsa)
 	nif_t *bucket = nif_alloc();
 	bucket->path = rc->path;
 	bucket->buf = rc->inf;
-	nif_read(rc, bucket);
+	nif_read(bucket);
+	nif_save(rc, bucket);
 	nif_visitor_t *visitor = nif_alloc_visitor();
     visitor->ni_node = test_visit_ni_node;
-	nif_accept(bucket, visitor);
+	nif_accept(bucket, visitor, NULL);
 }
 
-void test_visit_ni_node(int parent, int block) {
-	printf("niftest.c visit ni node\n");
+void test_visit_ni_node(int parent, int block, void *data) {
+	
 }

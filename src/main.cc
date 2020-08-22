@@ -14,6 +14,7 @@ extern "C" {
 #include "cpp/opengl/geometry"
 #include "cpp/opengl/material"
 
+#include "cpp/mesh.h"
 
 namespace dark2
 {
@@ -34,7 +35,7 @@ namespace dark2
 
 using namespace dark2;
 
-void load_bsas()
+void loadBSA()
 {
 	log_("load bsas");
 
@@ -47,13 +48,25 @@ void load_bsas()
 	log_("got bsas");
 }
 
+void loadBucket() {
+	Mesh *mesh = new Mesh;
+	rc_t *rc = bsa_find(&meshes, "meshes\\clutter\\bucket02a.nif");
+	cassert_(rc, "mh no bucket02a");
+	bsa_read(&meshes, rc);
+	nif_t *bucket = nif_alloc();
+	bucket->path = rc->path;
+	bucket->buf = rc->inf;
+	nif_read(bucket);
+	mesh->Construct(bucket);
+}
+
 int main()
 {
 	log_("dark2 loading");
 	OLDRIM_PATH = fread(PATH_TXT);
 	cassert_(
 		OLDRIM_PATH != "no", "missing" PATH_TXT);
-	load_bsas();
+	loadBSA();
 	//system("PAUSE");
 	program_go();
 	oglGo();
@@ -72,6 +85,8 @@ int main()
 	cube->Update();
 	scene->Add(cube);
 	}
+
+	loadBucket();
 
 	nif_test(&meshes);
 

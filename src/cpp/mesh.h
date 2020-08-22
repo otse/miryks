@@ -15,12 +15,12 @@ extern "C" {
 
 
 class Mesh {
-	Mesh(nif_t *);
-
-	nif_t *nif;
+	public:
+	Mesh();
 
 	Group baseGroup;
+	Group *lastGroup;
 
-	void Construct();
+	void Construct(nif_t *);
 };
 

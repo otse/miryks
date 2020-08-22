@@ -1,19 +1,19 @@
 #include "mesh.h"
 
-Mesh::Mesh(nif_t *nif) :
-    nif(nif)
+Mesh::Mesh()
 {
     int l;
 }
 
-void meshify_ni_node(int, int);
+void meshify_ni_node(int, int, void *);
 
-void Mesh::Construct()
+void Mesh::Construct(nif_t *bucket)
 {
     nif_visitor_t *visitor = nif_alloc_visitor();
     visitor->ni_node = meshify_ni_node;
+	nif_accept(bucket, visitor, this);
 }
 
-void meshify_ni_node(int parent, int block) {
+void meshify_ni_node(int parent, int block, void *) {
     printf("mesh.cc meshify ni node\n");
 }

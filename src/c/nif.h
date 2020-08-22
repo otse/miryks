@@ -56,7 +56,7 @@ struct nif_t
 	int *skips;
 };
 
-typedef void(ni_block_cb)(int, int);
+typedef void(ni_block_cb)(int, int, void *);
 struct nif_visitor_t {
 	int x;
 	ni_block_cb *ni_node;
@@ -89,11 +89,11 @@ void nif_read_blocks(nif_t *);
 api nif_t *nif_alloc();
 
 api nif_visitor_t *nif_alloc_visitor();
-api void nif_accept(nif_t *, nif_visitor_t *);
+api void nif_accept(nif_t *, nif_visitor_t *, void *);
 
-api void nif_read(void *, nif_t *);
-api void nif_add(void *, nif_t *);
-api nif_t *nif_get_stored(void *);
+api void nif_read(nif_t *);
+api void nif_save(void *, nif_t *);
+api nif_t *nif_saved(void *);
 
 api char *nif_get_string(nif_t *, int);
 api char *nif_get_block_type(nif_t *, int);
