@@ -21,6 +21,9 @@ class Mesh {
 	nif_t *nif;
 	Group *base, *lastGroup;
 
+	//Material *material;
+	//Geometry *geometry;
+
 	void Construct(nif_t *);
 	Group *Nested(int);
 };

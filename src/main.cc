@@ -58,6 +58,7 @@ void loadBucket() {
 	bucket->buf = rc->inf;
 	nif_read(bucket);
 	mesh->Construct(bucket);
+	scene->Add(mesh->base);
 }
 
 int main()
@@ -70,7 +71,7 @@ int main()
 	//system("PAUSE");
 	program_go();
 	oglGo();
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10; i++)
 	{
 	Group *cube = new Group;
 	vec3 pos = vec3(
