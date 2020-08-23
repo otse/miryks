@@ -351,32 +351,33 @@ void *read_bs_shader_texture_set(nifr)
 
 // rundown
 
-void visit(int, int, nif_rundown_t *);
-void visit_dud(int, int, nif_rundown_t *);
-void visit_dud_block(int, int, void *, nif_rundown_t *);
+void visit(rd_t *, int, int);
+void visit_dud(rd_t *, int, int);
+void visit_dud_block(rd_t *, void *, int, int);
 
-api nif_rundown_t *nif_alloc_rundown() {
-	nif_rundown_t *rundown = malloc(sizeof(nif_rundown_t));
-	memset(rundown, 0, sizeof(nif_rundown_t));
-	rundown->generic = visit_dud;
-	rundown->ni_node = visit_dud;
-	return rundown;
+api rd_t *nif_alloc_rundown() {
+	rd_t *rd = malloc(sizeof(rd_t));
+	memset(rd, 0, sizeof(rd_t));
+	rd->other = visit_dud;
+	rd->ni_node = visit_dud;
+	rd->ni_tri_shape = visit_dud;
+	return rd;
 }
 
-api void nif_accept(nif_t *nif, nif_rundown_t *rundown)
+api void nif_accept(nif_t *nif, rd_t *rd)
 {
 	printf("nif accept\n");
-	rundown->nif = nif;
+	rd->nif = nif;
 	for (int n = 0; n < hedr.num_blocks; n++)
 	{
-	visit(-1, n, rundown);
+	visit(rd, -1, n);
 	}
 }
 
-void visit(int p, int c, nif_rundown_t *rundown)
+void visit(rd_t *rd, int p, int c)
 {
 	//printf("visit %i %i\n", p, c);
-	nif_t *nif = rundown->nif;
+	nif_t *nif = rd->nif;
 	if (-1 == c)
 	return;
 	if (skips[c])
@@ -387,27 +388,28 @@ void visit(int p, int c, nif_rundown_t *rundown)
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{
 	ni_node_t *block = blocks[c];
-	rundown->ni_node(p, c, block, rundown);
-	//rundown->generic(p, c, block_type, rundown);
+	rd->ni_node(rd, p, c, block);
+	//rundown->other(p, c, block_type, rundown);
 	for (int i = 0; i < block->num_children; i++)
 	{
 	int b = block->children[i];
-	visit(c, b, rundown);
+	visit(rd, c, b);
 	}
 	}
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
 	{
 	ni_tri_shape_t *block = blocks[c];
-	rundown->generic(p, c, block_type, rundown);
+	rd->ni_tri_shape(rd, p, c, block);
+	//rd->other(rd, p, c, block_type);
 	}
 }
 
-void visit_dud(int p, int c, nif_rundown_t *rundown)
+void visit_dud(rd_t *rd, int p, int c)
 {
 
 }
 
-void visit_dud_block(int p, int c, void *block, nif_rundown_t *rundown)
+void visit_dud_block(rd_t *rd, void *block, int p, int c)
 {
 
 }

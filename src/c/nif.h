@@ -6,7 +6,7 @@
 typedef void ni_block_t;
 
 typedef struct nif_t nif_t;
-typedef struct nif_rundown_t nif_rundown_t;
+typedef struct rd_t rd_t;
 typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nmap_t nmap_t;
 typedef struct vec_2 vec_2;
@@ -53,14 +53,17 @@ struct nif_t
 	int *skips;
 };
 
-struct nif_rundown_t {
+typedef void(* rd_func_t)(rd_t *, int, int, void *);
+
+struct rd_t {
 	int x;
 	nif_t *nif;
 	void *data;
 	int parent, current;
-	void(* generic)(int, int, const char *, nif_rundown_t *);
-	void(* ni_node)(int, int, ni_node_t *, nif_rundown_t *);
-	void(* ni_tri_shape)(int, int, ni_tri_shape_t *, nif_rundown_t *);
+	void(* other)(rd_t *, int, int, const char *);
+	//rd_func_t typed;
+	void(* ni_node)(rd_t *, ni_node_t *, int, int);
+	void(* ni_tri_shape)(rd_t *, ni_tri_shape_t *, int, int);
 };
 
 struct vec_2{ float x, y; };
@@ -88,8 +91,8 @@ void nif_read_blocks(nif_t *);
 
 api nif_t *nif_alloc();
 
-api nif_rundown_t *nif_alloc_rundown();
-api void nif_accept(nif_t *, nif_rundown_t *, void *);
+api rd_t *nif_alloc_rundown();
+api void nif_accept(nif_t *, rd_t *, void *);
 
 api void nif_read(nif_t *);
 api void nif_save(void *, nif_t *);

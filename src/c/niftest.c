@@ -3,7 +3,7 @@
 #include "nif.h"
 #include "bsa.h"
 
-void test_rundown(int, int, nif_rundown_t *);
+void test_callback(int, int, rd_t *);
 
 void nif_test(void *bsa)
 {
@@ -16,12 +16,12 @@ void nif_test(void *bsa)
 	bucket->buf = rc->inf;
 	nif_read(bucket);
 	nif_save(rc, bucket);
-	nif_rundown_t *rd = nif_alloc_rundown();
+	rd_t *rd = nif_alloc_rundown();
 	rd->nif = bucket;
-    rd->generic = test_rundown;
+    rd->other = test_callback;
 	nif_accept(bucket, rd, NULL);
 }
 
-void test_rundown(int parent, int block, nif_rundown_t *rd) {
+void test_callback(int parent, int block, rd_t *rd) {
 	
 }
