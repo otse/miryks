@@ -3,7 +3,7 @@
 #include "nif.h"
 #include "bsa.h"
 
-void test_callback(int, int, rd_t *);
+void test_callback(rd_t *, int, int);
 
 void nif_test(void *bsa)
 {
@@ -22,6 +22,6 @@ void nif_test(void *bsa)
 	nif_rundown(bucket, rd, NULL);
 }
 
-void test_callback(int parent, int block, rd_t *rd) {
+void test_callback(rd_t *rd, int parent, int block) {
 	
 }

@@ -19,7 +19,7 @@ class Mesh {
 	Mesh();
 
 	nif_t *nif;
-	Group *base, *front;
+	Group *base, *lastGroup;
 
 	void Construct(nif_t *);
 	Group *Nested(int);

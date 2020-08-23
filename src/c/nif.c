@@ -352,15 +352,14 @@ void *read_bs_shader_texture_set(nifr)
 // rundown
 
 void visit(rd_t *, int, int);
-void visit_dud(rd_t *, int, int);
-void visit_dud_block(rd_t *, void *);
+void visit_other(rd_t *, int, int);
+void visit_block(rd_t *, void *);
 
 api rd_t *nif_alloc_rundown() {
 	rd_t *rd = malloc(sizeof(rd_t));
 	memset(rd, 0, sizeof(rd_t));
-	rd->other = visit_dud;
-	rd->ni_node = visit_dud_block;
-	rd->ni_tri_shape = visit_dud_block;
+	rd->other = visit_other;
+	rd->ni_node = rd->ni_tri_shape = visit_block;
 	return rd;
 }
 
@@ -405,12 +404,12 @@ void visit(rd_t *rd, int p, int c)
 	}
 }
 
-void visit_dud(rd_t *rd, int p, int c)
+void visit_other(rd_t *rd, int p, int c)
 {
 
 }
 
-void visit_dud_block(rd_t *rd, void *block)
+void visit_block(rd_t *rd, void *block)
 {
 
 }
