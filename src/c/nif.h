@@ -6,7 +6,7 @@
 typedef void ni_block_t;
 
 typedef struct nif_t nif_t;
-typedef struct nif_visitor_t nif_visitor_t;
+typedef struct nif_rundown_t nif_rundown_t;
 typedef struct nif_hedr_t nif_hedr_t;
 typedef struct nmap_t nmap_t;
 typedef struct vec_2 vec_2;
@@ -53,12 +53,14 @@ struct nif_t
 	int *skips;
 };
 
-struct nif_visitor_t {
+struct nif_rundown_t {
 	int x;
 	nif_t *nif;
 	void *data;
 	int parent, current;
-	void(* callback)(int, int, const char *, nif_visitor_t *);
+	void(* generic)(int, int, const char *, nif_rundown_t *);
+	void(* ni_node)(int, int, ni_node_t *, nif_rundown_t *);
+	void(* ni_tri_shape)(int, int, ni_tri_shape_t *, nif_rundown_t *);
 };
 
 struct vec_2{ float x, y; };
@@ -86,8 +88,8 @@ void nif_read_blocks(nif_t *);
 
 api nif_t *nif_alloc();
 
-api nif_visitor_t *nif_alloc_visitor();
-api void nif_accept(nif_t *, nif_visitor_t *, void *);
+api nif_rundown_t *nif_alloc_rundown();
+api void nif_accept(nif_t *, nif_rundown_t *, void *);
 
 api void nif_read(nif_t *);
 api void nif_save(void *, nif_t *);
