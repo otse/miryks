@@ -19,7 +19,7 @@ void nif_test(void *bsa)
 	rd_t *rd = nif_alloc_rundown();
 	rd->nif = bucket;
     rd->other = test_callback;
-	nif_accept(bucket, rd, NULL);
+	nif_rundown(bucket, rd, NULL);
 }
 
 void test_callback(int parent, int block, rd_t *rd) {

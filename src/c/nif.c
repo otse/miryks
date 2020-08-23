@@ -353,18 +353,18 @@ void *read_bs_shader_texture_set(nifr)
 
 void visit(rd_t *, int, int);
 void visit_dud(rd_t *, int, int);
-void visit_dud_block(rd_t *, void *, int, int);
+void visit_dud_block(rd_t *, void *);
 
 api rd_t *nif_alloc_rundown() {
 	rd_t *rd = malloc(sizeof(rd_t));
 	memset(rd, 0, sizeof(rd_t));
 	rd->other = visit_dud;
-	rd->ni_node = visit_dud;
-	rd->ni_tri_shape = visit_dud;
+	rd->ni_node = visit_dud_block;
+	rd->ni_tri_shape = visit_dud_block;
 	return rd;
 }
 
-api void nif_accept(nif_t *nif, rd_t *rd)
+api void nif_rundown(nif_t *nif, rd_t *rd)
 {
 	printf("nif accept\n");
 	rd->nif = nif;
@@ -376,6 +376,7 @@ api void nif_accept(nif_t *nif, rd_t *rd)
 
 void visit(rd_t *rd, int p, int c)
 {
+#define rd_trail(a, b) rd->parent = a; rd->current = b;
 	//printf("visit %i %i\n", p, c);
 	nif_t *nif = rd->nif;
 	if (-1 == c)
@@ -388,8 +389,8 @@ void visit(rd_t *rd, int p, int c)
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{
 	ni_node_t *block = blocks[c];
-	rd->ni_node(rd, p, c, block);
-	//rundown->other(p, c, block_type, rundown);
+	rd_trail(p, c);
+	rd->ni_node(rd, block);
 	for (int i = 0; i < block->num_children; i++)
 	{
 	int b = block->children[i];
@@ -399,8 +400,8 @@ void visit(rd_t *rd, int p, int c)
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
 	{
 	ni_tri_shape_t *block = blocks[c];
-	rd->ni_tri_shape(rd, p, c, block);
-	//rd->other(rd, p, c, block_type);
+	rd_trail(p, c);
+	rd->ni_tri_shape(rd, block);
 	}
 }
 
@@ -409,7 +410,7 @@ void visit_dud(rd_t *rd, int p, int c)
 
 }
 
-void visit_dud_block(rd_t *rd, void *block, int p, int c)
+void visit_dud_block(rd_t *rd, void *block)
 {
 
 }

@@ -53,7 +53,7 @@ struct nif_t
 	int *skips;
 };
 
-typedef void(* rd_func_t)(rd_t *, int, int, void *);
+//typedef void(* rd_func_t)(rd_t *, int, int, void *);
 
 struct rd_t {
 	int x;
@@ -61,9 +61,8 @@ struct rd_t {
 	void *data;
 	int parent, current;
 	void(* other)(rd_t *, int, int, const char *);
-	//rd_func_t typed;
-	void(* ni_node)(rd_t *, ni_node_t *, int, int);
-	void(* ni_tri_shape)(rd_t *, ni_tri_shape_t *, int, int);
+	void(* ni_node)(rd_t *, ni_node_t *);
+	void(* ni_tri_shape)(rd_t *, ni_tri_shape_t *);
 };
 
 struct vec_2{ float x, y; };
@@ -92,7 +91,7 @@ void nif_read_blocks(nif_t *);
 api nif_t *nif_alloc();
 
 api rd_t *nif_alloc_rundown();
-api void nif_accept(nif_t *, rd_t *, void *);
+api void nif_rundown(nif_t *, rd_t *, void *);
 
 api void nif_read(nif_t *);
 api void nif_save(void *, nif_t *);
