@@ -2,6 +2,16 @@
 
 #include "opengl/types"
 
+vec3 *cast_vec_3(float *f) {
+	return reinterpret_cast<vec3 *>(f);
+}
+mat3 *cast_mat_3(float *f) {
+	return reinterpret_cast<mat3 *>(f);
+}
+mat4 *cast_mat_4(float *f) {
+	return reinterpret_cast<mat4 *>(f);
+}
+
 Mesh::Mesh()
 {
 	int l;
@@ -13,6 +23,9 @@ Mesh::Mesh()
 void other(rd_t *, int, int, const char *);
 void ni_node_callback(rd_t *, ni_node_t *);
 void ni_tri_shape_callback(rd_t *, ni_tri_shape_t *);
+void ni_tri_shape_data_callback(rd_t *, ni_tri_shape_data_t *);
+void bs_lighting_shader_property_callback(rd_t *, bs_lighting_shader_property_t *);
+void bs_shader_texture_set_callback(rd_t *, bs_shader_texture_set_t *);
 
 void Mesh::Construct(nif_t *bucket)
 {
@@ -23,6 +36,8 @@ void Mesh::Construct(nif_t *bucket)
 	rd->other = other;
 	rd->ni_node = ni_node_callback;
 	rd->ni_tri_shape = ni_tri_shape_callback;
+	rd->bs_lighting_shader_property = bs_lighting_shader_property_callback;
+	rd->bs_shader_texture_set = bs_shader_texture_set_callback;
 	nif_rundown(bucket, rd, this);
 }
 
@@ -41,40 +56,42 @@ void other(rd_t *rd, int parent, int current, const char *block_type)
 	Mesh *mesh = (Mesh *)rd->data;
 }
 
-vec3 *vec_3_vec3(float *f)
+void matrix_from_common(Group *group, ni_common_layout_t *common)
 {
-	return reinterpret_cast<vec3*>(f);
-}
-mat3 *mat_3_mat3(float *f)
-{
-	return reinterpret_cast<mat3*>(f);
-}
-
-void set_matrix_from_common(ni_common_layout_t *common)
-{
-	vec3 translation = *vec_3_vec3(&common->translation.x);
-	mat3 rotation = *mat_3_mat3(&common->rotation.n[0]);
+	group->matrix = mat4(*cast_mat_3((float *)&common->rotation));
+	group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->translation));
 }
 
 void ni_node_callback(rd_t *rd, ni_node_t *ni_node)
 {
 	printf("ni node callback\n");
-
 	Mesh *mesh = (Mesh *)rd->data;
-
 	Group *group = mesh->Nested(rd->parent);
-
-	set_matrix_from_common(&ni_node->common);
+	matrix_from_common(group, &ni_node->common);
 }
 
 void ni_tri_shape_callback(rd_t *rd, ni_tri_shape_t *ni_tri_shape)
 {
 	printf("ni tri shape callback\n");
-
 	Mesh *mesh = (Mesh *)rd->data;
-
 	Group *group = mesh->Nested(rd->parent);
+	matrix_from_common(group, &ni_tri_shape->common);
+}
 
-	set_matrix_from_common(&ni_tri_shape->common);
+void ni_tri_shape_data_callback(rd_t *rd, ni_tri_shape_data_t *ni_tri_shape_data)
+{
+	printf("ni tri shape data callback\n");
+	Mesh *mesh = (Mesh *)rd->data;
+}
 
+void bs_lighting_shader_property_callback(rd_t *rd, bs_lighting_shader_property_t *bs_lighting_shader_property)
+{
+	printf("bs lighting shader property callback\n");
+	Mesh *mesh = (Mesh *)rd->data;
+}
+
+void bs_shader_texture_set_callback(rd_t *rd, bs_shader_texture_set_t *bs_shader_texture_set)
+{
+	printf("bs shader texture set callback\n");
+	Mesh *mesh = (Mesh *)rd->data;
 }

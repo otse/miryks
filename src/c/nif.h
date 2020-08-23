@@ -63,6 +63,9 @@ struct rd_t {
 	void(* other)(rd_t *, int, int, const char *);
 	void(* ni_node)(rd_t *, ni_node_t *);
 	void(* ni_tri_shape)(rd_t *, ni_tri_shape_t *);
+	void(* ni_tri_shape_data)(rd_t *, ni_tri_shape_data_t *);
+	void(* bs_lighting_shader_property)(rd_t *, bs_lighting_shader_property_t *);
+	void(* bs_shader_texture_set)(rd_t *, bs_shader_texture_set_t *);
 };
 
 struct vec_2{ float x, y; };

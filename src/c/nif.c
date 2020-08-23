@@ -359,7 +359,7 @@ api rd_t *nif_alloc_rundown() {
 	rd_t *rd = malloc(sizeof(rd_t));
 	memset(rd, 0, sizeof(rd_t));
 	rd->other = visit_other;
-	rd->ni_node = rd->ni_tri_shape = visit_block;
+	rd->ni_node = rd->ni_tri_shape = rd->ni_tri_shape_data = rd->bs_lighting_shader_property = rd->bs_shader_texture_set = visit_block;
 	return rd;
 }
 
@@ -382,13 +382,13 @@ void visit(rd_t *rd, int p, int c)
 	return;
 	if (skips[c])
 	return;
+	rd_trail(p, c);
 	skips[c] = 1;
 	const char *block_type = hedr.block_types[hedr.block_type_index[c]];
 	if (0) ;
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{
 	ni_node_t *block = blocks[c];
-	rd_trail(p, c);
 	rd->ni_node(rd, block);
 	for (int i = 0; i < block->num_children; i++)
 	{
@@ -399,8 +399,24 @@ void visit(rd_t *rd, int p, int c)
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
 	{
 	ni_tri_shape_t *block = blocks[c];
-	rd_trail(p, c);
 	rd->ni_tri_shape(rd, block);
+	visit(rd, c, block->data);
+	visit(rd, c, block->shader_property);
+	visit(rd, c, block->alpha_property);
+	}
+	else if ( ni_is_type(NI_TRI_SHAPE_DATA) )
+	{
+	rd->ni_tri_shape_data(rd, blocks[c]);
+	}
+	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) )
+	{
+	bs_lighting_shader_property_t *block = blocks[c];
+	rd->bs_lighting_shader_property(rd, block);
+	visit(rd, c, block->texture_set);
+	}
+	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) )
+	{
+	rd->bs_shader_texture_set(rd, blocks[c]);
 	}
 }
 
