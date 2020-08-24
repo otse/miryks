@@ -23,6 +23,7 @@ namespace dark2
 	bsa_t interface;
 	bsa_t meshes;
 	bsa_t animations;
+	bsa_t textures;
 
 	Camera *camera;
 
@@ -35,28 +36,16 @@ namespace dark2
 
 using namespace dark2;
 
-void loadBSA()
-{
-	log_("load bsas");
-
-	//bsa_test();
-
-	//interface = bsa_load(OLDRIM_PATH + "Data/Skyrim - Interface.bsa");
-	//animations = bsa_load(OLDRIM_PATH + "Data/Skyrim - Animations.bsa");
-	meshes = bsa_load((OLDRIM_PATH + "Data/Skyrim - Meshes.bsa").c_str());
-
-	log_("got bsas");
-}
-
 void loadBucket() {
 	Mesh *mesh = new Mesh;
-	rc_t *rc = bsa_find(&meshes, "meshes\\clutter\\bucket02a.nif");
+	rc_t *rc = bsa_find(&dark2::meshes, "meshes\\clutter\\bucket02a.nif");
 	cassert_(rc, "mh no bucket02a");
-	bsa_read(&meshes, rc);
+	bsa_read(&dark2::meshes, rc);
 	nif_t *bucket = nif_alloc();
 	bucket->path = rc->path;
 	bucket->buf = rc->inf;
 	nif_read(bucket);
+	nif_save(rc, bucket);
 	mesh->Construct(bucket);
 	scene->Add(mesh->base);
 }
@@ -67,7 +56,10 @@ int main()
 	OLDRIM_PATH = fread(PATH_TXT);
 	cassert_(
 		OLDRIM_PATH != "no", "missing" PATH_TXT);
-	loadBSA();
+	//interface = bsa_load(OLDRIM_PATH + "Data/Skyrim - Interface.bsa");
+	//animations = bsa_load(OLDRIM_PATH + "Data/Skyrim - Animations.bsa");
+	meshes = bsa_load((OLDRIM_PATH + "Data/Skyrim - Meshes.bsa").c_str());
+	textures = bsa_load((OLDRIM_PATH + "Data/Skyrim - Textures.bsa").c_str());
 	//system("PAUSE");
 	program_go();
 	oglGo();

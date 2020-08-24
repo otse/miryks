@@ -152,7 +152,7 @@ void aabb::geometrize()
 	int i = 0;
 	for (const vec3 &pos : lines)
 	{
-		vertex_t &vertex = geometry->vertices[i++];
+		Vertex &vertex = geometry->vertices[i++];
 		vertex.position = pos;
 	}
 

@@ -1,44 +1,50 @@
-#include "files"
+#include "dark2.h"
 
 #include "texture"
 
 extern "C"
 {
-#include "../../c/files.h"
+#include "c/c.h"
+#include "c/files.h"
+#include "c/bsa.h"
 #include <dds.h>
 }
 
-static std::map<const string, Texture *> textures;
+#include <algorithm>
 
-Texture *GetTexture(const string &path)
+static std::map<const std::string, Texture *> textures;
+
+inline std::string lowercase(const char *c)
 {
-	if (textures.count(path))
-
-		return textures[path];
-
-	textures.emplace(path, new Texture(path));
-	
-	return --textures.end()->second;
+	std::string s = c;
+	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+	return s;
 }
 
-Texture::Texture(const string &path)
-	: path(path)
+Texture *GetProduceTexture(const char *path)
 {
-	//log_("new texture ", path);
+	std::string lower = lowercase(path);
+	if (textures.count(lower) == 0)
+		textures.emplace(lower, new Texture(lower));
+	return textures[lower];
+}
 
+Texture::Texture(const string &path) : path(path)
+{
+	printf("new texture %s\n", path.c_str());
+	rc_t *rc = bsa_find(&dark2::textures, path.c_str());
+	if (rc == NULL)
+		return;
+	bsa_read(&dark2::textures, rc);
+	buf = rc->inf;
+	size = rc->size;
 	Load();
 }
 Texture::~Texture() {}
 
 void Texture::Load()
 {
-	if (fchec(path.c_str()))
-	{
-		log_("texture cant find ", path, "");
-		return;
-	}
-
-	DDSFile *dds = ddsloader_load(path.c_str());
+	DDSFile *dds = ddsloader_load_buf(buf, size);
 
 	int offset = 0;
 	int count = dds->dwMipMapCount;
@@ -98,7 +104,7 @@ void Texture::Load()
 
 	for (int i = 0; i < count && (w || h); ++i)
 	{
-		if ( w == 0 || h == 0)
+		if (w == 0 || h == 0)
 		{ // 0x1 0x2 resolutions
 			count--;
 			//log_("discarding odd mipmap for ", path);

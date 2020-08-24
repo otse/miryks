@@ -5,9 +5,8 @@
 
 void test_callback(rd_t *, int, int);
 
-void nif_test(void *bsa)
+void nif_test(bsa_t *meshes)
 {
-	bsa_t *meshes = (bsa_t *)bsa;
 	rc_t *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	cassert_(rc, "mh no bucket02a");
 	bsa_read(meshes, rc);
@@ -15,7 +14,7 @@ void nif_test(void *bsa)
 	bucket->path = rc->path;
 	bucket->buf = rc->inf;
 	nif_read(bucket);
-	nif_save(rc, bucket);
+	//nif_save(rc, bucket);
 	rd_t *rd = nif_alloc_rundown();
 	rd->nif = bucket;
     rd->other = test_callback;

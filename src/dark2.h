@@ -20,7 +20,7 @@ namespace dark2
 	extern bsa_t interface;
 	extern bsa_t meshes;
 	extern bsa_t animations;
-
+	extern bsa_t textures;
 	
 } // namespace dark2
 

@@ -7,9 +7,12 @@
 
 struct Texture
 {
-    friend Texture *GetTexture(const string &);
+    friend Texture *GetProduceTexture(const char *);
 
     GLuint tid;
+
+    int size;
+    const unsigned char *buf = nullptr;
 
     const string path;
 

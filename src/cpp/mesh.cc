@@ -1,20 +1,26 @@
 #include "mesh.h"
 
+#include "opengl/texture"
 #include "opengl/types"
 
-vec2 *cast_vec_2(float *f) {
+vec2 *cast_vec_2(float *f)
+{
 	return reinterpret_cast<vec2 *>(f);
 }
-vec3 *cast_vec_3(float *f) {
+vec3 *cast_vec_3(float *f)
+{
 	return reinterpret_cast<vec3 *>(f);
 }
-vec4 *cast_vec_4(float *f) {
+vec4 *cast_vec_4(float *f)
+{
 	return reinterpret_cast<vec4 *>(f);
 }
-mat3 *cast_mat_3(float *f) {
+mat3 *cast_mat_3(float *f)
+{
 	return reinterpret_cast<mat3 *>(f);
 }
-mat4 *cast_mat_4(float *f) {
+mat4 *cast_mat_4(float *f)
+{
 	return reinterpret_cast<mat4 *>(f);
 }
 
@@ -69,65 +75,73 @@ void matrix_from_common(Group *group, ni_common_layout_t *common)
 	group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->translation));
 }
 
-void ni_node_callback(rd_t *rd, ni_node_t *ni_node)
+void ni_node_callback(rd_t *rd, ni_node_t *block)
 {
 	printf("ni node callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
 	Group *group = mesh->Nested(rd->parent);
-	matrix_from_common(group, &ni_node->common);
+	matrix_from_common(group, &block->common);
 }
 
-void ni_tri_shape_callback(rd_t *rd, ni_tri_shape_t *ni_tri_shape)
+void ni_tri_shape_callback(rd_t *rd, ni_tri_shape_t *block)
 {
 	printf("ni tri shape callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
 	Group *group = mesh->Nested(rd->parent);
 	group->geometry = new Geometry();
 	group->geometry->material = new Material();
-	matrix_from_common(group, &ni_tri_shape->common);
+	matrix_from_common(group, &block->common);
 }
 
 void ni_tri_shape_data_callback(rd_t *rd, ni_tri_shape_data_t *block)
 {
 	printf("ni tri shape data callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
-	Group *group = mesh->lastGroup;
+	Geometry *geometry = mesh->lastGroup->geometry;
 	if (!block->num_vertices)
 	{
-	printf("ntsd no vertices\n");
-	return;
+		printf("\n------ no vertices ? ------\n\n");
+		return;
 	}
-	group->geometry->Clear(block->num_vertices, block->num_triangles * 3);
+	geometry->Clear(block->num_vertices, block->num_triangles * 3);
 	for (int i = 0; i < block->num_triangles; i++)
 	{
-	// todo
-	group->geometry->elements.push_back(block->triangles[i].x);
-	group->geometry->elements.push_back(block->triangles[i].y);
-	group->geometry->elements.push_back(block->triangles[i].z);
+		unsigned short *triangle = (unsigned short *)&block->triangles[i];
+		geometry->elements.insert(geometry->elements.end(), { triangle[0], triangle[1], triangle[2] });
 	}
 	for (int i = 0; i < block->num_vertices; i++)
 	{
-	vertex_t &vertex = group->geometry->vertices[i];
-
-	vertex.position = *cast_vec_3((float *)&block->vertices[i]);
-	vertex.uv = 	  *cast_vec_2((float *)&block->uv_sets[i]);
-	vertex.normal =   *cast_vec_3((float *)&block->normals[i]);
-	if (block->has_vertex_colors)
-	vertex.color =    *cast_vec_4((float *)&block->vertex_colors[i]);
-	printf("vertex %i set!", i);
+		geometry->vertices[i].position =*cast_vec_3((float *)&block->vertices[i]);
+		geometry->vertices[i].uv =      *cast_vec_2((float *)&block->uv_sets[i]);
+		geometry->vertices[i].normal =  *cast_vec_3((float *)&block->normals[i]);
+		if (block->has_vertex_colors)
+		geometry->vertices[i].color =   *cast_vec_4((float *)&block->vertex_colors[i]);
 	}
 
-	group->geometry->SetupMesh();
+	geometry->SetupMesh();
 }
 
-void bs_lighting_shader_property_callback(rd_t *rd, bs_lighting_shader_property_t *bs_lighting_shader_property)
+void bs_lighting_shader_property_callback(rd_t *rd, bs_lighting_shader_property_t *block)
 {
 	printf("bs lighting shader property callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
 }
 
-void bs_shader_texture_set_callback(rd_t *rd, bs_shader_texture_set_t *bs_shader_texture_set)
+void bs_shader_texture_set_callback(rd_t *rd, bs_shader_texture_set_t *block)
 {
 	printf("bs shader texture set callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
+	Group *group = mesh->lastGroup;
+	for (int i = 0; i < block->num_textures; i++)
+	{
+		string path = block->textures[i];
+		if (path.empty())
+			continue;
+		if (path.find("skyrimhd\\build\\pc\\data\\") != std::string::npos)
+			path = path.substr(23, std::string::npos);
+		if (i == 0)
+			group->geometry->material->map = GetProduceTexture(block->textures[i]);
+		if (i == 1)
+			group->geometry->material->normalMap = GetProduceTexture(block->textures[i]);
+	}
 }

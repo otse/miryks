@@ -23,10 +23,13 @@ static int seek(bsa_t *b, unsigned offset)
 	return fseek((FILE *)b->stream, offset, SEEK_SET);
 }
 
+int NUM = 0;
+
 api bsa_t bsa_load(const char *s)
 {
 #define hedr bsa.hdr
 	bsa_t bsa;
+	bsa.num = NUM++;
 	//bsa.pos = 0;
 	bsa.stream = fopen(s, "rb");
 	cassert_(
@@ -119,7 +122,8 @@ void bsa_resources(bsa_t *b)
 	for (int j = 0; j < b->fld[i].num; j++)
 	{
 	b->rc[r] = malloc(sizeof(rc_t));
-	*b->rc[r] = (rc_t){b, i, j, r, b->cb[r], bsa_path(b, i, r), NULL, NULL};
+	// todo wobly
+	*b->rc[r] = (rc_t){b, i, j, r, b->file[i][j].size, b->cb[r], bsa_path(b, i, r), NULL, NULL};
 	r++;
 	}
 	}
@@ -143,8 +147,8 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 	{
 	cmp = strcmp(name, b->cb[r]);
 	if (!cmp) {
-		rc = b->rc[r];
-		goto end;
+	rc = b->rc[r];
+	goto end;
 	}
 	r++;
 	}
@@ -158,23 +162,46 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 char *bsa_uncompress(char *data, size_t size)
 {
 	uint32_t u = *(uint32_t *)&data[0];
+	printf("bsa uncompress u %u\n", u);
 	size -= sizeof(uint32_t);
+	data += sizeof(uint32_t);
 	char *dest = malloc(u * sizeof(char));
-	char *src = data + sizeof(uint32_t);
+	char *src = data;
 	int ret = uncompress(dest, (uLongf*)&u, src, size);
+	printf("uncompress ret %i", ret);
 	cassert_(ret == Z_OK, BSA "zlib");
 	return dest;
 }
 
+#define EMBED_FILE_NAMES 0x100
+#define INVERT_COMPRESSED 0x40000000
+
 api int bsa_read(bsa_t *b, rc_t *rc) {
 	if (!rc || rc->buf || rc->inf)
-		return 0;
+	return 0;
 	bsa_file_t *f = &b->file[rc->i][rc->j];
-	rc->buf = malloc(f->size * sizeof(char));
+	unsigned long size = f->size;
+	if (hedr.archive_flags & EMBED_FILE_NAMES)
+	{
+	unsigned char bstring = 0;
 	seek(b, f->offset);
-	read(b, (void *)rc->buf, f->size);
-	if (hedr.archive_flags & 0x4) {
-		rc->inf = bsa_uncompress(rc->buf, f->size);
+	read(b, &bstring, 1);
+	size -= bstring + 1;
+	seek(b, f->offset + bstring + 1);
+	}
+	else
+	{
+	seek(b, f->offset);
+	}
+	rc->buf = malloc(size * sizeof(char));
+	rc->size = size;
+	read(b, rc->buf, size);
+	printf("bsa compress: %i, rc %s compress: %i\n", hedr.archive_flags & 0x4, b->cb[rc->r], f->size & INVERT_COMPRESSED);
+	printf("bsa compress size: %i\n", f->size);
+	printf("bsa compress corrected size: %i\n", size);
+	if ((hedr.archive_flags & 0x4) != (f->size & INVERT_COMPRESSED))
+	{
+	rc->inf = bsa_uncompress(rc->buf, f->size);
 	}
 	return 1;
 }

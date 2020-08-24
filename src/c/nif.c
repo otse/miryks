@@ -151,8 +151,8 @@ void read_some_stuff(nif_t *nif)
 	hedr.user_value =  from_buf(unsigned int);
 	hedr.num_blocks =  from_buf(unsigned int);
 	hedr.user_value_2 =from_buf(unsigned int);
-	hedr.author = nif_read_short_string(nif);
-	hedr.process_script = nif_read_short_string(nif);
+	hedr.author =        nif_read_short_string(nif);
+	hedr.process_script =nif_read_short_string(nif);
 	hedr.export_script = nif_read_short_string(nif);
 	hedr.num_block_types = from_buf(unsigned short);
 }
@@ -350,6 +350,7 @@ void *read_bs_shader_texture_set(nifr)
 }
 
 // rundown
+// look at mesh.cc in dark2 for example
 
 void visit(rd_t *, int, int);
 void visit_other(rd_t *, int, int);
@@ -375,14 +376,12 @@ api void nif_rundown(nif_t *nif, rd_t *rd)
 
 void visit(rd_t *rd, int p, int c)
 {
-#define rd_trail(a, b) rd->parent = a; rd->current = b;
-	//printf("visit %i %i\n", p, c);
 	nif_t *nif = rd->nif;
 	if (-1 == c)
 	return;
 	if (skips[c])
 	return;
-	rd_trail(p, c);
+	rd->parent = p; rd->current = c;
 	skips[c] = 1;
 	const char *block_type = hedr.block_types[hedr.block_type_index[c]];
 	if (0) ;

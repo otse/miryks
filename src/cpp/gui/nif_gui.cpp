@@ -34,6 +34,9 @@ void nif_gui()
 	{
 		nif_t *nif = nmap->value;
 
+		if (!nif->path)
+			continue;
+
 		if (ImGui::TreeNode(nif->path))
 		{
 			ss <<

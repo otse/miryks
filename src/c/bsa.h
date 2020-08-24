@@ -32,6 +32,7 @@ struct rc_t
 {
 	bsa_t *b;
 	int i, j, r;
+	int size;
 	const char *name;
 	const char *path;
 	const unsigned char *buf, *inf;
@@ -39,6 +40,7 @@ struct rc_t
 
 struct bsa_t
 {
+	int num;
 	bsa_hedr_t hdr;
 	void *stream;
 	//unsigned pos;

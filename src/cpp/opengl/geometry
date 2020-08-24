@@ -5,7 +5,7 @@
 
 #include "aabb"
 
-struct vertex_t
+struct Vertex
 {
 	vec3 position;
 	vec2 uv;
@@ -30,7 +30,7 @@ struct Geometry
 	Material *material = nullptr;
 	//std::vector<texture_t> textures;
 
-	vector<vertex_t> vertices;
+	vector<Vertex> vertices;
 	vector<GLuint> elements;
 
 	Geometry();

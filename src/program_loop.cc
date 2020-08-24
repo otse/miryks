@@ -240,7 +240,7 @@ void dark2::program_loop()
 
 		bsa_gui();
 		nif_gui();
-		opengl_gui();
+		//opengl_gui();
 		ImGui::ShowDemoWindow();
 		//viewer();
 
