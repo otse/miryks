@@ -8,5 +8,6 @@ char *fstem(const char *, char);
 char *fname(const char *, char);
 
 char *fout(const char *, const char *);
+char *fout2(const char *, const unsigned char *, int);
 
 #endif

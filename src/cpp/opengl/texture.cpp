@@ -29,6 +29,7 @@ Texture *GetProduceTexture(const char *path)
 	return textures[lower];
 }
 
+int outed = 0;
 Texture::Texture(const string &path) : path(path)
 {
 	printf("new texture %s\n", path.c_str());
@@ -38,6 +39,11 @@ Texture::Texture(const string &path) : path(path)
 	bsa_read(&dark2::textures, rc);
 	buf = rc->inf;
 	size = rc->size;
+	if (!outed)
+	{
+		outed = 1;
+		fout2("test.dds", rc->inf, rc->size);
+	}
 	Load();
 }
 Texture::~Texture() {}
@@ -107,7 +113,7 @@ void Texture::Load()
 		if (w == 0 || h == 0)
 		{ // 0x1 0x2 resolutions
 			count--;
-			//log_("discarding odd mipmap for ", path);
+			printf("discarding odd mipmap\n");
 			continue;
 		}
 		int size = ((w + 3) / 4) * ((h + 3) / 4) * blockSize;

@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define ffread(a, b) memcpy(a, buf + pos, b)
+#define ffread(a, b) memcpy(a, buf + pos, b); pos += b;
 
 DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	
@@ -18,6 +18,8 @@ DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	
 	unsigned char *filesig = malloc(4);
 	ffread(filesig, 4);
+
+	printf("filesig %s\n", filesig);
 	
 	if(memcmp(filesig, "DDS ", 4) != 0)
 		goto exit; // not a dds file
@@ -25,11 +27,15 @@ DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	file = malloc(sizeof(DDSFile));
 	if(file == 0)
 		goto exit;
+		
 	memset(file, 0, sizeof(DDSFile));
 	ffread(file, 124); // read into struct up to dwReserved2; (EOF header)
 	
+	printf("dds width %i height %i\n", file->dwWidth, file->dwHeight);
+
 	isDx10 = memcmp(&file->ddspf.dwFourCC, "DX10", 4) == 0 ? 1 : 0;
 	if(isDx10) {
+		printf("its dx10\n");
 		file->ddsHeaderDx10 = malloc(sizeof(DDS_HEADER_DXT10));
 		if(file->ddsHeaderDx10 == 0) {
 			dds_free(file);
@@ -43,14 +49,15 @@ DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	
 	file->blBuffer = malloc(file->dwBufferSize);
 	if(file->blBuffer == 0) {
+		printf("blBuffer 0\n");
 		dds_free(file);
 		goto exit;
 	}
+	printf("read dwBufferSize %i\n", file->dwBufferSize);
 	ffread(file->blBuffer, file->dwBufferSize);
 	
 exit:
 	free(filesig);
-	printf("ddsloader fuck");
 	return file;
 }
 

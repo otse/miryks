@@ -43,3 +43,11 @@ char *fout(const char *n, const char *m)
 	fclose(stream);
 	return 0;
 }
+
+char *fout2(const char *n, const unsigned char *u, int size)
+{
+	FILE *stream = fopen(n, "wb");
+	fwrite(u, 1, size, stream);
+	fclose(stream);
+	return 0;
+}

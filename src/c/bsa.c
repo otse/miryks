@@ -11,8 +11,6 @@
 #define VER 104
 #define VER_SE 105
 
-#define QUESTION "is your 'path to oldrim.txt' set correctly?"
-
 static int read(bsa_t *b, void *data, unsigned size)
 {
 	return fread(data, 1, size, (FILE *)b->stream);
@@ -159,49 +157,47 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 	return rc;
 }
 
-char *bsa_uncompress(char *data, size_t size)
+char *bsa_uncompress(rc_t *rc)
 {
+	char *data = rc->buf;
 	uint32_t u = *(uint32_t *)&data[0];
 	printf("bsa uncompress u %u\n", u);
-	size -= sizeof(uint32_t);
+	rc->size -= sizeof(uint32_t);
 	data += sizeof(uint32_t);
 	char *dest = malloc(u * sizeof(char));
 	char *src = data;
-	int ret = uncompress(dest, (uLongf*)&u, src, size);
+	int ret = uncompress(dest, (uLongf*)&u, src, rc->size);
 	printf("uncompress ret %i", ret);
 	cassert_(ret == Z_OK, BSA "zlib");
+	rc->size = u;
 	return dest;
 }
 
 #define EMBED_FILE_NAMES 0x100
+
 #define INVERT_COMPRESSED 0x40000000
+
 
 api int bsa_read(bsa_t *b, rc_t *rc) {
 	if (!rc || rc->buf || rc->inf)
 	return 0;
 	bsa_file_t *f = &b->file[rc->i][rc->j];
-	unsigned long size = f->size;
+	int offset = f->offset, size = f->size;
 	if (hedr.archive_flags & EMBED_FILE_NAMES)
 	{
-	unsigned char bstring = 0;
-	seek(b, f->offset);
-	read(b, &bstring, 1);
-	size -= bstring + 1;
-	seek(b, f->offset + bstring + 1);
+	unsigned char x;
+	seek(b, offset);
+	read(b, &x, 1);
+	offset += x + 1;
+	size -= x + 1;
 	}
-	else
-	{
-	seek(b, f->offset);
-	}
-	rc->buf = malloc(size * sizeof(char));
 	rc->size = size;
-	read(b, rc->buf, size);
-	printf("bsa compress: %i, rc %s compress: %i\n", hedr.archive_flags & 0x4, b->cb[rc->r], f->size & INVERT_COMPRESSED);
-	printf("bsa compress size: %i\n", f->size);
-	printf("bsa compress corrected size: %i\n", size);
+	rc->buf = malloc(size * sizeof(char));
+	seek(b, offset);
+	read(b, rc->buf, rc->size);
 	if ((hedr.archive_flags & 0x4) != (f->size & INVERT_COMPRESSED))
 	{
-	rc->inf = bsa_uncompress(rc->buf, f->size);
+	rc->inf = bsa_uncompress(rc);
 	}
 	return 1;
 }
