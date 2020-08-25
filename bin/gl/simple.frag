@@ -213,9 +213,9 @@ void main()
 	//float fogDensity = 0.000970;
 	float fogDensity = 0.001100;
 
-	//diffuseColor *= texture2D(map, vUv);
+	diffuseColor *= texture2D(map, vUv);
 	
-	//diffuseColor.rgba *= vColor.rgba;
+	diffuseColor.rgba *= vColor.rgba;
 
 	//if (alphaTest == 0.0)
 		//discard;

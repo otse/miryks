@@ -47,9 +47,8 @@ void Camera::Call()
 	//log_("view ", glm::to_string(view));
 }
 
-void Camera::UpDown(const int dir, float time)
+void Camera::UpDown(float time)
 {
-	return;
 	float speed = 250 * time;
 	if (shift)
 		speed /= 10;
@@ -62,6 +61,8 @@ void Camera::UpDown(const int dir, float time)
 
 void Camera::Move(float time)
 {
+	UpDown(time);
+	
 	auto forward = [&](float n) {
 		pos.x += n * sin(fyaw);
 		pos.y += n * cos(fyaw);

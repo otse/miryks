@@ -23,7 +23,7 @@ struct Camera
 	void Mouse(float, float);
 	void Move(float);
 	void Call();
-	void UpDown(const int, float);
+	void UpDown(float);
 };
 
 #endif

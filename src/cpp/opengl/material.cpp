@@ -28,8 +28,9 @@ Material::Material()
 
 	depth_func = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
 
+	offset = vec2(0);
 	repeat = vec2(1);
-	emissive = vec3(17 / 255.f);
+	center = vec2(0);
 
 	composeUvTransform();
 
@@ -37,6 +38,10 @@ Material::Material()
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX);
+
+	color = vec3(1, 1, 1);
+	specular = vec3(17.0 / 255.0);
+	emissive = vec3(0);
 }
 
 void Material::composeUvTransform()
