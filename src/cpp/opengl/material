@@ -13,26 +13,10 @@ struct Material
 	Shader *shader;
 	Texture *map, *normalMap;
 
-	bool
-		transparent,
-		doubleSided,
-		blending,
-		testing,
-		decal;
-	float
-		opacity,
-		treshold,
-		shininess,
-		glossiness,
-		rotation;
-	vec2
-		offset,
-		repeat,
-		center;
-	vec3
-		color,
-		specular,
-		emissive;
+	bool transparent, doubleSided, blending, testing, decal;
+	float opacity, treshold, shininess, glossiness, rotation;
+	vec2 offset, repeat, center;
+	vec3 color, specular, emissive;
 
 	mat3 uvTransform;
 

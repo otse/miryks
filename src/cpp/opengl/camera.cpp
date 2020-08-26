@@ -5,11 +5,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-
 Camera::Camera()
 {
 	pos = vec3(0);
-	eye = vec3(0);
+	pos2 = vec3(0);
 }
 
 void Camera::Mouse(float x, float y)
@@ -22,6 +21,9 @@ void Camera::Mouse(float x, float y)
 
 void Camera::Call()
 {
+	if (disabled)
+		return;
+
 	while (fyaw > 2 * pif)
 		fyaw -= 2 * pif;
 	while (fyaw < 0)
@@ -32,7 +34,7 @@ void Camera::Call()
 	view = mat4(1.0f);
 	view = rotate(view, fpitch, vec3(1, 0, 0));
 	view = rotate(view, fyaw, vec3(0, 0, 1));
-	view = translate(view, -pos - eye);
+	view = translate(view, -pos - pos2);
 
 	using namespace dark2;
 
@@ -62,7 +64,7 @@ void Camera::UpDown(float time)
 void Camera::Move(float time)
 {
 	UpDown(time);
-	
+
 	auto forward = [&](float n) {
 		pos.x += n * sin(fyaw);
 		pos.y += n * cos(fyaw);

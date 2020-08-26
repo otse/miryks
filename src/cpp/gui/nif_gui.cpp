@@ -21,8 +21,9 @@ static stringstream ss;
 
 void nif_gui()
 {
-	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
+	ImGui::SetNextWindowPos(ImVec2(400, 0));
 	ImGui::Begin(NIF_GUI, nullptr, flags);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;

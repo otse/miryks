@@ -8,7 +8,7 @@
 
 struct Camera
 {
-	vec3 pos, eye;
+	vec3 pos, pos2;
 	mat4 view, projection;
 
 	float fyaw = 0, fpitch = -pif / 2;
@@ -16,14 +16,19 @@ struct Camera
 
 	bool w = false, a = false, s = false, d = false;
 	bool r = false, f = false;
-	bool shift = false;
-
+	bool shift = false, disabled = false;
 	Camera();
 
 	void Mouse(float, float);
 	void Move(float);
 	void Call();
 	void UpDown(float);
+};
+
+struct Camera2
+{
+	vec3 pos, pos2;
+	
 };
 
 #endif

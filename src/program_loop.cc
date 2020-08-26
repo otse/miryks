@@ -41,6 +41,8 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		F3 = !F3;
 		glfwSetInputMode(window, GLFW_CURSOR, F3 ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+		if (camera)
+			camera->disabled = F3;
 	}
 }
 
@@ -180,7 +182,7 @@ static void glfw_error_callback(int error, const char *description)
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-void dark2::program_go()
+void dark2::programGo()
 {
 	glfwSetErrorCallback(glfw_error_callback);
 
@@ -228,7 +230,7 @@ void dark2::program_go()
 	glfwWindowHint(GLFW_SAMPLES, 4);
 }
 
-void dark2::program_loop()
+void dark2::programLoop()
 {
 	while (!glfwWindowShouldClose(window))
 	{
@@ -240,9 +242,8 @@ void dark2::program_loop()
 
 		bsa_gui();
 		nif_gui();
-		//opengl_gui();
+		opengl_gui();
 		ImGui::ShowDemoWindow();
-		//viewer();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

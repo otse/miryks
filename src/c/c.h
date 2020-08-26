@@ -19,7 +19,7 @@ static void log_(const char *p)
 #define cassert_(e, m)       \
     if (!(e))               \
     {                       \
-        fout(ERROR_TXT, m); \
+        cfout(ERROR_TXT, m); \
         exit(1);            \
     }
 

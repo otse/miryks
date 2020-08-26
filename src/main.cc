@@ -18,12 +18,12 @@ extern "C" {
 
 namespace dark2
 {
-	string OLDRIM_PATH;
+	std::string OLDRIM;
 
-	bsa_t interface;
-	bsa_t meshes;
-	bsa_t animations;
-	bsa_t textures;
+	bsa_t *interface;
+	bsa_t *meshes;
+	bsa_t *animations;
+	bsa_t *textures;
 
 	Camera *camera;
 
@@ -38,12 +38,12 @@ using namespace dark2;
 
 void loadBucket() {
 	Mesh *mesh = new Mesh;
-	rc_t *rc = bsa_find(&dark2::meshes, "meshes\\clutter\\bucket02a.nif");
-	cassert_(rc, "mh no bucket02a");
-	bsa_read(&dark2::meshes, rc);
+	rc_t *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
+	cassert_(rc, "mh no bucket02a cc");
+	bsa_read_rc(rc);
 	nif_t *bucket = nif_alloc();
 	bucket->path = rc->path;
-	bucket->buf = rc->inf;
+	bucket->buf = rc->buf;
 	nif_read(bucket);
 	nif_save(rc, bucket);
 	mesh->Construct(bucket);
@@ -53,36 +53,16 @@ void loadBucket() {
 int main()
 {
 	log_("dark2 loading");
-	OLDRIM_PATH = fread(PATH_TXT);
-	cassert_(
-		OLDRIM_PATH != "no", "missing" PATH_TXT);
-	//interface = bsa_load(OLDRIM_PATH + "Data/Skyrim - Interface.bsa");
-	//animations = bsa_load(OLDRIM_PATH + "Data/Skyrim - Animations.bsa");
-	meshes = bsa_load((OLDRIM_PATH + "Data/Skyrim - Meshes.bsa").c_str());
-	textures = bsa_load((OLDRIM_PATH + "Data/Skyrim - Textures.bsa").c_str());
-	//system("PAUSE");
-	program_go();
+	cassert_(exists(PATH_TXT), "missing " PATH_TXT);
+	OLDRIM = fread(PATH_TXT);
+	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
+	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
+	bsa_t *array[2] = { meshes, textures };
+	bsas_add_to_loaded(&bsas, array, 2);
+	programGo();
 	oglGo();
-	for (int i = 0; i < 10; i++)
-	{
-	Group *cube = new Group;
-	vec3 pos = vec3(
-		(float)rand() / RAND_MAX,
-		(float)rand() / RAND_MAX,
-		(float)rand() / RAND_MAX);
-	pos *= 20;
-	cube->matrix = glm::translate(mat4(1.0f), pos);
-	cube->geometry = new Geometry;
-	cube->geometry->material = new Material;
-	cube->geometry->SetupMesh();
-	cube->Update();
-	scene->Add(cube);
-	}
-
 	loadBucket();
-
-	nif_test(&meshes);
-
-	program_loop();
+	nif_test(meshes);
+	programLoop();
 	return 1;
 }

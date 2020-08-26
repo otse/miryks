@@ -9,18 +9,18 @@ struct bsa_t;
 
 namespace dark2
 {
-	void program_go();
-	void program_loop();
+	void programGo();
+	void programLoop();
 
 	extern int width, height;
 	extern float delta;
 
-	extern string OLDRIM_PATH;
+	extern std::string OLDRIM;
 	
-	extern bsa_t interface;
-	extern bsa_t meshes;
-	extern bsa_t animations;
-	extern bsa_t textures;
+	extern bsa_t *interface;
+	extern bsa_t *meshes;
+	extern bsa_t *animations;
+	extern bsa_t *textures;
 	
 } // namespace dark2
 

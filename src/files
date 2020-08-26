@@ -6,5 +6,6 @@
 void fwrite(const string &, const string &);
 string fread(const string &);
 vector<unsigned char> freadbin(const string &);
+bool exists_test3(const std::string &name);
 
 #endif

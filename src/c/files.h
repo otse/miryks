@@ -3,11 +3,16 @@
 
 #include <stdio.h>
 
-int fchec(const char *);
-char *fstem(const char *, char);
-char *fname(const char *, char);
+int exists(const char *);
+//char *fsamplevar(const char *, const char *, const char *);
 
-char *fout(const char *, const char *);
-char *fout2(const char *, const unsigned char *, int);
+char *FileStem(const char *, char);
+char *FileName(const char *, char);
+char *abf(const char *, const char *);
+
+char *ReadFile(const char *);
+
+char *cfout(const char *, const char *);
+char *cfout2(const char *, const unsigned char *, int);
 
 #endif

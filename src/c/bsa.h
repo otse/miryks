@@ -4,6 +4,7 @@
 #define api
 
 typedef struct bsa_t bsa_t;
+typedef struct bsas_t bsas_t;
 typedef struct bsa_hedr_t bsa_hedr_t;
 typedef struct bsa_fld_t bsa_fld_t;
 typedef struct bsa_file_t bsa_file_t;
@@ -34,35 +35,36 @@ struct rc_t
 	int i, j, r;
 	int size;
 	const char *name;
-	const char *path;
-	const unsigned char *buf, *inf;
+	char path[255];
+	const unsigned char *buf;
 };
 
 struct bsa_t
 {
 	int num;
+	char *path;
 	bsa_hedr_t hdr;
 	void *stream;
-	//unsigned pos;
 	bsa_fld_t *fld;
 	bsa_file_t **file;
 	rc_t **rc;
 	int *r;
 	const char **ca;
 	const char **cb;
-	int magic;
 };
+
+struct bsas_t {
+	int num;
+	bsa_t* bsas[30];
+};
+
+extern bsas_t bsas;
 
 void bsa_test();
 void bsa_gui();
 
-api bsa_t bsa_load(const char *);
-void bsa_read_folder_records(bsa_t *);
-void bsa_read_file_records(bsa_t *);
-void bsa_read_filenames(bsa_t *);
-
-void bsa_resources(bsa_t *);
-void bsa_bsort(bsa_t *);
+api bsa_t *bsa_load(const char *);
+api void bsa_free(bsa_t *);
 
 char *bsa_path(bsa_t *, int, int);
 char *bsa_read_bzstring(bsa_t *);
@@ -74,6 +76,10 @@ api char *bsa_print_fle_rcd(bsa_t *, int, int);
 api char *bsa_print_rc(bsa_t *, int);
 
 api rc_t *bsa_find(bsa_t *, const char *);
-api int bsa_read(bsa_t *, rc_t *);
+api int bsa_read_rc(rc_t *);
+
+api rc_t *bsas_find(bsas_t *, const char *);
+api void bsas_add_to_loaded(bsas_t *, bsa_t **, int);
+api bsa_t *bsas_get_by_path(bsas_t *, const char *);
 
 #endif

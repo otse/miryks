@@ -1,6 +1,8 @@
 #include "dark2.h"
+#include "files"
 
-extern "C" {
+extern "C"
+{
 #include "c/c.h"
 #include "c/files.h"
 #include "c/bsa.h"
@@ -17,31 +19,57 @@ using namespace dark2;
 	ss.str(string()); \
 	ss.clear();
 
-static bsa_t bsa;
 static bool good = true;
 static stringstream ss;
 static char *hedr = "not loaded";
-static char buf[230] = "Data/Skyrim - Meshes.bsa";
-static char buf_before[230];
+static bsa_t *bsa = NULL;
 
 void bsa_gui()
 {
-	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+
 	ImGui::SetNextWindowSize(ImVec2(400, 0));
 	ImGui::Begin(BSA_GUI, nullptr, flags);
-	
-	ImGui::InputText("##archive", buf, IM_ARRAYSIZE(buf));
-	if (strcmp(buf, buf_before) && fchec((OLDRIM_PATH + buf).c_str()))
+
+#define MAX 230
+	static char buf[MAX] = "Data/Skyrim - Whatever.bsa";
+	static char buf2[MAX] = {'\0'};
+	ImGui::InputText("Manual##archive", buf, IM_ARRAYSIZE(buf));
+
+	if (strcmp(buf, buf2))
 	{
-		log_("bsa gui loading new archive");
-		memcpy(buf_before, buf, 230);
-		bsa = bsa_load((OLDRIM_PATH + buf).c_str());
-		hedr = bsa_print_hedr(&bsa);
-		good = true;
-		cls;
+		printf("bsa-gui manual loading new archive\n");
+		memcpy(buf2, buf, MAX);
+		std::string oldrim = OLDRIM + buf;
+		std::string bin = buf;
+		std::string *path = nullptr;
+		if (exists_test3(oldrim))
+			path = &oldrim;
+		else if (exists_test3(bin))
+			path = &bin;
+		if (!path) {
+			bsa = nullptr;
+			return;
+		}
+		if (bsa)
+			bsa_free(bsa);
+		bsa = bsa_load(path->c_str());
+		hedr = bsa_print_hedr(bsa);
 	}
-	if (!good)
+
+	/*const char *items[] = {"Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon"};
+	static int item_current = 1;
+
+	ImGui::ListBox("Default", &item_current, items, IM_ARRAYSIZE(items), 4);*/
+	ImGui::Separator();
+
+	if (!bsa)
+	{
+		ImGui::End();
 		return;
+	}
+
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("BsaTabs", tabBarFlags))
 	{
@@ -59,25 +87,28 @@ void bsa_gui()
 			static char rc_str[230] = "meshes\\clutter\\bucket02a.nif";
 			static char rc_str_before[230];
 			ImGui::InputText("##rc", rc_str, IM_ARRAYSIZE(rc_str));
-			rc_t *rc = bsa_find(&bsa, rc_str);
+			rc_t *rc = bsa_find(bsa, rc_str);
 			ImGui::Text(rc ? "found!" : "not found!");
 			if (rc)
 			{
 				char *s;
-				s = bsa_print_rc(&bsa, rc->r);
+				s = bsa_print_rc(bsa, rc->r);
 				ImGui::Separator();
 				//ImGui::Text("Resource:");
 				ImGui::Text(s);
 				free(s);
-				s = bsa_print_fle_rcd(&bsa, rc->i, rc->j);
+				s = bsa_print_fle_rcd(bsa, rc->i, rc->j);
 				ImGui::Separator();
 				ImGui::Text(s);
 				free(s);
-				if (!rc->buf)
-					bsa_read(&bsa, rc);
-				ImGui::Separator();
-				ImGui::Text("Contents:");
-				ImGui::Text((char *)rc->buf);
+				//if (!rc->buf)
+				//bsa_read(&bsa, rc);
+				if (rc->buf)
+				{
+					ImGui::Separator();
+					ImGui::Text("Contents:");
+					ImGui::Text((char *)rc->buf);
+				}
 				//cls;
 			}
 			ImGui::EndTabItem();
@@ -85,22 +116,22 @@ void bsa_gui()
 		if (ImGui::BeginTabItem("list"))
 		{
 			ImGui::BeginChildFrame(1, ImVec2(0, 800));
-			for (uns_t i = 0; i < bsa.hdr.folders; i++)
+			for (uns_t i = 0; i < bsa->hdr.folders; i++)
 			{
-				if (ImGui::TreeNode(bsa.ca[i]))
+				if (ImGui::TreeNode(bsa->ca[i]))
 				{
-					char *s = bsa_print_fld_rcd(&bsa, i);
+					char *s = bsa_print_fld_rcd(bsa, i);
 					ImGui::Text(s);
 					free(s);
 					ImGui::Separator();
 					//cls;
 					ImGui::Text("Files:");
-					int r = bsa.r[i];
-					for (uns_t j = 0; j < bsa.fld[i].num; j++)
+					int r = bsa->r[i];
+					for (uns_t j = 0; j < bsa->fld[i].num; j++)
 					{
-						if (ImGui::TreeNode(bsa.cb[r]))
+						if (ImGui::TreeNode(bsa->cb[r]))
 						{
-							char *s = bsa_print_fle_rcd(&bsa, i, j);
+							char *s = bsa_print_fle_rcd(bsa, i, j);
 							ImGui::Text(s);
 							free(s);
 							ImGui::Separator();

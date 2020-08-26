@@ -11,11 +11,11 @@ string fread(const string &a)
 	ifstream is(a, mode);
 	if (is)
 	{
-	size_t end = is.tellg();
-	string str(end, ' ');
-	is.seekg(0, is.beg);
-	is.read(&str[0], end);
-	return str;
+		size_t end = is.tellg();
+		string str(end, ' ');
+		is.seekg(0, is.beg);
+		is.read(&str[0], end);
+		return str;
 	}
 	return "no";
 }
@@ -35,4 +35,10 @@ void fwrite(const string &a, const string &b)
 	os.open(a.c_str());
 	os << b.c_str();
 	os.close();
+}
+
+bool exists_test3(const std::string &name)
+{
+	struct stat buffer;
+	return (stat(name.c_str(), &buffer) == 0);
 }

@@ -11,44 +11,63 @@
 #define VER 104
 #define VER_SE 105
 
-static int read(bsa_t *b, void *data, unsigned size)
-{
+int read(bsa_t *b, void *data, unsigned size) {
 	return fread(data, 1, size, (FILE *)b->stream);
 }
 
-static int seek(bsa_t *b, unsigned offset)
-{
+int seek(bsa_t *b, unsigned offset) {
 	return fseek((FILE *)b->stream, offset, SEEK_SET);
 }
 
+bsas_t bsas;
 int NUM = 0;
 
-api bsa_t bsa_load(const char *s)
+void bsa_read_folder_records(bsa_t *);
+void bsa_read_file_records(bsa_t *);
+void bsa_read_filenames(bsa_t *);
+void bsa_resources(bsa_t *);
+void bsa_bsort(bsa_t *);
+
+api bsa_t* bsa_load(const char *path)
 {
-#define hedr bsa.hdr
-	bsa_t bsa;
-	bsa.num = NUM++;
-	//bsa.pos = 0;
-	bsa.stream = fopen(s, "rb");
+#define hedr bsa->hdr
+	bsa_t *bsa = malloc(sizeof(bsa_t));
+	memset(bsa, 0, sizeof(bsa_t));
+	bsa->num = NUM++;
+	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
+	strcpy(bsa->path, path);
+	bsa->stream = fopen(path, "rb");
 	cassert_(
-		bsa.stream, BSA "can't open");
-	read(&bsa, &hedr, sizeof(bsa_hedr_t));
+		bsa->stream, BSA "can't open");
+	read(bsa, &hedr, sizeof(bsa_hedr_t));
 	//printf(bsa_print_hedr(&bsa));
 	cassert_(
 		strcmp(
 			"BSA\x00", (char *)&hedr.id) == 0,
 		BSA "not a bsa");
 	cassert_(
-		hedr.ver != VER_SE, BSA "ver 105 is SE");
+		hedr.ver != VER_SE, BSA "cant use special edition");
 	cassert_(
 		hedr.ver == VER, BSA "not 104");
-	bsa_read_folder_records(&bsa);
-	bsa_read_file_records(&bsa);
-	bsa_read_filenames(&bsa);
-	bsa_resources(&bsa);
-	log_("loaded bsa");
-	bsa.magic = 654;
+	bsa_read_folder_records(bsa);
+	bsa_read_file_records(bsa);
+	bsa_read_filenames(bsa);
+	bsa_resources(bsa);
+	printf("loaded bsa %s\n", path);
 	return bsa;
+}
+
+api void bsas_add_to_loaded(bsas_t *bsas, bsa_t **bsa, int num)
+{
+	for (int i = 0; i < num; i++)
+	{
+	bsas->bsas[bsas->num++] = &bsa[i];
+	}
+}
+
+api bsa_t *bsas_get_by_path(bsas_t *bsas, const char *path)
+{
+
 }
 
 void bsa_read_folder_records(bsa_t *b)
@@ -82,11 +101,11 @@ void bsa_read_filenames(bsa_t *b)
 	while (i++ < hedr.filesl)
 	{
 	if (buf[i] != '\0')
-		continue;
+	continue;
 	b->cb[n++] = &buf[j];
 	j = i + 1;
 	if (n >= hedr.files)
-		break;
+	break;
 	}
 }
 
@@ -99,9 +118,9 @@ char *bsa_read_bzstring(bsa_t *b)
 	return name;
 }
 
-char *bsa_path(bsa_t *b, int i, int r)
+void bsa_rc_path(bsa_t *b, int i, int r)
 {
-	char *path = (char *)malloc(strlen(b->ca[i]) + strlen(b->cb[r]) + 2);
+	char *path = b->rc[r]->path;
 	strcpy(path, b->ca[i]);
 	strcat(path, "\\");
 	strcat(path, b->cb[r]);
@@ -120,8 +139,8 @@ void bsa_resources(bsa_t *b)
 	for (int j = 0; j < b->fld[i].num; j++)
 	{
 	b->rc[r] = malloc(sizeof(rc_t));
-	// todo wobly
-	*b->rc[r] = (rc_t){b, i, j, r, b->file[i][j].size, b->cb[r], bsa_path(b, i, r), NULL, NULL};
+	*b->rc[r] = (rc_t){b, i, j, r, -1, b->cb[r], 0, NULL};
+	bsa_rc_path(b, i, r);
 	r++;
 	}
 	}
@@ -131,8 +150,8 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 {
 #define hedr b->hdr
 	rc_t *rc = NULL;
-	char *stem = fstem(p, '\\');
-	char *name = fname(p, '\\');
+	char *stem = FileStem(p, '\\');
+	char *name = FileName(p, '\\');
 	if (!stem || !name) goto end;
 	int cmp;
 	int r;
@@ -157,19 +176,21 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 	return rc;
 }
 
+api rc_t *bsas_find(bsas_t *bsas, const char *p)
+{
+	
+}
+
 char *bsa_uncompress(rc_t *rc)
 {
-	char *data = rc->buf;
-	uint32_t u = *(uint32_t *)&data[0];
-	printf("bsa uncompress u %u\n", u);
+	char *src = rc->buf;
+	uint32_t size = *(uint32_t *)&src[0];
 	rc->size -= sizeof(uint32_t);
-	data += sizeof(uint32_t);
-	char *dest = malloc(u * sizeof(char));
-	char *src = data;
-	int ret = uncompress(dest, (uLongf*)&u, src, rc->size);
-	printf("uncompress ret %i", ret);
+	src += sizeof(uint32_t);
+	char *dest = malloc(size * sizeof(char));
+	int ret = uncompress(dest, (uLongf*)&size, src, rc->size);
 	cassert_(ret == Z_OK, BSA "zlib");
-	rc->size = u;
+	rc->size = size;
 	return dest;
 }
 
@@ -178,11 +199,15 @@ char *bsa_uncompress(rc_t *rc)
 #define INVERT_COMPRESSED 0x40000000
 
 
-api int bsa_read(bsa_t *b, rc_t *rc) {
-	if (!rc || rc->buf || rc->inf)
+api int bsa_read_rc(rc_t *rc) {
+	if (rc == NULL)
 	return 0;
+	if (rc->buf)
+	return 1;
+	bsa_t *b = rc->b;
 	bsa_file_t *f = &b->file[rc->i][rc->j];
-	int offset = f->offset, size = f->size;
+	int offset = f->offset;
+	int size = f->size;
 	if (hedr.archive_flags & EMBED_FILE_NAMES)
 	{
 	unsigned char x;
@@ -197,7 +222,38 @@ api int bsa_read(bsa_t *b, rc_t *rc) {
 	read(b, rc->buf, rc->size);
 	if ((hedr.archive_flags & 0x4) != (f->size & INVERT_COMPRESSED))
 	{
-	rc->inf = bsa_uncompress(rc);
+	char *x = bsa_uncompress(rc);
+	free(rc->buf);
+	rc->buf = x;
 	}
 	return 1;
+}
+
+api void bsa_free(bsa_t *b)
+{
+#define hedr b->hdr
+	// Delete file records
+	if (hedr.folders)
+	{
+	for (int i = 0; i < hedr.folders; i++)
+	{
+	free(b->file[i]);
+	free(b->ca[i]);
+	}
+	free(b->file);
+	free(b->ca);
+	}
+	// Delete folder records
+	free(b->fld);
+	free(b->cb);
+	// Delete filenames
+	if (hedr.files)
+	free(b->cb[0]);
+	// Other
+	for (int i = 0; i < hedr.folders; i++)
+	{
+	
+	}
+	free(b);
+	b = NULL;
 }

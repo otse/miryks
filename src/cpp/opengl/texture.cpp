@@ -33,16 +33,16 @@ int outed = 0;
 Texture::Texture(const string &path) : path(path)
 {
 	printf("new texture %s\n", path.c_str());
-	rc_t *rc = bsa_find(&dark2::textures, path.c_str());
+	rc_t *rc = bsa_find(dark2::textures, path.c_str());
 	if (rc == NULL)
 		return;
-	bsa_read(&dark2::textures, rc);
-	buf = rc->inf;
+	bsa_read_rc(rc);
+	buf = rc->buf;
 	size = rc->size;
 	if (!outed)
 	{
 		outed = 1;
-		fout2("test.dds", rc->inf, rc->size);
+		cfout2("test.dds", rc->buf, rc->size);
 	}
 	Load();
 }
