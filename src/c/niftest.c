@@ -9,7 +9,7 @@ void nif_test(bsa_t *meshes)
 {
 	rc_t *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	cassert_(rc, "mh no bucket02a");
-	bsa_read_rc(meshes, rc);
+	bsa_read(meshes, rc);
 	nif_t *bucket = nif_alloc();
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;

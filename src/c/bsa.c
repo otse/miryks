@@ -11,16 +11,10 @@
 #define VER 104
 #define VER_SE 105
 
-int read(bsa_t *b, void *data, unsigned size) {
-	return fread(data, 1, size, (FILE *)b->stream);
-}
+int read(bsa_t *, void *, unsigned);
+int seek(bsa_t *, unsigned);
 
-int seek(bsa_t *b, unsigned offset) {
-	return fseek((FILE *)b->stream, offset, SEEK_SET);
-}
-
-bsas_t bsas;
-int NUM = 0;
+char *bsa_read_bzstring(bsa_t *);
 
 void bsa_read_folder_records(bsa_t *);
 void bsa_read_file_records(bsa_t *);
@@ -33,7 +27,6 @@ api bsa_t* bsa_load(const char *path)
 #define hedr bsa->hdr
 	bsa_t *bsa = malloc(sizeof(bsa_t));
 	memset(bsa, 0, sizeof(bsa_t));
-	bsa->num = NUM++;
 	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
 	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
@@ -57,24 +50,20 @@ api bsa_t* bsa_load(const char *path)
 	return bsa;
 }
 
-api void bsas_add_to_loaded(bsas_t *bsas, bsa_t **bsa, int num)
-{
-	for (int i = 0; i < num; i++)
-	{
-	bsas->bsas[bsas->num++] = &bsa[i];
-	}
-}
-
-api bsa_t *bsas_get_by_path(bsas_t *bsas, const char *path)
-{
-
-}
-
 void bsa_read_folder_records(bsa_t *b)
 {
 #define hedr b->hdr
 	b->fld = malloc(sizeof(bsa_fld_t) * hedr.folders);
 	read(b, b->fld, hedr.folders * sizeof(bsa_fld_t));
+}
+
+char *bsa_read_bzstring(bsa_t *b)
+{
+	int c = 0;
+	read(b, &c, 1);
+	char *name = malloc(sizeof(char) * c);
+	read(b, name, c);
+	return name;
 }
 
 void bsa_read_file_records(bsa_t *b)
@@ -109,15 +98,6 @@ void bsa_read_filenames(bsa_t *b)
 	}
 }
 
-char *bsa_read_bzstring(bsa_t *b)
-{
-	int c = 0;
-	read(b, &c, 1);
-	char *name = malloc(sizeof(char) * c);
-	read(b, name, c);
-	return name;
-}
-
 void bsa_rc_path(bsa_t *b, int i, int r)
 {
 	char *path = b->rc[r]->path;
@@ -139,7 +119,7 @@ void bsa_resources(bsa_t *b)
 	for (int j = 0; j < b->fld[i].num; j++)
 	{
 	b->rc[r] = malloc(sizeof(rc_t));
-	*b->rc[r] = (rc_t){b, i, j, r, -1, b->cb[r], 0, NULL};
+	*b->rc[r] = (rc_t){b, i, j, r, -1, b->cb[r], NULL};
 	bsa_rc_path(b, i, r);
 	r++;
 	}
@@ -176,11 +156,6 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 	return rc;
 }
 
-api rc_t *bsas_find(bsas_t *bsas, const char *p)
-{
-	
-}
-
 char *bsa_uncompress(rc_t *rc)
 {
 	char *src = rc->buf;
@@ -198,8 +173,7 @@ char *bsa_uncompress(rc_t *rc)
 
 #define INVERT_COMPRESSED 0x40000000
 
-
-api int bsa_read_rc(rc_t *rc) {
+api int bsa_read(rc_t *rc) {
 	if (rc == NULL)
 	return 0;
 	if (rc->buf)
@@ -229,8 +203,11 @@ api int bsa_read_rc(rc_t *rc) {
 	return 1;
 }
 
-api void bsa_free(bsa_t *b)
+api void bsa_free(bsa_t **bsa)
 {
+	bsa_t *b = *bsa;
+	*bsa = NULL;
+	return;
 #define hedr b->hdr
 	// Delete file records
 	if (hedr.folders)
@@ -247,13 +224,55 @@ api void bsa_free(bsa_t *b)
 	free(b->fld);
 	free(b->cb);
 	// Delete filenames
-	if (hedr.files)
 	free(b->cb[0]);
 	// Other
-	for (int i = 0; i < hedr.folders; i++)
-	{
-	
-	}
 	free(b);
-	b = NULL;
+	*bsa = NULL;
+}
+
+bsas_t bsas;
+
+api void bsas_add_to_loaded(bsas_t *bsas, bsa_t **bsa, int num)
+{
+	for (int i = 0; i < num; i++)
+	{
+	bsas->array[bsas->num++] = bsa[i];
+	bsa[i]->bsas = bsas;
+	}
+}
+
+api bsa_t *bsas_get_by_path(bsas_t *bsas, const char *path)
+{
+	for (int i = 0; i < bsas->num; i++)
+	{
+	bsa_t *b = bsas->array[i];
+	if (0 == strcmp(b->path, path))
+	return b;
+	}
+	return NULL;
+}
+
+api rc_t *bsas_find(bsas_t *bsas, const char *p, unsigned long flags)
+{
+	rc_t *rc = NULL;
+	for (int i = bsas->num; i --> 0; )
+	{
+	bsa_t *b = bsas->array[i];
+	int test = hedr.file_flags & flags;
+	if (hedr.file_flags == 0 || test)
+	rc = bsa_find(b, p);
+	if (rc != NULL)
+	break;
+	}
+	return rc;
+}
+
+int read(bsa_t *b, void *data, unsigned size)
+{
+	return fread(data, 1, size, (FILE *)b->stream);
+}
+
+int seek(bsa_t *b, unsigned offset)
+{
+	return fseek((FILE *)b->stream, offset, SEEK_SET);
 }

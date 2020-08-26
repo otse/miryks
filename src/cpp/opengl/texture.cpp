@@ -36,7 +36,7 @@ Texture::Texture(const string &path) : path(path)
 	rc_t *rc = bsa_find(dark2::textures, path.c_str());
 	if (rc == NULL)
 		return;
-	bsa_read_rc(rc);
+	bsa_read(rc);
 	buf = rc->buf;
 	size = rc->size;
 	if (!outed)

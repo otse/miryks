@@ -40,7 +40,7 @@ void loadBucket() {
 	Mesh *mesh = new Mesh;
 	rc_t *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
 	cassert_(rc, "mh no bucket02a cc");
-	bsa_read_rc(rc);
+	bsa_read(rc);
 	nif_t *bucket = nif_alloc();
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;

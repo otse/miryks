@@ -33,7 +33,7 @@ void bsa_gui()
 	ImGui::Begin(BSA_GUI, nullptr, flags);
 
 #define MAX 230
-	static char buf[MAX] = "Data/Skyrim - Whatever.bsa";
+	static char buf[MAX] = "Data/Skyrim - Meshes.bsa";
 	static char buf2[MAX] = {'\0'};
 	ImGui::InputText("Manual##archive", buf, IM_ARRAYSIZE(buf));
 
@@ -48,14 +48,19 @@ void bsa_gui()
 			path = &oldrim;
 		else if (exists_test3(bin))
 			path = &bin;
-		if (!path) {
-			bsa = nullptr;
-			return;
+		if (path)
+		{
+		if (bsa && !bsa->bsas) {
+			printf("unloading non load ordered %s\n", bsa->path);
+			bsa_free(&bsa);
+			printf("bsa after bsa_free: %i\n", bsa);
 		}
-		if (bsa)
-			bsa_free(bsa);
-		bsa = bsa_load(path->c_str());
+		bsa = bsas_get_by_path(&bsas, path->c_str());
+		if (bsa == NULL)
+			bsa = bsa_load(path->c_str());
+		if (bsa != NULL)
 		hedr = bsa_print_hedr(bsa);
+		}
 	}
 
 	/*const char *items[] = {"Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon"};
@@ -69,6 +74,10 @@ void bsa_gui()
 		ImGui::End();
 		return;
 	}
+
+	//ss << bsa->path;
+	ImGui::Text(bsa->path);
+	//cls;
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("BsaTabs", tabBarFlags))
