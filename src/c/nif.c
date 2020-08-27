@@ -38,12 +38,15 @@ api nif_t *nif_saved(void *key)
 #define depos (buf + pos)
 #define from_buf(x) *(x*)depos; pos += sizeof(x);
 
-#define read_array(nif, c, d, e, f, g) sink_array(nif, d, offsetof(c, f), offsetof(c, g), sizeof(e))
+#define read_array(nif, c, d, e, f, g, h) sink_array(nif, d, offsetof(c, f), offsetof(c, g), sizeof(e), h)
 #define read_struct(nif, c, d, e, f) sink_struct(nif, d, offsetof(c, e), offsetof(c, f))
 
-void sink_array(nif_t *nif, unsigned char *base, int pointer, int num, int element) {
+void sink_array(nif_t *nif, unsigned char *base, int pointer, int num, int element, int is_short) {
 	void **dest = base + pointer;
 	int repeat = *(unsigned *)(base + num);
+	if (is_short)
+	repeat = *(unsigned short *)(base + num);
+	printf("repeat %i\n", repeat);
 	int size = element * repeat;
 	*dest = malloc(size);
 	*dest = depos;
@@ -263,7 +266,7 @@ ni_common_layout_t read_ni_common_layout(nifr)
 	unsigned int size;
 	ni_common_layout_t block;
 	read_struct(nif, ni_common_layout_t, &block, name, extra_data_list);
-	read_array(nif, ni_common_layout_t, &block, ni_ref_t, extra_data_list, num_extra_data_list);
+	read_array(nif, ni_common_layout_t, &block, ni_ref_t, extra_data_list, num_extra_data_list, 0);
 	read_struct(nif, ni_common_layout_t, &block, controller, end);
 	block.name_string = nif_get_string(nif, block.name);
 	return block;
@@ -275,9 +278,9 @@ void *read_ni_node(nifr)
 	ni_node_t *block = malloc(sizeof(ni_node_t));
 	block->common = read_ni_common_layout(nif, n);
 	read_struct(nif, ni_node_t, block, num_children, children);
-	read_array(nif, ni_node_t, block, ni_ref_t, children, num_children);
+	read_array(nif, ni_node_t, block, ni_ref_t, children, num_children, 0);
 	read_struct(nif, ni_node_t, block, num_effects, effects);
-	read_array(nif, ni_node_t, block, ni_ref_t, effects, num_effects);
+	read_array(nif, ni_node_t, block, ni_ref_t, effects, num_effects, 0);
 	return block;
 }
 
@@ -297,18 +300,18 @@ void *read_ni_tri_shape_data(nifr)
 	//printf("read ni tri shape data\n");
 	ni_tri_shape_data_t *block = malloc(sizeof(ni_tri_shape_data_t));
 	read_struct(nif, ni_tri_shape_data_t, block, group_id, vertices);
-	read_array(nif, ni_tri_shape_data_t, block, vec_3, vertices, num_vertices);
+	read_array(nif, ni_tri_shape_data_t, block, vec_3, vertices, num_vertices, 0);
 	read_struct(nif, ni_tri_shape_data_t, block, bs_vector_flags, normals);
-	read_array(nif, ni_tri_shape_data_t, block, vec_3, normals, num_vertices);
-	read_array(nif, ni_tri_shape_data_t, block, vec_3, tangents, num_vertices);
-	read_array(nif, ni_tri_shape_data_t, block, vec_3, bitangents, num_vertices);
+	read_array(nif, ni_tri_shape_data_t, block, vec_3, normals, num_vertices, 0);
+	read_array(nif, ni_tri_shape_data_t, block, vec_3, tangents, num_vertices, 0);
+	read_array(nif, ni_tri_shape_data_t, block, vec_3, bitangents, num_vertices, 0);
 	read_struct(nif, ni_tri_shape_data_t, block, center, vertex_colors);
-	read_array(nif, ni_tri_shape_data_t, block, vec_4, vertex_colors, num_vertices);
-	read_array(nif, ni_tri_shape_data_t, block, vec_2, uv_sets, num_vertices);
+	read_array(nif, ni_tri_shape_data_t, block, vec_4, vertex_colors, num_vertices, 0);
+	read_array(nif, ni_tri_shape_data_t, block, vec_2, uv_sets, num_vertices, 0);
 	read_struct(nif, ni_tri_shape_data_t, block, consistency_flags, triangles);
-	read_array(nif, ni_tri_shape_data_t, block, ushort_3, triangles, num_triangles);
+	read_array(nif, ni_tri_shape_data_t, block, ushort_3, triangles, num_triangles, 1);
 	read_struct(nif, ni_tri_shape_data_t, block, num_match_groups, match_groups);
-	read_array(nif, ni_tri_shape_data_t, block, ni_ref_t, match_groups, num_match_groups);
+	read_array(nif, ni_tri_shape_data_t, block, ni_ref_t, match_groups, num_match_groups, 0);
 	return block;
 }
 
@@ -328,7 +331,7 @@ void *read_bs_lighting_shader_property(nifr)
 	//printf("read bs lighting shader property\n");
 	bs_lighting_shader_property_t *block = malloc(sizeof(bs_lighting_shader_property_t));
 	read_struct(nif, bs_lighting_shader_property_t, block, skyrim_shader_type, extra_data_list);
-	read_array(nif, bs_lighting_shader_property_t, block, ni_ref_t, extra_data_list, num_extra_data_list);
+	read_array(nif, bs_lighting_shader_property_t, block, ni_ref_t, extra_data_list, num_extra_data_list, 0);
 	read_struct(nif, bs_lighting_shader_property_t, block, controller, end);
 	block->name_string = nif_get_string(nif, block->name);
 	return block;

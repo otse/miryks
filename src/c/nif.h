@@ -68,13 +68,6 @@ struct rd_t {
 	void(* bs_shader_texture_set)(rd_t *, bs_shader_texture_set_t *);
 };
 
-struct vec_2{ float x, y; };
-struct vec_3{ float x, y, z; };
-struct vec_4{ float x, y, z, w; };
-struct mat_3{ float n[9]; };
-struct mat_4{ float n[16]; };
-struct ushort_3{ unsigned short x, y, z; };
-
 struct nmap_t {
 	void *key;
 	nif_t *value;
@@ -140,6 +133,13 @@ api void nif_print_block(nif_t *, int, char *);
 
 #pragma pack(push, 1)
 
+struct vec_2{ float x, y; };
+struct vec_3{ float x, y, z; };
+struct vec_4{ float x, y, z, w; };
+struct mat_3{ float n[9]; };
+struct mat_4{ float n[16]; };
+struct ushort_3{ unsigned short x, y, z; };
+
 struct ni_common_layout_t {
 	int name;
 	unsigned int num_extra_data_list;
@@ -199,7 +199,7 @@ struct ni_tri_shape_data_t {
 	unsigned char has_triangles;
 	ushort_3 *triangles;
 	unsigned short num_match_groups;
-	int *match_groups;
+	ni_ref_t *match_groups;
 	int end;
 };
 

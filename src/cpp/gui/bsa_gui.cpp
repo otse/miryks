@@ -154,7 +154,14 @@ void bsa_gui()
 							if (ImGui::Button("load"))
 							{
 								bsa_read(rc);
-								view_nif(rc);
+							}
+							if (rc->size > -1)
+							{
+								ImGui::SameLine();
+								if (ImGui::Button("view"))
+								{
+									view_nif(rc);
+								}
 							}
 							ImGui::Separator();
 							ImGui::TreePop();
