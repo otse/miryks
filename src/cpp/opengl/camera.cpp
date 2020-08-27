@@ -12,6 +12,16 @@ Camera::Camera()
 	disabled = false;
 }
 
+void Camera::SetProjection() {
+	float aspect = (float)dark2::width / (float)dark2::height;
+
+	projection = perspective(
+		radians(fzoom),
+		aspect,
+		0.1f,
+		10000.0f);
+}
+
 FirstPersonCamera::FirstPersonCamera() : Camera()
 {
 	eye = vec3(0);
@@ -45,13 +55,7 @@ void FirstPersonCamera::Update(float time)
 	view = rotate(view, fyaw, vec3(0, 0, 1));
 	view = translate(view, -pos - eye);
 
-	float aspect = (float)dark2::width / (float)dark2::height;
-
-	projection = perspective(
-		radians(fzoom),
-		aspect,
-		0.1f,
-		10000.0f);
+	Camera::SetProjection();
 }
 
 void FirstPersonCamera::Move(float time)
@@ -85,4 +89,43 @@ void FirstPersonCamera::Move(float time)
 		pos.z += speed / 2;
 	if (f)
 		pos.z -= speed / 2;
+}
+
+ViewerCamera::ViewerCamera() : Camera()
+{
+	center = vec3(0);
+	radius = 60;
+	yaw = 0;
+	pitch = 0;
+}
+
+void ViewerCamera::Mouse(float x, float y)
+{
+	const float sensitivity = .001f;
+	yaw += x * sensitivity;
+	pitch -= y * sensitivity;
+}
+
+void ViewerCamera::Update(float time)
+{
+	if (disabled)
+		return;
+
+	//vec3 push = vec3(0);
+	//push.x += radius * sin(yaw);
+	//push.y += radius * cos(yaw);
+
+	//push.x -= radius * sin(pitch);
+	//push.z -= radius * cos(pitch);
+
+	view = mat4(1.0f);
+	view = rotate(view, pitch, vec3(1, 0, 0));
+	view = rotate(view, yaw, vec3(0, 0, 1));
+
+	vec3 pan = vec3(0, 0, 100) * mat3(view);
+
+	view = translate(view, -pan);
+	view = translate(view, -pos);
+
+	Camera::SetProjection();
 }

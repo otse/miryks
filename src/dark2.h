@@ -13,7 +13,7 @@ class Mesh;
 namespace dark2
 {
 	nif_t *nif_from_rc(rc_t *);
-	void view_nif(nif_t *);
+	void nif_viewer(nif_t *);
 
 	void programGo();
 	void programLoop();
@@ -24,6 +24,9 @@ namespace dark2
 	extern std::string OLDRIM;
 
 	extern Mesh *viewed;
+
+	extern FirstPersonCamera *first_person_camera;
+	extern ViewerCamera *viewer_camera;
 	
 	extern bsa_t *interface;
 	extern bsa_t *meshes;

@@ -5,6 +5,8 @@
 
 void test_callback(rd_t *, int, int);
 
+// look at mesh.cc for good example of rd
+
 void nif_test(bsa_t *meshes)
 {
 	rc_t *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
@@ -15,9 +17,10 @@ void nif_test(bsa_t *meshes)
 	bucket->buf = rc->buf;
 	nif_read(bucket);
 	//nif_save(rc, bucket);
-	rd_t *rd = nif_alloc_rundown();
+	rd_t *rd = nif_alloc_rd();
+	rd->data = 0x1; // Like some Geometry instance
     rd->other = test_callback;
-	nif_rundown(bucket, rd, NULL);
+	nif_rd(bucket, rd, NULL);
 }
 
 void test_callback(rd_t *rd, int parent, int block) {

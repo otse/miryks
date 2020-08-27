@@ -9,6 +9,7 @@ extern "C" {
 }
 
 #include "cpp/opengl/types"
+#include "cpp/opengl/camera"
 #include "cpp/opengl/scene"
 #include "cpp/opengl/group"
 #include "cpp/opengl/geometry"
@@ -27,7 +28,8 @@ namespace dark2
 	bsa_t *animations;
 	bsa_t *textures;
 
-	Camera *camera;
+	FirstPersonCamera *first_person_camera;
+	ViewerCamera *viewer_camera;
 
 	int width = 1920;
 	int height = 1080;
@@ -47,7 +49,7 @@ nif_t *dark2::nif_from_rc(rc_t *rc) {
 	return nif;
 }
 
-void dark2::view_nif(nif_t *nif) {
+void dark2::nif_viewer(nif_t *nif) {
 	if (viewed) {
 	scene->Remove(viewed->base);
 	delete viewed;
@@ -55,6 +57,7 @@ void dark2::view_nif(nif_t *nif) {
 	Mesh *mesh = new Mesh;
 	mesh->Construct(nif);
 	scene->Add(mesh->base);
+	camera = viewer_camera;
 	viewed = mesh;
 }
 
@@ -69,8 +72,11 @@ int main()
 	bsa_t *array[2] = { meshes, textures };
 	bsas_add_to_loaded(&bsas, array, 2);
 	programGo();
+	first_person_camera = new FirstPersonCamera;
+	viewer_camera = new ViewerCamera;
 	oglGo();
-	view_nif(nif_from_rc(bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif")));
+	camera = first_person_camera;
+	nif_viewer(nif_from_rc(bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif")));
 	nif_test(meshes);
 	programLoop();
 	return 1;

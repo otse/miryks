@@ -17,6 +17,8 @@ struct aabb;
 struct Geometry;
 struct Material;
 struct Camera;
+struct FirstPersonCamera;
+struct ViewerCamera;
 struct Scene;
 struct Group;
 struct Texture;

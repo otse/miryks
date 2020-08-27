@@ -7,37 +7,43 @@
 
 
 struct Camera {
-	vec3 pos;
-	mat4 view, projection;
-
 	Camera();
 
+	vec3 pos;
+	mat4 view, projection;
+	float fzoom = 45;
 	bool disabled;
-	virtual void Update(float) = 0;
-	virtual void Mouse(float, float) = 0;
+
+	virtual void Mouse(float, float) {};
+	virtual void Update(float) {};
+
+	void SetProjection();
 };
 
 struct FirstPersonCamera : public Camera
 {
 	vec3 eye;
+	float fyaw = 0, fpitch = -pif / 2;
 	bool w, a, s, d, r, f;
 	bool shift;
 
-	float fyaw = 0, fpitch = -pif / 2;
-	float fzoom = 45;
-
 	FirstPersonCamera();
 
-	virtual void Update(float);
 	virtual void Mouse(float, float);
+	virtual void Update(float);
 
 	void Move(float);
 };
 
 struct ViewerCamera : public Camera
 {
+	vec3 center;
+	float radius, yaw, pitch, zoom;
+
 	ViewerCamera();
-	
+
+	virtual void Mouse(float, float);
+	virtual void Update(float);
 };
 
 #endif

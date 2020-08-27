@@ -85,9 +85,10 @@ void nif_read_header(nif_t *);
 void nif_read_blocks(nif_t *);
 
 api nif_t *nif_alloc();
+api rd_t *nif_alloc_rd();
 
-api rd_t *nif_alloc_rundown();
-api void nif_rundown(nif_t *, rd_t *, void *);
+api void nif_free_rd(rd_t **);
+api void nif_rd(nif_t *, rd_t *, void *);
 
 api void nif_read(nif_t *);
 api void nif_save(void *, nif_t *);

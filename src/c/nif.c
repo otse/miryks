@@ -359,7 +359,7 @@ void visit(rd_t *, int, int);
 void visit_other(rd_t *, int, int);
 void visit_block(rd_t *, void *);
 
-api rd_t *nif_alloc_rundown() {
+api rd_t *nif_alloc_rd() {
 	rd_t *rd = malloc(sizeof(rd_t));
 	memset(rd, 0, sizeof(rd_t));
 	rd->other = visit_other;
@@ -367,7 +367,15 @@ api rd_t *nif_alloc_rundown() {
 	return rd;
 }
 
-api void nif_rundown(nif_t *nif, rd_t *rd)
+api void nif_free_rd(rd_t **p)
+{
+	rd_t *rd = *p;
+	free(rd->skips);
+	free(rd);
+	*p = NULL;
+}
+
+api void nif_rd(nif_t *nif, rd_t *rd)
 {
 	printf("nif accept\n");
 	rd->skips = malloc(sizeof(int) * hedr.num_blocks);

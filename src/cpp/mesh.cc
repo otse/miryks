@@ -42,7 +42,7 @@ void bs_shader_texture_set_callback(rd_t *, bs_shader_texture_set_t *);
 void Mesh::Construct(nif_t *bucket)
 {
 	nif = bucket;
-	rd_t *rd = nif_alloc_rundown();
+	rd_t *rd = nif_alloc_rd();
 	rd->nif = bucket;
 	rd->data = this;
 	rd->other = other;
@@ -51,7 +51,8 @@ void Mesh::Construct(nif_t *bucket)
 	rd->ni_tri_shape_data = ni_tri_shape_data_callback;
 	rd->bs_lighting_shader_property = bs_lighting_shader_property_callback;
 	rd->bs_shader_texture_set = bs_shader_texture_set_callback;
-	nif_rundown(bucket, rd, this);
+	nif_rd(bucket, rd, this);
+	nif_free_rd(&rd);
 }
 
 Group *Mesh::Nested(int parent)
@@ -99,10 +100,7 @@ void ni_tri_shape_data_callback(rd_t *rd, ni_tri_shape_data_t *block)
 	Mesh *mesh = (Mesh *)rd->data;
 	Geometry *geometry = mesh->lastGroup->geometry;
 	if (!block->num_vertices)
-	{
-		printf("\n------ no vertices ? ------\n\n");
 		return;
-	}
 	geometry->Clear(block->num_vertices, block->num_triangles * 3);
 	for (int i = 0; i < block->num_triangles; i++)
 	{
