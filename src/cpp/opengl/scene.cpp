@@ -74,6 +74,11 @@ void Scene::Add(Group *gr)
 	add_nullable<Group *>(gr, groups);
 }
 
+void Scene::Remove(Group *gr)
+{
+	remove_nullable<Group *>(gr, groups);
+}
+
 void Scene::DrawItems()
 {
 	CalcLights();

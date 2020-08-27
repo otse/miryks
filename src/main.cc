@@ -18,6 +18,8 @@ extern "C" {
 
 namespace dark2
 {
+	Mesh *viewed = nullptr;
+
 	std::string OLDRIM;
 
 	bsa_t *interface;
@@ -34,24 +36,30 @@ namespace dark2
 
 #define PATH_TXT "path to oldrim.txt"
 
-using namespace dark2;
-
-void loadBucket() {
-	Mesh *mesh = new Mesh;
-	rc_t *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
-	cassert_(rc, "mh no bucket02a cc");
+nif_t *dark2::nif_rc(rc_t *rc) {
+	cassert_(rc, "mh no rc");
 	bsa_read(rc);
-	nif_t *bucket = nif_alloc();
-	bucket->path = rc->path;
-	bucket->buf = rc->buf;
-	nif_read(bucket);
-	nif_save(rc, bucket);
-	mesh->Construct(bucket);
+	nif_t *nif = nif_alloc();
+	nif->path = rc->path;
+	nif->buf = rc->buf;
+	nif_read(nif);
+	nif_save(rc, nif);
+	return nif;
+}
+
+void dark2::view_nif(rc_t *rc) {
+	if (viewed)
+	scene->Remove(dark2::viewed->base);
+	Mesh *mesh = new Mesh;
+	nif_t *nif = dark2::nif_rc(rc);
+	mesh->Construct(nif);
 	scene->Add(mesh->base);
+	dark2::viewed = mesh;
 }
 
 int main()
 {
+	using namespace dark2;
 	log_("dark2 loading");
 	cassert_(exists(PATH_TXT), "missing " PATH_TXT);
 	OLDRIM = fread(PATH_TXT);
@@ -61,7 +69,7 @@ int main()
 	bsas_add_to_loaded(&bsas, array, 2);
 	programGo();
 	oglGo();
-	loadBucket();
+	view_nif(bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif"));
 	nif_test(meshes);
 	programLoop();
 	return 1;

@@ -29,7 +29,7 @@ void bsa_gui()
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 
-	ImGui::SetNextWindowSize(ImVec2(400, 0));
+	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::Begin(BSA_GUI, nullptr, flags);
 
 #define MAX 230
@@ -50,16 +50,17 @@ void bsa_gui()
 			path = &bin;
 		if (path)
 		{
-		if (bsa && !bsa->bsas) {
-			printf("unloading non load ordered %s\n", bsa->path);
-			bsa_free(&bsa);
-			printf("bsa after bsa_free: %i\n", bsa);
-		}
-		bsa = bsas_get_by_path(&bsas, path->c_str());
-		if (bsa == NULL)
-			bsa = bsa_load(path->c_str());
-		if (bsa != NULL)
-		hedr = bsa_print_hedr(bsa);
+			if (bsa && !bsa->bsas)
+			{
+				printf("unloading non load ordered %s\n", bsa->path);
+				bsa_free(&bsa);
+				printf("bsa after bsa_free: %i\n", bsa);
+			}
+			bsa = bsas_get_by_path(&bsas, path->c_str());
+			if (bsa == NULL)
+				bsa = bsa_load(path->c_str());
+			if (bsa != NULL)
+				hedr = bsa_print_hedr(bsa);
 		}
 	}
 
@@ -102,19 +103,19 @@ void bsa_gui()
 			{
 				char *s;
 				s = bsa_print_rc(bsa, rc->r);
-				ImGui::Separator();
+				//ImGui::Separator();
 				//ImGui::Text("Resource:");
 				ImGui::Text(s);
 				free(s);
 				s = bsa_print_fle_rcd(bsa, rc->i, rc->j);
-				ImGui::Separator();
+				//ImGui::Separator();
 				ImGui::Text(s);
 				free(s);
 				//if (!rc->buf)
 				//bsa_read(&bsa, rc);
 				if (rc->buf)
 				{
-					ImGui::Separator();
+					//ImGui::Separator();
 					ImGui::Text("Contents:");
 					ImGui::Text((char *)rc->buf);
 				}
@@ -140,9 +141,21 @@ void bsa_gui()
 					{
 						if (ImGui::TreeNode(bsa->cb[r]))
 						{
-							char *s = bsa_print_fle_rcd(bsa, i, j);
+							char *s;
+							rc_t *rc = bsa->rc[bsa->r[i] + j];
+							s = bsa_print_rc(bsa, rc->r);
+							ImGui::Separator();
 							ImGui::Text(s);
 							free(s);
+							s = bsa_print_fle_rcd(bsa, i, j);
+							ImGui::Text(s);
+							free(s);
+
+							if (ImGui::Button("load"))
+							{
+								bsa_read(rc);
+								view_nif(rc);
+							}
 							ImGui::Separator();
 							ImGui::TreePop();
 							//cls;

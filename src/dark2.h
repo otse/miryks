@@ -2,6 +2,9 @@
 #define DARK2_H
 
 struct bsa_t;
+struct rc_t;
+struct nif_t;
+class Mesh;
 
 #include "cpp/opengl/types"
 
@@ -9,6 +12,9 @@ struct bsa_t;
 
 namespace dark2
 {
+	nif_t *nif_rc(rc_t *);
+	void view_nif(rc_t *);
+
 	void programGo();
 	void programLoop();
 
@@ -16,6 +22,8 @@ namespace dark2
 	extern float delta;
 
 	extern std::string OLDRIM;
+
+	extern Mesh *viewed;
 	
 	extern bsa_t *interface;
 	extern bsa_t *meshes;

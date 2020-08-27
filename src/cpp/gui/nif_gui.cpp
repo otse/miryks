@@ -1,7 +1,8 @@
 #include "dark2.h"
 
-extern "C" {
-	#include "../../c/nif.h"
+extern "C"
+{
+#include "../../c/nif.h"
 }
 
 #include "files"
@@ -23,7 +24,7 @@ void nif_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
-	ImGui::SetNextWindowPos(ImVec2(400, 0));
+	ImGui::SetNextWindowPos(ImVec2(450, 0));
 	ImGui::Begin(NIF_GUI, nullptr, flags);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
@@ -40,10 +41,8 @@ void nif_gui()
 
 		if (ImGui::TreeNode(nif->path))
 		{
-			ss <<
-				"# " << nif->n <<
-				"\nkey " << nmap->key;// <<
-				//"\npath " << nif->path;
+			ss << "# " << nif->n << "\nkey " << nmap->key; // <<
+														   //"\npath " << nif->path;
 			ImGui::Text(ss.str().c_str());
 			cls;
 			ImGui::Separator();
@@ -52,7 +51,8 @@ void nif_gui()
 				char s[500];
 				nif_print_hedr(nif, s);
 				ImGui::TextWrapped(s);
-				if (ImGui::TreeNode("Block Types")) {
+				if (ImGui::TreeNode("Block Types"))
+				{
 					const int n = nif->hdr.num_block_types;
 					for (int i = 0; i < n; i++)
 					{
@@ -60,7 +60,8 @@ void nif_gui()
 					}
 					ImGui::TreePop();
 				}
-				if (ImGui::TreeNode("Block Type Index")) {
+				if (ImGui::TreeNode("Block Type Index"))
+				{
 					const int n = nif->hdr.num_blocks;
 					for (int i = 0; i < n; i++)
 					{
@@ -70,7 +71,8 @@ void nif_gui()
 					}
 					ImGui::TreePop();
 				}
-				if (ImGui::TreeNode("Block Sizes")) {
+				if (ImGui::TreeNode("Block Sizes"))
+				{
 					const int n = nif->hdr.num_blocks;
 					for (int i = 0; i < n; i++)
 					{
@@ -78,7 +80,8 @@ void nif_gui()
 					}
 					ImGui::TreePop();
 				}
-				if (ImGui::TreeNode("Strings")) {
+				if (ImGui::TreeNode("Strings"))
+				{
 					const int n = nif->hdr.num_strings;
 					for (int i = 0; i < n; i++)
 					{
@@ -88,7 +91,6 @@ void nif_gui()
 				}
 				ImGui::Separator();
 				ImGui::TreePop();
-
 			}
 			if (ImGui::TreeNode("Blocks"))
 			{
@@ -114,6 +116,10 @@ void nif_gui()
 				}
 				ImGui::Separator();
 				ImGui::TreePop();
+			}
+
+			if (ImGui::Button("view"))
+			{
 			}
 
 			ImGui::TreePop();
