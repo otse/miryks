@@ -48,13 +48,16 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 
 static void do_keys()
 {
-	camera->w = glfwGetKey(window, GLFW_KEY_W);
-	camera->a = glfwGetKey(window, GLFW_KEY_A);
-	camera->s = glfwGetKey(window, GLFW_KEY_S);
-	camera->d = glfwGetKey(window, GLFW_KEY_D);
-	camera->r = glfwGetKey(window, GLFW_KEY_R);
-	camera->f = glfwGetKey(window, GLFW_KEY_F);
-	camera->shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+	FirstPersonCamera *firstpersoncamera = dynamic_cast<FirstPersonCamera *>(camera);
+	if (!firstpersoncamera)
+		return;
+	firstpersoncamera->w = glfwGetKey(window, GLFW_KEY_W);
+	firstpersoncamera->a = glfwGetKey(window, GLFW_KEY_A);
+	firstpersoncamera->s = glfwGetKey(window, GLFW_KEY_S);
+	firstpersoncamera->d = glfwGetKey(window, GLFW_KEY_D);
+	firstpersoncamera->r = glfwGetKey(window, GLFW_KEY_R);
+	firstpersoncamera->f = glfwGetKey(window, GLFW_KEY_F);
+	firstpersoncamera->shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
 }
 
 void cursor_pos_callback(GLFWwindow *window, double x, double y)
@@ -249,8 +252,7 @@ void dark2::programLoop()
 
 		do_keys();
 
-		camera->Move(0.016);
-		camera->Call();
+		camera->Update(0.016);
 
 		scene->Order();
 		scene->DrawItems();

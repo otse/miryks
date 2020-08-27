@@ -46,7 +46,6 @@ void sink_array(nif_t *nif, unsigned char *base, int pointer, int num, int eleme
 	int repeat = *(unsigned *)(base + num);
 	if (is_short)
 	repeat = *(unsigned short *)(base + num);
-	printf("repeat %i\n", repeat);
 	int size = element * repeat;
 	*dest = malloc(size);
 	*dest = depos;

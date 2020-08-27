@@ -53,7 +53,7 @@ void oglGo()
 {
 	log_("opengl go");
 
-	camera = new Camera;
+	camera = new FirstPersonCamera;
 	scene = new Scene;
 
 	shaBasic = new Shader;

@@ -7,22 +7,31 @@
 
 Camera::Camera()
 {
+	view = mat4(1);
 	pos = vec3(0);
-	pos2 = vec3(0);
+	disabled = false;
 }
 
-void Camera::Mouse(float x, float y)
+FirstPersonCamera::FirstPersonCamera() : Camera()
 {
-	const float sens = .001f;
-
-	fyaw += x * sens;
-	fpitch -= y * sens;
+	eye = vec3(0);
+	w = a = s = d = r = f = false;
+	shift = false;
 }
 
-void Camera::Call()
+void FirstPersonCamera::Mouse(float x, float y)
+{
+	const float sensitivity = .001f;
+	fyaw += x * sensitivity;
+	fpitch -= y * sensitivity;
+}
+
+void FirstPersonCamera::Update(float time)
 {
 	if (disabled)
 		return;
+
+	Move(time);
 
 	while (fyaw > 2 * pif)
 		fyaw -= 2 * pif;
@@ -34,42 +43,24 @@ void Camera::Call()
 	view = mat4(1.0f);
 	view = rotate(view, fpitch, vec3(1, 0, 0));
 	view = rotate(view, fyaw, vec3(0, 0, 1));
-	view = translate(view, -pos - pos2);
+	view = translate(view, -pos - eye);
 
-	using namespace dark2;
-
-	float aspect = (float) width / (float) height;
+	float aspect = (float)dark2::width / (float)dark2::height;
 
 	projection = perspective(
 		radians(fzoom),
 		aspect,
 		0.1f,
 		10000.0f);
-
-	//log_("view ", glm::to_string(view));
 }
 
-void Camera::UpDown(float time)
+void FirstPersonCamera::Move(float time)
 {
-	float speed = 250 * time;
-	if (shift)
-		speed /= 10;
-
-	if (r)
-		pos.z += speed;
-	if (f)
-		pos.z -= speed;
-}
-
-void Camera::Move(float time)
-{
-	UpDown(time);
-
 	auto forward = [&](float n) {
 		pos.x += n * sin(fyaw);
 		pos.y += n * cos(fyaw);
 	};
-	
+
 	auto strafe = [&](float n) {
 		pos.x += n * cos(-fyaw);
 		pos.y += n * sin(-fyaw);
@@ -89,4 +80,9 @@ void Camera::Move(float time)
 		strafe(-speed);
 	if (d && !a)
 		strafe(speed);
+
+	if (r)
+		pos.z += speed;
+	if (f)
+		pos.z -= speed;
 }
