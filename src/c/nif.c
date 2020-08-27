@@ -34,7 +34,6 @@ api nif_t *nif_saved(void *key)
 #define buf nif->buf
 #define pos nif->pos
 #define blocks nif->blocks
-#define skips nif->skips
 #define depos (buf + pos)
 #define from_buf(x) *(x*)depos; pos += sizeof(x);
 
@@ -200,8 +199,6 @@ void read_strings(nif_t *nif)
 void read_groups(nif_t *nif)
 {
 	hedr.num_groups = from_buf(unsigned int);
-	skips = malloc(sizeof(int) * hedr.num_blocks);
-	memset(skips, 0, sizeof(int) * hedr.num_blocks);
 }
 
 /// read blocks
@@ -373,6 +370,8 @@ api rd_t *nif_alloc_rundown() {
 api void nif_rundown(nif_t *nif, rd_t *rd)
 {
 	printf("nif accept\n");
+	rd->skips = malloc(sizeof(int) * hedr.num_blocks);
+	memset(rd->skips, 0, sizeof(int) * hedr.num_blocks);
 	rd->nif = nif;
 	for (int n = 0; n < hedr.num_blocks; n++)
 	{
@@ -385,10 +384,10 @@ void visit(rd_t *rd, int p, int c)
 	nif_t *nif = rd->nif;
 	if (-1 == c)
 	return;
-	if (skips[c])
+	if (rd->skips[c])
 	return;
 	rd->parent = p; rd->current = c;
-	skips[c] = 1;
+	rd->skips[c] = 1;
 	const char *block_type = hedr.block_types[hedr.block_type_index[c]];
 	if (0) ;
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )

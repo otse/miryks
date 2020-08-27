@@ -119,6 +119,7 @@ void nif_gui()
 
 			if (ImGui::Button("view"))
 			{
+				view_nif(nif);
 			}
 
 			ImGui::TreePop();

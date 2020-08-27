@@ -36,7 +36,7 @@ namespace dark2
 
 #define PATH_TXT "path to oldrim.txt"
 
-nif_t *dark2::nif_rc(rc_t *rc) {
+nif_t *dark2::nif_from_rc(rc_t *rc) {
 	cassert_(rc, "mh no rc");
 	bsa_read(rc);
 	nif_t *nif = nif_alloc();
@@ -47,14 +47,15 @@ nif_t *dark2::nif_rc(rc_t *rc) {
 	return nif;
 }
 
-void dark2::view_nif(rc_t *rc) {
-	if (viewed)
-	scene->Remove(dark2::viewed->base);
+void dark2::view_nif(nif_t *nif) {
+	if (viewed) {
+	scene->Remove(viewed->base);
+	delete viewed;
+	}
 	Mesh *mesh = new Mesh;
-	nif_t *nif = dark2::nif_rc(rc);
 	mesh->Construct(nif);
 	scene->Add(mesh->base);
-	dark2::viewed = mesh;
+	viewed = mesh;
 }
 
 int main()
@@ -69,7 +70,7 @@ int main()
 	bsas_add_to_loaded(&bsas, array, 2);
 	programGo();
 	oglGo();
-	view_nif(bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif"));
+	view_nif(nif_from_rc(bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif")));
 	nif_test(meshes);
 	programLoop();
 	return 1;

@@ -12,8 +12,8 @@ class Mesh;
 
 namespace dark2
 {
-	nif_t *nif_rc(rc_t *);
-	void view_nif(rc_t *);
+	nif_t *nif_from_rc(rc_t *);
+	void view_nif(nif_t *);
 
 	void programGo();
 	void programLoop();

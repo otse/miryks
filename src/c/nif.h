@@ -50,13 +50,13 @@ struct nif_t
 	unsigned pos;
 	nif_hedr_t hdr;
 	ni_block_t **blocks;
-	int *skips;
 };
 
 //typedef void(* rd_func_t)(rd_t *, int, int, void *);
 
 struct rd_t {
 	int x;
+	int *skips;
 	nif_t *nif;
 	void *data;
 	int parent, current;

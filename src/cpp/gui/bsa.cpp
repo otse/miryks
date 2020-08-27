@@ -160,7 +160,7 @@ void bsa_gui()
 								ImGui::SameLine();
 								if (ImGui::Button("view"))
 								{
-									view_nif(rc);
+									view_nif(nif_from_rc(rc));
 								}
 							}
 							ImGui::Separator();
