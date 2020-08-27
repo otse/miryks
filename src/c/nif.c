@@ -299,15 +299,19 @@ void *read_ni_tri_shape_data(nifr)
 	//printf("read ni tri shape data\n");
 	ni_tri_shape_data_t *block = malloc(sizeof(ni_tri_shape_data_t));
 	read_struct(nif, ni_tri_shape_data_t, block, group_id, vertices);
+	if (block->has_vertices)
 	read_array(nif, ni_tri_shape_data_t, block, vec_3, vertices, num_vertices, 0);
 	read_struct(nif, ni_tri_shape_data_t, block, bs_vector_flags, normals);
+	if (block->has_normals)
 	read_array(nif, ni_tri_shape_data_t, block, vec_3, normals, num_vertices, 0);
 	read_array(nif, ni_tri_shape_data_t, block, vec_3, tangents, num_vertices, 0);
 	read_array(nif, ni_tri_shape_data_t, block, vec_3, bitangents, num_vertices, 0);
 	read_struct(nif, ni_tri_shape_data_t, block, center, vertex_colors);
+	if (block->has_vertex_colors)
 	read_array(nif, ni_tri_shape_data_t, block, vec_4, vertex_colors, num_vertices, 0);
 	read_array(nif, ni_tri_shape_data_t, block, vec_2, uv_sets, num_vertices, 0);
 	read_struct(nif, ni_tri_shape_data_t, block, consistency_flags, triangles);
+	if (block->has_triangles)
 	read_array(nif, ni_tri_shape_data_t, block, ushort_3, triangles, num_triangles, 1);
 	read_struct(nif, ni_tri_shape_data_t, block, num_match_groups, match_groups);
 	read_array(nif, ni_tri_shape_data_t, block, ni_ref_t, match_groups, num_match_groups, 0);

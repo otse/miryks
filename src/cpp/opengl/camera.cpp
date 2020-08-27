@@ -82,7 +82,7 @@ void FirstPersonCamera::Move(float time)
 		strafe(speed);
 
 	if (r)
-		pos.z += speed;
+		pos.z += speed / 2;
 	if (f)
-		pos.z -= speed;
+		pos.z -= speed / 2;
 }

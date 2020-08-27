@@ -34,15 +34,14 @@ void nif_gui()
 	//{
 	for (int i = 0; i < nifs; i++)
 	{
-		nif_t *nif = nmap->value;
+		nif_t *nif = nmap[i].value;
 
 		if (!nif->path)
 			continue;
 
 		if (ImGui::TreeNode(nif->path))
 		{
-			ss << "# " << nif->n << "\nkey " << nmap->key; // <<
-														   //"\npath " << nif->path;
+			ss << "# " << nif->n << "\nkey " << nmap->key;
 			ImGui::Text(ss.str().c_str());
 			cls;
 			ImGui::Separator();
