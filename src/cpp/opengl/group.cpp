@@ -2,7 +2,7 @@
 
 #include "geometry"
 
-//#define DRAW_AXIS
+#define DRAW_AXIS
 
 int Group::num = 0;
 
@@ -28,12 +28,12 @@ Group::~Group() {
 	num--;
 }
 
-void Group::Add(Group *gr)
+void Group::Add(Group *group)
 {
-	gr->parent = this;
-	gr->Update();
+	group->parent = this;
+	group->Update();
 
-	groups.push_back(gr);
+	groups.push_back(group);
 }
 
 // Accumulate matrices
@@ -48,9 +48,9 @@ void Group::Update()
 
 		matrixWorld = parent->matrixWorld * matrix;
 
-	for (Group *gr : groups)
+	for (Group *group : groups)
 
-		gr->Update();
+		group->Update();
 }
 
 void Group::Draw(const mat4 &model)
@@ -78,16 +78,17 @@ void Group::Flatten(Group *root)
 
 	root->flat.push_back(this);
 
-	for (Group *gr : groups)
+	for (Group *group : groups)
 
-		gr->Flatten(root);
+		group->Flatten(root);
 }
 
 void Group::DrawClassic(const mat4 &model)
 {
 	Draw(model);
 
-	for (Group *gr : groups)
+	for (Group *group : groups)
 
-		gr->DrawClassic(model);
+		group->DrawClassic(model);
 }
+

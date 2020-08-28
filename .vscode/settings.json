@@ -21,6 +21,8 @@
         "bsabasic": "cpp",
         "bsaworker": "cpp",
         "archive": "cpp",
+        "files": "cpp",
+        "nif": "cpp",
         "src/*": "C++",
         "types": "cpp",
         "fstream": "cpp",
@@ -77,6 +79,7 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "arc": "cpp",
-        "sstream": "cpp"
+        "sstream": "cpp",
+        "renderable": "cpp"
     }
 }

@@ -29,12 +29,12 @@ api nif_t *nif_saved(void *key)
 
 // defines macros
 
-#define nifr nif_t *nif, int n
-#define hedr nif->hdr
-#define buf nif->buf
-#define pos nif->pos
+#define nifr   nif_t *nif, int n
+#define hedr   nif->hdr
+#define buf    nif->buf
+#define pos    nif->pos
 #define blocks nif->blocks
-#define depos (buf + pos)
+#define depos  (buf + pos)
 #define from_buf(x) *(x*)depos; pos += sizeof(x);
 
 #define read_array(nif, c, d, e, f, g, h) sink_array(nif, d, offsetof(c, f), offsetof(c, g), sizeof(e), h)
@@ -58,7 +58,7 @@ void sink_struct(nif_t *nif, unsigned char *base, int start, int stop) {
 	pos += size;
 }
 
-// getters:
+// funcs
 
 api char *nif_get_string(nif_t *nif, int i) {
 	if (i == -1)
@@ -86,7 +86,7 @@ api nif_t *nif_alloc() {
 }
 
 api void nif_read(nif_t *nif) {
-	cassert_(buf, "buf not set");
+	cassert_(buf, "nif_read buf not set");
 	nif_read_header(nif);
 	nif_read_blocks(nif);
 }
@@ -101,8 +101,7 @@ void read_block_sizes(nif_t *);
 void read_strings(nif_t *);
 void read_groups(nif_t *);
 
-char *nif_read_short_string(nif_t *nif)
-{
+char *nif_read_short_string(nif_t *nif) {
 	char len = from_buf(char);
 	char *string = malloc(sizeof(char) * len);
 	strncpy(string, depos, len);
@@ -110,8 +109,7 @@ char *nif_read_short_string(nif_t *nif)
 	return string;
 }
 
-char *nif_read_sized_string(nif_t *nif)
-{
+char *nif_read_sized_string(nif_t *nif) {
 	int len = from_buf(int);
 	char *string = malloc(sizeof(char) * len + 1);
 	strncpy(string, depos, len);
@@ -120,8 +118,7 @@ char *nif_read_sized_string(nif_t *nif)
 	return string;
 }
 
-api void nif_read_header(nif_t *nif)
-{
+api void nif_read_header(nif_t *nif) {
 	read_header_string(nif);
 	hedr.unknown_1 = from_buf(int);
 	// later on blocks use aggressive macros to read
@@ -134,8 +131,7 @@ api void nif_read_header(nif_t *nif)
 	hedr.end = pos;
 }
 
-void read_header_string(nif_t *nif)
-{
+void read_header_string(nif_t *nif) {
 	// Gamebryo File Format, Version 20.2.0.7\n
 	int n = strchr(buf, '\n') - buf + 1;
 	char *string = malloc(sizeof(char) * n);
@@ -146,8 +142,7 @@ void read_header_string(nif_t *nif)
 	pos += n;
 }
 
-void read_some_stuff(nif_t *nif)
-{
+void read_some_stuff(nif_t *nif) {
 	hedr.endian_type = from_buf(unsigned char);
 	hedr.user_value =  from_buf(unsigned int);
 	hedr.num_blocks =  from_buf(unsigned int);
@@ -158,8 +153,7 @@ void read_some_stuff(nif_t *nif)
 	hedr.num_block_types = from_buf(unsigned short);
 }
 
-void read_block_types(nif_t *nif)
-{
+void read_block_types(nif_t *nif) {
 	int n = hedr.num_block_types;
 	hedr.block_types = malloc(sizeof(char *) * n);
 	for (int i = 0; i < n; i++)
@@ -168,24 +162,21 @@ void read_block_types(nif_t *nif)
 	}
 }
 
-void read_block_type_index(nif_t *nif)
-{
+void read_block_type_index(nif_t *nif) {
 	int size = sizeof(unsigned short) * hedr.num_blocks;
 	hedr.block_type_index = malloc(size);
 	memcpy(hedr.block_type_index, depos, size);
 	pos += size;
 }
 
-void read_block_sizes(nif_t *nif)
-{
+void read_block_sizes(nif_t *nif) {
 	int size = sizeof(unsigned int) * hedr.num_blocks;
 	hedr.block_sizes = malloc(size);
 	memcpy(hedr.block_sizes, depos, size);
 	pos += size;
 }
 
-void read_strings(nif_t *nif)
-{
+void read_strings(nif_t *nif) {
 	hedr.num_strings = from_buf(unsigned int);
 	hedr.max_string_length = from_buf(unsigned int);
 	int n = hedr.num_strings;
@@ -196,8 +187,7 @@ void read_strings(nif_t *nif)
 	}
 }
 
-void read_groups(nif_t *nif)
-{
+void read_groups(nif_t *nif) {
 	hedr.num_groups = from_buf(unsigned int);
 }
 
@@ -367,16 +357,14 @@ api rd_t *nif_alloc_rd() {
 	return rd;
 }
 
-api void nif_free_rd(rd_t **p)
-{
+api void nif_free_rd(rd_t **p) {
 	rd_t *rd = *p;
 	free(rd->skips);
 	free(rd);
 	*p = NULL;
 }
 
-api void nif_rd(nif_t *nif, rd_t *rd)
-{
+api void nif_rd(nif_t *nif, rd_t *rd) {
 	printf("nif accept\n");
 	rd->skips = malloc(sizeof(int) * hedr.num_blocks);
 	memset(rd->skips, 0, sizeof(int) * hedr.num_blocks);

@@ -2,7 +2,7 @@
 #define OPENGL_GROUP_H
 
 #include "types"
-//#include "aabb"
+#include "aabb"
 
 // A basic 3d object with a transformation
 

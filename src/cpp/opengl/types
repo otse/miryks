@@ -21,6 +21,8 @@ struct FirstPersonCamera;
 struct ViewerCamera;
 struct Scene;
 struct Group;
+struct Renderable;
+struct RenderItem;
 struct Texture;
 struct Shader;
 struct Program;
