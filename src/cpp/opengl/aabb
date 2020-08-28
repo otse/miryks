@@ -3,7 +3,7 @@
 
 #include "types"
 
-struct aabb
+struct AABB
 {
 	enum INTERSECTION
 	{
@@ -12,12 +12,12 @@ struct aabb
 		INTERSECT
 	};
 
-	INTERSECTION intersect(const aabb &) const;
+	INTERSECTION intersect(const AABB &) const;
 
-	static aabb mult(const aabb &, const mat4 &);
+	static AABB mult(const AABB &, const mat4 &);
 
-	aabb(float = 0);
-	~aabb();
+	AABB(float = 0);
+	~AABB();
 	vec3 min, max;
 
 	inline bool is_zero()
@@ -27,7 +27,7 @@ struct aabb
 
 	void extend(const float);
 	void extend(const vec3 &);
-	void extend(const aabb &);
+	void extend(const AABB &);
 	void translate(const vec3 &);
 
 	vec3 diagional() const;

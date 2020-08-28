@@ -10,11 +10,11 @@ struct Renderable
 {
 	Group *const group;
 
-	aabb bb;
+	AABB obb_total;
 
 	mat4 matrix;
 
-	std::vector<RenderItem> items;
+	std::vector<RenderItem> objects;
 
 	Renderable(mat4, Group *);
 	~Renderable();
@@ -29,8 +29,6 @@ struct Triangle
 	float dist;
 };
 
-// A render item
-
 struct RenderItem
 {
 	friend Renderable;
@@ -38,7 +36,8 @@ struct RenderItem
 protected:
 	RenderItem(Group *, Renderable *);
 
-	aabb bb, obb;
+public:
+	AABB aabb, obb;
 
 	Group *group;
 	Renderable *renderable;

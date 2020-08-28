@@ -12,7 +12,7 @@ using namespace glm;
 
 const float pif = pi<float>();
 
-struct aabb;
+struct AABB;
 
 struct Geometry;
 struct Material;

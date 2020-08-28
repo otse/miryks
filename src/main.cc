@@ -12,6 +12,7 @@ extern "C" {
 #include "cpp/opengl/camera"
 #include "cpp/opengl/scene"
 #include "cpp/opengl/group"
+#include "cpp/opengl/renderable"
 #include "cpp/opengl/geometry"
 #include "cpp/opengl/material"
 
@@ -19,7 +20,8 @@ extern "C" {
 
 namespace dark2
 {
-	Mesh *viewed = nullptr;
+	Mesh *viewed_mesh = nullptr;
+	Renderable *viewed_object = nullptr;
 
 	std::string OLDRIM;
 
@@ -50,15 +52,16 @@ nif_t *dark2::nif_from_rc(rc_t *rc) {
 }
 
 void dark2::nif_viewer(nif_t *nif) {
-	if (viewed) {
-	scene->Remove(viewed->base);
-	delete viewed;
+	if (viewed_mesh) {
+	scene->Remove(viewed_object);
+	delete viewed_mesh;
+	delete viewed_object;
 	}
-	Mesh *mesh = new Mesh;
-	mesh->Construct(nif);
-	scene->Add(mesh->base);
+	viewed_mesh = new Mesh;
+	viewed_mesh->Construct(nif);
+	viewed_object = new Renderable(mat4(1), viewed_mesh->base);
+	scene->Add(viewed_object);
 	camera = viewer_camera;
-	viewed = mesh;
 }
 
 int main()

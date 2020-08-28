@@ -34,9 +34,10 @@ Geometry::Geometry()
 {
 	num++;
 	for (const vec3 &v : VERTICES)
+	{
 		vertices.push_back(Vertex{v});
-	elements.insert(
-		elements.end(), ELEMENTS.begin(), ELEMENTS.end());
+	}
+	elements.insert(elements.end(), ELEMENTS.begin(), ELEMENTS.end());
 }
 
 Geometry::~Geometry()
@@ -94,10 +95,10 @@ void Geometry::SetupMesh()
 {
 	bool uses_elements = elements.size() > 0;
 
-	bb = aabb(0);
+	aabb = AABB(0);
 
-	for (Vertex &v : vertices)
-		bb.extend(v.position);
+	for (Vertex &vertex : vertices)
+		aabb.extend(vertex.position);
 
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);

@@ -3,19 +3,19 @@
 #include "geometry"
 #include "material"
 
-aabb::aabb(float f)
+AABB::AABB(float f)
 {
 	min = vec3(f);
 	max = vec3(f);
 }
 
-aabb::~aabb()
+AABB::~AABB()
 {
 	//glDeleteBuffers(1, &vbo_vertices);
 	//glDeleteBuffers(1, &ibo_elements);
 }
 
-void aabb::extend(const vec3 &v)
+void AABB::extend(const vec3 &v)
 {
 	if (is_zero())
 	{
@@ -29,37 +29,37 @@ void aabb::extend(const vec3 &v)
 	}
 }
 
-void aabb::extend(const aabb &bb)
+void AABB::extend(const AABB &bb)
 {
 	extend(bb.min);
 	extend(bb.max);
 }
 
-void aabb::extend(const float f)
+void AABB::extend(const float f)
 {
 	//assert_(is_zero(), "zero aabb");
 	min -= vec3(f);
 	max += vec3(f);
 }
 
-vec3 aabb::diagional() const
+vec3 AABB::diagional() const
 {
 	return max - min;
 }
 
-vec3 aabb::center() const
+vec3 AABB::center() const
 {
 	return min + (diagional() * 0.5f);
 }
 
-void aabb::translate(const vec3 &v)
+void AABB::translate(const vec3 &v)
 {
 	min += v;
 	max += v;
 }
 
 // todo change that fucking enum
-aabb::INTERSECTION aabb::intersect(const aabb &b) const
+AABB::INTERSECTION AABB::intersect(const AABB &b) const
 {
 	if (max.x < b.min.x || min.x > b.max.x ||
 		max.y < b.min.y || min.y > b.max.y ||
@@ -74,9 +74,9 @@ aabb::INTERSECTION aabb::intersect(const aabb &b) const
 	return INTERSECT;
 }
 
-aabb aabb::mult(const aabb &b, const mat4 &m)
+AABB AABB::mult(const AABB &b, const mat4 &m)
 {
-	aabb a;
+	AABB a;
 	std::vector<vec3> points = {
 		vec3(b.min.x, b.min.y, b.min.z),
 		vec3(b.max.x, b.min.y, b.min.z),
@@ -94,7 +94,7 @@ aabb aabb::mult(const aabb &b, const mat4 &m)
 	return a;
 }
 
-bool aabb::contains_vec(const vec3 &v) const
+bool AABB::contains_vec(const vec3 &v) const
 {
 	return v.x >= min.x && v.x <= max.x &&
 		   v.y >= min.y && v.y <= max.y &&
@@ -102,13 +102,13 @@ bool aabb::contains_vec(const vec3 &v) const
 }
 
 // taken from include/osg/Vec3f
-float aabb::radius2() const
+float AABB::radius2() const
 {
 	vec3 v = max - min;
 	return 0.25f * v.x * v.x + v.y * v.y + v.z * v.z;
 }
 
-void aabb::geometrize()
+void AABB::geometrize()
 {
 	if (geometry)
 		delete geometry;
@@ -161,7 +161,7 @@ void aabb::geometrize()
 	geometry->SetupMesh();
 }
 
-void aabb::draw(const mat4 &matrix)
+void AABB::draw(const mat4 &matrix)
 {
 	if (!geometry)
 		return;

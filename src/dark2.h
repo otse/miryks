@@ -23,7 +23,8 @@ namespace dark2
 
 	extern std::string OLDRIM;
 
-	extern Mesh *viewed;
+	extern Mesh *viewed_mesh;
+	extern Renderable *viewed_object;
 
 	extern FirstPersonCamera *first_person_camera;
 	extern ViewerCamera *viewer_camera;

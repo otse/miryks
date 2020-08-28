@@ -3,6 +3,7 @@
 
 #include "aabb"
 #include "group"
+#include "renderable"
 #include "material"
 #include "shader"
 #include "pointlight"
@@ -59,24 +60,32 @@ bool remove_nullable(T t, std::vector<T> &v)
 	return false;
 }
 
-void Scene::Add(PointLight *l)
-{
+void Scene::Add(PointLight *l) {
 	add_nullable<PointLight *>(l, pointlights);
 }
-
-void Scene::Remove(PointLight *l)
-{
+void Scene::Remove(PointLight *l) {
 	remove_nullable<PointLight *>(l, pointlights);
 }
-
-void Scene::Add(Group *gr)
-{
-	add_nullable<Group *>(gr, groups);
+void Scene::Add(Renderable *rb) {
+	if (add_nullable<Renderable *>(rb, renderables))
+	{
+		objects.insert(objects.end(), rb->objects.begin(), rb->objects.end());
+	}
 }
-
-void Scene::Remove(Group *gr)
-{
-	remove_nullable<Group *>(gr, groups);
+void Scene::Remove(Renderable *rb) {
+	if (remove_nullable<Renderable *>(rb, renderables))
+	{
+		auto it = objects.begin();
+		for (; it != objects.end();)
+		{
+			if ((*it).renderable == rb)
+			{
+				it = objects.erase(it);
+			}
+			else
+				++it;
+		}
+	}
 }
 
 void Scene::DrawItems()
@@ -84,14 +93,15 @@ void Scene::DrawItems()
 	CalcLights();
 	SortLights();
 
-	//for (Rent &item : items)
-	//{
-	//	item.draw();
-	//}
-
-	for (Group *gr : groups)
+	for (RenderItem &render_item : objects)
 	{
-		gr->DrawClassic(mat4(1));
+		render_item.Draw();
+	}
+
+	return;
+	for (Renderable *renderable : renderables)
+	{
+		renderable->DrawClassic();
 	}
 }
 

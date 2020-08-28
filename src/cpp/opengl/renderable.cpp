@@ -8,11 +8,16 @@
 #include "material"
 #include "shader"
 
-// #define DRAW_AABB_AND_OBB
+#define DRAW_AABB_AND_OBB
+#define RENDERABLE_OBB
 
 Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)
 {
 	Separate();
+
+#ifdef RENDERABLE_OBB
+	obb_total.geometrize();
+#endif
 }
 
 Renderable::~Renderable()
@@ -21,7 +26,7 @@ Renderable::~Renderable()
 
 void Renderable::Separate()
 {
-	items.clear();
+	objects.clear();
 
 	group->Flatten(group);
 
@@ -29,15 +34,22 @@ void Renderable::Separate()
 	{
 		if (!group->geometry)
 			continue;
+
 		RenderItem render_item = RenderItem(group, this);
-		items.push_back(render_item);
-		bb.extend(render_item.bb);
+
+		objects.push_back(render_item);
+
+#ifdef RENDERABLE_OBB
+		obb_total.extend(render_item.obb);
+#endif
 	}
 }
 
 void Renderable::DrawClassic()
 {
 	group->DrawClassic(matrix);
+
+	obb_total.draw(mat4(1.0));
 }
 
 RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), renderable(renderable)
@@ -46,17 +58,14 @@ RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), ren
 
 	matrix = renderable->matrix * group->matrixWorld;
 
-	obb = group->geometry->bb;
+	obb = group->geometry->aabb;
 
-	bb = aabb::mult(obb, matrix);
+	aabb = AABB::mult(obb, matrix);
 
 #ifdef DRAW_AABB_AND_OBB
-
-	bb.geometrize();
+	aabb.geometrize();
 	obb.geometrize();
-
 #endif
-
 }
 
 void RenderItem::Draw()
@@ -64,18 +73,15 @@ void RenderItem::Draw()
 	group->Draw(renderable->matrix);
 
 #ifdef DRAW_AABB_AND_OBB
-
-	bb.draw(mat4(1.0));
+	aabb.draw(mat4(1.0));
 	obb.draw(renderable->matrix);
-
 #endif
-
 }
 
 void RenderItem::TransformVertices()
 {
 	// Used for collision detection
-	
+
 	if (triangles.size() > 0)
 		return;
 

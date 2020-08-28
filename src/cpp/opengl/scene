@@ -6,8 +6,9 @@
 struct Scene
 {
 public:
-	vector<Group *> groups;
-	vector<PointLight *> pointlights;
+	std::vector<PointLight *> pointlights;
+	std::vector<Renderable *> renderables;
+	std::vector<RenderItem> objects;
 	
 	vec3 ambient;
 
@@ -15,9 +16,9 @@ public:
 	~Scene();
 
 	void Clear();
-	void Add(Group *);
+	void Add(Renderable *);
 	void Add(PointLight *);
-	void Remove(Group *);
+	void Remove(Renderable *);
 	void Remove(PointLight *);
 
 	void DrawItems();

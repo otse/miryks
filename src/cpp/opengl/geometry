@@ -24,7 +24,7 @@ struct Geometry
 
 	GLuint vao, vbo, ebo;
 
-	aabb bb;
+	AABB aabb;
 	
 	Group *parent = nullptr;
 	Material *material = nullptr;

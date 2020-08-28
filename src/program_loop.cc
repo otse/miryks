@@ -245,7 +245,7 @@ void dark2::programLoop()
 
 		bsa_gui();
 		nif_gui();
-		opengl_gui();
+		//opengl_gui();
 		ImGui::ShowDemoWindow();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
