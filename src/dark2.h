@@ -6,14 +6,16 @@ struct rc_t;
 struct nif_t;
 class Mesh;
 
+#define ONE_SKYRIM_UNIT_IN_CM 1.428
+
 #include "cpp/opengl/types"
 
 #include "idiom.hpp"
 
 namespace dark2
 {
-	nif_t *nif_from_rc(rc_t *);
-	void nif_viewer(nif_t *);
+	nif_t *makeNif(rc_t *);
+	void spotlightNif(nif_t *);
 
 	void programGo();
 	void programLoop();

@@ -10,7 +10,7 @@ struct Renderable
 {
 	Group *const group;
 
-	AABB obb_total;
+	AABB aabb;
 
 	mat4 matrix;
 

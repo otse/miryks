@@ -211,7 +211,7 @@ void main()
 	float fogNear = 1000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	float fogFar = 15000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	//float fogDensity = 0.000970;
-	float fogDensity = 0.001100;
+	float fogDensity = 0.000010;
 
 	diffuseColor *= texture2D(map, vUv);
 	

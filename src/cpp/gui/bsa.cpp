@@ -94,31 +94,91 @@ void bsa_gui()
 		//}
 		if (ImGui::BeginTabItem("find"))
 		{
-			static char rc_str[230] = "meshes\\clutter\\bucket02a.nif";
-			static char rc_str_before[230];
-			ImGui::InputText("##rc", rc_str, IM_ARRAYSIZE(rc_str));
-			rc_t *rc = bsa_find(bsa, rc_str);
+			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
+			static char str2[MAX] = {'\0'};
+
+			static rc_t *rc = nullptr;
+
+			ImGui::InputText("##Find", str, MAX);
+
 			ImGui::Text(rc ? "found!" : "not found!");
+
+			if (strcmp(str, str2))
+			{
+				rc = bsa_find(bsa, str);
+				memcpy(str2, str, MAX);
+			}
+
 			if (rc)
 			{
 				char *s;
 				s = bsa_print_rc(bsa, rc->r);
-				//ImGui::Separator();
-				//ImGui::Text("Resource:");
 				ImGui::Text(s);
 				free(s);
 				s = bsa_print_fle_rcd(bsa, rc->i, rc->j);
-				//ImGui::Separator();
 				ImGui::Text(s);
 				free(s);
-				//if (!rc->buf)
-				//bsa_read(&bsa, rc);
+			}
+
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("search"))
+		{
+			static char str[MAX] = "staffofmagnus";
+			static char str2[MAX] = {'\0'};
+
+			ImGui::InputText("##Search", str, MAX);
+
+			static const char *items[10];
+			static int num = 0;
+
+			static rc_t *rc = nullptr;
+			static rc_t *rcs[10] = {0};
+
+			if (strcmp(str, str2))
+			{
+				bsa_search(bsa, rcs, str, &num);
+				printf("bsa search num %i\n", num);
+				for (int i = 0; i < num; i++)
+				{
+					items[i] = rcs[i]->name;
+				}
+				memcpy(str2, str, MAX);
+			}
+
+			static int item_current = 0;
+			ImGui::ListBox("##Results", &item_current, items, num, 4);
+
+			rc = rcs[item_current];
+
+			if (!(item_current > num) && rc)
+			{
+				char *s;
+				s = bsa_print_rc(bsa, rc->r);
+				ImGui::Text(s);
+				free(s);
+				s = bsa_print_fle_rcd(bsa, rc->i, rc->j);
+				ImGui::Text(s);
+				free(s);
 				if (rc->buf)
 				{
 					//ImGui::Separator();
 					ImGui::Text("Contents:");
 					ImGui::Text((char *)rc->buf);
 				}
+				if (ImGui::Button("load"))
+				{
+					bsa_read(rc);
+				}
+				if (rc->size > -1)
+				{
+					ImGui::SameLine();
+					if (ImGui::Button("view"))
+					{
+						spotlightNif(makeNif(rc));
+					}
+				}
+				ImGui::Separator();
 				//cls;
 			}
 			ImGui::EndTabItem();
@@ -160,7 +220,7 @@ void bsa_gui()
 								ImGui::SameLine();
 								if (ImGui::Button("view"))
 								{
-									nif_viewer(nif_from_rc(rc));
+									spotlightNif(makeNif(rc));
 								}
 							}
 							ImGui::Separator();

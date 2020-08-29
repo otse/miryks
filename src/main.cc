@@ -40,7 +40,7 @@ namespace dark2
 
 #define PATH_TXT "path to oldrim.txt"
 
-nif_t *dark2::nif_from_rc(rc_t *rc) {
+nif_t *dark2::makeNif(rc_t *rc) {
 	cassert_(rc, "mh no rc");
 	bsa_read(rc);
 	nif_t *nif = nif_alloc();
@@ -51,7 +51,7 @@ nif_t *dark2::nif_from_rc(rc_t *rc) {
 	return nif;
 }
 
-void dark2::nif_viewer(nif_t *nif) {
+void dark2::spotlightNif(nif_t *nif) {
 	if (viewed_mesh) {
 	scene->Remove(viewed_object);
 	delete viewed_mesh;
@@ -62,6 +62,10 @@ void dark2::nif_viewer(nif_t *nif) {
 	viewed_object = new Renderable(mat4(1), viewed_mesh->base);
 	scene->Add(viewed_object);
 	camera = viewer_camera;
+	viewer_camera->pos = viewed_object->aabb.center();
+	viewer_camera->radius = viewed_object->aabb.radius2() * 2;
+	printf("radius %f\n", viewer_camera->radius);
+	//viewer_camera->radius = viewed_object->aabb.radius2();
 }
 
 int main()
@@ -79,7 +83,7 @@ int main()
 	viewer_camera = new ViewerCamera;
 	oglGo();
 	camera = first_person_camera;
-	nif_viewer(nif_from_rc(bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif")));
+	spotlightNif(makeNif(bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif")));
 	nif_test(meshes);
 	programLoop();
 	return 1;

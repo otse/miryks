@@ -119,7 +119,7 @@ void nif_gui()
 
 			if (ImGui::Button("view"))
 			{
-				nif_viewer(nif);
+				spotlightNif(nif);
 			}
 
 			ImGui::TreePop();

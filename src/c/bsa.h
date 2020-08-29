@@ -70,6 +70,8 @@ api int bsa_read(rc_t *);
 api rc_t *bsa_find(bsa_t *, const char *);
 api rc_t *bsas_find(bsas_t *, const char *, unsigned long);
 
+api void bsa_search(bsa_t *, rc_t *[10], const char *, int *);
+
 extern bsas_t bsas;
 
 api void bsas_add_to_loaded(bsas_t *, bsa_t **, int);

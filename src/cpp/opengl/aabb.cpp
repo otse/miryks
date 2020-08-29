@@ -3,6 +3,10 @@
 #include "geometry"
 #include "material"
 
+#include <glm/gtx/norm.hpp>
+
+// https://github.com/openscenegraph/OpenSceneGraph/blob/master/include/osg/BoundingBox
+
 AABB::AABB(float f)
 {
 	min = vec3(f);
@@ -49,7 +53,12 @@ vec3 AABB::diagional() const
 
 vec3 AABB::center() const
 {
-	return min + (diagional() * 0.5f);
+	return (min + max) * 0.5f;
+}
+
+float AABB::radius2() const
+{
+	return sqrt(0.25f * length2(max - min));
 }
 
 void AABB::translate(const vec3 &v)
@@ -99,13 +108,6 @@ bool AABB::contains_vec(const vec3 &v) const
 	return v.x >= min.x && v.x <= max.x &&
 		   v.y >= min.y && v.y <= max.y &&
 		   v.z >= min.z && v.z <= max.z;
-}
-
-// taken from include/osg/Vec3f
-float AABB::radius2() const
-{
-	vec3 v = max - min;
-	return 0.25f * v.x * v.x + v.y * v.y + v.z * v.z;
 }
 
 void AABB::geometrize()

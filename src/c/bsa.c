@@ -156,6 +156,31 @@ api rc_t *bsa_find(bsa_t *b, const char *p)
 	return rc;
 }
 
+const max_results = 10;
+
+api void bsa_search(bsa_t *b, rc_t *rcs[10], const char *s, int *num)
+{
+	char *str;
+	int r;
+	int n = 0;
+	for (int i = 0; i < hedr.folders; i++)
+	{
+	r = b->r[i];
+	for (int j = 0; j < b->fld[i].num; j++)
+	{
+	str = strstr(b->cb[r], s);
+	if (str!=NULL) {
+	rcs[n++] = b->rc[r];
+	if (n>=max_results)
+	goto end;
+	}
+	r++;
+	}
+	}
+	end:
+	*num=n;
+}
+
 char *bsa_uncompress(rc_t *rc)
 {
 	char *src = rc->buf;
@@ -208,7 +233,6 @@ api void bsa_free(bsa_t **bsa)
 	bsa_t *b = *bsa;
 	*bsa = NULL;
 	return;
-#define hedr b->hdr
 	// Delete file records
 	if (hedr.folders)
 	{

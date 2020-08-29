@@ -94,13 +94,15 @@ void FirstPersonCamera::Move(float time)
 ViewerCamera::ViewerCamera() : Camera()
 {
 	center = vec3(0);
-	radius = 60;
+	radius = 100;
 	yaw = 0;
 	pitch = 0;
 }
 
 void ViewerCamera::Mouse(float x, float y)
 {
+	if (disabled)
+		return;
 	const float sensitivity = .001f;
 	yaw += x * sensitivity;
 	pitch -= y * sensitivity;
@@ -108,21 +110,11 @@ void ViewerCamera::Mouse(float x, float y)
 
 void ViewerCamera::Update(float time)
 {
-	if (disabled)
-		return;
-
-	//vec3 push = vec3(0);
-	//push.x += radius * sin(yaw);
-	//push.y += radius * cos(yaw);
-
-	//push.x -= radius * sin(pitch);
-	//push.z -= radius * cos(pitch);
-
 	view = mat4(1.0f);
 	view = rotate(view, pitch, vec3(1, 0, 0));
 	view = rotate(view, yaw, vec3(0, 0, 1));
 
-	vec3 pan = vec3(0, 0, 100) * mat3(view);
+	vec3 pan = vec3(0, 0, radius) * mat3(view);
 
 	view = translate(view, -pan);
 	view = translate(view, -pos);

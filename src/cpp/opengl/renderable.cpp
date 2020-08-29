@@ -8,16 +8,15 @@
 #include "material"
 #include "shader"
 
-#define DRAW_AABB_AND_OBB
-#define RENDERABLE_OBB
+const bool DRAW_BOUNDS = true;
 
 Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)
 {
+	aabb = AABB(0);
+
 	Separate();
 
-#ifdef RENDERABLE_OBB
-	obb_total.geometrize();
-#endif
+	aabb.geometrize();
 }
 
 Renderable::~Renderable()
@@ -39,9 +38,7 @@ void Renderable::Separate()
 
 		objects.push_back(render_item);
 
-#ifdef RENDERABLE_OBB
-		obb_total.extend(render_item.obb);
-#endif
+		aabb.extend(render_item.obb);
 	}
 }
 
@@ -49,7 +46,7 @@ void Renderable::DrawClassic()
 {
 	group->DrawClassic(matrix);
 
-	obb_total.draw(mat4(1.0));
+	//obb.draw(mat4(1.0));
 }
 
 RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), renderable(renderable)
@@ -58,24 +55,26 @@ RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), ren
 
 	matrix = renderable->matrix * group->matrixWorld;
 
-	obb = group->geometry->aabb;
+	aabb = obb = group->geometry->aabb;
 
-	aabb = AABB::mult(obb, matrix);
+	aabb = AABB::mult(aabb, matrix);
 
-#ifdef DRAW_AABB_AND_OBB
-	aabb.geometrize();
-	obb.geometrize();
-#endif
+	if (DRAW_BOUNDS)
+	{
+		aabb.geometrize();
+		obb.geometrize();
+	}
 }
 
 void RenderItem::Draw()
 {
 	group->Draw(renderable->matrix);
 
-#ifdef DRAW_AABB_AND_OBB
-	aabb.draw(mat4(1.0));
-	obb.draw(renderable->matrix);
-#endif
+	if (DRAW_BOUNDS)
+	{
+		aabb.draw(mat4(1.0));
+		obb.draw(renderable->matrix);
+	}
 }
 
 void RenderItem::TransformVertices()
