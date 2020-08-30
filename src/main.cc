@@ -69,7 +69,7 @@ void dark2::viewer::spotlight(rc_t *rc)
 		nif = make_nif(rc);
 	mesh = new Mesh;
 	mesh->Construct(nif);
-	object = new Renderable(mat4(1.0), mesh->base);
+	object = new Renderable(mat4(1.0), mesh->baseGroup);
 	scene->Add(object);
 	camera = viewer_camera;
 	viewer_camera->pos = object->aabb.center();
@@ -82,6 +82,7 @@ int main()
 	log_("dark2 loading");
 	cassert_(exists(PATH_TXT), "missing " PATH_TXT);
 	OLDRIM = fread(PATH_TXT);
+	
 	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
 	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
 	bsa_t *array[2] = {meshes, textures};

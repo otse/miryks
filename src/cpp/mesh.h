@@ -23,7 +23,7 @@ public:
 
 	std::map<int, Group *> groups;
 	
-	Group *base, *lastGroup;
+	Group *baseGroup, *lastGroup;
 
 	//Material *material;
 	//Geometry *geometry;

@@ -40,6 +40,8 @@ namespace dark2
 	extern FirstPersonCamera *first_person_camera;
 	extern ViewerCamera *viewer_camera;
 	
+	extern esp_t *skyrim;
+	
 	extern bsa_t *interface;
 	extern bsa_t *meshes;
 	extern bsa_t *animations;

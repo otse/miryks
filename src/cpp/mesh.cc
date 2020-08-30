@@ -28,8 +28,8 @@ Mesh::Mesh()
 {
 	int l;
 	nif = nullptr;
-	base = new Group();
-	lastGroup = base;
+	baseGroup = new Group();
+	lastGroup = baseGroup;
 }
 
 void other(rd_t *, int, int, const char *);
@@ -53,13 +53,13 @@ void Mesh::Construct(nif_t *bucket)
 	rd->bs_shader_texture_set = bs_shader_texture_set_callback;
 	nif_rd(bucket, rd, this);
 	nif_free_rd(&rd);
-	base->Update();
+	baseGroup->Update();
 }
 
 Group *Mesh::Nested(rd_t *rd)
 {
 	Group *group = new Group();
-	Group *parent = rd->parent == -1 ? base : groups[rd->parent];
+	Group *parent = rd->parent == -1 ? baseGroup : groups[rd->parent];
 	groups[rd->current] = group;
 	parent->Add(group);
 	lastGroup = group;

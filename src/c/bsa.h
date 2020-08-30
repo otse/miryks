@@ -1,5 +1,5 @@
-#ifndef BSA_BSA_H
-#define BSA_BSA_H
+#ifndef C_BSA_H
+#define C_BSA_H
 
 #define api
 
@@ -8,8 +8,10 @@ typedef struct bsas_t bsas_t;
 typedef struct bsa_hedr_t bsa_hedr_t;
 typedef struct bsa_fld_t bsa_fld_t;
 typedef struct bsa_file_t bsa_file_t;
-
 typedef struct rc_t rc_t;
+
+typedef bsa_t Bsa;
+typedef rc_t Rc;
 
 struct bsa_hedr_t
 {
