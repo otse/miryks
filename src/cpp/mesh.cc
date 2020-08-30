@@ -56,13 +56,12 @@ void Mesh::Construct(nif_t *bucket)
 	base->Update();
 }
 
-Group *Mesh::Nested(int parent)
+Group *Mesh::Nested(rd_t *rd)
 {
 	Group *group = new Group();
-	if (parent == -1) {
-		lastGroup = base;
-	}
-	lastGroup->Add(group);
+	Group *parent = rd->parent == -1 ? base : groups[rd->parent];
+	groups[rd->current] = group;
+	parent->Add(group);
 	lastGroup = group;
 	return group;
 }
@@ -75,15 +74,15 @@ void other(rd_t *rd, int parent, int current, const char *block_type)
 void matrix_from_common(Group *group, ni_common_layout_t *common)
 {
 	group->matrix = mat4(*cast_mat_3((float *)&common->rotation));
+	group->matrix = rotate(group->matrix, pif, vec3(0, 1, 1));
 	group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->translation));
-	
 }
 
 void ni_node_callback(rd_t *rd, ni_node_t *block)
 {
 	printf("ni node callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
-	Group *group = mesh->Nested(rd->parent);
+	Group *group = mesh->Nested(rd);
 	matrix_from_common(group, &block->common);
 }
 
@@ -91,12 +90,12 @@ void ni_tri_shape_callback(rd_t *rd, ni_tri_shape_t *block)
 {
 	printf("ni tri shape callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
-	Group *group = mesh->Nested(rd->parent);
+	Group *group = mesh->Nested(rd);
 	matrix_from_common(group, &block->common);
 	group->geometry = new Geometry();
 	group->geometry->material = new Material();
-	vec3 v = *cast_vec_3((float *)&block->common.translation);
-	printf("block name %s translate %f %f %f", nif_get_string(rd->nif, block->common.name), v.x, v.y, v.z);
+	//vec3 v = *cast_vec_3((float *)&block->common.translation);
+	//printf("block name %s translate %f %f %f", nif_get_string(rd->nif, block->common.name), v.x, v.y, v.z);
 }
 
 void ni_tri_shape_data_callback(rd_t *rd, ni_tri_shape_data_t *block)
@@ -110,15 +109,15 @@ void ni_tri_shape_data_callback(rd_t *rd, ni_tri_shape_data_t *block)
 	for (int i = 0; i < block->num_triangles; i++)
 	{
 		unsigned short *triangle = (unsigned short *)&block->triangles[i];
-		geometry->elements.insert(geometry->elements.end(), { triangle[0], triangle[1], triangle[2] });
+		geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
 	}
 	for (int i = 0; i < block->num_vertices; i++)
 	{
-		geometry->vertices[i].position =*cast_vec_3((float *)&block->vertices[i]);
-		geometry->vertices[i].uv =      *cast_vec_2((float *)&block->uv_sets[i]);
-		geometry->vertices[i].normal =  *cast_vec_3((float *)&block->normals[i]);
+		geometry->vertices[i].position = *cast_vec_3((float *)&block->vertices[i]);
+		geometry->vertices[i].uv = *cast_vec_2((float *)&block->uv_sets[i]);
+		geometry->vertices[i].normal = *cast_vec_3((float *)&block->normals[i]);
 		if (block->has_vertex_colors)
-		geometry->vertices[i].color =   *cast_vec_4((float *)&block->vertex_colors[i]);
+			geometry->vertices[i].color = *cast_vec_4((float *)&block->vertex_colors[i]);
 	}
 
 	geometry->SetupMesh();

@@ -20,6 +20,9 @@ public:
 	Mesh();
 
 	nif_t *nif;
+
+	std::map<int, Group *> groups;
+	
 	Group *base, *lastGroup;
 
 	//Material *material;
@@ -27,5 +30,5 @@ public:
 
 	void Construct(nif_t *);
 
-	Group *Nested(int);
+	Group *Nested(rd_t *);
 };
