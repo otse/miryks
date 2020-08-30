@@ -2,7 +2,7 @@
 
 #include "geometry"
 
-#define DRAW_AXIS
+const bool DRAW_AXIS = true;
 
 int Group::num = 0;
 
@@ -16,12 +16,12 @@ Group::Group()
 	matrix = mat4(1.0f);
 	matrixWorld = mat4(1.0f);
 
-#ifdef DRAW_AXIS
+	if (DRAW_AXIS)
+	{
+		axis = new Geometry;
+		axis->SetupMesh();
+	}
 
-	axis = new Geometry;
-	axis->SetupMesh();
-
-#endif
 }
 
 Group::~Group() {
@@ -31,15 +31,18 @@ Group::~Group() {
 void Group::Add(Group *group)
 {
 	group->parent = this;
+	
 	group->Update();
 
 	groups.push_back(group);
 }
 
-// Accumulate matrices
-// https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L561
 void Group::Update()
 {
+	// Accumulate matrices
+
+	// https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L561
+	
 	if (parent == nullptr)
 
 		matrixWorld = matrix;
@@ -55,17 +58,15 @@ void Group::Update()
 
 void Group::Draw(const mat4 &model)
 {
-	mat4 matrix = model * matrixWorld;
+	mat4 place = model * matrixWorld;
 
-#ifdef DRAW_AXIS
+	if (DRAW_AXIS)
 
-	axis->Draw(matrix);
-
-#endif
+		axis->Draw(place);
 
 	if (geometry)
 
-		geometry->Draw(matrix);
+		geometry->Draw(place);
 }
 
 void Group::Flatten(Group *root)

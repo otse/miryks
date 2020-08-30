@@ -26,7 +26,7 @@ void Renderable::Separate()
 	aabb = AABB(0);
 
 	objects.clear();
-
+	
 	group->Flatten(group);
 
 	for (Group *group : group->flat)
@@ -38,7 +38,7 @@ void Renderable::Separate()
 
 		objects.push_back(render_item);
 
-		aabb.extend(render_item.obb);
+		aabb.extend(render_item.aabb);
 	}
 }
 
@@ -46,7 +46,7 @@ void Renderable::DrawClassic()
 {
 	group->DrawClassic(matrix);
 
-	//obb.draw(mat4(1.0));
+	aabb.draw(mat4(1.0));
 }
 
 RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), renderable(renderable)
@@ -61,7 +61,7 @@ RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), ren
 
 	if (DRAW_BOUNDS)
 	{
-		aabb.geometrize();
+		//aabb.geometrize();
 		obb.geometrize();
 	}
 }
@@ -72,8 +72,8 @@ void RenderItem::Draw()
 
 	if (DRAW_BOUNDS)
 	{
-		aabb.draw(mat4(1.0));
-		obb.draw(renderable->matrix);
+		//aabb.draw(mat4(1.0));
+		obb.draw(group->matrixWorld);
 	}
 }
 

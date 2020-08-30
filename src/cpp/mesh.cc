@@ -53,13 +53,15 @@ void Mesh::Construct(nif_t *bucket)
 	rd->bs_shader_texture_set = bs_shader_texture_set_callback;
 	nif_rd(bucket, rd, this);
 	nif_free_rd(&rd);
+	base->Update();
 }
 
 Group *Mesh::Nested(int parent)
 {
 	Group *group = new Group();
-	if (parent == -1)
+	if (parent == -1) {
 		lastGroup = base;
+	}
 	lastGroup->Add(group);
 	lastGroup = group;
 	return group;
@@ -74,6 +76,7 @@ void matrix_from_common(Group *group, ni_common_layout_t *common)
 {
 	group->matrix = mat4(*cast_mat_3((float *)&common->rotation));
 	group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->translation));
+	
 }
 
 void ni_node_callback(rd_t *rd, ni_node_t *block)
@@ -89,9 +92,11 @@ void ni_tri_shape_callback(rd_t *rd, ni_tri_shape_t *block)
 	printf("ni tri shape callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
 	Group *group = mesh->Nested(rd->parent);
+	matrix_from_common(group, &block->common);
 	group->geometry = new Geometry();
 	group->geometry->material = new Material();
-	matrix_from_common(group, &block->common);
+	vec3 v = *cast_vec_3((float *)&block->common.translation);
+	printf("block name %s translate %f %f %f", nif_get_string(rd->nif, block->common.name), v.x, v.y, v.z);
 }
 
 void ni_tri_shape_data_callback(rd_t *rd, ni_tri_shape_data_t *block)

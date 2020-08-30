@@ -9,6 +9,7 @@ public:
 	std::vector<PointLight *> pointlights;
 	std::vector<Renderable *> renderables;
 	std::vector<RenderItem> objects;
+	std::vector<Group *> classics;
 	
 	vec3 ambient;
 

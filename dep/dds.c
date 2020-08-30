@@ -9,7 +9,7 @@
 
 DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	
-	printf("ddsloader load buf\n");
+	//printf("ddsloader load buf\n");
 	unsigned int isDx10;
 	
 	DDSFile* file = 0;
@@ -19,7 +19,7 @@ DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	unsigned char *filesig = malloc(4);
 	ffread(filesig, 4);
 
-	printf("filesig %s\n", filesig);
+	//printf("filesig %s\n", filesig);
 	
 	if(memcmp(filesig, "DDS ", 4) != 0)
 		goto exit; // not a dds file
@@ -31,11 +31,11 @@ DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	memset(file, 0, sizeof(DDSFile));
 	ffread(file, 124); // read into struct up to dwReserved2; (EOF header)
 	
-	printf("dds width %i height %i\n", file->dwWidth, file->dwHeight);
+	//printf("dds width %i height %i\n", file->dwWidth, file->dwHeight);
 
 	isDx10 = memcmp(&file->ddspf.dwFourCC, "DX10", 4) == 0 ? 1 : 0;
 	if(isDx10) {
-		printf("its dx10\n");
+		//printf("its dx10\n");
 		file->ddsHeaderDx10 = malloc(sizeof(DDS_HEADER_DXT10));
 		if(file->ddsHeaderDx10 == 0) {
 			dds_free(file);
@@ -49,11 +49,11 @@ DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	
 	file->blBuffer = malloc(file->dwBufferSize);
 	if(file->blBuffer == 0) {
-		printf("blBuffer 0\n");
+		//printf("blBuffer 0\n");
 		dds_free(file);
 		goto exit;
 	}
-	printf("read dwBufferSize %i\n", file->dwBufferSize);
+	//printf("read dwBufferSize %i\n", file->dwBufferSize);
 	ffread(file->blBuffer, file->dwBufferSize);
 	
 exit:

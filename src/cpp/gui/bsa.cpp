@@ -163,7 +163,6 @@ void bsa_gui()
 						viewer::spotlight(rc);
 					}
 				}
-				ImGui::Separator();
 			}
 			ImGui::EndTabItem();
 		}
@@ -184,10 +183,11 @@ void bsa_gui()
 					{
 						if (ImGui::TreeNode(bsa->cb[r]))
 						{
+							ImGui::Separator();
+
 							char s[200];
 							rc_t *rc = bsa->rc[bsa->r[i] + j];
 							bsa_print_rc(bsa, s, rc->r);
-							ImGui::Separator();
 							ImGui::Text(s);
 							bsa_print_fle_rcd(bsa, s, i, j);
 							ImGui::Text(s);

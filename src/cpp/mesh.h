@@ -2,7 +2,8 @@
 
 #include "files"
 
-extern "C" {
+extern "C"
+{
 #include "c/bsa.h"
 #include "c/nif.h"
 }
@@ -13,9 +14,9 @@ extern "C" {
 #include "cpp/opengl/geometry"
 #include "cpp/opengl/material"
 
-
-class Mesh {
-	public:
+class Mesh
+{
+public:
 	Mesh();
 
 	nif_t *nif;
@@ -25,6 +26,6 @@ class Mesh {
 	//Geometry *geometry;
 
 	void Construct(nif_t *);
+
 	Group *Nested(int);
 };
-

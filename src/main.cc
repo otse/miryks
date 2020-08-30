@@ -69,7 +69,7 @@ void dark2::viewer::spotlight(rc_t *rc)
 		nif = make_nif(rc);
 	mesh = new Mesh;
 	mesh->Construct(nif);
-	object = new Renderable(mat4(1), mesh->base);
+	object = new Renderable(mat4(1.0), mesh->base);
 	scene->Add(object);
 	camera = viewer_camera;
 	viewer_camera->pos = object->aabb.center();
