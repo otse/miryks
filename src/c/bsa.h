@@ -61,10 +61,10 @@ struct bsas_t {
 api bsa_t *bsa_load(const char *);
 api void bsa_free(bsa_t **);
 
-api char *bsa_print_hedr(bsa_t *);
-api char *bsa_print_fld_rcd(bsa_t *, int);
-api char *bsa_print_fle_rcd(bsa_t *, int, int);
-api char *bsa_print_rc(bsa_t *, int);
+api void bsa_print_hedr(bsa_t *, char *s);
+api void bsa_print_fld_rcd(bsa_t *, char *s, int);
+api void bsa_print_fle_rcd(bsa_t *, char *s, int, int);
+api void bsa_print_rc(bsa_t *, char *s, int);
 
 api int bsa_read(rc_t *);
 api rc_t *bsa_find(bsa_t *, const char *);
