@@ -1,5 +1,5 @@
-#ifndef NIF_NIF_H
-#define NIF_NIF_H
+#ifndef C_NIF_H
+#define C_NIF_H
 
 #define api
 
