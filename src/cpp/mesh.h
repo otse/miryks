@@ -19,7 +19,7 @@ class Mesh
 public:
 	Mesh();
 
-	nif_t *nif;
+	Nif *nif;
 
 	std::map<int, Group *> groups;
 	
@@ -28,7 +28,7 @@ public:
 	//Material *material;
 	//Geometry *geometry;
 
-	void Construct(nif_t *);
+	void Construct(Nif *);
 
-	Group *Nested(rd_t *);
+	Group *Nested(Rd *);
 };

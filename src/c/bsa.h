@@ -3,17 +3,14 @@
 
 #define api
 
-typedef struct bsa_t bsa_t;
-typedef struct bsas_t bsas_t;
-typedef struct bsa_hedr_t bsa_hedr_t;
+typedef struct Bsa Bsa;
+typedef struct Bsas Bsas;
+typedef struct BsaHedr BsaHedr;
 typedef struct bsa_fld_t bsa_fld_t;
 typedef struct bsa_file_t bsa_file_t;
-typedef struct rc_t rc_t;
+typedef struct Rc Rc;
 
-typedef bsa_t Bsa;
-typedef rc_t Rc;
-
-struct bsa_hedr_t
+struct BsaHedr
 {
 	char id[4];
 	unsigned long ver, offset, archive_flags, folders, files, foldersl, filesl, file_flags;
@@ -31,9 +28,9 @@ struct bsa_file_t
 	unsigned long size, offset;
 };
 
-struct rc_t
+struct Rc
 {
-	bsa_t *b;
+	Bsa *b;
 	int i, j, r;
 	int size;
 	const char *name;
@@ -41,43 +38,43 @@ struct rc_t
 	char path[255];
 };
 
-struct bsa_t
+struct Bsa
 {
 	char *path;
-	bsa_hedr_t hdr;
+	BsaHedr hdr;
 	void *stream;
 	bsa_fld_t *fld;
 	bsa_file_t **file;
-	rc_t **rc;
+	Rc **rc;
 	int *r;
 	const char **ca;
 	const char **cb;
-	bsas_t *bsas;
+	Bsas *bsas;
 };
 
-struct bsas_t {
+struct Bsas {
 	int num;
-	bsa_t* array[30];
+	Bsa* array[30];
 };
 
-api bsa_t *bsa_load(const char *);
-api void bsa_free(bsa_t **);
+api Bsa *bsa_load(const char *);
+api void bsa_free(Bsa **);
 
-api void bsa_print_hedr(bsa_t *, char *s);
-api void bsa_print_fld_rcd(bsa_t *, char *s, int);
-api void bsa_print_fle_rcd(bsa_t *, char *s, int, int);
-api void bsa_print_rc(bsa_t *, char *s, int);
+api void bsa_print_hedr(Bsa *, char *s);
+api void bsa_print_fld_rcd(Bsa *, char *s, int);
+api void bsa_print_fle_rcd(Bsa *, char *s, int, int);
+api void bsa_print_rc(Bsa *, char *s, int);
 
-api int bsa_read(rc_t *);
-api rc_t *bsa_find(bsa_t *, const char *);
-api rc_t *bsas_find(bsas_t *, const char *, unsigned long);
+api int bsa_read(Rc *);
+api Rc *bsa_find(Bsa *, const char *);
+api Rc *bsas_find(Bsas *, const char *, unsigned long);
 
-api void bsa_search(bsa_t *, rc_t *[10], const char *, int *);
+api void bsa_search(Bsa *, Rc *[10], const char *, int *);
 
-extern bsas_t bsas;
+extern Bsas bsas;
 
-api void bsas_add_to_loaded(bsas_t *, bsa_t **, int);
-api bsa_t *bsas_get_by_path(bsas_t *, const char *);
+api void bsas_add_to_loaded(Bsas *, Bsa **, int);
+api Bsa *bsas_get_by_path(Bsas *, const char *);
 
 #define BSA_MESHES   0x1
 #define BSA_TEXTURES 0x2

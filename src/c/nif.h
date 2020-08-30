@@ -5,9 +5,9 @@
 
 typedef void ni_block_t;
 
-typedef struct nif_t nif_t;
-typedef struct rd_t rd_t;
-typedef struct nif_hedr_t nif_hedr_t;
+typedef struct Nif Nif;
+typedef struct Rd Rd;
+typedef struct NifHedr NifHedr;
 typedef struct nmap_t nmap_t;
 typedef struct vec_2 vec_2;
 typedef struct vec_3 vec_3;
@@ -25,7 +25,7 @@ typedef struct ni_tri_shape_data_t ni_tri_shape_data_t;
 typedef struct bs_lighting_shader_property_t bs_lighting_shader_property_t;
 typedef struct bs_shader_texture_set_t bs_shader_texture_set_t;
 
-struct nif_hedr_t
+struct NifHedr
 {
 	char *header_string;
 	unsigned int unknown_1;
@@ -42,35 +42,32 @@ struct nif_hedr_t
 	int end;
 };
 
-struct nif_t
+struct Nif
 {
 	int n;
 	const char *path;
 	const unsigned char *buf;
 	unsigned pos;
-	nif_hedr_t hdr;
+	NifHedr hdr;
 	ni_block_t **blocks;
 };
 
-//typedef void(* rd_func_t)(rd_t *, int, int, void *);
-
-struct rd_t {
-	int x;
-	int *skips;
-	nif_t *nif;
+struct Rd { // Rundown
+	Nif *nif;
 	void *data;
+	int *skips;
 	int parent, current;
-	void(* other)(rd_t *, int, int, const char *);
-	void(* ni_node)(rd_t *, ni_node_t *);
-	void(* ni_tri_shape)(rd_t *, ni_tri_shape_t *);
-	void(* ni_tri_shape_data)(rd_t *, ni_tri_shape_data_t *);
-	void(* bs_lighting_shader_property)(rd_t *, bs_lighting_shader_property_t *);
-	void(* bs_shader_texture_set)(rd_t *, bs_shader_texture_set_t *);
+	void(* other)(Rd *, int, int, const char *);
+	void(* ni_node)(Rd *, ni_node_t *);
+	void(* ni_tri_shape)(Rd *, ni_tri_shape_t *);
+	void(* ni_tri_shape_data)(Rd *, ni_tri_shape_data_t *);
+	void(* bs_lighting_shader_property)(Rd *, bs_lighting_shader_property_t *);
+	void(* bs_shader_texture_set)(Rd *, bs_shader_texture_set_t *);
 };
 
 struct nmap_t {
 	void *key;
-	nif_t *value;
+	Nif *value;
 };
 extern nmap_t nmap[1000];
 extern int nifs;
@@ -78,28 +75,28 @@ extern int nifs;
 void nif_gui();
 void nif_test(void *);
 
-char *nif_read_short_string(nif_t *);
-char *nif_read_sized_string(nif_t *);
+char *nif_read_short_string(Nif *);
+char *nif_read_sized_string(Nif *);
 
-void nif_read_header(nif_t *);
-void nif_read_blocks(nif_t *);
+void nif_read_header(Nif *);
+void nif_read_blocks(Nif *);
 
-api nif_t *nif_alloc();
-api rd_t *nif_alloc_rd();
+api Nif *nif_alloc();
+api Rd *nif_alloc_rd();
 
-api void nif_free_rd(rd_t **);
-api void nif_rd(nif_t *, rd_t *, void *);
+api void nif_free_rd(Rd **);
+api void nif_rd(Nif *, Rd *, void *);
 
-api void nif_read(nif_t *);
-api void nif_save(void *, nif_t *);
-api nif_t *nif_saved(void *);
+api void nif_read(Nif *);
+api void nif_save(void *, Nif *);
+api Nif *nif_saved(void *);
 
-api char *nif_get_string(nif_t *, int);
-api char *nif_get_block_type(nif_t *, int);
-api ni_block_t *nif_get_block(nif_t *, int);
+api char *nif_get_string(Nif *, int);
+api char *nif_get_block_type(Nif *, int);
+api ni_block_t *nif_get_block(Nif *, int);
 
-api void nif_print_hedr(nif_t *, char *);
-api void nif_print_block(nif_t *, int, char *);
+api void nif_print_hedr(Nif *, char *);
+api void nif_print_block(Nif *, int, char *);
 
 ///
 

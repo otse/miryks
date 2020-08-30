@@ -7,13 +7,13 @@
 nmap_t nmap[1000];
 int nifs = 0;
 
-api void nif_save(void *key, nif_t *nif)
+api void nif_save(void *key, Nif *nif)
 {
 	nif->n = nifs;
 	nmap[nifs++] = (nmap_t){key, nif};
 }
 
-api nif_t *nif_saved(void *key)
+api Nif *nif_saved(void *key)
 {
 	for (int i = 0; i < nifs; i++)
 	{
@@ -36,7 +36,7 @@ api nif_t *nif_saved(void *key)
 #define ReadArray(nif, c, d, e, f, g, h) sink_array(nif, d, offsetof(c, f), offsetof(c, g), sizeof(e), h)
 #define ReadStruct(nif, c, d, e, f) sink_struct(nif, d, offsetof(c, e), offsetof(c, f))
 
-void sink_array(nif_t *nif, unsigned char *base, int pointer, int num, int element, int is_short) {
+void sink_array(Nif *nif, unsigned char *base, int pointer, int num, int element, int is_short) {
 	void **dest = base + pointer;
 	int repeat = *(unsigned *)(base + num);
 	if (is_short)
@@ -47,53 +47,53 @@ void sink_array(nif_t *nif, unsigned char *base, int pointer, int num, int eleme
 	Pos += size;
 }
 
-void sink_struct(nif_t *nif, unsigned char *base, int start, int stop) {
+void sink_struct(Nif *nif, unsigned char *base, int start, int stop) {
 	void *dest = base + start;
 	int size = stop - start;
 	memcpy(dest, Depos, size);
 	Pos += size;
 }
 
-api char *nif_get_string(nif_t *nif, int i) {
+api char *nif_get_string(Nif *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Hedr.strings[i];
 }
 
-api char *nif_get_block_type(nif_t *nif, int i) {
+api char *nif_get_block_type(Nif *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Hedr.block_types[Hedr.block_type_index[i]];
 }
 
-api ni_block_t *nif_get_block(nif_t *nif, int i) {
+api ni_block_t *nif_get_block(Nif *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Blocks[i];
 }
 
-api nif_t *nif_alloc() {
-	nif_t *nif = malloc(sizeof(nif_t));
+api Nif *nif_alloc() {
+	Nif *nif = malloc(sizeof(Nif));
 	Pos = 0;
 	Buf = 0;
 	return nif;
 }
 
-api void nif_read(nif_t *nif) {
+api void nif_read(Nif *nif) {
 	cassert_(Buf, "nif_read Buf not set");
 	nif_read_header(nif);
 	nif_read_blocks(nif);
 }
 
-void hedr_read_header_string(nif_t *);
-void hedr_read_vars(nif_t *);
-void hedr_read_block_types(nif_t *);
-void hedr_read_block_type_index(nif_t *);
-void hedr_read_block_sizes(nif_t *);
-void hedr_read_strings(nif_t *);
-void hedr_read_groups(nif_t *);
+void hedr_read_header_string(Nif *);
+void hedr_read_vars(Nif *);
+void hedr_read_block_types(Nif *);
+void hedr_read_block_type_index(Nif *);
+void hedr_read_block_sizes(Nif *);
+void hedr_read_strings(Nif *);
+void hedr_read_groups(Nif *);
 
-char *nif_read_short_string(nif_t *nif) {
+char *nif_read_short_string(Nif *nif) {
 	char len = FromBuf(char);
 	char *string = malloc(sizeof(char) * len);
 	strncpy(string, Depos, len);
@@ -101,7 +101,7 @@ char *nif_read_short_string(nif_t *nif) {
 	return string;
 }
 
-char *nif_read_sized_string(nif_t *nif) {
+char *nif_read_sized_string(Nif *nif) {
 	int len = FromBuf(int);
 	char *string = malloc(sizeof(char) * len + 1);
 	strncpy(string, Depos, len);
@@ -110,7 +110,7 @@ char *nif_read_sized_string(nif_t *nif) {
 	return string;
 }
 
-api void nif_read_header(nif_t *nif) {
+api void nif_read_header(Nif *nif) {
 	hedr_read_header_string(nif);
 	Hedr.unknown_1 = FromBuf(int);
 	// later on blocks use aggressive macros to read
@@ -123,7 +123,7 @@ api void nif_read_header(nif_t *nif) {
 	Hedr.end = Pos;
 }
 
-void hedr_read_header_string(nif_t *nif) {
+void hedr_read_header_string(Nif *nif) {
 	// Gamebryo File Format, Version 20.2.0.7\n
 	int n = strchr(Buf, '\n') - Buf + 1;
 	char *string = malloc(sizeof(char) * n);
@@ -134,7 +134,7 @@ void hedr_read_header_string(nif_t *nif) {
 	Pos += n;
 }
 
-void hedr_read_vars(nif_t *nif) {
+void hedr_read_vars(Nif *nif) {
 	Hedr.endian_type = FromBuf(unsigned char);
 	Hedr.user_value =  FromBuf(unsigned int);
 	Hedr.num_blocks =  FromBuf(unsigned int);
@@ -145,7 +145,7 @@ void hedr_read_vars(nif_t *nif) {
 	Hedr.num_block_types = FromBuf(unsigned short);
 }
 
-void hedr_read_block_types(nif_t *nif) {
+void hedr_read_block_types(Nif *nif) {
 	int n = Hedr.num_block_types;
 	Hedr.block_types = malloc(sizeof(char *) * n);
 	for (int i = 0; i < n; i++)
@@ -154,21 +154,21 @@ void hedr_read_block_types(nif_t *nif) {
 	}
 }
 
-void hedr_read_block_type_index(nif_t *nif) {
+void hedr_read_block_type_index(Nif *nif) {
 	int size = sizeof(unsigned short) * Hedr.num_blocks;
 	Hedr.block_type_index = malloc(size);
 	memcpy(Hedr.block_type_index, Depos, size);
 	Pos += size;
 }
 
-void hedr_read_block_sizes(nif_t *nif) {
+void hedr_read_block_sizes(Nif *nif) {
 	int size = sizeof(unsigned int) * Hedr.num_blocks;
 	Hedr.block_sizes = malloc(size);
 	memcpy(Hedr.block_sizes, Depos, size);
 	Pos += size;
 }
 
-void hedr_read_strings(nif_t *nif) {
+void hedr_read_strings(Nif *nif) {
 	Hedr.num_strings = FromBuf(unsigned int);
 	Hedr.max_string_length = FromBuf(unsigned int);
 	int n = Hedr.num_strings;
@@ -179,13 +179,13 @@ void hedr_read_strings(nif_t *nif) {
 	}
 }
 
-void hedr_read_groups(nif_t *nif) {
+void hedr_read_groups(Nif *nif) {
 	Hedr.num_groups = FromBuf(unsigned int);
 }
 
-#define nifr nif_t *nif, int n
+#define nifr Nif *nif, int n
 
-void read_block(nif_t *, int);
+void read_block(Nif *, int);
 
 ni_common_layout_t read_ni_common_layout(nifr);
 void *read_ni_node(nifr);
@@ -196,7 +196,7 @@ void *read_ni_tri_shape_data(nifr);
 void *read_bs_lighting_shader_property(nifr);
 void *read_bs_shader_texture_set(nifr);
 
-api void nif_read_blocks(nif_t *nif)
+api void nif_read_blocks(Nif *nif)
 {
 	unsigned int pos = Pos;
 	Blocks = malloc(sizeof(ni_block_t *) * Hedr.num_blocks);
@@ -210,7 +210,7 @@ api void nif_read_blocks(nif_t *nif)
 	}
 }
 
-void read_block(nif_t *nif, int n)
+void read_block(Nif *nif, int n)
 {
 	const char *block_type = Hedr.block_types[Hedr.block_type_index[n]];
 	void *block = NULL;
@@ -334,26 +334,26 @@ void *read_bs_shader_texture_set(nifr)
 	return block;
 }
 
-void visit(rd_t *, int, int);
-void visit_other(rd_t *, int, int);
-void visit_block(rd_t *, void *);
+void visit(Rd *, int, int);
+void visit_other(Rd *, int, int);
+void visit_block(Rd *, void *);
 
-api rd_t *nif_alloc_rd() {
-	rd_t *rd = malloc(sizeof(rd_t));
-	memset(rd, 0, sizeof(rd_t));
+api Rd *nif_alloc_rd() {
+	Rd *rd = malloc(sizeof(Rd));
+	memset(rd, 0, sizeof(Rd));
 	rd->other = visit_other;
 	rd->ni_node = rd->ni_tri_shape = rd->ni_tri_shape_data = rd->bs_lighting_shader_property = rd->bs_shader_texture_set = visit_block;
 	return rd;
 }
 
-api void nif_free_rd(rd_t **p) {
-	rd_t *rd = *p;
+api void nif_free_rd(Rd **p) {
+	Rd *rd = *p;
 	free(rd->skips);
 	free(rd);
 	*p = NULL;
 }
 
-api void nif_rd(nif_t *nif, rd_t *rd) {
+api void nif_rd(Nif *nif, Rd *rd) {
 	printf("nif accept\n");
 	rd->skips = malloc(sizeof(int) * Hedr.num_blocks);
 	memset(rd->skips, 0, sizeof(int) * Hedr.num_blocks);
@@ -364,9 +364,9 @@ api void nif_rd(nif_t *nif, rd_t *rd) {
 	}
 }
 
-void visit(rd_t *rd, int p, int c)
+void visit(Rd *rd, int p, int c)
 {
-	nif_t *nif = rd->nif;
+	Nif *nif = rd->nif;
 	if (-1 == c)
 	return;
 	if (rd->skips[c])
@@ -409,12 +409,12 @@ void visit(rd_t *rd, int p, int c)
 	}
 }
 
-void visit_other(rd_t *rd, int p, int c)
+void visit_other(Rd *rd, int p, int c)
 {
 
 }
 
-void visit_block(rd_t *rd, void *block)
+void visit_block(Rd *rd, void *block)
 {
 
 }
