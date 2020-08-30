@@ -66,7 +66,7 @@ api char *nif_get_block_type(Nif *nif, int i) {
 	return Hedr.block_types[Hedr.block_type_index[i]];
 }
 
-api ni_block_t *nif_get_block(Nif *nif, int i) {
+api void *nif_get_block(Nif *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Blocks[i];
@@ -187,7 +187,7 @@ void hedr_read_groups(Nif *nif) {
 
 void read_block(Nif *, int);
 
-ni_common_layout_t read_ni_common_layout(nifr);
+NiCommonLayout read_ni_common_layout(nifr);
 void *read_ni_node(nifr);
 void *read_ni_skin_instance(nifr);
 void *read_ni_skin_data(nifr);
@@ -199,7 +199,7 @@ void *read_bs_shader_texture_set(nifr);
 api void nif_read_blocks(Nif *nif)
 {
 	unsigned int pos = Pos;
-	Blocks = malloc(sizeof(ni_block_t *) * Hedr.num_blocks);
+	Blocks = malloc(sizeof(void *) * Hedr.num_blocks);
 	for (unsigned int i = 0; i < Hedr.num_blocks; i++)
 	{
 	Blocks[i] = NULL;
@@ -239,13 +239,13 @@ void read_block(Nif *nif, int n)
 	Blocks[n] = block;
 }
 
-ni_common_layout_t read_ni_common_layout(nifr)
+NiCommonLayout read_ni_common_layout(nifr)
 {
 	unsigned int size;
-	ni_common_layout_t block;
-	ReadStruct(nif, ni_common_layout_t, &block, name, extra_data_list);
-	ReadArray(nif, ni_common_layout_t, &block, ni_ref_t, extra_data_list, num_extra_data_list, 0);
-	ReadStruct(nif, ni_common_layout_t, &block, controller, end);
+	NiCommonLayout block;
+	ReadStruct(nif, NiCommonLayout, &block, name, extra_data_list);
+	ReadArray(nif, NiCommonLayout, &block, NiRef, extra_data_list, num_extra_data_list, 0);
+	ReadStruct(nif, NiCommonLayout, &block, controller, end);
 	block.name_string = nif_get_string(nif, block.name);
 	return block;
 }
@@ -253,47 +253,47 @@ ni_common_layout_t read_ni_common_layout(nifr)
 void *read_ni_node(nifr)
 {
 	//printf("read ni node\n");
-	ni_node_t *block = malloc(sizeof(ni_node_t));
+	NiNode *block = malloc(sizeof(NiNode));
 	block->common = read_ni_common_layout(nif, n);
-	ReadStruct(nif, ni_node_t, block, num_children, children);
-	ReadArray(nif, ni_node_t, block, ni_ref_t, children, num_children, 0);
-	ReadStruct(nif, ni_node_t, block, num_effects, effects);
-	ReadArray(nif, ni_node_t, block, ni_ref_t, effects, num_effects, 0);
+	ReadStruct(nif, NiNode, block, num_children, children);
+	ReadArray(nif, NiNode, block, NiRef, children, num_children, 0);
+	ReadStruct(nif, NiNode, block, num_effects, effects);
+	ReadArray(nif, NiNode, block, NiRef, effects, num_effects, 0);
 	return block;
 }
 
 void *read_ni_tri_shape(nifr)
 {
 	//printf("read ni tri shape\n");
-	ni_tri_shape_t *block = malloc(sizeof(ni_node_t));
+	NiTriShape *block = malloc(sizeof(NiNode));
 	block->common = read_ni_common_layout(nif, n);
-	ReadStruct(nif, ni_tri_shape_t, block, data, material_data);
+	ReadStruct(nif, NiTriShape, block, data, material_data);
 	Pos += 9;
-	ReadStruct(nif, ni_tri_shape_t, block, shader_property, end);
+	ReadStruct(nif, NiTriShape, block, shader_property, end);
 	return block;
 }
 
 void *read_ni_tri_shape_data(nifr)
 {
 	//printf("read ni tri shape data\n");
-	ni_tri_shape_data_t *block = malloc(sizeof(ni_tri_shape_data_t));
-	ReadStruct(nif, ni_tri_shape_data_t, block, group_id, vertices);
+	NiTriShapeData *block = malloc(sizeof(NiTriShapeData));
+	ReadStruct(nif, NiTriShapeData, block, group_id, vertices);
 	if (block->has_vertices)
-	ReadArray(nif, ni_tri_shape_data_t, block, vec_3, vertices, num_vertices, 0);
-	ReadStruct(nif, ni_tri_shape_data_t, block, bs_vector_flags, normals);
+	ReadArray(nif, NiTriShapeData, block, Vec3, vertices, num_vertices, 0);
+	ReadStruct(nif, NiTriShapeData, block, bs_vector_flags, normals);
 	if (block->has_normals)
-	ReadArray(nif, ni_tri_shape_data_t, block, vec_3, normals, num_vertices, 0);
-	ReadArray(nif, ni_tri_shape_data_t, block, vec_3, tangents, num_vertices, 0);
-	ReadArray(nif, ni_tri_shape_data_t, block, vec_3, bitangents, num_vertices, 0);
-	ReadStruct(nif, ni_tri_shape_data_t, block, center, vertex_colors);
+	ReadArray(nif, NiTriShapeData, block, Vec3, normals, num_vertices, 0);
+	ReadArray(nif, NiTriShapeData, block, Vec3, tangents, num_vertices, 0);
+	ReadArray(nif, NiTriShapeData, block, Vec3, bitangents, num_vertices, 0);
+	ReadStruct(nif, NiTriShapeData, block, center, vertex_colors);
 	if (block->has_vertex_colors)
-	ReadArray(nif, ni_tri_shape_data_t, block, vec_4, vertex_colors, num_vertices, 0);
-	ReadArray(nif, ni_tri_shape_data_t, block, vec_2, uv_sets, num_vertices, 0);
-	ReadStruct(nif, ni_tri_shape_data_t, block, consistency_flags, triangles);
+	ReadArray(nif, NiTriShapeData, block, Vec4, vertex_colors, num_vertices, 0);
+	ReadArray(nif, NiTriShapeData, block, Vec2, uv_sets, num_vertices, 0);
+	ReadStruct(nif, NiTriShapeData, block, consistency_flags, triangles);
 	if (block->has_triangles)
-	ReadArray(nif, ni_tri_shape_data_t, block, ushort_3, triangles, num_triangles, 1);
-	ReadStruct(nif, ni_tri_shape_data_t, block, num_match_groups, match_groups);
-	ReadArray(nif, ni_tri_shape_data_t, block, ni_ref_t, match_groups, num_match_groups, 0);
+	ReadArray(nif, NiTriShapeData, block, Ushort3, triangles, num_triangles, 1);
+	ReadStruct(nif, NiTriShapeData, block, num_match_groups, match_groups);
+	ReadArray(nif, NiTriShapeData, block, NiRef, match_groups, num_match_groups, 0);
 	return block;
 }
 
@@ -311,10 +311,10 @@ void *read_ni_skin_data(nifr)
 void *read_bs_lighting_shader_property(nifr)
 {
 	//printf("read bs lighting shader property\n");
-	bs_lighting_shader_property_t *block = malloc(sizeof(bs_lighting_shader_property_t));
-	ReadStruct(nif, bs_lighting_shader_property_t, block, skyrim_shader_type, extra_data_list);
-	ReadArray(nif, bs_lighting_shader_property_t, block, ni_ref_t, extra_data_list, num_extra_data_list, 0);
-	ReadStruct(nif, bs_lighting_shader_property_t, block, controller, end);
+	BsLightingShaderProperty *block = malloc(sizeof(BsLightingShaderProperty));
+	ReadStruct(nif, BsLightingShaderProperty, block, skyrim_shader_type, extra_data_list);
+	ReadArray(nif, BsLightingShaderProperty, block, NiRef, extra_data_list, num_extra_data_list, 0);
+	ReadStruct(nif, BsLightingShaderProperty, block, controller, end);
 	block->name_string = nif_get_string(nif, block->name);
 	return block;
 }
@@ -322,8 +322,8 @@ void *read_bs_lighting_shader_property(nifr)
 void *read_bs_shader_texture_set(nifr)
 {
 	//printf("read bs shader texture set\n");
-	bs_shader_texture_set_t *block = malloc(sizeof(bs_shader_texture_set_t));
-	ReadStruct(nif, bs_shader_texture_set_t, block, num_textures, textures);
+	BsShaderTextureSet *block = malloc(sizeof(BsShaderTextureSet));
+	ReadStruct(nif, BsShaderTextureSet, block, num_textures, textures);
 	block->textures = malloc(sizeof(char *) * block->num_textures);
 	memset(block->textures, '\0', block->num_textures);
 	int l = block->num_textures;
@@ -377,7 +377,7 @@ void visit(Rd *rd, int p, int c)
 	if (0) ;
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{
-	ni_node_t *block = Blocks[c];
+	NiNode *block = Blocks[c];
 	rd->ni_node(rd, block);
 	for (int i = 0; i < block->num_children; i++)
 	{
@@ -387,7 +387,7 @@ void visit(Rd *rd, int p, int c)
 	}
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
 	{
-	ni_tri_shape_t *block = Blocks[c];
+	NiTriShape *block = Blocks[c];
 	rd->ni_tri_shape(rd, block);
 	visit(rd, c, block->data);
 	visit(rd, c, block->shader_property);
@@ -399,7 +399,7 @@ void visit(Rd *rd, int p, int c)
 	}
 	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) )
 	{
-	bs_lighting_shader_property_t *block = Blocks[c];
+	BsLightingShaderProperty *block = Blocks[c];
 	rd->bs_lighting_shader_property(rd, block);
 	visit(rd, c, block->texture_set);
 	}
