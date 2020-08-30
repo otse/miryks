@@ -14,9 +14,18 @@ class Mesh;
 
 namespace dark2
 {
-	nif_t *makeNif(rc_t *);
-	void spotlightNif(nif_t *);
+	namespace viewer
+	{
+	extern Mesh *viewed_mesh;
+	extern Renderable *viewed_object;
 
+	void spotlight(rc_t *);
+	}
+
+	//namespace importers
+	//{
+	nif_t *make_nif(rc_t *);
+	//}
 	void programGo();
 	void programLoop();
 

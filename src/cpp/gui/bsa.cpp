@@ -21,7 +21,7 @@ using namespace dark2;
 
 static bool good = true;
 static stringstream ss;
-static char *hedr = "not loaded";
+static char hedrstr[600] = { "not loaded" };
 static bsa_t *bsa = NULL;
 
 void bsa_gui()
@@ -60,14 +60,10 @@ void bsa_gui()
 			if (bsa == NULL)
 				bsa = bsa_load(path->c_str());
 			if (bsa != NULL)
-				hedr = bsa_print_hedr(bsa);
+				bsa_print_hedr(bsa, hedrstr);
 		}
 	}
 
-	/*const char *items[] = {"Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pineapple", "Strawberry", "Watermelon"};
-	static int item_current = 1;
-
-	ImGui::ListBox("Default", &item_current, items, IM_ARRAYSIZE(items), 4);*/
 	ImGui::Separator();
 
 	if (!bsa)
@@ -76,22 +72,16 @@ void bsa_gui()
 		return;
 	}
 
-	//ss << bsa->path;
-	ImGui::Text(bsa->path);
-	//cls;
+	//ImGui::Text(bsa->path);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("BsaTabs", tabBarFlags))
 	{
 		if (ImGui::BeginTabItem("hedr"))
 		{
-			ImGui::Text(hedr);
+			ImGui::Text(hedrstr);
 			ImGui::EndTabItem();
 		}
-		//if (ImGui::BeginTabItem("records"))
-		//{
-		//	ImGui::EndTabItem();
-		//}
 		if (ImGui::BeginTabItem("find"))
 		{
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
@@ -111,13 +101,14 @@ void bsa_gui()
 
 			if (rc)
 			{
-				char *s;
-				s = bsa_print_rc(bsa, rc->r);
+				ImGui::Separator();
+				char s[200];
+				bsa_print_rc(bsa, s, rc->r);
 				ImGui::Text(s);
-				free(s);
-				s = bsa_print_fle_rcd(bsa, rc->i, rc->j);
+				bsa_print_fle_rcd(bsa, s, rc->i, rc->j);
 				ImGui::Text(s);
-				free(s);
+				bsa_print_fld_rcd(bsa, s, rc->i);
+				ImGui::Text(s);
 			}
 
 			ImGui::EndTabItem();
@@ -138,7 +129,6 @@ void bsa_gui()
 			if (strcmp(str, str2))
 			{
 				bsa_search(bsa, rcs, str, &num);
-				printf("bsa search num %i\n", num);
 				for (int i = 0; i < num; i++)
 				{
 					items[i] = rcs[i]->name;
@@ -147,25 +137,20 @@ void bsa_gui()
 			}
 
 			static int item_current = 0;
-			ImGui::ListBox("##Results", &item_current, items, num, 4);
+			ImGui::ListBox("##Results", &item_current, items, num, 10);
 
 			rc = rcs[item_current];
 
 			if (!(item_current > num) && rc)
 			{
-				char *s;
-				s = bsa_print_rc(bsa, rc->r);
+				ImGui::Separator();
+				char s[200];
+				bsa_print_rc(bsa, s, rc->r);
 				ImGui::Text(s);
-				free(s);
-				s = bsa_print_fle_rcd(bsa, rc->i, rc->j);
+				bsa_print_fle_rcd(bsa, s, rc->i, rc->j);
 				ImGui::Text(s);
-				free(s);
-				if (rc->buf)
-				{
-					//ImGui::Separator();
-					ImGui::Text("Contents:");
-					ImGui::Text((char *)rc->buf);
-				}
+				bsa_print_fld_rcd(bsa, s, rc->i);
+				ImGui::Text(s);
 				if (ImGui::Button("load"))
 				{
 					bsa_read(rc);
@@ -175,11 +160,10 @@ void bsa_gui()
 					ImGui::SameLine();
 					if (ImGui::Button("view"))
 					{
-						spotlightNif(makeNif(rc));
+						viewer::spotlight(rc);
 					}
 				}
 				ImGui::Separator();
-				//cls;
 			}
 			ImGui::EndTabItem();
 		}
@@ -190,26 +174,23 @@ void bsa_gui()
 			{
 				if (ImGui::TreeNode(bsa->ca[i]))
 				{
-					char *s = bsa_print_fld_rcd(bsa, i);
+					char s[200];
+					bsa_print_fld_rcd(bsa, s, i);
 					ImGui::Text(s);
-					free(s);
 					ImGui::Separator();
-					//cls;
 					ImGui::Text("Files:");
 					int r = bsa->r[i];
 					for (uns_t j = 0; j < bsa->fld[i].num; j++)
 					{
 						if (ImGui::TreeNode(bsa->cb[r]))
 						{
-							char *s;
+							char s[200];
 							rc_t *rc = bsa->rc[bsa->r[i] + j];
-							s = bsa_print_rc(bsa, rc->r);
+							bsa_print_rc(bsa, s, rc->r);
 							ImGui::Separator();
 							ImGui::Text(s);
-							free(s);
-							s = bsa_print_fle_rcd(bsa, i, j);
+							bsa_print_fle_rcd(bsa, s, i, j);
 							ImGui::Text(s);
-							free(s);
 
 							if (ImGui::Button("load"))
 							{
@@ -220,7 +201,7 @@ void bsa_gui()
 								ImGui::SameLine();
 								if (ImGui::Button("view"))
 								{
-									spotlightNif(makeNif(rc));
+									viewer::spotlight(rc);
 								}
 							}
 							ImGui::Separator();

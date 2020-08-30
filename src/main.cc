@@ -2,7 +2,8 @@
 
 #include "files"
 
-extern "C" {
+extern "C"
+{
 #include "c/c.h"
 #include "c/bsa.h"
 #include "c/nif.h"
@@ -20,8 +21,11 @@ extern "C" {
 
 namespace dark2
 {
-	Mesh *viewed_mesh = nullptr;
-	Renderable *viewed_object = nullptr;
+	namespace viewer
+	{
+	Mesh *mesh = nullptr;
+	Renderable *object = nullptr;
+	}
 
 	std::string OLDRIM;
 
@@ -40,7 +44,8 @@ namespace dark2
 
 #define PATH_TXT "path to oldrim.txt"
 
-nif_t *dark2::makeNif(rc_t *rc) {
+nif_t *dark2::make_nif(rc_t *rc)
+{
 	cassert_(rc, "mh no rc");
 	bsa_read(rc);
 	nif_t *nif = nif_alloc();
@@ -51,21 +56,24 @@ nif_t *dark2::makeNif(rc_t *rc) {
 	return nif;
 }
 
-void dark2::spotlightNif(nif_t *nif) {
-	if (viewed_mesh) {
-	scene->Remove(viewed_object);
-	delete viewed_mesh;
-	delete viewed_object;
+void dark2::viewer::spotlight(rc_t *rc)
+{
+	if (mesh)
+	{
+		scene->Remove(object);
+		delete mesh;
+		delete object;
 	}
-	viewed_mesh = new Mesh;
-	viewed_mesh->Construct(nif);
-	viewed_object = new Renderable(mat4(1), viewed_mesh->base);
-	scene->Add(viewed_object);
+	nif_t *nif = nif_saved(rc);
+	if (nif == NULL)
+		nif = make_nif(rc);
+	mesh = new Mesh;
+	mesh->Construct(nif);
+	object = new Renderable(mat4(1), mesh->base);
+	scene->Add(object);
 	camera = viewer_camera;
-	viewer_camera->pos = viewed_object->aabb.center();
-	viewer_camera->radius = viewed_object->aabb.radius2() * 2;
-	printf("radius %f\n", viewer_camera->radius);
-	//viewer_camera->radius = viewed_object->aabb.radius2();
+	viewer_camera->pos = object->aabb.center();
+	viewer_camera->radius = object->aabb.radius2() * 2;
 }
 
 int main()
@@ -76,14 +84,15 @@ int main()
 	OLDRIM = fread(PATH_TXT);
 	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
 	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
-	bsa_t *array[2] = { meshes, textures };
+	bsa_t *array[2] = {meshes, textures};
 	bsas_add_to_loaded(&bsas, array, 2);
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
 	oglGo();
 	camera = first_person_camera;
-	spotlightNif(makeNif(bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif")));
+	rc_t *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
+	viewer::spotlight(rc);
 	nif_test(meshes);
 	programLoop();
 	return 1;

@@ -22,7 +22,7 @@ void bsa_read_filenames(bsa_t *);
 void bsa_resources(bsa_t *);
 void bsa_bsort(bsa_t *);
 
-api bsa_t* bsa_load(const char *path)
+api bsa_t *bsa_load(const char *path)
 {
 #define hedr bsa->hdr
 	bsa_t *bsa = malloc(sizeof(bsa_t));

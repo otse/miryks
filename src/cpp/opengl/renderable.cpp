@@ -12,8 +12,6 @@ const bool DRAW_BOUNDS = true;
 
 Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)
 {
-	aabb = AABB(0);
-
 	Separate();
 
 	aabb.geometrize();
@@ -25,6 +23,8 @@ Renderable::~Renderable()
 
 void Renderable::Separate()
 {
+	aabb = AABB(0);
+
 	objects.clear();
 
 	group->Flatten(group);

@@ -5,34 +5,29 @@
 
 #define INVERT_COMPRESSED 0x40000000
 
-api char *bsa_print_rc(bsa_t *b, int r)
+api void bsa_print_rc(bsa_t *b, char *s, int r)
 {
 	rc_t *rc = b->rc[r];
-	char *buf = malloc(200 * sizeof(char));
-	int w = snprintf(buf, 200, "\
-rc #%i\
+	int w = snprintf(s, 200, "\
+resource: %i\
 \nfilename: %s\
 \nfolder: %s\
 \nbuf: %p\
 \ncompressed: %i\
-\nunread: %i\
 ",
 r,
 rc->name,
 b->ca[rc->i],
 rc->buf,
-(b->hdr.archive_flags & 0x4) != (b->file[rc->i][rc->j].size & 0x40000000),
-rc->size == -1
+(b->hdr.archive_flags & 0x4) != (b->file[rc->i][rc->j].size & 0x40000000)
 );
-	return buf;
 }
 
-api char *bsa_print_fle_rcd(bsa_t *b, int i, int j)
+api void bsa_print_fle_rcd(bsa_t *b, char *s, int i, int j)
 {
 	bsa_file_t *rcd = &b->file[i][j];
-	char *buf = malloc(100 * sizeof(char));
-	int w = snprintf(buf, 100, "\
-file #%i\
+	int w = snprintf(s, 200, "\
+file: %i\
 \nhash: %llu\
 \nsize: %lu\
 \noffset: %lu\
@@ -42,17 +37,15 @@ rcd->hash,
 rcd->size,
 rcd->offset
 );
-	return buf;
 }
 
-api char *bsa_print_fld_rcd(bsa_t *b, int n)
+api void bsa_print_fld_rcd(bsa_t *b, char *s, int n)
 {
 	bsa_fld_t *rcd = &b->fld[n];
-	char *buf = malloc(200 * sizeof(char));
-	int w = snprintf(buf, 200, "\
-fld #%i\
+	int w = snprintf(s, 200, "\
+folder: %i\
 \nhash: %llu\
-\nnum: %lu\
+\nnum files: %lu\
 \noffset: %lu\
 ",
 n,
@@ -60,14 +53,12 @@ rcd->hash,
 rcd->num,
 rcd->offset
 );
-	return buf;
 }
 
-api char *bsa_print_hedr(bsa_t *b)
+api void bsa_print_hedr(bsa_t *b, char *s)
 {
-	#define hedr b->hdr
-	char *buf = malloc(500 * sizeof(char));
-	int w = snprintf(buf, 500, "\
+#define hedr b->hdr
+	int w = snprintf(s, 600, "\
 id: %s\
 \nver: %i\
 \narchive flags:\
@@ -128,5 +119,4 @@ hedr.filesl,
 hedr.file_flags,
 sizeof(bsa_hedr_t)
 );
-	return buf;
 }
