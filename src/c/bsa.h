@@ -25,7 +25,7 @@ struct bsa_file
 
 struct rc
 {
-	struct bsa *b;
+	struct bsa *bsa;
 	int i, j, r;
 	int size;
 	const char *name;
@@ -52,6 +52,8 @@ struct bsas {
 	struct bsa* array[30];
 };
 
+extern struct bsas bsas;
+
 api struct bsa *bsa_load(const char *);
 api void bsa_free(struct bsa **);
 
@@ -65,8 +67,6 @@ api struct rc *bsa_find(struct bsa *, const char *);
 api struct rc *bsas_find(struct bsas *, const char *, unsigned long);
 
 api void bsa_search(struct bsa *, struct rc *[10], const char *, int *);
-
-extern struct bsas bsas;
 
 api void bsas_add_to_loaded(struct bsas *, struct bsa **, int);
 api struct bsa *bsas_get_by_path(struct bsas *, const char *);

@@ -11,6 +11,8 @@
 #define VER 104
 #define VER_SE 105
 
+#define Hedr bsa->hdr
+
 int read(struct bsa *, void *, unsigned);
 int seek(struct bsa *, unsigned);
 
@@ -24,7 +26,6 @@ void bsa_bsort(struct bsa *);
 
 api struct bsa *bsa_load(const char *path)
 {
-#define hedr bsa->hdr
 	struct bsa *bsa = malloc(sizeof(struct bsa));
 	memset(bsa, 0, sizeof(struct bsa));
 	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
@@ -32,16 +33,16 @@ api struct bsa *bsa_load(const char *path)
 	bsa->stream = fopen(path, "rb");
 	cassert_(
 		bsa->stream, BSA "can't open");
-	read(bsa, &hedr, sizeof(struct bsa_hedr));
+	read(bsa, &Hedr, sizeof(struct bsa_hedr));
 	//printf(bsa_print_hedr(&bsa));
 	cassert_(
 		strcmp(
-			"BSA\x00", (char *)&hedr.id) == 0,
+			"BSA\x00", (char *)&Hedr.id) == 0,
 		BSA "not a bsa");
 	cassert_(
-		hedr.ver != VER_SE, BSA "cant use special edition");
+		Hedr.ver != VER_SE, BSA "cant use special edition");
 	cassert_(
-		hedr.ver == VER, BSA "not 104");
+		Hedr.ver == VER, BSA "not 104");
 	bsa_read_folder_records(bsa);
 	bsa_read_file_records(bsa);
 	bsa_read_filenames(bsa);
@@ -50,101 +51,96 @@ api struct bsa *bsa_load(const char *path)
 	return bsa;
 }
 
-void bsa_read_folder_records(struct bsa *b)
+void bsa_read_folder_records(struct bsa *bsa)
 {
-#define hedr b->hdr
-	b->fld = malloc(sizeof(struct bsa_fld) * hedr.folders);
-	read(b, b->fld, hedr.folders * sizeof(struct bsa_fld));
+	bsa->fld = malloc(sizeof(struct bsa_fld) * Hedr.folders);
+	read(bsa, bsa->fld, Hedr.folders * sizeof(struct bsa_fld));
 }
 
-char *bsa_read_bzstring(struct bsa *b)
+char *bsa_read_bzstring(struct bsa *bsa)
 {
 	int c = 0;
-	read(b, &c, 1);
+	read(bsa, &c, 1);
 	char *name = malloc(sizeof(char) * c);
-	read(b, name, c);
+	read(bsa, name, c);
 	return name;
 }
 
-void bsa_read_file_records(struct bsa *b)
+void bsa_read_file_records(struct bsa *bsa)
 {
-#define hedr b->hdr
-	b->file = malloc(sizeof(struct bsa_file *) * hedr.folders);
-	b->ca = malloc(sizeof(char *) * hedr.folders);
-	for (int i = 0; i < hedr.folders; i++)
+	bsa->file = malloc(sizeof(struct bsa_file *) * Hedr.folders);
+	bsa->ca = malloc(sizeof(char *) * Hedr.folders);
+	for (int i = 0; i < Hedr.folders; i++)
 	{
-	const int num = b->fld[i].num;
-	b->file[i] = malloc(sizeof(struct bsa_file) * num);
-	b->ca[i] = bsa_read_bzstring(b);
-	read(b, b->file[i], sizeof(struct bsa_file) * num);
+	const int num = bsa->fld[i].num;
+	bsa->file[i] = malloc(sizeof(struct bsa_file) * num);
+	bsa->ca[i] = bsa_read_bzstring(bsa);
+	read(bsa, bsa->file[i], sizeof(struct bsa_file) * num);
 	}
 }
 
-void bsa_read_filenames(struct bsa *b)
+void bsa_read_filenames(struct bsa *bsa)
 {
-#define hedr b->hdr
-	char *buf = malloc(sizeof(char) * hedr.filesl);
-	b->cb = malloc(sizeof(char *) * hedr.files);
-	read(b, buf, hedr.filesl);
+	char *buf = malloc(sizeof(char) * Hedr.filesl);
+	bsa->cb = malloc(sizeof(char *) * Hedr.files);
+	read(bsa, buf, Hedr.filesl);
 	int i = 0, j = 0, n = 0;
-	while (i++ < hedr.filesl)
+	while (i++ < Hedr.filesl)
 	{
 	if (buf[i] != '\0')
 	continue;
-	b->cb[n++] = &buf[j];
+	bsa->cb[n++] = &buf[j];
 	j = i + 1;
-	if (n >= hedr.files)
+	if (n >= Hedr.files)
 	break;
 	}
 }
 
-void bsa_rc_path(struct bsa *b, int i, int r)
+void bsa_rc_path(struct bsa *bsa, int i, int r)
 {
-	char *path = b->rc[r]->path;
-	strcpy(path, b->ca[i]);
+	char *path = bsa->rc[r]->path;
+	strcpy(path, bsa->ca[i]);
 	strcat(path, "\\");
-	strcat(path, b->cb[r]);
+	strcat(path, bsa->cb[r]);
 	return path;
 }
 
-void bsa_resources(struct bsa *b)
+void bsa_resources(struct bsa *bsa)
 {
-#define hedr b->hdr
-	b->rc = malloc(sizeof(struct rc *) * hedr.files);
-	b->r = malloc(sizeof(int) * hedr.folders);
+	bsa->rc = malloc(sizeof(struct rc *) * Hedr.files);
+	bsa->r = malloc(sizeof(int) * Hedr.folders);
 	int r = 0;
-	for (int i = 0; i < hedr.folders; i++)
+	for (int i = 0; i < Hedr.folders; i++)
 	{
-	b->r[i] = r;
-	for (int j = 0; j < b->fld[i].num; j++)
+	bsa->r[i] = r;
+	for (int j = 0; j < bsa->fld[i].num; j++)
 	{
-	b->rc[r] = malloc(sizeof(struct rc));
-	*b->rc[r] = (struct rc){b, i, j, r, -1, b->cb[r], NULL};
-	bsa_rc_path(b, i, r);
+	bsa->rc[r] = malloc(sizeof(struct rc));
+	*bsa->rc[r] = (struct rc){bsa, i, j, r, -1, bsa->cb[r], NULL};
+	bsa_rc_path(bsa, i, r);
 	r++;
 	}
 	}
 }
 
-api struct rc *bsa_find(struct bsa *b, const char *p)
+api struct rc *bsa_find(struct bsa *bsa, const char *p)
 {
-#define hedr b->hdr
 	struct rc *rc = NULL;
 	char *stem = FileStem(p, '\\');
 	char *name = FileName(p, '\\');
 	if (!stem || !name) goto end;
 	int cmp;
 	int r;
-	for (int i = 0; i < hedr.folders; i++)
+	for (int i = 0; i < Hedr.folders; i++)
 	{
-	cmp = strcmp(stem, b->ca[i]);
+	cmp = strcmp(stem, bsa->ca[i]);
 	if (cmp) continue;
-	r = b->r[i];
-	for (int j = 0; j < b->fld[i].num; j++)
+	r = bsa->r[i];
+	for (int j = 0; j < bsa->fld[i].num; j++)
 	{
-	cmp = strcmp(name, b->cb[r]);
+	cmp = strcmp(name, bsa->cb[r]);
 	if (!cmp) {
-	rc = b->rc[r];
+	rc = bsa->rc[r];
 	goto end;
 	}
 	r++;
@@ -158,19 +154,19 @@ api struct rc *bsa_find(struct bsa *b, const char *p)
 
 const max_results = 10;
 
-api void bsa_search(struct bsa *b, struct rc *rcs[10], const char *s, int *num)
+api void bsa_search(struct bsa *bsa, struct rc *rcs[10], const char *s, int *num)
 {
 	char *str;
 	int r;
 	int n = 0;
-	for (int i = 0; i < hedr.folders; i++)
+	for (int i = 0; i < Hedr.folders; i++)
 	{
-	r = b->r[i];
-	for (int j = 0; j < b->fld[i].num; j++)
+	r = bsa->r[i];
+	for (int j = 0; j < bsa->fld[i].num; j++)
 	{
-	str = strstr(b->cb[r], s);
+	str = strstr(bsa->cb[r], s);
 	if (str!=NULL) {
-	rcs[n++] = b->rc[r];
+	rcs[n++] = bsa->rc[r];
 	if (n>=max_results)
 	goto end;
 	}
@@ -203,23 +199,23 @@ api int bsa_read(struct rc *rc) {
 	return 0;
 	if (rc->buf)
 	return 1;
-	struct bsa *b = rc->b;
-	struct bsa_file *f = &b->file[rc->i][rc->j];
+	struct bsa *bsa = rc->bsa;
+	struct bsa_file *f = &bsa->file[rc->i][rc->j];
 	int offset = f->offset;
 	int size = f->size;
-	if (hedr.archive_flags & EMBED_FILE_NAMES)
+	if (Hedr.archive_flags & EMBED_FILE_NAMES)
 	{
 	unsigned char x;
-	seek(b, offset);
-	read(b, &x, 1);
+	seek(bsa, offset);
+	read(bsa, &x, 1);
 	offset += x + 1;
 	size -= x + 1;
 	}
 	rc->size = size;
 	rc->buf = malloc(size * sizeof(char));
-	seek(b, offset);
-	read(b, rc->buf, rc->size);
-	if ((hedr.archive_flags & 0x4) != (f->size & INVERT_COMPRESSED))
+	seek(bsa, offset);
+	read(bsa, rc->buf, rc->size);
+	if ((Hedr.archive_flags & 0x4) != (f->size & INVERT_COMPRESSED))
 	{
 	char *x = bsa_uncompress(rc);
 	free(rc->buf);
@@ -228,30 +224,30 @@ api int bsa_read(struct rc *rc) {
 	return 1;
 }
 
-api void bsa_free(struct bsa **bsa)
+api void bsa_free(struct bsa **b)
 {
-	struct bsa *b = *bsa;
-	*bsa = NULL;
+	struct bsa *bsa = *b;
+	*b = NULL;
 	return;
 	// Delete file records
-	if (hedr.folders)
+	if (Hedr.folders)
 	{
-	for (int i = 0; i < hedr.folders; i++)
+	for (int i = 0; i < Hedr.folders; i++)
 	{
-	free(b->file[i]);
-	free(b->ca[i]);
+	free(bsa->file[i]);
+	free(bsa->ca[i]);
 	}
-	free(b->file);
-	free(b->ca);
+	free(bsa->file);
+	free(bsa->ca);
 	}
 	// Delete folder records
-	free(b->fld);
-	free(b->cb);
+	free(bsa->fld);
+	free(bsa->cb);
 	// Delete filenames
-	free(b->cb[0]);
+	free(bsa->cb[0]);
 	// Other
-	free(b);
-	*bsa = NULL;
+	free(bsa);
+	*b = NULL;
 }
 
 struct bsas bsas;
@@ -269,9 +265,9 @@ api struct bsa *bsas_get_by_path(struct bsas *bsas, const char *path)
 {
 	for (int i = 0; i < bsas->num; i++)
 	{
-	struct bsa *b = bsas->array[i];
-	if (0 == strcmp(b->path, path))
-	return b;
+	struct bsa *bsa = bsas->array[i];
+	if (0 == strcmp(bsa->path, path))
+	return bsa;
 	}
 	return NULL;
 }
@@ -281,22 +277,22 @@ api struct rc *bsas_find(struct bsas *bsas, const char *p, unsigned long flags)
 	struct rc *rc = NULL;
 	for (int i = bsas->num; i --> 0; )
 	{
-	struct bsa *b = bsas->array[i];
-	int test = hedr.file_flags & flags;
-	if (hedr.file_flags == 0 || test)
-	rc = bsa_find(b, p);
+	struct bsa *bsa = bsas->array[i];
+	int test = Hedr.file_flags & flags;
+	if (Hedr.file_flags == 0 || test)
+	rc = bsa_find(bsa, p);
 	if (rc != NULL)
 	break;
 	}
 	return rc;
 }
 
-int read(struct bsa *b, void *data, unsigned size)
+int read(struct bsa *bsa, void *data, unsigned size)
 {
-	return fread(data, 1, size, (FILE *)b->stream);
+	return fread(data, 1, size, (FILE *)bsa->stream);
 }
 
-int seek(struct bsa *b, unsigned offset)
+int seek(struct bsa *bsa, unsigned offset)
 {
-	return fseek((FILE *)b->stream, offset, SEEK_SET);
+	return fseek((FILE *)bsa->stream, offset, SEEK_SET);
 }
