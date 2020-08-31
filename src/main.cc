@@ -29,12 +29,10 @@ namespace dark2
 
 	std::string OLDRIM;
 
-	Esp *skyrim;
-
-	Bsa *interface;
-	Bsa *meshes;
-	Bsa *animations;
-	Bsa *textures;
+	bsa_t *interface;
+	bsa_t *meshes;
+	bsa_t *animations;
+	bsa_t *textures;
 
 	FirstPersonCamera *first_person_camera;
 	ViewerCamera *viewer_camera;
@@ -46,11 +44,11 @@ namespace dark2
 
 #define PATH_TXT "path to oldrim.txt"
 
-Nif *dark2::make_nif(Rc *rc)
+nif_t *dark2::make_nif(rc_t *rc)
 {
 	cassert_(rc, "mh no rc");
 	bsa_read(rc);
-	Nif *nif = nif_alloc();
+	nif_t *nif = nif_alloc();
 	nif->path = rc->path;
 	nif->buf = rc->buf;
 	nif_read(nif);
@@ -58,7 +56,7 @@ Nif *dark2::make_nif(Rc *rc)
 	return nif;
 }
 
-void dark2::viewer::spotlight(Rc *rc)
+void dark2::viewer::spotlight(rc_t *rc)
 {
 	if (mesh)
 	{
@@ -66,7 +64,7 @@ void dark2::viewer::spotlight(Rc *rc)
 		delete mesh;
 		delete object;
 	}
-	Nif *nif = nif_saved(rc);
+	nif_t *nif = nif_saved(rc);
 	if (nif == NULL)
 		nif = make_nif(rc);
 	mesh = new Mesh;
@@ -84,17 +82,17 @@ int main()
 	log_("dark2 loading");
 	cassert_(exists(PATH_TXT), "missing " PATH_TXT);
 	OLDRIM = fread(PATH_TXT);
-
+	
 	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
 	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
-	Bsa *array[2] = {meshes, textures};
+	bsa_t *array[2] = {meshes, textures};
 	bsas_add_to_loaded(&bsas, array, 2);
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
 	oglGo();
 	camera = first_person_camera;
-	Rc *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
+	rc_t *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
 	viewer::spotlight(rc);
 	nif_test(meshes);
 	programLoop();

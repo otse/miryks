@@ -1,10 +1,9 @@
 #ifndef DARK2_H
 #define DARK2_H
 
-struct Bsa;
-struct Esp;
-struct Rc;
-struct Nif;
+struct bsa_t;
+struct rc_t;
+struct nif_t;
 class Mesh;
 
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
@@ -20,12 +19,12 @@ namespace dark2
 	extern Mesh *viewed_mesh;
 	extern Renderable *viewed_object;
 
-	void spotlight(Rc *);
+	void spotlight(rc_t *);
 	}
 
 	//namespace importers
 	//{
-	Nif *make_nif(Rc *);
+	nif_t *make_nif(rc_t *);
 	//}
 	void programGo();
 	void programLoop();
@@ -41,12 +40,12 @@ namespace dark2
 	extern FirstPersonCamera *first_person_camera;
 	extern ViewerCamera *viewer_camera;
 	
-	extern Esp *skyrim;
-
-	extern Bsa *interface;
-	extern Bsa *meshes;
-	extern Bsa *animations;
-	extern Bsa *textures;
+	extern esp_t *skyrim;
+	
+	extern bsa_t *interface;
+	extern bsa_t *meshes;
+	extern bsa_t *animations;
+	extern bsa_t *textures;
 	
 } // namespace dark2
 

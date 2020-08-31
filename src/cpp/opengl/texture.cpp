@@ -33,7 +33,7 @@ int outed = 0;
 Texture::Texture(const string &path) : path(path)
 {
 	//printf("new texture %s\n", path.c_str());
-	Rc *rc = bsa_find(dark2::textures, path.c_str());
+	rc_t *rc = bsa_find(dark2::textures, path.c_str());
 	if (rc == NULL)
 		return;
 	bsa_read(rc);

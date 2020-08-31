@@ -34,7 +34,7 @@ void nif_gui()
 	//{
 	for (int i = 0; i < nifs; i++)
 	{
-		Nif *nif = nmap[i].value;
+		nif_t *nif = nmap[i].value;
 
 		if (!nif->path)
 			continue;
@@ -119,7 +119,7 @@ void nif_gui()
 
 			if (ImGui::Button("view"))
 			{
-				viewer::spotlight((Rc*)nmap[i].key);
+				viewer::spotlight((rc_t*)nmap[i].key);
 			}
 
 			ImGui::TreePop();
