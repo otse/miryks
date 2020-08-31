@@ -3,29 +3,12 @@
 
 #define api
 
-typedef void ni_block_t;
+typedef struct nif Nif;
+typedef struct rd Rd;
 
-typedef struct nif_t nif_t;
-typedef struct rd_t rd_t;
-typedef struct nif_hedr_t nif_hedr_t;
-typedef struct nmap_t nmap_t;
-typedef struct Vec2 Vec2;
-typedef struct Vec3 Vec3;
-typedef struct Vec4 Vec4;
-typedef struct Mat3 Mat3;
-typedef struct Mat4 Mat4;
-typedef struct Ushort3 Ushort3;
-typedef int32_t NiRef;
-typedef int32_t ni_string_t;
+typedef int ni_ref;
 
-typedef struct NiCommonLayout NiCommonLayout;
-typedef struct NiNode NiNode;
-typedef struct NiTriShape NiTriShape;
-typedef struct NiTriShapeData NiTriShapeData;
-typedef struct BsLightingShaderProperty BsLightingShaderProperty;
-typedef struct BsShaderTextureSet BsShaderTextureSet;
-
-struct nif_hedr_t
+struct nif_hedr
 {
 	char *header_string;
 	unsigned int unknown_1;
@@ -42,64 +25,64 @@ struct nif_hedr_t
 	int end;
 };
 
-struct nif_t
+struct nif
 {
 	int n;
 	const char *path;
 	const unsigned char *buf;
 	unsigned pos;
-	nif_hedr_t hdr;
-	ni_block_t **blocks;
+	struct nif_hedr hdr;
+	void **blocks;
 };
 
-//typedef void(* rd_func_t)(rd_t *, int, int, void *);
+//typedef void(* rd_func_t)(struct rd *, int, int, void *);
 
-struct rd_t {
+struct rd {
 	int x;
 	int *skips;
-	nif_t *nif;
+	struct nif *nif;
 	void *data;
 	int parent, current;
-	void(* other)(rd_t *, int, int, const char *);
-	void(* ni_node)(rd_t *, ni_node_t *);
-	void(* ni_tri_shape)(rd_t *, ni_tri_shape_t *);
-	void(* ni_tri_shape_data)(rd_t *, ni_tri_shape_data_t *);
-	void(* bs_lighting_shader_property)(rd_t *, bs_lighting_shader_property_t *);
-	void(* bs_shader_texture_set)(rd_t *, bs_shader_texture_set_t *);
+	void(* other)(struct rd *, int, int, const char *);
+	void(* ni_node)(struct rd *, struct ni_node *);
+	void(* ni_tri_shape)(struct rd *, struct ni_tri_shape *);
+	void(* ni_tri_shape_data)(struct rd *, struct ni_tri_shape_data *);
+	void(* bs_lighting_shader_property)(struct rd *, struct bs_lighting_shader_property *);
+	void(* bs_shader_texture_set)(struct rd *, struct bs_shader_texture_set *);
 };
 
 struct nmap_t {
 	void *key;
-	nif_t *value;
+	struct nif *value;
 };
-extern nmap_t nmap[1000];
+extern struct nmap_t nmap[1000];
 extern int nifs;
 
 void nif_gui();
 void nif_test(void *);
 
-char *nif_read_short_string(nif_t *);
-char *nif_read_sized_string(nif_t *);
+char *nif_read_short_string(struct nif *);
+char *nif_read_sized_string(struct nif *);
 
-void nif_read_header(nif_t *);
-void nif_read_blocks(nif_t *);
+void nif_read_header(struct nif *);
+void nif_read_blocks(struct nif *);
 
-api nif_t *nif_alloc();
-api rd_t *nif_alloc_rd();
+api struct nif *nif_alloc();
+api struct rd *nif_alloc_rd();
 
-api void nif_free_rd(rd_t **);
-api void nif_rd(nif_t *, rd_t *, void *);
+api void nif_free_rd(struct rd **);
+api void nif_rd(struct nif *, struct rd *, void *);
 
-api void nif_read(nif_t *);
-api void nif_save(void *, nif_t *);
-api nif_t *nif_saved(void *);
+api void nif_read(struct nif *);
+api void nif_save(void *, struct nif *);
+api struct nif *nif_saved(void *);
 
-api char *nif_get_string(nif_t *, int);
-api char *nif_get_block_type(nif_t *, int);
-api ni_block_t *nif_get_block(nif_t *, int);
+api char *nif_get_string(struct nif *, int);
+api char *nif_get_block_type(struct nif *, int);
+api void *nif_get_block(struct nif *, int);
 
-api void nif_print_hedr(nif_t *, char *);
-api void nif_print_block(nif_t *, int, char *);
+api void nif_print_hedr(struct nif *, char *);
+api void nif_print_block(struct nif *, int, char *);
 
 ///
 
@@ -134,95 +117,95 @@ api void nif_print_block(nif_t *, int, char *);
 
 #pragma pack(push, 1)
 
-struct Vec2{ float x, y; };
-struct Vec3{ float x, y, z; };
-struct Vec4{ float x, y, z, w; };
-struct Mat3{ float n[9]; };
-struct Mat4{ float n[16]; };
-struct Ushort3{ unsigned short x, y, z; };
+struct vec_2{ float x, y; };
+struct vec_3{ float x, y, z; };
+struct vec_4{ float x, y, z, w; };
+struct mat_3{ float n[9]; };
+struct mat_4{ float n[16]; };
+struct ushort_3{ unsigned short x, y, z; };
 
-struct NiCommonLayout {
+struct ni_common_layout {
 	int name;
 	unsigned int num_extra_data_list;
-	NiRef *extra_data_list, controller;
+	ni_ref *extra_data_list, controller;
 	unsigned int flags;
-	Vec3 translation;
-	Mat3 rotation;
+	struct vec_3 translation;
+	struct mat_3 rotation;
 	float scale;
-	NiRef collision_object;
+	ni_ref collision_object;
 	int end;
 	char *name_string;
 };
 
 // ninode, bsleafanimnode, bsfadenode
-struct NiNode {
-	NiCommonLayout common;
+struct ni_node {
+	struct ni_common_layout common;
 	unsigned int num_children;
-	NiRef *children;
+	ni_ref *children;
 	unsigned int num_effects;
-	NiRef *effects;
+	ni_ref *effects;
 };
 
 // nitrishape, bslodtrishape
-struct NiTriShape {
-	NiCommonLayout common;
-	NiRef data, skin_instance, material_data, shader_property, alpha_property;
+struct ni_tri_shape {
+	struct ni_common_layout common;
+	ni_ref data, skin_instance, material_data, shader_property, alpha_property;
 	int end;
 };
 
 // bstrishape, bsdynamictrishape
-struct BsTriShape {
+struct bs_tri_shape {
 	int end;
 };
 
 // niskininstance, bsdismemberskininstance
-struct NiSkinInstance {
+struct ni_skin_instance {
 	int end;
 };
 
-struct NiTriShapeData {
+struct ni_tri_shape_data {
 	int group_id;
 	unsigned short num_vertices;
 	unsigned char keep_flags, compress_flags, has_vertices;
-	Vec3 *vertices;
+	struct vec_3 *vertices;
 	unsigned short bs_vector_flags;
 	unsigned int material_crc;
 	unsigned char has_normals;
-	Vec3 *normals, *tangents, *bitangents, center;
+	struct vec_3 *normals, *tangents, *bitangents, center;
 	float radius;
 	unsigned char has_vertex_colors;
-	Vec4 *vertex_colors;
-	Vec2 *uv_sets;
+	struct vec_4 *vertex_colors;
+	struct vec_2 *uv_sets;
 	unsigned short consistency_flags;
-	NiRef additional_data;
+	ni_ref additional_data;
 	unsigned short num_triangles;
 	unsigned int num_triangle_points;
 	unsigned char has_triangles;
-	Ushort3 *triangles;
+	struct ushort_3 *triangles;
 	unsigned short num_match_groups;
-	NiRef *match_groups;
+	ni_ref *match_groups;
 	int end;
 };
 
-struct BsLightingShaderProperty {
+struct bs_lighting_shader_property {
 	unsigned int skyrim_shader_type;
 	int name;
 	unsigned int num_extra_data_list;
-	NiRef *extra_data_list, controller;
+	ni_ref *extra_data_list, controller;
 	unsigned int shader_flags_1, shader_flags_2;
-	Vec2 uv_offset, uv_scale;
-	NiRef texture_set;
-	Vec3 emissive_color;
+	struct vec_2 uv_offset, uv_scale;
+	ni_ref texture_set;
+	struct vec_3 emissive_color;
 	float emissive_multiple;
 	unsigned int texture_clamp_mode;
 	float alpha, refraction_strength, glossiness;
-	Vec3 specular_color;
+	struct vec_3 specular_color;
 	float specular_strength, lighting_effect_1, lighting_effect_2;
 	int end;
 	char *name_string;
 };
 
-struct BsShaderTextureSet {
+struct bs_shader_texture_set {
 	int num_textures;
 	char **textures; // sized strings
 	int end;

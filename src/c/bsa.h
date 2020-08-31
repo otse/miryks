@@ -3,37 +3,29 @@
 
 #define api
 
-typedef struct bsa_t bsa_t;
-typedef struct bsas_t bsas_t;
-typedef struct bsa_hedr_t bsa_hedr_t;
-typedef struct bsa_fld_t bsa_fld_t;
-typedef struct bsa_file_t bsa_file_t;
-typedef struct rc_t rc_t;
+typedef struct bsa Bsa;
 
-typedef bsa_t Bsa;
-typedef rc_t Rc;
-
-struct bsa_hedr_t
+struct bsa_hedr
 {
 	char id[4];
 	unsigned long ver, offset, archive_flags, folders, files, foldersl, filesl, file_flags;
 };
 
-struct bsa_fld_t
+struct bsa_fld
 {
 	unsigned long long hash;
 	unsigned long num, offset;
 };
 
-struct bsa_file_t
+struct bsa_file
 {
 	unsigned long long hash;
 	unsigned long size, offset;
 };
 
-struct rc_t
+struct rc
 {
-	bsa_t *b;
+	struct bsa *b;
 	int i, j, r;
 	int size;
 	const char *name;
@@ -41,43 +33,43 @@ struct rc_t
 	char path[255];
 };
 
-struct bsa_t
+struct bsa
 {
 	char *path;
-	bsa_hedr_t hdr;
+	struct bsa_hedr hdr;
 	void *stream;
-	bsa_fld_t *fld;
-	bsa_file_t **file;
-	rc_t **rc;
+	struct bsa_fld *fld;
+	struct bsa_file **file;
+	struct rc **rc;
 	int *r;
 	const char **ca;
 	const char **cb;
-	bsas_t *bsas;
+	struct bsas *bsas;
 };
 
-struct bsas_t {
+struct bsas {
 	int num;
-	bsa_t* array[30];
+	struct bsa* array[30];
 };
 
-api bsa_t *bsa_load(const char *);
-api void bsa_free(bsa_t **);
+api struct bsa *bsa_load(const char *);
+api void bsa_free(struct bsa **);
 
-api void bsa_print_hedr(bsa_t *, char *s);
-api void bsa_print_fld_rcd(bsa_t *, char *s, int);
-api void bsa_print_fle_rcd(bsa_t *, char *s, int, int);
-api void bsa_print_rc(bsa_t *, char *s, int);
+api void bsa_print_hedr(struct bsa *, char *s);
+api void bsa_print_fld_rcd(struct bsa *, char *s, int);
+api void bsa_print_fle_rcd(struct bsa *, char *s, int, int);
+api void bsa_print_rc(struct bsa *, char *s, int);
 
-api int bsa_read(rc_t *);
-api rc_t *bsa_find(bsa_t *, const char *);
-api rc_t *bsas_find(bsas_t *, const char *, unsigned long);
+api int bsa_read(struct rc *);
+api struct rc *bsa_find(struct bsa *, const char *);
+api struct rc *bsas_find(struct bsas *, const char *, unsigned long);
 
-api void bsa_search(bsa_t *, rc_t *[10], const char *, int *);
+api void bsa_search(struct bsa *, struct rc *[10], const char *, int *);
 
-extern bsas_t bsas;
+extern struct bsas bsas;
 
-api void bsas_add_to_loaded(bsas_t *, bsa_t **, int);
-api bsa_t *bsas_get_by_path(bsas_t *, const char *);
+api void bsas_add_to_loaded(struct bsas *, struct bsa **, int);
+api struct bsa *bsas_get_by_path(struct bsas *, const char *);
 
 #define BSA_MESHES   0x1
 #define BSA_TEXTURES 0x2

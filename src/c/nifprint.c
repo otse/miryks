@@ -2,22 +2,20 @@
 
 #include "nif.h"
 
-#define nifn nif_t *nif, int n
+#define nifn struct nif *nif, int n
 
-#define hedr nif->hdr
-#define buf nif->buf
-#define pos nif->pos
-#define blocks nif->blocks
+#define Hedr   nif->hdr
+#define Blocks nif->blocks
 
 char *print_ni_array(nifn, int);
-char *print_ni_common_layout(nifn, char *, NiCommonLayout *);
+char *print_ni_common_layout(nifn, char *, struct ni_common_layout *);
 void print_ni_node(nifn, char *);
 void print_ni_tri_shape(nifn, char *);
 void print_ni_tri_shape_data(nifn, char *);
 void print_bs_lighting_shader_property(nifn, char *);
 void print_bs_shader_texture_set(nifn, char *);
 
-void nif_print_hedr(nif_t *nif, char *s)
+void nif_print_hedr(struct nif *nif, char *s)
 {
 	snprintf(
 		s, 600,
@@ -41,43 +39,43 @@ header string: %s\
 \nnum groups: %u\
 \ngroups\
 ",
-nif->hdr.header_string,
-nif->hdr.version,
-nif->hdr.endian_type,
-nif->hdr.user_value,
-nif->hdr.num_blocks,
-nif->hdr.user_value_2,
-nif->hdr.author,
-nif->hdr.process_script,
-nif->hdr.export_script,
-nif->hdr.num_block_types,
-nif->hdr.num_strings,
-nif->hdr.max_string_length,
-nif->hdr.num_groups
+Hedr.header_string,
+Hedr.version,
+Hedr.endian_type,
+Hedr.user_value,
+Hedr.num_blocks,
+Hedr.user_value_2,
+Hedr.author,
+Hedr.process_script,
+Hedr.export_script,
+Hedr.num_block_types,
+Hedr.num_strings,
+Hedr.max_string_length,
+Hedr.num_groups
 );
 }
 
-char *print_vec_2(char *s, Vec2 v) {
+char *print_vec_2(char *s, struct vec_2 v) {
 	snprintf(s, 200, "[%f, %f]", v.x, v.y);
 	return s;
 }
 
-char *print_vec_3(char *s, Vec3 v) {
+char *print_vec_3(char *s, struct vec_3 v) {
 	snprintf(s, 200, "[%f, %f, %f]", v.x, v.y, v.z);
 	return s;
 }
 
-char *print_vec_4(char *s, Vec4 v) {
+char *print_vec_4(char *s, struct vec_4 v) {
 	snprintf(s, 200, "[%f, %f, %f, %f]", v.x, v.y, v.z, v.w);
 	return s;
 }
 
-char *print_ushort_3(char *s, Ushort3 v) {
+char *print_ushort_3(char *s, struct ushort_3 v) {
 	snprintf(s, 200, "[%hu, %hu, %hu]", v.x, v.y, v.z);
 	return s;
 }
 
-char *print_mat_3(char *s, Mat3 v) {
+char *print_mat_3(char *s, struct mat_3 v) {
 #define V ((float*)&v)
 	snprintf(
 		s, 200,
@@ -108,7 +106,7 @@ V[12], V[13], V[14], V[15]);
 }
 
 
-char *print_ni_common_layout(nifn, char *s, NiCommonLayout *block)
+char *print_ni_common_layout(nifn, char *s, struct ni_common_layout *block)
 {
 	char x[200], y[200];
 	snprintf(
@@ -139,7 +137,7 @@ block->collision_object);
 void print_ni_node(nifn, char *s)
 {
 	char x[600];
-	ni_node_t *block = blocks[n];
+	struct ni_node *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -157,7 +155,7 @@ block->num_effects);
 void print_ni_tri_shape(nifn, char *s)
 {
 	char x[600];
-	ni_tri_shape_t *block = blocks[n];
+	struct ni_tri_shape *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -179,7 +177,7 @@ block->alpha_property);
 void print_ni_tri_shape_data(nifn, char *s)
 {
 	char a[200], b[200], c[200], d[200], e[200], f[200], g[200], h[200], i[200], j[200], k[200], l[200], m[200], o[200], p[200];
-	ni_tri_shape_data_t *block = blocks[n];
+	struct ni_tri_shape_data *block = Blocks[n];
 	snprintf(
 		s, 1500,
 		"\
@@ -272,7 +270,7 @@ void print_ni_tri_shape_data_arrays(nifn, char *s) {
 void print_bs_lighting_shader_property(nifn, char *s)
 {
 	char a[200], b[200], c[200], d[200];
-	bs_lighting_shader_property_t *block = blocks[n];
+	struct bs_lighting_shader_property *block = Blocks[n];
 	snprintf(
 		s, 1500,
 		"\
@@ -322,7 +320,7 @@ block->lighting_effect_2
 
 void print_bs_shader_texture_set(nifn, char *s)
 {
-	bs_shader_texture_set_t *block = blocks[n];
+	struct bs_shader_texture_set *block = Blocks[n];
 	snprintf(
 		s, 1500,
 		"\
@@ -359,7 +357,7 @@ char *print_ni_array(nifn, int x) {
 void nif_print_block(nifn, char *s)
 {
 	s[0] = '\0';
-	const char *block_type = hedr.block_types[hedr.block_type_index[n]];
+	const char *block_type = Hedr.block_types[Hedr.block_type_index[n]];
 	if (0);
 	else if (type(NI_NODE)) print_ni_node(nif, n, s);
 	else if (type(BS_LEAF_ANIM_NODE)) print_ni_node(nif, n, s);

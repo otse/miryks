@@ -5,9 +5,9 @@
 
 #define INVERT_COMPRESSED 0x40000000
 
-api void bsa_print_rc(bsa_t *b, char *s, int r)
+api void bsa_print_rc(struct bsa *b, char *s, int r)
 {
-	rc_t *rc = b->rc[r];
+	struct rc *rc = b->rc[r];
 	int w = snprintf(s, 200, "\
 resource: %i\
 \nfilename: %s\
@@ -23,9 +23,9 @@ rc->buf,
 );
 }
 
-api void bsa_print_fle_rcd(bsa_t *b, char *s, int i, int j)
+api void bsa_print_fle_rcd(struct bsa *b, char *s, int i, int j)
 {
-	bsa_file_t *rcd = &b->file[i][j];
+	struct bsa_file *rcd = &b->file[i][j];
 	int w = snprintf(s, 200, "\
 file: %i\
 \nhash: %llu\
@@ -39,9 +39,9 @@ rcd->offset
 );
 }
 
-api void bsa_print_fld_rcd(bsa_t *b, char *s, int n)
+api void bsa_print_fld_rcd(struct bsa *b, char *s, int n)
 {
-	bsa_fld_t *rcd = &b->fld[n];
+	struct bsa_fld *rcd = &b->fld[n];
 	int w = snprintf(s, 200, "\
 folder: %i\
 \nhash: %llu\
@@ -55,7 +55,7 @@ rcd->offset
 );
 }
 
-api void bsa_print_hedr(bsa_t *b, char *s)
+api void bsa_print_hedr(struct bsa *b, char *s)
 {
 #define hedr b->hdr
 	int w = snprintf(s, 600, "\
@@ -117,6 +117,6 @@ hedr.files,
 hedr.foldersl,
 hedr.filesl,
 hedr.file_flags,
-sizeof(bsa_hedr_t)
+sizeof(struct bsa_hedr)
 );
 }
