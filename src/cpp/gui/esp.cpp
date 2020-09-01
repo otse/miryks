@@ -65,11 +65,13 @@ void esp_gui()
 		char s[200];
 		esp_print_record(esp, s, record);
 		ImGui::Text(s);
-		ImGui::Separator();
-		ImGui::Text("Subrecords:");
+		if (ImGui::TreeNode("Subrecords"))
+		{
 		for (int i = 0; i < record->count; i++)
 		{
-			if (ImGui::TreeNode("Subrecord"))
+			char s[100];
+			snprintf(s, 100, "Subrecord %i", i);
+			if (ImGui::TreeNode(s))
 			{
 				char s[400];
 				esp_print_subrecord(esp, s, record->subrecords[i]);
@@ -78,19 +80,18 @@ void esp_gui()
 				ImGui::TreePop();
 			}
 		}
+		ImGui::TreePop();
+		}
 	};
 
-	if (ImGui::BeginTabBar("ESPTabs", tabBarFlags))
+	if (ImGui::BeginTabBar("EspTabs", tabBarFlags))
 	{
-		if (ImGui::BeginTabItem("info"))
+		if (ImGui::BeginTabItem("records"))
 		{
-			ImGui::Text("Header Record:");
-			im_record(esp->header);
-			ImGui::EndTabItem();
-		}
-		else if (ImGui::BeginTabItem("records"))
-		{
-
+			if (ImGui::TreeNode("00"))
+			{
+				im_record(esp->header);
+			}
 			ImGui::EndTabItem();
 		}
 		ImGui::EndTabBar();

@@ -8,14 +8,16 @@ api void esp_print_record(struct esp *esp, char *s, struct record *record)
 	int w = snprintf(s, 200, "\
 record: %i\
 \ntype: %s\
-\nsubrecordsSize: %u\
+\ndataSize: %u\
 \nflags: %u\
+\nformId: %#08x\
 \ncount: %u\
 ",
 0,
 record->type,
-record->subrecordsSize,
+record->dataSize,
 record->flags,
+record->formId,
 record->count);
 }
 

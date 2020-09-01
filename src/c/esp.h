@@ -8,27 +8,40 @@ typedef struct record Record;
 
 struct record;
 struct subrecord;
-struct group;
+struct grup;
+
+enum espnum { GRUP, RECORD, SUBRECORD };
 
 struct esp
 {
 	int x;
 	void *stream;
-	unsigned int pos;
+	unsigned int pos, filesize;
 	const char *path;
 	struct record *header;
+	int count;
+	struct grup **grups;
 };
 
-struct group
+struct grup
 {
+	enum espnum x;
+	int id;
+	int parent;
 	char type[5];
+	//unsigned int skip;
 	unsigned int size;
 };
 
 struct record
 {
+	enum espnum x;
+	int id;
+	void *parent;
 	char type[5];
-	unsigned int flags, formId, subrecordsSize;
+	unsigned int dataSize;
+	unsigned int flags;
+	unsigned int formId;
 	char *sink;
 	int pos;
 	int count;
@@ -37,14 +50,15 @@ struct record
 
 struct subrecord
 {
+	enum espnum x;
+	int id;
+	void *parent;
 	char type[5];
 	unsigned int length;
 	int start;
 	unsigned char *buf;
 	struct subrecord *next;
 };
-
-
 
 void esp_gui();
 
