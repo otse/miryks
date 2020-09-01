@@ -22,7 +22,7 @@ using namespace dark2;
 static bool good = true;
 static stringstream ss;
 static char hedrstr[600] = { "not loaded" };
-static struct bsa *bsa = NULL;
+static Bsa *bsa = NULL;
 
 void bsa_gui()
 {
@@ -33,15 +33,15 @@ void bsa_gui()
 	ImGui::Begin(BSA_GUI, nullptr, flags);
 
 #define MAX 230
-	static char buf[MAX] = "Data/Skyrim - Meshes.bsa";
+	static char buf[MAX] = "Skyrim - Meshes.bsa";
 	static char buf2[MAX] = {'\0'};
-	ImGui::InputText("Manual##archive", buf, IM_ARRAYSIZE(buf));
+	ImGui::InputText("##archive", buf, IM_ARRAYSIZE(buf));
 
 	if (strcmp(buf, buf2))
 	{
 		printf("bsa-gui manual loading new archive\n");
 		memcpy(buf2, buf, MAX);
-		std::string oldrim = OLDRIM + buf;
+		std::string oldrim = OLDRIM + "Data/" + buf;
 		std::string bin = buf;
 		std::string *path = nullptr;
 		if (exists_test3(oldrim))
@@ -75,7 +75,7 @@ void bsa_gui()
 	//ImGui::Text(bsa->path);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-	if (ImGui::BeginTabBar("BsaTabs", tabBarFlags))
+	if (ImGui::BeginTabBar("BSATabs", tabBarFlags))
 	{
 		if (ImGui::BeginTabItem("hedr"))
 		{
@@ -87,7 +87,7 @@ void bsa_gui()
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
 
-			static struct rc *rc = nullptr;
+			static Rc *rc = nullptr;
 
 			ImGui::InputText("##Find", str, MAX);
 
@@ -120,11 +120,11 @@ void bsa_gui()
 
 			ImGui::InputText("##Search", str, MAX);
 
-			static const char *items[10];
+			static const char *items[BSA_MAX_SEARCHES];
 			static int num = 0;
 
-			static struct rc *rc = nullptr;
-			static struct rc *rcs[10] = {0};
+			static Rc *rc = nullptr;
+			static Rc *rcs[BSA_MAX_SEARCHES];
 
 			if (strcmp(str, str2))
 			{
@@ -141,6 +141,10 @@ void bsa_gui()
 
 			rc = rcs[item_current];
 
+			char found[100];
+			snprintf(found, 100, "search returned %i results", num);
+			ImGui::Text(found);
+
 			if (!(item_current > num) && rc)
 			{
 				ImGui::Separator();
@@ -151,14 +155,14 @@ void bsa_gui()
 				ImGui::Text(s);
 				bsa_print_fld_rcd(bsa, s, rc->i);
 				ImGui::Text(s);
-				if (ImGui::Button("load"))
+				if (ImGui::Button(READ_BSA_RESOURCE))
 				{
 					bsa_read(rc);
 				}
 				if (rc->size > -1)
 				{
 					ImGui::SameLine();
-					if (ImGui::Button("view"))
+					if (ImGui::Button(VIEW_NIF))
 					{
 						viewer::spotlight(rc);
 					}
@@ -186,20 +190,20 @@ void bsa_gui()
 							ImGui::Separator();
 
 							char s[200];
-							struct rc *rc = bsa->rc[bsa->r[i] + j];
+							Rc *rc = bsa->rc[bsa->r[i] + j];
 							bsa_print_rc(bsa, s, rc->r);
 							ImGui::Text(s);
 							bsa_print_fle_rcd(bsa, s, i, j);
 							ImGui::Text(s);
 
-							if (ImGui::Button("load"))
+							if (ImGui::Button(READ_BSA_RESOURCE))
 							{
 								bsa_read(rc);
 							}
 							if (rc->size > -1)
 							{
 								ImGui::SameLine();
-								if (ImGui::Button("view"))
+								if (ImGui::Button(VIEW_NIF))
 								{
 									viewer::spotlight(rc);
 								}

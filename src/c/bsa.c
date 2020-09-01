@@ -13,8 +13,8 @@
 
 #define Hedr bsa->hdr
 
-int read(struct bsa *, void *, unsigned);
-int seek(struct bsa *, unsigned);
+static int read(struct bsa *, void *, unsigned);
+static int seek(struct bsa *, unsigned);
 
 char *bsa_read_bzstring(struct bsa *);
 
@@ -152,9 +152,7 @@ api struct rc *bsa_find(struct bsa *bsa, const char *p)
 	return rc;
 }
 
-const max_results = 10;
-
-api void bsa_search(struct bsa *bsa, struct rc *rcs[10], const char *s, int *num)
+api void bsa_search(struct bsa *bsa, struct rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num)
 {
 	char *str;
 	int r;
@@ -167,7 +165,7 @@ api void bsa_search(struct bsa *bsa, struct rc *rcs[10], const char *s, int *num
 	str = strstr(bsa->cb[r], s);
 	if (str!=NULL) {
 	rcs[n++] = bsa->rc[r];
-	if (n>=max_results)
+	if (n>=BSA_MAX_SEARCHES)
 	goto end;
 	}
 	r++;
@@ -228,6 +226,7 @@ api void bsa_free(struct bsa **b)
 {
 	struct bsa *bsa = *b;
 	*b = NULL;
+	fclose(bsa->stream);
 	return;
 	// Delete file records
 	if (Hedr.folders)
@@ -287,12 +286,12 @@ api struct rc *bsas_find(struct bsas *bsas, const char *p, unsigned long flags)
 	return rc;
 }
 
-int read(struct bsa *bsa, void *data, unsigned size)
+static int read(struct bsa *bsa, void *data, unsigned size)
 {
 	return fread(data, 1, size, (FILE *)bsa->stream);
 }
 
-int seek(struct bsa *bsa, unsigned offset)
+static int seek(struct bsa *bsa, unsigned offset)
 {
 	return fseek((FILE *)bsa->stream, offset, SEEK_SET);
 }

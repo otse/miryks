@@ -66,7 +66,8 @@ api int bsa_read(struct rc *);
 api struct rc *bsa_find(struct bsa *, const char *);
 api struct rc *bsas_find(struct bsas *, const char *, unsigned long);
 
-api void bsa_search(struct bsa *, struct rc *[10], const char *, int *);
+#define BSA_MAX_SEARCHES 30
+api void bsa_search(struct bsa *, struct rc *[BSA_MAX_SEARCHES], const char *, int *);
 
 api void bsas_add_to_loaded(struct bsas *, struct bsa **, int);
 api struct bsa *bsas_get_by_path(struct bsas *, const char *);

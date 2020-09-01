@@ -1,7 +1,6 @@
 #ifndef DARK2_H
 #define DARK2_H
 
-
 typedef struct nif Nif;
 typedef struct bsa Bsa;
 
@@ -52,5 +51,8 @@ namespace dark2
 	extern Bsa *textures;
 	
 } // namespace dark2
+
+#define READ_BSA_RESOURCE "Load"
+#define VIEW_NIF "View"
 
 #endif

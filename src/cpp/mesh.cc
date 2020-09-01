@@ -42,7 +42,7 @@ void bs_shader_texture_set_callback(Rd *, bs_shader_texture_set *);
 void Mesh::Construct(Nif *bucket)
 {
 	nif = bucket;
-	Rd *rd = nif_alloc_rd();
+	rd *rd = nif_alloc_rd();
 	rd->nif = bucket;
 	rd->data = this;
 	rd->other = other;
@@ -66,7 +66,7 @@ Group *Mesh::Nested(Rd *rd)
 	return group;
 }
 
-void other(Rd *rd, int parent, int current, const char *block_type)
+void other(rd *rd, int parent, int current, const char *block_type)
 {
 	Mesh *mesh = (Mesh *)rd->data;
 }
@@ -78,7 +78,7 @@ void matrix_from_common(Group *group, ni_common_layout *common)
 	group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->translation));
 }
 
-void ni_node_callback(Rd *rd, ni_node *block)
+void ni_node_callback(rd *rd, ni_node *block)
 {
 	printf("ni node callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
@@ -86,7 +86,7 @@ void ni_node_callback(Rd *rd, ni_node *block)
 	matrix_from_common(group, &block->common);
 }
 
-void ni_tri_shape_callback(Rd *rd, ni_tri_shape *block)
+void ni_tri_shape_callback(rd *rd, ni_tri_shape *block)
 {
 	printf("ni tri shape callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
@@ -98,7 +98,7 @@ void ni_tri_shape_callback(Rd *rd, ni_tri_shape *block)
 	//printf("block name %s translate %f %f %f", nif_get_string(rd->nif, block->common.name), v.x, v.y, v.z);
 }
 
-void ni_tri_shape_data_callback(Rd *rd, ni_tri_shape_data *block)
+void ni_tri_shape_data_callback(rd *rd, ni_tri_shape_data *block)
 {
 	printf("ni tri shape data callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
@@ -123,13 +123,13 @@ void ni_tri_shape_data_callback(Rd *rd, ni_tri_shape_data *block)
 	geometry->SetupMesh();
 }
 
-void bs_lighting_shader_property_callback(Rd *rd, bs_lighting_shader_property *block)
+void bs_lighting_shader_property_callback(rd *rd, bs_lighting_shader_property *block)
 {
 	printf("bs lighting shader property callback\n");
 	Mesh *mesh = (Mesh *)rd->data;
 }
 
-void bs_shader_texture_set_callback(Rd *rd, bs_shader_texture_set *block)
+void bs_shader_texture_set_callback(rd *rd, bs_shader_texture_set *block)
 {
 	printf("bs shader texture set callback\n");
 	Mesh *mesh = (Mesh *)rd->data;

@@ -24,14 +24,11 @@ void nif_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
-	ImGui::SetNextWindowPos(ImVec2(450, 0));
+	ImGui::SetNextWindowPos(ImVec2(900, 0));
 	ImGui::Begin(NIF_GUI, nullptr, flags);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-	//if (ImGui::BeginTabBar("tabs", tabBarFlags))
-	//{
-	//if (ImGui::BeginTabItem("inspector"))
-	//{
+	
 	for (int i = 0; i < nifs; i++)
 	{
 		Nif *nif = nmap[i].value;
@@ -117,7 +114,7 @@ void nif_gui()
 				ImGui::TreePop();
 			}
 
-			if (ImGui::Button("view"))
+			if (ImGui::Button(VIEW_NIF))
 			{
 				viewer::spotlight((struct rc*)nmap[i].key);
 			}
@@ -125,9 +122,6 @@ void nif_gui()
 			ImGui::TreePop();
 		}
 	}
-	//ImGui::EndTabItem();
-	//}
-	//}
 
 	ImGui::End();
 }
