@@ -12,18 +12,16 @@
 
 #define Pos rec->pos
 
-typedef int Parent;
-
 static inline int read(struct esp *, void *, size_t, size_t);
 static inline int seek(struct esp *, long);
 static inline int skip(struct esp *, unsigned int);
 static long tell(struct esp *);
 
-struct record *read_record(struct esp *, Parent);
+struct record *read_record(struct esp *);
 void read_record_subrecords(struct esp *, struct record *);
-struct subrecord *read_subrecord(struct esp *, Parent, unsigned int);
-struct grup *read_grup(struct esp *, Parent);
-void read_grup_records(struct esp *, Parent);
+struct subrecord *read_subrecord(struct esp *, unsigned int);
+struct grup *read_grup(struct esp *);
+void read_grup_records(struct esp *);
 
 void read_subrecord_into_buf(struct esp *, struct subrecord *);
 
@@ -48,8 +46,7 @@ api struct esp *esp_load(const char *path) {
 	fseek(esp->stream, 0, SEEK_END);
 	esp->filesize = ftell(esp->stream);
 	seek(esp, 0);
-	cassert_(
-		esp->stream, "esp can't open");
+	cassert_(esp->stream, "esp can't open");
 	esp->header = read_record(esp, 0);
 	long pos = tell(esp);
 	while(tell(esp) < esp->filesize)
@@ -59,12 +56,16 @@ api struct esp *esp_load(const char *path) {
 	return esp;
 }
 
+void no_hog(struct esp *esp) {
+
+}
+
 void report_record(struct record *rec)
 {
 	if (report)
 	printf("R %s %u > ", (char *)&rec->type, rec->dataSize);
 }
-struct record *read_record(struct esp *esp, Parent parent) {
+struct record *read_record(struct esp *esp) {
 	struct record *rec;
 	rec = malloc(sizeof(struct record));
 	memset(rec, 0, sizeof(struct record));
@@ -79,7 +80,6 @@ struct record *read_record(struct esp *esp, Parent parent) {
 	skip(esp, 8);
 	}
 	report_record(rec);
-	//printf("R %s %u > ", rec->type, rec->dataSize);
 	// subrecords
 	if ((rec->flags & 0x00040000) != 0)
 	skip(esp, rec->dataSize);
@@ -106,10 +106,10 @@ unsigned int large_landmark(struct esp *esp, struct subrecord *sub)
 void read_record_subrecords(struct esp *esp, struct record *rec) {
 	long pos = tell(esp);
 	unsigned int large = 0;
-	while(tell(esp) - pos < rec->dataSize)
+	while(tell(esp) - pos < (long)rec->dataSize)
 	{
 	struct subrecord *sub;
-	sub = read_subrecord(esp, rec->parent, large);
+	sub = read_subrecord(esp, large);
 	large = large_landmark(esp, sub);
 	}
 	return rec;
@@ -120,7 +120,7 @@ void report_subrecord(struct subrecord *sub)
 	if (report)
 	printf("S %s %u > ", (char *)&sub->type, sub->size);
 }
-struct subrecord *read_subrecord(struct esp *esp, Parent parent, unsigned int override) {
+struct subrecord *read_subrecord(struct esp *esp, unsigned int override) {
 	struct subrecord *sub;
 	sub = malloc(sizeof(struct subrecord));
 	memset(sub, 0, sizeof(struct subrecord));
@@ -172,7 +172,7 @@ void report_group(struct esp *esp, struct grup *grup)
 	if (report)
 	printf("G %s %u > ", (char *)&grup->type, grup->size);
 }
-struct grup *read_grup(struct esp *esp, Parent parent) {
+struct grup *read_grup(struct esp *esp) {
 	report_load_percentage(esp);
 	struct grup *grup = malloc(sizeof(struct grup));
 	memset(grup, 0, sizeof(struct grup));
@@ -180,7 +180,6 @@ struct grup *read_grup(struct esp *esp, Parent parent) {
 	// grup->x = GRUP;
 	{
 	grup->id = Grups++;
-	grup->parent = parent;
 	read(esp, &grup->type, 4, 1);
 	read(esp, &grup->size, 4, 1);
 	skip(esp, 16);
@@ -188,6 +187,7 @@ struct grup *read_grup(struct esp *esp, Parent parent) {
 	report_group(esp, grup);
 	// records
 	read_grup_records(esp, grup);
+	printf("\nend grup\n");
 	return grup;
 }
 void read_grup_records(struct esp *esp, struct grup *grup) {
@@ -200,11 +200,11 @@ void read_grup_records(struct esp *esp, struct grup *grup) {
 	if (peek_type(esp) == GRUP)
 	{
 	//printf("peeked grup\n");
-	read_grup(esp, grup->parent);
+	read_grup(esp);
 	}
 	else
 	{
-	read_record(esp, grup->parent);
+	read_record(esp);
 	}
 	pos = tell(esp);
 	}

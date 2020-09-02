@@ -27,7 +27,6 @@ struct grup
 {
 	enum espnum x;
 	int id;
-	int parent;
 	unsigned int type;
 	char zero;
 	//unsigned int skip;
@@ -38,7 +37,6 @@ struct record
 {
 	enum espnum x;
 	int id;
-	void *parent;
 	unsigned int type;
 	char zero;
 	unsigned int dataSize;
@@ -53,7 +51,6 @@ struct subrecord
 {
 	enum espnum x;
 	int id;
-	void *parent;
 	unsigned int type;
 	char zero;
 	unsigned int size;
