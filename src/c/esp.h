@@ -16,7 +16,7 @@ struct esp
 {
 	int x;
 	void *stream;
-	unsigned int pos, filesize;
+	long int pos, filesize;
 	const char *path;
 	struct record *header;
 	int count;
@@ -57,7 +57,7 @@ struct subrecord
 	unsigned int type;
 	char zero;
 	unsigned int size;
-	int start;
+	long offset;
 	unsigned char *buf;
 };
 
