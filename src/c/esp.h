@@ -12,7 +12,6 @@ struct grup;
 
 extern int esp_skip_subrecords;
 
-
 struct esp
 {
 	int x;
