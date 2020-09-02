@@ -10,8 +10,6 @@ struct record;
 struct subrecord;
 struct grup;
 
-enum espnum { GRUP, RECORD, SUBRECORD };
-
 extern int esp_skip_subrecords;
 
 struct esp
@@ -29,9 +27,6 @@ struct grup
 {
 	unsigned int type;
 	char zero;
-	enum espnum x;
-	int id;
-	//unsigned int skip;
 	unsigned int size;
 };
 
@@ -39,8 +34,6 @@ struct record
 {
 	unsigned int type;
 	char zero;
-	enum espnum x;
-	int id;
 	unsigned int dataSize;
 	unsigned int flags;
 	unsigned int formId;
@@ -53,8 +46,6 @@ struct subrecord
 {
 	unsigned int type;
 	char zero;
-	enum espnum x;
-	int id;
 	unsigned int size;
 	long offset;
 	unsigned char *buf;

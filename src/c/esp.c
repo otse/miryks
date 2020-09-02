@@ -31,7 +31,7 @@ void report_load_percentage(struct esp *);
 #define XXXX 0x58585858
 
 int report = 0;
-int esp_skip_subrecords = 0;
+int esp_skip_subrecords = 1;
 
 int Grups = 0;
 int Records = 0;
@@ -54,6 +54,7 @@ api struct esp *esp_load(const char *path) {
 	{
 	read_grup(esp, 0);
 	}
+	printf("done loading esp\n");
 	return esp;
 }
 
@@ -73,7 +74,7 @@ struct record *read_record(struct esp *esp) {
 	//  header
 	{
 	// rec->x = RECORD;
-	rec->id = Records++;
+	// rec->id = Records++;
 	read(esp, &rec->type, 4, 1);
 	read(esp, &rec->dataSize, 4, 1);
 	read(esp, &rec->flags, 4, 1);
@@ -82,7 +83,7 @@ struct record *read_record(struct esp *esp) {
 	}
 	report_record(rec);
 	// subrecords
-	if (esp_skip_subrecords|| (rec->flags & 0x00040000) != 0)
+	if (esp_skip_subrecords || (rec->flags & 0x00040000) != 0)
 	skip(esp, rec->dataSize);
 	else
 	read_record_subrecords(esp, rec);
@@ -98,20 +99,20 @@ unsigned int large_landmark(struct esp *esp, struct subrecord *sub)
 	if (sub->type == XXXX)
 	{
 	read_subrecord_into_buf(esp, sub);
-	unsigned int large = *(unsigned int *)sub->buf;
-	report_xxxx(esp, sub, large);
-	return large;
+	unsigned int large_sub = *(unsigned int *)sub->buf;
+	report_xxxx(esp, sub, large_sub);
+	return large_sub;
 	}
 	return 0;
 }
 void read_record_subrecords(struct esp *esp, struct record *rec) {
 	long pos = tell(esp);
-	unsigned int large = 0;
+	unsigned int large_sub = 0;
 	while(tell(esp) - pos < (long)rec->dataSize)
 	{
 	struct subrecord *sub;
-	sub = read_subrecord(esp, large);
-	large = large_landmark(esp, sub);
+	sub = read_subrecord(esp, large_sub);
+	large_sub = large_landmark(esp, sub);
 	}
 }
 
@@ -126,7 +127,7 @@ struct subrecord *read_subrecord(struct esp *esp, unsigned int override) {
 	memset(sub, 0, sizeof(struct subrecord));
 	{
 	// sub->x = SUBRECORD;
-	sub->id = Subrecords++;
+	// sub->id = Subrecords++;
 	read(esp, &sub->type, 4, 1);
 	}
 	if (override == 0)
@@ -169,9 +170,9 @@ struct grup *read_grup(struct esp *esp) {
 	struct grup *grup = malloc(sizeof(struct grup));
 	memset(grup, 0, sizeof(struct grup));
 	// header
-	// grup->x = GRUP;
 	{
-	grup->id = Grups++;
+	// grup->x = GRUP;
+	// grup->id = Grups++;
 	read(esp, &grup->type, 4, 1);
 	read(esp, &grup->size, 4, 1);
 	skip(esp, 16);
@@ -179,7 +180,7 @@ struct grup *read_grup(struct esp *esp) {
 	report_group(esp, grup);
 	// records
 	read_grup_records(esp, grup);
-	printf("\nend grup\n");
+	// printf("\nend grup\n");
 	return grup;
 }
 const unsigned int peek_type(struct esp *esp)
@@ -192,16 +193,14 @@ const unsigned int peek_type(struct esp *esp)
 }
 void read_grup_records(struct esp *esp, struct grup *grup) {
 	long size = grup->size - 4 - 4 - 16;
-	long pos = tell(esp);
-	long start = pos;
-	while (start - pos < size)
+	long start = tell(esp);
+	while (tell(esp) - start < size)
 	{
 	//printf("peek type %s ", type);
 	if (peek_type(esp) == GRUP)
 	read_grup(esp);
 	else
 	read_record(esp);
-	pos = tell(esp);
 	}
 }
 
@@ -240,8 +239,8 @@ void report_load_percentage(struct esp *esp)
 	{
 		printf("\n\n%u%% loaded\n\n", pos);
 		load_tens += 10;
-		if (pos >= 80)
-		report = 1;
+		//if (pos >= 80)
+		//report = 1;
 		//Sleep(333);
 	}
 }
