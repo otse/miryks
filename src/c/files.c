@@ -54,7 +54,7 @@ char *fsamplevar(const char *a, const char *b, const char *c)
 }
 */
 
-char* ReadFile(const char *filename)
+char* ReadFile2(const char *filename)
 {
    char *buffer = NULL;
    int string_size, read_size;

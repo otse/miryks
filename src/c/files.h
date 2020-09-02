@@ -10,7 +10,7 @@ char *FileStem(const char *, char);
 char *FileName(const char *, char);
 char *abf(const char *, const char *);
 
-char *ReadFile(const char *);
+char *ReadFile2(const char *);
 
 char *cfout(const char *, const char *);
 char *cfout2(const char *, const unsigned char *, int);

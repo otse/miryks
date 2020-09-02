@@ -67,7 +67,7 @@ void esp_gui()
 		ImGui::Text(s);
 		if (ImGui::TreeNode("Subrecords"))
 		{
-		for (int i = 0; i < record->count; i++)
+		/*for (int i = 0; i < record->count; i++)
 		{
 			char s[100];
 			snprintf(s, 100, "Subrecord %i", i);
@@ -79,7 +79,7 @@ void esp_gui()
 				ImGui::Separator();
 				ImGui::TreePop();
 			}
-		}
+		}*/
 		ImGui::TreePop();
 		}
 	};
@@ -90,7 +90,7 @@ void esp_gui()
 		{
 			if (ImGui::TreeNode("00"))
 			{
-				im_record(esp->header);
+				//im_record(esp->header);
 			}
 			ImGui::EndTabItem();
 		}

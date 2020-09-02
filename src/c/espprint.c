@@ -11,14 +11,14 @@ record: %i\
 \ndataSize: %u\
 \nflags: %u\
 \nformId: %#08x\
-\ncount: %u\
+\ncount: %i\
 ",
 0,
 record->type,
 record->dataSize,
 record->flags,
 record->formId,
-record->count);
+-1);
 }
 
 api void esp_print_subrecord(struct esp *esp, char *s, struct subrecord *subrecord)
@@ -26,11 +26,11 @@ api void esp_print_subrecord(struct esp *esp, char *s, struct subrecord *subreco
 	int w = snprintf(s, 400, "\
 record: %i\
 \ntype: %s\
-\nlength: %u\
+\nsize: %u\
 \nbuf: %s\
 ",
 0,
 subrecord->type,
-subrecord->length,
+subrecord->size,
 subrecord->buf);
 }
