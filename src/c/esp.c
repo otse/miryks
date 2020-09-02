@@ -13,8 +13,6 @@
 #endif
 
 static inline void read(struct esp *, void *, size_t, size_t);
-static inline void seek(struct esp *, long);
-static inline void skip(struct esp *, unsigned int);
 
 struct record *read_record(struct esp *);
 void read_record_subrecords(struct esp *, struct record *);
@@ -42,7 +40,7 @@ int Grups = 0;
 int Records = 0;
 int Subrecords = 0;
 
-unsigned char *read_entire_file(struct esp *esp)
+float read_entire_file(struct esp *esp)
 {
 	clock_t before, after;
 	before = clock();
@@ -56,28 +54,30 @@ unsigned char *read_entire_file(struct esp *esp)
 	after = clock();
 	float difference = (float)(after - before) / CLOCKS_PER_SEC;
 	printf("read entire esp %i mb took %.2fs\n", esp->filesize / 1024 / 1024, difference);
+	return difference;
 }
 api struct esp *esp_load(const char *path)
 {
 	printf("esp load\n");
 	clock_t before, after;
+	float entirety;
 	struct esp *esp = malloc(sizeof(struct esp));
 	memset(esp, 0, sizeof(struct esp));
 	esp->path = malloc(sizeof(char) * strlen(path) + 1);
 	strcpy(esp->path, path);
 	esp->file = fopen(path, "rb");
 	cassert_(esp->file, "esp can't open");
-	read_entire_file(esp);
+	entirety = read_entire_file(esp);
 	Pos = 0;
 	before = clock();
 	esp->header = read_record(esp);
 	while(Pos < esp->filesize)
 	{
-	read_grup(esp, 0);
+	read_grup(esp);
 	}
 	after = clock();
 	float difference = (float)(after - before) / CLOCKS_PER_SEC;
-	printf("done parsing esp took %.2fs\n", difference);
+	printf("parsing esp took %.2fs, alltogether %.2fs\n", difference, difference + entirety);
 	printf("esp has %i grups %i records and %i subrecords\n", Grups, Records, Subrecords);
 	return esp;
 }
@@ -88,25 +88,25 @@ void no_hog(struct esp *esp) {
 
 void report_record(struct record *rec)
 {
-	if (report)
-	printf("R %s %u > ", (char *)&rec->type, rec->dataSize);
+	if (!report)
+	return;
+	printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
 }
 struct record *read_record(struct esp *esp)
 {
 	struct record *rec;
 	rec = malloc(sizeof(struct record));
 	memset(rec, 0, sizeof(struct record));
-	//  header
 	{
-	// rec->x = RECORD;
-	rec->id = Records++;
-	read(esp, rec, 4 + 4 + 4 + 4, 1);
-	skip(esp, 8);
+	Records++;
+	rec->head = Depos;
+	Pos += sizeof(struct record_head);
+	Pos += 8;
 	}
 	report_record(rec);
 	// subrecords
-	if (esp_skip_subrecords || (rec->flags & 0x00040000) != 0)
-	skip(esp, rec->dataSize);
+	if (esp_skip_subrecords || (rec->head->flags & 0x00040000) != 0)
+	Pos += rec->head->dataSize;
 	else
 	read_record_subrecords(esp, rec);
 	return rec;
@@ -118,10 +118,10 @@ void report_xxxx(struct esp *esp, struct subrecord *sub, unsigned int override)
 }
 unsigned int large_landmark(struct esp *esp, struct subrecord *sub)
 {
-	if (sub->type == XXXX)
+	if (sub->head->type == XXXX)
 	{
 	read_subrecord_into_buf(esp, sub);
-	unsigned int large_sub = *(unsigned int *)sub->buf;
+	unsigned int large_sub = *(unsigned int *)sub->data;
 	report_xxxx(esp, sub, large_sub);
 	return large_sub;
 	}
@@ -131,7 +131,7 @@ void read_record_subrecords(struct esp *esp, struct record *rec)
 {
 	long pos = Pos;
 	unsigned int large_sub = 0;
-	while(Pos - pos < (long)rec->dataSize)
+	while(Pos - pos < (long)rec->head->dataSize)
 	{
 	struct subrecord *sub;
 	sub = read_subrecord(esp, large_sub);
@@ -141,8 +141,9 @@ void read_record_subrecords(struct esp *esp, struct record *rec)
 
 void report_subrecord(struct subrecord *sub)
 {
-	if (report)
-	printf("S %s %u > ", (char *)&sub->type, sub->size);
+	if (!report)
+	return;
+	printf("S %.4s %u > ", (char *)&sub->head->type, sub->head->size);
 }
 struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
 {
@@ -150,43 +151,33 @@ struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
 	sub = malloc(sizeof(struct subrecord));
 	memset(sub, 0, sizeof(struct subrecord));
 	{
-	// sub->x = SUBRECORD;
-	sub->id = Subrecords++;
-	read(esp, sub, 4 + 2, 1);
+	Subrecords++;
+	sub->head = Depos;
+	Pos += sizeof(struct subrecord_head);
 	}
-	//read(esp, (unsigned short *)&sub->size, 2, 1);
 	if (override)
 	{
 	sub->size = override;
-	skip(esp, 2);
+	Pos += 2;
 	}
-	#if 0
-	read_subrecord_into_buf(esp, sub);
-	#else
-	sub->offset = Pos;
-	skip(esp, sub->size);
-	#endif
-	// report_subrecord(sub);
+	else
+	sub->size = sub->head->size;
+	sub->data = Depos;
+	Pos += sub->size;
+	report_subrecord(sub);
 	return sub;
 }
 
 void read_subrecord_into_buf(struct esp *esp, struct subrecord *sub)
 {
-	if (sub->buf != NULL)
-	return;
-	long late = sub->offset ? Pos : 0;
-	if (late)
-	seek(esp, sub->offset);
-	sub->buf = malloc(sizeof(char) * sub->size);
-	read(esp, sub->buf, sub->size, 1);
-	if (late)
-	seek(esp, late);
+	
 }
 
 void report_group(struct esp *esp, struct grup *grup)
 {
-	if (report)
-	printf("G %s %u > ", (char *)&grup->type, grup->size);
+	if (!report)
+	return;
+	printf("G %.4s %u > ", (char *)&grup->head->type, grup->head->size);
 }
 struct grup *read_grup(struct esp *esp)
 {
@@ -196,10 +187,10 @@ struct grup *read_grup(struct esp *esp)
 	// header
 	{
 	// grup->x = GRUP;
-	grup->id = Grups++;
-	read(esp, &grup->type, 4, 1);
-	read(esp, &grup->size, 4, 1);
-	skip(esp, 16);
+	Grups++;
+	grup->head = Depos;
+	Pos += sizeof(struct grup_head);
+	Pos += 16;
 	}
 	report_group(esp, grup);
 	// records
@@ -209,15 +200,11 @@ struct grup *read_grup(struct esp *esp)
 }
 const unsigned int peek_type(struct esp *esp)
 {
-	unsigned int type;
-	long pos = Pos;
-	read(esp, &type, 4, 1);
-	seek(esp, pos);
-	return type;
+	return *(unsigned int *)(Depos);
 }
 void read_grup_records(struct esp *esp, struct grup *grup)
 {
-	long size = grup->size - 4 - 4 - 16;
+	long size = grup->head->size - 4 - 4 - 16;
 	long start = Pos;
 	while (Pos - start < size)
 	{
@@ -241,14 +228,6 @@ static inline void read(struct esp *esp, void *dest, size_t size, size_t count)
 {
 	memcpy(dest, Depos, size * count);
 	Pos += size * count;
-}
-static inline void seek(struct esp *esp, long offset)
-{
-	Pos = offset;
-}
-static inline void skip(struct esp *esp, unsigned int offset)
-{
-	Pos += offset;
 }
 
 int load_tens = 10;

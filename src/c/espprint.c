@@ -14,10 +14,10 @@ record: %i\
 \ncount: %i\
 ",
 0,
-record->type,
-record->dataSize,
-record->flags,
-record->formId,
+record->head->type,
+record->head->dataSize,
+record->head->flags,
+record->head->formId,
 -1);
 }
 
@@ -27,10 +27,10 @@ api void esp_print_subrecord(struct esp *esp, char *s, struct subrecord *subreco
 record: %i\
 \ntype: %s\
 \nsize: %u\
-\nbuf: %s\
+\ndata: %p\
 ",
 0,
-subrecord->type,
+subrecord->head->type,
 subrecord->size,
-subrecord->buf);
+&subrecord->data);
 }

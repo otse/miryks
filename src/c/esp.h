@@ -28,35 +28,41 @@ struct esp
 
 #pragma pack(push, 1)
 
-struct grup
+struct grup_head
 {
 	unsigned int type;
 	unsigned int size;
-	int end;
-	int id;
 };
 
-struct record
+struct record_head
 {
 	unsigned int type;
 	unsigned int dataSize;
 	unsigned int flags;
 	unsigned int formId;
-	int end;
-	int id;
-	char *sink;
-	int pos;
-	struct subrecord **subrecords;
+};
+
+struct subrecord_head
+{
+	unsigned int type;
+	unsigned short size;
+};
+
+struct grup
+{
+	struct grup_head *head;
+};
+
+struct record
+{
+	struct record_head *head;
 };
 
 struct subrecord
 {
-	unsigned int type;
+	struct subrecord_head *head;
 	unsigned int size;
-	int end;
-	int id;
-	long offset;
-	unsigned char *buf;
+	const char *data;
 };
 
 #pragma pack(pop)
