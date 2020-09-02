@@ -4,6 +4,8 @@
 
 #include "esp.h"
 
+#include <time.h>
+
 #ifdef _WIN32
 #include <Windows.h>
 #else
@@ -48,13 +50,16 @@ api struct esp *esp_load(const char *path) {
 	esp->filesize = ftell(esp->stream);
 	seek(esp, 0);
 	cassert_(esp->stream, "esp can't open");
+	clock_t before = clock();
 	esp->header = read_record(esp);
 	long pos = tell(esp);
 	while(tell(esp) < esp->filesize)
 	{
 	read_grup(esp, 0);
 	}
-	printf("done loading esp\n");
+	clock_t after = clock();
+	float difference = (float)(after - before) / CLOCKS_PER_SEC;
+	printf("done loading esp took %.2f\n", difference);
 	return esp;
 }
 
@@ -196,7 +201,6 @@ void read_grup_records(struct esp *esp, struct grup *grup) {
 	long start = tell(esp);
 	while (tell(esp) - start < size)
 	{
-	//printf("peek type %s ", type);
 	if (peek_type(esp) == GRUP)
 	read_grup(esp);
 	else
