@@ -58,28 +58,32 @@ api struct esp *esp_load(const char *path) {
 	return esp;
 }
 
+void report_record(struct record *rec)
+{
+	printf("R %s %u > ", (char *)&rec->type, rec->dataSize);
+}
 struct record *read_record(struct esp *esp, Parent parent) {
 	struct record *rec;
 	rec = malloc(sizeof(struct record));
 	memset(rec, 0, sizeof(struct record));
 	//  header
-	rec->x = RECORD;
+	//rec->x = RECORD;
 	rec->id = Records++;
 	read(esp, &rec->type, 4, 1);
 	read(esp, &rec->dataSize, 4, 1);
 	read(esp, &rec->flags, 4, 1);
 	read(esp, &rec->formId, 4, 1);
 	skip(esp, 8);
+	//report_record(rec);
 	//printf("R %s %u > ", rec->type, rec->dataSize);
 	// subrecords
 	if ((rec->flags & 0x00040000) != 0)
-	{
 	skip(esp, rec->dataSize);
-	}
 	else
 	read_record_subrecords(esp, rec);
 	return rec;
 }
+
 void report_xxxx(struct esp *esp, struct subrecord *sub, unsigned int override)
 {
 	printf("\nXXXX at %u size %u\n", tell(esp), override);
@@ -107,11 +111,15 @@ void read_record_subrecords(struct esp *esp, struct record *rec) {
 	return rec;
 }
 
+void report_subrecord(struct subrecord *sub)
+{
+	printf("S %s %u > ", (char *)&sub->type, sub->size);
+}
 struct subrecord *read_subrecord(struct esp *esp, Parent parent, unsigned int override) {
 	struct subrecord *sub;
 	sub = malloc(sizeof(struct subrecord));
 	memset(sub, 0, sizeof(struct subrecord));
-	sub->x = SUBRECORD;
+	//sub->x = SUBRECORD;
 	sub->id = Subrecords++;
 	read(esp, &sub->type, 4, 1);
 	if (override == 0)
@@ -121,13 +129,13 @@ struct subrecord *read_subrecord(struct esp *esp, Parent parent, unsigned int ov
 	sub->size = override;
 	skip(esp, 2);
 	}
-	#if 1
+	#if 0
 	read_subrecord_into_buf(esp, sub);
 	#else
 	sub->offset = tell(esp);
 	skip(esp, sub->size);
 	#endif
-	//printf("S %s %u > ", sub->type, sub->size);
+	// report_subrecord(sub);
 	return sub;
 }
 
@@ -161,7 +169,7 @@ struct grup *read_grup(struct esp *esp, Parent parent) {
 	struct grup *grup = malloc(sizeof(struct grup));
 	memset(grup, 0, sizeof(struct grup));
 	// header
-	grup->x = GRUP;
+	//grup->x = GRUP;
 	grup->id = Grups++;
 	grup->parent = parent;
 	read(esp, &grup->type, 4, 1);
@@ -230,6 +238,6 @@ void report_load_percentage(struct esp *esp)
 	{
 		printf("\n\n%u%% loaded\n\n", pos);
 		report_at += 10;
-		//Sleep(300);
+		//Sleep(333);
 	}
 }
