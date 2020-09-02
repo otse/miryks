@@ -21,7 +21,7 @@ struct record *read_record(struct esp *);
 void read_record_subrecords(struct esp *, struct record *);
 struct subrecord *read_subrecord(struct esp *, unsigned int);
 struct grup *read_grup(struct esp *);
-void read_grup_records(struct esp *);
+void read_grup_records(struct esp *, struct grup *);
 
 void read_subrecord_into_buf(struct esp *, struct subrecord *);
 
@@ -31,6 +31,7 @@ void report_load_percentage(struct esp *);
 #define XXXX 0x58585858
 
 int report = 0;
+int esp_skip_subrecords = 0;
 
 int Grups = 0;
 int Records = 0;
@@ -47,7 +48,7 @@ api struct esp *esp_load(const char *path) {
 	esp->filesize = ftell(esp->stream);
 	seek(esp, 0);
 	cassert_(esp->stream, "esp can't open");
-	esp->header = read_record(esp, 0);
+	esp->header = read_record(esp);
 	long pos = tell(esp);
 	while(tell(esp) < esp->filesize)
 	{
@@ -81,7 +82,7 @@ struct record *read_record(struct esp *esp) {
 	}
 	report_record(rec);
 	// subrecords
-	if ((rec->flags & 0x00040000) != 0)
+	if (esp_skip_subrecords|| (rec->flags & 0x00040000) != 0)
 	skip(esp, rec->dataSize);
 	else
 	read_record_subrecords(esp, rec);
@@ -112,7 +113,6 @@ void read_record_subrecords(struct esp *esp, struct record *rec) {
 	sub = read_subrecord(esp, large);
 	large = large_landmark(esp, sub);
 	}
-	return rec;
 }
 
 void report_subrecord(struct subrecord *sub)
@@ -159,14 +159,6 @@ void read_subrecord_into_buf(struct esp *esp, struct subrecord *sub)
 	seek(esp, late);
 }
 
-const unsigned int peek_type(struct esp *esp)
-{
-	unsigned int type;
-	long pos = tell(esp);
-	read(esp, &type, 4, 1);
-	seek(esp, pos);
-	return type;
-}
 void report_group(struct esp *esp, struct grup *grup)
 {
 	if (report)
@@ -190,6 +182,14 @@ struct grup *read_grup(struct esp *esp) {
 	printf("\nend grup\n");
 	return grup;
 }
+const unsigned int peek_type(struct esp *esp)
+{
+	unsigned int type;
+	long pos = tell(esp);
+	read(esp, &type, 4, 1);
+	seek(esp, pos);
+	return type;
+}
 void read_grup_records(struct esp *esp, struct grup *grup) {
 	long size = grup->size - 4 - 4 - 16;
 	long pos = tell(esp);
@@ -198,14 +198,9 @@ void read_grup_records(struct esp *esp, struct grup *grup) {
 	{
 	//printf("peek type %s ", type);
 	if (peek_type(esp) == GRUP)
-	{
-	//printf("peeked grup\n");
 	read_grup(esp);
-	}
 	else
-	{
 	read_record(esp);
-	}
 	pos = tell(esp);
 	}
 }
@@ -223,17 +218,14 @@ static inline int read(struct esp *esp, void *data, size_t size, size_t count)
 {
 	return fread(data, size, count, esp->stream);
 }
-
 static inline int seek(struct esp *esp, long offset)
 {
 	return fseek(esp->stream, offset, SEEK_SET);
 }
-
 static inline int skip(struct esp *esp, unsigned int offset)
 {
 	return fseek(esp->stream, offset, SEEK_CUR);
 }
-
 static inline long tell(struct esp *esp)
 {
 	return ftell(esp->stream);

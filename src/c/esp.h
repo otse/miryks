@@ -12,12 +12,14 @@ struct grup;
 
 enum espnum { GRUP, RECORD, SUBRECORD };
 
+extern int esp_skip_subrecords;
+
 struct esp
 {
 	int x;
 	void *stream;
 	long int pos, filesize;
-	const char *path;
+	char *path;
 	struct record *header;
 	int count;
 	struct grup **grups;
@@ -25,20 +27,20 @@ struct esp
 
 struct grup
 {
-	enum espnum x;
-	int id;
 	unsigned int type;
 	char zero;
+	enum espnum x;
+	int id;
 	//unsigned int skip;
 	unsigned int size;
 };
 
 struct record
 {
-	enum espnum x;
-	int id;
 	unsigned int type;
 	char zero;
+	enum espnum x;
+	int id;
 	unsigned int dataSize;
 	unsigned int flags;
 	unsigned int formId;
@@ -49,10 +51,10 @@ struct record
 
 struct subrecord
 {
-	enum espnum x;
-	int id;
 	unsigned int type;
 	char zero;
+	enum espnum x;
+	int id;
 	unsigned int size;
 	long offset;
 	unsigned char *buf;
