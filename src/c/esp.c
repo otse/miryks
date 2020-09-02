@@ -17,7 +17,7 @@ typedef int Parent;
 static inline int read(struct esp *, void *, size_t, size_t);
 static inline int seek(struct esp *, long);
 static inline int skip(struct esp *, unsigned int);
-static long int tell(struct esp *);
+static long tell(struct esp *);
 
 struct record *read_record(struct esp *, Parent);
 void read_record_subrecords(struct esp *, struct record *);
@@ -32,6 +32,8 @@ void report_load_percentage(struct esp *);
 #define GRUP 0x50555247
 #define XXXX 0x58585858
 
+int report = 0;
+
 int Grups = 0;
 int Records = 0;
 int Subrecords = 0;
@@ -45,12 +47,11 @@ api struct esp *esp_load(const char *path) {
 	esp->stream = fopen(path, "rb");
 	fseek(esp->stream, 0, SEEK_END);
 	esp->filesize = ftell(esp->stream);
-	fseek(esp->stream, 0, SEEK_SET);
 	seek(esp, 0);
 	cassert_(
 		esp->stream, "esp can't open");
 	esp->header = read_record(esp, 0);
-	long int pos = tell(esp);
+	long pos = tell(esp);
 	while(tell(esp) < esp->filesize)
 	{
 	read_grup(esp, 0);
@@ -60,6 +61,7 @@ api struct esp *esp_load(const char *path) {
 
 void report_record(struct record *rec)
 {
+	if (report)
 	printf("R %s %u > ", (char *)&rec->type, rec->dataSize);
 }
 struct record *read_record(struct esp *esp, Parent parent) {
@@ -67,14 +69,16 @@ struct record *read_record(struct esp *esp, Parent parent) {
 	rec = malloc(sizeof(struct record));
 	memset(rec, 0, sizeof(struct record));
 	//  header
-	//rec->x = RECORD;
+	{
+	// rec->x = RECORD;
 	rec->id = Records++;
 	read(esp, &rec->type, 4, 1);
 	read(esp, &rec->dataSize, 4, 1);
 	read(esp, &rec->flags, 4, 1);
 	read(esp, &rec->formId, 4, 1);
 	skip(esp, 8);
-	//report_record(rec);
+	}
+	report_record(rec);
 	//printf("R %s %u > ", rec->type, rec->dataSize);
 	// subrecords
 	if ((rec->flags & 0x00040000) != 0)
@@ -100,7 +104,7 @@ unsigned int large_landmark(struct esp *esp, struct subrecord *sub)
 	return 0;
 }
 void read_record_subrecords(struct esp *esp, struct record *rec) {
-	long int pos = tell(esp);
+	long pos = tell(esp);
 	unsigned int large = 0;
 	while(tell(esp) - pos < rec->dataSize)
 	{
@@ -113,15 +117,18 @@ void read_record_subrecords(struct esp *esp, struct record *rec) {
 
 void report_subrecord(struct subrecord *sub)
 {
+	if (report)
 	printf("S %s %u > ", (char *)&sub->type, sub->size);
 }
 struct subrecord *read_subrecord(struct esp *esp, Parent parent, unsigned int override) {
 	struct subrecord *sub;
 	sub = malloc(sizeof(struct subrecord));
 	memset(sub, 0, sizeof(struct subrecord));
-	//sub->x = SUBRECORD;
+	{
+	// sub->x = SUBRECORD;
 	sub->id = Subrecords++;
 	read(esp, &sub->type, 4, 1);
+	}
 	if (override == 0)
 	read(esp, (unsigned short *)&sub->size, 2, 1);
 	else
@@ -147,7 +154,7 @@ void read_subrecord_into_buf(struct esp *esp, struct subrecord *sub)
 	if (late)
 	seek(esp, sub->offset);
 	sub->buf = malloc(sizeof(char) * sub->size);
-	read(esp, sub->buf, 1, sub->size);
+	read(esp, sub->buf, sub->size, 1);
 	if (late)
 	seek(esp, late);
 }
@@ -155,13 +162,14 @@ void read_subrecord_into_buf(struct esp *esp, struct subrecord *sub)
 const unsigned int peek_type(struct esp *esp)
 {
 	unsigned int type;
-	long int pos = tell(esp);
+	long pos = tell(esp);
 	read(esp, &type, 4, 1);
 	seek(esp, pos);
 	return type;
 }
 void report_group(struct esp *esp, struct grup *grup)
 {
+	if (report)
 	printf("G %s %u > ", (char *)&grup->type, grup->size);
 }
 struct grup *read_grup(struct esp *esp, Parent parent) {
@@ -169,13 +177,15 @@ struct grup *read_grup(struct esp *esp, Parent parent) {
 	struct grup *grup = malloc(sizeof(struct grup));
 	memset(grup, 0, sizeof(struct grup));
 	// header
-	//grup->x = GRUP;
+	// grup->x = GRUP;
+	{
 	grup->id = Grups++;
 	grup->parent = parent;
 	read(esp, &grup->type, 4, 1);
 	read(esp, &grup->size, 4, 1);
 	skip(esp, 16);
-	// report_group(esp, grup);
+	}
+	report_group(esp, grup);
 	// records
 	read_grup_records(esp, grup);
 	return grup;
@@ -229,15 +239,17 @@ static inline long tell(struct esp *esp)
 	return ftell(esp->stream);
 }
 
-int report_at = 10;
+int load_tens = 10;
 
 void report_load_percentage(struct esp *esp)
 {
-	long int pos = ((double)tell(esp) / esp->filesize) * 100;
-	if (pos >= report_at)
+	long pos = ((double)tell(esp) / esp->filesize) * 100;
+	if (pos >= load_tens)
 	{
 		printf("\n\n%u%% loaded\n\n", pos);
-		report_at += 10;
+		load_tens += 10;
+		if (pos >= 80)
+		report = 1;
 		//Sleep(333);
 	}
 }
