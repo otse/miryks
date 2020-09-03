@@ -32,15 +32,15 @@ void im_grup(Grup *grup)
 		char s[100];
 		esp_print_grup(esp, s, grup);
 		ImGui::Text(s);
-		for (int i = 0; i < grup->grups.used; i++)
+		for (int i = 0; i < grup->mixed.used; i++)
 		{
-			im_grup((Grup *)grup->grups.array[i]);
+			void *element = grup->mixed.array[i];
+			if (*(enum espnum *)element == GRUP)
+				im_grup((Grup *)element);
+			if (*(enum espnum *)element == RECORD)
+				im_record((Record *)element);
 		}
-		for (int i = 0; i < grup->records.used; i++)
-		{
-			im_record((Record *)grup->records.array[i]);
-		}
-		if (grup->grups.used)
+		if (grup->mixed.used)
 			ImGui::Separator();
 		ImGui::TreePop();
 	}
@@ -120,8 +120,8 @@ void esp_gui()
 
 	if (ImGui::BeginTabBar("EspTabs", tabBarFlags))
 	{
-		ImGui::Text("Num group: %u", esp->grups.used);
-		if (ImGui::BeginTabItem("records"))
+#if 1
+		if (ImGui::BeginTabItem("plain"))
 		{
 			if (ImGui::TreeNode("Header"))
 			{
@@ -136,6 +136,12 @@ void esp_gui()
 			}
 			ImGui::EndTabItem();
 		}
+		if (ImGui::BeginTabItem("assorted"))
+		{
+			ImGui::Text("Woo");
+			ImGui::EndTabItem();
+		}
+#endif
 		ImGui::EndTabBar();
 	}
 

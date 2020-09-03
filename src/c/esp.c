@@ -17,8 +17,8 @@ void read_grup_records(struct esp *, struct grup *);
 
 void read_subrecord_into_buf(struct esp *, struct subrecord *);
 
-#define GRUP 0x50555247
-#define XXXX 0x58585858
+#define GRUP_HEX 0x50555247
+#define XXXX_HEX 0x58585858
 
 #define Buf esp->buf
 #define Pos esp->pos
@@ -27,9 +27,9 @@ void read_subrecord_into_buf(struct esp *, struct subrecord *);
 int report = 0;
 int esp_skip_subrecords = 0;
 
-int grups = 0;
-int records = 0;
-int subrecords = 0;
+unsigned int grups = 0;
+unsigned int records = 0;
+unsigned int subrecords = 0;
 
 inline void array(struct esp_array *a, size_t initial) {
 	a->size = initial;
@@ -81,6 +81,8 @@ api struct esp *esp_load(const char *path)
 	before = clock();
 	esp->header = read_record(esp);
 	array(&esp->grups, 200);
+	//array(&esp->records, 200);
+	//array(&esp->subrecords, 200);
 	while(Pos < esp->filesize)
 	{
 	void *grup = read_grup(esp);
@@ -98,6 +100,7 @@ struct record *read_record(struct esp *esp)
 	struct record *rec;
 	rec = malloc(sizeof(struct record));
 	// head
+	rec->x = RECORD;
 	rec->id = records++;
 	rec->head = Depos;
 	Pos += sizeof(struct record_head);
@@ -121,8 +124,9 @@ void read_record_subrecords(struct esp *esp, struct record *rec)
 	struct subrecord *sub;
 	sub = read_subrecord(esp, large);
 	large = 0;
-	if (sub->head->type == XXXX)
+	if (sub->head->type == XXXX_HEX)
 	large = *(unsigned int *)sub->data;
+	//insert(&esp->subrecords, sub);
 	insert(&rec->subrecords, sub);
 	}
 }
@@ -132,6 +136,7 @@ struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
 	struct subrecord *sub;
 	sub = malloc(sizeof(struct subrecord));
 	// head
+	sub->x = SUBRECORD;
 	sub->id = subrecords++;
 	sub->head = Depos;
 	Pos += sizeof(struct subrecord_head);
@@ -150,12 +155,14 @@ struct grup *read_grup(struct esp *esp)
 {
 	struct grup *grup = malloc(sizeof(struct grup));
 	// head
+	grup->x = GRUP;
 	grup->id = grups++;
 	grup->head = Depos;
 	Pos += sizeof(struct grup_head);
 	Pos += 16;
-	array(&grup->grups, 6);
-	array(&grup->records, 6);
+	//array(&grup->grups, 6);
+	//array(&grup->records, 6);
+	array(&grup->mixed, 12);
 	// printf("G %.4s %u > ", (char *)&grup->head->type, grup->head->size);
 	// records
 	read_grup_records(esp, grup);
@@ -172,15 +179,19 @@ void read_grup_records(struct esp *esp, struct grup *grup)
 	long start = Pos;
 	while (Pos - start < size)
 	{
-	if (peek_type(esp) == GRUP)
+	if (peek_type(esp) == GRUP_HEX)
 	{
 	void *element = read_grup(esp);
-	insert(&grup->grups, element);
+	//insert(&esp->grups, element);
+	//insert(&grup->grups, element);
+	insert(&grup->mixed, element);
 	}
 	else
 	{
 	void *element = read_record(esp);
-	insert(&grup->records, element);
+	//insert(&esp->records, element);
+	//insert(&grup->records, element);
+	insert(&grup->mixed, element);
 	}
 	}
 }

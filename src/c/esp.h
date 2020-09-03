@@ -30,7 +30,12 @@ struct esp
 	long filesize;
 	char *path;
 	struct record *header;
-	struct esp_array grups;
+	struct esp_array grups, records, subrecords;
+};
+
+enum espnum
+{
+	GRUP, RECORD, SUBRECORD
 };
 
 #pragma pack(push, 1)
@@ -57,23 +62,25 @@ struct subrecord_head
 
 struct grup
 {
+	enum espnum x;
+	unsigned int id;
 	struct grup_head *head;
-	int id;
-	struct esp_array grups;
-	struct esp_array records;
+	struct esp_array grups, records, mixed;
 };
 
 struct record
 {
+	enum espnum x;
+	unsigned int id;
 	struct record_head *head;
-	int id;
 	struct esp_array subrecords;
 };
 
 struct subrecord
 {
+	enum espnum x;
+	unsigned int id;
 	struct subrecord_head *head;
-	int id;
 	unsigned int actualSize;
 	const char *data;
 };
