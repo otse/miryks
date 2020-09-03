@@ -66,10 +66,10 @@ void im_record(Record *record)
 void im_subrecord(Subrecord *subrecord)
 {
 	char t[100];
-	snprintf(t, 100, "%.4s %i", (char *)&subrecord->head->type, subrecord->id);
+	snprintf(t, 100, "%.4s##Sub %i", (char *)&subrecord->head->type, subrecord->id);
 	if (ImGui::TreeNode(t))
 	{
-		char s[200];
+		char s[400];
 		esp_print_subrecord(esp, s, subrecord);
 		ImGui::Text(s);
 		ImGui::TreePop();
@@ -120,9 +120,9 @@ void esp_gui()
 
 	if (ImGui::BeginTabBar("EspTabs", tabBarFlags))
 	{
-#if 1
 		if (ImGui::BeginTabItem("plain"))
 		{
+			ImGui::BeginChildFrame(1, ImVec2(0, 800));
 			if (ImGui::TreeNode("Header"))
 			{
 				im_record(esp->header);
@@ -134,14 +134,17 @@ void esp_gui()
 					im_grup((Grup *)esp->grups.array[i]);
 				ImGui::TreePop();
 			}
+			ImGui::EndChildFrame();
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("assorted"))
+		if (ImGui::BeginTabItem("statics"))
 		{
-			ImGui::Text("Woo");
+			ImGui::BeginChildFrame(1, ImVec2(0, 800));
+			for (int i = 0; i < esp->statics.used; i++)
+			im_record((Record *)esp->statics.array[i]);
+			ImGui::EndChildFrame();
 			ImGui::EndTabItem();
 		}
-#endif
 		ImGui::EndTabBar();
 	}
 

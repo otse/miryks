@@ -17,9 +17,6 @@ void read_grup_records(struct esp *, struct grup *);
 
 void read_subrecord_into_buf(struct esp *, struct subrecord *);
 
-#define GRUP_HEX 0x50555247
-#define XXXX_HEX 0x58585858
-
 #define Buf esp->buf
 #define Pos esp->pos
 #define Depos Buf + Pos
@@ -81,6 +78,7 @@ api struct esp *esp_load(const char *path)
 	before = clock();
 	esp->header = read_record(esp);
 	array(&esp->grups, 200);
+	array(&esp->statics, 200);
 	//array(&esp->records, 200);
 	//array(&esp->subrecords, 200);
 	while(Pos < esp->filesize)
@@ -106,6 +104,8 @@ struct record *read_record(struct esp *esp)
 	Pos += sizeof(struct record_head);
 	Pos += 8;
 	array(&rec->subrecords, 6);
+	if (rec->head->type == ESP_STAT_HEX)
+	insert(&esp->statics, rec);
 	// printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
 	// subrecords
 	if (esp_skip_subrecords || (rec->head->flags & 0x00040000) != 0)
@@ -124,7 +124,7 @@ void read_record_subrecords(struct esp *esp, struct record *rec)
 	struct subrecord *sub;
 	sub = read_subrecord(esp, large);
 	large = 0;
-	if (sub->head->type == XXXX_HEX)
+	if (sub->head->type == ESP_XXXX_HEX)
 	large = *(unsigned int *)sub->data;
 	//insert(&esp->subrecords, sub);
 	insert(&rec->subrecords, sub);
@@ -179,7 +179,7 @@ void read_grup_records(struct esp *esp, struct grup *grup)
 	long start = Pos;
 	while (Pos - start < size)
 	{
-	if (peek_type(esp) == GRUP_HEX)
+	if (peek_type(esp) == ESP_GRUP_HEX)
 	{
 	void *element = read_grup(esp);
 	//insert(&esp->grups, element);

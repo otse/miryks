@@ -12,6 +12,11 @@ struct record;
 struct subrecord;
 struct grup;
 
+#define ESP_GRUP_HEX 0x50555247
+#define ESP_XXXX_HEX 0x58585858
+#define ESP_STAT_HEX 0x54415453
+#define ESP_EDID_HEX 0x44494445
+
 extern int esp_skip_subrecords;
 
 struct esp_array
@@ -30,7 +35,7 @@ struct esp
 	long filesize;
 	char *path;
 	struct record *header;
-	struct esp_array grups, records, subrecords;
+	struct esp_array grups, records, subrecords, statics;
 };
 
 enum espnum
