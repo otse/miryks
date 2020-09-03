@@ -4,13 +4,22 @@
 #define api
 
 typedef struct esp Esp;
+typedef struct grup Grup;
 typedef struct record Record;
+typedef struct subrecord Subrecord;
 
 struct record;
 struct subrecord;
 struct grup;
 
 extern int esp_skip_subrecords;
+
+struct esp_array
+{
+	void **array;
+	size_t used;
+	size_t size;
+};
 
 struct esp
 {
@@ -21,8 +30,7 @@ struct esp
 	long filesize;
 	char *path;
 	struct record *header;
-	int count;
-	struct grup **grups;
+	struct esp_array grups;
 };
 
 #pragma pack(push, 1)
@@ -50,17 +58,23 @@ struct subrecord_head
 struct grup
 {
 	struct grup_head *head;
+	int id;
+	struct esp_array grups;
+	struct esp_array records;
 };
 
 struct record
 {
 	struct record_head *head;
+	int id;
+	struct esp_array subrecords;
 };
 
 struct subrecord
 {
 	struct subrecord_head *head;
-	unsigned int size;
+	int id;
+	unsigned int actualSize;
 	const char *data;
 };
 
@@ -69,10 +83,10 @@ struct subrecord
 void esp_gui();
 
 api struct esp *esp_load(const char *);
-api struct esp *esp_load_in_memory(const char *);
 
 api void esp_read_subrecord_data(struct esp *, struct subrecord *);
 
+api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
 

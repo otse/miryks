@@ -6,11 +6,6 @@
 
 #include <time.h>
 
-#ifdef _WIN32
-#include <Windows.h>
-#else
-#include <unistd.h>
-#endif
 
 static inline void copy(struct esp *, void *, size_t, size_t);
 
@@ -25,9 +20,9 @@ void read_subrecord_into_buf(struct esp *, struct subrecord *);
 #define GRUP 0x50555247
 #define XXXX 0x58585858
 
-#define Buf    esp->buf
-#define Pos    esp->pos
-#define Depos  Buf + Pos
+#define Buf esp->buf
+#define Pos esp->pos
+#define Depos Buf + Pos
 
 int report = 0;
 int esp_skip_subrecords = 0;
@@ -35,6 +30,24 @@ int esp_skip_subrecords = 0;
 int grups = 0;
 int records = 0;
 int subrecords = 0;
+
+inline void array(struct esp_array *a, size_t initial) {
+	a->size = initial;
+	a->used = 0;
+	a->array = malloc(a->size * sizeof(void **));
+}
+
+inline void grow(struct esp_array *a) {
+	if (a->used != a->size)
+	return;
+	a->size *= 2;
+	a->array = realloc(a->array, a->size * sizeof(void **));
+}
+
+inline void insert(struct esp_array *a, void *element) {
+	grow(a);
+	a->array[a->used++] = element;
+}
 
 float read_entire_file(struct esp *esp)
 {
@@ -67,9 +80,11 @@ api struct esp *esp_load(const char *path)
 	Pos = 0;
 	before = clock();
 	esp->header = read_record(esp);
+	array(&esp->grups, 200);
 	while(Pos < esp->filesize)
 	{
-	read_grup(esp);
+	void *grup = read_grup(esp);
+	insert(&esp->grups, grup);
 	}
 	after = clock();
 	float difference = (float)(after - before) / CLOCKS_PER_SEC;
@@ -78,20 +93,16 @@ api struct esp *esp_load(const char *path)
 	return esp;
 }
 
-void no_hog(struct esp *esp) {
-
-}
-
 struct record *read_record(struct esp *esp)
 {
 	struct record *rec;
 	rec = malloc(sizeof(struct record));
-	memset(rec, 0, sizeof(struct record));
 	// head
-	records++;
+	rec->id = records++;
 	rec->head = Depos;
 	Pos += sizeof(struct record_head);
 	Pos += 8;
+	array(&rec->subrecords, 6);
 	// printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
 	// subrecords
 	if (esp_skip_subrecords || (rec->head->flags & 0x00040000) != 0)
@@ -101,16 +112,6 @@ struct record *read_record(struct esp *esp)
 	return rec;
 }
 
-unsigned int large_landmark(struct esp *esp, struct subrecord *sub)
-{
-	if (sub->head->type == XXXX)
-	{
-	unsigned int large_sub = *(unsigned int *)sub->data;
-	printf("\nXXXX at %u size %u\n", Pos, large_sub);
-	return large_sub;
-	}
-	return 0;
-}
 void read_record_subrecords(struct esp *esp, struct record *rec)
 {
 	long pos = Pos;
@@ -122,6 +123,7 @@ void read_record_subrecords(struct esp *esp, struct record *rec)
 	large = 0;
 	if (sub->head->type == XXXX)
 	large = *(unsigned int *)sub->data;
+	insert(&rec->subrecords, sub);
 	}
 }
 
@@ -129,18 +131,17 @@ struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
 {
 	struct subrecord *sub;
 	sub = malloc(sizeof(struct subrecord));
-	memset(sub, 0, sizeof(struct subrecord));
 	// head
-	subrecords++;
+	sub->id = subrecords++;
 	sub->head = Depos;
 	Pos += sizeof(struct subrecord_head);
 	if (override)
-	sub->size = override;
+	sub->actualSize = override;
 	else
-	sub->size = sub->head->size;
+	sub->actualSize = sub->head->size;
 	// data
 	sub->data = Depos;
-	Pos += sub->size;
+	Pos += sub->actualSize;
 	// printf("S %.4s %u > ", (char *)&sub->head->type, sub->head->size);
 	return sub;
 }
@@ -148,12 +149,13 @@ struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
 struct grup *read_grup(struct esp *esp)
 {
 	struct grup *grup = malloc(sizeof(struct grup));
-	memset(grup, 0, sizeof(struct grup));
 	// head
-	grups++;
+	grup->id = grups++;
 	grup->head = Depos;
 	Pos += sizeof(struct grup_head);
 	Pos += 16;
+	array(&grup->grups, 6);
+	array(&grup->records, 6);
 	// printf("G %.4s %u > ", (char *)&grup->head->type, grup->head->size);
 	// records
 	read_grup_records(esp, grup);
@@ -166,14 +168,20 @@ const unsigned int peek_type(struct esp *esp)
 }
 void read_grup_records(struct esp *esp, struct grup *grup)
 {
-	long size = grup->head->size - 4 - 4 - 16;
+	long size = grup->head->size - sizeof(struct grup_head) - 16;
 	long start = Pos;
 	while (Pos - start < size)
 	{
 	if (peek_type(esp) == GRUP)
-	read_grup(esp);
+	{
+	void *element = read_grup(esp);
+	insert(&grup->grups, element);
+	}
 	else
-	read_record(esp);
+	{
+	void *element = read_record(esp);
+	insert(&grup->records, element);
+	}
 	}
 }
 

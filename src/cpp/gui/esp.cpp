@@ -19,6 +19,63 @@ static stringstream ss;
 
 static Esp *esp = NULL;
 
+void im_grup(Grup *);
+void im_record(Record *);
+void im_subrecord(Subrecord *);
+
+void im_grup(Grup *grup)
+{
+	char t[100];
+	snprintf(t, 100, "GRUP %i", grup->id);
+	if (ImGui::TreeNode(t))
+	{
+		char s[100];
+		esp_print_grup(esp, s, grup);
+		ImGui::Text(s);
+		for (int i = 0; i < grup->grups.used; i++)
+		{
+			im_grup((Grup *)grup->grups.array[i]);
+		}
+		for (int i = 0; i < grup->records.used; i++)
+		{
+			im_record((Record *)grup->records.array[i]);
+		}
+		if (grup->grups.used)
+			ImGui::Separator();
+		ImGui::TreePop();
+	}
+}
+
+void im_record(Record *record)
+{
+	char t[100];
+	snprintf(t, 100, "%.4s %i", (char *)&record->head->type, record->id);
+	if (ImGui::TreeNode(t))
+	{
+		char s[200];
+		esp_print_record(esp, s, record);
+		ImGui::Text(s);
+		for (int i = 0; i < record->subrecords.used; i++)
+		{
+			im_subrecord((Subrecord *)record->subrecords.array[i]);
+		}
+		ImGui::TreePop();
+	}
+}
+
+void im_subrecord(Subrecord *subrecord)
+{
+	char t[100];
+	snprintf(t, 100, "%.4s %i", (char *)&subrecord->head->type, subrecord->id);
+	if (ImGui::TreeNode(t))
+	{
+		char s[200];
+		esp_print_subrecord(esp, s, subrecord);
+		ImGui::Text(s);
+		ImGui::TreePop();
+	}
+}
+
 void esp_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
@@ -61,36 +118,21 @@ void esp_gui()
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
-	auto im_record = [&](Record *record) {
-		char s[200];
-		esp_print_record(esp, s, record);
-		ImGui::Text(s);
-		if (ImGui::TreeNode("Subrecords"))
-		{
-		/*for (int i = 0; i < record->count; i++)
-		{
-			char s[100];
-			snprintf(s, 100, "Subrecord %i", i);
-			if (ImGui::TreeNode(s))
-			{
-				char s[400];
-				esp_print_subrecord(esp, s, record->subrecords[i]);
-				ImGui::Text(s);
-				ImGui::Separator();
-				ImGui::TreePop();
-			}
-		}*/
-		ImGui::TreePop();
-		}
-	};
-
 	if (ImGui::BeginTabBar("EspTabs", tabBarFlags))
 	{
+		ImGui::Text("Num group: %u", esp->grups.used);
 		if (ImGui::BeginTabItem("records"))
 		{
-			if (ImGui::TreeNode("00"))
+			if (ImGui::TreeNode("Header"))
 			{
-				//im_record(esp->header);
+				im_record(esp->header);
+				ImGui::TreePop();
+			}
+			if (ImGui::TreeNode("Grups"))
+			{
+				for (int i = 0; i < esp->grups.used; i++)
+					im_grup((Grup *)esp->grups.array[i]);
+				ImGui::TreePop();
 			}
 			ImGui::EndTabItem();
 		}
