@@ -13,12 +13,12 @@ struct grup *read_grup(struct esp *);
 #define Buf esp->buf
 #define Pos esp->pos
 
-int report = 0;
 int esp_skip_subrecords = 0;
 
 unsigned int grups = 0;
 unsigned int records = 0;
 unsigned int subrecords = 0;
+unsigned int decompressions = 0;
 
 inline void array(struct esp_array *a, size_t initial, size_t element) {
 	a->size = initial;
@@ -48,7 +48,7 @@ float read_entire_file(struct esp *esp)
 	esp->filesize = ftell(esp->file);
 	printf("esp filesize %u\n", esp->filesize);
 	rewind(esp->file);
-	esp->buf = malloc(sizeof(char) * esp->filesize);
+	esp->buf = malloc(esp->filesize * sizeof(char));
 	cassert_(esp->buf != NULL, "esp cant get memory");
 	size_t read = fread(esp->buf, sizeof(char), esp->filesize, esp->file);
 	cassert_(read, "esp buf bad");
@@ -87,7 +87,7 @@ api struct esp *esp_load(const char *path)
 	after = clock();
 	float difference = (float)(after - before) / CLOCKS_PER_SEC;
 	printf("parsing esp took %.2fs, alltogether %.2fs\n", difference, difference + entirety);
-	printf("esp has %i grups %i records %i subrecords\n", grups, records, subrecords);
+	printf("esp has %i grups %i records %i subrecords %i decompressions\n", grups, records, subrecords, decompressions);
 	return esp;
 }
 
@@ -126,7 +126,8 @@ struct record *read_record(struct esp *esp)
 	{
 	if (rec->head->flags & 0x00040000)
 	{
-	rec->buf = rec->pos = 0;
+	rec->buf = 0;
+	rec->pos = 0;
 	uncompress_record(rec);
 	read_record_subrecords(esp, rec);
 	Pos += rec->head->size;
@@ -163,7 +164,6 @@ inline struct subrecord *read_subrecord(struct esp *esp, struct record *rec, uns
 	char *buf = Buf;
 	if (rec->head->flags & 0x00040000)
 	{
-	// printf("boy read comp field\n");
 	pos = &rec->pos;
 	buf = rec->buf;
 	}
@@ -239,6 +239,7 @@ void uncompress_record(struct record *rec)
 	int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);
 	cassert_(ret == Z_OK, "esp zlib");
 	rec->actualSize = realSize;
+	decompressions++;
 }
 
 api struct esp_array *esp_filter_records(struct esp *esp, char s[4])
@@ -254,7 +255,7 @@ api struct esp_array *esp_filter_records(struct esp *esp, char s[4])
 	insert(filtered, record);
 	}
 	}
-	printf("filtered %u recs\n", filtered->used);
+	// printf("filtered %u records\n", filtered->used);
 	return filtered;
 }
 
