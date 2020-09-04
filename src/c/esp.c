@@ -15,6 +15,8 @@ struct grup *read_grup(struct esp *);
 
 int esp_skip_subrecords = 0;
 
+struct esp *plugins[5] = { NULL, NULL, NULL, NULL, NULL };
+
 unsigned int grups = 0;
 unsigned int records = 0;
 unsigned int subrecords = 0;
@@ -64,6 +66,9 @@ float read_entire_file(struct esp *esp)
 api struct esp *esp_load(const char *path)
 {
 	printf("esp load\n");
+	for (int i = 0; i < 5; i++)
+	if (plugins[i] != NULL && 0 == strcmp(path, plugins[i]->path))
+	return plugins[i];
 	clock_t before, after;
 	float entirety;
 	struct esp *esp = malloc(sizeof(struct esp));
@@ -154,6 +159,7 @@ inline void read_record_subrecords(struct esp *esp, struct record *rec)
 	large = 0;
 	if (sub->head->type == XXXX_HEX)
 	large = *(unsigned int *)sub->data;
+	else
 	insert(&rec->fields, sub);
 	}
 }
@@ -174,10 +180,7 @@ inline struct subrecord *read_subrecord(struct esp *esp, struct record *rec, uns
 	sub->id = subrecords++;
 	sub->head = buf + *pos;
 	*pos += sizeof(struct subrecord_head);
-	if (override)
-	sub->actualSize = override;
-	else
-	sub->actualSize = sub->head->size;
+	sub->actualSize = override == 0 ? sub->head->size : override;
 	// data
 	sub->data = buf + *pos;
 	*pos += sub->actualSize;

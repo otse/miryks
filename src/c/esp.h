@@ -20,6 +20,7 @@ struct grup;
 #define FULL_HEX 0x4C4C5546
 
 extern int esp_skip_subrecords;
+extern struct esp *plugins[5];
 
 struct esp_array
 {

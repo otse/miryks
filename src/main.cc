@@ -17,6 +17,7 @@ extern "C"
 #include "cpp/opengl/geometry"
 #include "cpp/opengl/material"
 
+#include "cpp/level.h"
 #include "cpp/mesh.h"
 
 namespace dark2
@@ -27,12 +28,15 @@ namespace dark2
 	Renderable *object = nullptr;
 	}
 
+	Level *dungeon;
+
 	std::string OLDRIM;
 
-	struct bsa *interface;
-	struct bsa *meshes;
-	struct bsa *animations;
-	struct bsa *textures;
+	Esp *skyrim;
+	Bsa *interface;
+	Bsa *meshes;
+	Bsa *animations;
+	Bsa *textures;
 
 	FirstPersonCamera *first_person_camera;
 	ViewerCamera *viewer_camera;
@@ -82,7 +86,8 @@ int main()
 	log_("dark2 loading");
 	cassert_(exists(PATH_TXT), "missing " PATH_TXT);
 	OLDRIM = fread(PATH_TXT);
-	
+	skyrim = esp_load((OLDRIM + "Data/Skyrim.esm").c_str());
+	plugins[0] = skyrim;
 	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
 	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
 	struct bsa *array[2] = {meshes, textures};
@@ -95,6 +100,7 @@ int main()
 	Rc *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
 	viewer::spotlight(rc);
 	nif_test(meshes);
+	dungeon = new Level();
 	programLoop();
 	return 1;
 }

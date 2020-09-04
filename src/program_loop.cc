@@ -6,6 +6,9 @@ extern "C" {
 #include "c/esp.h"
 }
 
+#include "cpp/mesh.h"
+#include "cpp/level.h"
+
 #include "cpp/opengl/camera"
 #include "cpp/opengl/scene"
 #include "cpp/opengl/material"
@@ -170,6 +173,8 @@ void dark2::programLoop()
 		do_keys();
 
 		camera->Update(0.016);
+
+		dungeon->Update();
 
 		scene->Order();
 		scene->DrawItems();

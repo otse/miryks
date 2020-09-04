@@ -25,7 +25,7 @@ char *get_skyrim_grup(Grup *grup)
 	{
 		if (grup->id == 30)
 		{
-			return "(STATS)";
+			return "Static";
 		}
 	}
 	return "";

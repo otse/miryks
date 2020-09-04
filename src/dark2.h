@@ -3,10 +3,12 @@
 
 typedef struct nif Nif;
 typedef struct bsa Bsa;
+typedef struct esp Esp;
 
 typedef struct rc Rc;
 struct esp_t;
 
+class Level;
 class Mesh;
 
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
@@ -42,9 +44,10 @@ namespace dark2
 
 	extern FirstPersonCamera *first_person_camera;
 	extern ViewerCamera *viewer_camera;
+
+	extern Level *dungeon;
 	
-	extern esp_t *skyrim;
-	
+	extern Esp *skyrim;
 	extern Bsa *interface;
 	extern Bsa *meshes;
 	extern Bsa *animations;

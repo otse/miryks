@@ -1,11 +1,12 @@
-#include "dark2.h"
+#pragma once
 
-#include "files"
+#include "dark2.h"
 
 extern "C"
 {
 #include "c/bsa.h"
 #include "c/nif.h"
+#include "c/esp.h"
 }
 
 #include "cpp/opengl/types"
@@ -18,4 +19,6 @@ class Level
 {
 public:
 	Level();
+
+	void Update();
 };
