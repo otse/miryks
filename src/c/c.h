@@ -17,10 +17,11 @@ static void log_(const char *p)
 }
 
 #define cassert_(e, m)       \
-    if (!(e))               \
-    {                       \
+    if (!(e))                \
+    {                        \
+        printf(m);           \
         cfout(ERROR_TXT, m); \
-        exit(1);            \
+        exit(1);             \
     }
 
 #endif

@@ -129,8 +129,10 @@ struct record *read_record(struct esp *esp)
 	{
 	rec->buf = rec->pos = 0;
 	uncompress_record(esp, rec);
-	printf("uncompress record! buf %p\n", rec->buf);
+	read_record_subrecords(esp, rec);
+	Pos += rec->head->size;
 	}
+	else
 	read_record_subrecords(esp, rec);
 	}
 	return rec;
@@ -162,7 +164,7 @@ inline struct subrecord *read_subrecord(struct esp *esp, struct record *rec, uns
 	char *buf = Buf;
 	if (rec->head->flags & 0x00040000)
 	{
-	printf("boy read comp field\n");
+	// printf("boy read comp field\n");
 	pos = &rec->pos;
 	buf = rec->buf;
 	}
