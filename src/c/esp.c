@@ -4,10 +4,8 @@
 
 #include "esp.h"
 
+#include <zlib.h>
 #include <time.h>
-
-
-static inline void copy(struct esp *, void *, size_t, size_t);
 
 struct record *read_record(struct esp *);
 struct grup *read_grup(struct esp *);
@@ -104,6 +102,7 @@ inline void form_id(struct form_id *form_id, struct record *record)
 	#endif
 }
 
+char *esp_uncompress(struct esp *, struct record *);
 inline void read_record_subrecords(struct esp *, struct record *);
 
 struct record *read_record(struct esp *esp)
@@ -116,37 +115,46 @@ struct record *read_record(struct esp *esp)
 	rec->head = Depos;
 	Pos += sizeof(struct record_head);
 	Pos += 8;
+	rec->actualSize = rec->head->size;
+	rec->data = Depos;
+	rec->buf = 0;
 	array(&rec->fields, 6, sizeof(void *));
 	insert(&esp->records, rec);
 	// printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
 	// subrecords
-	if (esp_skip_subrecords || rec->head->flags & 0x00040000)
+	if (esp_skip_subrecords)
 	Pos += rec->head->size;
 	else
+	{
+	if (rec->head->flags & 0x00040000)
+	{
+	esp_uncompress(esp, rec);
+	}
 	read_record_subrecords(esp, rec);
+	}
 	return rec;
 }
 
-inline struct subrecord *read_subrecord(struct esp *, unsigned int);
+inline struct subrecord *read_subrecord(struct esp *, struct record *, unsigned int);
 
 inline void read_record_subrecords(struct esp *esp, struct record *rec)
 {
 	long pos = Pos;
 	unsigned int large = 0;
-	while(Pos - pos < (long)rec->head->size)
+	while(Pos - pos < rec->actualSize)
 	{
 	struct subrecord *sub;
-	sub = read_subrecord(esp, large);
+	sub = read_subrecord(esp, rec, large);
 	large = 0;
 	if (sub->head->type == XXXX_HEX)
 	large = *(unsigned int *)sub->data;
-	//insert(&esp->subrecords, sub);
 	insert(&rec->fields, sub);
 	}
 }
 
-inline struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
+inline struct subrecord *read_subrecord(struct esp *esp, struct record *rec, unsigned int override)
 {
+	//if ()
 	struct subrecord *sub;
 	sub = malloc(sizeof(struct subrecord));
 	// head
@@ -176,6 +184,7 @@ struct grup *read_grup(struct esp *esp)
 	grup->head = Depos;
 	Pos += sizeof(struct grup_head);
 	Pos += 16;
+	grup->data = Depos;
 	array(&grup->mixed, 12, sizeof(void **));
 	// printf("G %.4s %u > ", (char *)&grup->head->type, grup->head->size);
 	// records
@@ -208,6 +217,19 @@ inline void read_grup_records(struct esp *esp, struct grup *grup)
 	}
 }
 
+char *esp_uncompress(struct esp *esp, struct record *rec)
+{
+	char *src = rec->data;
+	uint32_t realSize = *(uint32_t *)&src[0];
+	unsigned int size = rec->head->size - 4;
+	src += 4;
+	char *dest = malloc(realSize * sizeof(char));
+	int ret = uncompress(dest, (uLongf*)&realSize, src, size);
+	cassert_(ret == Z_OK, "esp zlib");
+	rec->actualSize = realSize;
+	return dest;
+}
+
 api struct esp_array *esp_filter_records(struct esp *esp, char s[4])
 {
 	struct esp_array *filtered = malloc(sizeof(struct esp_array));
@@ -225,7 +247,7 @@ api struct esp_array *esp_filter_records(struct esp *esp, char s[4])
 	return filtered;
 }
 
-api void esp_free(struct esp **p)
+api void free_esp(struct esp **p)
 {
 	struct esp *esp = *p;
 	*p = NULL;
@@ -233,16 +255,10 @@ api void esp_free(struct esp **p)
 	free(esp);
 }
 
-api void esp_free_array(struct esp_array **p)
+api void free_esp_array(struct esp_array **p)
 {
 	struct esp_array *array = *p;
 	*p = NULL;
 	free(array->array);
 	free(array);
-}
-
-static inline void copy(struct esp *esp, void *dest, size_t size, size_t count)
-{
-	memcpy(dest, Depos, size * count);
-	Pos += size * count;
 }

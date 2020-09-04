@@ -85,6 +85,7 @@ struct grup
 	enum espnum x;
 	unsigned int id;
 	struct grup_head *head;
+	unsigned char *data;
 	struct esp_array grups, records, mixed;
 };
 
@@ -93,7 +94,12 @@ struct record
 	enum espnum x;
 	unsigned int id;
 	struct record_head *head;
+	unsigned char *data;
 	struct esp_array fields;
+	// compression related
+	unsigned int actualSize;
+	int pos;
+	unsigned char *buf;
 };
 
 struct subrecord
@@ -102,7 +108,7 @@ struct subrecord
 	unsigned int id;
 	struct subrecord_head *head;
 	unsigned int actualSize;
-	const char *data;
+	unsigned char *data;
 };
 
 #pragma pack(pop)
@@ -119,7 +125,7 @@ api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
 
 api struct esp_array *esp_filter_records(struct esp *, char s[4]);
 
-api void esp_free(struct esp **);
-api void esp_free_array(struct esp_array **);
+api void free_esp(struct esp **);
+api void free_esp_array(struct esp_array **);
 
 #endif

@@ -117,7 +117,7 @@ void esp_gui()
 			if (esp != NULL)
 			{
 				printf("todo unload non load ordered esp here\n");
-				esp_free(&esp);
+				free_esp(&esp);
 			}
 			if (esp == NULL)
 				esp = esp_load(path->c_str());
@@ -162,7 +162,7 @@ void esp_gui()
 				printf("esp try filter %.4s\n", filter);
 				memcpy(buf, filter, 4);
 				if (filtered)
-					esp_free_array(&filtered);
+					free_esp_array(&filtered);
 				if (strlen(filter) == 4)
 				{
 					filtered = esp_filter_records(esp, filter);
