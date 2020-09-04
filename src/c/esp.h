@@ -8,22 +8,28 @@ typedef struct grup Grup;
 typedef struct record Record;
 typedef struct subrecord Subrecord;
 
+struct form_id;
 struct record;
 struct subrecord;
 struct grup;
 
-#define ESP_GRUP_HEX 0x50555247
-#define ESP_XXXX_HEX 0x58585858
-#define ESP_STAT_HEX 0x54415453
-#define ESP_EDID_HEX 0x44494445
+#define GRUP_HEX 0x50555247
+#define XXXX_HEX 0x58585858
+#define STAT_HEX 0x54415453
+#define EDID_HEX 0x44494445
+#define FULL_HEX 0x4C4C5546
 
 extern int esp_skip_subrecords;
 
 struct esp_array
 {
-	void **array;
+	union {
+	void *array;
+	void **pointers;
+	};
 	size_t used;
 	size_t size;
+	size_t element;
 };
 
 struct esp
@@ -35,7 +41,8 @@ struct esp
 	long filesize;
 	char *path;
 	struct record *header;
-	struct esp_array grups, records, subrecords, statics;
+	struct esp_array formIds;
+	struct esp_array grups, records;
 };
 
 enum espnum
@@ -44,6 +51,14 @@ enum espnum
 };
 
 #pragma pack(push, 1)
+
+#define FORMID_HEX 1
+
+struct form_id
+{
+	unsigned int formId;
+	char hex[9];
+};
 
 struct grup_head
 {
@@ -54,7 +69,7 @@ struct grup_head
 struct record_head
 {
 	unsigned int type;
-	unsigned int dataSize;
+	unsigned int size;
 	unsigned int flags;
 	unsigned int formId;
 };
@@ -78,7 +93,7 @@ struct record
 	enum espnum x;
 	unsigned int id;
 	struct record_head *head;
-	struct esp_array subrecords;
+	struct esp_array fields;
 };
 
 struct subrecord
@@ -102,6 +117,9 @@ api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
 
+api struct esp_array *esp_filter_records(struct esp *, char s[4]);
+
 api void esp_free(struct esp **);
+api void esp_free_array(struct esp_array **);
 
 #endif

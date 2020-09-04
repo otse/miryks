@@ -172,7 +172,13 @@ void bsa_gui()
 		}
 		if (ImGui::BeginTabItem("list"))
 		{
-			ImGui::BeginChildFrame(1, ImVec2(0, 800));
+			//ImGui::Text("Folders %i", bsa->hdr.folders);
+			//ImGui::Text("Files %i", bsa->hdr.files);
+
+			const ImGuiWindowFlags child_flags = 0;
+            const ImGuiID child_id = ImGui::GetID((void*)(intptr_t)0);
+            const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
+			//ImGui::BeginChildFrame(1, ImVec2(0, 800));
 			for (uns_t i = 0; i < bsa->hdr.folders; i++)
 			{
 				if (ImGui::TreeNode(bsa->ca[i]))
@@ -217,8 +223,9 @@ void bsa_gui()
 					ImGui::TreePop();
 				}
 			}
-			ImGui::EndChildFrame();
+			//ImGui::EndChildFrame();
 			ImGui::EndTabItem();
+            ImGui::EndChild();
 		}
 
 		ImGui::EndTabBar();

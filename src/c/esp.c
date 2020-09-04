@@ -10,12 +10,7 @@
 static inline void copy(struct esp *, void *, size_t, size_t);
 
 struct record *read_record(struct esp *);
-void read_record_subrecords(struct esp *, struct record *);
-struct subrecord *read_subrecord(struct esp *, unsigned int);
 struct grup *read_grup(struct esp *);
-void read_grup_records(struct esp *, struct grup *);
-
-void read_subrecord_into_buf(struct esp *, struct subrecord *);
 
 #define Buf esp->buf
 #define Pos esp->pos
@@ -28,32 +23,36 @@ unsigned int grups = 0;
 unsigned int records = 0;
 unsigned int subrecords = 0;
 
-inline void array(struct esp_array *a, size_t initial) {
+inline void array(struct esp_array *a, size_t initial, size_t element) {
 	a->size = initial;
 	a->used = 0;
-	a->array = malloc(a->size * sizeof(void **));
+	a->element = element;
+	a->array = malloc(a->size * a->element);
 }
 
 inline void grow(struct esp_array *a) {
 	if (a->used != a->size)
 	return;
 	a->size *= 2;
-	a->array = realloc(a->array, a->size * sizeof(void **));
+	a->array = realloc(a->array, a->size * a->element);
 }
 
 inline void insert(struct esp_array *a, void *element) {
 	grow(a);
-	a->array[a->used++] = element;
+	a->pointers[a->used++] = element;
 }
 
+// todo cleanup pls
 float read_entire_file(struct esp *esp)
 {
 	clock_t before, after;
 	before = clock();
 	fseek(esp->file, 0, SEEK_END);
 	esp->filesize = ftell(esp->file);
+	printf("esp filesize %u\n", esp->filesize);
 	rewind(esp->file);
 	esp->buf = malloc(sizeof(char) * esp->filesize);
+	cassert_(esp->buf != NULL, "esp cant get memory");
 	size_t read = fread(esp->buf, sizeof(char), esp->filesize, esp->file);
 	cassert_(read, "esp buf bad");
 	rewind(esp->file);
@@ -62,6 +61,9 @@ float read_entire_file(struct esp *esp)
 	printf("read entire esp %i mb took %.2fs\n", esp->filesize / 1024 / 1024, difference);
 	return difference;
 }
+
+// todo cleanup pls
+
 api struct esp *esp_load(const char *path)
 {
 	printf("esp load\n");
@@ -77,10 +79,9 @@ api struct esp *esp_load(const char *path)
 	Pos = 0;
 	before = clock();
 	esp->header = read_record(esp);
-	array(&esp->grups, 200);
-	array(&esp->statics, 200);
-	//array(&esp->records, 200);
-	//array(&esp->subrecords, 200);
+	array(&esp->formIds, 2000, sizeof(struct form_id));
+	array(&esp->grups, 200, sizeof(void *));
+	array(&esp->records, 200, sizeof(void *));
 	while(Pos < esp->filesize)
 	{
 	void *grup = read_grup(esp);
@@ -93,6 +94,18 @@ api struct esp *esp_load(const char *path)
 	return esp;
 }
 
+inline void form_id(struct form_id *form_id, struct record *record)
+{
+	form_id->formId = record->head->formId;
+	#if FORMID_HEX
+	snprintf(form_id->hex, 10, "%08X", form_id->formId);
+	#else
+	form_id.hex = formId;
+	#endif
+}
+
+inline void read_record_subrecords(struct esp *, struct record *);
+
 struct record *read_record(struct esp *esp)
 {
 	struct record *rec;
@@ -103,35 +116,36 @@ struct record *read_record(struct esp *esp)
 	rec->head = Depos;
 	Pos += sizeof(struct record_head);
 	Pos += 8;
-	array(&rec->subrecords, 6);
-	if (rec->head->type == ESP_STAT_HEX)
-	insert(&esp->statics, rec);
+	array(&rec->fields, 6, sizeof(void *));
+	insert(&esp->records, rec);
 	// printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
 	// subrecords
-	if (esp_skip_subrecords || (rec->head->flags & 0x00040000) != 0)
-	Pos += rec->head->dataSize;
+	if (esp_skip_subrecords || rec->head->flags & 0x00040000)
+	Pos += rec->head->size;
 	else
 	read_record_subrecords(esp, rec);
 	return rec;
 }
 
-void read_record_subrecords(struct esp *esp, struct record *rec)
+inline struct subrecord *read_subrecord(struct esp *, unsigned int);
+
+inline void read_record_subrecords(struct esp *esp, struct record *rec)
 {
 	long pos = Pos;
 	unsigned int large = 0;
-	while(Pos - pos < (long)rec->head->dataSize)
+	while(Pos - pos < (long)rec->head->size)
 	{
 	struct subrecord *sub;
 	sub = read_subrecord(esp, large);
 	large = 0;
-	if (sub->head->type == ESP_XXXX_HEX)
+	if (sub->head->type == XXXX_HEX)
 	large = *(unsigned int *)sub->data;
 	//insert(&esp->subrecords, sub);
-	insert(&rec->subrecords, sub);
+	insert(&rec->fields, sub);
 	}
 }
 
-struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
+inline struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
 {
 	struct subrecord *sub;
 	sub = malloc(sizeof(struct subrecord));
@@ -151,6 +165,8 @@ struct subrecord *read_subrecord(struct esp *esp, unsigned int override)
 	return sub;
 }
 
+inline void read_grup_records(struct esp *, struct grup *);
+
 struct grup *read_grup(struct esp *esp)
 {
 	struct grup *grup = malloc(sizeof(struct grup));
@@ -160,40 +176,53 @@ struct grup *read_grup(struct esp *esp)
 	grup->head = Depos;
 	Pos += sizeof(struct grup_head);
 	Pos += 16;
-	//array(&grup->grups, 6);
-	//array(&grup->records, 6);
-	array(&grup->mixed, 12);
+	array(&grup->mixed, 12, sizeof(void **));
 	// printf("G %.4s %u > ", (char *)&grup->head->type, grup->head->size);
 	// records
 	read_grup_records(esp, grup);
 	// printf("\nend grup\n");
 	return grup;
 }
+
 const unsigned int peek_type(struct esp *esp)
 {
 	return *(unsigned int *)(Depos);
 }
-void read_grup_records(struct esp *esp, struct grup *grup)
+
+inline void read_grup_records(struct esp *esp, struct grup *grup)
 {
 	long size = grup->head->size - sizeof(struct grup_head) - 16;
 	long start = Pos;
 	while (Pos - start < size)
 	{
-	if (peek_type(esp) == ESP_GRUP_HEX)
+	if (peek_type(esp) == GRUP_HEX)
 	{
 	void *element = read_grup(esp);
-	//insert(&esp->grups, element);
-	//insert(&grup->grups, element);
 	insert(&grup->mixed, element);
 	}
 	else
 	{
 	void *element = read_record(esp);
-	//insert(&esp->records, element);
-	//insert(&grup->records, element);
 	insert(&grup->mixed, element);
 	}
 	}
+}
+
+api struct esp_array *esp_filter_records(struct esp *esp, char s[4])
+{
+	struct esp_array *filtered = malloc(sizeof(struct esp_array));
+	unsigned int type = *(unsigned int *)s;
+	array(filtered, 100, sizeof(void *));
+	for (int i = 0; i < esp->records.used; i++)
+	{
+	struct record *record = esp->records.pointers[i];
+	if (record->head->type == type)
+	{
+	insert(filtered, record);
+	}
+	}
+	printf("filtered %u recs\n", filtered->used);
+	return filtered;
 }
 
 api void esp_free(struct esp **p)
@@ -202,7 +231,14 @@ api void esp_free(struct esp **p)
 	*p = NULL;
 	fclose(esp->file);
 	free(esp);
-	return;
+}
+
+api void esp_free_array(struct esp_array **p)
+{
+	struct esp_array *array = *p;
+	*p = NULL;
+	free(array->array);
+	free(array);
 }
 
 static inline void copy(struct esp *esp, void *dest, size_t size, size_t count)
