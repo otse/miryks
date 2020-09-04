@@ -37,7 +37,7 @@ struct esp
 	int x;
 	void *file;
 	long pos;
-	unsigned char *buf;
+	char *buf;
 	long filesize;
 	char *path;
 	struct record *header;
@@ -96,10 +96,10 @@ struct record
 	struct record_head *head;
 	unsigned char *data;
 	struct esp_array fields;
-	// compression related
 	unsigned int actualSize;
-	int pos;
-	unsigned char *buf;
+	// compression related
+	long pos;
+	char *buf;
 };
 
 struct subrecord

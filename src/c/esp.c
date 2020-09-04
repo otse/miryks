@@ -102,7 +102,7 @@ inline void form_id(struct form_id *form_id, struct record *record)
 	#endif
 }
 
-char *esp_uncompress(struct esp *, struct record *);
+void uncompress_record(struct esp *, struct record *);
 inline void read_record_subrecords(struct esp *, struct record *);
 
 struct record *read_record(struct esp *esp)
@@ -117,7 +117,6 @@ struct record *read_record(struct esp *esp)
 	Pos += 8;
 	rec->actualSize = rec->head->size;
 	rec->data = Depos;
-	rec->buf = 0;
 	array(&rec->fields, 6, sizeof(void *));
 	insert(&esp->records, rec);
 	// printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
@@ -128,7 +127,9 @@ struct record *read_record(struct esp *esp)
 	{
 	if (rec->head->flags & 0x00040000)
 	{
-	esp_uncompress(esp, rec);
+	rec->buf = rec->pos = 0;
+	uncompress_record(esp, rec);
+	printf("uncompress record! buf %p\n", rec->buf);
 	}
 	read_record_subrecords(esp, rec);
 	}
@@ -139,9 +140,12 @@ inline struct subrecord *read_subrecord(struct esp *, struct record *, unsigned 
 
 inline void read_record_subrecords(struct esp *esp, struct record *rec)
 {
-	long pos = Pos;
+	long *pos = &Pos;
+	if (rec->head->flags & 0x00040000)
+	pos = &rec->pos;
+	long start = *pos;
 	unsigned int large = 0;
-	while(Pos - pos < rec->actualSize)
+	while(*pos - start < rec->actualSize)
 	{
 	struct subrecord *sub;
 	sub = read_subrecord(esp, rec, large);
@@ -154,21 +158,28 @@ inline void read_record_subrecords(struct esp *esp, struct record *rec)
 
 inline struct subrecord *read_subrecord(struct esp *esp, struct record *rec, unsigned int override)
 {
-	//if ()
+	long *pos = &Pos;
+	char *buf = Buf;
+	if (rec->head->flags & 0x00040000)
+	{
+	printf("boy read comp field\n");
+	pos = &rec->pos;
+	buf = rec->buf;
+	}
 	struct subrecord *sub;
 	sub = malloc(sizeof(struct subrecord));
 	// head
 	sub->x = SUBRECORD;
 	sub->id = subrecords++;
-	sub->head = Depos;
-	Pos += sizeof(struct subrecord_head);
+	sub->head = buf + *pos;
+	*pos += sizeof(struct subrecord_head);
 	if (override)
 	sub->actualSize = override;
 	else
 	sub->actualSize = sub->head->size;
 	// data
-	sub->data = Depos;
-	Pos += sub->actualSize;
+	sub->data = buf + *pos;
+	*pos += sub->actualSize;
 	// printf("S %.4s %u > ", (char *)&sub->head->type, sub->head->size);
 	return sub;
 }
@@ -217,17 +228,16 @@ inline void read_grup_records(struct esp *esp, struct grup *grup)
 	}
 }
 
-char *esp_uncompress(struct esp *esp, struct record *rec)
+void uncompress_record(struct esp *esp, struct record *rec)
 {
 	char *src = rec->data;
-	uint32_t realSize = *(uint32_t *)&src[0];
+	unsigned int realSize = *(unsigned int *)src;
 	unsigned int size = rec->head->size - 4;
 	src += 4;
-	char *dest = malloc(realSize * sizeof(char));
-	int ret = uncompress(dest, (uLongf*)&realSize, src, size);
+	rec->buf = malloc(realSize * sizeof(char));
+	int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);
 	cassert_(ret == Z_OK, "esp zlib");
 	rec->actualSize = realSize;
-	return dest;
 }
 
 api struct esp_array *esp_filter_records(struct esp *esp, char s[4])
