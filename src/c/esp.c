@@ -12,7 +12,6 @@ struct grup *read_grup(struct esp *);
 
 #define Buf esp->buf
 #define Pos esp->pos
-#define Depos Buf + Pos
 
 int report = 0;
 int esp_skip_subrecords = 0;
@@ -102,7 +101,7 @@ inline void form_id(struct form_id *form_id, struct record *record)
 	#endif
 }
 
-void uncompress_record(struct esp *, struct record *);
+void uncompress_record(struct record *);
 inline void read_record_subrecords(struct esp *, struct record *);
 
 struct record *read_record(struct esp *esp)
@@ -112,11 +111,11 @@ struct record *read_record(struct esp *esp)
 	// head
 	rec->x = RECORD;
 	rec->id = records++;
-	rec->head = Depos;
+	rec->head = Buf + Pos;
 	Pos += sizeof(struct record_head);
 	Pos += 8;
 	rec->actualSize = rec->head->size;
-	rec->data = Depos;
+	rec->data = Buf + Pos;
 	array(&rec->fields, 6, sizeof(void *));
 	insert(&esp->records, rec);
 	// printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
@@ -128,7 +127,7 @@ struct record *read_record(struct esp *esp)
 	if (rec->head->flags & 0x00040000)
 	{
 	rec->buf = rec->pos = 0;
-	uncompress_record(esp, rec);
+	uncompress_record(rec);
 	read_record_subrecords(esp, rec);
 	Pos += rec->head->size;
 	}
@@ -194,10 +193,10 @@ struct grup *read_grup(struct esp *esp)
 	// head
 	grup->x = GRUP;
 	grup->id = grups++;
-	grup->head = Depos;
+	grup->head = Buf + Pos;
 	Pos += sizeof(struct grup_head);
 	Pos += 16;
-	grup->data = Depos;
+	grup->data = Buf + Pos;
 	array(&grup->mixed, 12, sizeof(void **));
 	// printf("G %.4s %u > ", (char *)&grup->head->type, grup->head->size);
 	// records
@@ -208,7 +207,7 @@ struct grup *read_grup(struct esp *esp)
 
 const unsigned int peek_type(struct esp *esp)
 {
-	return *(unsigned int *)(Depos);
+	return *(unsigned int *)(Buf + Pos);
 }
 
 inline void read_grup_records(struct esp *esp, struct grup *grup)
@@ -230,7 +229,7 @@ inline void read_grup_records(struct esp *esp, struct grup *grup)
 	}
 }
 
-void uncompress_record(struct esp *esp, struct record *rec)
+void uncompress_record(struct record *rec)
 {
 	char *src = rec->data;
 	unsigned int realSize = *(unsigned int *)src;
