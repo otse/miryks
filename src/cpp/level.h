@@ -15,10 +15,22 @@ extern "C"
 #include "cpp/opengl/geometry"
 #include "cpp/opengl/material"
 
+namespace dark2
+{
+struct Cell
+{
+	Record *cell;
+	Grup *persistent;
+	Grup *non_persistent;
+};
+
 class Level
 {
 public:
 	Level();
 
+	static Cell GetCell(const char *);
+
 	void Update();
 };
+}

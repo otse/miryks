@@ -41,7 +41,7 @@ void AABB::extend(const AABB &bb)
 
 void AABB::extend(const float f)
 {
-	//assert_(is_zero(), "zero aabb");
+	//Assert(is_zero(), "zero aabb");
 	min -= vec3(f);
 	max += vec3(f);
 }

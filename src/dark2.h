@@ -8,9 +8,6 @@ typedef struct esp Esp;
 typedef struct rc Rc;
 struct esp_t;
 
-class Level;
-class Mesh;
-
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
 
 #include "cpp/opengl/types"
@@ -19,13 +16,16 @@ class Mesh;
 
 namespace dark2
 {
+	class Level;
+	class Mesh;
+
 	namespace viewer
 	{
-	extern Mesh *viewed_mesh;
-	extern Renderable *viewed_object;
+		extern Mesh *viewed_mesh;
+		extern Renderable *viewed_object;
 
-	void spotlight(Rc *);
-	}
+		void spotlight(Rc *);
+	} // namespace viewer
 
 	//namespace importers
 	//{
@@ -46,14 +46,14 @@ namespace dark2
 	extern ViewerCamera *viewer_camera;
 
 	extern Level *dungeon;
-	
+
 	extern Esp *skyrim;
 	extern Esp *testMod;
 	extern Bsa *interface;
 	extern Bsa *meshes;
 	extern Bsa *animations;
 	extern Bsa *textures;
-	
+
 } // namespace dark2
 
 #define READ_BSA_RESOURCE "Load"

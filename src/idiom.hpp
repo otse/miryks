@@ -18,7 +18,7 @@ void log_(
       //file << (std::cout << ... << args);
 }
 
-#define assert_(e, m)                \
+#define Assert(e, m)                \
       if (!(e))                      \
       {                              \
             log_("assert hit: ", m); \

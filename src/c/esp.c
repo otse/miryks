@@ -257,7 +257,7 @@ void make_top_grups(struct esp *esp)
 	}
 }
 
-struct grup *esp_get_top_grup(struct esp *esp, char type[5])
+api struct grup *esp_get_top_grup(struct esp *esp, char type[5])
 {
 	for (int i = 0; i < esp->grups.size; i++)
 	if (*(unsigned int *)type == *(unsigned int *)esp->tops[i])

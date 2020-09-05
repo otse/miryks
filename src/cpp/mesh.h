@@ -14,6 +14,8 @@ extern "C"
 #include "cpp/opengl/geometry"
 #include "cpp/opengl/material"
 
+namespace dark2
+{
 class Mesh
 {
 public:
@@ -32,3 +34,4 @@ public:
 
 	Group *Nested(Rd *);
 };
+}
