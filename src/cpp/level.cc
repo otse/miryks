@@ -12,13 +12,13 @@ extern "C"
 
 namespace dark2
 {
-	Cell Level::GetCell(const char *edid)
+	Cell Level::GetCell(const char *editorId)
 	{
-		Cell cell;
+		Cell cell = { false };
 
 		Grup *top = esp_get_top_grup(testMod, "CELL");
 
-		Assert(top, "plugin has no top cells?");
+		Assert(top, "no cells top grup");
 
 		for (int i = 0; i < top->mixed.size; i++)
 		{
@@ -28,10 +28,19 @@ namespace dark2
 				Grup *subBlock = (Grup *)block->mixed.elements[j];
 				for (int k = 0; k < subBlock->mixed.size; k += 2)
 				{
-					Record *cell = (Record *)subBlock->mixed.elements[k];
+					Record *record = (Record *)subBlock->mixed.elements[k];
 					Grup *grup = (Grup *)subBlock->mixed.elements[k + 1];
-					Assert(cell->head->type == *(unsigned int *)"CELL", "level getcell isnt a cell");
-					printf("Found cell %s\n", ((Subrecord *)cell->fields.elements[0])->data);
+					Assert(record->head->type == *(unsigned int *)"CELL", "isnt a cell");
+					const char *cellEdid = (char *)((Subrecord *)record->fields.elements[0])->data;
+					printf("Found cell %s\n", cellEdid);
+					if (0 == strcmp(cellEdid, editorId))
+					{
+						printf("Found your cell %s\n", cellEdid);
+						cell.cell = record;
+						cell.persistent = (Grup *)grup->mixed.elements[0];
+						cell.non_persistent = (Grup *)grup->mixed.elements[1];
+						return cell;
+					}
 				}
 			}
 		}
@@ -43,7 +52,7 @@ namespace dark2
 	{
 		Group *group = new Group();
 
-		GetCell("DarkSchmuck");
+		Cell cell = GetCell("Dark2Schmuck");
 	}
 
 	/*Grup *cells = dark2::skyrim->grups.grups[57];

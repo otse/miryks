@@ -19,6 +19,7 @@ namespace dark2
 {
 struct Cell
 {
+	bool good;
 	Record *cell;
 	Grup *persistent;
 	Grup *non_persistent;
