@@ -24,9 +24,9 @@ namespace dark2
 {
 	namespace viewer
 	{
-	Mesh *mesh = nullptr;
-	Renderable *object = nullptr;
-	}
+		Mesh *mesh = nullptr;
+		Renderable *object = nullptr;
+	} // namespace viewer
 
 	Level *dungeon;
 

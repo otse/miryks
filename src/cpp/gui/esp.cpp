@@ -19,40 +19,28 @@ static stringstream ss;
 
 static Esp *esp = NULL;
 
-char *get_skyrim_grup(Grup *grup)
-{
-	if (esp->header->head->flags & 0x00000001)
-	{
-		if (grup->id == 30)
-		{
-			return "Static";
-		}
-	}
-	return "";
-}
-
-void im_grup(Grup *);
+void im_grup(Grup *, int);
 void im_record(Record *);
 void im_subrecord(Subrecord *);
 
-void im_grup(Grup *grup)
+void im_grup(Grup *grup, int top_grup = -1)
 {
 	char t[100];
-	snprintf(t, 100, "GRUP %i %s", grup->id, get_skyrim_grup(grup));
+	snprintf(t, 100, "GRUP %i %s", grup->id, top_grup != -1 ? esp->tops[top_grup] : "");
 	if (ImGui::TreeNode(t))
 	{
 		char s[100];
 		esp_print_grup(esp, s, grup);
 		ImGui::Text(s);
-		for (int i = 0; i < grup->mixed.used; i++)
+		for (int i = 0; i < grup->mixed.size; i++)
 		{
-			void *element = grup->mixed.pointers[i];
-			if (*(enum espnum *)element == GRUP)
-				im_grup((Grup *)element);
-			if (*(enum espnum *)element == RECORD)
-				im_record((Record *)element);
+			void *element = grup->mixed.elements[i];
+			if (*(char *)element == GRUP)
+				im_grup(grup->mixed.grups[i]);
+			if (*(char *)element == RECORD)
+				im_record(grup->mixed.records[i]);
 		}
-		if (grup->mixed.used)
+		if (grup->mixed.size)
 			ImGui::Separator();
 		ImGui::TreePop();
 	}
@@ -67,9 +55,9 @@ void im_record(Record *record)
 		char s[200];
 		esp_print_record(esp, s, record);
 		ImGui::Text(s);
-		for (int i = 0; i < record->fields.used; i++)
+		for (int i = 0; i < record->fields.size; i++)
 		{
-			im_subrecord((Subrecord *)record->fields.pointers[i]);
+			im_subrecord(record->fields.subrecords[i]);
 		}
 		ImGui::TreePop();
 	}
@@ -144,8 +132,8 @@ void esp_gui()
 			//}
 			//if (ImGui::TreeNode("Grups"))
 			//{
-			for (int i = 0; i < esp->grups.used; i++)
-				im_grup((Grup *)esp->grups.pointers[i]);
+			for (int i = 0; i < esp->grups.size; i++)
+				im_grup((Grup *)esp->grups.elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();
@@ -165,41 +153,41 @@ void esp_gui()
 					free_esp_array(&filtered);
 				if (strlen(filter) == 4)
 				{
-					filtered = esp_filter_records(esp, filter);
+					filtered = esp_filter(esp, filter);
 				}
 			}
 			if (filtered)
 			{
-				ImGui::Text("Found %i records", filtered->used);
-				//ImGui::Text("%i", esp->statics.used);
+				ImGui::Text("Found %i records", filtered->size);
+				//ImGui::Text("%i", esp->statics.size);
 				const ImGuiWindowFlags child_flags = 0;
 				const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
 				const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
-				for (int i = 0; i < filtered->used; i++)
-					im_record((Record *)filtered->pointers[i]);
+				for (int i = 0; i < filtered->size; i++)
+					im_record((Record *)filtered->elements[i]);
 				ImGui::EndChild();
 			}
 			ImGui::EndTabItem();
 		}
 		/*if (ImGui::BeginTabItem("statics"))
 		{
-			//ImGui::Text("%i", esp->statics.used);
+			//ImGui::Text("%i", esp->statics.size);
 			const ImGuiWindowFlags child_flags = 0;
 			const ImGuiID child_id = ImGui::GetID((void*)(intptr_t)0);
 			const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
-			for (int i = 0; i < esp->statics.used; i++)
-				im_record((Record *)esp->statics.pointers[i]);
+			for (int i = 0; i < esp->statics.size; i++)
+				im_record((Record *)esp->statics.elements[i]);
 			ImGui::EndChild();
 			ImGui::EndTabItem();
 		}*/
 		if (ImGui::BeginTabItem("formIds"))
 		{
 #if 0
-			//ImGui::Text("%i", esp->formIds.used);
+			//ImGui::Text("%i", esp->formIds.size);
 			const ImGuiWindowFlags child_flags = 0;
 			const ImGuiID child_id = ImGui::GetID((void*)(intptr_t)0);
 			const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
-			for (int i = 0; i < esp->formIds.used; i++)
+			for (int i = 0; i < esp->formIds.size; i++)
 			{
 				struct form_id *formId = &esp->formIds.formIds[i];
 				if (ImGui::TreeNode(formId->hex))

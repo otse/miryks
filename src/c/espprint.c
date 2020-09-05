@@ -14,7 +14,7 @@ id: %u\
 grup->id,
 (char *)&grup->head->type,
 grup->head->size,
-grup->mixed.used
+grup->mixed.size
 );
 }
 
@@ -35,7 +35,7 @@ record->head->size,
 record->head->flags,
 record->head->formId,
 (record->head->flags & 0x00040000) != 0,
-record->fields.used
+record->fields.size
 );
 }
 

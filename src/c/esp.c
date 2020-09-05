@@ -22,23 +22,27 @@ unsigned int records = 0;
 unsigned int subrecords = 0;
 unsigned int decompressions = 0;
 
+const char *esp_types[] = {"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"};
+
+#define COUNT_OF(x) sizeof(x) / sizeof(0[x])
+
 inline void array(struct esp_array *a, size_t initial, size_t element) {
-	a->size = initial;
-	a->used = 0;
+	a->capacity = initial;
+	a->size = 0;
 	a->element = element;
-	a->array = malloc(a->size * a->element);
+	a->elements = malloc(a->capacity * a->element);
 }
 
 inline void grow(struct esp_array *a) {
-	if (a->used != a->size)
+	if (a->size != a->capacity)
 	return;
-	a->size *= 2;
-	a->array = realloc(a->array, a->size * a->element);
+	a->capacity *= 2;
+	a->elements = realloc(a->elements, a->capacity * a->element);
 }
 
 inline void insert(struct esp_array *a, void *element) {
 	grow(a);
-	a->pointers[a->used++] = element;
+	a->elements[a->size++] = element;
 }
 
 // todo cleanup pls
@@ -61,7 +65,7 @@ float read_entire_file(struct esp *esp)
 	return difference;
 }
 
-// todo cleanup pls
+void make_top_grups(struct esp *);
 
 api struct esp *esp_load(const char *path)
 {
@@ -88,7 +92,9 @@ api struct esp *esp_load(const char *path)
 	{
 	void *grup = read_grup(esp);
 	insert(&esp->grups, grup);
+	//printf("insert grup %u\n", esp->grups.size);
 	}
+	make_top_grups(esp);
 	after = clock();
 	float difference = (float)(after - before) / CLOCKS_PER_SEC;
 	printf("parsing esp took %.2fs, alltogether %.2fs\n", difference, difference + entirety);
@@ -131,8 +137,7 @@ struct record *read_record(struct esp *esp)
 	{
 	if (rec->head->flags & 0x00040000)
 	{
-	rec->buf = 0;
-	rec->pos = 0;
+	rec->buf = rec->pos = 0;
 	uncompress_record(rec);
 	read_record_subrecords(esp, rec);
 	Pos += rec->head->size;
@@ -232,6 +237,55 @@ inline void read_grup_records(struct esp *esp, struct grup *grup)
 	}
 }
 
+void make_top_grups(struct esp *esp)
+{
+	char type[5] = "pooh";
+	esp->tops = malloc(sizeof(const char *) * COUNT_OF(esp_types));
+	for (int i = 0; i < esp->grups.size; i++)
+	{
+	esp->tops[i] = NULL;
+	struct grup *top = esp->grups.elements[i];
+	if (top->mixed.size == 0 || *(char *)top->mixed.elements[0] != RECORD)
+	continue;
+	struct record *first = top->mixed.elements[0];
+	(*(unsigned int *)type) = first->head->type;
+	for (int j = 0; j < COUNT_OF(esp_types); j++)
+	{
+	if (0 == strcmp(type, esp_types[j]))
+	{
+	esp->tops[i] = esp_types[j];
+	break;
+	}
+	}
+	}
+}
+
+int esp_get_top_grup(struct esp *esp, unsigned int t)
+{
+	char type[5] = "pooh";
+	(*(unsigned int *)type) = t;
+	for (int i = 0; i < COUNT_OF(esp_types); i++)
+	{
+	
+	}
+}
+
+api struct esp_array *esp_filter(struct esp *esp, char type[4])
+{
+	struct esp_array *filtered;
+	filtered = malloc(sizeof(struct esp_array));
+	array(filtered, 100, sizeof(void *));
+	for (int i = 0; i < esp->records.size; i++)
+	{
+	struct record *record = esp->records.elements[i];
+	if (record->head->type == *(unsigned int *)type)
+	{
+	insert(filtered, record);
+	}
+	}
+	return filtered;
+}
+
 void uncompress_record(struct record *rec)
 {
 	char *src = rec->data;
@@ -243,23 +297,6 @@ void uncompress_record(struct record *rec)
 	cassert_(ret == Z_OK, "esp zlib");
 	rec->actualSize = realSize;
 	decompressions++;
-}
-
-api struct esp_array *esp_filter_records(struct esp *esp, char s[4])
-{
-	struct esp_array *filtered = malloc(sizeof(struct esp_array));
-	unsigned int type = *(unsigned int *)s;
-	array(filtered, 100, sizeof(void *));
-	for (int i = 0; i < esp->records.used; i++)
-	{
-	struct record *record = esp->records.pointers[i];
-	if (record->head->type == type)
-	{
-	insert(filtered, record);
-	}
-	}
-	// printf("filtered %u records\n", filtered->used);
-	return filtered;
 }
 
 api void free_esp(struct esp **p)
@@ -274,6 +311,6 @@ api void free_esp_array(struct esp_array **p)
 {
 	struct esp_array *array = *p;
 	*p = NULL;
-	free(array->array);
+	free(array->elements);
 	free(array);
 }

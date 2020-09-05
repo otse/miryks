@@ -20,16 +20,19 @@ struct grup;
 #define FULL_HEX 0x4C4C5546
 
 extern int esp_skip_subrecords;
+
 extern struct esp *plugins[5];
 
 struct esp_array
 {
 	union {
-	void *array;
-	void **pointers;
+	void **elements;
+	struct grup **grups;
+	struct record **records;
+	struct subrecord **subrecords;
 	};
-	size_t used;
 	size_t size;
+	size_t capacity;
 	size_t element;
 };
 
@@ -44,12 +47,12 @@ struct esp
 	struct record *header;
 	struct esp_array formIds;
 	struct esp_array grups, records;
+	const char **tops;
 };
 
-enum espnum
-{
-	GRUP, RECORD, SUBRECORD
-};
+#define GRUP 1
+#define RECORD 2
+#define SUBRECORD 3
 
 #pragma pack(push, 1)
 
@@ -83,16 +86,16 @@ struct subrecord_head
 
 struct grup
 {
-	enum espnum x;
+	char x;
 	unsigned int id;
 	struct grup_head *head;
 	unsigned char *data;
-	struct esp_array grups, records, mixed;
+	struct esp_array mixed;
 };
 
 struct record
 {
-	enum espnum x;
+	char x;
 	unsigned int id;
 	struct record_head *head;
 	unsigned char *data;
@@ -105,7 +108,7 @@ struct record
 
 struct subrecord
 {
-	enum espnum x;
+	char x;
 	unsigned int id;
 	struct subrecord_head *head;
 	unsigned int actualSize;
@@ -124,7 +127,10 @@ api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
 
-api struct esp_array *esp_filter_records(struct esp *, char s[4]);
+api struct esp_array *esp_filter(struct esp *, char s[4]);
+
+extern const char *esp_types[];
+api int esp_get_top_grup(struct esp *);
 
 api void free_esp(struct esp **);
 api void free_esp_array(struct esp_array **);
