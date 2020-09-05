@@ -33,6 +33,7 @@ namespace dark2
 	std::string OLDRIM;
 
 	Esp *skyrim;
+	Esp *testMod;
 	Bsa *interface;
 	Bsa *meshes;
 	Bsa *animations;
@@ -87,7 +88,9 @@ int main()
 	cassert_(exists(PATH_TXT), "missing " PATH_TXT);
 	OLDRIM = fread(PATH_TXT);
 	skyrim = esp_load((OLDRIM + "Data/Skyrim.esm").c_str());
+	testMod = esp_load((OLDRIM + "Data/TestMod.esp").c_str());
 	plugins[0] = skyrim;
+	plugins[1] = testMod;
 	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
 	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
 	struct bsa *array[2] = {meshes, textures};

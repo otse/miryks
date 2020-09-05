@@ -153,7 +153,7 @@ void esp_gui()
 					free_esp_array(&filtered);
 				if (strlen(filter) == 4)
 				{
-					filtered = esp_filter(esp, filter);
+					filtered = esp_lazy_filter(esp, filter);
 				}
 			}
 			if (filtered)

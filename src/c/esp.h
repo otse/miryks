@@ -124,9 +124,9 @@ api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
 
-api struct esp_array *esp_filter(struct esp *, char [4]);
+api struct esp_array *esp_lazy_filter(struct esp *, char [5]);
 
-api int esp_get_top_grup(struct esp *, char [4]);
+api struct grup *esp_get_top_grup(struct esp *, char [5]);
 
 api void free_esp(struct esp **);
 api void free_esp_array(struct esp_array **);

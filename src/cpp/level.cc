@@ -13,6 +13,16 @@ Level::Level()
 	int l;
 	Group *group = new Group();
 
+	//Grup *top_grup_cells = esp_get_top_grup(dark2::testMod, "CELL");
+
+	printf("level top grup for cell is %p\n", esp_get_top_grup(dark2::skyrim, "CELL"));
+
+	//int l = dark2::testMod->grups[top_grup_cells]->size;
+	//for (int i = 0; i < l; i++)
+	{
+		
+	}
+
 	return;
 
 	/*Grup *cells = dark2::skyrim->grups.grups[57];

@@ -48,6 +48,7 @@ namespace dark2
 	extern Level *dungeon;
 	
 	extern Esp *skyrim;
+	extern Esp *testMod;
 	extern Bsa *interface;
 	extern Bsa *meshes;
 	extern Bsa *animations;
