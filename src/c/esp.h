@@ -23,14 +23,11 @@ extern int esp_skip_subrecords;
 
 extern struct esp *plugins[5];
 
+extern const char *esp_types[];
+
 struct esp_array
 {
-	union {
 	void **elements;
-	struct grup **grups;
-	struct record **records;
-	struct subrecord **subrecords;
-	};
 	size_t size;
 	size_t capacity;
 	size_t element;
@@ -127,10 +124,9 @@ api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
 
-api struct esp_array *esp_filter(struct esp *, char s[4]);
+api struct esp_array *esp_filter(struct esp *, char [4]);
 
-extern const char *esp_types[];
-api int esp_get_top_grup(struct esp *);
+api int esp_get_top_grup(struct esp *, char [4]);
 
 api void free_esp(struct esp **);
 api void free_esp_array(struct esp_array **);

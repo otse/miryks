@@ -36,9 +36,9 @@ void im_grup(Grup *grup, int top_grup = -1)
 		{
 			void *element = grup->mixed.elements[i];
 			if (*(char *)element == GRUP)
-				im_grup(grup->mixed.grups[i]);
+				im_grup((Grup *)grup->mixed.elements[i]);
 			if (*(char *)element == RECORD)
-				im_record(grup->mixed.records[i]);
+				im_record((Record *)grup->mixed.elements[i]);
 		}
 		if (grup->mixed.size)
 			ImGui::Separator();
@@ -57,7 +57,7 @@ void im_record(Record *record)
 		ImGui::Text(s);
 		for (int i = 0; i < record->fields.size; i++)
 		{
-			im_subrecord(record->fields.subrecords[i]);
+			im_subrecord((Subrecord *)record->fields.elements[i]);
 		}
 		ImGui::TreePop();
 	}

@@ -239,19 +239,24 @@ inline void read_grup_records(struct esp *esp, struct grup *grup)
 
 void make_top_grups(struct esp *esp)
 {
-	char type[5] = "pooh";
-	esp->tops = malloc(sizeof(const char *) * COUNT_OF(esp_types));
+	const int max = COUNT_OF(esp_types);
+	esp->tops = malloc(sizeof(const char *) * max);
 	for (int i = 0; i < esp->grups.size; i++)
 	{
 	esp->tops[i] = NULL;
-	struct grup *top = esp->grups.elements[i];
-	if (top->mixed.size == 0 || *(char *)top->mixed.elements[0] != RECORD)
+	struct grup *grup = esp->grups.elements[i];
+	retry:
+	if (grup->mixed.size == 0)
 	continue;
-	struct record *first = top->mixed.elements[0];
-	(*(unsigned int *)type) = first->head->type;
-	for (int j = 0; j < COUNT_OF(esp_types); j++)
+	if(*(char *)grup->mixed.elements[0] != RECORD)
 	{
-	if (0 == strcmp(type, esp_types[j]))
+	grup = grup->mixed.elements[0];
+	goto retry;
+	}
+	struct record *first = grup->mixed.elements[0];
+	for (int j = 0; j < max; j++)
+	{
+	if (first->head->type == *(unsigned int *)esp_types[j])
 	{
 	esp->tops[i] = esp_types[j];
 	break;
@@ -260,14 +265,15 @@ void make_top_grups(struct esp *esp)
 	}
 }
 
-int esp_get_top_grup(struct esp *esp, unsigned int t)
+int esp_get_top_grup(struct esp *esp, char type[4])
 {
-	char type[5] = "pooh";
-	(*(unsigned int *)type) = t;
-	for (int i = 0; i < COUNT_OF(esp_types); i++)
+	const int max = COUNT_OF(esp_types);
+	for (int i = 0; i < max; i++)
 	{
-	
+	if (*(unsigned int *)type == *(unsigned int *)esp_types[i])
+	return i;
 	}
+	return NULL;
 }
 
 api struct esp_array *esp_filter(struct esp *esp, char type[4])
