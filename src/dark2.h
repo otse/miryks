@@ -16,6 +16,12 @@ struct esp_t;
 
 namespace dark2
 {
+	vec2 *cast_vec_2(float *f);
+	vec3 *cast_vec_3(float *f);
+	vec4 *cast_vec_4(float *f);
+	mat3 *cast_mat_3(float *f);
+	mat4 *cast_mat_4(float *f);
+	
 	class Level;
 	class Mesh;
 

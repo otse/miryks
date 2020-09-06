@@ -55,6 +55,16 @@ void im_record(Record *record)
 		char s[200];
 		esp_print_record(esp, s, record);
 		ImGui::Text(s);
+		if (ImGui::TreeNode("formId"))
+		{
+			if (record->fi)
+			{
+				char s[200];
+				esp_print_form_id(esp, s, record->fi);
+				ImGui::Text(s);
+			}
+			ImGui::TreePop();
+		}
 		for (int i = 0; i < record->fields.size; i++)
 		{
 			im_subrecord((Subrecord *)record->fields.elements[i]);

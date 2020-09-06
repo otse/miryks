@@ -17,21 +17,40 @@ extern "C"
 
 namespace dark2
 {
-struct Cell
-{
-	bool good;
-	Record *cell;
-	Grup *persistent;
-	Grup *non_persistent;
-};
+	class Reference;
 
-class Level
-{
-public:
-	Level();
+	struct Cell
+	{
+		bool good;
+		Record *cell;
+		Grup *persistent;
+		Grup *non_persistent;
+	};
 
-	static Cell GetCell(const char *);
+	class Level
+	{
+	public:
+		Level();
 
-	void Update();
-};
-}
+		//Cell cell;
+
+		static Cell GetCell(const char *);
+
+		std::vector<Reference *> references;
+
+		void Update();
+		void LoadCell(Cell &);
+		
+		void ParseGrup(Cell &, Grup *);
+	};
+
+	class Reference
+	{
+	public:
+		Reference();
+
+		mat4 matrix;
+
+		void SetData(Record *);
+	};
+} // namespace dark2

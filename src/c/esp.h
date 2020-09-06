@@ -27,24 +27,26 @@ extern const char *esp_types[];
 
 struct esp_array
 {
+	union{
 	void **elements;
+	struct subrecord **fields;
+	};
 	size_t size;
 	size_t capacity;
-	size_t element;
 };
 
 struct esp
 {
-	int x;
 	void *file;
 	long pos;
 	char *buf;
-	long filesize;
 	char *path;
+	long size;
 	struct record *header;
-	struct esp_array formIds;
 	struct esp_array grups, records;
+	struct form_id *formIds;
 	const char **tops;
+	const char **masters;
 };
 
 #define GRUP 1
@@ -53,12 +55,13 @@ struct esp
 
 #pragma pack(push, 1)
 
-#define FORMID_HEX 1
-
 struct form_id
 {
-	unsigned int formId;
+	struct esp *esp;
+	unsigned int formId, modIndex, objectIndex;
 	char hex[9];
+	struct record *record;
+	void *plugin;
 };
 
 struct grup_head
@@ -95,8 +98,9 @@ struct record
 	char x;
 	unsigned int id;
 	struct record_head *head;
-	unsigned char *data;
+	struct form_id *fi;
 	struct esp_array fields;
+	unsigned char *data;
 	unsigned int actualSize;
 	// compression related
 	long pos;
@@ -120,13 +124,14 @@ api struct esp *esp_load(const char *);
 
 api void esp_read_subrecord_data(struct esp *, struct subrecord *);
 
+api void esp_print_form_id(struct esp *, char *, struct form_id *);
 api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
 
-api struct esp_array *esp_lazy_filter(struct esp *, char [5]);
+api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 
-api struct grup *esp_get_top_grup(struct esp *, char [5]);
+api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
 
 api void free_esp(struct esp **);
 api void free_esp_array(struct esp_array **);
