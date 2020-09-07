@@ -78,7 +78,7 @@ Nif *dark2::make_nif(Rc *rc)
 	nif->path = rc->path;
 	nif->buf = rc->buf;
 	nif_read(nif);
-	nif_save(rc, nif);
+	//nif_save(rc, nif);
 	return nif;
 }
 
@@ -91,8 +91,10 @@ void dark2::viewer::spotlight(Rc *rc)
 		delete object;
 	}
 	Nif *nif = nif_saved(rc);
-	if (nif == NULL)
+	if (nif == NULL) {
 		nif = make_nif(rc);
+		nif_save(rc, nif);
+	}
 	mesh = new Mesh;
 	mesh->Construct(nif);
 	object = new Renderable(mat4(1.0), mesh->baseGroup);

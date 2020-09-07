@@ -66,7 +66,7 @@ namespace dark2
 			Assert(*(char *)element == RECORD, "cell mixed has non record");
 			auto ref = new Reference;
 			ref->SetData((Record *)element);
-			printf("Reference\n");
+			//printf("Reference\n");
 		}
 	}
 
@@ -87,11 +87,19 @@ namespace dark2
 
 	void Reference::SetData(Record *record)
 	{
+		matrix = mat4(1.0);
+
+		mat4 translation(1.0), rotation(1.0), scale(1.0);
+
 		for (int i = 0; i < record->fields.size; i++)
 		{
 			Subrecord *field = (Subrecord *)record->fields.fields[i];
 			if (field->head->type == *(unsigned int *)"EDID")
 			{
+			}
+			if (field->head->type == *(unsigned int *)"XSCL")
+			{
+				scale = glm::scale(mat4(1.0), vec3(*(float *)field->data));
 			}
 			if (field->head->type == *(unsigned int *)"DATA")
 			{
@@ -101,25 +109,23 @@ namespace dark2
 				//printf("Reference has DATA pos %f %f %f\n", pos.x, pos.y, pos.z);
 				//printf("Reference has DATA rad %f %f %f\n", rad.x, rad.y, rad.z);
 
-				matrix = mat4(1.0f);
+				translation = translate(mat4(1.0f), pos);
 
-				mat4 translation = translate(mat4(1.0f), pos);
-				mat4 rotation = mat4(1.0f);
-				mat4 scale = glm::scale(mat4(1.0), vec3(1));
-
+				//glm::quat rot = glm::angleAxis(glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f))
 				rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
 				rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
 				rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
-
-				matrix = translation * rotation * scale;
 			}
 			if (field->head->type == *(unsigned int *)"NAME")
 			{
 				unsigned int formId = *(unsigned int *)field->data;
-				printf("NAME %i\n", formId);
-				Record *base = esp_get_record_by_form_id(formId);
+				//printf("NAME %i\n", formId);
+				Record *base = esp_brute_record_by_form_id(formId);
 				Assert(base, "ref cant find name base");
-				if (base->head->type == *(unsigned int *)"STAT")
+				if (base->head->type == *(unsigned int *)"STAT" ||
+					base->head->type == *(unsigned int *)"CONT" ||
+					base->head->type == *(unsigned int *)"MISC"
+				)
 				{
 					for (int i = 0; i < base->fields.size; i++)
 					{
@@ -130,19 +136,22 @@ namespace dark2
 						data = "meshes\\" + data;
 						std::transform(data.begin(), data.end(), data.begin(),
 									   [](unsigned char c) { return std::tolower(c); });
-						printf("stat base has a modl %s\n", data.c_str());
+						//printf("stat base has a modl %s\n", data.c_str());
 						Rc *rc = bsa_find(meshes, data.c_str());
-						printf("found a rc %p\n", rc);
+						//printf("found a rc %p\n", rc);
 						Nif *nif = nif_saved(rc);
-						if (nif == NULL)
+						if (nif == NULL) {
 							nif = make_nif(rc);
-						nif_save(rc, nif);
+							nif_save(rc, nif);
+						}
 						mesh = new Mesh;
 						mesh->Construct(nif);
 					}
 				}
 			}
 		}
+
+		matrix = translation * rotation * scale;
 
 		if (mesh)
 		{

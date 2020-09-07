@@ -113,7 +113,7 @@ void Texture::Load()
 		if (w == 0 || h == 0)
 		{ // 0x1 0x2 resolutions
 			count--;
-			printf("discarding odd mipmap\n");
+			// printf("discarding odd mipmap\n");
 			continue;
 		}
 		int size = ((w + 3) / 4) * ((h + 3) / 4) * blockSize;

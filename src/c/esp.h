@@ -131,7 +131,7 @@ api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
 
 api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 
-api struct record *esp_get_record_by_form_id(unsigned int);
+api struct record *esp_brute_record_by_form_id(unsigned int);
 api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
 
 api void free_esp(struct esp **);

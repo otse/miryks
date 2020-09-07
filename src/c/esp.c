@@ -98,6 +98,7 @@ api struct esp *esp_load(const char *path)
 	}
 	make_top_grups(esp);
 	make_form_ids(esp);
+	fclose(esp->file);
 	after = clock();
 	float difference = (float)(after - before) / CLOCKS_PER_SEC;
 	printf("parsing esp took %.2fs\n", difference);
@@ -284,7 +285,7 @@ void make_form_ids(struct esp *esp)
 	build_form_id(esp, esp->records.elements[i], &esp->formIds[i]);
 }
 
-api struct record *esp_get_record_by_form_id(unsigned int formId)
+api struct record *esp_brute_record_by_form_id(unsigned int formId)
 {
 	for (int p = 0; p < 5; p++)
 	{
@@ -296,7 +297,7 @@ api struct record *esp_get_record_by_form_id(unsigned int formId)
 	struct record *rec = esp->records.elements[i];
 	if (rec->fi->formId == formId)
 	{
-	printf("found fi at rec %i\n", i);
+	//printf("found fi at rec %i\n", i);
 	return rec;
 	}
 	}

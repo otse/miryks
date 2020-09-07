@@ -52,11 +52,32 @@ namespace dark2
 		Mesh *mesh = (Mesh *)rd->data;
 	}
 
+	/*const mat3 &swap(const mat3 &mat)
+	{
+		mat3 copy = mat;
+		float a = mat[0].x;
+		float b = mat[0].y;
+		float c = mat[0].z;
+		float d = mat[1].x;
+		float e = mat[1].y;
+		float f = mat[1].z;
+		float g = mat[2].x;
+		float h = mat[2].y;
+		float i = mat[2].z;
+		copy = mat3(a, d, g,
+		            b, e, h,
+				    c, f, i);
+		copy = mat3(a, -b, c,
+		            -d, e, f,
+				    g, h, i);
+		return copy;
+	}*/
+
 	void matrix_from_common(Group *group, ni_common_layout *common)
 	{
-		mat4 translation = translate(mat4(1.0), *cast_vec_3((float *)&common->translation));
-		mat3 rotation = *cast_mat_3((float *)&common->rotation);
-		group->matrix = translation * mat4(rotation);
+		group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->translation));
+		group->matrix *= mat4((*cast_mat_3((float *)&common->rotation)));
+		group->matrix = scale(group->matrix, vec3(common->scale));
 	}
 
 	void ni_node_callback(rd *rd, ni_node *block)
