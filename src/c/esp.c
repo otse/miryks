@@ -44,44 +44,64 @@ inline void insert(struct esp_array *a, void *element) {
 	a->elements[a->size++] = element;
 }
 
-void read_file(struct esp *esp)
+float read_file(struct esp *esp)
 {
 	esp->file = fopen(esp->path, "rb");
 	cassert_(esp->file, "esp can't open");
+	clock_t before = clock();
 	fseek(esp->file, 0, SEEK_END);
-	esp->size = ftell(esp->file);
-	printf("esp filesize %u\n", esp->size);
+	esp->filesize = ftell(esp->file);
+	printf("esp filesize %u\n", esp->filesize);
 	rewind(esp->file);
-	esp->buf = malloc(esp->size * sizeof(char));
+	esp->buf = malloc(esp->filesize * sizeof(char));
 	cassert_(esp->buf != NULL, "esp cant get memory");
-	size_t read = fread(esp->buf, sizeof(char), esp->size, esp->file);
+	size_t read = fread(esp->buf, sizeof(char), esp->filesize, esp->file);
 	cassert_(read, "esp buf bad");
 	rewind(esp->file);
+	clock_t after = clock();
+	float difference = (float)(after - before) / CLOCKS_PER_SEC;
+	printf("read esp %i mb took %.2fs\n", esp->filesize / 1024 / 1024, difference);
 }
 
 void make_top_grups(struct esp *);
 void make_form_ids(struct esp *);
 
+unsigned int hedr_num_records(struct esp *esp)
+{
+	if (esp_skip_subrecords)
+	return 200;
+	return *(unsigned int *)(esp->header->fields.fields[0]->data + 4);
+}
+
 api struct esp *esp_load(const char *path)
 {
+	grups = 0;
+	records = 0;
+	subrecords = 0;
+	decompressions = 0;
 	for (int i = 0; i < 5; i++)
 	if (plugins[i] != NULL && 0 == strcmp(path, plugins[i]->path))
 	return plugins[i];
+	clock_t before, after;
 	struct esp *esp = malloc(sizeof(struct esp));
-	esp->path = path;
-	esp->pos = 0;
+	memset(esp, 0, sizeof(struct esp));
+	strncpy(esp->path, path, 255);
 	read_file(esp);
+	before = clock();
 	esp->header = read_record(esp);
-	int capacity = 2;//*(unsigned int *)(esp->header->fields.fields[0]->data + 4);
 	array(&esp->grups, 200);
-	array(&esp->records, capacity);
-	while(Pos < esp->size)
+	array(&esp->records, hedr_num_records(esp));
+	while(Pos < esp->filesize)
 	{
 	struct grup *grup = read_grup(esp);
 	insert(&esp->grups, grup);
 	}
 	make_top_grups(esp);
 	make_form_ids(esp);
+	after = clock();
+	float difference = (float)(after - before) / CLOCKS_PER_SEC;
+	printf("parsing esp took %.2fs\n", difference);
+	printf("esp has %i grups %i records %i subrecords %i decompressions\n", grups, records, subrecords, decompressions);
 	return esp;
 }
 
@@ -301,10 +321,7 @@ api void free_esp(struct esp **p)
 	free(esp);
 }
 
-api void free_esp_array(struct esp_array **p)
+api void free_esp_array(struct esp_array *array)
 {
-	struct esp_array *array = *p;
-	*p = NULL;
 	free(array->elements);
-	free(array);
 }

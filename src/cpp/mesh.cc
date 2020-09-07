@@ -61,7 +61,7 @@ namespace dark2
 
 	void ni_node_callback(rd *rd, ni_node *block)
 	{
-		printf("ni node callback\n");
+		// printf("ni node callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, &block->common);
@@ -69,7 +69,7 @@ namespace dark2
 
 	void ni_tri_shape_callback(rd *rd, ni_tri_shape *block)
 	{
-		printf("ni tri shape callback\n");
+		// printf("ni tri shape callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, &block->common);
@@ -81,7 +81,7 @@ namespace dark2
 
 	void ni_tri_shape_data_callback(rd *rd, ni_tri_shape_data *block)
 	{
-		printf("ni tri shape data callback\n");
+		// printf("ni tri shape data callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Geometry *geometry = mesh->lastGroup->geometry;
 		if (!block->num_vertices)
@@ -106,13 +106,13 @@ namespace dark2
 
 	void bs_lighting_shader_property_callback(rd *rd, bs_lighting_shader_property *block)
 	{
-		printf("bs lighting shader property callback\n");
+		// printf("bs lighting shader property callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 	}
 
 	void bs_shader_texture_set_callback(rd *rd, bs_shader_texture_set *block)
 	{
-		printf("bs shader texture set callback\n");
+		// printf("bs shader texture set callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
 		for (int i = 0; i < block->num_textures; i++)

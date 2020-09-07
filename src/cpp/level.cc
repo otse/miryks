@@ -27,7 +27,7 @@ namespace dark2
 					Grup *grup = (Grup *)B->mixed.elements[k + 1];
 					Assert(record->head->type == *(unsigned int *)"CELL", "not a cell");
 					const char *cellEdid = (char *)((Subrecord *)record->fields.elements[0])->data;
-					printf("Found cell %s\n", cellEdid);
+					//printf("Found cell %s\n", cellEdid);
 					if (0 == strcmp(cellEdid, editorId))
 					{
 						printf("Found your cell %s\n", cellEdid);
@@ -93,8 +93,8 @@ namespace dark2
 				vec3 pos, rad;
 				pos = *cast_vec_3((float *)field->data);
 				rad = *cast_vec_3((float *)field->data + 3);
-				printf("Reference has DATA pos %f %f %f\n", pos.x, pos.y, pos.z);
-				printf("Reference has DATA rad %f %f %f\n", rad.x, rad.y, rad.z);
+				//printf("Reference has DATA pos %f %f %f\n", pos.x, pos.y, pos.z);
+				//printf("Reference has DATA rad %f %f %f\n", rad.x, rad.y, rad.z);
 
 				matrix = mat4(1.0f);
 

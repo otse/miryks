@@ -75,7 +75,7 @@ void Shader::Compile()
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
 
-	log_("made ur shader");
+	//log_("made ur shader");
 }
 
 void Shader::SetInt(const char *name, int value) const { glUniform1i(glGetUniformLocation(id, name), value); }

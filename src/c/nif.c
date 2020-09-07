@@ -300,12 +300,13 @@ void *read_ni_tri_shape_data(nifr)
 void *read_ni_skin_instance(nifr)
 {
 	//read_block_save(nif, n, block);
-
+	return NULL;
 }
 
 void *read_ni_skin_data(nifr)
 {
 	//read_block_save(nif, n, block);
+	return NULL;
 }
 
 void *read_bs_lighting_shader_property(nifr)
@@ -354,7 +355,7 @@ api void nif_free_rd(struct rd **p) {
 }
 
 api void nif_rd(struct nif *nif, struct rd *rd) {
-	printf("nif accept\n");
+	// printf("nif rd\n");
 	rd->skips = malloc(sizeof(int) * Hedr.num_blocks);
 	memset(rd->skips, 0, sizeof(int) * Hedr.num_blocks);
 	rd->nif = nif;

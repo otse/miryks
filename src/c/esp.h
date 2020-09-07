@@ -40,8 +40,8 @@ struct esp
 	void *file;
 	long pos;
 	char *buf;
-	char *path;
-	long size;
+	char path[255];
+	long filesize;
 	struct record *header;
 	struct esp_array grups, records;
 	struct form_id *formIds;
@@ -134,6 +134,6 @@ api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
 
 api void free_esp(struct esp **);
-api void free_esp_array(struct esp_array **);
+api void free_esp_array(struct esp_array *);
 
 #endif

@@ -101,7 +101,6 @@ void esp_gui()
 
 	if (strcmp(buf, buf2))
 	{
-		printf("esp-gui loading new plugin\n");
 		memcpy(buf2, buf, MAX);
 		std::string oldrim = OLDRIM + "Data/" + buf;
 		std::string bin = buf;
@@ -112,6 +111,7 @@ void esp_gui()
 			path = &bin;
 		if (path)
 		{
+			printf("esp-gui loading new plugin\n");
 			if (esp != NULL)
 			{
 				printf("todo unload non load ordered esp here\n");
@@ -159,8 +159,10 @@ void esp_gui()
 			{
 				printf("esp try filter %.4s\n", filter);
 				memcpy(buf, filter, 4);
-				if (filtered)
-					free_esp_array(&filtered);
+				if (filtered) {
+					free_esp_array(filtered);
+					filtered = NULL;
+				}
 				if (strlen(filter) == 4)
 				{
 					filtered = esp_lazy_filter(esp, filter);
