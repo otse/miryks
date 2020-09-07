@@ -21,11 +21,11 @@ in mat4 modelView;
 uniform sampler2D map;
 uniform sampler2D normalMap;
 
-//#define ASH
+#define ASH
 //#define USE_A_HEMISPHERE
-//#define USE_NORMALMAP
-//#define USE_SPECULARMAP
-//#define USE_TANGENT
+#define USE_NORMALMAP
+#define USE_SPECULARMAP
+#define USE_TANGENT
 
 #ifdef USE_NORMALMAP
 
@@ -273,7 +273,7 @@ void main()
 	#ifdef USE_SPECULARMAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );
-		specularStrength = texelSpecular.a / 1.0;
+		specularStrength = texelSpecular.a / 1.0 * 20.0;
 
 	#else
 

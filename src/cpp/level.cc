@@ -9,6 +9,8 @@
 
 #include "opengl/renderable"
 #include "opengl/texture"
+#include "opengl/camera"
+#include "opengl/pointlight"
 #include "opengl/types"
 
 namespace dark2
@@ -60,18 +62,28 @@ namespace dark2
 
 	void Level::ParseGrup(Cell &cell, Grup *grup)
 	{
-		for (int i = 0; i < cell.non_persistent->mixed.size; i++)
+		for (int i = 0; i < grup->mixed.size; i++)
 		{
-			void *element = cell.non_persistent->mixed.elements[i];
+			void *element = grup->mixed.elements[i];
 			Assert(*(char *)element == RECORD, "cell mixed has non record");
 			auto ref = new Reference;
 			ref->SetData((Record *)element);
-			//printf("Reference\n");
+			if (ref->EDID)
+				editorIds.insert({ref->EDID, ref});
+		}
+
+		auto ref = editorIds.find("darkshackspawn");
+		if (ref != editorIds.end())
+		{
+			first_person_camera->pos = ref->second->matrix[3];
+			first_person_camera->pos.z += 170 / ONE_SKYRIM_UNIT_IN_CM;
+			first_person_camera->fyaw = cast_vec_3(ref->second->DATA + 3)->z;
 		}
 	}
 
 	void Level::LoadCell(Cell &cell)
 	{
+		//ParseGrup(cell, cell.persistent);
 		ParseGrup(cell, cell.non_persistent);
 	}
 
@@ -82,7 +94,6 @@ namespace dark2
 	Reference::Reference()
 	{
 		Group *group = new Group();
-		mesh = nullptr;
 	}
 
 	void Reference::SetData(Record *record)
@@ -96,6 +107,7 @@ namespace dark2
 			Subrecord *field = (Subrecord *)record->fields.fields[i];
 			if (field->head->type == *(unsigned int *)"EDID")
 			{
+				this->EDID = (char *)field->data;
 			}
 			if (field->head->type == *(unsigned int *)"XSCL")
 			{
@@ -103,6 +115,7 @@ namespace dark2
 			}
 			if (field->head->type == *(unsigned int *)"DATA")
 			{
+				this->DATA = (float *)field->data;
 				vec3 pos, rad;
 				pos = *cast_vec_3((float *)field->data);
 				rad = *cast_vec_3((float *)field->data + 3);
@@ -119,13 +132,14 @@ namespace dark2
 			if (field->head->type == *(unsigned int *)"NAME")
 			{
 				unsigned int formId = *(unsigned int *)field->data;
-				//printf("NAME %i\n", formId);
+
 				Record *base = esp_brute_record_by_form_id(formId);
 				Assert(base, "ref cant find name base");
 				if (base->head->type == *(unsigned int *)"STAT" ||
 					base->head->type == *(unsigned int *)"CONT" ||
-					base->head->type == *(unsigned int *)"MISC"
-				)
+					base->head->type == *(unsigned int *)"ARMO" ||
+					base->head->type == *(unsigned int *)"WEAP" ||
+					base->head->type == *(unsigned int *)"MISC")
 				{
 					for (int i = 0; i < base->fields.size; i++)
 					{
@@ -138,15 +152,43 @@ namespace dark2
 									   [](unsigned char c) { return std::tolower(c); });
 						//printf("stat base has a modl %s\n", data.c_str());
 						Rc *rc = bsa_find(meshes, data.c_str());
-						//printf("found a rc %p\n", rc);
-						Nif *nif = nif_saved(rc);
-						if (nif == NULL) {
-							nif = make_nif(rc);
-							nif_save(rc, nif);
+						if (rc)
+						{
+							//printf("found a rc %p\n", rc);
+							Nif *nif = nif_saved(rc);
+							if (nif == NULL)
+							{
+								nif = make_nif(rc);
+								nif_save(rc, nif);
+							}
+							mesh = new Mesh;
+							mesh->Construct(nif);
 						}
-						mesh = new Mesh;
-						mesh->Construct(nif);
 					}
+				}
+				else if (base->head->type == *(unsigned int *)"LIGH")
+				{
+					float radius = 400 / ONE_SKYRIM_UNIT_IN_CM;
+					vec3 color = vec3(1, 0, 0);
+					for (int i = 0; i < base->fields.size; i++)
+					{
+						if (field->head->type == *(unsigned int *)"DATA")
+						{
+							radius = *(float *)field->data;
+							//color.x = (field->data + 8 + 2);
+							//color.y = (field->data + 8 + 3);
+							//color.z = (field->data + 8 + 4);
+						}
+					}
+
+					pl = new PointLight;
+					pl->distance = radius;
+
+					//point_light->decay = _j["Falloff Exponent"];
+
+					pl->color = vec3(color);
+					//pl->color /= 255.f;
+					scene->Add(pl);
 				}
 			}
 		}
@@ -158,5 +200,13 @@ namespace dark2
 			Renderable *object = new Renderable(matrix, mesh->baseGroup);
 			scene->Add(object);
 		}
+		if (pl)
+		{
+			printf("add a ligh\n");
+
+			pl->matrix = matrix;
+			scene->Add(pl);
+		}
 	}
+
 } // namespace dark2

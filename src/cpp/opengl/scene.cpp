@@ -18,8 +18,8 @@ Scene::Scene()
 	black->distance = 0;
 	black->intensity = 0;
 
-	//ambient = vec3(100.f / 255.f, 100.f / 255.f, 100.f / 255.f);
-	ambient = vec3(1, 1, 1);
+	ambient = vec3(100.f / 255.f, 100.f / 255.f, 100.f / 255.f);
+	//ambient = vec3(1, 1, 1);
 };
 
 Scene::~Scene(){};
@@ -95,13 +95,13 @@ void Scene::DrawItems()
 
 	for (RenderItem &render_item : objects)
 	{
-		//render_item.Draw();
+		render_item.Draw();
 	}
 
 	//return;
 	for (Renderable *renderable : renderables)
 	{
-		renderable->DrawClassic();
+		//renderable->DrawClassic();
 	}
 }
 

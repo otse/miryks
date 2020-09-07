@@ -85,7 +85,7 @@ namespace dark2
 		// printf("ni node callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
-		matrix_from_common(group, &block->common);
+		//matrix_from_common(group, &block->common);
 	}
 
 	void ni_tri_shape_callback(rd *rd, ni_tri_shape *block)
@@ -122,6 +122,11 @@ namespace dark2
 			if (block->bs_vector_flags & 0x00000001)
 			geometry->vertices[i].uv = *cast_vec_2((float *)&block->uv_sets[i]);
 			geometry->vertices[i].normal = *cast_vec_3((float *)&block->normals[i]);
+			if (block->bs_vector_flags & 0x00001000)
+			{
+			geometry->vertices[i].tangent = *cast_vec_3((float *)&block->tangents[i]);
+			geometry->vertices[i].bitangent = *cast_vec_3((float *)&block->bitangents[i]);
+			}
 			if (block->has_vertex_colors)
 				geometry->vertices[i].color = *cast_vec_4((float *)&block->vertex_colors[i]);
 		}

@@ -37,6 +37,7 @@ namespace dark2
 		static Cell GetCell(const char *);
 
 		std::vector<Reference *> references;
+		std::map<std::string, Reference *> editorIds;
 
 		void Update();
 		void LoadCell(Cell &);
@@ -49,7 +50,11 @@ namespace dark2
 	public:
 		Reference();
 
-		Mesh *mesh;
+		char *EDID = nullptr;
+		float *DATA = nullptr;
+
+		PointLight *pl = nullptr;
+		Mesh *mesh = nullptr;
 		mat4 matrix;
 
 		void SetData(Record *);

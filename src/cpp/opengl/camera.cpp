@@ -15,11 +15,7 @@ Camera::Camera()
 void Camera::SetProjection() {
 	float aspect = (float)dark2::width / (float)dark2::height;
 
-	projection = perspective(
-		radians(fzoom),
-		aspect,
-		0.1f,
-		10000.0f);
+	projection = perspective(radians(fzoom), aspect, 5.0f, 10000.0f);
 }
 
 FirstPersonCamera::FirstPersonCamera() : Camera()
