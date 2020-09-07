@@ -48,20 +48,24 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		if (camera)
 			camera->disabled = F3;
 	}
+	if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
+	{
+		camera = first_person_camera;
+
+	}
 }
 
 static void do_keys()
 {
-	FirstPersonCamera *firstpersoncamera = dynamic_cast<FirstPersonCamera *>(camera);
-	if (!firstpersoncamera)
+	if (!dynamic_cast<FirstPersonCamera *>(camera))
 		return;
-	firstpersoncamera->w = glfwGetKey(window, GLFW_KEY_W);
-	firstpersoncamera->a = glfwGetKey(window, GLFW_KEY_A);
-	firstpersoncamera->s = glfwGetKey(window, GLFW_KEY_S);
-	firstpersoncamera->d = glfwGetKey(window, GLFW_KEY_D);
-	firstpersoncamera->r = glfwGetKey(window, GLFW_KEY_R);
-	firstpersoncamera->f = glfwGetKey(window, GLFW_KEY_F);
-	firstpersoncamera->shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+	first_person_camera->w = glfwGetKey(window, GLFW_KEY_W);
+	first_person_camera->a = glfwGetKey(window, GLFW_KEY_A);
+	first_person_camera->s = glfwGetKey(window, GLFW_KEY_S);
+	first_person_camera->d = glfwGetKey(window, GLFW_KEY_D);
+	first_person_camera->r = glfwGetKey(window, GLFW_KEY_R);
+	first_person_camera->f = glfwGetKey(window, GLFW_KEY_F);
+	first_person_camera->shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
 }
 
 void cursor_pos_callback(GLFWwindow *window, double x, double y)

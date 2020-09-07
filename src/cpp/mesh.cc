@@ -55,7 +55,6 @@ namespace dark2
 	void matrix_from_common(Group *group, ni_common_layout *common)
 	{
 		group->matrix = mat4(*cast_mat_3((float *)&common->rotation));
-		group->matrix = rotate(group->matrix, pif, vec3(0, 1, 1));
 		group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->translation));
 	}
 
@@ -87,14 +86,18 @@ namespace dark2
 		if (!block->num_vertices)
 			return;
 		geometry->Clear(block->num_vertices, block->num_triangles * 3);
+		if (block->has_triangles)
+		{
 		for (int i = 0; i < block->num_triangles; i++)
 		{
 			unsigned short *triangle = (unsigned short *)&block->triangles[i];
 			geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
 		}
+		}
 		for (int i = 0; i < block->num_vertices; i++)
 		{
 			geometry->vertices[i].position = *cast_vec_3((float *)&block->vertices[i]);
+			if (block->bs_vector_flags & 0x00000001)
 			geometry->vertices[i].uv = *cast_vec_2((float *)&block->uv_sets[i]);
 			geometry->vertices[i].normal = *cast_vec_3((float *)&block->normals[i]);
 			if (block->has_vertex_colors)

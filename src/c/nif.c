@@ -283,11 +283,15 @@ void *read_ni_tri_shape_data(nifr)
 	ReadStruct(nif, ni_tri_shape_data, block, bs_vector_flags, normals);
 	if (block->has_normals)
 	ReadArray(nif, ni_tri_shape_data, block, struct vec_3, normals, num_vertices, 0);
+	if (block->bs_vector_flags & 0x00001000)
+	{
 	ReadArray(nif, ni_tri_shape_data, block, struct vec_3, tangents, num_vertices, 0);
 	ReadArray(nif, ni_tri_shape_data, block, struct vec_3, bitangents, num_vertices, 0);
+	}
 	ReadStruct(nif, ni_tri_shape_data, block, center, vertex_colors);
 	if (block->has_vertex_colors)
 	ReadArray(nif, ni_tri_shape_data, block, struct vec_4, vertex_colors, num_vertices, 0);
+	if (block->bs_vector_flags & 0x00000001)
 	ReadArray(nif, ni_tri_shape_data, block, struct vec_2, uv_sets, num_vertices, 0);
 	ReadStruct(nif, ni_tri_shape_data, block, consistency_flags, triangles);
 	if (block->has_triangles)

@@ -49,6 +49,7 @@ namespace dark2
 	public:
 		Reference();
 
+		Mesh *mesh;
 		mat4 matrix;
 
 		void SetData(Record *);

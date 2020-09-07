@@ -82,6 +82,7 @@ namespace dark2
 	Reference::Reference()
 	{
 		Group *group = new Group();
+		mesh = nullptr;
 	}
 
 	void Reference::SetData(Record *record)
@@ -104,11 +105,11 @@ namespace dark2
 
 				mat4 translation = translate(mat4(1.0f), pos);
 				mat4 rotation = mat4(1.0f);
-				mat4 scale = mat4(1.0f);
+				mat4 scale = glm::scale(mat4(1.0), vec3(1));
 
-				rotation = rotate(rotation, rad.x, vec3(1, 0, 0));
-				rotation = rotate(rotation, rad.y, vec3(0, 1, 0));
-				rotation = rotate(rotation, rad.z, vec3(0, 0, 1));
+				rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
+				rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
+				rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
 
 				matrix = translation * rotation * scale;
 			}
@@ -123,26 +124,29 @@ namespace dark2
 					for (int i = 0; i < base->fields.size; i++)
 					{
 						Subrecord *field = (Subrecord *)base->fields.fields[i];
-						if (field->head->type == *(unsigned int *)"MODL")
-						{
-							std::string data = (char *)field->data;
-							data = "meshes\\" + data;
-							std::transform(data.begin(), data.end(), data.begin(),
-										   [](unsigned char c) { return std::tolower(c); });
-							printf("stat base has a modl %s\n", data.c_str());
-							Rc *rc = bsa_find(meshes, data.c_str());
-							printf("found a rc %p\n", rc);
-							Nif *nif = nif_saved(rc);
-							if (nif == NULL)
-								nif = make_nif(rc);
-							Mesh *mesh = new Mesh;
-							mesh->Construct(nif);
-							Renderable *object = new Renderable(mat4(1.0), mesh->baseGroup);
-							scene->Add(object);
-						}
+						if (field->head->type != *(unsigned int *)"MODL")
+							continue;
+						std::string data = (char *)field->data;
+						data = "meshes\\" + data;
+						std::transform(data.begin(), data.end(), data.begin(),
+									   [](unsigned char c) { return std::tolower(c); });
+						printf("stat base has a modl %s\n", data.c_str());
+						Rc *rc = bsa_find(meshes, data.c_str());
+						printf("found a rc %p\n", rc);
+						Nif *nif = nif_saved(rc);
+						if (nif == NULL)
+							nif = make_nif(rc);
+						mesh = new Mesh;
+						mesh->Construct(nif);
 					}
 				}
 			}
+		}
+
+		if (mesh)
+		{
+		Renderable *object = new Renderable(matrix, mesh->baseGroup);
+		scene->Add(object);
 		}
 	}
 } // namespace dark2
