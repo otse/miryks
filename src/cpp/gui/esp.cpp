@@ -88,7 +88,7 @@ void im_subrecord(Subrecord *subrecord)
 
 void esp_gui()
 {
-	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;// | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowPos(ImVec2(450, 0));
 
 	ImGui::SetNextWindowSize(ImVec2(450, 0));

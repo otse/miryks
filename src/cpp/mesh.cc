@@ -54,8 +54,9 @@ namespace dark2
 
 	void matrix_from_common(Group *group, ni_common_layout *common)
 	{
-		group->matrix = mat4(*cast_mat_3((float *)&common->rotation));
-		group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->translation));
+		mat4 translation = translate(mat4(1.0), *cast_vec_3((float *)&common->translation));
+		mat3 rotation = *cast_mat_3((float *)&common->rotation);
+		group->matrix = translation * mat4(rotation);
 	}
 
 	void ni_node_callback(rd *rd, ni_node *block)

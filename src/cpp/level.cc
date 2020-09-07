@@ -136,6 +136,7 @@ namespace dark2
 						Nif *nif = nif_saved(rc);
 						if (nif == NULL)
 							nif = make_nif(rc);
+						nif_save(rc, nif);
 						mesh = new Mesh;
 						mesh->Construct(nif);
 					}
@@ -145,8 +146,8 @@ namespace dark2
 
 		if (mesh)
 		{
-		Renderable *object = new Renderable(matrix, mesh->baseGroup);
-		scene->Add(object);
+			Renderable *object = new Renderable(matrix, mesh->baseGroup);
+			scene->Add(object);
 		}
 	}
 } // namespace dark2

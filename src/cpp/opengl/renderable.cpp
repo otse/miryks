@@ -73,7 +73,7 @@ void RenderItem::Draw()
 	if (DRAW_BOUNDS)
 	{
 		//aabb.draw(mat4(1.0));
-		obb.draw(group->matrixWorld);
+		obb.draw(renderable->matrix * group->matrixWorld);
 	}
 }
 
