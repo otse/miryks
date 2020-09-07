@@ -284,6 +284,26 @@ void make_form_ids(struct esp *esp)
 	build_form_id(esp, esp->records.elements[i], &esp->formIds[i]);
 }
 
+api struct record *esp_get_record_by_form_id(unsigned int formId)
+{
+	for (int p = 0; p < 5; p++)
+	{
+	struct esp *esp = plugins[p];
+	if (esp == NULL)
+	break;
+	for (int i = 0; i < esp->records.size; i++)
+	{
+	struct record *rec = esp->records.elements[i];
+	if (rec->fi->formId == formId)
+	{
+	printf("found fi at rec %i\n", i);
+	return rec;
+	}
+	}
+	}
+	return NULL;
+}
+
 api struct esp_array *esp_lazy_filter(const struct esp *esp, const char type[5])
 {
 	struct esp_array *filtered;

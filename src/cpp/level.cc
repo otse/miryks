@@ -1,7 +1,13 @@
 #include "level.h"
+#include "mesh.h"
+
+#include <algorithm>
+#include <cctype>
+#include <string>
 
 #include "files"
 
+#include "opengl/renderable"
 #include "opengl/texture"
 #include "opengl/types"
 
@@ -82,11 +88,9 @@ namespace dark2
 	{
 		for (int i = 0; i < record->fields.size; i++)
 		{
-			void *element = record->fields.elements[i];
-			Subrecord *field = (Subrecord *)element;
+			Subrecord *field = (Subrecord *)record->fields.fields[i];
 			if (field->head->type == *(unsigned int *)"EDID")
 			{
-				
 			}
 			if (field->head->type == *(unsigned int *)"DATA")
 			{
@@ -112,9 +116,33 @@ namespace dark2
 			{
 				unsigned int formId = *(unsigned int *)field->data;
 				printf("NAME %i\n", formId);
+				Record *base = esp_get_record_by_form_id(formId);
+				Assert(base, "ref cant find name base");
+				if (base->head->type == *(unsigned int *)"STAT")
+				{
+					for (int i = 0; i < base->fields.size; i++)
+					{
+						Subrecord *field = (Subrecord *)base->fields.fields[i];
+						if (field->head->type == *(unsigned int *)"MODL")
+						{
+							std::string data = (char *)field->data;
+							data = "meshes\\" + data;
+							std::transform(data.begin(), data.end(), data.begin(),
+										   [](unsigned char c) { return std::tolower(c); });
+							printf("stat base has a modl %s\n", data.c_str());
+							Rc *rc = bsa_find(meshes, data.c_str());
+							printf("found a rc %p\n", rc);
+							Nif *nif = nif_saved(rc);
+							if (nif == NULL)
+								nif = make_nif(rc);
+							Mesh *mesh = new Mesh;
+							mesh->Construct(nif);
+							Renderable *object = new Renderable(mat4(1.0), mesh->baseGroup);
+							scene->Add(object);
+						}
+					}
+				}
 			}
 		}
-
-
 	}
 } // namespace dark2
