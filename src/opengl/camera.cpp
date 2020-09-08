@@ -34,8 +34,10 @@ void FirstPersonCamera::Mouse(float x, float y)
 
 void FirstPersonCamera::Update(float time)
 {
-	if (disabled)
+	if (disabled) {
+		Camera::SetProjection();
 		return;
+	}
 
 	Move(time);
 

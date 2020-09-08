@@ -21,10 +21,10 @@ in mat4 modelView;
 uniform sampler2D map;
 uniform sampler2D normalMap;
 
-#define ASH
+//#define ASH
 //#define USE_A_HEMISPHERE
 #define USE_NORMALMAP
-#define USE_SPECULARMAP
+//#define USE_SPECULARMAP
 #define USE_TANGENT
 
 #ifdef USE_NORMALMAP
@@ -273,7 +273,7 @@ void main()
 	#ifdef USE_SPECULARMAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );
-		specularStrength = texelSpecular.a / 1.0 * 20.0;
+		specularStrength = texelSpecular.a * 100.0;
 
 	#else
 
@@ -309,7 +309,7 @@ void main()
 	//material.specularColor = vec3(17.0/255.0, 17.0/255.0, 17.0/255.0);
 	material.specularColor = specular;
 	//material.specularColor = vec3(127.0/255.0, 127.0/255.0, 127.0/255.0);
-	material.specularShininess = shininess / 8.0; // 15;
+	material.specularShininess = shininess;// / 8.0; // 15;
 	material.specularStrength = specularStrength;
 
 	GeometricContext geometry;
@@ -340,7 +340,7 @@ void main()
 
 		PointLight b = PointLight(
 			a.package[0],
-			a.package[1] * 7,
+			a.package[1] * 4,
 			a.package[2][0],
 			a.package[2][1],
 			mat3(0.0));

@@ -62,7 +62,7 @@ RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), ren
 	if (DRAW_BOUNDS)
 	{
 		//aabb.geometrize();
-		obb.geometrize();
+		//obb.geometrize();
 	}
 }
 
@@ -73,7 +73,7 @@ void RenderItem::Draw()
 	if (DRAW_BOUNDS)
 	{
 		//aabb.draw(mat4(1.0));
-		obb.draw(renderable->matrix * group->matrixWorld);
+		//obb.draw(renderable->matrix * group->matrixWorld);
 	}
 }
 

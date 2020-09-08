@@ -168,26 +168,32 @@ namespace dark2
 				}
 				else if (base->head->type == *(unsigned int *)"LIGH")
 				{
-					float radius = 400 / ONE_SKYRIM_UNIT_IN_CM;
+					unsigned int radius = 0;
 					vec3 color = vec3(1, 0, 0);
 					for (int i = 0; i < base->fields.size; i++)
 					{
+						pl = new PointLight;
+
+						Subrecord *field = (Subrecord *)base->fields.fields[i];
+						if (field->head->type == *(unsigned int *)"EDID")
+						{
+							printf("ligh edid %s\n", field->data);
+						}
 						if (field->head->type == *(unsigned int *)"DATA")
 						{
-							radius = *(float *)field->data;
-							//color.x = (field->data + 8 + 2);
-							//color.y = (field->data + 8 + 3);
-							//color.z = (field->data + 8 + 4);
+							int time = *(int *)field->data;
+							pl->distance = *((unsigned int *)field->data + 1);
+							unsigned int rgb = *((unsigned int *)field->data + 2);
+							unsigned char r = (rgb >> (8*0)) & 0xff;
+							unsigned char g = (rgb >> (8*1)) & 0xff;
+							unsigned char b = (rgb >> (8*2)) & 0xff;
+							pl->color = vec3(r, g, b) / 255.f;
+							printf("ligh data, time %i radius %f rgb %i %i %i\n", time, pl->distance, r, g, b);
 						}
 					}
 
-					pl = new PointLight;
-					pl->distance = radius;
-
 					//point_light->decay = _j["Falloff Exponent"];
 
-					pl->color = vec3(color);
-					//pl->color /= 255.f;
 					scene->Add(pl);
 				}
 			}

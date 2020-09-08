@@ -1,6 +1,6 @@
 // based on ortham/libespm
 
-#include "c/c.h"
+#include "c.h"
 
 #include "esp.h"
 

@@ -1,7 +1,7 @@
 #ifndef OPENGL_TYPES
 #define OPENGL_TYPES
 
-#include "../../idiom.hpp"
+#include "../idiom.hpp"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>

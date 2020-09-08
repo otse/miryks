@@ -4,9 +4,9 @@
 
 extern "C"
 {
-#include "c/c.h"
-#include "c/files.h"
-#include "c/bsa.h"
+#include "c.h"
+#include "files.h"
+#include "bsa.h"
 #include <dds.h>
 }
 

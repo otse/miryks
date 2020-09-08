@@ -1,18 +1,18 @@
 #include "dark2.h"
 
 extern "C" {
-#include "c/bsa.h"
-#include "c/nif.h"
-#include "c/esp.h"
+#include "bsa.h"
+#include "nif.h"
+#include "esp.h"
 }
 
-#include "cpp/mesh.h"
-#include "cpp/level.h"
+#include "mesh.h"
+#include "level.h"
 
-#include "cpp/opengl/camera"
-#include "cpp/opengl/scene"
-#include "cpp/opengl/material"
-#include "cpp/opengl/shader"
+#include "opengl/camera"
+#include "opengl/scene"
+#include "opengl/material"
+#include "opengl/shader"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -80,6 +80,8 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+	dark2::width = width;
+	dark2::height = height;
 }
 
 void setupImgui()

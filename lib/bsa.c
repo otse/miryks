@@ -1,4 +1,4 @@
-#include "c/c.h"
+#include "c.h"
 
 #include "bsa.h"
 

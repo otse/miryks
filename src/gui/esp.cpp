@@ -3,9 +3,9 @@
 
 extern "C"
 {
-#include "c/files.h"
-#include "c/c.h"
-#include "c/esp.h"
+#include "files.h"
+#include "c.h"
+#include "esp.h"
 }
 
 using namespace dark2;

@@ -37,13 +37,15 @@ project "Dark2"
 	
 	files {
 		"dep/**",
+		"src/**",
+		"lib/**",
 		"include/**",
-		"src/**"
 	}
 
 	includedirs {
 		"dep",
 		"src",
+		"lib",
 		"include",
 		"F:/New folder/",
 		"F:/New folder/glm",

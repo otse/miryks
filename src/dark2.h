@@ -10,7 +10,7 @@ struct esp_t;
 
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
 
-#include "cpp/opengl/types"
+#include "opengl/types"
 
 #include "idiom.hpp"
 

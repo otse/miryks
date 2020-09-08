@@ -2,7 +2,7 @@
 
 extern "C"
 {
-#include "../../c/nif.h"
+#include "nif.h"
 }
 
 #include "files"

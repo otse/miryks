@@ -21,7 +21,7 @@ in mat4 modelView;
 uniform sampler2D map;
 uniform sampler2D normalMap;
 
-#define ASH
+//#define ASH
 #define USE_A_HEMISPHERE
 #define USE_NORMALMAP
 #define USE_SPECULARMAP
@@ -304,7 +304,7 @@ void main()
 
 		PointLight b = PointLight(
 			a.package[0],
-			a.package[1] * 6,
+			a.package[1],
 			a.package[2][0],
 			a.package[2][1],
 			mat3(0.0));
@@ -316,8 +316,10 @@ void main()
 
 	HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));
-	hemiLight.skyColor = vec3(0.0, 0.0, 0.0) * 0.3;
-	hemiLight.groundColor = vec3(0.0, 0.0, 0) * 0.3;
+	//hemiLight.skyColor = vec3(0.0, 0.0, 0.0) * 0.3;
+	//hemiLight.groundColor = vec3(0.0, 0.0, 0) * 0.3;
+	hemiLight.skyColor = vec3(0.03, 0.06, 0.04);
+	hemiLight.groundColor = vec3(0, 0.04, 0.12);
 
 	vec3 irradiance = ambientLightColor * PI;
 

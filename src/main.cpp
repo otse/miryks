@@ -4,21 +4,21 @@
 
 extern "C"
 {
-#include "c/c.h"
-#include "c/bsa.h"
-#include "c/nif.h"
+#include "c.h"
+#include "bsa.h"
+#include "nif.h"
 }
 
-#include "cpp/opengl/types"
-#include "cpp/opengl/camera"
-#include "cpp/opengl/scene"
-#include "cpp/opengl/group"
-#include "cpp/opengl/renderable"
-#include "cpp/opengl/geometry"
-#include "cpp/opengl/material"
+#include "opengl/types"
+#include "opengl/camera"
+#include "opengl/scene"
+#include "opengl/group"
+#include "opengl/renderable"
+#include "opengl/geometry"
+#include "opengl/material"
 
-#include "cpp/level.h"
-#include "cpp/mesh.h"
+#include "level.h"
+#include "mesh.h"
 
 namespace dark2
 {

@@ -4,16 +4,16 @@
 
 extern "C"
 {
-#include "c/bsa.h"
-#include "c/nif.h"
-#include "c/esp.h"
+#include "bsa.h"
+#include "nif.h"
+#include "esp.h"
 }
 
-#include "cpp/opengl/types"
-#include "cpp/opengl/scene"
-#include "cpp/opengl/group"
-#include "cpp/opengl/geometry"
-#include "cpp/opengl/material"
+#include "opengl/types"
+#include "opengl/scene"
+#include "opengl/group"
+#include "opengl/geometry"
+#include "opengl/material"
 
 namespace dark2
 {
