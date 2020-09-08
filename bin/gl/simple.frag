@@ -340,7 +340,7 @@ void main()
 
 		PointLight b = PointLight(
 			a.package[0],
-			a.package[1] * 4,
+			a.package[1] * 6,
 			a.package[2][0],
 			a.package[2][1],
 			mat3(0.0));

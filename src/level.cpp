@@ -109,11 +109,11 @@ namespace dark2
 			{
 				this->EDID = (char *)field->data;
 			}
-			if (field->head->type == *(unsigned int *)"XSCL")
+			else if (field->head->type == *(unsigned int *)"XSCL")
 			{
 				scale = glm::scale(mat4(1.0), vec3(*(float *)field->data));
 			}
-			if (field->head->type == *(unsigned int *)"DATA")
+			else if (field->head->type == *(unsigned int *)"DATA")
 			{
 				this->DATA = (float *)field->data;
 				vec3 pos, rad;
@@ -129,13 +129,15 @@ namespace dark2
 				rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
 				rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
 			}
-			if (field->head->type == *(unsigned int *)"NAME")
+			else if (field->head->type == *(unsigned int *)"NAME")
 			{
 				unsigned int formId = *(unsigned int *)field->data;
 
 				Record *base = esp_brute_record_by_form_id(formId);
 				Assert(base, "ref cant find name base");
 				if (base->head->type == *(unsigned int *)"STAT" ||
+					//base->head->type == *(unsigned int *)"FURN" ||
+					base->head->type == *(unsigned int *)"ALCH" ||
 					base->head->type == *(unsigned int *)"CONT" ||
 					base->head->type == *(unsigned int *)"ARMO" ||
 					base->head->type == *(unsigned int *)"WEAP" ||
@@ -167,19 +169,18 @@ namespace dark2
 					}
 				}
 				else if (base->head->type == *(unsigned int *)"LIGH")
-				{
-					unsigned int radius = 0;
-					vec3 color = vec3(1, 0, 0);
+				{	
+					pl = new PointLight;
+					scene->Add(pl);
+
 					for (int i = 0; i < base->fields.size; i++)
 					{
-						pl = new PointLight;
-
 						Subrecord *field = (Subrecord *)base->fields.fields[i];
 						if (field->head->type == *(unsigned int *)"EDID")
 						{
 							printf("ligh edid %s\n", field->data);
 						}
-						if (field->head->type == *(unsigned int *)"DATA")
+						else if (field->head->type == *(unsigned int *)"DATA")
 						{
 							int time = *(int *)field->data;
 							pl->distance = *((unsigned int *)field->data + 1);
@@ -193,8 +194,6 @@ namespace dark2
 					}
 
 					//point_light->decay = _j["Falloff Exponent"];
-
-					scene->Add(pl);
 				}
 			}
 		}
