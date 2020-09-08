@@ -7,6 +7,7 @@ extern "C"
 #include "c.h"
 #include "bsa.h"
 #include "nif.h"
+#include "esp.h"
 }
 
 #include "opengl/types"

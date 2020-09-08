@@ -5,6 +5,13 @@
 #include <cctype>
 #include <string>
 
+extern "C"
+{
+#include "bsa.h"
+#include "nif.h"
+#include "esp.h"
+}
+
 #include "files"
 
 #include "opengl/renderable"
@@ -34,7 +41,7 @@ namespace dark2
 					Record *record = (Record *)B->mixed.elements[k];
 					Grup *grup = (Grup *)B->mixed.elements[k + 1];
 					Assert(record->head->type == *(unsigned int *)"CELL", "not a cell");
-					const char *cellEdid = (char *)((Subrecord *)record->fields.elements[0])->data;
+					const char *cellEdid = (char *)((Field *)record->fields.elements[0])->data;
 					//printf("Found cell %s\n", cellEdid);
 					if (0 == strcmp(cellEdid, editorId))
 					{
@@ -65,7 +72,8 @@ namespace dark2
 		for (int i = 0; i < grup->mixed.size; i++)
 		{
 			void *element = grup->mixed.elements[i];
-			Assert(*(char *)element == RECORD, "cell mixed has non record");
+			Assert(*(char *)element == RECORD, "mixed non record");
+			Assert(grup->mixed.records[i]->head->type == *(unsigned int *)"REFR", "not a refr");
 			auto ref = new Reference;
 			ref->SetData((Record *)element);
 			if (ref->EDID)
@@ -91,127 +99,5 @@ namespace dark2
 	{
 	}
 
-	Reference::Reference()
-	{
-		Group *group = new Group();
-	}
-
-	void Reference::SetData(Record *record)
-	{
-		matrix = mat4(1.0);
-
-		mat4 translation(1.0), rotation(1.0), scale(1.0);
-
-		for (int i = 0; i < record->fields.size; i++)
-		{
-			Subrecord *field = (Subrecord *)record->fields.fields[i];
-			if (field->head->type == *(unsigned int *)"EDID")
-			{
-				this->EDID = (char *)field->data;
-			}
-			else if (field->head->type == *(unsigned int *)"XSCL")
-			{
-				scale = glm::scale(mat4(1.0), vec3(*(float *)field->data));
-			}
-			else if (field->head->type == *(unsigned int *)"DATA")
-			{
-				this->DATA = (float *)field->data;
-				vec3 pos, rad;
-				pos = *cast_vec_3((float *)field->data);
-				rad = *cast_vec_3((float *)field->data + 3);
-				//printf("Reference has DATA pos %f %f %f\n", pos.x, pos.y, pos.z);
-				//printf("Reference has DATA rad %f %f %f\n", rad.x, rad.y, rad.z);
-
-				translation = translate(mat4(1.0f), pos);
-
-				//glm::quat rot = glm::angleAxis(glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f))
-				rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
-				rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
-				rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
-			}
-			else if (field->head->type == *(unsigned int *)"NAME")
-			{
-				unsigned int formId = *(unsigned int *)field->data;
-
-				Record *base = esp_brute_record_by_form_id(formId);
-				Assert(base, "ref cant find name base");
-				if (base->head->type == *(unsigned int *)"STAT" ||
-					//base->head->type == *(unsigned int *)"FURN" ||
-					base->head->type == *(unsigned int *)"ALCH" ||
-					base->head->type == *(unsigned int *)"CONT" ||
-					base->head->type == *(unsigned int *)"ARMO" ||
-					base->head->type == *(unsigned int *)"WEAP" ||
-					base->head->type == *(unsigned int *)"MISC")
-				{
-					for (int i = 0; i < base->fields.size; i++)
-					{
-						Subrecord *field = (Subrecord *)base->fields.fields[i];
-						if (field->head->type != *(unsigned int *)"MODL")
-							continue;
-						std::string data = (char *)field->data;
-						data = "meshes\\" + data;
-						std::transform(data.begin(), data.end(), data.begin(),
-									   [](unsigned char c) { return std::tolower(c); });
-						//printf("stat base has a modl %s\n", data.c_str());
-						Rc *rc = bsa_find(meshes, data.c_str());
-						if (rc)
-						{
-							//printf("found a rc %p\n", rc);
-							Nif *nif = nif_saved(rc);
-							if (nif == NULL)
-							{
-								nif = make_nif(rc);
-								nif_save(rc, nif);
-							}
-							mesh = new Mesh;
-							mesh->Construct(nif);
-						}
-					}
-				}
-				else if (base->head->type == *(unsigned int *)"LIGH")
-				{	
-					pl = new PointLight;
-					scene->Add(pl);
-
-					for (int i = 0; i < base->fields.size; i++)
-					{
-						Subrecord *field = (Subrecord *)base->fields.fields[i];
-						if (field->head->type == *(unsigned int *)"EDID")
-						{
-							printf("ligh edid %s\n", field->data);
-						}
-						else if (field->head->type == *(unsigned int *)"DATA")
-						{
-							int time = *(int *)field->data;
-							pl->distance = *((unsigned int *)field->data + 1);
-							unsigned int rgb = *((unsigned int *)field->data + 2);
-							unsigned char r = (rgb >> (8*0)) & 0xff;
-							unsigned char g = (rgb >> (8*1)) & 0xff;
-							unsigned char b = (rgb >> (8*2)) & 0xff;
-							pl->color = vec3(r, g, b) / 255.f;
-							printf("ligh data, time %i radius %f rgb %i %i %i\n", time, pl->distance, r, g, b);
-						}
-					}
-
-					//point_light->decay = _j["Falloff Exponent"];
-				}
-			}
-		}
-
-		matrix = translation * rotation * scale;
-
-		if (mesh)
-		{
-			Renderable *object = new Renderable(matrix, mesh->baseGroup);
-			scene->Add(object);
-		}
-		if (pl)
-		{
-			printf("add a ligh\n");
-
-			pl->matrix = matrix;
-			scene->Add(pl);
-		}
-	}
 
 } // namespace dark2

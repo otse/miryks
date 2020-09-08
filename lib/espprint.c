@@ -52,23 +52,23 @@ record->fields.size
 );
 }
 
-char *specifics(struct esp *esp, char *s, struct subrecord *subrecord)
+char *specifics(struct esp *esp, char *s, struct field *field)
 {
-if (subrecord->head->type == *(unsigned int *)"EDID")
-snprintf(s, 300, "%s", subrecord->data);
-if (subrecord->head->type == *(unsigned int *)"FULL")
-snprintf(s, 300, "%s", subrecord->data);
-if (subrecord->head->type == *(unsigned int *)"HEDR")
+if (field->head->type == *(unsigned int *)"EDID")
+snprintf(s, 300, "%s", field->data);
+if (field->head->type == *(unsigned int *)"FULL")
+snprintf(s, 300, "%s", field->data);
+if (field->head->type == *(unsigned int *)"HEDR")
 snprintf(s, 300, "\
 \n  version: %.2f\
 \n  numRecords: %u\
 ",
-*(float *)(subrecord->data),
-*(unsigned int *)(subrecord->data + 4));
+*(float *)(field->data),
+*(unsigned int *)(field->data + 4));
 	return s;
 }
 
-api void esp_print_subrecord(struct esp *esp, char *s, struct subrecord *subrecord)
+api void esp_print_field(struct esp *esp, char *s, struct field *field)
 {
 char x[300] = "Not Handled\0";
 int w = snprintf(s, 400, "\
@@ -78,11 +78,11 @@ id: %u\
 \ndata: %p\
 \nvalue: %s\
 ",
-subrecord->id,
-(char *)&subrecord->head->type,
-subrecord->actualSize,
-&subrecord->data,
-specifics(esp, x, subrecord)
+field->id,
+(char *)&field->head->type,
+field->actualSize,
+&field->data,
+specifics(esp, x, field)
 );
 }
 

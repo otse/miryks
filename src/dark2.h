@@ -4,6 +4,8 @@
 typedef struct nif Nif;
 typedef struct bsa Bsa;
 typedef struct esp Esp;
+typedef struct record Record;
+typedef struct grup Grup;
 
 typedef struct rc Rc;
 struct esp_t;

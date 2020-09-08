@@ -2,12 +2,7 @@
 
 #include "dark2.h"
 
-extern "C"
-{
-#include "bsa.h"
-#include "nif.h"
-#include "esp.h"
-}
+#include "ref.h"
 
 #include "opengl/types"
 #include "opengl/scene"
@@ -43,20 +38,5 @@ namespace dark2
 		void LoadCell(Cell &);
 		
 		void ParseGrup(Cell &, Grup *);
-	};
-
-	class Reference
-	{
-	public:
-		Reference();
-
-		char *EDID = nullptr;
-		float *DATA = nullptr;
-
-		PointLight *pl = nullptr;
-		Mesh *mesh = nullptr;
-		mat4 matrix;
-
-		void SetData(Record *);
 	};
 } // namespace dark2

@@ -13,13 +13,13 @@ struct grup *read_grup(struct esp *);
 #define Buf esp->buf
 #define Pos esp->pos
 
-int esp_skip_subrecords = 0;
+int esp_skip_fields = 0;
 
 struct esp *plugins[5] = { NULL, NULL, NULL, NULL, NULL };
 
 unsigned int grups = 0;
 unsigned int records = 0;
-unsigned int subrecords = 0;
+unsigned int fields = 0;
 unsigned int decompressions = 0;
 
 const char *esp_types[] = {"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"};
@@ -68,7 +68,7 @@ void make_form_ids(struct esp *);
 
 unsigned int hedr_num_records(struct esp *esp)
 {
-	if (esp_skip_subrecords)
+	if (esp_skip_fields)
 	return 200;
 	return *(unsigned int *)(esp->header->fields.fields[0]->data + 4);
 }
@@ -77,7 +77,7 @@ api struct esp *esp_load(const char *path)
 {
 	grups = 0;
 	records = 0;
-	subrecords = 0;
+	fields = 0;
 	decompressions = 0;
 	for (int i = 0; i < 5; i++)
 	if (plugins[i] != NULL && 0 == strcmp(path, plugins[i]->path))
@@ -102,12 +102,12 @@ api struct esp *esp_load(const char *path)
 	after = clock();
 	float difference = (float)(after - before) / CLOCKS_PER_SEC;
 	printf("parsing esp took %.2fs\n", difference);
-	printf("esp has %i grups %i records %i subrecords %i decompressions\n", grups, records, subrecords, decompressions);
+	printf("esp has %i grups %i records %i fields %i decompressions\n", grups, records, fields, decompressions);
 	return esp;
 }
 
 void uncompress_record(struct record *);
-inline void read_record_subrecords(struct esp *, struct record *);
+inline void read_record_fields(struct esp *, struct record *);
 
 struct record *read_record(struct esp *esp)
 {
@@ -125,8 +125,8 @@ struct record *read_record(struct esp *esp)
 	array(&rec->fields, 6);
 	insert(&esp->records, rec);
 	// printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
-	// subrecords
-	if (esp_skip_subrecords)
+	// fields
+	if (esp_skip_fields)
 	Pos += rec->head->size;
 	else
 	{
@@ -134,18 +134,18 @@ struct record *read_record(struct esp *esp)
 	{
 	rec->buf = rec->pos = 0;
 	uncompress_record(rec);
-	read_record_subrecords(esp, rec);
+	read_record_fields(esp, rec);
 	Pos += rec->head->size;
 	}
 	else
-	read_record_subrecords(esp, rec);
+	read_record_fields(esp, rec);
 	}
 	return rec;
 }
 
-inline struct subrecord *read_subrecord(struct esp *, struct record *, unsigned int);
+inline struct field *read_field(struct esp *, struct record *, unsigned int);
 
-inline void read_record_subrecords(struct esp *esp, struct record *rec)
+inline void read_record_fields(struct esp *esp, struct record *rec)
 {
 	long *pos = &Pos;
 	if (rec->head->flags & 0x00040000)
@@ -154,8 +154,8 @@ inline void read_record_subrecords(struct esp *esp, struct record *rec)
 	unsigned int large = 0;
 	while(*pos - start < rec->actualSize)
 	{
-	struct subrecord *sub;
-	sub = read_subrecord(esp, rec, large);
+	struct field *sub;
+	sub = read_field(esp, rec, large);
 	large = 0;
 	if (sub->head->type == XXXX_HEX)
 	large = *(unsigned int *)sub->data;
@@ -164,7 +164,7 @@ inline void read_record_subrecords(struct esp *esp, struct record *rec)
 	}
 }
 
-inline struct subrecord *read_subrecord(struct esp *esp, struct record *rec, unsigned int override)
+inline struct field *read_field(struct esp *esp, struct record *rec, unsigned int override)
 {
 	long *pos = &Pos;
 	char *buf = Buf;
@@ -173,13 +173,13 @@ inline struct subrecord *read_subrecord(struct esp *esp, struct record *rec, uns
 	pos = &rec->pos;
 	buf = rec->buf;
 	}
-	struct subrecord *sub;
-	sub = malloc(sizeof(struct subrecord));
+	struct field *sub;
+	sub = malloc(sizeof(struct field));
 	// head
 	sub->x = SUBRECORD;
-	sub->id = subrecords++;
+	sub->id = fields++;
 	sub->head = buf + *pos;
-	*pos += sizeof(struct subrecord_head);
+	*pos += sizeof(struct field_head);
 	sub->actualSize = override == 0 ? sub->head->size : override;
 	// data
 	sub->data = buf + *pos;

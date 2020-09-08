@@ -6,11 +6,11 @@
 typedef struct esp Esp;
 typedef struct grup Grup;
 typedef struct record Record;
-typedef struct subrecord Subrecord;
+typedef struct field Field;
 
 struct form_id;
 struct record;
-struct subrecord;
+struct field;
 struct grup;
 
 #define GRUP_HEX 0x50555247
@@ -19,7 +19,7 @@ struct grup;
 #define EDID_HEX 0x44494445
 #define FULL_HEX 0x4C4C5546
 
-extern int esp_skip_subrecords;
+extern int esp_skip_fields;
 
 extern struct esp *plugins[5];
 
@@ -29,7 +29,9 @@ struct esp_array
 {
 	union{
 	void **elements;
-	struct subrecord **fields;
+	struct grup **grups;
+	struct record **records;
+	struct field **fields;
 	};
 	size_t size;
 	size_t capacity;
@@ -78,7 +80,7 @@ struct record_head
 	unsigned int formId;
 };
 
-struct subrecord_head
+struct field_head
 {
 	unsigned int type;
 	unsigned short size;
@@ -107,11 +109,11 @@ struct record
 	char *buf;
 };
 
-struct subrecord
+struct field
 {
 	char x;
 	unsigned int id;
-	struct subrecord_head *head;
+	struct field_head *head;
 	unsigned int actualSize;
 	unsigned char *data;
 };
@@ -122,12 +124,12 @@ void esp_gui();
 
 api struct esp *esp_load(const char *);
 
-api void esp_read_subrecord_data(struct esp *, struct subrecord *);
+api void esp_read_field_data(struct esp *, struct field *);
 
 api void esp_print_form_id(struct esp *, char *, struct form_id *);
 api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
-api void esp_print_subrecord(struct esp *, char *, struct subrecord *);
+api void esp_print_field(struct esp *, char *, struct field *);
 
 api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 
