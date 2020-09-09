@@ -79,9 +79,6 @@ api struct esp *esp_load(const char *path)
 	records = 0;
 	fields = 0;
 	decompressions = 0;
-	for (int i = 0; i < 5; i++)
-	if (plugins[i] != NULL && 0 == strcmp(path, plugins[i]->path))
-	return plugins[i];
 	clock_t before, after;
 	struct esp *esp = malloc(sizeof(struct esp));
 	memset(esp, 0, sizeof(struct esp));
@@ -287,19 +284,16 @@ void make_form_ids(struct esp *esp)
 
 api struct record *esp_brute_record_by_form_id(unsigned int formId)
 {
-	for (int p = 0; p < 5; p++)
+	for (int i = 5; i --> 0; )
 	{
-	struct esp *esp = plugins[p];
+	struct esp *esp = plugins[i];
 	if (esp == NULL)
-	break;
-	for (int i = 0; i < esp->records.size; i++)
+	continue;
+	for (int j = 0; j < esp->records.size; j++)
 	{
-	struct record *rec = esp->records.elements[i];
+	struct record *rec = esp->records.elements[j];
 	if (rec->fi->formId == formId)
-	{
-	//printf("found fi at rec %i\n", i);
 	return rec;
-	}
 	}
 	}
 	return NULL;
@@ -346,7 +340,9 @@ api void free_esp(struct esp **p)
 {
 	struct esp *esp = *p;
 	*p = NULL;
-	fclose(esp->file);
+	for (int i = 5; i --> 0; )
+	if (plugins[i] != NULL && 0 == strcmp(esp->path, plugins[i]->path))
+	plugins[i] = NULL;
 	free_esp_array(&esp->grups);
 	free_esp_array(&esp->records);
 	free(esp);

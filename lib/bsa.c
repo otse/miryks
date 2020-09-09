@@ -273,6 +273,7 @@ api struct bsa *bsas_get_by_path(struct bsas *bsas, const char *path)
 	return NULL;
 }
 
+
 api struct rc *bsas_find(struct bsas *bsas, const char *p, unsigned long flags)
 {
 	struct rc *rc = NULL;
@@ -284,11 +285,8 @@ api struct rc *bsas_find(struct bsas *bsas, const char *p, unsigned long flags)
 	int test = Hedr.file_flags & flags;
 	if (Hedr.file_flags == 0 || test)
 	rc = bsa_find(bsa, p);
-	if (rc != NULL)
-	{
-	printf("found rc in %s\n", bsa->path);
+	if (rc!=NULL)
 	break;
-	}
 	}
 	return rc;
 }

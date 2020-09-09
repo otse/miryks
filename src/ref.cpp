@@ -62,6 +62,14 @@ namespace dark2
 		Group *group = new Group();
 	}
 
+	Ref::~Ref()
+	{
+		scene->Remove(renderable);
+		scene->Remove(pointlight);
+		delete renderable;
+		delete pointlight;
+	}
+
 	void Ref::SetData(Record *refr)
 	{
 		REFR REFR(refr);
@@ -80,9 +88,8 @@ namespace dark2
 		if (REFR.DATA)
 		{
 			DATA = (float *)REFR.DATA;
-			vec3 pos, rad;
-			pos = *cast_vec_3(((float *)REFR.DATA));
-			rad = *cast_vec_3(((float *)REFR.DATA + 3));
+			vec3 pos = *cast_vec_3(((float *)REFR.DATA));
+			vec3 rad = *cast_vec_3(((float *)REFR.DATA + 3));
 
 			translation = translate(mat4(1.0f), pos);
 
@@ -134,8 +141,8 @@ namespace dark2
 			}
 			else if (base->hed->type == X "LIGH")
 			{
-				pl = new PointLight;
-				scene->Add(pl);
+				pointlight = new PointLight;
+				scene->Add(pointlight);
 
 				for (int i = 0; i < base->fields.size; i++)
 				{
@@ -147,12 +154,12 @@ namespace dark2
 					else if (field->hed->type == X "DATA")
 					{
 						int time = *(int *)field->data;
-						pl->distance = *((unsigned int *)field->data + 1);
+						pointlight->distance = *((unsigned int *)field->data + 1);
 						unsigned int rgb = *((unsigned int *)field->data + 2);
 						unsigned char r = (rgb >> (8 * 0)) & 0xff;
 						unsigned char g = (rgb >> (8 * 1)) & 0xff;
 						unsigned char b = (rgb >> (8 * 2)) & 0xff;
-						pl->color = vec3(r, g, b) / 255.f;
+						pointlight->color = vec3(r, g, b) / 255.f;
 					}
 				}
 
@@ -162,12 +169,12 @@ namespace dark2
 
 		if (mesh)
 		{
-			Renderable *object = new Renderable(matrix, mesh->baseGroup);
-			scene->Add(object);
+			renderable = new Renderable(matrix, mesh->baseGroup);
+			scene->Add(renderable);
 		}
-		if (pl)
+		if (pointlight)
 		{
-			pl->matrix = matrix;
+			pointlight->matrix = matrix;
 		}
 	}
 

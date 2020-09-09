@@ -25,17 +25,19 @@ namespace dark2
 	class Level
 	{
 	public:
-		Level();
+		Level(const char *);
+		~Level();
 
-		//Cell cell;
+		Cell loadedCell;
 
 		static Cell GetCell(const char *);
 
-		std::vector<Ref *> references;
+		std::vector<Ref *> refs;
 		std::map<std::string, Ref *> editorIds;
 
 		void Update();
 		void LoadCell(Cell &);
+		void Unload();
 		
 		void ParseGrup(Cell &, Grup *);
 	};

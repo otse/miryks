@@ -58,11 +58,18 @@ namespace dark2
 		return cell;
 	}
 
-	Level::Level()
+	Level::~Level()
+	{
+		loadedCell;
+
+		Unload();
+	}
+
+	Level::Level(const char *edid)
 	{
 		Group *group = new Group();
 
-		Cell cell = GetCell("Dark2Schmuck");
+		Cell cell = GetCell(edid);
 
 		LoadCell(cell);
 	}
@@ -91,13 +98,22 @@ namespace dark2
 
 	void Level::LoadCell(Cell &cell)
 	{
+		loadedCell = cell;
 		//ParseGrup(cell, cell.persistent);
 		ParseGrup(cell, cell.non_persistent);
+	}
+
+	void Level::Unload()
+	{
+		for (auto it = refs.begin(); it != refs.end(); ++it)
+		{
+			Ref *ref = *it;
+			delete ref;
+		}
 	}
 
 	void Level::Update()
 	{
 	}
-
 
 } // namespace dark2

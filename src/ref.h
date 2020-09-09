@@ -19,13 +19,16 @@ namespace dark2
 	{
 	public:
 		Ref();
+		~Ref();
 
 		char *EDID = nullptr;
 		float *DATA = nullptr;
 
 		mat4 matrix;
+
 		Mesh *mesh = nullptr;
-		PointLight *pl = nullptr;
+		Renderable *renderable = nullptr;
+		PointLight *pointlight = nullptr;
 
 		void SetData(Record *);
 	};

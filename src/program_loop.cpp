@@ -1,6 +1,7 @@
 #include "dark2.h"
 
-extern "C" {
+extern "C"
+{
 #include "bsa.h"
 #include "nif.h"
 #include "esp.h"
@@ -51,7 +52,15 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
 	{
 		camera = first_person_camera;
-
+	}
+	if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
+	{
+		printf("F5!\n");
+		free_esp(&testMod);
+		testMod = esp_load((OLDRIM + "Data/TestMod.esp").c_str());
+		plugins[1] = testMod;
+		delete dungeon;
+		dungeon = new Level("Dark2Schmuck");
 	}
 }
 

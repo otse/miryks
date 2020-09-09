@@ -138,7 +138,7 @@ int main()
 	Rc *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
 	viewer::spotlight(rc);
 	nif_test(meshes);
-	dungeon = new Level();
+	dungeon = new Level("Dark2Schmuck");
 	programLoop();
 	return 1;
 }

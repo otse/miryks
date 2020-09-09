@@ -60,11 +60,11 @@ bool remove_nullable(T t, std::vector<T> &v)
 	return false;
 }
 
-void Scene::Add(PointLight *l) {
-	add_nullable<PointLight *>(l, pointlights);
+void Scene::Add(PointLight *pl) {
+	add_nullable<PointLight *>(pl, pointlights);
 }
-void Scene::Remove(PointLight *l) {
-	remove_nullable<PointLight *>(l, pointlights);
+void Scene::Remove(PointLight *pl) {
+	remove_nullable<PointLight *>(pl, pointlights);
 }
 void Scene::Add(Renderable *rb) {
 	if (add_nullable<Renderable *>(rb, renderables))

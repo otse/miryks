@@ -88,7 +88,7 @@ void im_subrecord(Subrecord *subrecord)
 
 void esp_gui()
 {
-	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;// | ImGuiWindowFlags_NoSavedSettings;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowPos(ImVec2(450, 0));
 
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
@@ -116,6 +116,12 @@ void esp_gui()
 			{
 				printf("todo unload non load ordered esp here\n");
 				free_esp(&esp);
+			}
+			if (esp == NULL)
+			{
+				for (int i = 0; i < 5; i++)
+					if (plugins[i] != NULL && 0 == strcmp(path->c_str(), plugins[i]->path))
+						esp = plugins[i];
 			}
 			if (esp == NULL)
 				esp = esp_load(path->c_str());
@@ -159,7 +165,8 @@ void esp_gui()
 			{
 				printf("esp try filter %.4s\n", filter);
 				memcpy(buf, filter, 4);
-				if (filtered) {
+				if (filtered)
+				{
 					free_esp_array(filtered);
 					filtered = NULL;
 				}
