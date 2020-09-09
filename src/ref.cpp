@@ -34,8 +34,8 @@ namespace dark2
 		for (int i = 0; i < Fields.size; i++)
 		{
 			Subrecord *field = ((Subrecord *)Fields.elements[i]);
-			for(auto it = req.begin(); it != req.end(); ++it) {
-				
+			for (auto it = req.begin(); it != req.end(); ++it)
+			{
 			}
 		}
 	}
@@ -52,6 +52,21 @@ namespace dark2
 				XSCL = ((float *)field->data);
 			if (field->hed->type == *(unsigned int *)"NAME")
 				NAME = ((unsigned int *)field->data);
+			if (field->hed->type == *(unsigned int *)"DATA")
+				DATA = ((unsigned char *)field->data);
+		}
+	}
+
+	LIGH::LIGH(Record *record)
+	{
+		auto array = &record->fields;
+		for (int i = 0; i < array->size; i++)
+		{
+			auto field = ((Subrecord *)array->elements[i]);
+			if (field->hed->type == *(unsigned int *)"EDID")
+				EDID = ((char *)field->data);
+			if (field->hed->type == *(unsigned int *)"FNAM")
+				FNAM = ((float *)field->data);
 			if (field->hed->type == *(unsigned int *)"DATA")
 				DATA = ((unsigned char *)field->data);
 		}
@@ -141,26 +156,30 @@ namespace dark2
 			}
 			else if (base->hed->type == X "LIGH")
 			{
+				LIGH LIGH(base);
+
 				pointlight = new PointLight;
 				scene->Add(pointlight);
 
-				for (int i = 0; i < base->fields.size; i++)
+				if (LIGH.EDID)
 				{
-					Subrecord *field = base->fields.subrecords[i];
-					if (field->hed->type == X "EDID")
-					{
-						printf("ligh edid %s\n", field->data);
-					}
-					else if (field->hed->type == X "DATA")
-					{
-						int time = *(int *)field->data;
-						pointlight->distance = *((unsigned int *)field->data + 1);
-						unsigned int rgb = *((unsigned int *)field->data + 2);
-						unsigned char r = (rgb >> (8 * 0)) & 0xff;
-						unsigned char g = (rgb >> (8 * 1)) & 0xff;
-						unsigned char b = (rgb >> (8 * 2)) & 0xff;
-						pointlight->color = vec3(r, g, b) / 255.f;
-					}
+					printf("ligh edid %s\n", LIGH.EDID);
+				}
+				if (LIGH.DATA)
+				{
+					int time = *(int *)LIGH.DATA;
+					pointlight->distance = *((unsigned int *)LIGH.DATA + 1);
+					unsigned int rgb = *((unsigned int *)LIGH.DATA + 2);
+					unsigned char r = (rgb >> (8 * 0)) & 0xff;
+					unsigned char g = (rgb >> (8 * 1)) & 0xff;
+					unsigned char b = (rgb >> (8 * 2)) & 0xff;
+					pointlight->color = vec3(r, g, b) / 255.f;
+				}
+				if (LIGH.FNAM)
+				{
+					float fade = *LIGH.FNAM;
+					fade = 1 / fade;
+					pointlight->decay = fade;
 				}
 
 				//point_light->decay = _j["Falloff Exponent"];

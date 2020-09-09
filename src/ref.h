@@ -15,6 +15,14 @@ namespace dark2
 		unsigned char *DATA = nullptr;
 	};
 
+	struct LIGH
+	{
+		LIGH(Record *);
+		char *EDID = nullptr;
+		float *FNAM = nullptr;
+		unsigned char *DATA = nullptr;
+	};
+
 	class Ref
 	{
 	public:

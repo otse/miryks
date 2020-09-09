@@ -18,7 +18,7 @@ Scene::Scene()
 	black->distance = 0;
 	black->intensity = 0;
 
-	ambient = vec3(100.f / 255.f, 100.f / 255.f, 100.f / 255.f);
+	ambient = vec3(10.f / 255.f, 10.f / 255.f, 10.f / 255.f);
 	//ambient = vec3(1, 1, 1);
 };
 
