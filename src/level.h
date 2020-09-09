@@ -12,7 +12,7 @@
 
 namespace dark2
 {
-	class Reference;
+	class Ref;
 
 	struct Cell
 	{
@@ -31,8 +31,8 @@ namespace dark2
 
 		static Cell GetCell(const char *);
 
-		std::vector<Reference *> references;
-		std::map<std::string, Reference *> editorIds;
+		std::vector<Ref *> references;
+		std::map<std::string, Ref *> editorIds;
 
 		void Update();
 		void LoadCell(Cell &);

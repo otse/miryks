@@ -305,6 +305,14 @@ api struct record *esp_brute_record_by_form_id(unsigned int formId)
 	return NULL;
 }
 
+api void esp_array_each(const struct esp_array *array, void *data, void (*func)(struct field *field, void *data))
+{
+	for (int i = 0; i < array->size; i++)
+	{
+	func(array->elements[i], data);
+	};
+}
+
 api struct esp_array *esp_lazy_filter(const struct esp *esp, const char type[5])
 {
 	struct esp_array *filtered;

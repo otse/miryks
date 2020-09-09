@@ -6,10 +6,19 @@
 
 namespace dark2
 {
-	class Reference
+	struct REFR
+	{
+		char *EDID = nullptr;
+		float *XSCL = nullptr;
+		unsigned int *NAME = nullptr;
+		unsigned char *DATA = nullptr;
+		REFR(Record *);
+	};
+
+	class Ref
 	{
 	public:
-		Reference();
+		Ref();
 
 		char *EDID = nullptr;
 		float *DATA = nullptr;

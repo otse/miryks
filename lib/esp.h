@@ -125,12 +125,12 @@ void esp_gui();
 
 api struct esp *esp_load(const char *);
 
-
 api void esp_print_form_id(struct esp *, char *, struct form_id *);
 api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_field(struct esp *, char *, struct field *);
 
+api void esp_array_each(const struct esp_array *, void (*func)(struct field *, void *));
 api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 
 api struct record *esp_brute_record_by_form_id(unsigned int);

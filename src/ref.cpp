@@ -25,38 +25,32 @@ constexpr char test_expr[] = "EDID";
 
 #define X *(unsigned int *)
 
-struct REFR
-{
-	char *EDID = nullptr;
-	float *XSCL = nullptr;
-	unsigned int *NAME = nullptr;
-	unsigned char *DATA = nullptr;
-	REFR(Record *record)
-	{
-		for (int i = 0; i < record->fields.size; i++)
-		{
-			Field *sub = record->fields.fields[i];
-			const auto type = sub->hed->type;
-			if (type == *(unsigned int *) "EDID")
-				EDID = ((char *)sub->data);
-			if (type == *(unsigned int *) "XSCL")
-				XSCL = ((float *)sub->data);
-			if (type == *(unsigned int *) "NAME")
-				NAME = ((unsigned int *)sub->data);
-			if (sub->hed->type == *(unsigned int *) "DATA")
-				DATA = ((unsigned char*)sub->data);
-		};
-	}
-};
-
 namespace dark2
 {
-	Reference::Reference()
+	REFR::REFR(Record *record)
+	{
+		esp_array_each(record->fields, each_field);
+	}
+
+	void each_field(Subrecord *field, void *data)
+	{
+		REFR *REFR = (REFR *)data;
+		if (field->hed->type == *(unsigned int *)"EDID")
+			EDID = ((char *)sub->data);
+		if (field->hed->type == *(unsigned int *)"XSCL")
+			XSCL = ((float *)sub->data);
+		if (field->hed->type == *(unsigned int *)"NAME")
+			NAME = ((unsigned int *)sub->data);
+		if (field->hed->type == *(unsigned int *)"DATA")
+			DATA = ((unsigned char *)sub->data);
+	}
+
+	Ref::Ref()
 	{
 		Group *group = new Group();
 	}
 
-	void Reference::SetData(Record *refr)
+	void Ref::SetData(Record *refr)
 	{
 		REFR REFR(refr);
 		matrix = mat4(1.0);
@@ -65,7 +59,7 @@ namespace dark2
 
 		if (REFR.EDID)
 		{
-			this->EDID = REFR.EDID;
+			EDID = REFR.EDID;
 		}
 		if (REFR.XSCL)
 		{
@@ -73,7 +67,7 @@ namespace dark2
 		}
 		if (REFR.DATA)
 		{
-			this->DATA = (float *)REFR.DATA;
+			DATA = (float *)REFR.DATA;
 			vec3 pos, rad;
 			pos = *cast_vec_3(((float *)REFR.DATA));
 			rad = *cast_vec_3(((float *)REFR.DATA + 3));
