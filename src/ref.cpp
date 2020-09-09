@@ -27,24 +27,24 @@ constexpr char test_expr[] = "EDID";
 
 struct REFR
 {
-	char *EDID;
-	float *XSCL;
-	unsigned int *NAME;
-	struct
-	{
-		float position[3], rotation[3];
-	} * DATA;
+	char *EDID = nullptr;
+	float *XSCL = nullptr;
+	unsigned int *NAME = nullptr;
+	unsigned char *DATA = nullptr;
 	REFR(Record *record)
 	{
 		for (int i = 0; i < record->fields.size; i++)
 		{
 			Field *sub = record->fields.fields[i];
-			if (sub->head->type == X"EDID")
+			const auto type = sub->hed->type;
+			if (type == *(unsigned int *) "EDID")
 				EDID = ((char *)sub->data);
-			if (sub->head->type == X"XSCL")
+			if (type == *(unsigned int *) "XSCL")
 				XSCL = ((float *)sub->data);
-			if (sub->head->type == X"NAME")
+			if (type == *(unsigned int *) "NAME")
 				NAME = ((unsigned int *)sub->data);
+			if (sub->hed->type == *(unsigned int *) "DATA")
+				DATA = ((unsigned char*)sub->data);
 		};
 	}
 };
@@ -63,98 +63,94 @@ namespace dark2
 
 		mat4 translation(1.0), rotation(1.0), scale(1.0);
 
-		for (int i = 0; i < refr->fields.size; i++)
+		if (REFR.EDID)
 		{
-			Field *sub = refr->fields.fields[i];
-			if (sub->head->type == X"EDID")
-			{
-				this->EDID = (char *)sub->data;
-			}
-			else if (sub->head->type == X"XSCL")
-			{
-				scale = glm::scale(mat4(1.0), vec3(*(float *)sub->data));
-			}
-			else if (sub->head->type == X"DATA")
-			{
-				this->DATA = (float *)sub->data;
-				vec3 pos, rad;
-				pos = *cast_vec_3((float *)sub->data);
-				rad = *cast_vec_3((float *)sub->data + 3);
+			this->EDID = REFR.EDID;
+		}
+		if (REFR.XSCL)
+		{
+			scale = glm::scale(mat4(1.0), vec3(*REFR.XSCL));
+		}
+		if (REFR.DATA)
+		{
+			this->DATA = (float *)REFR.DATA;
+			vec3 pos, rad;
+			pos = *cast_vec_3(((float *)REFR.DATA));
+			rad = *cast_vec_3(((float *)REFR.DATA + 3));
 
-				translation = translate(mat4(1.0f), pos);
+			translation = translate(mat4(1.0f), pos);
 
-				//glm::quat rot = glm::angleAxis(glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f))
-				rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
-				rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
-				rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
+			//glm::quat rot = glm::angleAxis(glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f))
+			rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
+			rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
+			rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
 
-				matrix = translation * rotation * scale;
-			}
-			else if (sub->head->type == X"NAME")
+			matrix = translation * rotation * scale;
+		}
+		if (REFR.NAME)
+		{
+			unsigned int formId = *REFR.NAME;
+
+			Record *base = esp_brute_record_by_form_id(formId);
+			Assert(base, "ref cant find name base");
+			if (base->hed->type == X "STAT" ||
+				//base->hed->type == X"FURN" ||
+				base->hed->type == X "ALCH" ||
+				base->hed->type == X "CONT" ||
+				base->hed->type == X "ARMO" ||
+				base->hed->type == X "WEAP" ||
+				base->hed->type == X "MISC")
 			{
-				unsigned int formId = *(unsigned int *)sub->data;
-
-				Record *base = esp_brute_record_by_form_id(formId);
-				Assert(base, "ref cant find name base");
-				if (base->head->type == X"STAT" ||
-					//base->head->type == *(unsigned int *)"FURN" ||
-					base->head->type == X"ALCH" ||
-					base->head->type == X"CONT" ||
-					base->head->type == X"ARMO" ||
-					base->head->type == X"WEAP" ||
-					base->head->type == X"MISC")
+				for (int i = 0; i < base->fields.size; i++)
 				{
-					for (int i = 0; i < base->fields.size; i++)
+					Field *field = base->fields.fields[i];
+					if (field->hed->type != X "MODL")
+						continue;
+					std::string data = (char *)field->data;
+					data = "meshes\\" + data;
+					std::transform(data.begin(), data.end(), data.begin(),
+								   [](unsigned char c) { return std::tolower(c); });
+					//printf("stat base has a modl %s\n", data.c_str());
+					Rc *rc = bsa_find(meshes, data.c_str());
+					if (rc)
 					{
-						Field *field = base->fields.fields[i];
-						if (field->head->type != *(unsigned int *)"MODL")
-							continue;
-						std::string data = (char *)field->data;
-						data = "meshes\\" + data;
-						std::transform(data.begin(), data.end(), data.begin(),
-									   [](unsigned char c) { return std::tolower(c); });
-						//printf("stat base has a modl %s\n", data.c_str());
-						Rc *rc = bsa_find(meshes, data.c_str());
-						if (rc)
+						//printf("found a rc %p\n", rc);
+						Nif *nif = nif_saved(rc);
+						if (nif == NULL)
 						{
-							//printf("found a rc %p\n", rc);
-							Nif *nif = nif_saved(rc);
-							if (nif == NULL)
-							{
-								nif = make_nif(rc);
-								nif_save(rc, nif);
-							}
-							mesh = new Mesh;
-							mesh->Construct(nif);
+							nif = make_nif(rc);
+							nif_save(rc, nif);
 						}
+						mesh = new Mesh;
+						mesh->Construct(nif);
 					}
 				}
-				else if (base->head->type == *(unsigned int *)"LIGH")
+			}
+			else if (base->hed->type == X "LIGH")
+			{
+				pl = new PointLight;
+				scene->Add(pl);
+
+				for (int i = 0; i < base->fields.size; i++)
 				{
-					pl = new PointLight;
-					scene->Add(pl);
-
-					for (int i = 0; i < base->fields.size; i++)
+					Field *field = base->fields.fields[i];
+					if (field->hed->type == X "EDID")
 					{
-						Field *field = base->fields.fields[i];
-						if (field->head->type == *(unsigned int *)"EDID")
-						{
-							printf("ligh edid %s\n", field->data);
-						}
-						else if (field->head->type == *(unsigned int *)"DATA")
-						{
-							int time = *(int *)field->data;
-							pl->distance = *((unsigned int *)field->data + 1);
-							unsigned int rgb = *((unsigned int *)field->data + 2);
-							unsigned char r = (rgb >> (8 * 0)) & 0xff;
-							unsigned char g = (rgb >> (8 * 1)) & 0xff;
-							unsigned char b = (rgb >> (8 * 2)) & 0xff;
-							pl->color = vec3(r, g, b) / 255.f;
-						}
+						printf("ligh edid %s\n", field->data);
 					}
-
-					//point_light->decay = _j["Falloff Exponent"];
+					else if (field->hed->type == X "DATA")
+					{
+						int time = *(int *)field->data;
+						pl->distance = *((unsigned int *)field->data + 1);
+						unsigned int rgb = *((unsigned int *)field->data + 2);
+						unsigned char r = (rgb >> (8 * 0)) & 0xff;
+						unsigned char g = (rgb >> (8 * 1)) & 0xff;
+						unsigned char b = (rgb >> (8 * 2)) & 0xff;
+						pl->color = vec3(r, g, b) / 255.f;
+					}
 				}
+
+				//point_light->decay = _j["Falloff Exponent"];
 			}
 		}
 

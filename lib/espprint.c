@@ -23,8 +23,8 @@ id: %u\
 \nelements: %u\
 ",
 grup->id,
-(char *)&grup->head->type,
-grup->head->size,
+(char *)&grup->hed->type,
+grup->hed->size,
 grup->mixed.size
 );
 }
@@ -42,23 +42,23 @@ id: %u\
 \nfields: %i\
 ",
 record->id,
-(char *)&record->head->type,
-record->head->size,
-record->head->flags,
-record->head->formId,
-record->head->formId,
-(record->head->flags & 0x00040000) != 0,
+(char *)&record->hed->type,
+record->hed->size,
+record->hed->flags,
+record->hed->formId,
+record->hed->formId,
+(record->hed->flags & 0x00040000) != 0,
 record->fields.size
 );
 }
 
 char *specifics(struct esp *esp, char *s, struct field *field)
 {
-if (field->head->type == *(unsigned int *)"EDID")
+if (field->hed->type == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
-if (field->head->type == *(unsigned int *)"FULL")
+if (field->hed->type == *(unsigned int *)"FULL")
 snprintf(s, 300, "%s", field->data);
-if (field->head->type == *(unsigned int *)"HEDR")
+if (field->hed->type == *(unsigned int *)"HEDR")
 snprintf(s, 300, "\
 \n  version: %.2f\
 \n  numRecords: %u\
@@ -79,7 +79,7 @@ id: %u\
 \nvalue: %s\
 ",
 field->id,
-(char *)&field->head->type,
+(char *)&field->hed->type,
 field->actualSize,
 &field->data,
 specifics(esp, x, field)

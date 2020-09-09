@@ -40,7 +40,7 @@ namespace dark2
 				{
 					Record *record = (Record *)B->mixed.elements[k];
 					Grup *grup = (Grup *)B->mixed.elements[k + 1];
-					Assert(record->head->type == *(unsigned int *)"CELL", "not a cell");
+					Assert(record->hed->type == *(unsigned int *)"CELL", "not a cell");
 					const char *cellEdid = (char *)((Field *)record->fields.elements[0])->data;
 					//printf("Found cell %s\n", cellEdid);
 					if (0 == strcmp(cellEdid, editorId))
@@ -73,7 +73,7 @@ namespace dark2
 		{
 			void *element = grup->mixed.elements[i];
 			Assert(*(char *)element == RECORD, "mixed non record");
-			Assert(grup->mixed.records[i]->head->type == *(unsigned int *)"REFR", "not a refr");
+			Assert(grup->mixed.records[i]->hed->type == *(unsigned int *)"REFR", "not a refr");
 			auto ref = new Reference;
 			ref->SetData((Record *)element);
 			if (ref->EDID)

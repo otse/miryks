@@ -49,7 +49,7 @@ void im_grup(Grup *grup, int top_grup = -1)
 void im_record(Record *record)
 {
 	char t[100];
-	snprintf(t, 100, "%.4s %i", (char *)&record->head->type, record->id);
+	snprintf(t, 100, "%.4s %i", (char *)&record->hed->type, record->id);
 	if (ImGui::TreeNode(t))
 	{
 		char s[200];
@@ -76,7 +76,7 @@ void im_record(Record *record)
 void im_subrecord(Field *subrecord)
 {
 	char t[100];
-	snprintf(t, 100, "%.4s##Sub %i", (char *)&subrecord->head->type, subrecord->id);
+	snprintf(t, 100, "%.4s##Sub %i", (char *)&subrecord->hed->type, subrecord->id);
 	if (ImGui::TreeNode(t))
 	{
 		char s[400];

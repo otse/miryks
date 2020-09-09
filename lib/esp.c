@@ -117,25 +117,25 @@ struct record *read_record(struct esp *esp)
 	// head
 	rec->x = RECORD;
 	rec->id = records++;
-	rec->head = Buf + Pos;
-	Pos += sizeof(struct record_head);
+	rec->hed = Buf + Pos;
+	Pos += sizeof(struct record_header);
 	Pos += 8;
-	rec->actualSize = rec->head->size;
+	rec->actualSize = rec->hed->size;
 	rec->data = Buf + Pos;
 	array(&rec->fields, 6);
 	insert(&esp->records, rec);
-	// printf("R %.4s %u > ", (char *)&rec->head->type, rec->head->dataSize);
+	// printf("R %.4s %u > ", (char *)&rec->hed->type, rec->hed->dataSize);
 	// fields
 	if (esp_skip_fields)
-	Pos += rec->head->size;
+	Pos += rec->hed->size;
 	else
 	{
-	if (rec->head->flags & 0x00040000)
+	if (rec->hed->flags & 0x00040000)
 	{
 	rec->buf = rec->pos = 0;
 	uncompress_record(rec);
 	read_record_fields(esp, rec);
-	Pos += rec->head->size;
+	Pos += rec->hed->size;
 	}
 	else
 	read_record_fields(esp, rec);
@@ -148,7 +148,7 @@ inline struct field *read_field(struct esp *, struct record *, unsigned int);
 inline void read_record_fields(struct esp *esp, struct record *rec)
 {
 	long *pos = &Pos;
-	if (rec->head->flags & 0x00040000)
+	if (rec->hed->flags & 0x00040000)
 	pos = &rec->pos;
 	long start = *pos;
 	unsigned int large = 0;
@@ -157,7 +157,7 @@ inline void read_record_fields(struct esp *esp, struct record *rec)
 	struct field *sub;
 	sub = read_field(esp, rec, large);
 	large = 0;
-	if (sub->head->type == XXXX_HEX)
+	if (sub->hed->type == XXXX_HEX)
 	large = *(unsigned int *)sub->data;
 	else
 	insert(&rec->fields, sub);
@@ -168,23 +168,23 @@ inline struct field *read_field(struct esp *esp, struct record *rec, unsigned in
 {
 	long *pos = &Pos;
 	char *buf = Buf;
-	if (rec->head->flags & 0x00040000)
+	if (rec->hed->flags & 0x00040000)
 	{
 	pos = &rec->pos;
 	buf = rec->buf;
 	}
 	struct field *sub;
 	sub = malloc(sizeof(struct field));
-	// head
+	// hed
 	sub->x = SUBRECORD;
 	sub->id = fields++;
-	sub->head = buf + *pos;
-	*pos += sizeof(struct field_head);
-	sub->actualSize = override == 0 ? sub->head->size : override;
+	sub->hed = buf + *pos;
+	*pos += sizeof(struct field_header);
+	sub->actualSize = override == 0 ? sub->hed->size : override;
 	// data
 	sub->data = buf + *pos;
 	*pos += sub->actualSize;
-	// printf("S %.4s %u > ", (char *)&sub->head->type, sub->head->size);
+	// printf("S %.4s %u > ", (char *)&sub->hed->type, sub->hed->size);
 	return sub;
 }
 
@@ -194,15 +194,15 @@ struct grup *read_grup(struct esp *esp)
 {
 	struct grup *grup = malloc(sizeof(struct grup));
 	//grup->lowest = grup->highest = 0;
-	// head
+	// hed
 	grup->x = GRUP;
 	grup->id = grups++;
-	grup->head = Buf + Pos;
-	Pos += sizeof(struct grup_head);
+	grup->hed = Buf + Pos;
+	Pos += sizeof(struct grup_header);
 	Pos += 16;
 	grup->data = Buf + Pos;
 	array(&grup->mixed, 12);
-	// printf("G %.4s %u > ", (char *)&grup->head->type, grup->head->size);
+	// printf("G %.4s %u > ", (char *)&grup->hed->type, grup->hed->size);
 	// records
 	read_grup_records(esp, grup);
 	// printf("\nend grup\n");
@@ -216,7 +216,7 @@ const unsigned int peek_type(struct esp *esp)
 
 inline void read_grup_records(struct esp *esp, struct grup *grup)
 {
-	long size = grup->head->size - sizeof(struct grup_head) - 16;
+	long size = grup->hed->size - sizeof(struct grup_header) - 16;
 	long start = Pos;
 	while (Pos - start < size)
 	{
@@ -245,7 +245,7 @@ void make_top_grups(struct esp *esp)
 	}
 	struct record *first = grup->mixed.elements[0];
 	for (int j = 0; j < max; j++)
-	if (first->head->type == *(unsigned int *)esp_types[j])
+	if (first->hed->type == *(unsigned int *)esp_types[j])
 	{
 	esp->tops[i] = esp_types[j];
 	break;
@@ -265,9 +265,9 @@ inline void build_form_id(struct esp *esp, struct record *record, struct form_id
 {
 	fi->esp = esp;
 	record->fi = fi;
-	fi->formId = record->head->formId;
+	fi->formId = record->hed->formId;
 	fi->record = record;
-	//snprintf(form_id.hex, 10, "%08X", record->head->formId);
+	//snprintf(form_id.hex, 10, "%08X", record->hed->formId);
 	//form_id.hex = 0;
 	fi->modIndex = fi->formId >> 24;
 	fi->objectIndex = fi->formId & ~(fi->modIndex << 24);
@@ -313,7 +313,7 @@ api struct esp_array *esp_lazy_filter(const struct esp *esp, const char type[5])
 	for (int i = 0; i < esp->records.size; i++)
 	{
 	struct record *record = esp->records.elements[i];
-	if (record->head->type == *(unsigned int *)type)
+	if (record->hed->type == *(unsigned int *)type)
 	insert(filtered, record);
 	}
 	return filtered;
@@ -323,7 +323,7 @@ void uncompress_record(struct record *rec)
 {
 	char *src = rec->data;
 	const unsigned int realSize = *(unsigned int *)src;
-	const unsigned int size = rec->head->size - 4;
+	const unsigned int size = rec->hed->size - 4;
 	src += 4;
 	rec->buf = malloc(realSize * sizeof(char));
 	int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);

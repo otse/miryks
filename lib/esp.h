@@ -66,13 +66,13 @@ struct form_id
 	void *plugin;
 };
 
-struct grup_head
+struct grup_header
 {
 	unsigned int type;
 	unsigned int size;
 };
 
-struct record_head
+struct record_header
 {
 	unsigned int type;
 	unsigned int size;
@@ -80,7 +80,7 @@ struct record_head
 	unsigned int formId;
 };
 
-struct field_head
+struct field_header
 {
 	unsigned int type;
 	unsigned short size;
@@ -90,7 +90,7 @@ struct grup
 {
 	char x;
 	unsigned int id;
-	struct grup_head *head;
+	const struct grup_header *hed;
 	unsigned char *data;
 	struct esp_array mixed;
 };
@@ -99,7 +99,7 @@ struct record
 {
 	char x;
 	unsigned int id;
-	struct record_head *head;
+	const struct record_header *hed;
 	struct form_id *fi;
 	struct esp_array fields;
 	unsigned char *data;
@@ -113,10 +113,11 @@ struct field
 {
 	char x;
 	unsigned int id;
-	struct field_head *head;
+	const struct field_header *hed;
 	unsigned int actualSize;
 	unsigned char *data;
 };
+
 
 #pragma pack(pop)
 
@@ -124,7 +125,6 @@ void esp_gui();
 
 api struct esp *esp_load(const char *);
 
-api void esp_read_field_data(struct esp *, struct field *);
 
 api void esp_print_form_id(struct esp *, char *, struct form_id *);
 api void esp_print_grup(struct esp *, char *, struct grup *);
@@ -135,6 +135,7 @@ api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 
 api struct record *esp_brute_record_by_form_id(unsigned int);
 api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
+// api void esp_read_field_data(struct esp *, struct field *);
 
 api void free_esp(struct esp **);
 api void free_esp_array(struct esp_array *);
