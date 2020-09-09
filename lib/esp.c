@@ -343,8 +343,16 @@ api void free_esp(struct esp **p)
 	for (int i = 5; i --> 0; )
 	if (plugins[i] != NULL && 0 == strcmp(esp->path, plugins[i]->path))
 	plugins[i] = NULL;
+	for (int i = 0; i < esp->records.size; i++)
+	{
+	struct record *record = esp->records.elements[i];
+	if (record->hed->flags & 0x00040000)
+	free(record->buf);
+	free_esp_array(&record->fields);
+	}
 	free_esp_array(&esp->grups);
 	free_esp_array(&esp->records);
+	free(esp->buf);
 	free(esp);
 }
 

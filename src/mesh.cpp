@@ -107,9 +107,10 @@ namespace dark2
 		Geometry *geometry = mesh->lastGroup->geometry;
 		if (!block->num_vertices)
 			return;
-		geometry->Clear(block->num_vertices, block->num_triangles * 3);
+		geometry->Clear(0, 0);
 		if (block->has_triangles)
 		{
+		geometry->Clear(block->num_vertices, block->num_triangles * 3);
 		for (int i = 0; i < block->num_triangles; i++)
 		{
 			unsigned short *triangle = (unsigned short *)&block->triangles[i];

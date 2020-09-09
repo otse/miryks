@@ -53,8 +53,10 @@ void Geometry::Clear(int num_vertices, int num_elements)
 {
 	vertices.clear();
 	elements.clear();
-	vertices.resize(num_vertices);
-	elements.resize(num_elements);
+	if (num_vertices)
+		vertices.resize(num_vertices);
+	if (num_elements)
+		elements.resize(num_elements);
 }
 
 void Geometry::Draw(const mat4 &model)

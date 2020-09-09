@@ -82,6 +82,7 @@ namespace dark2
 			Assert(*(char *)element == RECORD, "mixed non record");
 			Assert(grup->mixed.records[i]->hed->type == *(unsigned int *)"REFR", "not a refr");
 			auto ref = new Ref;
+			refs.push_back(ref);
 			ref->SetData((Record *)element);
 			if (ref->EDID)
 				editorIds.insert({ref->EDID, ref});
