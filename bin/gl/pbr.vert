@@ -1,7 +1,6 @@
 #version 330 core
 
-// attributes
-// values are linearly interpolated between the vertices
+#define PHYSICAL
 
 layout (location = 0) in vec3 Position;
 layout (location = 1) in vec2 Uv;
@@ -26,17 +25,15 @@ out vec3 vBitangent;
 out vec3 vViewPosition;
 out mat4 modelView;
 
-out float fogDepth;
+varying float fogDepth;
 
 #define USE_TANGENT
 
-void main()
-{
-	vec3 objectNormal = vec3( Normal );
+void main() {
 
+	vec3 objectNormal = vec3( Normal );
 	vec3 transformedNormal = normalMatrix * objectNormal;
 
-	//vUv = Uv;
 	vUv = ( uvTransform * vec3( Uv, 1 ) ).xy;
 	vColor = Color;
 	vNormal = normalize(transformedNormal);
@@ -56,7 +53,7 @@ void main()
 		//vBitangent = normalize( transformedBitangent );
 
 	#endif
-	
+
 	modelView = view * model;
 	
 	gl_Position = projection * modelView * vec4(Position, 1.0);
@@ -66,4 +63,5 @@ void main()
 	vViewPosition = - mvPosition.xyz;
 
 	fogDepth = -mvPosition.z;
+
 }

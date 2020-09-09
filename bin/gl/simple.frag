@@ -21,17 +21,13 @@ in mat4 modelView;
 uniform sampler2D map;
 uniform sampler2D normalMap;
 
-#define ASH
+//#define ASH
 #define USE_A_HEMISPHERE
 #define USE_NORMALMAP
 #define USE_SPECULARMAP
 #define USE_TANGENT
 
-#ifdef USE_NORMALMAP
-
-	vec2 normalScale = vec2(0.66, 0.66);
-
-#endif
+vec2 normalScale = vec2(0.8, 0.8);
 
 uniform vec3 color;
 uniform vec3 specular;
@@ -270,7 +266,7 @@ void main()
 	#ifdef USE_SPECULARMAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );
-		specularStrength = texelSpecular.a * 6.6;
+		specularStrength = texelSpecular.a * 10.0;
 
 	#else
 
@@ -286,16 +282,16 @@ void main()
 		vec3 normalAsh = normalize(normal) * mat3(view);
 
 		// blue ash
-		//vec3 ash = vec3(70.0/255.0, 70.0/255.0, 75.0/255.0);
+		vec3 ash = vec3(70.0/255.0, 70.0/255.0, 75.0/255.0);
 
 		// middle ash
-		vec3 ash = vec3(70.0/255.0, 60.0/255.0, 60.0/255.0);
+		//vec3 ash = vec3(70.0/255.0, 60.0/255.0, 60.0/255.0);
 		
 		// sulfur ash
 		//vec3 ash = vec3(70.0 / 255.0, 60.0 / 255.0, 40.0 / 255.0);
 		ash /= 1.5;
 		
-		if (normalAsh.z > 0.90) { // 0.55
+		if (normalAsh.z > 0.4) { // 0.55
 			diffuseColor.rgb = ash;
 			specularStrength /= 10.0;
 		}
@@ -350,8 +346,8 @@ void main()
 
 	HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));
-	hemiLight.skyColor = vec3(0.03, 0.06, 0.04);
-	hemiLight.groundColor = vec3(0, 0.04, 0.12);
+	hemiLight.skyColor = vec3(0.03, 0.05, 0.04) * 1.0;
+	hemiLight.groundColor = vec3(0.0, 0.02, 0.025) * 1.0;
 
 	// ambientLightColor
 	vec3 localAmbient = vec3(30.0 / 255.0);

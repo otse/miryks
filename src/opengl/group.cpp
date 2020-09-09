@@ -2,7 +2,7 @@
 
 #include "geometry"
 
-const bool DRAW_AXIS = true;
+const bool DRAW_AXIS = 0;
 
 int Group::num = 0;
 

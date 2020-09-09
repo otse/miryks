@@ -168,7 +168,7 @@ void dark2::programGo()
 	glFrontFace(GL_CCW);
 
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_SAMPLES, 8);
 }
 
 void dark2::programLoop()

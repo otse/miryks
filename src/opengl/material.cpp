@@ -86,6 +86,7 @@ void Material::Use()
 	shader->Use();
 	shader->SetVec3("color", color);
 	shader->SetVec3("specular", specular);
+	shader->SetVec3("emissive", emissive);
 	shader->SetMat3("uvTransform", uvTransform);
 	shader->SetBool("doubleSided", doubleSided);
 	shader->SetFloat("opacity", opacity);

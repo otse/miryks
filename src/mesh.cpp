@@ -105,9 +105,9 @@ namespace dark2
 		// printf("ni tri shape data callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Geometry *geometry = mesh->lastGroup->geometry;
+		geometry->Clear(0, 0);
 		if (!block->num_vertices)
 			return;
-		geometry->Clear(0, 0);
 		if (block->has_triangles)
 		{
 		geometry->Clear(block->num_vertices, block->num_triangles * 3);
