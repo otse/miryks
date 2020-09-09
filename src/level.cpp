@@ -41,7 +41,7 @@ namespace dark2
 					Record *record = (Record *)B->mixed.elements[k];
 					Grup *grup = (Grup *)B->mixed.elements[k + 1];
 					Assert(record->hed->type == *(unsigned int *)"CELL", "not a cell");
-					const char *cellEdid = (char *)((Field *)record->fields.elements[0])->data;
+					const char *cellEdid = (char *)((Subrecord *)record->fields.elements[0])->data;
 					//printf("Found cell %s\n", cellEdid);
 					if (0 == strcmp(cellEdid, editorId))
 					{

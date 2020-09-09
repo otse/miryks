@@ -31,6 +31,8 @@ api struct bsa *bsa_load(const char *path)
 	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
 	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
+	//if (!bsa->stream)
+	//return NULL;
 	cassert_(
 		bsa->stream, BSA "can't open");
 	read(bsa, &Hedr, sizeof(struct bsa_hedr));
@@ -277,11 +279,16 @@ api struct rc *bsas_find(struct bsas *bsas, const char *p, unsigned long flags)
 	for (int i = bsas->num; i --> 0; )
 	{
 	struct bsa *bsa = bsas->array[i];
+	if (bsa==NULL)
+	break;
 	int test = Hedr.file_flags & flags;
 	if (Hedr.file_flags == 0 || test)
 	rc = bsa_find(bsa, p);
 	if (rc != NULL)
+	{
+	printf("found rc in %s\n", bsa->path);
 	break;
+	}
 	}
 	return rc;
 }

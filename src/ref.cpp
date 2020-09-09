@@ -25,24 +25,36 @@ constexpr char test_expr[] = "EDID";
 
 #define X *(unsigned int *)
 
+#define Fields object->fields
+
 namespace dark2
 {
-	REFR::REFR(Record *record)
+	void gather_fields(Record *object, std::vector<char *> req)
 	{
-		esp_array_each(record->fields, each_field);
+		for (int i = 0; i < Fields.size; i++)
+		{
+			Subrecord *field = ((Subrecord *)Fields.elements[i]);
+			for(auto it = req.begin(); it != req.end(); ++it) {
+				
+			}
+		}
 	}
 
-	void each_field(Subrecord *field, void *data)
+	REFR::REFR(Record *record)
 	{
-		REFR *REFR = (REFR *)data;
-		if (field->hed->type == *(unsigned int *)"EDID")
-			EDID = ((char *)sub->data);
-		if (field->hed->type == *(unsigned int *)"XSCL")
-			XSCL = ((float *)sub->data);
-		if (field->hed->type == *(unsigned int *)"NAME")
-			NAME = ((unsigned int *)sub->data);
-		if (field->hed->type == *(unsigned int *)"DATA")
-			DATA = ((unsigned char *)sub->data);
+		auto array = &record->fields;
+		for (int i = 0; i < array->size; i++)
+		{
+			auto field = ((Subrecord *)array->elements[i]);
+			if (field->hed->type == *(unsigned int *)"EDID")
+				EDID = ((char *)field->data);
+			if (field->hed->type == *(unsigned int *)"XSCL")
+				XSCL = ((float *)field->data);
+			if (field->hed->type == *(unsigned int *)"NAME")
+				NAME = ((unsigned int *)field->data);
+			if (field->hed->type == *(unsigned int *)"DATA")
+				DATA = ((unsigned char *)field->data);
+		}
 	}
 
 	Ref::Ref()
@@ -97,7 +109,7 @@ namespace dark2
 			{
 				for (int i = 0; i < base->fields.size; i++)
 				{
-					Field *field = base->fields.fields[i];
+					Subrecord *field = base->fields.subrecords[i];
 					if (field->hed->type != X "MODL")
 						continue;
 					std::string data = (char *)field->data;
@@ -127,7 +139,7 @@ namespace dark2
 
 				for (int i = 0; i < base->fields.size; i++)
 				{
-					Field *field = base->fields.fields[i];
+					Subrecord *field = base->fields.subrecords[i];
 					if (field->hed->type == X "EDID")
 					{
 						printf("ligh edid %s\n", field->data);

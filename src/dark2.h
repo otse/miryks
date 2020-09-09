@@ -61,6 +61,9 @@ namespace dark2
 	extern Bsa *meshes;
 	extern Bsa *animations;
 	extern Bsa *textures;
+	extern Bsa *hirestexturepack01;
+	extern Bsa *hirestexturepack02;
+	extern Bsa *hirestexturepack03;
 
 } // namespace dark2
 

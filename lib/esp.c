@@ -70,7 +70,7 @@ unsigned int hedr_num_records(struct esp *esp)
 {
 	if (esp_skip_fields)
 	return 200;
-	return *(unsigned int *)(esp->header->fields.fields[0]->data + 4);
+	return *(unsigned int *)(esp->header->fields.subrecords[0]->data + 4);
 }
 
 api struct esp *esp_load(const char *path)
@@ -143,7 +143,7 @@ struct record *read_record(struct esp *esp)
 	return rec;
 }
 
-inline struct field *read_field(struct esp *, struct record *, unsigned int);
+inline struct subrecord *read_field(struct esp *, struct record *, unsigned int);
 
 inline void read_record_fields(struct esp *esp, struct record *rec)
 {
@@ -154,7 +154,7 @@ inline void read_record_fields(struct esp *esp, struct record *rec)
 	unsigned int large = 0;
 	while(*pos - start < rec->actualSize)
 	{
-	struct field *sub;
+	struct subrecord *sub;
 	sub = read_field(esp, rec, large);
 	large = 0;
 	if (sub->hed->type == XXXX_HEX)
@@ -164,7 +164,7 @@ inline void read_record_fields(struct esp *esp, struct record *rec)
 	}
 }
 
-inline struct field *read_field(struct esp *esp, struct record *rec, unsigned int override)
+inline struct subrecord *read_field(struct esp *esp, struct record *rec, unsigned int override)
 {
 	long *pos = &Pos;
 	char *buf = Buf;
@@ -173,8 +173,8 @@ inline struct field *read_field(struct esp *esp, struct record *rec, unsigned in
 	pos = &rec->pos;
 	buf = rec->buf;
 	}
-	struct field *sub;
-	sub = malloc(sizeof(struct field));
+	struct subrecord *sub;
+	sub = malloc(sizeof(struct subrecord));
 	// hed
 	sub->x = SUBRECORD;
 	sub->id = fields++;
@@ -305,13 +305,15 @@ api struct record *esp_brute_record_by_form_id(unsigned int formId)
 	return NULL;
 }
 
-api void esp_array_each(const struct esp_array *array, void *data, void (*func)(struct field *field, void *data))
+/*
+api void esp_array_loop(struct esp_array *array, void (*func)(struct subrecord *field, void *data), void *data)
 {
 	for (int i = 0; i < array->size; i++)
 	{
 	func(array->elements[i], data);
 	};
 }
+*/
 
 api struct esp_array *esp_lazy_filter(const struct esp *esp, const char type[5])
 {

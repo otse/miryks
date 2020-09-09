@@ -6,12 +6,14 @@
 typedef struct esp Esp;
 typedef struct grup Grup;
 typedef struct record Record;
-typedef struct field Field;
+typedef struct subrecord Subrecord;
 
 struct form_id;
 struct record;
-struct field;
+struct subrecord;
 struct grup;
+
+#define Fields object->fields
 
 #define GRUP_HEX 0x50555247
 #define XXXX_HEX 0x58585858
@@ -31,7 +33,7 @@ struct esp_array
 	void **elements;
 	struct grup **grups;
 	struct record **records;
-	struct field **fields;
+	struct subrecord **subrecords;
 	};
 	size_t size;
 	size_t capacity;
@@ -109,7 +111,7 @@ struct record
 	char *buf;
 };
 
-struct field
+struct subrecord
 {
 	char x;
 	unsigned int id;
@@ -128,14 +130,14 @@ api struct esp *esp_load(const char *);
 api void esp_print_form_id(struct esp *, char *, struct form_id *);
 api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
-api void esp_print_field(struct esp *, char *, struct field *);
+api void esp_print_field(struct esp *, char *, struct subrecord *);
 
-api void esp_array_each(const struct esp_array *, void (*func)(struct field *, void *));
+//api void esp_array_loop(struct esp_array *, void (*func)(struct subrecord *, void *), void *);
 api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 
 api struct record *esp_brute_record_by_form_id(unsigned int);
 api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
-// api void esp_read_field_data(struct esp *, struct field *);
+// api void esp_read_field_data(struct esp *, struct subrecord *);
 
 api void free_esp(struct esp **);
 api void free_esp_array(struct esp_array *);

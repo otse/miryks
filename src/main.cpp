@@ -43,7 +43,7 @@ namespace dark2
 	{
 		return reinterpret_cast<mat4 *>(f);
 	}
-	
+
 	namespace viewer
 	{
 		Mesh *mesh = nullptr;
@@ -60,6 +60,9 @@ namespace dark2
 	Bsa *meshes;
 	Bsa *animations;
 	Bsa *textures;
+	Bsa *hirestexturepack01;
+	Bsa *hirestexturepack02;
+	Bsa *hirestexturepack03;
 
 	FirstPersonCamera *first_person_camera;
 	ViewerCamera *viewer_camera;
@@ -92,7 +95,8 @@ void dark2::viewer::spotlight(Rc *rc)
 		delete object;
 	}
 	Nif *nif = nif_saved(rc);
-	if (nif == NULL) {
+	if (nif == NULL)
+	{
 		nif = make_nif(rc);
 		nif_save(rc, nif);
 	}
@@ -117,8 +121,15 @@ int main()
 	plugins[1] = testMod;
 	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
 	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
-	struct bsa *array[2] = {meshes, textures};
-	bsas_add_to_loaded(&bsas, array, 2);
+	if (exists_test3(OLDRIM + "Data/HighResTexturePack01.bsa"))
+	{
+		hirestexturepack01 = bsa_load((OLDRIM + "Data/HighResTexturePack01.bsa").c_str());
+		hirestexturepack02 = bsa_load((OLDRIM + "Data/HighResTexturePack02.bsa").c_str());
+		hirestexturepack03 = bsa_load((OLDRIM + "Data/HighResTexturePack03.bsa").c_str());
+	}
+	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
+	struct bsa *array[5] = {meshes, textures, hirestexturepack01, hirestexturepack02, hirestexturepack03};
+	bsas_add_to_loaded(&bsas, array, 5);
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;

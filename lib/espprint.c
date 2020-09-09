@@ -52,7 +52,7 @@ record->fields.size
 );
 }
 
-char *specifics(struct esp *esp, char *s, struct field *field)
+char *specifics(struct esp *esp, char *s, struct subrecord *field)
 {
 if (field->hed->type == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
@@ -68,7 +68,7 @@ snprintf(s, 300, "\
 	return s;
 }
 
-api void esp_print_field(struct esp *esp, char *s, struct field *field)
+api void esp_print_field(struct esp *esp, char *s, struct subrecord *field)
 {
 char x[300] = "Not Handled\0";
 int w = snprintf(s, 400, "\

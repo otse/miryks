@@ -21,7 +21,7 @@ static Esp *esp = NULL;
 
 void im_grup(Grup *, int);
 void im_record(Record *);
-void im_subrecord(Field *);
+void im_subrecord(Subrecord *);
 
 void im_grup(Grup *grup, int top_grup = -1)
 {
@@ -67,13 +67,13 @@ void im_record(Record *record)
 		}
 		for (int i = 0; i < record->fields.size; i++)
 		{
-			im_subrecord((Field *)record->fields.elements[i]);
+			im_subrecord((Subrecord *)record->fields.elements[i]);
 		}
 		ImGui::TreePop();
 	}
 }
 
-void im_subrecord(Field *subrecord)
+void im_subrecord(Subrecord *subrecord)
 {
 	char t[100];
 	snprintf(t, 100, "%.4s##Sub %i", (char *)&subrecord->hed->type, subrecord->id);

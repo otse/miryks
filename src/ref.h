@@ -8,11 +8,11 @@ namespace dark2
 {
 	struct REFR
 	{
+		REFR(Record *);
 		char *EDID = nullptr;
 		float *XSCL = nullptr;
 		unsigned int *NAME = nullptr;
 		unsigned char *DATA = nullptr;
-		REFR(Record *);
 	};
 
 	class Ref
