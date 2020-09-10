@@ -58,7 +58,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		printf("F5!\n");
 		free_plugin(&testMod);
 		testMod = GetPlugin("TestMod.esp");
-		get_plugins()[0] = testMod;
+		get_plugins()[1] = testMod;
 		delete dungeon;
 		dungeon = new Level("Dark2Schmuck");
 	}

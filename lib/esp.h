@@ -15,6 +15,8 @@ struct grup;
 
 #define Fields object->fields
 
+#define espwrd *(unsigned int *)
+
 extern int esp_skip_fields;
 
 extern const char *esp_types[];
@@ -33,10 +35,10 @@ struct esp_array
 
 struct esp
 {
-	char path[260];
+	const char *name;
 	void *file;
 	long pos;
-	char *buf;
+	const char *buf;
 	long filesize;
 	struct record *header;
 	struct esp_array grups, records;
@@ -121,7 +123,8 @@ struct subrecord
 
 void esp_gui();
 
-api struct esp *esp_load(const char *, int);
+api struct esp *plugin_slate();
+api int plugin_load(struct esp *);
 
 api void esp_print_form_id(struct esp *, char *, struct form_id *);
 api void esp_print_grup(struct esp *, char *, struct grup *);

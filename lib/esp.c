@@ -28,22 +28,6 @@ inline void array(struct esp_array *, size_t);
 inline void grow(struct esp_array *);
 inline void insert(struct esp_array *, void *);
 
-float read_plugin(struct esp *esp, const char *path, int failsafe)
-{
-	strncpy(esp->path, path, 260);
-	printf("read esp %s\n", esp->path);
-	esp->file = fopen(esp->path, "rb");
-	cassert(esp->file, "esp can't open");
-	fseek(esp->file, 0, SEEK_END);
-	esp->filesize = ftell(esp->file);
-	rewind(esp->file);
-	esp->buf = malloc(esp->filesize * sizeof(char));
-	cassert(esp->buf != NULL, "esp cant get memory");
-	size_t read = fread(esp->buf, sizeof(char), esp->filesize, esp->file);
-	cassert(read, "esp buf bad");
-	rewind(esp->file);
-}
-
 void make_top_grups(struct esp *);
 void make_form_ids(struct esp *);
 
@@ -54,11 +38,18 @@ unsigned int hedr_num_records(struct esp *esp)
 	return *(unsigned int *)(esp->header->fields.subrecords[0]->data + 4);
 }
 
-api struct esp *esp_load(const char *path, int failsafe)
+struct esp *plugin_slate()
 {
-	struct esp *esp = malloc(sizeof(struct esp));
-	memset(esp, 0, sizeof(struct esp));
-	read_plugin(esp, path, failsafe);
+	struct esp *plugin = malloc(sizeof(struct esp));
+	memset(plugin, 0, sizeof(struct esp));
+	return plugin;
+}
+
+api int plugin_load(struct esp *esp)
+{
+	cassert(esp->buf,      "need buf");
+	cassert(esp->filesize, "need filesize");
+	cassert(esp->name,     "need name");
 	esp->header = read_record(esp);
 	array(&esp->grups, 200);
 	array(&esp->records, hedr_num_records(esp));
@@ -69,8 +60,7 @@ api struct esp *esp_load(const char *path, int failsafe)
 	}
 	make_top_grups(esp);
 	make_form_ids(esp);
-	fclose(esp->file);
-	return esp;
+	return 0;
 }
 
 void uncompress_record(struct esp *, struct record *);
@@ -178,7 +168,7 @@ struct grup *read_grup(struct esp *esp)
 
 const unsigned int peek_type(struct esp *esp)
 {
-	return *(unsigned int *)(Buf + Pos);
+	return espwrd (Buf + Pos);
 }
 
 inline void read_grup_records(struct esp *esp, struct grup *grup)
@@ -187,7 +177,7 @@ inline void read_grup_records(struct esp *esp, struct grup *grup)
 	long start = Pos;
 	while (Pos - start < size)
 	{
-	if (peek_type(esp) == *(unsigned int *)"GRUP")
+	if (peek_type(esp) == espwrd "GRUP")
 	insert(&grup->mixed, read_grup(esp));
 	else
 	insert(&grup->mixed, read_record(esp));

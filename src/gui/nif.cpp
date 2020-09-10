@@ -5,7 +5,7 @@ extern "C"
 #include "nif.h"
 }
 
-#include "files"
+#include "files.h"
 
 #include <sstream>
 #include <imgui.h>

@@ -1,6 +1,6 @@
 #include "dark2.h"
 
-#include "files"
+#include "files.h"
 
 extern "C"
 {
@@ -69,11 +69,17 @@ namespace dark2
 
 	esp *GetPlugin(const char *filename)
 	{
-		esp *plugin = nullptr;
 		std::string path = OLDRIM + "Data/" + filename;
-		plugin = esp_load(path.c_str(), 1);
-		if (!plugin)
-			plugin = esp_load(filename, 0);
+		const char *buf = nullptr;
+		int ret;
+		// Try skyrim/Data after that locally
+		(ret = fbuf(path, &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
+		printf("ret %i\n", ret);
+		esp *plugin = plugin_slate();
+		plugin->name = filename;
+		plugin->buf = buf;
+		plugin->filesize = ret;
+		plugin_load(plugin);
 		return plugin;
 	}
 

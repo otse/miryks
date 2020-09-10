@@ -30,7 +30,7 @@ uniform sampler2D normalMap;
 vec2 normalScale = vec2(1.0);
 
 uniform vec3 color;
-vec3 specular = vec3(0.5, 0.8, 1.0) * 0.7;
+vec3 specular = vec3(0.5, 0.75, 1.0) * 1.0;
 //vec3 emissive = vec3(1.0, 1.0, 0); // out
 
 uniform float opacity;
@@ -293,7 +293,7 @@ void main()
 		ash /= 1.5;
 		
 		if (normalAsh.z > 0.9) { // 0.55
-			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.1);
+			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.2);
 			specularStrength /= 10.0;
 		}
 
@@ -335,7 +335,7 @@ void main()
 
 		PointLight b = PointLight(
 			a.package[0],
-			a.package[1] * 6,
+			a.package[1] * 7,
 			a.package[2][0],
 			a.package[2][1],
 			mat3(0.0));
@@ -351,7 +351,7 @@ void main()
 	hemiLight.groundColor = vec3(0.0, 0.02, 0.025) * 1.0;
 
 	// ambientLightColor
-	vec3 localAmbient = vec3(20.0 / 255.0);
+	vec3 localAmbient = vec3(40.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
 	#ifdef USE_A_HEMISPHERE

@@ -9,7 +9,7 @@ Shader *Shader::active = nullptr;
 #include "camera"
 #include "scene"
 
-#include "files"
+#include "files.h"
 
 #include <glad/glad.h>
 

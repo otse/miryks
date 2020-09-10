@@ -1,5 +1,5 @@
 #include "dark2.h"
-#include "files"
+#include "files.h"
 
 extern "C"
 {

@@ -13,7 +13,7 @@ extern "C"
 #include "esp.h"
 }
 
-#include "files"
+#include "files.h"
 
 #include "opengl/renderable"
 #include "opengl/texture"
@@ -23,36 +23,23 @@ extern "C"
 
 constexpr char test_expr[] = "EDID";
 
-#define X *(unsigned int *)
-
 #define Fields object->fields
 
 namespace dark2
 {
-	void gather_fields(Record *object, std::vector<char *> req)
-	{
-		for (int i = 0; i < Fields.size; i++)
-		{
-			Subrecord *field = ((Subrecord *)Fields.elements[i]);
-			for (auto it = req.begin(); it != req.end(); ++it)
-			{
-			}
-		}
-	}
-
 	REFR::REFR(Record *record)
 	{
 		auto array = &record->fields;
 		for (int i = 0; i < array->size; i++)
 		{
 			auto field = ((Subrecord *)array->elements[i]);
-			if (field->hed->type == *(unsigned int *)"EDID")
+			if (field->hed->type == espwrd "EDID")
 				EDID = ((char *)field->data);
-			if (field->hed->type == *(unsigned int *)"XSCL")
+			if (field->hed->type == espwrd "XSCL")
 				XSCL = ((float *)field->data);
-			if (field->hed->type == *(unsigned int *)"NAME")
+			if (field->hed->type == espwrd "NAME")
 				NAME = ((unsigned int *)field->data);
-			if (field->hed->type == *(unsigned int *)"DATA")
+			if (field->hed->type == espwrd "DATA")
 				DATA = ((unsigned char *)field->data);
 		}
 	}
@@ -63,11 +50,11 @@ namespace dark2
 		for (int i = 0; i < array->size; i++)
 		{
 			auto field = ((Subrecord *)array->elements[i]);
-			if (field->hed->type == *(unsigned int *)"EDID")
+			if (field->hed->type == espwrd "EDID")
 				EDID = ((char *)field->data);
-			if (field->hed->type == *(unsigned int *)"FNAM")
+			if (field->hed->type == espwrd "FNAM")
 				FNAM = ((float *)field->data);
-			if (field->hed->type == *(unsigned int *)"DATA")
+			if (field->hed->type == espwrd "DATA")
 				DATA = ((unsigned char *)field->data);
 		}
 	}
@@ -121,18 +108,18 @@ namespace dark2
 
 			Record *base = esp_brute_record_by_form_id(formId);
 			Assert(base, "ref cant find name base");
-			if (base->hed->type == X "STAT" ||
-				//base->hed->type == X"FURN" ||
-				base->hed->type == X "ALCH" ||
-				base->hed->type == X "CONT" ||
-				base->hed->type == X "ARMO" ||
-				base->hed->type == X "WEAP" ||
-				base->hed->type == X "MISC")
+			if (base->hed->type == espwrd "STAT" ||
+				//base->hed->type == espwrd"FURN" ||
+				base->hed->type == espwrd "ALCH" ||
+				base->hed->type == espwrd "CONT" ||
+				base->hed->type == espwrd "ARMO" ||
+				base->hed->type == espwrd "WEAP" ||
+				base->hed->type == espwrd "MISC")
 			{
 				for (int i = 0; i < base->fields.size; i++)
 				{
 					Subrecord *field = base->fields.subrecords[i];
-					if (field->hed->type != X "MODL")
+					if (field->hed->type != espwrd "MODL")
 						continue;
 					mesh = Mesh::GetStored(field->data);
 					if (!mesh)
@@ -159,7 +146,7 @@ namespace dark2
 					}
 				}
 			}
-			else if (base->hed->type == X "LIGH")
+			else if (base->hed->type == espwrd "LIGH")
 			{
 				LIGH LIGH(base);
 
@@ -168,7 +155,7 @@ namespace dark2
 
 				if (LIGH.EDID)
 				{
-					printf("ligh edid %s\n", LIGH.EDID);
+					//printf("ligh edid %s\n", LIGH.EDID);
 				}
 				if (LIGH.DATA)
 				{

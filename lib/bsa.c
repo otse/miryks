@@ -49,7 +49,7 @@ api struct bsa *bsa_load(const char *path)
 	bsa_read_file_records(bsa);
 	bsa_read_filenames(bsa);
 	bsa_resources(bsa);
-	printf("loaded bsa %s\n", path);
+	//printf("loaded bsa %s\n", path);
 	return bsa;
 }
 

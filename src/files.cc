@@ -1,9 +1,26 @@
 #include <fstream>
 #include <filesystem>
 
-#include "files"
+#include "files.h"
 
 #include "idiom.hpp"
+
+// written for filling out a plugin struct
+int fbuf(std::string path, const char **dest)
+{
+	printf("fbuf path %s", path.c_str());
+	int mode = ifstream::binary | ifstream::ate;
+	ifstream is(path, mode);
+	if (is)
+	{
+		size_t end = is.tellg();
+		*dest = (const char *)malloc(end);
+		is.seekg(0, is.beg);
+		is.read((char *)*dest, end);
+		return end;
+	}
+	return -1;
+}
 
 string fread(const string &a)
 {
@@ -20,12 +37,10 @@ string fread(const string &a)
 	return "no";
 }
 
-vector<unsigned char> freadbin(const string &a)
+vector<unsigned char> *readbin(const string &a)
 {
-	int mode = ifstream::binary;
-	ifstream b(a, mode);
-	vector<unsigned char> c(
-		istreambuf_iterator<char>(b), {});
+	ifstream input(a, ifstream::binary);
+	vector<unsigned char> *c = new vector<unsigned char>(istreambuf_iterator<char>(input), {});
 	return c;
 }
 

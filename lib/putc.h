@@ -1,5 +1,4 @@
-// putc
-// common access for plugins, archives, netimmerse files for dark2
+// stuff for elder scrolls plugin, bethesda archive and netimmerse file format
 
 #ifndef LIB_PUTC_H
 #define LIB_PUTC_H
@@ -10,13 +9,11 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define cassert(e, m)          \
-    if (!(e))                  \
-    {                          \
-        printf(m);             \
-        cfout("error.txt", m); \
-        exit(1);               \
-    }
+#define cassert(e, m) if (!(e)) Fail(m);
+
+/*inline*/ int Fail(const char *);
+
+//cfout("error.txt", m);
 
 int exists(const char *);
 //char *fsamplevar(const char *, const char *, const char *);
