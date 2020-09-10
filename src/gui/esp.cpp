@@ -93,27 +93,41 @@ void esp_gui()
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::Begin(ESP_GUI, nullptr, flags);
 
-#define MAX 230
-	static char buf[MAX] = "Skyrim.esm";
-	static char buf2[MAX] = {'\0'};
-	ImGui::InputText("##archive", buf, IM_ARRAYSIZE(buf));
+	static bool pluginUsedByGame = false;
+	static char buf[260] = "Skyrim.esm";
+	static char buf2[260] = {'\0'};
+	static char temporaryName[260] = {'\0'};
+	ImGui::InputText("##archive", buf, 260);
 
 	if (strcmp(buf, buf2))
 	{
-		memcpy(buf2, buf, MAX);
-		auto plugins = get_plugins();
-		for (int i = 5; i-- > 0;)
+		memcpy(buf2, buf, 260);
+		esp *plugin2 = has_plugin(buf);
+		if (plugin2)
 		{
-			if (plugins[i] == NULL)
-				continue;
-			if (0 == strcmp(buf, (char *)plugins[i]))
+			pluginUsedByGame = true;
+			plugin = plugin2;
+		}
+		else
+		{
+			plugin2 = GetPlugin(buf2);
+			if (plugin2)
 			{
-				plugin = plugins[i];
+				memcpy(temporaryName, buf, 260);
+				pluginUsedByGame = false;
+				plugin = plugin2;
+				plugin->name = temporaryName;
 			}
 		}
 	}
 
 	ImGui::Separator();
+
+	if (plugin)
+	{
+		ImGui::Text(plugin->name);
+		ImGui::TextWrapped(pluginUsedByGame ? "This plugin is active" : "Plugin loaded via imgui, but not active");
+	}
 
 	if (!plugin)
 	{
@@ -161,7 +175,7 @@ void esp_gui()
 				}
 				if (strlen(filter) == 4)
 				{
-					filtered = esp_lazy_filter(plugin, filter);
+					filtered = esp_filter_objects(plugin, filter);
 				}
 			}
 			if (filtered)

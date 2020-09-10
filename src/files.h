@@ -3,7 +3,7 @@
 
 #include "idiom.hpp"
 
-int fbuf(std::string, const char **);
+int fbuf(const char *, const char **);
 
 void fwrite(const string &, const string &);
 string fread(const string &);

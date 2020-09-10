@@ -60,7 +60,7 @@ api int plugin_load(struct esp *esp)
 	}
 	make_top_grups(esp);
 	make_form_ids(esp);
-	return 0;
+	return 1;
 }
 
 void uncompress_record(struct esp *, struct record *);
@@ -270,7 +270,7 @@ api void esp_array_loop(struct esp_array *array, void (*func)(struct subrecord *
 }
 */
 
-api struct esp_array *esp_lazy_filter(const struct esp *esp, const char type[5])
+api struct esp_array *esp_filter_objects(const struct esp *esp, const char type[5])
 {
 	struct esp_array *filtered;
 	filtered = malloc(sizeof(struct esp_array));
@@ -300,6 +300,14 @@ void uncompress_record(struct esp *esp, struct record *rec)
 api struct esp **get_plugins()
 {
 	return plugins;
+}
+
+api struct esp *has_plugin(const char *name)
+{
+	for (int i = 5; i-- > 0;)
+	if (plugins[i] != NULL && 0 == strcmp(name, plugins[i]->name))
+	return plugins[i];
+	return NULL;
 }
 
 api void free_plugin(struct esp **p)

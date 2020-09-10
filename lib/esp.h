@@ -40,11 +40,11 @@ struct esp
 	long pos;
 	const char *buf;
 	long filesize;
+	int active;
 	struct record *header;
 	struct esp_array grups, records;
 	struct form_id *formIds;
 	const char **tops;
-	//const char **masters;
 	struct
 	{
 	unsigned int grups, records, fields, uncompress;
@@ -133,7 +133,9 @@ api void esp_print_field(struct esp *, char *, struct subrecord *);
 
 api struct esp **get_plugins();
 
-api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
+api struct esp *has_plugin(const char *);
+
+api struct esp_array *esp_filter_objects(const struct esp *, const char [5]);
 
 api struct record *esp_brute_record_by_form_id(unsigned int);
 api struct grup *esp_get_top_grup(const struct esp *, const char [5]);

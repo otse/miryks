@@ -6,9 +6,9 @@
 #include "idiom.hpp"
 
 // written for filling out a plugin struct
-int fbuf(std::string path, const char **dest)
+int fbuf(const char *path, const char **dest)
 {
-	printf("fbuf path %s", path.c_str());
+	// printf("fbuf path %s", path);
 	int mode = ifstream::binary | ifstream::ate;
 	ifstream is(path, mode);
 	if (is)

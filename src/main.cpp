@@ -67,13 +67,16 @@ namespace dark2
 		return nif;
 	}
 
+	// A powerful function
 	esp *GetPlugin(const char *filename)
 	{
 		std::string path = OLDRIM + "Data/" + filename;
-		const char *buf = nullptr;
+		const char *buf;
 		int ret;
-		// Try skyrim/Data after that locally
-		(ret = fbuf(path, &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
+		// Get plugin from skyrim else locally
+		(ret = fbuf(path.c_str(), &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
+		if (ret == -1)
+		return nullptr;
 		printf("ret %i\n", ret);
 		esp *plugin = plugin_slate();
 		plugin->name = filename;

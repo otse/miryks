@@ -293,7 +293,7 @@ void main()
 		ash /= 1.5;
 		
 		if (normalAsh.z > 0.9) { // 0.55
-			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.2);
+			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.15);
 			specularStrength /= 10.0;
 		}
 
