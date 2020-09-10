@@ -18,11 +18,11 @@ static stringstream ss;
 
 static Esp *plugin = NULL;
 
-void im_grup(Grup *, int);
-void im_record(Record *);
-void im_subrecord(Subrecord *);
+void im_grup(grup *, int);
+void im_record(record *);
+void im_subrecord(subrecord *);
 
-void im_grup(Grup *grup, int top_grup = -1)
+void im_grup(grup *grup, int top_grup = -1)
 {
 	char t[100];
 	snprintf(t, 100, "GRUP %i %s", grup->id, top_grup != -1 ? plugin->tops[top_grup] : "");
@@ -35,9 +35,9 @@ void im_grup(Grup *grup, int top_grup = -1)
 		{
 			void *element = grup->mixed.elements[i];
 			if (*(char *)element == GRUP)
-				im_grup((Grup *)grup->mixed.elements[i]);
+				im_grup(grup->mixed.grups[i]);
 			if (*(char *)element == RECORD)
-				im_record((Record *)grup->mixed.elements[i]);
+				im_record(grup->mixed.records[i]);
 		}
 		if (grup->mixed.size)
 			ImGui::Separator();
@@ -66,13 +66,13 @@ void im_record(Record *record)
 		}
 		for (int i = 0; i < record->fields.size; i++)
 		{
-			im_subrecord((Subrecord *)record->fields.elements[i]);
+			im_subrecord(record->fields.subrecords[i]);
 		}
 		ImGui::TreePop();
 	}
 }
 
-void im_subrecord(Subrecord *subrecord)
+void im_subrecord(subrecord *subrecord)
 {
 	char t[100];
 	snprintf(t, 100, "%.4s##Sub %i", (char *)&subrecord->hed->type, subrecord->id);
@@ -110,7 +110,7 @@ void esp_gui()
 		}
 		else
 		{
-			plugin2 = GetPlugin(buf2);
+			plugin2 = LoadPlugin(buf2);
 			if (plugin2)
 			{
 				memcpy(temporaryName, buf, 260);

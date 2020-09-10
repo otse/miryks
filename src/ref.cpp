@@ -32,7 +32,7 @@ namespace dark2
 		auto array = &record->fields;
 		for (int i = 0; i < array->size; i++)
 		{
-			auto field = ((Subrecord *)array->elements[i]);
+			auto field = (array->subrecords[i]);
 			if (field->hed->type == espwrd "EDID")
 				EDID = ((char *)field->data);
 			if (field->hed->type == espwrd "XSCL")
@@ -49,7 +49,7 @@ namespace dark2
 		auto array = &record->fields;
 		for (int i = 0; i < array->size; i++)
 		{
-			auto field = ((Subrecord *)array->elements[i]);
+			auto field = (array->subrecords[i]);
 			if (field->hed->type == espwrd "EDID")
 				EDID = ((char *)field->data);
 			if (field->hed->type == espwrd "FNAM")
@@ -118,7 +118,7 @@ namespace dark2
 			{
 				for (int i = 0; i < base->fields.size; i++)
 				{
-					Subrecord *field = base->fields.subrecords[i];
+					subrecord *field = base->fields.subrecords[i];
 					if (field->hed->type != espwrd "MODL")
 						continue;
 					mesh = Mesh::GetStored(field->data);
@@ -136,7 +136,7 @@ namespace dark2
 							Nif *nif = nif_saved(rc);
 							if (nif == NULL)
 							{
-								nif = GetNif(rc);
+								nif = LoadNif(rc);
 								nif_save(rc, nif);
 							}
 							mesh = new Mesh;

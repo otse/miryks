@@ -35,8 +35,9 @@ namespace dark2
 		void spotlight(Rc *);
 	} // namespace viewer
 
-	nif *GetNif(rc *);
-	esp *GetPlugin(const char *);
+	nif *LoadNif(rc *);
+	esp *LoadPlugin(const char *);
+	bsa *LoadArchive(const char *);
 
 	void programGo();
 	void programLoop();
@@ -54,15 +55,16 @@ namespace dark2
 
 	extern Level *dungeon;
 
-	extern Esp *skyrim;
-	extern Esp *testMod;
-	extern Bsa *interface;
-	extern Bsa *meshes;
-	extern Bsa *animations;
-	extern Bsa *textures;
-	extern Bsa *hirestexturepack01;
-	extern Bsa *hirestexturepack02;
-	extern Bsa *hirestexturepack03;
+	extern esp *skyrim;
+	extern esp *padstow;
+
+	extern bsa *interface;
+	extern bsa *meshes;
+	extern bsa *animations;
+	extern bsa *textures;
+	extern bsa *hirestexturepack01;
+	extern bsa *hirestexturepack02;
+	extern bsa *hirestexturepack03;
 
 } // namespace dark2
 

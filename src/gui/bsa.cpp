@@ -56,7 +56,7 @@ void bsa_gui()
 				bsa_free(&bsa);
 				printf("bsa after bsa_free: %i\n", bsa);
 			}
-			bsa = bsa_get_loaded(path->c_str());
+			bsa = bsa_get(path->c_str());
 			if (bsa == NULL)
 				bsa = bsa_load(path->c_str());
 			if (bsa != NULL)

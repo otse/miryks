@@ -247,37 +247,34 @@ api void bsa_free(struct bsa **b)
 	*b = NULL;
 }
 
-static struct {
-	int num;
-	struct bsa* array[30];
-} loaded;
+static struct bsa *archives[10];
 
-api void bsa_set_loaded(struct bsa **bsa, int count)
+api struct bsa **get_archives()
 {
-	loaded.num = count;
-	for (int i = 0; i < count; i++)
-	{
-	loaded.array[i] = bsa[i];
-	loaded.array[i]->loadlisted = 1;
-	}
+	return archives;
 }
 
-api struct bsa *bsa_get_loaded(const char *path)
+api struct bsa *bsa_get(const char *path)
 {
-	for (int i = 0; i < loaded.num; i++)
-	if (0 == strcmp(loaded.array[i]->path, path))
-	return loaded.array[i];
+	for (int i = 10; i --> 0; )
+	{
+	struct bsa *bsa = archives[i];
+	if (bsa==NULL)
+	continue;
+	if (0 == strcmp(path, bsa->path))
+	return bsa;
 	return NULL;
+	}
 }
 
 api struct rc *bsa_find_more(const char *p, unsigned long flags)
 {
 	struct rc *rc = NULL;
-	for (int i = loaded.num; i --> 0; )
+	for (int i = 10; i --> 0; )
 	{
-	struct bsa *bsa = loaded.array[i];
+	struct bsa *bsa = archives[i];
 	if (bsa==NULL)
-	break;
+	continue;
 	int test = Hedr.file_flags & flags;
 	if (Hedr.file_flags == 0 || test)
 	rc = bsa_find(bsa, p);

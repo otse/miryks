@@ -56,11 +56,12 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
 		printf("F5!\n");
-		free_plugin(&testMod);
-		testMod = GetPlugin("TestMod.esp");
-		get_plugins()[1] = testMod;
+		const char *name = padstow->name;
+		free_plugin(&padstow);
+		padstow = LoadPlugin(name);
+		get_plugins()[1] = padstow;
 		delete dungeon;
-		dungeon = new Level("Dark2Schmuck");
+		dungeon = new Level("PadstowDungeon");
 	}
 	if (glfwGetKey(window, GLFW_KEY_F6))
 	{

@@ -36,7 +36,7 @@ namespace dark2
 	std::string OLDRIM;
 
 	Esp *skyrim;
-	Esp *testMod;
+	Esp *padstow;
 	Bsa *interface;
 	Bsa *meshes;
 	Bsa *animations;
@@ -55,7 +55,7 @@ namespace dark2
 
 namespace dark2
 {
-	nif *GetNif(rc *rc)
+	nif *LoadNif(rc *rc)
 	{
 		cassert(rc, "mh no rc");
 		bsa_read(rc);
@@ -66,24 +66,32 @@ namespace dark2
 		// nif_save(rc, nif);
 		return nif;
 	}
-
-	// A powerful function
-	esp *GetPlugin(const char *filename)
+	
+	esp *LoadPlugin(const char *filename)
 	{
 		std::string path = OLDRIM + "Data/" + filename;
 		const char *buf;
 		int ret;
-		// Get plugin from skyrim else locally
+		// Try load plugin from skyrim else locally
 		(ret = fbuf(path.c_str(), &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
 		if (ret == -1)
 		return nullptr;
-		printf("ret %i\n", ret);
 		esp *plugin = plugin_slate();
 		plugin->name = filename;
 		plugin->buf = buf;
 		plugin->filesize = ret;
 		plugin_load(plugin);
 		return plugin;
+	}
+
+	bsa *LoadArchive(const char *filename)
+	{
+		std::string path = OLDRIM + "Data/" + filename;
+		if (exists_test3(path))
+		return bsa_load(path.c_str());
+		else
+		return bsa_load(filename);
+		return nullptr;
 	}
 
 	void viewer::spotlight(rc *rc)
@@ -97,7 +105,7 @@ namespace dark2
 		nif *nif = nif_saved(rc);
 		if (nif == NULL)
 		{
-			nif = GetNif(rc);
+			nif = LoadNif(rc);
 			nif_save(rc, nif);
 		}
 		mesh = new Mesh;
@@ -116,21 +124,25 @@ int main()
 	log_("dark2 loading");
 	cassert(exists(PATH_TXT), "missing " PATH_TXT);
 	OLDRIM = fread(PATH_TXT);
-	skyrim = GetPlugin("Skyrim.esm");
-	testMod = GetPlugin("TestMod.esp");
+	skyrim = LoadPlugin("Skyrim.esm");
+	padstow = LoadPlugin("Padstow.esp");
 	get_plugins()[0] = skyrim;
-	get_plugins()[1] = testMod;
-	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
-	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
-	if (exists_test3(OLDRIM + "Data/HighResTexturePack01.bsa"))
-	{
-		hirestexturepack01 = bsa_load((OLDRIM + "Data/HighResTexturePack01.bsa").c_str());
-		hirestexturepack02 = bsa_load((OLDRIM + "Data/HighResTexturePack02.bsa").c_str());
-		hirestexturepack03 = bsa_load((OLDRIM + "Data/HighResTexturePack03.bsa").c_str());
-	}
-	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
-	bsa *array[5] = {meshes, textures, hirestexturepack01, hirestexturepack02, hirestexturepack03};
-	bsa_set_loaded(array, 5);
+	get_plugins()[1] = padstow;
+	cassert(skyrim, "cant load skyrim.esm");
+	cassert(padstow, "cant load padstow.esp");
+
+	meshes = LoadArchive("Skyrim - Meshes.bsa");
+	textures = LoadArchive("Skyrim - Textures.bsa");
+	hirestexturepack01 = LoadArchive("HighResTexturePack01.bsa");
+	hirestexturepack02 = LoadArchive("HighResTexturePack02.bsa");
+	hirestexturepack03 = LoadArchive("HighResTexturePack03.bsa");
+	
+	get_archives()[0] = meshes;
+	get_archives()[1] = textures;
+	get_archives()[2] = hirestexturepack01;
+	get_archives()[3] = hirestexturepack02;
+	get_archives()[4] = hirestexturepack03;
+	
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
@@ -139,7 +151,7 @@ int main()
 	rc *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
 	viewer::spotlight(rc);
 	nif_test(meshes);
-	dungeon = new Level("Dark2Schmuck");
+	dungeon = new Level("PadstowDungeon"); // <-- interior to load
 	programLoop();
 	return 1;
 }

@@ -3,11 +3,6 @@
 
 #define api
 
-typedef struct esp Esp;
-typedef struct grup Grup;
-typedef struct record Record;
-typedef struct subrecord Subrecord;
-
 struct form_id;
 struct record;
 struct subrecord;

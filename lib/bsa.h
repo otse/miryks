@@ -3,7 +3,7 @@
 
 #define api
 
-typedef struct bsa Bsa;
+#define BSA_MAX_SEARCHES 30
 
 struct bsa_hedr
 {
@@ -59,11 +59,11 @@ api int bsa_read(struct rc *);
 api struct rc *bsa_find(struct bsa *, const char *);
 api struct rc *bsa_find_more(const char *, unsigned long);
 
-#define BSA_MAX_SEARCHES 30
 api void bsa_search(struct bsa *, struct rc *[BSA_MAX_SEARCHES], const char *, int *);
 
-api void bsa_set_loaded(struct bsa **, int);
-api struct bsa *bsa_get_loaded(const char *);
+api struct bsa **get_archives();
+
+api struct bsa *bsa_get(const char *);
 
 #define BSA_MESHES   0x1
 #define BSA_TEXTURES 0x2

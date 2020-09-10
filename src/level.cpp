@@ -12,13 +12,13 @@ extern "C"
 #include "esp.h"
 }
 
-#include "files"
-
 #include "opengl/renderable"
 #include "opengl/texture"
 #include "opengl/camera"
 #include "opengl/pointlight"
 #include "opengl/types"
+
+
 
 namespace dark2
 {
@@ -26,29 +26,29 @@ namespace dark2
 	{
 		Cell cell = {false};
 
-		Grup *top = esp_get_top_grup(testMod, "CELL");
+		grup *top = esp_get_top_grup(padstow, "CELL");
 
 		Assert(top, "no cells top grup");
 
 		for (int i = 0; i < top->mixed.size; i++)
 		{
-			Grup *A = (Grup *)top->mixed.elements[i];
+			grup *A = (grup *)top->mixed.elements[i];
 			for (int j = 0; j < A->mixed.size; j++)
 			{
-				Grup *B = (Grup *)A->mixed.elements[j];
+				grup *B = (grup *)A->mixed.elements[j];
 				for (int k = 0; k < B->mixed.size; k += 2)
 				{
-					Record *record = (Record *)B->mixed.elements[k];
-					Grup *grup = (Grup *)B->mixed.elements[k + 1];
-					Assert(record->hed->type == *(unsigned int *)"CELL", "not a cell");
-					const char *cellEdid = (char *)((Subrecord *)record->fields.elements[0])->data;
+					record *object = B->mixed.records[k];
+					grup *grup = B->mixed.grups[k + 1];
+					Assert(object->hed->type == *(unsigned int *)"CELL", "not a cell");
+					const char *cellEdid = (char *)object->fields.subrecords[0]->data;
 					//printf("Found cell %s\n", cellEdid);
 					if (0 == strcmp(cellEdid, editorId))
 					{
 						printf("Found your cell %s\n", cellEdid);
-						cell.cell = record;
-						cell.persistent = (Grup *)grup->mixed.elements[0];
-						cell.non_persistent = (Grup *)grup->mixed.elements[1];
+						cell.cell = object;
+						cell.persistent = grup->mixed.grups[0];
+						cell.non_persistent = grup->mixed.grups[1];
 						return cell;
 					}
 				}
@@ -74,8 +74,17 @@ namespace dark2
 		LoadCell(cell);
 	}
 
+	void Level::LoadCell(Cell &cell)
+	{
+		loadedCell = cell;
+		ParseGrup(cell, cell.persistent);
+		ParseGrup(cell, cell.non_persistent);
+	}
+
 	void Level::ParseGrup(Cell &cell, Grup *grup)
 	{
+		if (grup == nullptr)
+			return;
 		for (int i = 0; i < grup->mixed.size; i++)
 		{
 			void *element = grup->mixed.elements[i];
@@ -88,21 +97,17 @@ namespace dark2
 				editorIds.insert({ref->EDID, ref});
 		}
 
-		auto ref = editorIds.find("darkshackspawn");
-		if (ref != editorIds.end())
+		static bool spawned = false;
+		auto ref = editorIds.find("darkshackspawn001");
+		if (ref != editorIds.end() && !spawned)
 		{
 			first_person_camera->pos = ref->second->matrix[3];
 			first_person_camera->pos.z += 170 / ONE_SKYRIM_UNIT_IN_CM;
 			first_person_camera->fyaw = cast_vec_3(ref->second->DATA + 3)->z;
+			spawned = true;
 		}
 	}
 
-	void Level::LoadCell(Cell &cell)
-	{
-		loadedCell = cell;
-		//ParseGrup(cell, cell.persistent);
-		ParseGrup(cell, cell.non_persistent);
-	}
 
 	void Level::Unload()
 	{
