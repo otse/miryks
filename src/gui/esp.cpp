@@ -3,8 +3,7 @@
 
 extern "C"
 {
-#include "files.h"
-#include "c.h"
+#include "putc.h"
 #include "esp.h"
 }
 
@@ -17,7 +16,7 @@ using namespace dark2;
 
 static stringstream ss;
 
-static Esp *esp = NULL;
+static Esp *plugin = NULL;
 
 void im_grup(Grup *, int);
 void im_record(Record *);
@@ -26,11 +25,11 @@ void im_subrecord(Subrecord *);
 void im_grup(Grup *grup, int top_grup = -1)
 {
 	char t[100];
-	snprintf(t, 100, "GRUP %i %s", grup->id, top_grup != -1 ? esp->tops[top_grup] : "");
+	snprintf(t, 100, "GRUP %i %s", grup->id, top_grup != -1 ? plugin->tops[top_grup] : "");
 	if (ImGui::TreeNode(t))
 	{
 		char s[100];
-		esp_print_grup(esp, s, grup);
+		esp_print_grup(plugin, s, grup);
 		ImGui::Text(s);
 		for (int i = 0; i < grup->mixed.size; i++)
 		{
@@ -53,14 +52,14 @@ void im_record(Record *record)
 	if (ImGui::TreeNode(t))
 	{
 		char s[200];
-		esp_print_record(esp, s, record);
+		esp_print_record(plugin, s, record);
 		ImGui::Text(s);
 		if (ImGui::TreeNode("formId"))
 		{
 			if (record->fi)
 			{
 				char s[200];
-				esp_print_form_id(esp, s, record->fi);
+				esp_print_form_id(plugin, s, record->fi);
 				ImGui::Text(s);
 			}
 			ImGui::TreePop();
@@ -80,7 +79,7 @@ void im_subrecord(Subrecord *subrecord)
 	if (ImGui::TreeNode(t))
 	{
 		char s[400];
-		esp_print_field(esp, s, subrecord);
+		esp_print_field(plugin, s, subrecord);
 		ImGui::Text(s);
 		ImGui::TreePop();
 	}
@@ -102,35 +101,25 @@ void esp_gui()
 	if (strcmp(buf, buf2))
 	{
 		memcpy(buf2, buf, MAX);
-		std::string oldrim = OLDRIM + "Data/" + buf;
-		std::string bin = buf;
-		std::string *path = nullptr;
-		if (exists_test3(oldrim))
-			path = &oldrim;
-		else if (exists_test3(bin))
-			path = &bin;
-		if (path)
+		auto plugins = get_plugins();
+		for (int i = 5; i-- > 0;)
 		{
-			printf("esp-gui loading new plugin\n");
-			if (esp != NULL)
+			if (plugins[i] == NULL)
+				continue;
+			if (0 == strcmp(buf, (char *)plugins[i]))
 			{
-				printf("todo unload non load ordered esp here\n");
-				free_esp(&esp);
+				plugin = plugins[i];
 			}
-			if (esp == NULL)
-			{
-				for (int i = 0; i < 5; i++)
-					if (plugins[i] != NULL && 0 == strcmp(path->c_str(), plugins[i]->path))
-						esp = plugins[i];
-			}
-			if (esp == NULL)
-				esp = esp_load(path->c_str());
-			//if (bsa != NULL)
-			//esp_print_hedr(bsa, hedrstr);
 		}
 	}
 
 	ImGui::Separator();
+
+	if (!plugin)
+	{
+		ImGui::End();
+		return;
+	}
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
@@ -143,13 +132,13 @@ void esp_gui()
 			const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
 			//if (ImGui::TreeNode("Header"))
 			//{
-			im_record(esp->header);
+			im_record(plugin->header);
 			//ImGui::TreePop();
 			//}
 			//if (ImGui::TreeNode("Grups"))
 			//{
-			for (int i = 0; i < esp->grups.size; i++)
-				im_grup((Grup *)esp->grups.elements[i], i);
+			for (int i = 0; i < plugin->grups.size; i++)
+				im_grup((Grup *)plugin->grups.elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();
@@ -172,7 +161,7 @@ void esp_gui()
 				}
 				if (strlen(filter) == 4)
 				{
-					filtered = esp_lazy_filter(esp, filter);
+					filtered = esp_lazy_filter(plugin, filter);
 				}
 			}
 			if (filtered)

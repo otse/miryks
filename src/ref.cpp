@@ -7,7 +7,7 @@
 
 extern "C"
 {
-#include "c.h"
+//#include "putc.h"
 #include "bsa.h"
 #include "nif.h"
 #include "esp.h"
@@ -149,7 +149,7 @@ namespace dark2
 							Nif *nif = nif_saved(rc);
 							if (nif == NULL)
 							{
-								nif = make_nif(rc);
+								nif = GetNif(rc);
 								nif_save(rc, nif);
 							}
 							mesh = new Mesh;

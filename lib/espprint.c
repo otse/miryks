@@ -1,7 +1,6 @@
-#include "c.h"
+#include "putc.h"
 
 #include "esp.h"
-#include "files.h"
 
 api void esp_print_form_id(struct esp *esp, char *s, struct form_id *fi)
 {

@@ -3,8 +3,7 @@
 
 extern "C"
 {
-#include "c.h"
-#include "files.h"
+#include "putc.h"
 #include "bsa.h"
 }
 
@@ -180,7 +179,7 @@ void bsa_gui()
             const ImGuiID child_id = ImGui::GetID((void*)(intptr_t)0);
             const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
 			//ImGui::BeginChildFrame(1, ImVec2(0, 800));
-			for (uns_t i = 0; i < bsa->hdr.folders; i++)
+			for (unsigned int i = 0; i < bsa->hdr.folders; i++)
 			{
 				if (ImGui::TreeNode(bsa->ca[i]))
 				{
@@ -190,7 +189,7 @@ void bsa_gui()
 					ImGui::Separator();
 					ImGui::Text("Files:");
 					int r = bsa->r[i];
-					for (uns_t j = 0; j < bsa->fld[i].num; j++)
+					for (unsigned int j = 0; j < bsa->fld[i].num; j++)
 					{
 						if (ImGui::TreeNode(bsa->cb[r]))
 						{

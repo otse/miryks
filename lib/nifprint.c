@@ -1,4 +1,4 @@
-#include "c.h"
+#include "putc.h"
 
 #include "nif.h"
 

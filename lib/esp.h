@@ -15,15 +15,7 @@ struct grup;
 
 #define Fields object->fields
 
-#define GRUP_HEX 0x50555247
-#define XXXX_HEX 0x58585858
-#define STAT_HEX 0x54415453
-#define EDID_HEX 0x44494445
-#define FULL_HEX 0x4C4C5546
-
 extern int esp_skip_fields;
-
-extern struct esp *plugins[5];
 
 extern const char *esp_types[];
 
@@ -41,10 +33,10 @@ struct esp_array
 
 struct esp
 {
+	char path[260];
 	void *file;
 	long pos;
 	char *buf;
-	char path[255];
 	long filesize;
 	struct record *header;
 	struct esp_array grups, records;
@@ -129,19 +121,21 @@ struct subrecord
 
 void esp_gui();
 
-api struct esp *esp_load(const char *);
+api struct esp *esp_load(const char *, int);
 
 api void esp_print_form_id(struct esp *, char *, struct form_id *);
 api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_field(struct esp *, char *, struct subrecord *);
 
+api struct esp **get_plugins();
+
 api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 
 api struct record *esp_brute_record_by_form_id(unsigned int);
 api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
 
-api void free_esp(struct esp **);
+api void free_plugin(struct esp **);
 api void free_esp_array(struct esp_array *);
 
 #endif

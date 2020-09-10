@@ -1,4 +1,4 @@
-#include "c.h"
+#include "putc.h"
 
 #include "nif.h"
 #include "bsa.h"
@@ -10,7 +10,7 @@ void test_callback(struct rd *, int, int);
 void nif_test(struct bsa *meshes)
 {
 	struct rc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
-	cassert_(rc, "mh no bucket02a");
+	cassert(rc, "mh no bucket02a");
 	bsa_read(meshes, rc);
 	Nif *bucket = nif_alloc();
 	bucket->path = rc->path;

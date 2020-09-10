@@ -1,4 +1,4 @@
-#include "c.h"
+#include "putc.h"
 
 #include "bsa.h"
 
@@ -33,17 +33,17 @@ api struct bsa *bsa_load(const char *path)
 	bsa->stream = fopen(path, "rb");
 	//if (!bsa->stream)
 	//return NULL;
-	cassert_(
+	cassert(
 		bsa->stream, BSA "can't open");
 	read(bsa, &Hedr, sizeof(struct bsa_hedr));
 	//printf(bsa_print_hedr(&bsa));
-	cassert_(
+	cassert(
 		strcmp(
 			"BSA\x00", (char *)&Hedr.id) == 0,
 		BSA "not a bsa");
-	cassert_(
+	cassert(
 		Hedr.ver != VER_SE, BSA "cant use special edition");
-	cassert_(
+	cassert(
 		Hedr.ver == VER, BSA "not 104");
 	bsa_read_folder_records(bsa);
 	bsa_read_file_records(bsa);
@@ -127,10 +127,11 @@ void bsa_resources(struct bsa *bsa)
 
 api struct rc *bsa_find(struct bsa *bsa, const char *p)
 {
-	struct rc *rc = NULL;
-	char *stem = FileStem(p, '\\');
-	char *name = FileName(p, '\\');
-	if (!stem || !name) goto end;
+	char stem[260], name[260];
+	FileStem(stem, p, '\\');
+	FileName(name, p, '\\');
+	if (stem==NULL||name==NULL)
+	return;
 	int cmp;
 	int r;
 	for (int i = 0; i < Hedr.folders; i++)
@@ -141,17 +142,12 @@ api struct rc *bsa_find(struct bsa *bsa, const char *p)
 	for (int j = 0; j < bsa->fld[i].num; j++)
 	{
 	cmp = strcmp(name, bsa->cb[r]);
-	if (!cmp) {
-	rc = bsa->rc[r];
-	goto end;
-	}
+	if (0 == cmp)
+	return bsa->rc[r];
 	r++;
 	}
 	}
-	end:
-	free(stem);
-	free(name);
-	return rc;
+	return NULL;
 }
 
 api void bsa_search(struct bsa *bsa, struct rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num)
@@ -185,7 +181,7 @@ char *bsa_uncompress(struct rc *rc)
 	src += sizeof(uint32_t);
 	char *dest = malloc(size * sizeof(char));
 	int ret = uncompress(dest, (uLongf*)&size, src, rc->size);
-	cassert_(ret == Z_OK, BSA "zlib");
+	cassert(ret == Z_OK, BSA "zlib");
 	rc->size = size;
 	return dest;
 }

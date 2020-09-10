@@ -35,10 +35,9 @@ namespace dark2
 		void spotlight(Rc *);
 	} // namespace viewer
 
-	//namespace importers
-	//{
-	Nif *make_nif(Rc *);
-	//}
+	nif *GetNif(rc *);
+	esp *GetPlugin(const char *);
+
 	void programGo();
 	void programLoop();
 

@@ -4,10 +4,9 @@
 
 extern "C"
 {
-#include "c.h"
-#include "files.h"
+#include "putc.h"
 #include "bsa.h"
-#include <dds.h>
+#include "dds.h"
 }
 
 #include <algorithm>
@@ -39,11 +38,15 @@ Texture::Texture(const string &path) : path(path)
 	bsa_read(rc);
 	buf = rc->buf;
 	size = rc->size;
+	// Write out test.dds
+	// Typically a bucket
+#if 0
 	if (!outed)
 	{
 		outed = 1;
 		cfout2("test.dds", rc->buf, rc->size);
 	}
+#endif
 	Load();
 }
 Texture::~Texture() {}

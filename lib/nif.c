@@ -1,4 +1,4 @@
-#include "c.h"
+#include "putc.h"
 
 #include "nif.h"
 
@@ -80,7 +80,7 @@ api struct nif *nif_alloc() {
 }
 
 api void nif_read(struct nif *nif) {
-	cassert_(Buf, "nif_read Buf not set");
+	cassert(Buf, "nif_read Buf not set");
 	nif_read_header(nif);
 	nif_read_blocks(nif);
 }

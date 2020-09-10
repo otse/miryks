@@ -1,9 +1,9 @@
+#include "putc.h"
+
 #include <stdlib.h>
 #include <string.h>
 
 #include <sys/stat.h>
-
-#include "files.h"
 
 int exists(const char *p)
 {
@@ -11,29 +11,27 @@ int exists(const char *p)
 	return (stat(p, &buffer) == 0);
 }
 
-char *FileStem(const char *p, char delim)
+char *FileStem(char s[260], const char *p, char delim)
 {
 	const char *c = strrchr(p, delim);
 	if (!c)
 	return NULL;
 	int l = (c - p) + 1;
-	char *d = malloc(l * sizeof(char));
-	strncpy(d, p, l);
-	d[l - 1] = '\0';
-	return d;
+	strncpy(s, p, l);
+	s[l - 1] = '\0';
+	return s;
 }
 
-char *FileName(const char *p, char delim)
+char *FileName(char s[260], const char *p, char delim)
 {
 	const char *c = strrchr(p, delim);
 	if (!c)
 	return NULL;
 	c += 1;
 	int l = strlen(p) - (c - p) + 1;
-	char *d = malloc(l * sizeof(char));
-	strncpy(d, c, l-1);
-	d[l - 1] = '\0';
-	return d;
+	strncpy(s, c, l-1);
+	s[l - 1] = '\0';
+	return s;
 }
 
 char *abf(const char *a, const char *b)

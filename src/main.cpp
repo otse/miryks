@@ -4,7 +4,7 @@
 
 extern "C"
 {
-#include "c.h"
+#include "putc.h"
 #include "bsa.h"
 #include "nif.h"
 #include "esp.h"
@@ -55,9 +55,9 @@ namespace dark2
 
 namespace dark2
 {
-	nif *make_nif(rc *rc)
+	nif *GetNif(rc *rc)
 	{
-		cassert_(rc, "mh no rc");
+		cassert(rc, "mh no rc");
 		bsa_read(rc);
 		nif *nif = nif_alloc();
 		nif->path = rc->path;
@@ -65,6 +65,16 @@ namespace dark2
 		nif_read(nif);
 		// nif_save(rc, nif);
 		return nif;
+	}
+
+	esp *GetPlugin(const char *filename)
+	{
+		esp *plugin = nullptr;
+		std::string path = OLDRIM + "Data/" + filename;
+		plugin = esp_load(path.c_str(), 1);
+		if (!plugin)
+			plugin = esp_load(filename, 0);
+		return plugin;
 	}
 
 	void viewer::spotlight(rc *rc)
@@ -78,7 +88,7 @@ namespace dark2
 		nif *nif = nif_saved(rc);
 		if (nif == NULL)
 		{
-			nif = make_nif(rc);
+			nif = GetNif(rc);
 			nif_save(rc, nif);
 		}
 		mesh = new Mesh;
@@ -95,19 +105,12 @@ int main()
 {
 	using namespace dark2;
 	log_("dark2 loading");
-	cassert_(exists(PATH_TXT), "missing " PATH_TXT);
+	cassert(exists(PATH_TXT), "missing " PATH_TXT);
 	OLDRIM = fread(PATH_TXT);
-	skyrim = esp_load((OLDRIM + "Data/Skyrim.esm").c_str());
-	if (exists_test3(OLDRIM + "Data/TestMod.esp"))
-	{
-		testMod = esp_load((OLDRIM + "Data/TestMod.esp").c_str());
-	}
-	else
-	{
-		testMod = esp_load("TestMod.esp");
-	}
-	plugins[0] = skyrim;
-	plugins[1] = testMod;
+	skyrim = GetPlugin("Skyrim.esm");
+	testMod = GetPlugin("TestMod.esp");
+	get_plugins()[0] = skyrim;
+	get_plugins()[1] = testMod;
 	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
 	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
 	if (exists_test3(OLDRIM + "Data/HighResTexturePack01.bsa"))

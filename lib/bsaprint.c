@@ -1,7 +1,6 @@
-#include "c.h"
+#include "putc.h"
 
 #include "bsa.h"
-#include "files.h"
 
 #define INVERT_COMPRESSED 0x40000000
 

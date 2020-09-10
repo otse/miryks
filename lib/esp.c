@@ -2,12 +2,12 @@
 
 // the words subrecords and fields are used interchangeably
 
-#include "c.h"
+#include "putc.h"
 
 #include "esp.h"
 
 #include <zlib.h>
-#include <time.h>
+#include <sys/stat.h>
 
 struct record *read_record(struct esp *);
 struct grup *read_grup(struct esp *);
@@ -18,7 +18,7 @@ struct grup *read_grup(struct esp *);
 
 int esp_skip_fields = 0;
 
-struct esp *plugins[5] = { NULL, NULL, NULL, NULL, NULL };
+static struct esp *plugins[5] = { NULL, NULL, NULL, NULL, NULL };
 
 const char *esp_types[] = {"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"};
 
@@ -28,23 +28,20 @@ inline void array(struct esp_array *, size_t);
 inline void grow(struct esp_array *);
 inline void insert(struct esp_array *, void *);
 
-float read_file(struct esp *esp)
+float read_plugin(struct esp *esp, const char *path, int failsafe)
 {
+	strncpy(esp->path, path, 260);
+	printf("read esp %s\n", esp->path);
 	esp->file = fopen(esp->path, "rb");
-	cassert_(esp->file, "esp can't open");
-	clock_t before = clock();
+	cassert(esp->file, "esp can't open");
 	fseek(esp->file, 0, SEEK_END);
 	esp->filesize = ftell(esp->file);
-	printf("esp filesize %u\n", esp->filesize);
 	rewind(esp->file);
 	esp->buf = malloc(esp->filesize * sizeof(char));
-	cassert_(esp->buf != NULL, "esp cant get memory");
+	cassert(esp->buf != NULL, "esp cant get memory");
 	size_t read = fread(esp->buf, sizeof(char), esp->filesize, esp->file);
-	cassert_(read, "esp buf bad");
+	cassert(read, "esp buf bad");
 	rewind(esp->file);
-	clock_t after = clock();
-	float difference = (float)(after - before) / CLOCKS_PER_SEC;
-	printf("read esp %i mb took %.2fs\n", esp->filesize / 1024 / 1024, difference);
 }
 
 void make_top_grups(struct esp *);
@@ -57,14 +54,11 @@ unsigned int hedr_num_records(struct esp *esp)
 	return *(unsigned int *)(esp->header->fields.subrecords[0]->data + 4);
 }
 
-api struct esp *esp_load(const char *path)
+api struct esp *esp_load(const char *path, int failsafe)
 {
-	clock_t before, after;
 	struct esp *esp = malloc(sizeof(struct esp));
 	memset(esp, 0, sizeof(struct esp));
-	strncpy(esp->path, path, 255);
-	read_file(esp);
-	before = clock();
+	read_plugin(esp, path, failsafe);
 	esp->header = read_record(esp);
 	array(&esp->grups, 200);
 	array(&esp->records, hedr_num_records(esp));
@@ -76,10 +70,6 @@ api struct esp *esp_load(const char *path)
 	make_top_grups(esp);
 	make_form_ids(esp);
 	fclose(esp->file);
-	after = clock();
-	float difference = (float)(after - before) / CLOCKS_PER_SEC;
-	printf("parsing esp took %.2fs\n", difference);
-	printf("esp has %i grups %i records %i fields %i uncompressions\n", Count.grups, Count.records, Count.fields, Count.uncompress);
 	return esp;
 }
 
@@ -134,7 +124,7 @@ inline void read_record_fields(struct esp *esp, struct record *rec)
 	struct subrecord *sub;
 	sub = read_field(esp, rec, large);
 	large = 0;
-	if (sub->hed->type == XXXX_HEX)
+	if (sub->hed->type == *(unsigned int *)"XXXX")
 	large = *(unsigned int *)sub->data;
 	else
 	insert(&rec->fields, sub);
@@ -197,7 +187,7 @@ inline void read_grup_records(struct esp *esp, struct grup *grup)
 	long start = Pos;
 	while (Pos - start < size)
 	{
-	if (peek_type(esp) == GRUP_HEX)
+	if (peek_type(esp) == *(unsigned int *)"GRUP")
 	insert(&grup->mixed, read_grup(esp));
 	else
 	insert(&grup->mixed, read_record(esp));
@@ -312,17 +302,24 @@ void uncompress_record(struct esp *esp, struct record *rec)
 	src += 4;
 	rec->buf = malloc(realSize * sizeof(char));
 	int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);
-	cassert_(ret == Z_OK, "esp zlib");
+	cassert(ret == Z_OK, "esp zlib");
 	rec->actualSize = realSize;
 	Count.uncompress++;
 }
 
-api void free_esp(struct esp **p)
+api struct esp **get_plugins()
+{
+	return plugins;
+}
+
+api void free_plugin(struct esp **p)
 {
 	struct esp *esp = *p;
 	*p = NULL;
+	if (esp == NULL)
+	return;
 	for (int i = 5; i --> 0; )
-	if (plugins[i] != NULL && 0 == strcmp(esp->path, plugins[i]->path))
+	if (esp == plugins[i])
 	plugins[i] = NULL;
 	for (int i = 0; i < esp->records.size; i++)
 	{

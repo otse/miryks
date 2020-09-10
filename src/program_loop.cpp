@@ -56,9 +56,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
 		printf("F5!\n");
-		free_esp(&testMod);
-		testMod = esp_load((OLDRIM + "Data/TestMod.esp").c_str());
-		plugins[1] = testMod;
+		free_plugin(&testMod);
+		testMod = GetPlugin("TestMod.esp");
+		get_plugins()[0] = testMod;
 		delete dungeon;
 		dungeon = new Level("Dark2Schmuck");
 	}
