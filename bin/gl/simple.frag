@@ -21,16 +21,17 @@ in mat4 modelView;
 uniform sampler2D map;
 uniform sampler2D normalMap;
 
-//#define ASH
+#define ASH
 #define USE_A_HEMISPHERE
 #define USE_NORMALMAP
 #define USE_SPECULARMAP
 #define USE_TANGENT
 
-vec2 normalScale = vec2(0.8, 0.8);
+vec2 normalScale = vec2(1.0);
 
 uniform vec3 color;
-uniform vec3 specular;
+vec3 specular = vec3(0.5, 0.8, 1.0) * 0.7;
+//vec3 emissive = vec3(1.0, 1.0, 0); // out
 
 uniform float opacity;
 uniform float shininess;
@@ -204,7 +205,7 @@ void main()
 
 	float fogNear = 1000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	float fogFar = 15000.0 / ONE_SKYRIM_UNIT_IN_CM;
-	float fogDensity = 0.000970;
+	float fogDensity = 0.001200;
 
 	diffuseColor *= texture2D(map, vUv);
 	
@@ -266,7 +267,7 @@ void main()
 	#ifdef USE_SPECULARMAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );
-		specularStrength = texelSpecular.a * 10.0;
+		specularStrength = texelSpecular.a * 1.0;
 
 	#else
 
@@ -291,8 +292,8 @@ void main()
 		//vec3 ash = vec3(70.0 / 255.0, 60.0 / 255.0, 40.0 / 255.0);
 		ash /= 1.5;
 		
-		if (normalAsh.z > 0.4) { // 0.55
-			diffuseColor.rgb = ash;
+		if (normalAsh.z > 0.9) { // 0.55
+			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.1);
 			specularStrength /= 10.0;
 		}
 
@@ -350,7 +351,7 @@ void main()
 	hemiLight.groundColor = vec3(0.0, 0.02, 0.025) * 1.0;
 
 	// ambientLightColor
-	vec3 localAmbient = vec3(30.0 / 255.0);
+	vec3 localAmbient = vec3(20.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
 	#ifdef USE_A_HEMISPHERE

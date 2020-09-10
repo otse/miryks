@@ -5,6 +5,7 @@
 
 namespace dark2
 {
+
 	Mesh::Mesh()
 	{
 		int l;
@@ -19,6 +20,20 @@ namespace dark2
 	void ni_tri_shape_data_callback(Rd *, ni_tri_shape_data *);
 	void bs_lighting_shader_property_callback(Rd *, bs_lighting_shader_property *);
 	void bs_shader_texture_set_callback(Rd *, bs_shader_texture_set *);
+
+	static std::map<void *, Mesh *> store;
+
+	void Mesh::Store(void *key, Mesh *mesh)
+	{
+		store.emplace(key, mesh);
+	}
+
+	Mesh *Mesh::GetStored(void *key)
+	{
+		if (store.count(key))
+			return store[key];
+		return nullptr;
+	}
 
 	void Mesh::Construct(Nif *bucket)
 	{
@@ -51,27 +66,6 @@ namespace dark2
 	{
 		Mesh *mesh = (Mesh *)rd->data;
 	}
-
-	/*const mat3 &swap(const mat3 &mat)
-	{
-		mat3 copy = mat;
-		float a = mat[0].x;
-		float b = mat[0].y;
-		float c = mat[0].z;
-		float d = mat[1].x;
-		float e = mat[1].y;
-		float f = mat[1].z;
-		float g = mat[2].x;
-		float h = mat[2].y;
-		float i = mat[2].z;
-		copy = mat3(a, d, g,
-		            b, e, h,
-				    c, f, i);
-		copy = mat3(a, -b, c,
-		            -d, e, f,
-				    g, h, i);
-		return copy;
-	}*/
 
 	void matrix_from_common(Group *group, ni_common_layout *common)
 	{
@@ -110,23 +104,23 @@ namespace dark2
 			return;
 		if (block->has_triangles)
 		{
-		geometry->Clear(block->num_vertices, block->num_triangles * 3);
-		for (int i = 0; i < block->num_triangles; i++)
-		{
-			unsigned short *triangle = (unsigned short *)&block->triangles[i];
-			geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
-		}
+			geometry->Clear(block->num_vertices, block->num_triangles * 3);
+			for (int i = 0; i < block->num_triangles; i++)
+			{
+				unsigned short *triangle = (unsigned short *)&block->triangles[i];
+				geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
+			}
 		}
 		for (int i = 0; i < block->num_vertices; i++)
 		{
 			geometry->vertices[i].position = *cast_vec_3((float *)&block->vertices[i]);
 			if (block->bs_vector_flags & 0x00000001)
-			geometry->vertices[i].uv = *cast_vec_2((float *)&block->uv_sets[i]);
+				geometry->vertices[i].uv = *cast_vec_2((float *)&block->uv_sets[i]);
 			geometry->vertices[i].normal = *cast_vec_3((float *)&block->normals[i]);
 			if (block->bs_vector_flags & 0x00001000)
 			{
-			geometry->vertices[i].tangent = *cast_vec_3((float *)&block->tangents[i]);
-			geometry->vertices[i].bitangent = *cast_vec_3((float *)&block->bitangents[i]);
+				geometry->vertices[i].tangent = *cast_vec_3((float *)&block->tangents[i]);
+				geometry->vertices[i].bitangent = *cast_vec_3((float *)&block->bitangents[i]);
 			}
 			if (block->has_vertex_colors)
 				geometry->vertices[i].color = *cast_vec_4((float *)&block->vertex_colors[i]);

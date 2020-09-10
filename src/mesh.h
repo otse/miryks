@@ -30,6 +30,9 @@ public:
 	//Material *material;
 	//Geometry *geometry;
 
+	static void Store(void *, Mesh *);
+	static Mesh *GetStored(void *);
+
 	void Construct(Nif *);
 
 	Group *Nested(Rd *);

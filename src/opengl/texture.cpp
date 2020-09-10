@@ -33,7 +33,7 @@ int outed = 0;
 Texture::Texture(const string &path) : path(path)
 {
 	//printf("new texture %s\n", path.c_str());
-	struct rc *rc = bsas_find(&bsas, path.c_str(), 0x2);
+	struct rc *rc = bsa_find_more(path.c_str(), 0x2);
 	if (rc == NULL)
 		return;
 	bsa_read(rc);

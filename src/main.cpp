@@ -21,29 +21,10 @@ extern "C"
 #include "level.h"
 #include "mesh.h"
 
+#define PATH_TXT "path to oldrim.txt"
+
 namespace dark2
 {
-	vec2 *cast_vec_2(float *f)
-	{
-		return reinterpret_cast<vec2 *>(f);
-	}
-	vec3 *cast_vec_3(float *f)
-	{
-		return reinterpret_cast<vec3 *>(f);
-	}
-	vec4 *cast_vec_4(float *f)
-	{
-		return reinterpret_cast<vec4 *>(f);
-	}
-	mat3 *cast_mat_3(float *f)
-	{
-		return reinterpret_cast<mat3 *>(f);
-	}
-	mat4 *cast_mat_4(float *f)
-	{
-		return reinterpret_cast<mat4 *>(f);
-	}
-
 	namespace viewer
 	{
 		Mesh *mesh = nullptr;
@@ -72,42 +53,43 @@ namespace dark2
 	float delta = 1;
 } // namespace dark2
 
-#define PATH_TXT "path to oldrim.txt"
-
-Nif *dark2::make_nif(Rc *rc)
+namespace dark2
 {
-	cassert_(rc, "mh no rc");
-	bsa_read(rc);
-	Nif *nif = nif_alloc();
-	nif->path = rc->path;
-	nif->buf = rc->buf;
-	nif_read(nif);
-	//nif_save(rc, nif);
-	return nif;
-}
+	nif *make_nif(rc *rc)
+	{
+		cassert_(rc, "mh no rc");
+		bsa_read(rc);
+		nif *nif = nif_alloc();
+		nif->path = rc->path;
+		nif->buf = rc->buf;
+		nif_read(nif);
+		// nif_save(rc, nif);
+		return nif;
+	}
 
-void dark2::viewer::spotlight(Rc *rc)
-{
-	if (mesh)
+	void viewer::spotlight(rc *rc)
 	{
-		scene->Remove(object);
-		delete mesh;
-		delete object;
+		if (mesh)
+		{
+			scene->Remove(object);
+			delete mesh;
+			delete object;
+		}
+		nif *nif = nif_saved(rc);
+		if (nif == NULL)
+		{
+			nif = make_nif(rc);
+			nif_save(rc, nif);
+		}
+		mesh = new Mesh;
+		mesh->Construct(nif);
+		object = new Renderable(mat4(1.0), mesh->baseGroup);
+		scene->Add(object);
+		camera = viewer_camera;
+		viewer_camera->pos = object->aabb.center();
+		viewer_camera->radius = object->aabb.radius2() * 2;
 	}
-	Nif *nif = nif_saved(rc);
-	if (nif == NULL)
-	{
-		nif = make_nif(rc);
-		nif_save(rc, nif);
-	}
-	mesh = new Mesh;
-	mesh->Construct(nif);
-	object = new Renderable(mat4(1.0), mesh->baseGroup);
-	scene->Add(object);
-	camera = viewer_camera;
-	viewer_camera->pos = object->aabb.center();
-	viewer_camera->radius = object->aabb.radius2() * 2;
-}
+} // namespace dark2
 
 int main()
 {
@@ -116,7 +98,14 @@ int main()
 	cassert_(exists(PATH_TXT), "missing " PATH_TXT);
 	OLDRIM = fread(PATH_TXT);
 	skyrim = esp_load((OLDRIM + "Data/Skyrim.esm").c_str());
-	testMod = esp_load((OLDRIM + "Data/TestMod.esp").c_str());
+	if (exists_test3(OLDRIM + "Data/TestMod.esp"))
+	{
+		testMod = esp_load((OLDRIM + "Data/TestMod.esp").c_str());
+	}
+	else
+	{
+		testMod = esp_load("TestMod.esp");
+	}
 	plugins[0] = skyrim;
 	plugins[1] = testMod;
 	meshes = bsa_load((OLDRIM + "Data/Skyrim - Meshes.bsa").c_str());
@@ -128,14 +117,14 @@ int main()
 		hirestexturepack03 = bsa_load((OLDRIM + "Data/HighResTexturePack03.bsa").c_str());
 	}
 	textures = bsa_load((OLDRIM + "Data/Skyrim - Textures.bsa").c_str());
-	struct bsa *array[5] = {meshes, textures, hirestexturepack01, hirestexturepack02, hirestexturepack03};
-	bsas_add_to_loaded(&bsas, array, 5);
+	bsa *array[5] = {meshes, textures, hirestexturepack01, hirestexturepack02, hirestexturepack03};
+	bsa_set_loaded(array, 5);
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
 	oglGo();
 	camera = first_person_camera;
-	Rc *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
+	rc *rc = bsa_find(dark2::meshes, "meshes\\clutter\\bucket02a.nif");
 	viewer::spotlight(rc);
 	nif_test(meshes);
 	dungeon = new Level("Dark2Schmuck");

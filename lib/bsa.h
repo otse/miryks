@@ -44,15 +44,8 @@ struct bsa
 	int *r;
 	const char **ca;
 	const char **cb;
-	struct bsas *bsas;
+	int loadlisted;
 };
-
-struct bsas {
-	int num;
-	struct bsa* array[30];
-};
-
-extern struct bsas bsas;
 
 api struct bsa *bsa_load(const char *);
 api void bsa_free(struct bsa **);
@@ -64,13 +57,13 @@ api void bsa_print_rc(struct bsa *, char *s, int);
 
 api int bsa_read(struct rc *);
 api struct rc *bsa_find(struct bsa *, const char *);
-api struct rc *bsas_find(struct bsas *, const char *, unsigned long);
+api struct rc *bsa_find_more(const char *, unsigned long);
 
 #define BSA_MAX_SEARCHES 30
 api void bsa_search(struct bsa *, struct rc *[BSA_MAX_SEARCHES], const char *, int *);
 
-api void bsas_add_to_loaded(struct bsas *, struct bsa **, int);
-api struct bsa *bsas_get_by_path(struct bsas *, const char *);
+api void bsa_set_loaded(struct bsa **, int);
+api struct bsa *bsa_get_loaded(const char *);
 
 #define BSA_MESHES   0x1
 #define BSA_TEXTURES 0x2

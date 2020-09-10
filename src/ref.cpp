@@ -134,23 +134,28 @@ namespace dark2
 					Subrecord *field = base->fields.subrecords[i];
 					if (field->hed->type != X "MODL")
 						continue;
-					std::string data = (char *)field->data;
-					data = "meshes\\" + data;
-					std::transform(data.begin(), data.end(), data.begin(),
-								   [](unsigned char c) { return std::tolower(c); });
-					//printf("stat base has a modl %s\n", data.c_str());
-					Rc *rc = bsa_find(meshes, data.c_str());
-					if (rc)
+					mesh = Mesh::GetStored(field->data);
+					if (!mesh)
 					{
-						//printf("found a rc %p\n", rc);
-						Nif *nif = nif_saved(rc);
-						if (nif == NULL)
+						std::string data = (char *)field->data;
+						data = "meshes\\" + data;
+						std::transform(data.begin(), data.end(), data.begin(),
+									   [](unsigned char c) { return std::tolower(c); });
+						//printf("stat base has a modl %s\n", data.c_str());
+						Rc *rc = bsa_find(meshes, data.c_str());
+						if (rc)
 						{
-							nif = make_nif(rc);
-							nif_save(rc, nif);
+							//printf("found a rc %p\n", rc);
+							Nif *nif = nif_saved(rc);
+							if (nif == NULL)
+							{
+								nif = make_nif(rc);
+								nif_save(rc, nif);
+							}
+							mesh = new Mesh;
+							mesh->Construct(nif);
+							Mesh::Store(field->data, mesh);
 						}
-						mesh = new Mesh;
-						mesh->Construct(nif);
 					}
 				}
 			}

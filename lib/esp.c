@@ -1,4 +1,6 @@
-// based on ortham/libespm
+// based on ortham libespm
+
+// the words subrecords and fields are used interchangeably
 
 #include "c.h"
 
@@ -12,37 +14,19 @@ struct grup *read_grup(struct esp *);
 
 #define Buf esp->buf
 #define Pos esp->pos
+#define Count esp->count
 
 int esp_skip_fields = 0;
 
 struct esp *plugins[5] = { NULL, NULL, NULL, NULL, NULL };
 
-unsigned int grups = 0;
-unsigned int records = 0;
-unsigned int fields = 0;
-unsigned int decompressions = 0;
-
 const char *esp_types[] = {"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"};
 
 #define COUNT_OF(x) sizeof(x) / sizeof(0[x])
 
-inline void array(struct esp_array *a, size_t initial) {
-	a->capacity = initial;
-	a->size = 0;
-	a->elements = malloc(a->capacity * sizeof(void *));
-}
-
-inline void grow(struct esp_array *a) {
-	if (a->size != a->capacity)
-	return;
-	a->capacity *= 2;
-	a->elements = realloc(a->elements, a->capacity * sizeof(void *));
-}
-
-inline void insert(struct esp_array *a, void *element) {
-	grow(a);
-	a->elements[a->size++] = element;
-}
+inline void array(struct esp_array *, size_t);
+inline void grow(struct esp_array *);
+inline void insert(struct esp_array *, void *);
 
 float read_file(struct esp *esp)
 {
@@ -75,10 +59,6 @@ unsigned int hedr_num_records(struct esp *esp)
 
 api struct esp *esp_load(const char *path)
 {
-	grups = 0;
-	records = 0;
-	fields = 0;
-	decompressions = 0;
 	clock_t before, after;
 	struct esp *esp = malloc(sizeof(struct esp));
 	memset(esp, 0, sizeof(struct esp));
@@ -99,11 +79,11 @@ api struct esp *esp_load(const char *path)
 	after = clock();
 	float difference = (float)(after - before) / CLOCKS_PER_SEC;
 	printf("parsing esp took %.2fs\n", difference);
-	printf("esp has %i grups %i records %i fields %i decompressions\n", grups, records, fields, decompressions);
+	printf("esp has %i grups %i records %i fields %i uncompressions\n", Count.grups, Count.records, Count.fields, Count.uncompress);
 	return esp;
 }
 
-void uncompress_record(struct record *);
+void uncompress_record(struct esp *, struct record *);
 inline void read_record_fields(struct esp *, struct record *);
 
 struct record *read_record(struct esp *esp)
@@ -113,7 +93,7 @@ struct record *read_record(struct esp *esp)
 	rec->fi = NULL;
 	// head
 	rec->x = RECORD;
-	rec->id = records++;
+	rec->id = Count.records++;
 	rec->hed = Buf + Pos;
 	Pos += sizeof(struct record_header);
 	Pos += 8;
@@ -130,7 +110,7 @@ struct record *read_record(struct esp *esp)
 	if (rec->hed->flags & 0x00040000)
 	{
 	rec->buf = rec->pos = 0;
-	uncompress_record(rec);
+	uncompress_record(esp, rec);
 	read_record_fields(esp, rec);
 	Pos += rec->hed->size;
 	}
@@ -174,7 +154,7 @@ inline struct subrecord *read_field(struct esp *esp, struct record *rec, unsigne
 	sub = malloc(sizeof(struct subrecord));
 	// hed
 	sub->x = SUBRECORD;
-	sub->id = fields++;
+	sub->id = Count.fields++;
 	sub->hed = buf + *pos;
 	*pos += sizeof(struct field_header);
 	sub->actualSize = override == 0 ? sub->hed->size : override;
@@ -193,7 +173,7 @@ struct grup *read_grup(struct esp *esp)
 	//grup->lowest = grup->highest = 0;
 	// hed
 	grup->x = GRUP;
-	grup->id = grups++;
+	grup->id = Count.grups++;
 	grup->hed = Buf + Pos;
 	Pos += sizeof(struct grup_header);
 	Pos += 16;
@@ -277,9 +257,10 @@ inline void build_form_id(struct esp *esp, struct record *record, struct form_id
 
 void make_form_ids(struct esp *esp)
 {
-	esp->formIds = malloc(sizeof(struct form_id) * esp->records.size);
-	for (int i = 0; i < esp->records.size; i++)
-	build_form_id(esp, esp->records.elements[i], &esp->formIds[i]);
+	struct esp_array *array = &esp->records;
+	esp->formIds = malloc(sizeof(struct form_id) * array->size);
+	for (int i = 0; i < array->size; i++)
+	build_form_id(esp, array->elements[i], &esp->formIds[i]);
 }
 
 api struct record *esp_brute_record_by_form_id(unsigned int formId)
@@ -323,7 +304,7 @@ api struct esp_array *esp_lazy_filter(const struct esp *esp, const char type[5])
 	return filtered;
 }
 
-void uncompress_record(struct record *rec)
+void uncompress_record(struct esp *esp, struct record *rec)
 {
 	char *src = rec->data;
 	const unsigned int realSize = *(unsigned int *)src;
@@ -333,7 +314,7 @@ void uncompress_record(struct record *rec)
 	int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);
 	cassert_(ret == Z_OK, "esp zlib");
 	rec->actualSize = realSize;
-	decompressions++;
+	Count.uncompress++;
 }
 
 api void free_esp(struct esp **p)
@@ -359,4 +340,22 @@ api void free_esp(struct esp **p)
 api void free_esp_array(struct esp_array *array)
 {
 	free(array->elements);
+}
+
+inline void array(struct esp_array *a, size_t initial) {
+	a->capacity = initial;
+	a->size = 0;
+	a->elements = malloc(a->capacity * sizeof(void *));
+}
+
+inline void grow(struct esp_array *a) {
+	if (a->size != a->capacity)
+	return;
+	a->capacity *= 2;
+	a->elements = realloc(a->elements, a->capacity * sizeof(void *));
+}
+
+inline void insert(struct esp_array *a, void *element) {
+	grow(a);
+	a->elements[a->size++] = element;
 }

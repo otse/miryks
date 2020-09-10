@@ -251,35 +251,35 @@ api void bsa_free(struct bsa **b)
 	*b = NULL;
 }
 
-struct bsas bsas;
+static struct {
+	int num;
+	struct bsa* array[30];
+} loaded;
 
-api void bsas_add_to_loaded(struct bsas *bsas, struct bsa **bsa, int num)
+api void bsa_set_loaded(struct bsa **bsa, int count)
 {
-	for (int i = 0; i < num; i++)
+	loaded.num = count;
+	for (int i = 0; i < count; i++)
 	{
-	bsas->array[bsas->num++] = bsa[i];
-	bsa[i]->bsas = bsas;
+	loaded.array[i] = bsa[i];
+	loaded.array[i]->loadlisted = 1;
 	}
 }
 
-api struct bsa *bsas_get_by_path(struct bsas *bsas, const char *path)
+api struct bsa *bsa_get_loaded(const char *path)
 {
-	for (int i = 0; i < bsas->num; i++)
-	{
-	struct bsa *bsa = bsas->array[i];
-	if (0 == strcmp(bsa->path, path))
-	return bsa;
-	}
+	for (int i = 0; i < loaded.num; i++)
+	if (0 == strcmp(loaded.array[i]->path, path))
+	return loaded.array[i];
 	return NULL;
 }
 
-
-api struct rc *bsas_find(struct bsas *bsas, const char *p, unsigned long flags)
+api struct rc *bsa_find_more(const char *p, unsigned long flags)
 {
 	struct rc *rc = NULL;
-	for (int i = bsas->num; i --> 0; )
+	for (int i = loaded.num; i --> 0; )
 	{
-	struct bsa *bsa = bsas->array[i];
+	struct bsa *bsa = loaded.array[i];
 	if (bsa==NULL)
 	break;
 	int test = Hedr.file_flags & flags;

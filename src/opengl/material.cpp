@@ -22,7 +22,7 @@ Material::Material()
 
 	opacity = 1;
 	treshold = 0;
-	shininess = 20;
+	shininess = 10;
 	glossiness = 1;
 	rotation = 0;
 

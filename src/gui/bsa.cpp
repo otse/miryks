@@ -50,13 +50,14 @@ void bsa_gui()
 			path = &bin;
 		if (path)
 		{
-			if (bsa && !bsa->bsas)
+			// if we had one loaded via gui, see if its part of game
+			if (bsa && !bsa->loadlisted)
 			{
 				printf("unloading non load ordered %s\n", bsa->path);
 				bsa_free(&bsa);
 				printf("bsa after bsa_free: %i\n", bsa);
 			}
-			bsa = bsas_get_by_path(&bsas, path->c_str());
+			bsa = bsa_get_loaded(path->c_str());
 			if (bsa == NULL)
 				bsa = bsa_load(path->c_str());
 			if (bsa != NULL)

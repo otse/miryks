@@ -50,7 +50,11 @@ struct esp
 	struct esp_array grups, records;
 	struct form_id *formIds;
 	const char **tops;
-	const char **masters;
+	//const char **masters;
+	struct
+	{
+	unsigned int grups, records, fields, uncompress;
+	} count;
 };
 
 #define GRUP 1
@@ -132,12 +136,10 @@ api void esp_print_grup(struct esp *, char *, struct grup *);
 api void esp_print_record(struct esp *, char *, struct record *);
 api void esp_print_field(struct esp *, char *, struct subrecord *);
 
-//api void esp_array_loop(struct esp_array *, void (*func)(struct subrecord *, void *), void *);
 api struct esp_array *esp_lazy_filter(const struct esp *, const char [5]);
 
 api struct record *esp_brute_record_by_form_id(unsigned int);
 api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
-// api void esp_read_field_data(struct esp *, struct subrecord *);
 
 api void free_esp(struct esp **);
 api void free_esp_array(struct esp_array *);
