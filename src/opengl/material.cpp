@@ -12,7 +12,6 @@ extern "C"
 
 Material *Material::active = nullptr;
 
-
 Material::Material()
 {
 	prepared = false;
@@ -50,21 +49,21 @@ Material::Material()
 void Material::Ready()
 {
 	header = "#version 330 core\n";
-	char pepper[64];
-	snprintf(pepper, 64, "// %s\n", (*src)[0]);
+	char pepper[20];
+	snprintf(pepper, 20, "// %s\n", (*src)[0]);
 	header += pepper;
-	if (map)
-		header += "#define USE_MAP\n";
-	if (normalMap)
-		header += "#define USE_NORMALMAP\n";
-	
+	if (!map)
+		header += "#define DONT_USE_DIFFUSE_MAP\n";
+	if (!normalMap)
+		header += "#define DONT_USE_NORMAL_MAP\n";
+
 	if (Shader::shaders.count(header))
 	{
 		shader = Shader::shaders[header];
 	}
 	else
 	{
-		printf("new shader instance of type %s, header %s\n", (*src)[0], header);
+		//printf("new shader instance of type %s, header %s\n", (*src)[0], header);
 		shader = new Shader(src);
 		shader->header = header;
 		shader->Compile();
@@ -87,7 +86,7 @@ void Material::setUvTransformDirectly(
 {
 	float x = cos(rotation);
 	float y = sin(rotation);
- 
+
 	float a, b, c, d, e, f, g, h, i;
 	a = sx * x;
 	b = sx * y;
@@ -107,7 +106,8 @@ void Material::setUvTransformDirectly(
 
 void Material::Use()
 {
-	if (!prepared) {
+	if (!prepared)
+	{
 		//cassert(prepared, "use material->Ready() when you are done setting fields for it");
 		Ready();
 		prepared = true;
@@ -192,6 +192,6 @@ void Material::Unuse(Material *a, Material *b)
 	}
 	if (!a || a->doubleSided && !b->doubleSided)
 		glEnable(GL_CULL_FACE);
-	
+
 	active = b;
 }

@@ -81,6 +81,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	if (glfwGetKey(window, GLFW_KEY_F6))
 	{
 		SetShaderSources();
+		for (auto &pair : Shader::shaders)
+		{
+			pair.second->Compile();
+		}
 	}
 }
 
@@ -200,7 +204,7 @@ void dark2::programLoop()
 		bsa_gui();
 		nif_gui();
 		esp_gui();
-		//opengl_gui();
+		opengl_gui();
 		ImGui::ShowDemoWindow();
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

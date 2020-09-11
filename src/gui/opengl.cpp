@@ -3,6 +3,7 @@
 #include "opengl/group.h"
 #include "opengl/geometry.h"
 #include "opengl/camera.h"
+#include "opengl/shader.h"
 
 #include <glm/gtx/string_cast.hpp>
 #include <sstream>
@@ -29,6 +30,22 @@ void opengl_gui()
 	{
 		ImGui::Text((string("groups: ") + to_string(Group::num)).c_str());
 		ImGui::Text((string("geometries: ") + to_string(Geometry::num)).c_str());
+		if (ImGui::BeginTabItem("settings"))
+		{
+			bool a = ImGui::Checkbox("diffuse maps", &commonSettings.diffuseMaps);
+			bool b = ImGui::Checkbox("normal maps", &commonSettings.normalMaps);
+			bool c = ImGui::Checkbox("specular maps", &commonSettings.specularMaps);
+			bool d = ImGui::Checkbox("dust", &commonSettings.dust);
+
+			if (a||b||c||d)
+			{
+				for (auto &pair : Shader::shaders)
+				{
+					pair.second->Compile();
+				}
+			}
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("camera"))
 		{
 			ss << "pos: " << glm::to_string(camera->view);
@@ -36,6 +53,7 @@ void opengl_gui()
 			cls;
 			ImGui::EndTabItem();
 		}
+
 		ImGui::EndTabBar();
 	}
 

@@ -58,13 +58,29 @@ void Shader::Use()
 	active = this;
 }
 
+ShaderSettings commonSettings;
+
+std::string Shader::CommonHeader()
+{
+	std::string header;
+	if (!commonSettings.diffuseMaps)
+		header += "#define DONT_USE_DIFFUSE_MAP\n";
+	if (!commonSettings.normalMaps)
+		header += "#define DONT_USE_NORMAL_MAP\n";
+	if (!commonSettings.specularMaps)
+		header += "#define DONT_USE_SPECULAR_MAP\n";
+	if (!commonSettings.dust)
+		header += "#define DONT_USE_DUST\n";
+	return header;
+}
+
 void Shader::Compile()
 {
 	if (id)
 		glDeleteProgram(id);
 
-	std::string vert = header + ((*src)[1]);
-	std::string frag = header + ((*src)[2]);
+	std::string vert = header + CommonHeader() + ((*src)[1]);
+	std::string frag = header + CommonHeader() + ((*src)[2]);
 
 	GLuint vertex, fragment;
 

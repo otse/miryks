@@ -14,11 +14,24 @@ void SetShaderSources();
 
 extern ssrc simple, basic, fxs;
 
+struct ShaderSettings
+{
+	bool diffuseMaps = true;
+	bool normalMaps = true;
+	bool specularMaps = true;
+	bool dust = true;
+};
+extern ShaderSettings commonSettings;
+
 struct Shader
 {
+	std::string CommonHeader();
+	
 	static std::map<std::string, Shader *> shaders;
 
 	static Shader *active;
+
+	bool dust = true;
 
 	ssrc *const src;
 	GLuint id;

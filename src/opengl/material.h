@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+
 struct Material
 {
 	static Material *active;

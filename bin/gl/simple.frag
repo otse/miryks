@@ -22,9 +22,8 @@ in mat4 modelView;
 uniform sampler2D map;
 uniform sampler2D normalMap;
 
-#define ASH
 #define USE_A_HEMISPHERE
-#define USE_NORMALMAP
+
 #define USE_SPECULARMAP
 #define USE_TANGENT
 
@@ -208,9 +207,14 @@ void main()
 	float fogFar = 15000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	float fogDensity = 0.001200;
 
-	diffuseColor *= texture2D(map, vUv);
+	#ifndef DONT_USE_DIFFUSE_MAP
+
+		diffuseColor *= texture2D(map, vUv);
+
+		diffuseColor.rgba *= vColor.rgba;
+
+	#endif
 	
-	diffuseColor.rgba *= vColor.rgba;
 
 	//if (alphaTest == 0.0)
 		//discard;
@@ -243,7 +247,7 @@ void main()
 
 	#endif
 
-	#ifdef USE_NORMALMAP
+	#ifndef DONT_USE_NORMAL_MAP
 
 			#ifdef USE_TANGENT
 
@@ -261,21 +265,21 @@ void main()
 
 	float specularStrength;
 
-	#ifdef USE_SPECULARMAP
+	#ifndef DONT_USE_SPECULAR_MAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );
 		specularStrength = texelSpecular.a * 1.0;
 
 	#else
 
-		specularStrength = 1.0;
+		specularStrength = 0.5;
 
 	#endif
 
 	// for dark
 	//specularStrength *= 1.0 - glossiness;
 
-	#ifdef ASH
+	#ifndef DONT_USE_DUST
 		
 		vec3 normalAsh = normalize(normal) * mat3(view);
 
@@ -351,7 +355,7 @@ void main()
 	vec3 localAmbient = vec3(30.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
-	#ifdef USE_A_HEMISPHERE
+	#ifndef DONT_USE_A_HEMISPHERE
 
 		float dot_nl = dot( geometry.normal, hemiLight.direction );
 		float hemiDiffuseWeight = 0.5 * dot_nl + 0.5;
