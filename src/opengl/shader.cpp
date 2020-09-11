@@ -1,5 +1,10 @@
 #include "shader.h"
 
+extern "C"
+{
+#include "putc.h"
+}
+
 Shader *Shader::active = nullptr;
 
 //shader_t *shader_current;
@@ -13,12 +18,27 @@ Shader *Shader::active = nullptr;
 
 #include <glad/glad.h>
 
-ShaderSource::ShaderSource()
+Shader *basicShader;
+
+ssrc simple, basic, fxs;
+
+void SetShaderSources()
 {
-	vert = frag = nullptr;
+	simple[0] = "simple";
+	basic[0] = "basic";
+	fxs[0] = "fx";
+	fbuf("gl/simple.vert", &simple[1], true);
+	fbuf("gl/simple.frag", &simple[2], true);
+	fbuf("gl/basic.vert", &basic[1], true);
+	fbuf("gl/basic.frag", &basic[2], true);
+	fbuf("gl/fx.vert", &fxs[1], true);
+	fbuf("gl/fx.frag", &fxs[2], true);
+	printf("set shader sources\n");
 }
 
-Shader::Shader(ShaderSource *)
+std::map<std::string, Shader *> Shader::shaders;
+
+Shader::Shader(ssrc *src) : src(src)
 {
 	id = 0;
 }
@@ -43,14 +63,13 @@ void Shader::Compile()
 	if (id)
 		glDeleteProgram(id);
 
-	int *i = new int;
-	string vert_code = fread("gl/" + vertPath); // = toffshore("gl", vertPath, i);
-	string frag_code = fread("gl/" + fragPath); // = toffshore("gl", fragPath, i);
+	std::string vert = header + ((*src)[1]);
+	std::string frag = header + ((*src)[2]);
 
 	GLuint vertex, fragment;
 
-	const char *vert_lval = vert_code.c_str();
-	const char *frag_lval = frag_code.c_str();
+	const char *vert_lval = vert.c_str();
+	const char *frag_lval = frag.c_str();
 
 	vertex = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertex, 1, &vert_lval, NULL);

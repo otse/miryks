@@ -47,7 +47,10 @@ namespace dark2
 					{
 						printf("Found your cell %s\n", cellEdid);
 						cell.cell = object;
+						//cassert(grup->mixed.size >= 2, "cell lacks 2 following grups");
+						if (grup->mixed.size >= 1)
 						cell.persistent = grup->mixed.grups[0];
+						if (grup->mixed.size >= 2)
 						cell.non_persistent = grup->mixed.grups[1];
 						return cell;
 					}

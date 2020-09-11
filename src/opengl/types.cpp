@@ -10,14 +10,6 @@
 #include "material.h"
 #include "texture.h"
 
-namespace ShaderSources
-{
-ShaderSource basic;
-ShaderSource simple;
-ShaderSource fx;
-ShaderSource physical;
-}
-
 Camera *camera;
 Scene *scene;
 
@@ -42,21 +34,12 @@ void detectOpenGLError(const string where)
 	}
 }
 
-void ShaderSources::SetBufs()
-{
-	log_("reload simple / fx / pbr");
-
-	auto srcs = { basic, simple, fx, physical };
-	for (auto &src : srcs)
-	{
-		
-	}
-}
-
 void OGLGo()
 {
 	log_("OGL go");
 
 	camera = new Camera;
 	scene = new Scene;
+
+	SetShaderSources();
 }

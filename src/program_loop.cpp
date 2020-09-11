@@ -80,7 +80,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	if (glfwGetKey(window, GLFW_KEY_F6))
 	{
-		ShaderSources::SetBufs();
+		SetShaderSources();
 	}
 }
 

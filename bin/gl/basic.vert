@@ -1,4 +1,4 @@
-#version 330 core
+//#version 330 core
 
 // attributes
 // values are linearly interpolated between the vertices

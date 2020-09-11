@@ -6,7 +6,7 @@
 #include "idiom.hpp"
 
 // written for filling out a plugin struct
-int fbuf(const char *path, const char **dest)
+int fbuf(const char *path, char **dest, bool cap)
 {
 	// printf("fbuf path %s", path);
 	int mode = ifstream::binary | ifstream::ate;
@@ -14,9 +14,11 @@ int fbuf(const char *path, const char **dest)
 	if (is)
 	{
 		size_t end = is.tellg();
-		*dest = (const char *)malloc(end);
+		*dest = (char *)malloc(end + (cap ? 1 : 0));
 		is.seekg(0, is.beg);
 		is.read((char *)*dest, end);
+		if (cap)
+		(*dest)[end] = '\0';
 		return end;
 	}
 	return -1;

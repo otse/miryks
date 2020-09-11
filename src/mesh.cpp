@@ -1,5 +1,6 @@
 #include "mesh.h"
 
+#include "opengl/shader.h"
 #include "opengl/texture.h"
 #include "opengl/types.h"
 
@@ -90,6 +91,7 @@ namespace dark2
 		matrix_from_common(group, &block->common);
 		group->geometry = new Geometry();
 		group->geometry->material = new Material();
+		group->geometry->material->src = &simple;
 		//vec3 v = *cast_vec_3((float *)&block->common.translation);
 		//printf("block name %s translate %f %f %f", nif_get_string(rd->nif, block->common.name), v.x, v.y, v.z);
 	}

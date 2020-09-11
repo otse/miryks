@@ -1,4 +1,3 @@
-
 #include "material.h"
 
 extern "C"
@@ -11,19 +10,15 @@ extern "C"
 #include "shader.h"
 #include "scene.h"
 
-int Material::pool = 0;
-
 Material *Material::active = nullptr;
 
 
 Material::Material()
 {
-	id = pool++;
-
 	prepared = false;
 
 	shader = nullptr;
-	source = nullptr;
+	src = &basic;
 	map = normalMap = nullptr;
 
 	transparent = doubleSided = blending = testing = decal = false;
@@ -54,7 +49,28 @@ Material::Material()
 
 void Material::Ready()
 {
-	//cassert(prepared, "double ready");
+	header = "#version 330 core\n";
+	char pepper[64];
+	snprintf(pepper, 64, "// %s\n", (*src)[0]);
+	header += pepper;
+	if (map)
+		header += "#define USE_MAP\n";
+	if (normalMap)
+		header += "#define USE_NORMALMAP\n";
+	
+	if (Shader::shaders.count(header))
+	{
+		shader = Shader::shaders[header];
+	}
+	else
+	{
+		printf("new shader instance of type %s, header %s\n", (*src)[0], header);
+		shader = new Shader(src);
+		shader->header = header;
+		shader->Compile();
+		Shader::shaders.emplace(header, shader);
+	}
+	//shader = basicShader;
 }
 
 void Material::composeUvTransform()
@@ -91,8 +107,11 @@ void Material::setUvTransformDirectly(
 
 void Material::Use()
 {
-	if (!prepared)
-		cassert(prepared, "use material->Ready() before using it");
+	if (!prepared) {
+		//cassert(prepared, "use material->Ready() when you are done setting fields for it");
+		Ready();
+		prepared = true;
+	}
 
 	if (this == active)
 		return;

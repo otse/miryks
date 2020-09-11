@@ -121,7 +121,7 @@ void AABB::geometrize()
 
 	Material *material = new Material;
 	material->color = vec3(0.4f);
-	material->source = &ShaderSources::basic;
+	material->src = &basic;
 	geometry->material = material;
 
 	std::vector<vec3> lines = {

@@ -5,13 +5,13 @@
 
 struct Material
 {
-	static int pool;
 	static Material *active;
 
 	int id;
 	string name;
+	ssrc *src;
+
 	Shader *shader;
-	ShaderSource *source;
 	Texture *map, *normalMap;
 
 	bool transparent, doubleSided, blending, testing, decal;
@@ -20,6 +20,8 @@ struct Material
 	vec3 color, specular, emissive;
 
 	mat3 uvTransform;
+
+	std::string header;
 
 	Material();
 

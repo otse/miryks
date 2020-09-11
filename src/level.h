@@ -18,8 +18,8 @@ namespace dark2
 	{
 		bool good;
 		Record *cell;
-		Grup *persistent;
-		Grup *non_persistent;
+		Grup *persistent = nullptr;
+		Grup *non_persistent = nullptr;
 	};
 
 	class Level

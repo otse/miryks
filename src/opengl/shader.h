@@ -10,23 +10,22 @@
 
 #include <glad/glad.h>
 
-struct ShaderSource
-{
-	ShaderSource();
-	const char *vert, *frag;
-};
+void SetShaderSources();
+
+extern ssrc simple, basic, fxs;
 
 struct Shader
 {
+	static std::map<std::string, Shader *> shaders;
+
 	static Shader *active;
 
+	ssrc *const src;
 	GLuint id;
 
-	string vertPath, fragPath;
-	string vert, frag;
+	string header;
 
-	ShaderSource *source;
-	Shader(ShaderSource *);
+	Shader(ssrc *);
 
 	void Compile();
 

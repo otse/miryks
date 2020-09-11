@@ -63,7 +63,7 @@ namespace dark2
 	esp *LoadPlugin(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
-		const char *buf;
+		char *buf;
 		int ret;
 		// Try load plugin from skyrim else local folder
 		(ret = fbuf(path.c_str(), &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
@@ -101,13 +101,14 @@ namespace dark2
 			nif = LoadNif(rc);
 			nif_save(rc, nif);
 		}
-		HideCursor();
 		mesh = new Mesh;
 		mesh->Construct(nif);
 		mat4 mat = translate(mat4(1.0), first_person_camera->pos);
 		object = new Renderable(mat, mesh->baseGroup);
 		scene->Add(object);
 		camera = viewer_camera;
+		HideCursor();
+		viewer_camera->disabled = false;
 		viewer_camera->pos = object->aabb.center();
 		viewer_camera->radius = object->aabb.radius2() * 2;
 	}

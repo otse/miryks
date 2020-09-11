@@ -12,6 +12,8 @@ using namespace glm;
 
 const float pif = pi<float>();
 
+typedef char *ssrc[3];
+
 struct AABB;
 
 struct Geometry;
@@ -31,17 +33,6 @@ struct PointLight;
 
 extern Camera *camera;
 extern Scene *scene;
-
-extern Shader *basicShader;
-
-namespace ShaderSources
-{
-void SetBufs();
-extern ShaderSource basic;
-extern ShaderSource simple;
-extern ShaderSource fx;
-extern ShaderSource physical;
-}
 
 void detectGlfwError();
 void detectOpenGLError(const string = "?");
