@@ -18,11 +18,10 @@ static int seek(struct bsa *, unsigned);
 
 char *bsa_read_bzstring(struct bsa *);
 
-void bsa_read_folder_records(struct bsa *);
-void bsa_read_file_records(struct bsa *);
-void bsa_read_filenames(struct bsa *);
-void bsa_resources(struct bsa *);
-void bsa_bsort(struct bsa *);
+void read_folder_records(struct bsa *);
+void read_file_records(struct bsa *);
+void read_filenames(struct bsa *);
+void resources(struct bsa *);
 
 api struct bsa *bsa_load(const char *path)
 {
@@ -31,12 +30,9 @@ api struct bsa *bsa_load(const char *path)
 	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
 	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
-	//if (!bsa->stream)
-	//return NULL;
 	cassert(
 		bsa->stream, BSA "can't open");
 	read(bsa, &Hedr, sizeof(struct bsa_hedr));
-	//printf(bsa_print_hedr(&bsa));
 	cassert(
 		strcmp(
 			"BSA\x00", (char *)&Hedr.id) == 0,
@@ -45,15 +41,15 @@ api struct bsa *bsa_load(const char *path)
 		Hedr.ver != VER_SE, BSA "cant use special edition");
 	cassert(
 		Hedr.ver == VER, BSA "not 104");
-	bsa_read_folder_records(bsa);
-	bsa_read_file_records(bsa);
-	bsa_read_filenames(bsa);
-	bsa_resources(bsa);
+	read_folder_records(bsa);
+	read_file_records(bsa);
+	read_filenames(bsa);
+	resources(bsa);
 	//printf("loaded bsa %s\n", path);
 	return bsa;
 }
 
-void bsa_read_folder_records(struct bsa *bsa)
+void read_folder_records(struct bsa *bsa)
 {
 	bsa->fld = malloc(sizeof(struct bsa_fld) * Hedr.folders);
 	read(bsa, bsa->fld, Hedr.folders * sizeof(struct bsa_fld));
@@ -68,7 +64,7 @@ char *bsa_read_bzstring(struct bsa *bsa)
 	return name;
 }
 
-void bsa_read_file_records(struct bsa *bsa)
+void read_file_records(struct bsa *bsa)
 {
 	bsa->file = malloc(sizeof(struct bsa_file *) * Hedr.folders);
 	bsa->ca = malloc(sizeof(char *) * Hedr.folders);
@@ -81,7 +77,7 @@ void bsa_read_file_records(struct bsa *bsa)
 	}
 }
 
-void bsa_read_filenames(struct bsa *bsa)
+void read_filenames(struct bsa *bsa)
 {
 	char *buf = malloc(sizeof(char) * Hedr.filesl);
 	bsa->cb = malloc(sizeof(char *) * Hedr.files);
@@ -107,7 +103,7 @@ void bsa_rc_path(struct bsa *bsa, int i, int r)
 	return path;
 }
 
-void bsa_resources(struct bsa *bsa)
+void resources(struct bsa *bsa)
 {
 	bsa->rc = malloc(sizeof(struct rc *) * Hedr.files);
 	bsa->r = malloc(sizeof(int) * Hedr.folders);
@@ -246,6 +242,8 @@ api void bsa_free(struct bsa **b)
 	free(bsa);
 	*b = NULL;
 }
+
+// archive ext stuff below
 
 static struct bsa *archives[10];
 

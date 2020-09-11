@@ -1,7 +1,7 @@
 #ifndef OPENGL_TEXTURE_H
 #define OPENGL_TEXTURE_H
 
-#include "types"
+#include "types.h"
 
 // https://learnopengl.com/Getting-started/Textures
 

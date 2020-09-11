@@ -1,6 +1,6 @@
 #include "dark2.h"
 
-#include "texture"
+#include "texture.h"
 
 extern "C"
 {

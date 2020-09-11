@@ -30,7 +30,7 @@ uniform sampler2D normalMap;
 vec2 normalScale = vec2(1.0);
 
 uniform vec3 color;
-vec3 specular = vec3(0.5, 0.75, 1.0) * 1.0;
+vec3 specular = vec3(0.3, 0.75, 1.0) * 1.0;
 //vec3 emissive = vec3(1.0, 1.0, 0); // out
 
 uniform float opacity;
@@ -242,10 +242,6 @@ void main()
 
 	#endif
 
-	#ifdef ASH
-
-	#endif
-
 	#ifdef USE_NORMALMAP
 
 			#ifdef USE_TANGENT
@@ -292,8 +288,8 @@ void main()
 		//vec3 ash = vec3(70.0 / 255.0, 60.0 / 255.0, 40.0 / 255.0);
 		ash /= 1.5;
 		
-		if (normalAsh.z > 0.9) { // 0.55
-			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.15);
+		if (normalAsh.z > 0.9) {
+			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.1);
 			specularStrength /= 10.0;
 		}
 

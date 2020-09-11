@@ -1,7 +1,8 @@
-#include "aabb"
+#include "aabb.h"
 
-#include "geometry"
-#include "material"
+#include "geometry.h"
+#include "material.h"
+#include "shader.h"
 
 #include <glm/gtx/norm.hpp>
 
@@ -120,7 +121,7 @@ void AABB::geometrize()
 
 	Material *material = new Material;
 	material->color = vec3(0.4f);
-	material->shader = shaBasic;
+	material->source = &ShaderSources::basic;
 	geometry->material = material;
 
 	std::vector<vec3> lines = {

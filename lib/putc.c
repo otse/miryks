@@ -7,7 +7,7 @@
 
 /*inline*/ int Fail(const char *m)
 {
-	printf("%s\n", m);
+	printf("Program Exiting: %s\n", m);
 	system("PAUSE");
 	exit(1);
 }

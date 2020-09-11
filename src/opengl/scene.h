@@ -1,7 +1,7 @@
 #ifndef OPENGL_SCENE_H
 #define OPENGL_SCENE_H
 
-#include "types"
+#include "types.h"
 
 struct Scene
 {

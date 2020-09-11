@@ -40,7 +40,7 @@ void bsa_gui()
 	{
 		printf("bsa-gui manual loading new archive\n");
 		memcpy(buf2, buf, MAX);
-		std::string oldrim = OLDRIM + "Data/" + buf;
+		std::string oldrim = pathToOldrim + "Data/" + buf;
 		std::string bin = buf;
 		std::string *path = nullptr;
 		if (exists_test3(oldrim))

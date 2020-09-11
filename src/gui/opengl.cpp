@@ -1,10 +1,8 @@
 #include "dark2.h"
 
-#include "files.h"
-
-#include "../opengl/group"
-#include "../opengl/geometry"
-#include "../opengl/camera"
+#include "opengl/group.h"
+#include "opengl/geometry.h"
+#include "opengl/camera.h"
 
 #include <glm/gtx/string_cast.hpp>
 #include <sstream>

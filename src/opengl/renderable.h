@@ -1,8 +1,8 @@
 #ifndef OPENGL_GROUP2_H
 #define OPENGL_GROUP2_H
 
-#include "types"
-#include "aabb"
+#include "types.h"
+#include "aabb.h"
 
 // A basic 3d object with a transformation
 

@@ -1,6 +1,6 @@
-#include "group"
+#include "group.h"
 
-#include "geometry"
+#include "geometry.h"
 
 const bool DRAW_AXIS = 0;
 

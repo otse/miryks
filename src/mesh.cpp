@@ -1,7 +1,7 @@
 #include "mesh.h"
 
-#include "opengl/texture"
-#include "opengl/types"
+#include "opengl/texture.h"
+#include "opengl/types.h"
 
 namespace dark2
 {

@@ -1,12 +1,12 @@
 
-#include "scene"
+#include "scene.h"
 
-#include "aabb"
-#include "group"
-#include "renderable"
-#include "material"
-#include "shader"
-#include "pointlight"
+#include "aabb.h"
+#include "group.h"
+#include "renderable.h"
+#include "material.h"
+#include "shader.h"
+#include "pointlight.h"
 
 
 static PointLight *black;

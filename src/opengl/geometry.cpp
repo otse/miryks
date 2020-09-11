@@ -1,8 +1,8 @@
-#include "geometry"
+#include "geometry.h"
 
-#include "shader"
-#include "camera"
-#include "material"
+#include "shader.h"
+#include "camera.h"
+#include "material.h"
 
 int Geometry::num = 0;
 

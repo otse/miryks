@@ -1,7 +1,7 @@
 #ifndef OGL_AABB_H
 #define OGL_AABB_H
 
-#include "types"
+#include "types.h"
 
 struct AABB
 {

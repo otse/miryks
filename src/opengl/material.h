@@ -1,7 +1,7 @@
 #ifndef OPENGL_MATERIAL_H
 #define OPENGL_MATERIAL_H
 
-#include "types"
+#include "types.h"
 
 struct Material
 {
@@ -11,6 +11,7 @@ struct Material
 	int id;
 	string name;
 	Shader *shader;
+	ShaderSource *source;
 	Texture *map, *normalMap;
 
 	bool transparent, doubleSided, blending, testing, decal;
@@ -22,6 +23,8 @@ struct Material
 
 	Material();
 
+	bool prepared = false;
+	void Ready();
 	void Use();
 	static void Unuse(Material *, Material *);
 

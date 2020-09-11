@@ -1,19 +1,24 @@
-#include "shader"
+#include "shader.h"
 
 Shader *Shader::active = nullptr;
 
 //shader_t *shader_current;
 
-#include "types"
+#include "types.h"
 
-#include "camera"
-#include "scene"
+#include "camera.h"
+#include "scene.h"
 
 #include "files.h"
 
 #include <glad/glad.h>
 
-Shader::Shader()
+ShaderSource::ShaderSource()
+{
+	vert = frag = nullptr;
+}
+
+Shader::Shader(ShaderSource *)
 {
 	id = 0;
 }
@@ -33,22 +38,14 @@ void Shader::Use()
 	active = this;
 }
 
-void Shader::Load(const string &vert, const string &frag)
-{
-	this->vert_path = vert;
-	this->frag_path = frag;
-
-	Compile();
-}
-
 void Shader::Compile()
 {
 	if (id)
 		glDeleteProgram(id);
 
 	int *i = new int;
-	string vert_code = fread("gl/" + vert_path); // = toffshore("gl", vert_path, i);
-	string frag_code = fread("gl/" + frag_path); // = toffshore("gl", frag_path, i);
+	string vert_code = fread("gl/" + vertPath); // = toffshore("gl", vertPath, i);
+	string frag_code = fread("gl/" + fragPath); // = toffshore("gl", fragPath, i);
 
 	GLuint vertex, fragment;
 

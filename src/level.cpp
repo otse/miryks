@@ -7,17 +7,17 @@
 
 extern "C"
 {
+#include "putc.h"
 #include "bsa.h"
 #include "nif.h"
 #include "esp.h"
 }
 
-#include "opengl/renderable"
-#include "opengl/texture"
-#include "opengl/camera"
-#include "opengl/pointlight"
-#include "opengl/types"
-
+#include "opengl/renderable.h"
+#include "opengl/texture.h"
+#include "opengl/camera.h"
+#include "opengl/pointlight.h"
+#include "opengl/types.h"
 
 
 namespace dark2
@@ -26,9 +26,9 @@ namespace dark2
 	{
 		Cell cell = {false};
 
-		grup *top = esp_get_top_grup(padstow, "CELL");
+		grup *top = esp_get_top_grup(get_plugins()[1], "CELL");
 
-		Assert(top, "no cells top grup");
+		cassert(top, "no cells top grup");
 
 		for (int i = 0; i < top->mixed.size; i++)
 		{
@@ -40,7 +40,7 @@ namespace dark2
 				{
 					record *object = B->mixed.records[k];
 					grup *grup = B->mixed.grups[k + 1];
-					Assert(object->hed->type == *(unsigned int *)"CELL", "not a cell");
+					cassert(object->hed->type == *(unsigned int *)"CELL", "not a cell");
 					const char *cellEdid = (char *)object->fields.subrecords[0]->data;
 					//printf("Found cell %s\n", cellEdid);
 					if (0 == strcmp(cellEdid, editorId))
@@ -88,8 +88,8 @@ namespace dark2
 		for (int i = 0; i < grup->mixed.size; i++)
 		{
 			void *element = grup->mixed.elements[i];
-			Assert(*(char *)element == RECORD, "mixed non record");
-			Assert(grup->mixed.records[i]->hed->type == *(unsigned int *)"REFR", "not a refr");
+			cassert(*(char *)element == RECORD, "mixed non record");
+			cassert(grup->mixed.records[i]->hed->type == *(unsigned int *)"REFR", "not a refr");
 			auto ref = new Ref;
 			refs.push_back(ref);
 			ref->SetData((Record *)element);

@@ -10,10 +10,10 @@ extern "C"
 #include "mesh.h"
 #include "level.h"
 
-#include "opengl/camera"
-#include "opengl/scene"
-#include "opengl/material"
-#include "opengl/shader"
+#include "opengl/camera.h"
+#include "opengl/scene.h"
+#include "opengl/material.h"
+#include "opengl/shader.h"
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -30,6 +30,19 @@ using namespace glm;
 
 GLFWwindow *window;
 
+namespace dark2
+{
+	void HideCursor()
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
+	void ShowCursor()
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+} // namespace dark2
+
 static void error_callback(int error, const char *description)
 {
 	fprintf(stderr, "Error: %s\n", description);
@@ -42,30 +55,32 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 
-	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
-	{
-		F3 = !F3;
-		glfwSetInputMode(window, GLFW_CURSOR, F3 ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-		if (camera)
-			camera->disabled = F3;
-	}
 	if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
 	{
 		camera = first_person_camera;
+		camera->disabled = false;
+		HideCursor();
+		F3 = false;
+	}
+	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
+	{
+		F3 = !F3;
+		F3 ? ShowCursor() : HideCursor();
+		camera->disabled = F3;
 	}
 	if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
 		printf("F5!\n");
 		const char *name = padstow->name;
-		free_plugin(&padstow);
-		padstow = LoadPlugin(name);
-		get_plugins()[1] = padstow;
+		esp *plugin = has_plugin(name);
+		free_plugin(&plugin);
+		get_plugins()[1] = LoadPlugin(name);
 		delete dungeon;
 		dungeon = new Level("PadstowDungeon");
 	}
 	if (glfwGetKey(window, GLFW_KEY_F6))
 	{
-		oglReloadShaders();
+		ShaderSources::SetBufs();
 	}
 }
 

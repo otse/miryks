@@ -2,7 +2,7 @@
 
 #include "dark2.h"
 
-#include "opengl/types"
+#include "opengl/types.h"
 
 namespace dark2
 {

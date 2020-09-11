@@ -25,22 +25,29 @@ struct Renderable;
 struct RenderItem;
 struct Texture;
 struct Shader;
+struct ShaderSource;
 struct Program;
 struct PointLight;
 
 extern Camera *camera;
 extern Scene *scene;
 
-extern Shader *shaBasic;
-extern Shader *shaSimple;
-extern Shader *shaFx;
-extern Shader *shaPbr;
+extern Shader *basicShader;
+
+namespace ShaderSources
+{
+void SetBufs();
+extern ShaderSource basic;
+extern ShaderSource simple;
+extern ShaderSource fx;
+extern ShaderSource physical;
+}
 
 void detectGlfwError();
 void detectOpenGLError(const string = "?");
 
 void opengl_gui();
-void oglGo();
-void oglReloadShaders();
+void OGLGo();
+void OGLReloadShaderSource();
 
 #endif

@@ -15,11 +15,11 @@ extern "C"
 
 #include "files.h"
 
-#include "opengl/renderable"
-#include "opengl/texture"
-#include "opengl/camera"
-#include "opengl/pointlight"
-#include "opengl/types"
+#include "opengl/renderable.h"
+#include "opengl/texture.h"
+#include "opengl/camera.h"
+#include "opengl/pointlight.h"
+#include "opengl/types.h"
 
 constexpr char test_expr[] = "EDID";
 
@@ -129,7 +129,7 @@ namespace dark2
 						std::transform(data.begin(), data.end(), data.begin(),
 									   [](unsigned char c) { return std::tolower(c); });
 						//printf("stat base has a modl %s\n", data.c_str());
-						Rc *rc = bsa_find(meshes, data.c_str());
+						Rc *rc = bsa_find_more(data.c_str(), 0x1);
 						if (rc)
 						{
 							//printf("found a rc %p\n", rc);

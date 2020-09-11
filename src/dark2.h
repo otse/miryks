@@ -12,7 +12,7 @@ struct esp_t;
 
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
 
-#include "opengl/types"
+#include "opengl/types.h"
 
 #include "idiom.hpp"
 
@@ -42,10 +42,13 @@ namespace dark2
 	void programGo();
 	void programLoop();
 
+	void HideCursor();
+	void ShowCursor();
+
 	extern int width, height;
 	extern float delta;
 
-	extern std::string OLDRIM;
+	extern std::string pathToOldrim;
 
 	extern Mesh *viewed_mesh;
 	extern Renderable *viewed_object;
@@ -57,14 +60,6 @@ namespace dark2
 
 	extern esp *skyrim;
 	extern esp *padstow;
-
-	extern bsa *interface;
-	extern bsa *meshes;
-	extern bsa *animations;
-	extern bsa *textures;
-	extern bsa *hirestexturepack01;
-	extern bsa *hirestexturepack02;
-	extern bsa *hirestexturepack03;
 
 } // namespace dark2
 

@@ -1,9 +1,9 @@
 #ifndef OPENGL_GEOMETRY_H
 #define OPENGL_GEOMETRY_H
 
-#include "types"
+#include "types.h"
 
-#include "aabb"
+#include "aabb.h"
 
 struct Vertex
 {

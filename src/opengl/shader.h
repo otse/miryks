@@ -1,14 +1,20 @@
 #ifndef OPENGL_SHADER_H
 #define OPENGL_SHADER_H
 
-#include "types"
+#include "types.h"
 
-#include "camera"
-#include "scene"
+#include "camera.h"
+#include "scene.h"
 
 #include "files.h"
 
 #include <glad/glad.h>
+
+struct ShaderSource
+{
+	ShaderSource();
+	const char *vert, *frag;
+};
 
 struct Shader
 {
@@ -16,14 +22,12 @@ struct Shader
 
 	GLuint id;
 
-	string vert_path, frag_path;
+	string vertPath, fragPath;
 	string vert, frag;
 
-	Shader();
+	ShaderSource *source;
+	Shader(ShaderSource *);
 
-	void Reload() { Compile(); };
-
-	void Load(const string &, const string &);
 	void Compile();
 
 	void Use();

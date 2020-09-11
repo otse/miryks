@@ -1,9 +1,15 @@
-#include "material"
-#include "texture"
 
-#include "camera"
-#include "shader"
-#include "scene"
+#include "material.h"
+
+extern "C"
+{
+#include "putc.h"
+}
+
+#include "texture.h"
+#include "camera.h"
+#include "shader.h"
+#include "scene.h"
 
 int Material::pool = 0;
 
@@ -14,8 +20,10 @@ Material::Material()
 {
 	id = pool++;
 
-	shader = shaSimple;
+	prepared = false;
 
+	shader = nullptr;
+	source = nullptr;
 	map = normalMap = nullptr;
 
 	transparent = doubleSided = blending = testing = decal = false;
@@ -42,6 +50,11 @@ Material::Material()
 	color = vec3(1, 1, 1);
 	specular = vec3(17.0 / 255.0);
 	emissive = vec3(0);
+}
+
+void Material::Ready()
+{
+	//cassert(prepared, "double ready");
 }
 
 void Material::composeUvTransform()
@@ -78,6 +91,9 @@ void Material::setUvTransformDirectly(
 
 void Material::Use()
 {
+	if (!prepared)
+		cassert(prepared, "use material->Ready() before using it");
+
 	if (this == active)
 		return;
 

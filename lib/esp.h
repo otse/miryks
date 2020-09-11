@@ -133,6 +133,7 @@ api struct esp *has_plugin(const char *);
 api struct esp_array *esp_filter_objects(const struct esp *, const char [5]);
 
 api struct record *esp_brute_record_by_form_id(unsigned int);
+
 api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
 
 api void free_plugin(struct esp **);

@@ -1,4 +1,4 @@
-#include "camera"
+#include "camera.h"
 
 #include "dark2.h"
 

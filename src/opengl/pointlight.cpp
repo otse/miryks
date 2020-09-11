@@ -1,4 +1,4 @@
-#include "pointlight"
+#include "pointlight.h"
 
 // https://community.khronos.org/t/uniform-buffer-objects-dynamic-sized-arrays-and-lights/70415
 

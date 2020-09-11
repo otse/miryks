@@ -1,12 +1,12 @@
 #ifndef OGL_RENDERABLE_H
 #define OGL_RENDERABLE_H
 
-#include "renderable"
+#include "renderable.h"
 
-#include "group"
-#include "geometry"
-#include "material"
-#include "shader"
+#include "group.h"
+#include "geometry.h"
+#include "material.h"
+#include "shader.h"
 
 const bool DRAW_BOUNDS = true;
 

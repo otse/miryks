@@ -4,11 +4,11 @@
 
 #include "ref.h"
 
-#include "opengl/types"
-#include "opengl/scene"
-#include "opengl/group"
-#include "opengl/geometry"
-#include "opengl/material"
+#include "opengl/types.h"
+#include "opengl/scene.h"
+#include "opengl/group.h"
+#include "opengl/geometry.h"
+#include "opengl/material.h"
 
 namespace dark2
 {

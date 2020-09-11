@@ -1,19 +1,22 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include "types"
+#include "types.h"
 
-#include "camera"
-#include "scene"
-#include "shader"
+#include "camera.h"
+#include "scene.h"
+#include "shader.h"
 
-#include "material"
-#include "texture"
+#include "material.h"
+#include "texture.h"
 
-Shader *shaBasic;
-Shader *shaSimple;
-Shader *shaFx;
-Shader *shaPbr;
+namespace ShaderSources
+{
+ShaderSource basic;
+ShaderSource simple;
+ShaderSource fx;
+ShaderSource physical;
+}
 
 Camera *camera;
 Scene *scene;
@@ -39,30 +42,21 @@ void detectOpenGLError(const string where)
 	}
 }
 
-void oglReloadShaders()
+void ShaderSources::SetBufs()
 {
 	log_("reload simple / fx / pbr");
 
-	shaBasic->Reload();
-	shaSimple->Reload();
-	shaFx->Reload();
-	shaPbr->Reload();
+	auto srcs = { basic, simple, fx, physical };
+	for (auto &src : srcs)
+	{
+		
+	}
 }
 
-void oglGo()
+void OGLGo()
 {
-	log_("opengl go");
+	log_("OGL go");
 
 	camera = new Camera;
 	scene = new Scene;
-
-	shaBasic = new Shader;
-	shaSimple = new Shader;
-	shaFx = new Shader;
-	shaPbr = new Shader;
-
-	shaBasic->Load("basic.vert", "basic.frag");
-	shaSimple->Load("simple.vert", "simple.frag");
-	shaFx->Load("fx.vert", "fx.frag");
-	shaPbr->Load("pbr.vert", "pbr.frag");
 }
