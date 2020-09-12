@@ -371,17 +371,19 @@ api void nif_rd(struct nif *nif, struct rd *rd) {
 
 void visit(struct rd *rd, int p, int c)
 {
+#define skip rd->skips[c] = 1;
 	struct nif *nif = rd->nif;
 	if (-1 == c)
 	return;
 	if (rd->skips[c])
 	return;
 	rd->parent = p; rd->current = c;
-	rd->skips[c] = 1;
+	// skip
 	const char *block_type = Hedr.block_types[Hedr.block_type_index[c]];
 	if (0) ;
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{
+	skip;
 	struct ni_node *block = Blocks[c];
 	rd->ni_node(rd, block);
 	for (int i = 0; i < block->num_children; i++)
@@ -392,6 +394,7 @@ void visit(struct rd *rd, int p, int c)
 	}
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
 	{
+	skip;
 	struct ni_tri_shape *block = Blocks[c];
 	rd->ni_tri_shape(rd, block);
 	visit(rd, c, block->data);

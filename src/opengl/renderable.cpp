@@ -8,7 +8,7 @@
 #include "material.h"
 #include "shader.h"
 
-const bool DRAW_BOUNDS = true;
+const bool DRAW_BOUNDS = false;
 
 Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)
 {
@@ -26,7 +26,7 @@ void Renderable::Separate()
 	aabb = AABB(0);
 
 	objects.clear();
-	
+
 	group->Flatten(group);
 
 	for (Group *group : group->flat)
@@ -46,7 +46,10 @@ void Renderable::DrawClassic()
 {
 	group->DrawClassic(matrix);
 
-	aabb.draw(mat4(1.0));
+	if (DRAW_BOUNDS)
+	{
+		aabb.draw(mat4(1.0));
+	}
 }
 
 RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), renderable(renderable)

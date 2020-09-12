@@ -95,13 +95,13 @@ void Scene::DrawItems()
 
 	for (RenderItem &render_item : objects)
 	{
-		render_item.Draw();
+		//render_item.Draw();
 	}
 
 	//return;
 	for (Renderable *renderable : renderables)
 	{
-		//renderable->DrawClassic();
+		renderable->DrawClassic();
 	}
 }
 

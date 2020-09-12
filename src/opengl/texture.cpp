@@ -25,6 +25,10 @@ Texture *GetProduceTexture(const char *path)
 	std::string lower = lowercase(path);
 	if (textures.count(lower) == 0)
 		textures.emplace(lower, new Texture(lower));
+	if (path)
+	{
+		printf("returning texture at path %s\n", path);
+	}
 	return textures[lower];
 }
 
@@ -33,8 +37,10 @@ Texture::Texture(const string &path) : path(path)
 {
 	//printf("new texture %s\n", path.c_str());
 	struct rc *rc = bsa_find_more(path.c_str(), 0x2);
-	if (rc == NULL)
+	if (rc == NULL) {
+		printf("cant find %s\n", path.c_str());
 		return;
+	}
 	bsa_read(rc);
 	buf = rc->buf;
 	size = rc->size;

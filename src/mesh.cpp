@@ -15,12 +15,12 @@ namespace dark2
 		lastGroup = baseGroup;
 	}
 
-	void other(Rd *, int, int, const char *);
-	void ni_node_callback(Rd *, ni_node *);
-	void ni_tri_shape_callback(Rd *, ni_tri_shape *);
-	void ni_tri_shape_data_callback(Rd *, ni_tri_shape_data *);
-	void bs_lighting_shader_property_callback(Rd *, bs_lighting_shader_property *);
-	void bs_shader_texture_set_callback(Rd *, bs_shader_texture_set *);
+	void other(rd *, int, int, const char *);
+	void ni_node_callback(rd *, ni_node *);
+	void ni_tri_shape_callback(rd *, ni_tri_shape *);
+	void ni_tri_shape_data_callback(rd *, ni_tri_shape_data *);
+	void bs_lighting_shader_property_callback(rd *, bs_lighting_shader_property *);
+	void bs_shader_texture_set_callback(rd *, bs_shader_texture_set *);
 
 	static std::map<void *, Mesh *> store;
 
@@ -53,7 +53,7 @@ namespace dark2
 		baseGroup->Update();
 	}
 
-	Group *Mesh::Nested(Rd *rd)
+	Group *Mesh::Nested(rd *rd)
 	{
 		Group *group = new Group();
 		Group *parent = rd->parent == -1 ? baseGroup : groups[rd->parent];
@@ -85,7 +85,7 @@ namespace dark2
 
 	void ni_tri_shape_callback(rd *rd, ni_tri_shape *block)
 	{
-		// printf("ni tri shape callback\n");
+		// printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, &block->common);
@@ -144,7 +144,7 @@ namespace dark2
 		Group *group = mesh->lastGroup;
 		for (int i = 0; i < block->num_textures; i++)
 		{
-			string path = block->textures[i];
+			string path = std::string(block->textures[i]);
 			if (path.empty())
 				continue;
 			if (path.find("skyrimhd\\build\\pc\\data\\") != std::string::npos)

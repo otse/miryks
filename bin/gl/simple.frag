@@ -352,7 +352,7 @@ void main()
 	hemiLight.groundColor = vec3(0.0, 0.02, 0.025) * 1.0;
 
 	// ambientLightColor
-	vec3 localAmbient = vec3(30.0 / 255.0);
+	vec3 localAmbient = vec3(60.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
 	#ifndef DONT_USE_A_HEMISPHERE

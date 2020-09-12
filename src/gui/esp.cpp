@@ -47,8 +47,14 @@ void im_grup(grup *grup, int top_grup = -1)
 
 void im_record(Record *record)
 {
-	char t[100];
-	snprintf(t, 100, "%.4s %i", (char *)&record->hed->type, record->id);
+	char *edid = nullptr;
+	subrecord *first = record->fields.subrecords[0];
+	if (first->hed->type == (*(unsigned int *)"EDID"))
+	{
+		edid = (char *)first->data;
+	}
+	char t[130];
+	snprintf(t, 130, "%.4s %i - %s", (char *)&record->hed->type, record->id, edid);
 	if (ImGui::TreeNode(t))
 	{
 		char s[200];
@@ -72,14 +78,14 @@ void im_record(Record *record)
 	}
 }
 
-void im_subrecord(subrecord *subrecord)
+void im_subrecord(subrecord *field)
 {
 	char t[100];
-	snprintf(t, 100, "%.4s##Sub %i", (char *)&subrecord->hed->type, subrecord->id);
+	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->type, field->id);
 	if (ImGui::TreeNode(t))
 	{
 		char s[400];
-		esp_print_field(plugin, s, subrecord);
+		esp_print_field(plugin, s, field);
 		ImGui::Text(s);
 		ImGui::TreePop();
 	}
