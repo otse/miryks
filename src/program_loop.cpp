@@ -75,7 +75,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		const char *name = plugin->name;
 		esp *has = has_plugin(name);
 		free_plugin(&has);
-		get_plugins()[1] = LoadPlugin(name);
+		get_plugins()[1] = loadPlugin(name);
 		delete dungeon;
 		dungeon = new Level("PadstowDungeon");
 	}
@@ -194,8 +194,30 @@ void dark2::programGo()
 
 void dark2::programLoop()
 {
+	double fps;
+	int frames;
+	double time, t0;
+	char title[150];
+
+	frames = 0;
+	t0 = glfwGetTime();
+
 	while (!glfwWindowShouldClose(window))
 	{
+		//get the current time
+		time = glfwGetTime();
+
+		// Calcul and display the FPS
+		if ((time - t0) > 1.0 || frames == 0)
+		{
+			fps = (double)frames / (time - t0);
+			sprintf(title, "DARK II (%.1f FPS)", fps);
+			glfwSetWindowTitle(window, title);
+			t0 = time;
+			frames = 0;
+		}
+		frames++;
+
 		glfwPollEvents();
 
 		ImGui_ImplOpenGL3_NewFrame();

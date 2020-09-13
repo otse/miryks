@@ -49,7 +49,7 @@ void im_record(Record *record)
 {
 	char *edid = nullptr;
 	subrecord *first = record->fields.subrecords[0];
-	if (first->hed->type == (*(unsigned int *)"EDID"))
+	if (first->hed->type == espwrd "EDID")
 	{
 		edid = (char *)first->data;
 	}
@@ -116,7 +116,7 @@ void esp_gui()
 		}
 		else
 		{
-			plugin2 = LoadPlugin(buf2);
+			plugin2 = loadPlugin(buf2);
 			if (plugin2)
 			{
 				memcpy(temporaryName, buf, 260);

@@ -293,7 +293,7 @@ void main()
 		//vec3 ash = vec3(70.0 / 255.0, 60.0 / 255.0, 40.0 / 255.0);
 		ash /= 1.5;
 		
-		if (normalAsh.z > 0.9) {
+		if (normalAsh.z > 0.85) {
 			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.1);
 			specularStrength /= 10.0;
 		}

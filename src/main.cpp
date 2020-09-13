@@ -29,6 +29,11 @@ namespace dark2
 		Renderable *object = nullptr;
 	} // namespace viewer
 
+	namespace stats
+	{
+		unsigned int fps = 0;
+	}
+
 	Level *dungeon;
 
 	std::string pathToOldrim;
@@ -48,7 +53,7 @@ namespace dark2
 {
 	const char *dataFolder = "Data/";
 
-	nif *LoadNif(rc *rc)
+	nif *loadNif(rc *rc)
 	{
 		cassert(rc, "mh no rc");
 		bsa_read(rc);
@@ -60,7 +65,7 @@ namespace dark2
 		return nif;
 	}
 
-	esp *LoadPlugin(const char *filename)
+	esp *loadPlugin(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
 		char *buf;
@@ -77,7 +82,7 @@ namespace dark2
 		return plugin;
 	}
 
-	bsa *LoadArchive(const char *filename)
+	bsa *loadArchive(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
 		if (exists_test3(path))
@@ -87,7 +92,7 @@ namespace dark2
 		return nullptr;
 	}
 
-	void viewer::spotlight(rc *rc)
+	void viewer::view(rc *rc)
 	{
 		if (mesh)
 		{
@@ -98,7 +103,7 @@ namespace dark2
 		nif *nif = nif_saved(rc);
 		if (nif == NULL)
 		{
-			nif = LoadNif(rc);
+			nif = loadNif(rc);
 			nif_save(rc, nif);
 		}
 		mesh = new Mesh;
@@ -120,20 +125,20 @@ int main()
 	log_("dark2 loading");
 	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
 	pathToOldrim = fread("path to oldrim.txt");
-	get_plugins()[0] = LoadPlugin("Skyrim.esm");
-	get_plugins()[1] = LoadPlugin("Padstow.esp");
-	get_archives()[0] = LoadArchive("Skyrim - Meshes.bsa");
-	get_archives()[1] = LoadArchive("Skyrim - Textures.bsa");
-	get_archives()[2] = LoadArchive("HighResTexturePack01.bsa");
-	get_archives()[3] = LoadArchive("HighResTexturePack02.bsa");
-	get_archives()[4] = LoadArchive("HighResTexturePack03.bsa");
+	get_plugins()[0] = loadPlugin("Skyrim.esm");
+	get_plugins()[1] = loadPlugin("Padstow.esp");
+	get_archives()[0] = loadArchive("Skyrim - Meshes.bsa");
+	get_archives()[1] = loadArchive("Skyrim - Textures.bsa");
+	get_archives()[2] = loadArchive("HighResTexturePack01.bsa");
+	get_archives()[3] = loadArchive("HighResTexturePack02.bsa");
+	get_archives()[4] = loadArchive("HighResTexturePack03.bsa");
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
 	OGLGo();
 	camera = first_person_camera;
 	rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	viewer::spotlight(rc);
+	viewer::view(rc);
 	nif_test();
 	dungeon = new Level("PadstowDungeon"); // <-- interior to load
 	programLoop();

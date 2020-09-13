@@ -1,6 +1,3 @@
-#ifndef OGL_RENDERABLE_H
-#define OGL_RENDERABLE_H
-
 #include "renderable.h"
 
 #include "group.h"
@@ -119,5 +116,3 @@ void RenderItem::SetInfo()
 	if (material && material->testing)
 		score += 1;
 }
-
-#endif

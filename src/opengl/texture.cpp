@@ -22,13 +22,10 @@ inline std::string lowercase(const char *c)
 
 Texture *GetProduceTexture(const char *path)
 {
+	// printf("get texture %s\n", path);
 	std::string lower = lowercase(path);
 	if (textures.count(lower) == 0)
 		textures.emplace(lower, new Texture(lower));
-	if (path)
-	{
-		printf("returning texture at path %s\n", path);
-	}
 	return textures[lower];
 }
 

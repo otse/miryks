@@ -29,15 +29,19 @@ namespace dark2
 
 	namespace viewer
 	{
-		extern Mesh *viewed_mesh;
-		extern Renderable *viewed_object;
+	void view(rc *);
+	extern Mesh *viewed_mesh;
+	extern Renderable *viewed_object;
+	}
 
-		void spotlight(Rc *);
-	} // namespace viewer
+	namespace stats
+	{
+	extern unsigned int fps;
+	}
 
-	nif *LoadNif(rc *);
-	esp *LoadPlugin(const char *);
-	bsa *LoadArchive(const char *);
+	nif *loadNif(rc *);
+	esp *loadPlugin(const char *);
+	bsa *loadArchive(const char *);
 
 	void programGo();
 	void programLoop();

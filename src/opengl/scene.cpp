@@ -1,4 +1,3 @@
-
 #include "scene.h"
 
 #include "aabb.h"

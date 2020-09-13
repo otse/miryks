@@ -116,7 +116,7 @@ void nif_gui()
 
 			if (ImGui::Button(VIEW_NIF))
 			{
-				viewer::spotlight((struct rc*)nmap[i].key);
+				viewer::view((struct rc*)nmap[i].key);
 			}
 
 			ImGui::TreePop();

@@ -164,7 +164,7 @@ void bsa_gui()
 					ImGui::SameLine();
 					if (ImGui::Button(VIEW_NIF))
 					{
-						viewer::spotlight(rc);
+						viewer::view(rc);
 					}
 				}
 			}
@@ -211,7 +211,7 @@ void bsa_gui()
 								ImGui::SameLine();
 								if (ImGui::Button(VIEW_NIF))
 								{
-									viewer::spotlight(rc);
+									viewer::view(rc);
 								}
 							}
 							ImGui::Separator();

@@ -77,6 +77,8 @@ namespace dark2
 		REFR REFR(refr);
 		matrix = mat4(1.0);
 
+		unsigned int formIdName = 0;
+
 		mat4 translation(1.0), rotation(1.0), scale(1.0);
 
 		if (REFR.EDID)
@@ -104,16 +106,19 @@ namespace dark2
 		}
 		if (REFR.NAME)
 		{
-			unsigned int formId = *REFR.NAME;
+			formIdName = *REFR.NAME;
 
-			Record *base = esp_brute_record_by_form_id(formId);
+			Record *base = esp_brute_record_by_form_id(formIdName);
+
 			Assert(base, "ref cant find name base");
+
 			if (base->hed->type == espwrd "STAT" ||
 				//base->hed->type == espwrd"FURN" ||
 				base->hed->type == espwrd "ALCH" ||
 				base->hed->type == espwrd "CONT" ||
 				base->hed->type == espwrd "ARMO" ||
 				base->hed->type == espwrd "WEAP" ||
+				base->hed->type == espwrd "FLOR" ||
 				base->hed->type == espwrd "MISC")
 			{
 				for (int i = 0; i < base->fields.size; i++)
@@ -136,7 +141,7 @@ namespace dark2
 							Nif *nif = nif_saved(rc);
 							if (nif == NULL)
 							{
-								nif = LoadNif(rc);
+								nif = loadNif(rc);
 								nif_save(rc, nif);
 							}
 							mesh = new Mesh;
@@ -180,8 +185,11 @@ namespace dark2
 
 		if (mesh)
 		{
-			renderable = new Renderable(matrix, mesh->baseGroup);
-			scene->Add(renderable);
+			if (formIdName != 0x32)
+			{
+				renderable = new Renderable(matrix, mesh->baseGroup);
+				scene->Add(renderable);
+			}
 		}
 		if (pointlight)
 		{

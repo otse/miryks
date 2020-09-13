@@ -28,8 +28,8 @@ void opengl_gui()
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))
 	{
-		ImGui::Text((string("groups: ") + to_string(Group::num)).c_str());
-		ImGui::Text((string("geometries: ") + to_string(Geometry::num)).c_str());
+		ImGui::Text(("groups: %i"), Group::num);
+		ImGui::Text("geometries: %i", Geometry::num);
 		if (ImGui::BeginTabItem("settings"))
 		{
 			bool a = ImGui::Checkbox("diffuse maps", &commonSettings.diffuseMaps);

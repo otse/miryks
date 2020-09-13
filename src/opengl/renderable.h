@@ -1,5 +1,5 @@
-#ifndef OPENGL_GROUP2_H
-#define OPENGL_GROUP2_H
+#ifndef OGL_RENDERABLE_H
+#define OGL_RENDERABLE_H
 
 #include "types.h"
 #include "aabb.h"
