@@ -35,9 +35,10 @@ void opengl_gui()
 			bool a = ImGui::Checkbox("diffuse maps", &commonSettings.diffuseMaps);
 			bool b = ImGui::Checkbox("normal maps", &commonSettings.normalMaps);
 			bool c = ImGui::Checkbox("specular maps", &commonSettings.specularMaps);
-			bool d = ImGui::Checkbox("dust", &commonSettings.dust);
+			bool d = ImGui::Checkbox("glow maps", &commonSettings.glowMaps);
+			bool e = ImGui::Checkbox("dust", &commonSettings.dust);
 
-			if (a||b||c||d)
+			if (a||b||c||d||e)
 			{
 				for (auto &pair : Shader::shaders)
 				{

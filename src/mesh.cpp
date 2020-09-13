@@ -87,7 +87,7 @@ namespace dark2
 
 	void ni_tri_shape_callback(rd *rd, ni_tri_shape *block)
 	{
-		// printf("ni tri shape callback %s\n", block->common.name_string);
+		printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, &block->common);
@@ -162,19 +162,23 @@ namespace dark2
 				group->geometry->material->map = GetProduceTexture(block->textures[i]);
 			if (i == 1)
 				group->geometry->material->normalMap = GetProduceTexture(block->textures[i]);
+			if (i == 2)
+			{
+				printf("glowmap %s\n", block->textures[i]);
+				group->geometry->material->glowMap = GetProduceTexture(block->textures[i]);
+			}
 		}
 	}
 
 	void ni_alpha_property_callback(rd *rd, ni_alpha_property *block)
 	{
-		printf("ni alpha property");
+		// printf("ni alpha property");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
 		Geometry *geometry = mesh->lastGroup->geometry;
 		if (geometry)
 		{
 			geometry->material->treshold = block->treshold / 255.f;
-			printf("alpha test %u", block->treshold);
 		}
 	}
 } // namespace dark2

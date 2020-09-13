@@ -71,6 +71,8 @@ std::string Shader::CommonHeader()
 		header += "#define DONT_USE_NORMAL_MAP\n";
 	if (!commonSettings.specularMaps)
 		header += "#define DONT_USE_SPECULAR_MAP\n";
+	if (!commonSettings.glowMaps)
+		header += "#define DONT_USE_GLOW_MAP\n";
 	if (!commonSettings.dust)
 		header += "#define DONT_USE_DUST\n";
 	return header;

@@ -10,6 +10,7 @@ typedef struct grup Grup;
 typedef struct rc Rc;
 struct esp_t;
 
+#define EYE_HEIGHT 175
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
 
 #include "opengl/types.h"

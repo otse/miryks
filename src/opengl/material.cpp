@@ -18,7 +18,8 @@ Material::Material()
 
 	shader = nullptr;
 	src = &basic;
-	map = normalMap = nullptr;
+	
+	map = normalMap = glowMap = nullptr;
 
 	transparent = doubleSided = blending = testing = decal = false;
 
@@ -56,6 +57,8 @@ void Material::Ready()
 		header += "#define DONT_USE_DIFFUSE_MAP\n";
 	if (!normalMap)
 		header += "#define DONT_USE_NORMAL_MAP\n";
+	if (!glowMap)
+		header += "#define DONT_USE_GLOW_MAP\n";
 
 	if (Shader::shaders.count(header))
 	{
@@ -141,6 +144,12 @@ void Material::Use()
 		glBindTexture(GL_TEXTURE_2D, normalMap->tid);
 		shader->SetInt("normalMap", 1);
 	}
+	if (glowMap)
+	{
+		glActiveTexture(GL_TEXTURE0 + 2);
+		glBindTexture(GL_TEXTURE_2D, glowMap->tid);
+		shader->SetInt("glowMap", 2);
+	}
 	if (decal)
 	{
 		glEnable(GL_POLYGON_OFFSET_FILL);
@@ -174,6 +183,11 @@ void Material::Unuse(Material *a, Material *b)
 	if (!a || a->normalMap && !b->normalMap)
 	{
 		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	if (!a || a->glowMap && !b->glowMap)
+	{
+		glActiveTexture(GL_TEXTURE0 + 2);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 	if (!a || a->decal && !b->decal)

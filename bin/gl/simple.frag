@@ -21,6 +21,7 @@ in mat4 modelView;
 // texture samplers
 uniform sampler2D map;
 uniform sampler2D normalMap;
+uniform sampler2D glowMap;
 
 #define USE_A_HEMISPHERE
 
@@ -33,7 +34,7 @@ const vec3 sceneSpecular = vec3(0.3, 0.75, 1.0);
 
 uniform vec3 color;
 uniform vec3 specular;
-//vec3 emissive = vec3(1.0, 1.0, 0); // out
+uniform vec3 emissive;
 
 uniform float opacity;
 uniform float shininess;
@@ -213,22 +214,31 @@ void main()
 
 		diffuseColor *= texture2D(map, vUv);
 
-		diffuseColor.rgba *= vColor.rgba;
+	#endif
 
+	#ifndef DONT_USE_VERTEX_COLOR
+		
+		diffuseColor.rgba *= vColor.rgba;
+	
 	#endif
 	
 	if (diffuseColor.a <= alphaTest)
 		discard;
-
-	// if we discarded, ignore
-	//if (diffuseColor.a != 0.0)
-		//diffuseColor.a = opacity * vColor.a;
 
 	vec3 normal = normalize( vNormal );
 
 	if (doubleSided) {
 		normal = normal * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
 	}
+
+	float specularStrength = glossiness / 999;
+
+	#ifndef DONT_USE_SPECULAR_MAP
+
+		vec4 texelSpecular = texture2D( normalMap, vUv );
+		specularStrength = texelSpecular.a * 1.0;
+
+	#endif
 
 	#ifdef USE_TANGENT
 
@@ -258,20 +268,15 @@ void main()
 			#endif
 	#endif
 
-	float specularStrength = glossiness / 999;
+	vec3 totalEmissiveRadiance = emissive;
 
-	#ifndef DONT_USE_SPECULAR_MAP
+	#ifndef DONT_USE_GLOW_MAP
 
-		vec4 texelSpecular = texture2D( normalMap, vUv );
-		specularStrength = texelSpecular.a * 1.0;
+		vec4 emissiveColor = texture2D( glowMap, vUv );
 
-	#else
-
-		//specularStrength = 0.5;
+		totalEmissiveRadiance = emissiveColor.rgb;
 
 	#endif
-
-	//specularStrength *= glossiness / 999;
 
 	#define DONT_USE_DUST
 	#ifndef DONT_USE_DUST
@@ -369,7 +374,8 @@ void main()
 	vec3 outgoingLight = 	reflectedLight.directDiffuse +
 							reflectedLight.indirectDiffuse +
 							reflectedLight.directSpecular +
-							reflectedLight.indirectSpecular;
+							reflectedLight.indirectSpecular +
+							totalEmissiveRadiance;
 
 	FragColor = vec4(outgoingLight, diffuseColor.a);
 

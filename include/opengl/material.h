@@ -13,7 +13,7 @@ struct Material
 	ssrc *src;
 
 	Shader *shader;
-	Texture *map, *normalMap;
+	Texture *map, *normalMap, *glowMap;
 
 	bool transparent, doubleSided, blending, testing, decal;
 	float opacity, treshold, shininess, glossiness, rotation;

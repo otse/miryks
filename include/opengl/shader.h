@@ -19,6 +19,7 @@ struct ShaderSettings
 	bool diffuseMaps = true;
 	bool normalMaps = true;
 	bool specularMaps = true;
+	bool glowMaps = true;
 	bool dust = true;
 };
 extern ShaderSettings commonSettings;

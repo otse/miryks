@@ -382,6 +382,7 @@ api void nif_rd(struct nif *nif, struct rd *rd) {
 void visit(struct rd *rd, int p, int c)
 {
 #define skip rd->skips[c] = 1;
+#define needs_parent if (-1 == p) return;
 	struct nif *nif = rd->nif;
 	if (-1 == c)
 	return;
@@ -413,20 +414,24 @@ void visit(struct rd *rd, int p, int c)
 	}
 	else if ( ni_is_type(NI_TRI_SHAPE_DATA) )
 	{
+	needs_parent;
 	rd->ni_tri_shape_data(rd, Blocks[c]);
 	}
 	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) )
 	{
+	needs_parent;
 	struct bs_lighting_shader_property *block = Blocks[c];
 	rd->bs_lighting_shader_property(rd, block);
 	visit(rd, c, block->texture_set);
 	}
 	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) )
 	{
+	needs_parent;
 	rd->bs_shader_texture_set(rd, Blocks[c]);
 	}
 	else if ( ni_is_type(NI_ALPHA_PROPERTY) )
 	{
+	needs_parent;
 	rd->ni_alpha_property(rd, Blocks[c]);
 	}
 }
