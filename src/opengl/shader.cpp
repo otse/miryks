@@ -1,4 +1,4 @@
-#include "shader.h"
+#include <opengl/shader.h>
 
 extern "C"
 {
@@ -9,10 +9,10 @@ Shader *Shader::active = nullptr;
 
 //shader_t *shader_current;
 
-#include "types.h"
+#include <opengl/types.h>
 
-#include "camera.h"
-#include "scene.h"
+#include <opengl/camera.h>
+#include <opengl/scene.h>
 
 #include "files.h"
 
@@ -20,7 +20,7 @@ Shader *Shader::active = nullptr;
 
 Shader *basicShader;
 
-ssrc simple, basic, fxs;
+ssrc simple, basic, fxs, postquad;
 
 void SetShaderSources()
 {
@@ -33,6 +33,8 @@ void SetShaderSources()
 	fbuf("gl/basic.frag", &basic[2], true);
 	fbuf("gl/fx.vert", &fxs[1], true);
 	fbuf("gl/fx.frag", &fxs[2], true);
+	fbuf("gl/post.vert", &postquad[1], true);
+	fbuf("gl/post.frag", &postquad[2], true);
 	printf("set shader sources\n");
 }
 

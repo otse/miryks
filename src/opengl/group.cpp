@@ -1,6 +1,6 @@
-#include "group.h"
+#include <opengl/group.h>
 
-#include "geometry.h"
+#include <opengl/geometry.h>
 
 const bool DRAW_AXIS = 0;
 

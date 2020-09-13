@@ -21,6 +21,7 @@ namespace dark2
 	void ni_tri_shape_data_callback(rd *, ni_tri_shape_data *);
 	void bs_lighting_shader_property_callback(rd *, bs_lighting_shader_property *);
 	void bs_shader_texture_set_callback(rd *, bs_shader_texture_set *);
+	void ni_alpha_property_callback(rd *, ni_alpha_property *);
 
 	static std::map<void *, Mesh *> store;
 
@@ -48,6 +49,7 @@ namespace dark2
 		rd->ni_tri_shape_data = ni_tri_shape_data_callback;
 		rd->bs_lighting_shader_property = bs_lighting_shader_property_callback;
 		rd->bs_shader_texture_set = bs_shader_texture_set_callback;
+		rd->ni_alpha_property = ni_alpha_property_callback;
 		nif_rd(bucket, rd, this);
 		nif_free_rd(&rd);
 		baseGroup->Update();
@@ -135,6 +137,13 @@ namespace dark2
 	{
 		// printf("bs lighting shader property callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
+		Group *group = mesh->lastGroup;
+		Geometry *geometry = mesh->lastGroup->geometry;
+		if (geometry)
+		{
+			geometry->material->specular = *cast_vec_3((float *)&block->specular_color);
+			geometry->material->glossiness = block->glossiness;
+		}
 	}
 
 	void bs_shader_texture_set_callback(rd *rd, bs_shader_texture_set *block)
@@ -153,6 +162,19 @@ namespace dark2
 				group->geometry->material->map = GetProduceTexture(block->textures[i]);
 			if (i == 1)
 				group->geometry->material->normalMap = GetProduceTexture(block->textures[i]);
+		}
+	}
+
+	void ni_alpha_property_callback(rd *rd, ni_alpha_property *block)
+	{
+		printf("ni alpha property");
+		Mesh *mesh = (Mesh *)rd->data;
+		Group *group = mesh->lastGroup;
+		Geometry *geometry = mesh->lastGroup->geometry;
+		if (geometry)
+		{
+			geometry->material->treshold = block->treshold / 255.f;
+			printf("alpha test %u", block->treshold);
 		}
 	}
 } // namespace dark2

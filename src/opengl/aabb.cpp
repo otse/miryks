@@ -1,8 +1,8 @@
-#include "aabb.h"
+#include <opengl/aabb.h>
 
-#include "geometry.h"
-#include "material.h"
-#include "shader.h"
+#include <opengl/geometry.h>
+#include <opengl/material.h>
+#include <opengl/shader.h>
 
 #include <glm/gtx/norm.hpp>
 

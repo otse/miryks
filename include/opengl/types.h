@@ -1,7 +1,10 @@
-#ifndef OPENGL_TYPES
-#define OPENGL_TYPES
+#ifndef OPENGL_TYPES_H
+#define OPENGL_TYPES_H
 
-#include "../idiom.hpp"
+#include <iostream>
+#include <string>
+#include <vector>
+#include <map>
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
@@ -35,7 +38,7 @@ extern Camera *camera;
 extern Scene *scene;
 
 void detectGlfwError();
-void detectOpenGLError(const string = "?");
+void detectOpenGLError(const std::string = "?");
 
 void opengl_gui();
 void OGLGo();

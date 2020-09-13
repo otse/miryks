@@ -46,6 +46,9 @@ namespace dark2
 	void programGo();
 	void programLoop();
 
+	void doImGui();
+	void renderImGui();
+
 	void HideCursor();
 	void ShowCursor();
 

@@ -105,7 +105,7 @@ namespace dark2
 		if (ref != editorIds.end() && !spawned)
 		{
 			first_person_camera->pos = ref->second->matrix[3];
-			first_person_camera->pos.z += 170 / ONE_SKYRIM_UNIT_IN_CM;
+			first_person_camera->pos.z += 175 / ONE_SKYRIM_UNIT_IN_CM;
 			first_person_camera->fyaw = cast_vec_3(ref->second->DATA + 3)->z;
 			spawned = true;
 		}

@@ -1,8 +1,8 @@
 #ifndef OGL_RENDERABLE_H
 #define OGL_RENDERABLE_H
 
-#include "types.h"
-#include "aabb.h"
+#include <opengl/types.h>
+#include <opengl/aabb.h>
 
 // A basic 3d object with a transformation
 

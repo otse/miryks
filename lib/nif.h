@@ -49,6 +49,7 @@ struct rd {
 	void(* ni_tri_shape_data)(struct rd *, struct ni_tri_shape_data *);
 	void(* bs_lighting_shader_property)(struct rd *, struct bs_lighting_shader_property *);
 	void(* bs_shader_texture_set)(struct rd *, struct bs_shader_texture_set *);
+	void(* ni_alpha_property)(struct rd *, struct ni_alpha_property *);
 };
 
 struct nmap_t {
@@ -208,6 +209,15 @@ struct bs_lighting_shader_property {
 struct bs_shader_texture_set {
 	int num_textures;
 	char **textures; // sized strings
+	int end;
+};
+
+struct ni_alpha_property {
+	int name;
+	unsigned int num_extra_data_list;
+	ni_ref *extra_data_list, controller;
+	unsigned short flags;
+	unsigned char treshold;
 	int end;
 };
 

@@ -1,10 +1,13 @@
-#include "geometry.h"
+#include <opengl/geometry.h>
 
-#include "shader.h"
-#include "camera.h"
-#include "material.h"
+#include <opengl/shader.h>
+#include <opengl/camera.h>
+#include <opengl/material.h>
 
 int Geometry::num = 0;
+
+// useful for aabbs and cubic axes
+// refract maybe
 
 const std::vector<vec3> VERTICES = {
 	vec3(-1.0, -1.0, 1.0),
@@ -77,14 +80,11 @@ void Geometry::Draw(const mat4 &model)
 
 	if (uses_elements)
 		if (lines)
-			glDrawElements(
-				GL_LINES, (GLsizei)elements.size(), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_LINES, (GLsizei)elements.size(), GL_UNSIGNED_INT, 0);
 		else
-			glDrawElements(
-				GL_TRIANGLES, (GLsizei)elements.size(), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, (GLsizei)elements.size(), GL_UNSIGNED_INT, 0);
 	else
-		glDrawArrays(
-			GL_TRIANGLES, 0, (GLsizei)vertices.size());
+		glDrawArrays(GL_TRIANGLES, 0, (GLsizei)vertices.size());
 
 	glBindVertexArray(0);
 

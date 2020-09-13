@@ -1,11 +1,11 @@
-#include "scene.h"
+#include <opengl/scene.h>
 
-#include "aabb.h"
-#include "group.h"
-#include "renderable.h"
-#include "material.h"
-#include "shader.h"
-#include "pointlight.h"
+#include <opengl/aabb.h>
+#include <opengl/group.h>
+#include <opengl/renderable.h>
+#include <opengl/material.h>
+#include <opengl/shader.h>
+#include <opengl/pointlight.h>
 
 
 static PointLight *black;

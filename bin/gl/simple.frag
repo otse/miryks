@@ -29,13 +29,15 @@ uniform sampler2D normalMap;
 
 vec2 normalScale = vec2(1.0);
 
+const vec3 sceneSpecular = vec3(0.3, 0.75, 1.0);
+
 uniform vec3 color;
-vec3 specular = vec3(0.3, 0.75, 1.0) * 1.0;
+uniform vec3 specular;
 //vec3 emissive = vec3(1.0, 1.0, 0); // out
 
 uniform float opacity;
 uniform float shininess;
-//uniform float glossiness;
+uniform float glossiness;
 uniform float alphaTest;
 uniform bool doubleSided;
 
@@ -201,11 +203,11 @@ void main()
 	//vec3 fogColor = vec3(5.0 / 255.0, 4.0 / 255.0, 3.0 / 255.0);
 
 	// blue
-	vec3 fogColor = vec3(6.0 / 255.0, 6.0 / 255.0, 11.0 / 255.0);
+	vec3 fogColor = vec3(6.0 / 255.0, 9.0 / 255.0, 11.0 / 255.0);
 
 	float fogNear = 1000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	float fogFar = 15000.0 / ONE_SKYRIM_UNIT_IN_CM;
-	float fogDensity = 0.001200;
+	float fogDensity = 0.0015;
 
 	#ifndef DONT_USE_DIFFUSE_MAP
 
@@ -215,13 +217,6 @@ void main()
 
 	#endif
 	
-
-	//if (alphaTest == 0.0)
-		//discard;
-	
-	//if (alphaTest > 0.0)
-		//discard;
-		
 	if (diffuseColor.a <= alphaTest)
 		discard;
 
@@ -263,7 +258,7 @@ void main()
 			#endif
 	#endif
 
-	float specularStrength;
+	float specularStrength = glossiness / 999;
 
 	#ifndef DONT_USE_SPECULAR_MAP
 
@@ -272,13 +267,13 @@ void main()
 
 	#else
 
-		specularStrength = 0.5;
+		//specularStrength = 0.5;
 
 	#endif
 
-	// for dark
-	//specularStrength *= 1.0 - glossiness;
+	//specularStrength *= glossiness / 999;
 
+	#define DONT_USE_DUST
 	#ifndef DONT_USE_DUST
 		
 		vec3 normalAsh = normalize(normal) * mat3(view);
@@ -293,7 +288,7 @@ void main()
 		//vec3 ash = vec3(70.0 / 255.0, 60.0 / 255.0, 40.0 / 255.0);
 		ash /= 1.5;
 		
-		if (normalAsh.z > 0.85) {
+		if (normalAsh.z > 0.75) {
 			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.1);
 			specularStrength /= 10.0;
 		}
@@ -336,7 +331,7 @@ void main()
 
 		PointLight b = PointLight(
 			a.package[0],
-			a.package[1] * 7,
+			a.package[1] * 10,
 			a.package[2][0],
 			a.package[2][1],
 			mat3(0.0));
@@ -352,7 +347,7 @@ void main()
 	hemiLight.groundColor = vec3(0.0, 0.02, 0.025) * 1.0;
 
 	// ambientLightColor
-	vec3 localAmbient = vec3(60.0 / 255.0);
+	vec3 localAmbient = vec3(90.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
 	#ifndef DONT_USE_A_HEMISPHERE

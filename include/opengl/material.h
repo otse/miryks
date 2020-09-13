@@ -1,7 +1,7 @@
 #ifndef OPENGL_MATERIAL_H
 #define OPENGL_MATERIAL_H
 
-#include "types.h"
+#include <opengl/types.h>
 
 
 struct Material
@@ -9,7 +9,7 @@ struct Material
 	static Material *active;
 
 	int id;
-	string name;
+	std::string name;
 	ssrc *src;
 
 	Shader *shader;

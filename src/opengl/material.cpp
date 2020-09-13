@@ -1,14 +1,14 @@
-#include "material.h"
+#include <opengl/material.h>
 
 extern "C"
 {
 #include "putc.h"
 }
 
-#include "texture.h"
-#include "camera.h"
-#include "shader.h"
-#include "scene.h"
+#include <opengl/texture.h>
+#include <opengl/camera.h>
+#include <opengl/shader.h>
+#include <opengl/scene.h>
 
 Material *Material::active = nullptr;
 
@@ -24,8 +24,8 @@ Material::Material()
 
 	opacity = 1;
 	treshold = 0;
-	shininess = 10;
-	glossiness = 1;
+	shininess = 5;
+	glossiness = 100;
 	rotation = 0;
 
 	depth_func = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
@@ -127,7 +127,7 @@ void Material::Use()
 	shader->SetFloat("opacity", opacity);
 	shader->SetFloat("shininess", shininess);
 	shader->SetFloat("glossiness", glossiness);
-	shader->SetFloat("alphaTest", testing ? treshold / 255.f : 0);
+	shader->SetFloat("alphaTest", treshold);
 
 	if (map)
 	{
@@ -151,8 +151,8 @@ void Material::Use()
 		glEnable(GL_BLEND);
 		glBlendFunc(depth_func.sfactor, depth_func.dfactor);
 	}
-	if (testing)
-		glDepthFunc(GL_LEQUAL);
+	//if (testing)
+	//	glDepthFunc(GL_LEQUAL);
 	if (transparent)
 	{
 		glDepthMask(GL_FALSE);
@@ -183,8 +183,8 @@ void Material::Unuse(Material *a, Material *b)
 	}
 	if (!a || a->blending && !b->blending)
 		glDisable(GL_BLEND);
-	if (!a || a->testing && !b->testing)
-		glDepthFunc(GL_LEQUAL);
+	//if (!a || a->testing && !b->testing)
+	//	glDepthFunc(GL_LEQUAL);
 	if (!a || a->transparent && !b->transparent)
 	{
 		glDepthMask(GL_TRUE);

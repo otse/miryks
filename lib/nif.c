@@ -195,6 +195,7 @@ void *read_ni_tri_shape(nifr);
 void *read_ni_tri_shape_data(nifr);
 void *read_bs_lighting_shader_property(nifr);
 void *read_bs_shader_texture_set(nifr);
+void *read_ni_alpha_property(nifr);
 
 api void nif_read_blocks(struct nif *nif)
 {
@@ -222,7 +223,7 @@ void read_block(struct nif *nif, int n)
 	else if ( ni_is_type(BS_TRI_SHAPE) ) 0;
 	else if ( ni_is_type(BS_DYNAMIC_TRI_SHAPE) ) 0;
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) block = read_ni_tri_shape(nif, n);
-	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) 0;
+	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) block = read_ni_alpha_property(nif, n);
 	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) block = read_ni_tri_shape_data(nif, n);
 	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) ) 0;
 	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) ) 0;
@@ -339,6 +340,15 @@ void *read_bs_shader_texture_set(nifr)
 	return block;
 }
 
+void *read_ni_alpha_property(nifr)
+{
+	struct ni_alpha_property *block = malloc(sizeof(struct ni_alpha_property));
+	ReadStruct(nif, ni_alpha_property, block, name, extra_data_list);
+	ReadArray(nif, ni_alpha_property, block, ni_ref, extra_data_list, num_extra_data_list, 0);
+	ReadStruct(nif, ni_alpha_property, block, controller, end);
+	return block;
+}
+
 void visit(struct rd *, int, int);
 void visit_other(struct rd *, int, int);
 void visit_block(struct rd *, void *);
@@ -414,6 +424,10 @@ void visit(struct rd *rd, int p, int c)
 	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) )
 	{
 	rd->bs_shader_texture_set(rd, Blocks[c]);
+	}
+	else if ( ni_is_type(NI_ALPHA_PROPERTY) )
+	{
+	rd->ni_alpha_property(rd, Blocks[c]);
 	}
 }
 

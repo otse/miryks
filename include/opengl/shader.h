@@ -1,10 +1,10 @@
 #ifndef OPENGL_SHADER_H
 #define OPENGL_SHADER_H
 
-#include "types.h"
+#include <opengl/types.h>
 
-#include "camera.h"
-#include "scene.h"
+#include <opengl/camera.h>
+#include <opengl/scene.h>
 
 #include "files.h"
 
@@ -12,7 +12,7 @@
 
 void SetShaderSources();
 
-extern ssrc simple, basic, fxs;
+extern ssrc simple, basic, fxs, postquad;
 
 struct ShaderSettings
 {

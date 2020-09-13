@@ -1,9 +1,9 @@
-#include "renderable.h"
+#include <opengl/renderable.h>
 
-#include "group.h"
-#include "geometry.h"
-#include "material.h"
-#include "shader.h"
+#include <opengl/group.h>
+#include <opengl/geometry.h>
+#include <opengl/material.h>
+#include <opengl/shader.h>
 
 const bool DRAW_BOUNDS = false;
 

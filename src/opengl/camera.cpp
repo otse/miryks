@@ -1,4 +1,4 @@
-#include "camera.h"
+#include <opengl/camera.h>
 
 #include "dark2.h"
 

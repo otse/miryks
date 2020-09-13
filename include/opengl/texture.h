@@ -1,7 +1,7 @@
 #ifndef OPENGL_TEXTURE_H
 #define OPENGL_TEXTURE_H
 
-#include "types.h"
+#include <opengl/types.h>
 
 // https://learnopengl.com/Getting-started/Textures
 
@@ -14,10 +14,10 @@ struct Texture
     int size;
     const unsigned char *buf = nullptr;
 
-    const string path;
+    const std::string path;
 
 protected:
-    Texture(const string &);
+    Texture(const std::string &);
     ~Texture();
 
     void Load();

@@ -1,9 +1,9 @@
 #ifndef OPENGL_GEOMETRY_H
 #define OPENGL_GEOMETRY_H
 
-#include "types.h"
+#include <opengl/types.h>
 
-#include "aabb.h"
+#include <opengl/aabb.h>
 
 struct Vertex
 {
@@ -30,8 +30,8 @@ struct Geometry
 	Material *material = nullptr;
 	//std::vector<texture_t> textures;
 
-	vector<Vertex> vertices;
-	vector<GLuint> elements;
+	std::vector<Vertex> vertices;
+	std::vector<GLuint> elements;
 
 	Geometry();
 	~Geometry();

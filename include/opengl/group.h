@@ -1,8 +1,8 @@
 #ifndef OPENGL_GROUP_H
 #define OPENGL_GROUP_H
 
-#include "types.h"
-#include "aabb.h"
+#include <opengl/types.h>
+#include <opengl/aabb.h>
 
 // A basic 3d object with a transformation
 
@@ -10,8 +10,8 @@ struct Group
 {
 	static int num;
 
-	string name; 
-	vector<Group *> groups, flat;
+	std::string name; 
+	std::vector<Group *> groups, flat;
 
 	mat4 matrix, matrixWorld;
 

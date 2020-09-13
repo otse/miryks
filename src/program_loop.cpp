@@ -10,10 +10,11 @@ extern "C"
 #include "mesh.h"
 #include "level.h"
 
-#include "opengl/camera.h"
-#include "opengl/scene.h"
-#include "opengl/material.h"
-#include "opengl/shader.h"
+#include <opengl/camera.h>
+#include <opengl/scene.h>
+#include <opengl/material.h>
+#include <opengl/shader.h>
+#include <opengl/rt.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -89,7 +90,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 }
 
-static void do_keys()
+static void doKeys()
 {
 	if (!dynamic_cast<FirstPersonCamera *>(camera))
 		return;
@@ -192,47 +193,61 @@ void dark2::programGo()
 	glfwWindowHint(GLFW_SAMPLES, 8);
 }
 
+void dark2::doImGui()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	bsa_gui();
+	nif_gui();
+	esp_gui();
+	opengl_gui();
+}
+
+void dark2::renderImGui()
+{
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 void dark2::programLoop()
 {
+	RT rt(width, height);
+	RTQuad quad;
+
 	double fps;
 	int frames;
-	double time, t0;
+	double time, prevTime;
 	char title[150];
 
 	frames = 0;
-	t0 = glfwGetTime();
+	prevTime = glfwGetTime();
 
-	while (!glfwWindowShouldClose(window))
+	do
 	{
-		//get the current time
 		time = glfwGetTime();
 
-		// Calcul and display the FPS
-		if ((time - t0) > 1.0 || frames == 0)
+		// from mrdoob stats
+		if ((time - prevTime) > 1.0 || frames == 0)
 		{
-			fps = (double)frames / (time - t0);
-			sprintf(title, "DARK II (%.1f FPS)", fps);
+			fps = (double)frames / (time - prevTime);
+			sprintf(title, "dark2 %.0f FPS", fps);
 			glfwSetWindowTitle(window, title);
-			t0 = time;
+			prevTime = time;
 			frames = 0;
 		}
 		frames++;
 
+		//rt.Bind();
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		glfwPollEvents();
 
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+		doImGui();
 
-		bsa_gui();
-		nif_gui();
-		esp_gui();
-		opengl_gui();
-		ImGui::ShowDemoWindow();
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		do_keys();
+		doKeys();
 
 		camera->Update(0.016);
 
@@ -245,11 +260,13 @@ void dark2::programLoop()
 
 		Shader::active = nullptr;
 
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		renderImGui();
+
+		quad.geometry->Draw(mat4(1.0));
 
 		glfwSwapBuffers(window);
 	}
+	while (!glfwWindowShouldClose(window));
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
