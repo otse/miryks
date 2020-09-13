@@ -102,7 +102,8 @@ namespace dark2
 	{
 		// printf("ni tri shape data callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
-		Geometry *geometry = mesh->lastGroup->geometry;
+		Group *group = mesh->lastGroup;
+		Geometry *geometry = group->geometry;
 		geometry->Clear(0, 0);
 		if (!block->num_vertices)
 			return;
@@ -112,7 +113,7 @@ namespace dark2
 			for (int i = 0; i < block->num_triangles; i++)
 			{
 				unsigned short *triangle = (unsigned short *)&block->triangles[i];
-				geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
+				geometry->elements.insert(geometry->elements.end(), { triangle[0], triangle[1], triangle[2] });
 			}
 		}
 		for (int i = 0; i < block->num_vertices; i++)
@@ -138,10 +139,12 @@ namespace dark2
 		// printf("bs lighting shader property callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
-		Geometry *geometry = mesh->lastGroup->geometry;
+		Geometry *geometry = group->geometry;
 		if (geometry)
 		{
+			geometry->material->emissive = *cast_vec_3((float *)&block->emissive_color);
 			geometry->material->specular = *cast_vec_3((float *)&block->specular_color);
+			geometry->material->opacity = block->alpha;
 			geometry->material->glossiness = block->glossiness;
 		}
 	}
@@ -151,6 +154,7 @@ namespace dark2
 		// printf("bs shader texture set callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
+		Geometry *geometry = group->geometry;
 		for (int i = 0; i < block->num_textures; i++)
 		{
 			string path = std::string(block->textures[i]);
@@ -159,13 +163,13 @@ namespace dark2
 			if (path.find("skyrimhd\\build\\pc\\data\\") != std::string::npos)
 				path = path.substr(23, std::string::npos);
 			if (i == 0)
-				group->geometry->material->map = GetProduceTexture(block->textures[i]);
+				geometry->material->map = GetProduceTexture(block->textures[i]);
 			if (i == 1)
-				group->geometry->material->normalMap = GetProduceTexture(block->textures[i]);
+				geometry->material->normalMap = GetProduceTexture(block->textures[i]);
 			if (i == 2)
 			{
 				printf("glowmap %s\n", block->textures[i]);
-				group->geometry->material->glowMap = GetProduceTexture(block->textures[i]);
+				geometry->material->glowMap = GetProduceTexture(block->textures[i]);
 			}
 		}
 	}
@@ -175,7 +179,7 @@ namespace dark2
 		// printf("ni alpha property");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
-		Geometry *geometry = mesh->lastGroup->geometry;
+		Geometry *geometry = group->geometry;
 		if (geometry)
 		{
 			geometry->material->treshold = block->treshold / 255.f;

@@ -210,6 +210,8 @@ void main()
 	float fogFar = 15000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	float fogDensity = 0.0015;
 
+	vec3 totalEmissiveRadiance = emissive;
+
 	#ifndef DONT_USE_DIFFUSE_MAP
 
 		diffuseColor *= texture2D(map, vUv);
@@ -268,17 +270,16 @@ void main()
 			#endif
 	#endif
 
-	vec3 totalEmissiveRadiance = emissive;
-
 	#ifndef DONT_USE_GLOW_MAP
 
 		vec4 emissiveColor = texture2D( glowMap, vUv );
 
-		totalEmissiveRadiance = emissiveColor.rgb;
-
+		totalEmissiveRadiance *= emissiveColor.rgb;
+	#else
+		totalEmissiveRadiance = vec3(0);
 	#endif
 
-	#define DONT_USE_DUST
+	// #define DONT_USE_DUST
 	#ifndef DONT_USE_DUST
 		
 		vec3 normalAsh = normalize(normal) * mat3(view);
@@ -305,7 +306,7 @@ void main()
 	//material.specularColor = vec3(17.0/255.0, 17.0/255.0, 17.0/255.0);
 	material.specularColor = specular;
 	//material.specularColor = vec3(127.0/255.0, 127.0/255.0, 127.0/255.0);
-	material.specularShininess = shininess;// / 8.0; // 15;
+	material.specularShininess = shininess;//10;//
 	material.specularStrength = specularStrength;
 
 	GeometricContext geometry;
@@ -348,13 +349,14 @@ void main()
 
 	HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));
-	hemiLight.skyColor = vec3(0.03, 0.05, 0.04) * 1.0;
-	hemiLight.groundColor = vec3(0.0, 0.02, 0.025) * 1.0;
+	hemiLight.skyColor = vec3(0.02, 0.02, 0.06) * 0.5;
+	hemiLight.groundColor = vec3(0.03, 0.06, 0.04) * 0.5;
 
 	// ambientLightColor
-	vec3 localAmbient = vec3(90.0 / 255.0);
+	vec3 localAmbient = vec3(40.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
+	#define DONT_USE_A_HEMISPHEREx
 	#ifndef DONT_USE_A_HEMISPHERE
 
 		float dot_nl = dot( geometry.normal, hemiLight.direction );

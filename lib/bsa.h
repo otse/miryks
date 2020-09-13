@@ -3,7 +3,7 @@
 
 #define api
 
-#define BSA_MAX_SEARCHES 30
+#define BSA_MAX_SEARCHES 60
 
 struct bsa_hedr
 {
