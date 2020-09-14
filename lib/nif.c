@@ -36,21 +36,41 @@ api struct nif *nif_saved(void *key)
 #define ReadArray(nif, c, d, e, f, g, h) sink_array(nif, d, offsetof(struct c, f), offsetof(struct c, g), sizeof(e), h)
 #define ReadStruct(nif, c, d, e, f) sink_struct(nif, d, offsetof(struct c, e), offsetof(struct c, f))
 
-void sink_array(struct nif *nif, unsigned char *base, int pointer, int num, int element, int is_short) {
-	void **dest = base + pointer;
-	int repeat = *(unsigned *)(base + num);
-	if (is_short)
+void sink_array(struct nif *nif, unsigned char *base, int offset, int num, int element, int is_short) {
+	void **dest = base + offset;
+	int repeat;
+	if (!is_short)
+	repeat = *(unsigned int*)(base + num);
+	else
 	repeat = *(unsigned short *)(base + num);
 	int size = element * repeat;
+	if (size == 0)
+	return;
 	*dest = malloc(size);
-	*dest = Depos;
+	memcpy(*dest, Depos, size);
+	//*dest = Depos;
 	Pos += size;
 }
 
+// sink values
 void sink_struct(struct nif *nif, unsigned char *base, int start, int stop) {
 	void *dest = base + start;
 	int size = stop - start;
 	memcpy(dest, Depos, size);
+	Pos += size;
+}
+
+// sink values as pointers
+// impossible. struct-sinking relys on the memory-layout for correctness
+// pointers to data would always be 8*8bit
+// workaround = convert the end field to size, which points .. at sizes?
+void sink_struct_2(struct nif *nif, unsigned char *base, int start, int stop) {
+	int size = stop - start;
+	unsigned char *dest = base + start;
+	int num_fields = size / sizeof(void *);
+	for (int i = 0; i < num_fields; i++)
+	*(dest + i * sizeof(void *)) = start + i + sizeof(void *);
+	//memcpy(dest, Depos, size);
 	Pos += size;
 }
 
@@ -298,7 +318,7 @@ void *read_ni_tri_shape_data(nifr)
 	if (block->has_triangles)
 	ReadArray(nif, ni_tri_shape_data, block, struct ushort_3, triangles, num_triangles, 1);
 	ReadStruct(nif, ni_tri_shape_data, block, num_match_groups, match_groups);
-	ReadArray(nif, ni_tri_shape_data, block, ni_ref, match_groups, num_match_groups, 0);
+	ReadArray(nif, ni_tri_shape_data, block, ni_ref, match_groups, num_match_groups, 1);
 	return block;
 }
 

@@ -12,17 +12,7 @@
 
 void SetShaderSources();
 
-extern ssrc simple, basic, fxs, postquad;
-
-struct ShaderSettings
-{
-	bool diffuseMaps = true;
-	bool normalMaps = true;
-	bool specularMaps = true;
-	bool glowMaps = true;
-	bool dust = true;
-};
-extern ShaderSettings commonSettings;
+extern ShaderSource simple, basic, fxs, postquad;
 
 struct Shader
 {
@@ -34,12 +24,12 @@ struct Shader
 
 	bool dust = true;
 
-	ssrc *const src;
+	ShaderSource *const src;
 	GLuint id;
 
 	string header;
 
-	Shader(ssrc *);
+	Shader(ShaderSource *);
 
 	void Compile();
 

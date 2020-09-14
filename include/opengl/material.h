@@ -10,7 +10,7 @@ struct Material
 
 	int id;
 	std::string name;
-	ssrc *src;
+	ShaderSource *src;
 
 	Shader *shader;
 	Texture *map, *normalMap, *glowMap;

@@ -34,11 +34,13 @@ void opengl_gui()
 		
 		if (ImGui::BeginTabItem("settings"))
 		{
-			bool a = ImGui::Checkbox("diffuse maps", &commonSettings.diffuseMaps);
-			bool b = ImGui::Checkbox("normal maps", &commonSettings.normalMaps);
-			bool c = ImGui::Checkbox("specular maps", &commonSettings.specularMaps);
-			bool d = ImGui::Checkbox("glow maps", &commonSettings.glowMaps);
-			bool e = ImGui::Checkbox("dust", &commonSettings.dust);
+			bool a = ImGui::Checkbox("diffuse maps", &renderSettings.diffuseMaps);
+			bool b = ImGui::Checkbox("normal maps", &renderSettings.normalMaps);
+			bool c = ImGui::Checkbox("specular maps", &renderSettings.specularMaps);
+			bool d = ImGui::Checkbox("glow maps", &renderSettings.glowMaps);
+			bool e = ImGui::Checkbox("dust", &renderSettings.dust);
+			ImGui::Checkbox("axis-aligned bounding boxes", &renderSettings.axisAlignedBoundingBoxes);
+			ImGui::Checkbox("oriented bounding boxes", &renderSettings.orientedBoundingBoxes);
 
 			if (a||b||c||d||e)
 			{

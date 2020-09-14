@@ -59,10 +59,10 @@ RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), ren
 
 	aabb = AABB::mult(aabb, matrix);
 
-	if (DRAW_BOUNDS)
+	//if (DRAW_BOUNDS)
 	{
-		//aabb.geometrize();
-		//obb.geometrize();
+		aabb.geometrize();
+		obb.geometrize();
 	}
 }
 
@@ -70,11 +70,11 @@ void RenderItem::Draw()
 {
 	group->Draw(renderable->matrix);
 
-	if (DRAW_BOUNDS)
-	{
-		//aabb.draw(mat4(1.0));
-		//obb.draw(renderable->matrix * group->matrixWorld);
-	}
+	if (renderSettings.axisAlignedBoundingBoxes)
+		aabb.draw(mat4(1.0));
+
+	if (renderSettings.orientedBoundingBoxes)
+		obb.draw(renderable->matrix * group->matrixWorld);
 }
 
 void RenderItem::TransformVertices()

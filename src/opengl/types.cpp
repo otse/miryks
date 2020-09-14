@@ -13,6 +13,8 @@
 Camera *camera;
 Scene *scene;
 
+RenderSettings renderSettings;
+
 bool checkGlError = false;
 
 //std::map<const string, Texture_t *> Texture_t::Textures;

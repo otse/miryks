@@ -284,20 +284,12 @@ void main()
 	// #define DONT_USE_DUST
 	#ifndef DONT_USE_DUST
 		
-		vec3 normalAsh = normalize(normal) * mat3(view);
+		vec3 normalDust = normalize(normal) * mat3(view);
 
-		// blue ash
-		vec3 ash = vec3(70.0/255.0, 70.0/255.0, 75.0/255.0);
-
-		// middle ash
-		//vec3 ash = vec3(70.0/255.0, 60.0/255.0, 60.0/255.0);
+		vec3 dust = vec3(0.15, 0.15, 0.15);
 		
-		// sulfur ash
-		//vec3 ash = vec3(70.0 / 255.0, 60.0 / 255.0, 40.0 / 255.0);
-		ash /= 1.5;
-		
-		if (normalAsh.z > 0.75) {
-			diffuseColor.rgb = mix(ash, diffuseColor.rgb, 0.1);
+		if (normalDust.z > 0.8) {
+			diffuseColor.rgb = mix(dust, diffuseColor.rgb, 0.1);
 			specularStrength /= 10.0;
 		}
 
@@ -308,7 +300,7 @@ void main()
 	//material.specularColor = vec3(17.0/255.0, 17.0/255.0, 17.0/255.0);
 	material.specularColor = specular;
 	//material.specularColor = vec3(127.0/255.0, 127.0/255.0, 127.0/255.0);
-	material.specularShininess = glossiness / 1500 * 100; // shininess
+	material.specularShininess = glossiness / 1200 * 100; // shininess
 	material.specularStrength = specularStrength;
 
 	GeometricContext geometry;
@@ -339,7 +331,7 @@ void main()
 
 		PointLight b = PointLight(
 			a.package[0],
-			a.package[1] * 10,
+			a.package[1] * 5,
 			a.package[2][0],
 			a.package[2][1],
 			mat3(0.0));
@@ -351,14 +343,14 @@ void main()
 
 	HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));
-	hemiLight.skyColor = vec3(0.02, 0.02, 0.06) * 2.0;
+	hemiLight.skyColor = vec3(0.02, 0.02, 0.06) * 0.0;
 	hemiLight.groundColor = vec3(0.03, 0.06, 0.04) * 2.0;
 
 	// ambientLightColor
 	vec3 localAmbient = vec3(100.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
-	#define DONT_USE_A_HEMISPHEREx
+	#define DONT_USE_A_HEMISPHERE
 	#ifndef DONT_USE_A_HEMISPHERE
 
 		float dot_nl = dot( geometry.normal, hemiLight.direction );

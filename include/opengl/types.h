@@ -15,7 +15,7 @@ using namespace glm;
 
 const float pif = pi<float>();
 
-typedef char *ssrc[3];
+typedef char *ShaderSource[3];
 
 struct AABB;
 
@@ -31,7 +31,6 @@ struct RenderItem;
 struct Texture;
 struct RenderTarget;
 struct Shader;
-struct ShaderSource;
 struct Program;
 struct PointLight;
 
@@ -44,5 +43,17 @@ void detectOpenGLError(const std::string = "?");
 void opengl_gui();
 void OGLGo();
 void OGLReloadShaderSource();
+
+struct RenderSettings
+{
+	bool diffuseMaps = true;
+	bool normalMaps = true;
+	bool specularMaps = true;
+	bool glowMaps = true;
+	bool dust = true;
+	bool axisAlignedBoundingBoxes = false;
+	bool orientedBoundingBoxes = false;
+};
+extern RenderSettings renderSettings;
 
 #endif

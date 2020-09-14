@@ -20,7 +20,7 @@ Shader *Shader::active = nullptr;
 
 Shader *basicShader;
 
-ssrc simple, basic, fxs, postquad;
+ShaderSource simple, basic, fxs, postquad;
 
 void SetShaderSources()
 {
@@ -40,7 +40,7 @@ void SetShaderSources()
 
 std::map<std::string, Shader *> Shader::shaders;
 
-Shader::Shader(ssrc *src) : src(src)
+Shader::Shader(ShaderSource *src) : src(src)
 {
 	id = 0;
 }
@@ -60,20 +60,18 @@ void Shader::Use()
 	active = this;
 }
 
-ShaderSettings commonSettings;
-
 std::string Shader::CommonHeader()
 {
 	std::string header;
-	if (!commonSettings.diffuseMaps)
+	if (!renderSettings.diffuseMaps)
 		header += "#define DONT_USE_DIFFUSE_MAP\n";
-	if (!commonSettings.normalMaps)
+	if (!renderSettings.normalMaps)
 		header += "#define DONT_USE_NORMAL_MAP\n";
-	if (!commonSettings.specularMaps)
+	if (!renderSettings.specularMaps)
 		header += "#define DONT_USE_SPECULAR_MAP\n";
-	if (!commonSettings.glowMaps)
+	if (!renderSettings.glowMaps)
 		header += "#define DONT_USE_GLOW_MAP\n";
-	if (!commonSettings.dust)
+	if (!renderSettings.dust)
 		header += "#define DONT_USE_DUST\n";
 	return header;
 }

@@ -6,11 +6,8 @@
 
 namespace dark2
 {
-
 	Mesh::Mesh()
 	{
-		int l;
-		nif = nullptr;
 		baseGroup = new Group();
 		lastGroup = baseGroup;
 	}
@@ -37,9 +34,8 @@ namespace dark2
 		return nullptr;
 	}
 
-	void Mesh::Construct(Nif *bucket)
+	void Mesh::Construct(nif *bucket)
 	{
-		nif = bucket;
 		rd *rd = nif_alloc_rd();
 		rd->nif = bucket;
 		rd->data = this;
@@ -94,8 +90,6 @@ namespace dark2
 		group->geometry = new Geometry();
 		group->geometry->material = new Material();
 		group->geometry->material->src = &simple;
-		//vec3 v = *cast_vec_3((float *)&block->common.translation);
-		//printf("block name %s translate %f %f %f", nif_get_string(rd->nif, block->common.name), v.x, v.y, v.z);
 	}
 
 	void ni_tri_shape_data_callback(rd *rd, ni_tri_shape_data *block)
