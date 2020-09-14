@@ -228,15 +228,13 @@ struct ni_alpha_property_pointer {
 	struct {
 	int name;
 	unsigned int num_extra_data_list;
-	ni_ref *extra_data_list;
-	}
-	*A;
+	} *A;
+	struct { ni_ref *extra_data_list; } *B;
 	struct {
 	ni_ref controller;
 	unsigned short flags;
 	unsigned char treshold;
-	}
-	*B;
+	} *C;
 };
 
 #pragma pack(pop)
