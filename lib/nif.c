@@ -363,12 +363,11 @@ void *read_bs_shader_texture_set(nifr)
 
 void *read_ni_alpha_property(nifr)
 {
-	int pos = Pos;
 	struct ni_alpha_property *block = malloc(sizeof(struct ni_alpha_property));
 	ReadStruct(nif, ni_alpha_property, block, name, extra_data_list);
 	ReadArray(nif, ni_alpha_property, block, ni_ref, extra_data_list, num_extra_data_list, 0);
 	ReadStruct(nif, ni_alpha_property, block, controller, end);
-	read_ni_alpha_property2(nif, n, pos, Pos);
+	//read_ni_alpha_property2(nif, n, pos, Pos);
 	return block;
 }
 
