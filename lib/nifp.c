@@ -12,6 +12,18 @@
 
 #define FromBuf(x) *(x*)(Depos); Pos += sizeof(x);
 
+static void sink_val(struct nifp *nif, char *block_pointer, int src, int size) {
+	char **dest = block_pointer + src;
+	*dest = Depos;
+	Pos += size;
+	//printf("sink val %i\n", size);
+}
+
+// sizeof(((layout *)0)->part)
+#define SinkVal(nif, block_pointer, layout, part, size) sink_val(nif, block_pointer, offsetof(layout, part), size)
+
+#define GetSize(count, type) count * sizeof(type)
+
 api char *nifp_get_string(struct nifp *nif, int i) {
 	if (i == -1)
 	return NULL;
@@ -38,7 +50,7 @@ api struct nifp *malloc_nifp() {
 }
 
 api void nifp_read(struct nifp *nif) {
-	cassert(Buf, "nif_read Buf not set");
+	cassert(Buf, "nifp_read Buf not set");
 	nif_read_header(nif);
 	nif_read_blocks(nif);
 }
@@ -144,18 +156,7 @@ void hedr_read_groups(struct nifp *nif) {
 
 #define nifpr struct nifp *nif, int n, int before, int after
 
-void sink_val(struct nifp *nif, char *block_pointer, int src, int size) {
-	char **dest = block_pointer + src;
-	*dest = Depos;
-	Pos += size;
-	printf("sink val %i\n", size);
-}
 
-// sizeof(((layout *)0)->part)
-
-#define SinkVal(nif, block_pointer, layout, part, size) sink_val(nif, block_pointer, offsetof(layout, part), size)
-
-#define GetSize(count, type) count * sizeof(type)
 
 void *read_ni_alpha_property2(nifpr)
 {

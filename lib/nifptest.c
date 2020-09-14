@@ -3,7 +3,7 @@
 #include "nifp.h"
 #include "bsa.h"
 
-void test_callback(struct rd *, int, int);
+void test_callback(struct nifprd *, int, int);
 
 // look at mesh.cc for good example of rd
 
@@ -22,9 +22,11 @@ void nifp_test()
 	rd->data = 0x1; // like a Mesh instance
     rd->other = test_callback;
 	nifp_rd(bucket, rd, NULL);
-    printf("nifptest ok\n");
+    char str[600];
+    nifp_print_hedr(bucket, str);
+    printf("nifptest ok, hedr: %s\n", str);
 }
 
-static void test_callback(struct rd *rd, int parent, int block) {
-	
+static void test_callback(struct nifprd *rd, int parent, int current) {
+
 }

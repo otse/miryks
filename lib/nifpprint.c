@@ -5,7 +5,7 @@
 #define Hedr   nif->hdr
 #define Blocks nif->blocks
 
-void nif_print_hedr(struct nifp *nif, char *s)
+void nifp_print_hedr(struct nifp *nif, char *s)
 {
 	snprintf(
 		s, 600,
@@ -45,27 +45,27 @@ Hedr.num_groups
 );
 }
 
-char *print_vec_2(char *s, struct vec_2p v) {
+static char *print_vec_2p(char *s, struct vec_2p v) {
 	snprintf(s, 200, "[%f, %f]", v.x, v.y);
 	return s;
 }
 
-char *print_vec_3(char *s, struct vec_3p v) {
+static char *print_vec_3p(char *s, struct vec_3p v) {
 	snprintf(s, 200, "[%f, %f, %f]", v.x, v.y, v.z);
 	return s;
 }
 
-char *print_vec_4(char *s, struct vec_4p v) {
+static char *print_vec_4p(char *s, struct vec_4p v) {
 	snprintf(s, 200, "[%f, %f, %f, %f]", v.x, v.y, v.z, v.w);
 	return s;
 }
 
-char *print_ushort_3(char *s, struct ushort_3p v) {
+static char *print_ushort_3p(char *s, struct ushort_3p v) {
 	snprintf(s, 200, "[%hu, %hu, %hu]", v.x, v.y, v.z);
 	return s;
 }
 
-char *print_mat_3(char *s, struct mat_3p v) {
+static char *print_mat_3p(char *s, struct mat_3p v) {
 #define V ((float*)&v)
 	snprintf(
 		s, 200,
@@ -79,7 +79,7 @@ V[6], V[7], V[8]);
 	return s;
 }
 
-char *print_mat_4(char *s, float *v) {
+static char *print_mat_4p(char *s, float *v) {
 #define V ((float*)&v)
 	snprintf(
 		s, 200,
