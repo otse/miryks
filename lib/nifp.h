@@ -1,14 +1,13 @@
-#ifndef C_NIF_H
-#define C_NIF_H
+#ifndef C_NIFP_H
+#define C_NIFP_H
 
 #define api
 
-typedef struct nif Nif;
-typedef struct rd Rd;
+// an adaptation of nif.c to use pointers
 
 typedef int ni_ref;
 
-struct nif_hedr
+struct nifp_hedr
 {
 	char *header_string;
 	unsigned int unknown_1;
@@ -25,67 +24,58 @@ struct nif_hedr
 	int end;
 };
 
-struct nif
+struct nifp
 {
 	int n;
 	const char *path;
 	const unsigned char *buf;
 	unsigned pos;
-	struct nif_hedr hdr;
+	struct nifp_hedr hdr;
 	void **blocks;
 };
 
-//typedef void(* rd_func_t)(struct rd *, int, int, void *);
-
-struct rd {
+struct nifprd {
 	int x;
 	int *skips;
-	struct nif *nif;
+	struct nifp *nif;
 	void *data;
 	int parent, current;
-	void(* other)(struct rd *, int, int, const char *);
-	void(* ni_node)(struct rd *, struct ni_node *);
-	void(* ni_tri_shape)(struct rd *, struct ni_tri_shape *);
-	void(* ni_tri_shape_data)(struct rd *, struct ni_tri_shape_data *);
-	void(* bs_lighting_shader_property)(struct rd *, struct bs_lighting_shader_property *);
-	void(* bs_shader_texture_set)(struct rd *, struct bs_shader_texture_set *);
-	void(* ni_alpha_property)(struct rd *, struct ni_alpha_property *);
+	void(* other)(struct nifprd *, int, int, const char *);
+	void(* ni_node)(struct nifprd *, struct ni_node *);
+	void(* ni_tri_shape)(struct nifprd *, struct ni_tri_shape *);
+	void(* ni_tri_shape_data)(struct nifprd *, struct ni_tri_shape_data *);
+	void(* bs_lighting_shader_property)(struct nifprd *, struct bs_lighting_shader_property *);
+	void(* bs_shader_texture_set)(struct nifprd *, struct bs_shader_texture_set *);
+	void(* ni_alpha_property)(struct nifprd *, struct ni_alpha_property *);
 };
 
-struct nmap_t {
-	void *key;
-	struct nif *value;
-};
-extern struct nmap_t nmap[1000];
 extern int nifs;
 
-void nif_gui();
-void nif_test();
+void nifp_gui();
+void nifp_test();
 
-char *nif_read_short_string(struct nif *);
-char *nif_read_sized_string(struct nif *);
+char *nifp_read_short_string(struct nifp *);
+char *nifp_read_sized_string(struct nifp *);
 
-void nif_read_header(struct nif *);
-void nif_read_blocks(struct nif *);
+void nifp_read_header(struct nifp *);
+void nifp_read_blocks(struct nifp *);
 
-api struct nif *nif_alloc();
-api struct rd *nif_alloc_rd();
+api struct nifp   *malloc_nifp();
+api struct nifprd *malloc_nifprd();
 
-api void nif_free_rd(struct rd **);
-api void nif_rd(struct nif *, struct rd *, void *);
+api void nifp_free_rd(struct nifprd **);
+api void nifp_rd(struct nifp *, struct nifprd *, void *);
 
-api void nif_read(struct nif *);
-api void nif_save(void *, struct nif *);
-api struct nif *nif_saved(void *);
+api void nifp_read(struct nifp *);
+api void nifp_save(void *, struct nifp *);
+api struct nifp *nifp_saved(void *);
 
-api char *nif_get_string(struct nif *, int);
-api char *nif_get_block_type(struct nif *, int);
-api void *nif_get_block(struct nif *, int);
+api char *nifp_get_string(struct nifp *, int);
+api char *nifp_get_block_type(struct nifp *, int);
+api void *nifp_get_block(struct nifp *, int);
 
-api void nif_print_hedr(struct nif *, char *);
-api void nif_print_block(struct nif *, int, char *);
-
-void *read_ni_alpha_property_experimental(struct nif *, int, int, int);
+api void nifp_print_hedr(struct nifp *, char *);
+api void nifp_print_block(struct nifp *, int, char *);
 
 ///
 
@@ -120,108 +110,107 @@ void *read_ni_alpha_property_experimental(struct nif *, int, int, int);
 
 #pragma pack(push, 1)
 
-struct vec_2{ float x, y; };
-struct vec_3{ float x, y, z; };
-struct vec_4{ float x, y, z, w; };
-struct mat_3{ float n[9]; };
-struct mat_4{ float n[16]; };
-struct ushort_3{ unsigned short x, y, z; };
+struct vec_2p{ float x, y; };
+struct vec_3p{ float x, y, z; };
+struct vec_4p{ float x, y, z, w; };
+struct mat_3p{ float n[9]; };
+struct mat_4p{ float n[16]; };
+struct ushort_3p{ unsigned short x, y, z; };
 
-struct ni_common_layout {
+struct ni_common_layout_pointer {
 	int name;
 	unsigned int num_extra_data_list;
 	ni_ref *extra_data_list, controller;
 	unsigned int flags;
-	struct vec_3 translation;
-	struct mat_3 rotation;
+	struct vec_3p translation;
+	struct mat_3p rotation;
 	float scale;
 	ni_ref collision_object;
 	int end;
 	char *name_string;
 };
 
-// ninode, bsleafanimnode, bsfadenode
-struct ni_node {
-	struct ni_common_layout common;
+struct ni_node_pointer {
+	struct ni_common_layout_pointer common;
 	unsigned int num_children;
 	ni_ref *children;
 	unsigned int num_effects;
 	ni_ref *effects;
 };
 
-// nitrishape, bslodtrishape
-struct ni_tri_shape {
-	struct ni_common_layout common;
+struct ni_tri_shape_pointer {
+	struct ni_common_layout_pointer common;
 	ni_ref data, skin_instance, material_data, shader_property, alpha_property;
 	int end;
 };
 
-// bstrishape, bsdynamictrishape
-struct bs_tri_shape {
+struct bs_tri_shape_pointer_pointer {
 	int end;
 };
 
-// niskininstance, bsdismemberskininstance
-struct ni_skin_instance {
+struct ni_skin_instance_pointer {
 	int end;
 };
 
-struct ni_tri_shape_data {
+struct ni_tri_shape_data_pointer {
 	int group_id;
 	unsigned short num_vertices;
 	unsigned char keep_flags, compress_flags, has_vertices;
-	struct vec_3 *vertices;
+	struct vec_3p *vertices;
 	unsigned short bs_vector_flags;
 	unsigned int material_crc;
 	unsigned char has_normals;
-	struct vec_3 *normals, *tangents, *bitangents, center;
+	struct vec_3p *normals, *tangents, *bitangents, center;
 	float radius;
 	unsigned char has_vertex_colors;
-	struct vec_4 *vertex_colors;
-	struct vec_2 *uv_sets;
+	struct vec_4p *vertex_colors;
+	struct vec_2p *uv_sets;
 	unsigned short consistency_flags;
 	ni_ref additional_data;
 	unsigned short num_triangles;
 	unsigned int num_triangle_points;
 	unsigned char has_triangles;
-	struct ushort_3 *triangles;
+	struct ushort_3p *triangles;
 	unsigned short num_match_groups;
 	ni_ref *match_groups;
 	int end;
 };
 
-struct bs_lighting_shader_property {
+struct bs_lighting_shader_property_pointer {
 	unsigned int skyrim_shader_type;
 	int name;
 	unsigned int num_extra_data_list;
 	ni_ref *extra_data_list, controller;
 	unsigned int shader_flags_1, shader_flags_2;
-	struct vec_2 uv_offset, uv_scale;
+	struct vec_2p uv_offset, uv_scale;
 	ni_ref texture_set;
-	struct vec_3 emissive_color;
+	struct vec_3p emissive_color;
 	float emissive_multiple;
 	unsigned int texture_clamp_mode;
 	float alpha, refraction_strength, glossiness;
-	struct vec_3 specular_color;
+	struct vec_3p specular_color;
 	float specular_strength, lighting_effect_1, lighting_effect_2;
 	int end;
 	char *name_string;
 };
 
-struct bs_shader_texture_set {
+struct bs_shader_texture_set_pointer {
 	int num_textures;
 	char **textures; // sized strings
 	int end;
 };
 
-struct ni_alpha_property {
+struct ni_alpha_property_pointer {
+	struct {
 	int name;
 	unsigned int num_extra_data_list;
-	ni_ref *extra_data_list, controller;
+	} *A;
+	struct { ni_ref *extra_data_list; } *B;
+	struct {
+	ni_ref controller;
 	unsigned short flags;
 	unsigned char treshold;
-	int end;
-	int offsets[5];
+	} *C;
 };
 
 #pragma pack(pop)

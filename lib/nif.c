@@ -2,7 +2,7 @@
 
 #include "nif.h"
 
-// sorry ugly container
+// successed by nifp.c
 
 struct nmap_t nmap[1000];
 int nifs = 0;
