@@ -24,7 +24,8 @@ void nifp_test()
 	nifp_rd(bucket, rd, NULL);
     char str[600];
     nifp_print_hedr(bucket, str);
-    printf("nifptest ok, hedr: %s\n", str);
+	printf("nifp hedr end %i\n", bucket->hdr.end);
+    //printf("nifptest ok, hedr: %s\n", str);
 }
 
 static void test_callback(struct nifprd *rd, int parent, int current) {

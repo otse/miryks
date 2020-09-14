@@ -10,19 +10,7 @@
 #define Blocks nif->blocks
 #define Depos  Buf + Pos
 
-#define FromBuf(x) *(x*)(Depos); Pos += sizeof(x);
-
-static void sink_val(struct nifp *nif, char *block_pointer, int src, int size) {
-	char **dest = block_pointer + src;
-	*dest = Depos;
-	Pos += size;
-	//printf("sink val %i\n", size);
-}
-
-// sizeof(((layout *)0)->part)
-#define SinkVal(nif, block_pointer, layout, part, size) sink_val(nif, block_pointer, offsetof(layout, part), size)
-
-#define GetSize(count, type) count * sizeof(type)
+#define FromBuf(x) *(x*)(Depos); Pos += sizeof(x); // todo remove
 
 api char *nifp_get_string(struct nifp *nif, int i) {
 	if (i == -1)
@@ -109,7 +97,7 @@ api void nifp_read_header(struct nifp *nif) {
 	read_sized_strings(nif, &Hedr.block_types, Hedr.num_block_types);
 	read_array(nif, &Hedr.block_type_index, sizeof(unsigned short) * Hedr.num_blocks);
 	read_array(nif, &Hedr.block_sizes,      sizeof(unsigned int)   * Hedr.num_blocks);
-	read_value(nif, &Hedr.num_strings, 4);
+	read_value(nif, &Hedr.num_strings, 8);
 	read_sized_strings(nif, &Hedr.strings, Hedr.num_strings);
 	read_value(nif, &Hedr.num_groups, 4);
 	Hedr.end = Pos;
@@ -133,12 +121,13 @@ static void *read_ni_alpha_property(nifpr);
 
 api void nifp_read_blocks(struct nifp *nif)
 {
+	printf("nifp path %s\n", nif->path);
 	unsigned int pos = Pos;
 	Blocks = malloc(sizeof(void *) * Hedr.num_blocks);
 	for (unsigned int i = 0; i < Hedr.num_blocks; i++)
 	{
 	Blocks[i] = NULL;
-	//printf("block begin at %i %04x\n", Pos, Pos);
+	// printf("nifp block begin at %i %04x\n", Pos, Pos);
 	read_block(nif, i);
 	pos += Hedr.block_sizes[i];
 	Pos = pos;
@@ -174,72 +163,90 @@ void read_block(struct nifp *nif, int n)
 	Blocks[n] = block;
 }
 
+static void sink_val(struct nifp *nif, char *block_pointer, int src, int size) {
+	char **dest = block_pointer + src;
+	*dest = Depos;
+	Pos += size;
+}
+
+// sizeof(((layout *)0)->part)
+#define SinkVal(nif, block_pointer, layout, part, size) sink_val(nif, block_pointer, offsetof(layout, part), size)
+//#define SinkArr(nif, block_pointer, layout, part, size) sink_arr(nif, block_pointer, offsetof(layout, part), size)
+
+#define ArrSize(count, type) count * sizeof(type)
+
 void *read_ni_common_layout(nifpr)
 {
-	unsigned int size;
+	printf("read nifp block %i\n", n);
 	struct ni_common_layout_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_common_layout_pointer));
 	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, A, 8);
-	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, B, GetSize(block_pointer->A->num_extra_data_list, ni_ref));
-	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, C, 4+4+sizeof(struct vec_3p)+sizeof(struct mat_3p)+4+4);
-	/*ReadStruct(nif, ni_common_layout, &block, name, extra_data_list);
-	ReadArray(nif, ni_common_layout, &block, ni_ref, extra_data_list, num_extra_data_list, 0);
-	ReadStruct(nif, ni_common_layout, &block, controller, end);*/
-	//block.name_string = nif_get_string(nif, block.name);
+	printf("ni cmmon stuff name %i %u\n", block_pointer->A->name, block_pointer->A->num_extra_data_list);
+	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, B, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, C, 4+4+12+36+4+4);
 	return block_pointer;
 }
 
 void *read_ni_node(nifpr)
 {
-	//printf("read ni node\n");
+	//printf("read ni node pointer\n");
 	struct ni_node_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_node_pointer));
 	block_pointer->common = read_ni_common_layout(nif, n);
 	SinkVal(nif, block_pointer, struct ni_node_pointer, A, 4);
-	SinkVal(nif, block_pointer, struct ni_node_pointer, B, GetSize(block_pointer->A->num_children, ni_ref));
+	SinkVal(nif, block_pointer, struct ni_node_pointer, children, ArrSize(block_pointer->A->num_children, ni_ref));
 	SinkVal(nif, block_pointer, struct ni_node_pointer, C, 4);
-	SinkVal(nif, block_pointer, struct ni_node_pointer, D, GetSize(block_pointer->C->num_effects, ni_ref));
+	SinkVal(nif, block_pointer, struct ni_node_pointer, effects, ArrSize(block_pointer->C->num_effects, ni_ref));
 	return block_pointer;
 }
 
 void *read_ni_tri_shape(nifpr)
 {
-	//printf("read ni tri shape\n");
+	printf("read ni tri shape pointer\n");
 	struct ni_tri_shape_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct ni_node_pointer));
+	block_pointer = malloc(sizeof(struct ni_tri_shape_pointer));
 	block_pointer->common = read_ni_common_layout(nif, n);
-	//ReadStruct(nif, ni_tri_shape, block, data, material_data);
+	SinkVal(nif, block_pointer, struct ni_tri_shape_pointer, A, 8);
 	Pos += 9;
-	//ReadStruct(nif, ni_tri_shape, block, shader_property, end);
+	SinkVal(nif, block_pointer, struct ni_tri_shape_pointer, B, 8);
 	return block_pointer;
 }
 
 void *read_ni_tri_shape_data(nifpr)
 {
-	//printf("read ni tri shape data\n");
+	printf("read ni tri shape data\n");
 	struct ni_tri_shape_data_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_tri_shape_data_pointer));
-	/*ReadStruct(nif, ni_tri_shape_data, block, group_id, vertices);
-	if (block->has_vertices)
-	ReadArray(nif, ni_tri_shape_data, block, struct vec_3, vertices, num_vertices, 0);
-	ReadStruct(nif, ni_tri_shape_data, block, bs_vector_flags, normals);
-	if (block->has_normals)
-	ReadArray(nif, ni_tri_shape_data, block, struct vec_3, normals, num_vertices, 0);
-	if (block->bs_vector_flags & 0x00001000)
+	memset(block_pointer, NULL, sizeof(struct ni_tri_shape_data_pointer));
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, A, 4+2+1+1+1);
+	const int size = ArrSize(block_pointer->A->num_vertices, struct vec_3p);
+	if (block_pointer->A->has_vertices)
 	{
-	ReadArray(nif, ni_tri_shape_data, block, struct vec_3, tangents, num_vertices, 0);
-	ReadArray(nif, ni_tri_shape_data, block, struct vec_3, bitangents, num_vertices, 0);
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, vertices, size);
 	}
-	ReadStruct(nif, ni_tri_shape_data, block, center, vertex_colors);
-	if (block->has_vertex_colors)
-	ReadArray(nif, ni_tri_shape_data, block, struct vec_4, vertex_colors, num_vertices, 0);
-	if (block->bs_vector_flags & 0x00000001)
-	ReadArray(nif, ni_tri_shape_data, block, struct vec_2, uv_sets, num_vertices, 0);
-	ReadStruct(nif, ni_tri_shape_data, block, consistency_flags, triangles);
-	if (block->has_triangles)
-	ReadArray(nif, ni_tri_shape_data, block, struct ushort_3, triangles, num_triangles, 1);
-	ReadStruct(nif, ni_tri_shape_data, block, num_match_groups, match_groups);
-	ReadArray(nif, ni_tri_shape_data, block, ni_ref, match_groups, num_match_groups, 1);*/
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, C, 7);
+	if (block_pointer->C->has_normals)
+	{
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, normals, size);
+	}
+	if (block_pointer->C->bs_vector_flags & 0x00001000)
+	{
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, tangents, size);
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, bitangents, size);
+	}
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, G, 12+4+1);
+	if (block_pointer->G->has_vertex_colors)
+	{
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, vertex_colors, ArrSize(block_pointer->A->num_vertices, struct vec_4p));
+	}
+	if (block_pointer->C->bs_vector_flags & 0x00000001)
+	{
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, uv_sets, ArrSize(block_pointer->A->num_vertices, struct vec_2p));
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, J, 13);
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, triangles, ArrSize(block_pointer->J->num_triangles, struct ushort_3p));
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, L, 2);
+	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, match_groups, ArrSize(block_pointer->L->num_match_groups, ni_ref));
+	}
 	return block_pointer;
 }
 
@@ -292,11 +299,10 @@ void *read_ni_alpha_property(nifpr)
 	//printf("offsetof(struct ni_alpha_property_pointer, A) %i\n", of);
 	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, A, 8);
 	printf("fields from A %i %u\n", block_pointer->A->name, block_pointer->A->num_extra_data_list);
-	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, B, GetSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, extra_data_list, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
 	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, C, 7);
 	printf("fields from B %i %hu %u\n", block_pointer->C->controller, block_pointer->C->flags, block_pointer->C->treshold);
 	sizeof(struct ni_alpha_property_pointer);
 	sizeof(((struct ni_alpha_property_pointer *)0)->C);
 	return block_pointer;
-
 }

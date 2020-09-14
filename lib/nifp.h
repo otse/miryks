@@ -119,36 +119,43 @@ struct mat_4p{ float n[16]; };
 struct ushort_3p{ unsigned short x, y, z; };
 
 struct ni_common_layout_pointer {
-    struct
-    {
+	struct
+	{
 	int name;
 	unsigned int num_extra_data_list;
-    } *A;
+	} *A;
 	struct { ni_ref *extra_data_list; } *B;
-    struct {
-    ni_ref controller;
+	struct {
+	ni_ref controller;
 	unsigned int flags;
 	struct vec_3p translation;
 	struct mat_3p rotation;
 	float scale;
 	ni_ref collision_object;
-    } *C;
-	int end;
+	} *C;
 };
 
 struct ni_node_pointer {
 	struct ni_common_layout_pointer *common;
-	struct { unsigned int num_children; } *A;
-	struct { ni_ref *children; } *B;
-	struct { unsigned int num_effects; } *C;
-    struct { ni_ref *effects; } *D;
-    int end;
+	struct {
+	unsigned int num_children;
+	} *A;
+	ni_ref *children;
+	struct {
+	unsigned int num_effects;
+	} *C;
+	ni_ref *effects;
 };
 
 struct ni_tri_shape_pointer {
 	struct ni_common_layout_pointer *common;
-	ni_ref data, skin_instance, material_data, shader_property, alpha_property;
-	int end;
+	struct
+	{
+	ni_ref data, skin_instance;
+	} *A;
+	struct {
+	ni_ref shader_property, alpha_property;
+	} *B;
 };
 
 struct bs_tri_shape_pointer_pointer {
@@ -160,28 +167,41 @@ struct ni_skin_instance_pointer {
 };
 
 struct ni_tri_shape_data_pointer {
+	struct {
 	int group_id;
 	unsigned short num_vertices;
 	unsigned char keep_flags, compress_flags, has_vertices;
+	} *A;
 	struct vec_3p *vertices;
+	struct {
 	unsigned short bs_vector_flags;
 	unsigned int material_crc;
 	unsigned char has_normals;
-	struct vec_3p *normals, *tangents, *bitangents, center;
+	} *C;
+	struct vec_3p *normals;
+	struct vec_3p *tangents;
+	struct vec_3p *bitangents;
+	struct {
+	struct vec_3p center;
 	float radius;
 	unsigned char has_vertex_colors;
+	} *G;
 	struct vec_4p *vertex_colors;
 	struct vec_2p *uv_sets;
+	struct {
 	unsigned short consistency_flags;
 	ni_ref additional_data;
 	unsigned short num_triangles;
 	unsigned int num_triangle_points;
 	unsigned char has_triangles;
+	} *J;
 	struct ushort_3p *triangles;
+	struct {
 	unsigned short num_match_groups;
+	} *L;
 	ni_ref *match_groups;
-	int end;
 };
+static int test1 = sizeof(struct ni_tri_shape_data_pointer);
 
 struct bs_lighting_shader_property_pointer {
 	unsigned int skyrim_shader_type;
@@ -212,7 +232,7 @@ struct ni_alpha_property_pointer {
 	int name;
 	unsigned int num_extra_data_list;
 	} *A;
-	struct { ni_ref *extra_data_list; } *B;
+	ni_ref *extra_data_list;
 	struct {
 	ni_ref controller;
 	unsigned short flags;

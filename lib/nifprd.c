@@ -58,7 +58,7 @@ static void visit(struct nifprd *rd, int p, int c)
 	rd->ni_node(rd, block);
 	for (int i = 0; i < block->A->num_children; i++)
 	{
-	int b = block->B->children[i];
+	int b = block->children[i];
 	visit(rd, c, b);
 	}
 	}
@@ -67,9 +67,9 @@ static void visit(struct nifprd *rd, int p, int c)
 	skip;
 	struct ni_tri_shape_pointer *block = Blocks[c];
 	rd->ni_tri_shape(rd, block);
-	visit(rd, c, block->data);
-	visit(rd, c, block->shader_property);
-	visit(rd, c, block->alpha_property);
+	visit(rd, c, block->A->data);
+	visit(rd, c, block->B->shader_property);
+	visit(rd, c, block->B->alpha_property);
 	}
 	else if ( ni_is_type(NI_TRI_SHAPE_DATA) )
 	{

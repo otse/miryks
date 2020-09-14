@@ -135,7 +135,7 @@ int main()
 	camera = first_person_camera;
 	rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	viewer::view(rc);
-	//nif_test();
+	nif_test();
 	nifp_test();
 	dungeon = new Level("PadstowDungeon"); // <-- interior to load
 	programLoop();

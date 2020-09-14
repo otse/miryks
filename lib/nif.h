@@ -189,6 +189,7 @@ struct ni_tri_shape_data {
 	ni_ref *match_groups;
 	int end;
 };
+// int test = sizeof(struct ni_tri_shape_data);
 
 struct bs_lighting_shader_property {
 	unsigned int skyrim_shader_type;
@@ -221,7 +222,6 @@ struct ni_alpha_property {
 	unsigned short flags;
 	unsigned char treshold;
 	int end;
-	int offsets[5];
 };
 
 #pragma pack(pop)

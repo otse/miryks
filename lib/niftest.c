@@ -24,6 +24,7 @@ void nif_test()
 	rd->data = 0x1; // Like some Geometry instance
     rd->other = test_callback;
 	nif_rd(bucket, rd, NULL);
+	printf("nif hedr end %i\n", bucket->hdr.end);
 }
 
 static void test_callback(struct rd *rd, int parent, int block) {
