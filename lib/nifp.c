@@ -121,7 +121,7 @@ api void nifp_read_header(struct nifp *nif) {
 
 static void read_block(struct nifp *, int);
 
-static struct ni_common_layout_pointer read_ni_common_layout(nifpr);
+static void *read_ni_common_layout(nifpr);
 static void *read_ni_node(nifpr);
 static void *read_ni_skin_instance(nifpr);
 static void *read_ni_skin_data(nifpr);
@@ -174,44 +174,51 @@ void read_block(struct nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-struct ni_common_layout_pointer read_ni_common_layout(nifpr)
+void *read_ni_common_layout(nifpr)
 {
 	unsigned int size;
-	struct ni_common_layout_pointer block;
+	struct ni_common_layout_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_common_layout_pointer));
+	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, A, 8);
+	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, B, GetSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, C, 4+4+sizeof(struct vec_3p)+sizeof(struct mat_3p)+4+4);
 	/*ReadStruct(nif, ni_common_layout, &block, name, extra_data_list);
 	ReadArray(nif, ni_common_layout, &block, ni_ref, extra_data_list, num_extra_data_list, 0);
 	ReadStruct(nif, ni_common_layout, &block, controller, end);*/
 	//block.name_string = nif_get_string(nif, block.name);
-	return block;
+	return block_pointer;
 }
 
 void *read_ni_node(nifpr)
 {
 	//printf("read ni node\n");
-	struct ni_node_pointer *block = malloc(sizeof(struct ni_node_pointer));
-	block->common = read_ni_common_layout(nif, n);
-	/*ReadStruct(nif, ni_node, block, num_children, children);
-	ReadArray(nif, ni_node, block, ni_ref, children, num_children, 0);
-	ReadStruct(nif, ni_node, block, num_effects, effects);
-	ReadArray(nif, ni_node, block, ni_ref, effects, num_effects, 0);*/
-	return block;
+	struct ni_node_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_node_pointer));
+	block_pointer->common = read_ni_common_layout(nif, n);
+	SinkVal(nif, block_pointer, struct ni_node_pointer, A, 4);
+	SinkVal(nif, block_pointer, struct ni_node_pointer, B, GetSize(block_pointer->A->num_children, ni_ref));
+	SinkVal(nif, block_pointer, struct ni_node_pointer, C, 4);
+	SinkVal(nif, block_pointer, struct ni_node_pointer, D, GetSize(block_pointer->C->num_effects, ni_ref));
+	return block_pointer;
 }
 
 void *read_ni_tri_shape(nifpr)
 {
 	//printf("read ni tri shape\n");
-	struct ni_tri_shape_pointer *block = malloc(sizeof(struct ni_node_pointer));
-	block->common = read_ni_common_layout(nif, n);
+	struct ni_tri_shape_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_node_pointer));
+	block_pointer->common = read_ni_common_layout(nif, n);
 	//ReadStruct(nif, ni_tri_shape, block, data, material_data);
 	Pos += 9;
 	//ReadStruct(nif, ni_tri_shape, block, shader_property, end);
-	return block;
+	return block_pointer;
 }
 
 void *read_ni_tri_shape_data(nifpr)
 {
 	//printf("read ni tri shape data\n");
-	struct ni_tri_shape_data_pointer *block = malloc(sizeof(struct ni_tri_shape_data_pointer));
+	struct ni_tri_shape_data_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_tri_shape_data_pointer));
 	/*ReadStruct(nif, ni_tri_shape_data, block, group_id, vertices);
 	if (block->has_vertices)
 	ReadArray(nif, ni_tri_shape_data, block, struct vec_3, vertices, num_vertices, 0);
@@ -233,7 +240,7 @@ void *read_ni_tri_shape_data(nifpr)
 	ReadArray(nif, ni_tri_shape_data, block, struct ushort_3, triangles, num_triangles, 1);
 	ReadStruct(nif, ni_tri_shape_data, block, num_match_groups, match_groups);
 	ReadArray(nif, ni_tri_shape_data, block, ni_ref, match_groups, num_match_groups, 1);*/
-	return block;
+	return block_pointer;
 }
 
 void *read_ni_skin_instance(nifpr)
@@ -251,18 +258,20 @@ void *read_ni_skin_data(nifpr)
 void *read_bs_lighting_shader_property(nifpr)
 {
 	//printf("read bs lighting shader property\n");
-	struct bs_lighting_shader_property_pointer *block = malloc(sizeof(struct bs_lighting_shader_property_pointer));
+	struct bs_lighting_shader_property_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct bs_lighting_shader_property_pointer));
 	/*ReadStruct(nif, bs_lighting_shader_property, block, skyrim_shader_type, extra_data_list);
 	ReadArray(nif, bs_lighting_shader_property, block, ni_ref, extra_data_list, num_extra_data_list, 0);
 	ReadStruct(nif, bs_lighting_shader_property, block, controller, end);*/
 	//block->name_string = nif_get_string(nif, block->name);
-	return block;
+	return block_pointer;
 }
 
 void *read_bs_shader_texture_set(nifpr)
 {
 	//printf("read bs shader texture set\n");
-	struct bs_shader_texture_set_pointer *block = malloc(sizeof(struct bs_shader_texture_set_pointer));
+	struct bs_shader_texture_set_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct bs_shader_texture_set_pointer));
 	/*ReadStruct(nif, bs_shader_texture_set, block, num_textures, textures);
 	block->textures = malloc(sizeof(char *) * block->num_textures);
 	memset(block->textures, '\0', block->num_textures);
@@ -271,7 +280,7 @@ void *read_bs_shader_texture_set(nifpr)
 	{
 	block->textures[i] = nif_read_sized_string(nif);
 	}*/
-	return block;
+	return block_pointer;
 }
 
 void *read_ni_alpha_property(nifpr)

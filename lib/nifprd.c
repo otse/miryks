@@ -56,9 +56,9 @@ static void visit(struct nifprd *rd, int p, int c)
 	skip;
 	struct ni_node_pointer *block = Blocks[c];
 	rd->ni_node(rd, block);
-	for (int i = 0; i < block->num_children; i++)
+	for (int i = 0; i < block->A->num_children; i++)
 	{
-	int b = block->children[i];
+	int b = block->B->children[i];
 	visit(rd, c, b);
 	}
 	}

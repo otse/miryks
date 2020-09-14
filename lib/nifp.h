@@ -119,28 +119,34 @@ struct mat_4p{ float n[16]; };
 struct ushort_3p{ unsigned short x, y, z; };
 
 struct ni_common_layout_pointer {
+    struct
+    {
 	int name;
 	unsigned int num_extra_data_list;
-	ni_ref *extra_data_list, controller;
+    } *A;
+	struct { ni_ref *extra_data_list; } *B;
+    struct {
+    ni_ref controller;
 	unsigned int flags;
 	struct vec_3p translation;
 	struct mat_3p rotation;
 	float scale;
 	ni_ref collision_object;
+    } *C;
 	int end;
-	char *name_string;
 };
 
 struct ni_node_pointer {
-	struct ni_common_layout_pointer common;
-	unsigned int num_children;
-	ni_ref *children;
-	unsigned int num_effects;
-	ni_ref *effects;
+	struct ni_common_layout_pointer *common;
+	struct { unsigned int num_children; } *A;
+	struct { ni_ref *children; } *B;
+	struct { unsigned int num_effects; } *C;
+    struct { ni_ref *effects; } *D;
+    int end;
 };
 
 struct ni_tri_shape_pointer {
-	struct ni_common_layout_pointer common;
+	struct ni_common_layout_pointer *common;
 	ni_ref data, skin_instance, material_data, shader_property, alpha_property;
 	int end;
 };
