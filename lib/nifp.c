@@ -24,10 +24,11 @@ void sink_val(struct nif *nif, char *block_pointer, int src, int size) {
 	printf("sink val %i\n", size);
 }
 
-#define SinkVal(nif, block_pointer, layout, part) sink_val(nif, block_pointer, offsetof(layout, part), sizeof(((layout *)0)->part))
-#define SinkArr(nif, block_pointer, layout, part) sink_val(nif, block_pointer, offsetof(layout, part), 0)
+// sizeof(((layout *)0)->part)
 
-#define IncrArr(count, type) Pos += count * sizeof(type);
+#define SinkVal(nif, block_pointer, layout, part, size) sink_val(nif, block_pointer, offsetof(layout, part), size)
+
+#define GetSize(count, type) count * sizeof(type)
 
 void *read_ni_alpha_property2(nifpr)
 {
@@ -37,17 +38,16 @@ void *read_ni_alpha_property2(nifpr)
 	Pos = before;
 	//int of = offsetof(struct ni_alpha_property_pointer, A);
 	//printf("offsetof(struct ni_alpha_property_pointer, A) %i\n", of);
-	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, A);
+	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, A, 8);
 	printf("fields from A %i %u\n", block_pointer->A->name, block_pointer->A->num_extra_data_list);
-	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, B);
-	IncrArr(block_pointer->A->num_extra_data_list, ni_ref);
-	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, C);
+	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, B, GetSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, C, 7);
 	printf("fields from B %i %hu %u\n", block_pointer->C->controller, block_pointer->C->flags, block_pointer->C->treshold);
 	Pos = after;
 	return block_pointer;
 
 	sizeof(struct ni_alpha_property_pointer);
-	sizeof(((struct ni_alpha_property_pointer *)0)->B);
+	sizeof(((struct ni_alpha_property_pointer *)0)->C);
 	sizeof(struct ni_alpha_property);
 }
 
