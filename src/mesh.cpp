@@ -83,7 +83,7 @@ namespace dark2
 
 	void ni_tri_shape_callback(rd *rd, ni_tri_shape *block)
 	{
-		printf("ni tri shape callback %s\n", block->common.name_string);
+		// printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, &block->common);

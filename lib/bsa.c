@@ -186,6 +186,7 @@ char *bsa_uncompress(struct rc *rc)
 
 #define INVERT_COMPRESSED 0x40000000
 
+// todo embed files names fuffed this up real good
 api int bsa_read(struct rc *rc) {
 	if (rc == NULL)
 	return 0;

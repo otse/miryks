@@ -85,6 +85,8 @@ api void *nif_get_block(struct nif *, int);
 api void nif_print_hedr(struct nif *, char *);
 api void nif_print_block(struct nif *, int, char *);
 
+void *read_ni_alpha_property_experimental(struct nif *, int, int, int);
+
 ///
 
 #define NI_NODE "NiNode"
@@ -219,6 +221,22 @@ struct ni_alpha_property {
 	unsigned short flags;
 	unsigned char treshold;
 	int end;
+	int offsets[5];
+};
+
+struct ni_alpha_property_pointer {
+	struct {
+	int name;
+	unsigned int num_extra_data_list;
+	ni_ref *extra_data_list;
+	}
+	*A;
+	struct {
+	ni_ref controller;
+	unsigned short flags;
+	unsigned char treshold;
+	}
+	*B;
 };
 
 #pragma pack(pop)
