@@ -30,7 +30,7 @@ Texture *GetProduceTexture(const char *path)
 }
 
 int outed = 0;
-Texture::Texture(const string &path) : path(path)
+Texture::Texture(const std::string &path) : path(path)
 {
 	//printf("new texture %s\n", path.c_str());
 	struct rc *rc = bsa_find_more(path.c_str(), 0x2);
@@ -87,7 +87,7 @@ void Texture::Load()
 
 	char *fourcc = (char *)&(dds->ddspf.dwFourCC);
 
-	//log_("dds four cc ", string_t(fourcc));
+	//printf("dds four cc ", string_t(fourcc));
 
 	unsigned int format;
 
@@ -102,7 +102,7 @@ void Texture::Load()
 
 	else
 	{
-		log_("texture ", path, " is not 1, 3, 5, its ", fourcc);
+		printf("texture %s is dxt %u\n", path, fourcc);
 		return;
 		//tse_assert(false, "not dxt 1 / 3 / 5");
 	}

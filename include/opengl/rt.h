@@ -3,12 +3,12 @@
 
 #include <opengl/types.h>
 
-struct RT
+struct RenderTarget
 {
     GLuint framebufferName, renderedTexture, depthrenderbuffer;
     void Bind();
-	RT(int, int);
-	~RT();
+	RenderTarget(int, int);
+	~RenderTarget();
 };
 
 struct RTQuad

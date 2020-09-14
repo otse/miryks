@@ -144,6 +144,7 @@ namespace dark2
 		{
 			geometry->material->emissive = *cast_vec_3((float *)&block->emissive_color);
 			geometry->material->specular = *cast_vec_3((float *)&block->specular_color);
+			geometry->material->specular *= block->specular_strength;
 			geometry->material->opacity = block->alpha;
 			geometry->material->glossiness = block->glossiness;
 		}

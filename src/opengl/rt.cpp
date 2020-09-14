@@ -5,7 +5,7 @@
 #include <opengl/group.h>
 #include <opengl/geometry.h>
 
-RT::RT(int width, int height)
+RenderTarget::RenderTarget(int width, int height)
 {
 	glGenFramebuffers(1, &framebufferName);
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferName);
@@ -22,7 +22,7 @@ RT::RT(int width, int height)
 
 	glGenRenderbuffers(1, &depthrenderbuffer);
 	glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1024, 768);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, width, height);
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
 
 	//// Alternative : Depth texture. Slower, but you can sample it later in your shader
@@ -47,13 +47,13 @@ RT::RT(int width, int height)
 		printf("bad fb");
 }
 
-void RT::Bind()
+void RenderTarget::Bind()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, framebufferName);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
-RT::~RT()
+RenderTarget::~RenderTarget()
 {
 }
 

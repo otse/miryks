@@ -25,11 +25,13 @@ void opengl_gui()
 	ImGui::SetNextWindowSize(ImVec2(400, 0));
 	ImGui::Begin(OPENGL_GUI, nullptr, flags);
 
+	ImGui::Text(("groups: %i"), Group::num);
+	ImGui::Text("geometries: %i", Geometry::num);
+
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))
 	{
-		ImGui::Text(("groups: %i"), Group::num);
-		ImGui::Text("geometries: %i", Geometry::num);
+		
 		if (ImGui::BeginTabItem("settings"))
 		{
 			bool a = ImGui::Checkbox("diffuse maps", &commonSettings.diffuseMaps);
@@ -45,6 +47,8 @@ void opengl_gui()
 					pair.second->Compile();
 				}
 			}
+
+			ImGui::Image((void*)(intptr_t)7, ImVec2(512,512));
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("camera"))

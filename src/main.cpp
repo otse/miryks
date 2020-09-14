@@ -29,23 +29,18 @@ namespace dark2
 		Renderable *object = nullptr;
 	} // namespace viewer
 
-	namespace stats
-	{
-		unsigned int fps = 0;
-	}
+	unsigned int fps = 0;
 
 	Level *dungeon;
 
 	std::string pathToOldrim;
 
-	esp *skyrim;
-	esp *padstow;
-
 	FirstPersonCamera *first_person_camera;
 	ViewerCamera *viewer_camera;
+	RenderTarget *render_target;
 
-	int width = 1920;
-	int height = 1080;
+	int width = 2560;
+	int height = 1440;
 	float delta = 1;
 } // namespace dark2
 

@@ -1,14 +1,14 @@
-#include "dark2.h"
+#include <dark2.h>
 
 extern "C"
 {
-#include "bsa.h"
-#include "nif.h"
-#include "esp.h"
+#include <bsa.h>
+#include <nif.h>
+#include <esp.h>
 }
 
-#include "mesh.h"
-#include "level.h"
+#include <mesh.h>
+#include <level.h>
 
 #include <opengl/camera.h>
 #include <opengl/scene.h>
@@ -213,7 +213,7 @@ void dark2::renderImGui()
 
 void dark2::programLoop()
 {
-	RT rt(width, height);
+	render_target = new RenderTarget(width, height);
 	RTQuad quad;
 
 	double fps;
@@ -226,9 +226,8 @@ void dark2::programLoop()
 
 	do
 	{
-		time = glfwGetTime();
-
 		// from mrdoob stats
+		time = glfwGetTime();
 		if ((time - prevTime) > 1.0 || frames == 0)
 		{
 			fps = (double)frames / (time - prevTime);

@@ -29,6 +29,7 @@ struct Group;
 struct Renderable;
 struct RenderItem;
 struct Texture;
+struct RenderTarget;
 struct Shader;
 struct ShaderSource;
 struct Program;
