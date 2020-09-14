@@ -64,6 +64,7 @@ void sink_struct(struct nif *nif, unsigned char *base, int start, int stop) {
 // impossible. struct-sinking relys on the memory-layout for correctness
 // pointers to data would always be 8*8bit
 // workaround = convert the end field to size, which points .. at sizes?
+// tackled in nifp.c
 void sink_struct_2(struct nif *nif, unsigned char *base, int start, int stop) {
 	int size = stop - start;
 	unsigned char *dest = base + start;

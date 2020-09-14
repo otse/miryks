@@ -7,22 +7,26 @@
 
 typedef int ni_ref;
 
+#pragma pack(push, 1)
+
 struct nifp_hedr
 {
 	char *header_string;
-	unsigned int unknown_1;
 	char *version;
+	unsigned int unknown_1;
 	unsigned char endian_type;
 	unsigned int user_value, num_blocks, user_value_2;
-	char *author, *process_script, *export_script; // short strings
+	char *author, *process_script, *export_script;
 	unsigned short num_block_types;
-	char **block_types; // sized strings
+	char **block_types;
 	unsigned short *block_type_index;
 	unsigned int *block_sizes, num_strings, max_string_length;
-	char **strings; // sized strings
+	char **strings;
 	unsigned int num_groups, *groups;
 	int end;
 };
+
+#pragma pack(pop)
 
 struct nifp
 {
@@ -53,9 +57,6 @@ extern int nifs;
 
 void nifp_gui();
 void nifp_test();
-
-char *nifp_read_short_string(struct nifp *);
-char *nifp_read_sized_string(struct nifp *);
 
 void nifp_read_header(struct nifp *);
 void nifp_read_blocks(struct nifp *);

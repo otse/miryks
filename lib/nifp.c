@@ -51,50 +51,28 @@ api struct nifp *malloc_nifp() {
 
 api void nifp_read(struct nifp *nif) {
 	cassert(Buf, "nifp_read Buf not set");
-	nif_read_header(nif);
-	nif_read_blocks(nif);
+	nifp_read_header(nif);
+	//nifp_read_blocks(nif);
 }
 
-// todo need hard rewrite of hedr section!
+// begin hedr
 
-static void hedr_read_header_string(struct nifp *);
-static void hedr_read_vars(struct nifp *);
-static void hedr_read_block_types(struct nifp *);
-static void hedr_read_block_type_index(struct nifp *);
-static void hedr_read_block_sizes(struct nifp *);
-static void hedr_read_strings(struct nifp *);
-static void hedr_read_groups(struct nifp *);
-
-static  char *nifp_read_short_string(struct nifp *nif) {
+static void read_short_string(struct nifp *nif, char **string) {
 	char len = FromBuf(char);
-	char *string = malloc(sizeof(char) * len);
-	strncpy(string, Depos, len);
+	*string = malloc(sizeof(char) * len);
+	strncpy(*string, Depos, len);
 	Pos += len;
-	return string;
 }
 
-static  char *nifp_read_sized_string(struct nifp *nif) {
-	int len = FromBuf(int);
-	char *string = malloc(sizeof(char) * len + 1);
-	strncpy(string, Depos, len);
-	string[len] = '\0';
+static void read_sized_string(struct nifp *nif, char **string) {
+	unsigned int len = FromBuf(unsigned int);
+	*string = malloc(sizeof(char) * len + 1);
+	strncpy(*string, Depos, len);
+	(*string)[len] = '\0';
 	Pos += len;
-	return string;
 }
 
-api void nifp_read_header(struct nifp *nif) {
-	hedr_read_header_string(nif);
-	Hedr.unknown_1 = FromBuf(int);
-	hedr_read_vars(nif);
-	hedr_read_block_types(nif);
-	hedr_read_block_type_index(nif);
-	hedr_read_block_sizes(nif);
-	hedr_read_strings(nif);
-	hedr_read_groups(nif);
-	Hedr.end = Pos;
-}
-
-void hedr_read_header_string(struct nifp *nif) {
+static void hedr_read_header_string(struct nifp *nif) {
 	// Gamebryo File Format, Version 20.2.0.7\n
 	int n = strchr(Buf, '\n') - Buf + 1;
 	char *string = malloc(sizeof(char) * n);
@@ -105,58 +83,40 @@ void hedr_read_header_string(struct nifp *nif) {
 	Pos += n;
 }
 
-void hedr_read_vars(struct nifp *nif) {
-	Hedr.endian_type = FromBuf(unsigned char);
-	Hedr.user_value =  FromBuf(unsigned int);
-	Hedr.num_blocks =  FromBuf(unsigned int);
-	Hedr.user_value_2 =FromBuf(unsigned int);
-	Hedr.author =        nifp_read_short_string(nif);
-	Hedr.process_script =nifp_read_short_string(nif);
-	Hedr.export_script = nifp_read_short_string(nif);
-	Hedr.num_block_types = FromBuf(unsigned short);
-}
-
-void hedr_read_block_types(struct nifp *nif) {
-	int n = Hedr.num_block_types;
-	Hedr.block_types = malloc(sizeof(char *) * n);
-	for (int i = 0; i < n; i++)
-	{
-	Hedr.block_types[i] = nif_read_sized_string(nif);
-	}
-}
-
-void hedr_read_block_type_index(struct nifp *nif) {
-	int size = sizeof(unsigned short) * Hedr.num_blocks;
-	Hedr.block_type_index = malloc(size);
-	memcpy(Hedr.block_type_index, Depos, size);
+static void read_value(struct nifp *nif, void *dest, int size) {
+	memcpy(dest, Depos, size);
 	Pos += size;
 }
 
-void hedr_read_block_sizes(struct nifp *nif) {
-	int size = sizeof(unsigned int) * Hedr.num_blocks;
-	Hedr.block_sizes = malloc(size);
-	memcpy(Hedr.block_sizes, Depos, size);
-	Pos += size;
+static void read_array(struct nifp *nif, void **dest, int size) {
+	*dest = malloc(size);
+	read_value(nif, *dest, size);
 }
 
-void hedr_read_strings(struct nifp *nif) {
-	Hedr.num_strings = FromBuf(unsigned int);
-	Hedr.max_string_length = FromBuf(unsigned int);
-	int n = Hedr.num_strings;
-	Hedr.strings = malloc(sizeof(char *) * n);
-	for (int i = 0; i < n; i++)
-	{
-	Hedr.strings[i] = nif_read_sized_string(nif);
-	}
+static void read_sized_strings(struct nifp *nif, char ***dest, int count) {
+	*dest = malloc(count * sizeof(char *));
+	for (int i = 0; i < count; i++)
+	read_sized_string(nif, &(*dest)[i]);
 }
 
-void hedr_read_groups(struct nifp *nif) {
-	Hedr.num_groups = FromBuf(unsigned int);
+api void nifp_read_header(struct nifp *nif) {
+	hedr_read_header_string(nif);
+	read_value(nif, &Hedr.unknown_1, 17);
+	read_short_string(nif, &Hedr.author);
+	read_short_string(nif, &Hedr.process_script);
+	read_short_string(nif, &Hedr.export_script);
+	printf("export script %s\n", Hedr.export_script);
+	read_value(nif, &Hedr.num_block_types, 2);
+	read_sized_strings(nif, &Hedr.block_types, Hedr.num_block_types);
+	read_array(nif, &Hedr.block_type_index, sizeof(unsigned short) * Hedr.num_blocks);
+	read_array(nif, &Hedr.block_sizes,      sizeof(unsigned int)   * Hedr.num_blocks);
+	read_value(nif, &Hedr.num_strings, 4);
+	read_sized_strings(nif, &Hedr.strings, Hedr.num_strings);
+	read_value(nif, &Hedr.num_groups, 4);
+	Hedr.end = Pos;
 }
 
 #define nifpr struct nifp *nif, int n, int before, int after
-
-
 
 void *read_ni_alpha_property2(nifpr)
 {

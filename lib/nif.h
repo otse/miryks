@@ -15,12 +15,12 @@ struct nif_hedr
 	char *version;
 	unsigned char endian_type;
 	unsigned int user_value, num_blocks, user_value_2;
-	char *author, *process_script, *export_script; // short strings
+	char *author, *process_script, *export_script;
 	unsigned short num_block_types;
-	char **block_types; // sized strings
+	char **block_types;
 	unsigned short *block_type_index;
 	unsigned int *block_sizes, num_strings, max_string_length;
-	char **strings; // sized strings
+	char **strings;
 	unsigned int num_groups, *groups;
 	int end;
 };

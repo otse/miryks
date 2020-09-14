@@ -16,7 +16,7 @@ void nifp_test()
 	struct nifp *bucket = malloc_nifp();
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;
-	nif_read(bucket);
+	nifp_read(bucket);
 	//nif_save(rc, bucket);
 	struct nifprd *rd = malloc_nifprd();
 	rd->data = 0x1; // like a Mesh instance
