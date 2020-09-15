@@ -136,7 +136,7 @@ static void print_ni_node_pointer(struct nifp *nif, int n, char s[1000])
 \nchildren\
 \nnum_effects: %u\
 ",
-print_ni_common_layout(nif, n, x, block_pointer->common),
+print_ni_common_layout_pointer(nif, x, block_pointer->common),
 block_pointer->A->num_children,
 block_pointer->C->num_effects);
 }
@@ -156,7 +156,7 @@ static void print_ni_tri_shape_pointer(struct nifp *nif, int n, char s[1000])
 \nshader_property: %i\
 \nalpha_property: %i\
 ",
-print_ni_common_layout(nif, n, x, block_pointer->common),
+print_ni_common_layout_pointer(nif, x, block_pointer->common),
 block_pointer->A->data,
 block_pointer->A->skin_instance,
 block_pointer->B->shader_property,

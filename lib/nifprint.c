@@ -7,13 +7,13 @@
 #define Hedr   nif->hdr
 #define Blocks nif->blocks
 
-char *print_ni_array(nifn, int);
-char *print_ni_common_layout(nifn, char *, struct ni_common_layout *);
-void print_ni_node(nifn, char *);
-void print_ni_tri_shape(nifn, char *);
-void print_ni_tri_shape_data(nifn, char *);
-void print_bs_lighting_shader_property(nifn, char *);
-void print_bs_shader_texture_set(nifn, char *);
+static char *print_ni_array(nifn, int);
+static char *print_ni_common_layout(nifn, char *, struct ni_common_layout *);
+static void print_ni_node(nifn, char *);
+static void print_ni_tri_shape(nifn, char *);
+static void print_ni_tri_shape_data(nifn, char *);
+static void print_bs_lighting_shader_property(nifn, char *);
+static void print_bs_shader_texture_set(nifn, char *);
 
 void nif_print_hedr(struct nif *nif, char *s)
 {
@@ -352,10 +352,10 @@ char *print_ni_array(nifn, int x) {
 	return 0;
 }
 
-#define type(x) 0 == strcmp(block_type, x)
 
 void nif_print_block(nifn, char *s)
 {
+#define type(x) 0 == strcmp(block_type, x)
 	s[0] = '\0';
 	const char *block_type = Hedr.block_types[Hedr.block_type_index[n]];
 	if (0);

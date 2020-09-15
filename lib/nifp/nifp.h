@@ -129,7 +129,7 @@ struct ni_common_layout_pointer {
 	int name;
 	unsigned int num_extra_data_list;
 	} *A;
-	struct { ni_ref *extra_data_list; } *B;
+	ni_ref *extra_data_list;
 	struct {
 	ni_ref controller;
 	unsigned int flags;

@@ -23,10 +23,9 @@ void nifp_test()
 	rd->data = 0x1; // like a Mesh instance
     rd->other = test_callback;
 	nifp_rd(bucket, rd, NULL);
-    char str[600];
-    nifp_print_hedr(bucket, str);
-	printf("nifp hedr end %i\n", bucket->hdr->end);
-    //printf("nifptest ok, hedr: %s\n", str);
+    //char str[600];
+    //nifp_print_hedr(bucket, str);
+	//printf("nifp hedr end %i\n", bucket->hdr->end);
 }
 
 static void test_callback(struct nifprd *rd, int parent, int current) {

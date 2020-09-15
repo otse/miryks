@@ -200,8 +200,7 @@ void *read_ni_common_layout(nifpr)
 	block_pointer = malloc(sizeof(struct ni_common_layout_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_common_layout_pointer));
 	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, A, 8);
-	printf("ni cmmon stuff name %i %u\n", block_pointer->A->name, block_pointer->A->num_extra_data_list);
-	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, B, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, extra_data_list, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
 	SinkVal(nif, block_pointer, struct ni_common_layout_pointer, C, 4+4+12+36+4+4);
 	return block_pointer;
 }
@@ -269,10 +268,6 @@ void *read_ni_tri_shape_data(nifpr)
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, L, 2);
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, match_groups, ArrSize(block_pointer->L->num_match_groups, ni_ref));
 	}
-	Blocks[n] = block_pointer;
-	char str[1000];
-	nifp_print_block(nif, n, str);
-	printf(str);
 	return block_pointer;
 }
 
