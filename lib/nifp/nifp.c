@@ -289,10 +289,9 @@ void *read_bs_lighting_shader_property(nifpr)
 	struct bs_lighting_shader_property_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct bs_lighting_shader_property_pointer));
 	memset(block_pointer, NULL, sizeof(struct bs_lighting_shader_property_pointer));
-	/*ReadStruct(nif, bs_lighting_shader_property, block, skyrim_shader_type, extra_data_list);
-	ReadArray(nif, bs_lighting_shader_property, block, ni_ref, extra_data_list, num_extra_data_list, 0);
-	ReadStruct(nif, bs_lighting_shader_property, block, controller, end);*/
-	//block->name_string = nif_get_string(nif, block->name);
+	SinkVal(nif, block_pointer, struct bs_lighting_shader_property_pointer, A, 12);
+	SinkVal(nif, block_pointer, struct bs_lighting_shader_property_pointer, extra_data_list, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, struct bs_lighting_shader_property_pointer, B, 88);
 	return block_pointer;
 }
 
@@ -302,14 +301,11 @@ void *read_bs_shader_texture_set(nifpr)
 	struct bs_shader_texture_set_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct bs_shader_texture_set_pointer));
 	memset(block_pointer, NULL, sizeof(struct bs_shader_texture_set_pointer));
-	/*ReadStruct(nif, bs_shader_texture_set, block, num_textures, textures);
-	block->textures = malloc(sizeof(char *) * block->num_textures);
-	memset(block->textures, '\0', block->num_textures);
-	int l = block->num_textures;
-	for (unsigned i = 0; i < l; i++)
-	{
-	block->textures[i] = nif_read_sized_string(nif);
-	}*/
+	SinkVal(nif, block_pointer, struct bs_shader_texture_set_pointer, A, 4);
+	block_pointer->textures = malloc(sizeof(char *) * block_pointer->A->num_textures);
+	memset(block_pointer->textures, '\0', block_pointer->A->num_textures);
+	for (int i = 0; i < block_pointer->A->num_textures; i++)
+	block_pointer->textures[i] = nif_read_sized_string(nif);
 	return block_pointer;
 }
 

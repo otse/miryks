@@ -252,6 +252,87 @@ block_pointer->match_groups
 );
 }
 
+static void print_bs_lighting_shader_property_pointer(struct nifp *nif, int n, char s[1000])
+{
+	char a[200], b[200], c[200], d[200];
+	struct bs_lighting_shader_property_pointer *block_pointer = Blocks[n];
+	snprintf(
+		s, 1000,
+		"\
+skyrim_shader_type: %u\
+\nname: %s [%i]\
+\nnum_extra_data_list: %u\
+\nextra_data_list\
+\ncontroller: %i\
+\nshader_flags_1: %u\
+\nshader_flags_2: %u\
+\nuv_offset: %s\
+\nuv_scale: %s\
+\ntexture_set: %i\
+\nemissive_color: %s\
+\nemissive_multiple: %f\
+\ntexture_clamp_mode: %u\
+\nalpha: %f\
+\nrefraction_strength: %f\
+\nglossiness: %f\
+\nspecular_color: %s\
+\nspecular_strength: %f\
+\nlighting_effect_1: %f\
+\nlighting_effect_2: %f\
+",
+block_pointer->A->skyrim_shader_type,
+nifp_get_string(nif, block_pointer->A->name),
+block_pointer->A->name,
+block_pointer->A->num_extra_data_list,
+block_pointer->B->controller,
+block_pointer->B->shader_flags_1,
+block_pointer->B->shader_flags_2,
+print_vec_2(a, block_pointer->B->uv_offset),
+print_vec_2(b, block_pointer->B->uv_scale),
+block_pointer->B->texture_set,
+print_vec_3(c, block_pointer->B->emissive_color),
+block_pointer->B->emissive_multiple,
+block_pointer->B->texture_clamp_mode,
+block_pointer->B->alpha,
+block_pointer->B->refraction_strength,
+block_pointer->B->glossiness,
+print_vec_3(d, block_pointer->B->specular_color),
+block_pointer->B->specular_strength,
+block_pointer->B->lighting_effect_1,
+block_pointer->B->lighting_effect_2
+);
+}
+
+static void print_bs_shader_texture_set_pointer(struct nifp *nif, int n, char s[1000])
+{
+	struct bs_shader_texture_set_pointer *block_pointer = Blocks[n];
+	snprintf(
+		s, 1000,
+		"\
+num_textures: %i\
+\ntextures 0: %s\
+\ntextures 1: %s\
+\ntextures 2: %s\
+\ntextures 3: %s\
+\ntextures 4: %s\
+\ntextures 5: %s\
+\ntextures 6: %s\
+\ntextures 7: %s\
+\ntextures 8: %s\
+",
+block_pointer->A->num_textures,
+block_pointer->textures[0],
+block_pointer->textures[1],
+block_pointer->textures[2],
+block_pointer->textures[3],
+block_pointer->textures[4],
+block_pointer->textures[5],
+block_pointer->textures[6],
+block_pointer->textures[7],
+block_pointer->textures[8]
+);
+}
+
 api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 {
 #define type(x) 0 == strcmp(block_type, x)
@@ -263,6 +344,6 @@ api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 	else if (type(BS_FADE_NODE)) print_ni_node_pointer(nif, n, s);
 	else if (type(NI_TRI_SHAPE)) print_ni_tri_shape_pointer(nif, n, s);
 	else if (type(NI_TRI_SHAPE_DATA)) print_ni_tri_shape_data_pointer(nif, n, s);
-	//else if (type(BS_LIGHTING_SHADER_PROPERTY)) print_bs_lighting_shader_property_pointer(nif, n, s);
-	//else if (type(BS_SHADER_TEXTURE_SET)) print_bs_shader_texture_set_pointer(nif, n, s);
+	else if (type(BS_LIGHTING_SHADER_PROPERTY)) print_bs_lighting_shader_property_pointer(nif, n, s);
+	else if (type(BS_SHADER_TEXTURE_SET)) print_bs_shader_texture_set_pointer(nif, n, s);
 }

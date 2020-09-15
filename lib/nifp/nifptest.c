@@ -1,8 +1,8 @@
 #include "putc.h"
 
-#include <nifp/nifp.h>
+#include "nifp.h"
 
-#include "bsa.h"
+#include <bsa.h>
 
 void test_callback(struct nifprd *, int, int);
 

@@ -81,7 +81,7 @@ static void visit(struct nifprd *rd, int p, int c)
 	needs_parent;
 	struct bs_lighting_shader_property_pointer *block = Blocks[c];
 	rd->bs_lighting_shader_property(rd, block);
-	visit(rd, c, block->texture_set);
+	visit(rd, c, block->B->texture_set);
 	}
 	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) )
 	{

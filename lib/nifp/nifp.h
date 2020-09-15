@@ -209,10 +209,14 @@ struct ni_tri_shape_data_pointer {
 static int test1 = sizeof(struct ni_tri_shape_data_pointer);
 
 struct bs_lighting_shader_property_pointer {
+	struct {
 	unsigned int skyrim_shader_type;
 	int name;
 	unsigned int num_extra_data_list;
-	ni_ref *extra_data_list, controller;
+	} *A;
+	ni_ref *extra_data_list;
+	struct {
+	ni_ref controller;
 	unsigned int shader_flags_1, shader_flags_2;
 	struct vec_2p uv_offset, uv_scale;
 	ni_ref texture_set;
@@ -222,14 +226,14 @@ struct bs_lighting_shader_property_pointer {
 	float alpha, refraction_strength, glossiness;
 	struct vec_3p specular_color;
 	float specular_strength, lighting_effect_1, lighting_effect_2;
-	int end;
-	char *name_string;
+	} *B;
 };
 
 struct bs_shader_texture_set_pointer {
+	struct {
 	int num_textures;
+	} *A;
 	char **textures; // sized strings
-	int end;
 };
 
 struct ni_alpha_property_pointer {
