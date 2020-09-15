@@ -211,7 +211,6 @@ void *read_ni_node(nifpr)
 	struct ni_node_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_node_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_node_pointer));
-
 	block_pointer->common = read_ni_common_layout(nif, n);
 	SinkVal(nif, block_pointer, struct ni_node_pointer, A, 4);
 	SinkVal(nif, block_pointer, struct ni_node_pointer, children, ArrSize(block_pointer->A->num_children, ni_ref));
@@ -242,14 +241,10 @@ void *read_ni_tri_shape_data(nifpr)
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, A, 4+2+1+1+1);
 	const int size = ArrSize(block_pointer->A->num_vertices, struct vec_3p);
 	if (block_pointer->A->has_vertices)
-	{
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, vertices, size);
-	}
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, C, 7);
 	if (block_pointer->C->has_normals)
-	{
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, normals, size);
-	}
 	if (block_pointer->C->bs_vector_flags & 0x00001000)
 	{
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, tangents, size);
@@ -257,17 +252,14 @@ void *read_ni_tri_shape_data(nifpr)
 	}
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, G, 12+4+1);
 	if (block_pointer->G->has_vertex_colors)
-	{
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, vertex_colors, ArrSize(block_pointer->A->num_vertices, struct vec_4p));
-	}
 	if (block_pointer->C->bs_vector_flags & 0x00000001)
-	{
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, uv_sets, ArrSize(block_pointer->A->num_vertices, struct vec_2p));
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, J, 13);
+	if (block_pointer->J->has_triangles)
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, triangles, ArrSize(block_pointer->J->num_triangles, struct ushort_3p));
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, L, 2);
 	SinkVal(nif, block_pointer, struct ni_tri_shape_data_pointer, match_groups, ArrSize(block_pointer->L->num_match_groups, ni_ref));
-	}
 	return block_pointer;
 }
 
