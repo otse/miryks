@@ -1,20 +1,19 @@
 #ifndef DARK2_H
 #define DARK2_H
 
-typedef struct nif Nif;
-typedef struct bsa Bsa;
-typedef struct esp Esp;
-typedef struct record Record;
-typedef struct grup Grup;
-
-typedef struct rc Rc;
-struct esp_t;
-
 #define EYE_HEIGHT 175
 
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
 
 #include <opengl/types.h>
+
+struct grup;
+struct record;
+struct subrecord;
+struct rc;
+struct nifp;
+struct esp;
+struct bsa;
 
 namespace dark2
 {
@@ -30,7 +29,7 @@ namespace dark2
 
 	extern unsigned int fps;
 
-	nif *loadNif(rc *);
+	nifp *loadNif(rc *);
 	esp *loadPlugin(const char *);
 	bsa *loadArchive(const char *);
 

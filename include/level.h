@@ -17,9 +17,9 @@ namespace dark2
 	struct Cell
 	{
 		bool good;
-		Record *cell;
-		Grup *persistent = nullptr;
-		Grup *non_persistent = nullptr;
+		record *cell;
+		grup *persistent = nullptr;
+		grup *non_persistent = nullptr;
 	};
 
 	class Level
@@ -39,6 +39,6 @@ namespace dark2
 		void LoadCell(Cell &);
 		void Unload();
 		
-		void ParseGrup(Cell &, Grup *);
+		void ParseGrup(Cell &, grup *);
 	};
 } // namespace dark2

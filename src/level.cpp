@@ -9,7 +9,7 @@ extern "C"
 {
 #include "putc.h"
 #include "bsa.h"
-#include "nif.h"
+#include <nifp/nifp.h>
 #include "esp.h"
 }
 
@@ -84,7 +84,7 @@ namespace dark2
 		ParseGrup(cell, cell.non_persistent);
 	}
 
-	void Level::ParseGrup(Cell &cell, Grup *grup)
+	void Level::ParseGrup(Cell &cell, grup *grup)
 	{
 		if (grup == nullptr)
 			return;
@@ -95,7 +95,7 @@ namespace dark2
 			cassert(grup->mixed.records[i]->hed->type == *(unsigned int *)"REFR", "not a refr");
 			auto ref = new Ref;
 			refs.push_back(ref);
-			ref->SetData((Record *)element);
+			ref->SetData((record *)element);
 			if (ref->EDID)
 				editorIds.insert({ref->EDID, ref});
 		}

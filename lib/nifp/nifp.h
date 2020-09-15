@@ -27,12 +27,12 @@ struct nifprd
 	void *data;
 	int parent, current;
 	void(* other)(struct nifprd *, int, int, const char *);
-	void(* ni_node)(struct nifprd *, struct ni_node *);
-	void(* ni_tri_shape)(struct nifprd *, struct ni_tri_shape *);
-	void(* ni_tri_shape_data)(struct nifprd *, struct ni_tri_shape_data *);
-	void(* bs_lighting_shader_property)(struct nifprd *, struct bs_lighting_shader_property *);
-	void(* bs_shader_texture_set)(struct nifprd *, struct bs_shader_texture_set *);
-	void(* ni_alpha_property)(struct nifprd *, struct ni_alpha_property *);
+	void(* ni_node)(struct nifprd *, struct ni_node_pointer *);
+	void(* ni_tri_shape)(struct nifprd *, struct ni_tri_shape_pointer *);
+	void(* ni_tri_shape_data)(struct nifprd *, struct ni_tri_shape_data_pointer *);
+	void(* bs_lighting_shader_property)(struct nifprd *, struct bs_lighting_shader_property_pointer *);
+	void(* bs_shader_texture_set)(struct nifprd *, struct bs_shader_texture_set_pointer *);
+	void(* ni_alpha_property)(struct nifprd *, struct ni_alpha_property_pointer *);
 };
 
 void nifp_gui();
@@ -44,7 +44,8 @@ void nifp_read_blocks(struct nifp *);
 api struct nifp   *malloc_nifp();
 api struct nifprd *malloc_nifprd();
 
-api void free_nifrd(struct nifprd **);
+api void free_nifp(struct nifp **);
+api void free_nifprd(struct nifprd **);
 api void nifp_rd(struct nifp *, struct nifprd *, void *);
 
 api void nifp_read(struct nifp *);

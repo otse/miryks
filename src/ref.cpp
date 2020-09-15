@@ -9,7 +9,7 @@ extern "C"
 {
 //#include "putc.h"
 #include "bsa.h"
-#include "nif.h"
+#include <nifp/nifp.h>
 #include "esp.h"
 }
 
@@ -27,7 +27,7 @@ constexpr char test_expr[] = "EDID";
 
 namespace dark2
 {
-	REFR::REFR(Record *record)
+	REFR::REFR(record *record)
 	{
 		auto array = &record->fields;
 		for (int i = 0; i < array->size; i++)
@@ -44,7 +44,7 @@ namespace dark2
 		}
 	}
 
-	LIGH::LIGH(Record *record)
+	LIGH::LIGH(record *record)
 	{
 		auto array = &record->fields;
 		for (int i = 0; i < array->size; i++)
@@ -72,7 +72,7 @@ namespace dark2
 		delete pointlight;
 	}
 
-	void Ref::SetData(Record *refr)
+	void Ref::SetData(record *refr)
 	{
 		REFR REFR(refr);
 		matrix = mat4(1.0);
@@ -108,7 +108,7 @@ namespace dark2
 		{
 			formIdName = *REFR.NAME;
 
-			Record *base = esp_brute_record_by_form_id(formIdName);
+			record *base = esp_brute_record_by_form_id(formIdName);
 
 			Assert(base, "ref cant find name base");
 
@@ -134,15 +134,15 @@ namespace dark2
 						std::transform(data.begin(), data.end(), data.begin(),
 									   [](unsigned char c) { return std::tolower(c); });
 						//printf("stat base has a modl %s\n", data.c_str());
-						Rc *rc = bsa_find_more(data.c_str(), 0x1);
+						rc *rc = bsa_find_more(data.c_str(), 0x1);
 						if (rc)
 						{
 							//printf("found a rc %p\n", rc);
-							Nif *nif = nif_saved(rc);
+							nifp *nif = nifp_saved(rc);
 							if (nif == NULL)
 							{
 								nif = loadNif(rc);
-								nif_save(rc, nif);
+								nifp_save(rc, nif);
 							}
 							mesh = new Mesh;
 							mesh->Construct(nif);

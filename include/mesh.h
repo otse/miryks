@@ -3,7 +3,7 @@
 extern "C"
 {
 #include <bsa.h>
-#include <nif.h>
+#include <nifp/nifp.h>
 }
 
 #include <opengl/types.h>
@@ -25,8 +25,8 @@ public:
 	
 	Group *baseGroup, *lastGroup;
 
-	void Construct(nif *);
-	Group *Nested(rd *);
+	void Construct(nifp *);
+	Group *Nested(nifprd *);
 
 	static void Store(void *, Mesh *);
 	static Mesh *GetStored(void *);

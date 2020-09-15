@@ -16,7 +16,7 @@ using namespace dark2;
 
 static stringstream ss;
 
-static Esp *plugin = NULL;
+static esp *plugin = NULL;
 
 void im_grup(grup *, int);
 void im_record(record *);
@@ -45,7 +45,7 @@ void im_grup(grup *grup, int top_grup = -1)
 	}
 }
 
-void im_record(Record *record)
+void im_record(record *record)
 {
 	char *edid = nullptr;
 	subrecord *first = record->fields.subrecords[0];
@@ -158,7 +158,7 @@ void esp_gui()
 			//if (ImGui::TreeNode("Grups"))
 			//{
 			for (int i = 0; i < plugin->grups.size; i++)
-				im_grup((Grup *)plugin->grups.elements[i], i);
+				im_grup((grup *)plugin->grups.elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();
@@ -192,7 +192,7 @@ void esp_gui()
 				const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
 				const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
 				for (int i = 0; i < filtered->size; i++)
-					im_record((Record *)filtered->elements[i]);
+					im_record((record *)filtered->elements[i]);
 				ImGui::EndChild();
 			}
 			ImGui::EndTabItem();

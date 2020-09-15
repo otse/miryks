@@ -20,7 +20,7 @@ api struct nifprd *malloc_nifprd() {
 	return rd;
 }
 
-api void free_nifrd(struct nifprd **p) {
+api void free_nifprd(struct nifprd **p) {
 	struct nifprd *rd = *p;
 	free(rd->skips);
 	free(rd);

@@ -1,23 +1,22 @@
 #include "dark2.h"
 
-#include "files.h"
-
 extern "C"
 {
 #include "putc.h"
 #include "bsa.h"
-#include "nif.h"
 #include <nifp/nifp.h>
 #include "esp.h"
 }
 
-#include "opengl/types.h"
-#include "opengl/camera.h"
-#include "opengl/scene.h"
-#include "opengl/group.h"
-#include "opengl/renderable.h"
-#include "opengl/geometry.h"
-#include "opengl/material.h"
+#include <opengl/types.h>
+#include <opengl/camera.h>
+#include <opengl/scene.h>
+#include <opengl/group.h>
+#include <opengl/renderable.h>
+#include <opengl/geometry.h>
+#include <opengl/material.h>
+
+#include "files.h"
 
 #include "level.h"
 #include "mesh.h"
@@ -49,15 +48,15 @@ namespace dark2
 {
 	const char *dataFolder = "Data/";
 
-	nif *loadNif(rc *rc)
+	nifp *loadNif(rc *rc)
 	{
 		cassert(rc, "mh no rc");
 		bsa_read(rc);
-		nif *nif = nif_alloc();
+		nifp *nif = malloc_nifp();
 		nif->path = rc->path;
 		nif->buf = rc->buf;
-		nif_read(nif);
-		// nif_save(rc, nif);
+		nifp_read(nif);
+		// nifp_save(rc, nif);
 		return nif;
 	}
 
@@ -96,11 +95,11 @@ namespace dark2
 			delete mesh;
 			delete object;
 		}
-		nif *nif = nif_saved(rc);
+		nifp *nif = nifp_saved(rc);
 		if (nif == NULL)
 		{
 			nif = loadNif(rc);
-			nif_save(rc, nif);
+			nifp_save(rc, nif);
 		}
 		mesh = new Mesh;
 		mesh->Construct(nif);
@@ -135,7 +134,7 @@ int main()
 	camera = first_person_camera;
 	rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	viewer::view(rc);
-	nif_test();
+	//nif_test();
 	nifp_test();
 	dungeon = new Level("PadstowDungeon"); // <-- interior to load
 	programLoop();

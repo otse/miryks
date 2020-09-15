@@ -1,14 +1,14 @@
 #pragma once
 
-#include "dark2.h"
+#include <dark2.h>
 
-#include "opengl/types.h"
+#include <opengl/types.h>
 
 namespace dark2
 {
 	struct REFR
 	{
-		REFR(Record *);
+		REFR(record *);
 		char *EDID = nullptr;
 		float *XSCL = nullptr;
 		unsigned int *NAME = nullptr;
@@ -17,7 +17,7 @@ namespace dark2
 
 	struct LIGH
 	{
-		LIGH(Record *);
+		LIGH(record *);
 		char *EDID = nullptr;
 		float *FNAM = nullptr;
 		unsigned char *DATA = nullptr;
@@ -38,6 +38,6 @@ namespace dark2
 		Renderable *renderable = nullptr;
 		PointLight *pointlight = nullptr;
 
-		void SetData(Record *);
+		void SetData(record *);
 	};
 } // namespace dark2

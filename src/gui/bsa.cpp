@@ -21,7 +21,7 @@ using namespace dark2;
 static bool good = true;
 static stringstream ss;
 static char hedrstr[600] = { "not loaded" };
-static Bsa *bsa = NULL;
+static bsa *bsa = NULL;
 
 void bsa_gui()
 {
@@ -87,7 +87,7 @@ void bsa_gui()
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
 
-			static Rc *rc = nullptr;
+			static rc *rc = nullptr;
 
 			ImGui::InputText("##Find", str, MAX);
 
@@ -123,8 +123,8 @@ void bsa_gui()
 			static const char *items[BSA_MAX_SEARCHES];
 			static int num = 0;
 
-			static Rc *rc = nullptr;
-			static Rc *rcs[BSA_MAX_SEARCHES];
+			static struct rc *rc = nullptr;
+			static struct rc *rcs[BSA_MAX_SEARCHES];
 
 			if (strcmp(str, str2))
 			{
@@ -196,7 +196,7 @@ void bsa_gui()
 							ImGui::Separator();
 
 							char s[200];
-							Rc *rc = bsa->rc[bsa->r[i] + j];
+							struct rc *rc = bsa->rc[bsa->r[i] + j];
 							bsa_print_rc(bsa, s, rc->r);
 							ImGui::Text(s);
 							bsa_print_fle_rcd(bsa, s, i, j);
