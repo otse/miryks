@@ -1,11 +1,11 @@
-#include "dark2.h"
+#include <dark2.h>
 
 extern "C"
 {
-#include "nif.h"
+#include <nifp/nifp.h>
 }
 
-#include "files.h"
+#include <files.h>
 
 #include <sstream>
 #include <imgui.h>

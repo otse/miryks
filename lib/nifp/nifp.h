@@ -64,7 +64,7 @@ void nifp_read_blocks(struct nifp *);
 api struct nifp   *malloc_nifp();
 api struct nifprd *malloc_nifprd();
 
-api void nifp_free_rd(struct nifprd **);
+api void free_nifrd(struct nifprd **);
 api void nifp_rd(struct nifp *, struct nifprd *, void *);
 
 api void nifp_read(struct nifp *);
@@ -76,7 +76,7 @@ api char *nifp_get_block_type(struct nifp *, int);
 api void *nifp_get_block(struct nifp *, int);
 
 api void nifp_print_hedr(struct nifp *, char *);
-api void nifp_print_block(struct nifp *, int, char *);
+api void nifp_print_block(struct nifp *, int, char [1000]);
 
 ///
 

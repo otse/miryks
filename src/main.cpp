@@ -7,7 +7,7 @@ extern "C"
 #include "putc.h"
 #include "bsa.h"
 #include "nif.h"
-#include "nifp.h"
+#include <nif/nifp.h>
 #include "esp.h"
 }
 
