@@ -32,8 +32,9 @@ namespace dark2
 
 		static Cell GetCell(const char *);
 
-		std::vector<Ref *> refs;
-		std::map<std::string, Ref *> editorIds;
+		std::vector<Ref *> refs, iterables;
+
+		std::map<std::string, Ref *> refEditorIDs;
 
 		void Update();
 		void LoadCell(Cell &);

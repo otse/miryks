@@ -6,21 +6,30 @@
 
 namespace dark2
 {
-	struct REFR
+	struct Refr
 	{
-		REFR(record *);
+		Refr() {};
+		Refr(record *);
 		char *EDID = nullptr;
 		float *XSCL = nullptr;
 		unsigned int *NAME = nullptr;
 		unsigned char *DATA = nullptr;
 	};
 
-	struct LIGH
+	struct Ligh
 	{
-		LIGH(record *);
+		Ligh(record *);
 		char *EDID = nullptr;
 		float *FNAM = nullptr;
 		unsigned char *DATA = nullptr;
+	};
+
+	struct Weap
+	{
+		Weap(record *);
+		char *EDID = nullptr;
+		char *FULL = nullptr;
+		char *DESC = nullptr;
 	};
 
 	class Ref
@@ -28,6 +37,10 @@ namespace dark2
 	public:
 		Ref();
 		~Ref();
+
+		Refr REFR;
+		Weap *WEAP = nullptr;
+		record *baseObject = nullptr;
 
 		char *EDID = nullptr;
 		float *DATA = nullptr;
@@ -39,5 +52,8 @@ namespace dark2
 		PointLight *pointlight = nullptr;
 
 		void SetData(record *);
+
+		float GetDistance();
+		bool DisplayAsItem();
 	};
 } // namespace dark2

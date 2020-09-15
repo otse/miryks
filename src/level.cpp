@@ -92,25 +92,26 @@ namespace dark2
 		{
 			void *element = grup->mixed.elements[i];
 			cassert(*(char *)element == RECORD, "mixed non record");
-			cassert(grup->mixed.records[i]->hed->type == *(unsigned int *)"REFR", "not a refr");
+			cassert(grup->mixed.records[i]->hed->type == espwrd "REFR", "not a refr");
 			auto ref = new Ref;
 			refs.push_back(ref);
 			ref->SetData((record *)element);
 			if (ref->EDID)
-				editorIds.insert({ref->EDID, ref});
+				refEditorIDs.emplace(ref->EDID, ref);
+			if (ref->baseObject && ref->baseObject->hed->type == espwrd "WEAP")
+				iterables.push_back(ref);
 		}
 
 		static bool spawned = false;
-		auto ref = editorIds.find("darkshackspawn001");
-		if (ref != editorIds.end() && !spawned)
+		auto ref = refEditorIDs.find("darkshackspawn001");
+		if (ref != refEditorIDs.end() && !spawned)
 		{
 			first_person_camera->pos = ref->second->matrix[3];
-			first_person_camera->pos.z += EYE_HEIGHT / ONE_SKYRIM_UNIT_IN_CM;
+			first_person_camera->pos.z += EYE_HEIGHT;
 			first_person_camera->fyaw = cast_vec_3(ref->second->DATA + 3)->z;
 			spawned = true;
 		}
 	}
-
 
 	void Level::Unload()
 	{
@@ -121,8 +122,22 @@ namespace dark2
 		}
 	}
 
+	bool myfunction (Ref *l, Ref *r) {
+		return l->GetDistance() < r->GetDistance();
+	}
+
 	void Level::Update()
 	{
+		std::vector<Ref *> closest = iterables;
+		std::sort(iterables.begin(), iterables.end(), myfunction);
+
+		for (auto it = closest.begin(); it != closest.end(); ++it)
+		{
+			Ref *ref = *it;
+			
+			if (ref->DisplayAsItem())
+				return;
+		}
 	}
 
 } // namespace dark2

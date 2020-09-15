@@ -9,6 +9,7 @@ Camera::Camera()
 {
 	view = mat4(1);
 	pos = vec3(0);
+	fzoom = 45;
 	disabled = false;
 }
 

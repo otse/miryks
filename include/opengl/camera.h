@@ -11,7 +11,7 @@ struct Camera {
 
 	vec3 pos;
 	mat4 view, projection;
-	float fzoom = 45;
+	float fzoom;
 	bool disabled;
 
 	virtual void Mouse(float, float) {};

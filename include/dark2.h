@@ -1,9 +1,9 @@
 #ifndef DARK2_H
 #define DARK2_H
 
-#define EYE_HEIGHT 175
-
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
+
+#define EYE_HEIGHT 160 / ONE_SKYRIM_UNIT_IN_CM
 
 #include <opengl/types.h>
 

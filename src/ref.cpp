@@ -15,11 +15,14 @@ extern "C"
 
 #include "files.h"
 
-#include "opengl/renderable.h"
-#include "opengl/texture.h"
-#include "opengl/camera.h"
-#include "opengl/pointlight.h"
-#include "opengl/types.h"
+#include <opengl/renderable.h>
+#include <opengl/texture.h>
+#include <opengl/camera.h>
+#include <opengl/pointlight.h>
+#include <opengl/types.h>
+
+#include <imgui.h>
+#include <gui/extra.h>
 
 constexpr char test_expr[] = "EDID";
 
@@ -27,7 +30,7 @@ constexpr char test_expr[] = "EDID";
 
 namespace dark2
 {
-	REFR::REFR(record *record)
+	Refr::Refr(record *record)
 	{
 		auto array = &record->fields;
 		for (int i = 0; i < array->size; i++)
@@ -44,7 +47,7 @@ namespace dark2
 		}
 	}
 
-	LIGH::LIGH(record *record)
+	Ligh::Ligh(record *record)
 	{
 		auto array = &record->fields;
 		for (int i = 0; i < array->size; i++)
@@ -56,6 +59,21 @@ namespace dark2
 				FNAM = ((float *)field->data);
 			if (field->hed->type == espwrd "DATA")
 				DATA = ((unsigned char *)field->data);
+		}
+	}
+
+	Weap::Weap(record *record)
+	{
+		auto array = &record->fields;
+		for (int i = 0; i < array->size; i++)
+		{
+			auto field = (array->subrecords[i]);
+			if (field->hed->type == espwrd "EDID")
+				EDID = ((char *)field->data);
+			if (field->hed->type == espwrd "FULL")
+				FULL = ((char *)field->data);
+			if (field->hed->type == espwrd "DESC")
+				DESC = ((char *)field->data);
 		}
 	}
 
@@ -74,7 +92,8 @@ namespace dark2
 
 	void Ref::SetData(record *refr)
 	{
-		REFR REFR(refr);
+		REFR = Refr(refr);
+
 		matrix = mat4(1.0);
 
 		unsigned int formIdName = 0;
@@ -108,22 +127,22 @@ namespace dark2
 		{
 			formIdName = *REFR.NAME;
 
-			record *base = esp_brute_record_by_form_id(formIdName);
+			baseObject = esp_brute_record_by_form_id(formIdName);
 
-			Assert(base, "ref cant find name base");
+			Assert(baseObject, "ref cant find name baseObject");
 
-			if (base->hed->type == espwrd "STAT" ||
-				//base->hed->type == espwrd"FURN" ||
-				base->hed->type == espwrd "ALCH" ||
-				base->hed->type == espwrd "CONT" ||
-				base->hed->type == espwrd "ARMO" ||
-				base->hed->type == espwrd "WEAP" ||
-				base->hed->type == espwrd "FLOR" ||
-				base->hed->type == espwrd "MISC")
+			if (baseObject->hed->type == espwrd "STAT" ||
+				//baseObject->hed->type == espwrd"FURN" ||
+				baseObject->hed->type == espwrd "ALCH" ||
+				baseObject->hed->type == espwrd "CONT" ||
+				baseObject->hed->type == espwrd "ARMO" ||
+				baseObject->hed->type == espwrd "WEAP" ||
+				baseObject->hed->type == espwrd "FLOR" ||
+				baseObject->hed->type == espwrd "MISC")
 			{
-				for (int i = 0; i < base->fields.size; i++)
+				for (int i = 0; i < baseObject->fields.size; i++)
 				{
-					subrecord *field = base->fields.subrecords[i];
+					subrecord *field = baseObject->fields.subrecords[i];
 					if (field->hed->type != espwrd "MODL")
 						continue;
 					mesh = Mesh::GetStored(field->data);
@@ -133,7 +152,7 @@ namespace dark2
 						data = "meshes\\" + data;
 						std::transform(data.begin(), data.end(), data.begin(),
 									   [](unsigned char c) { return std::tolower(c); });
-						//printf("stat base has a modl %s\n", data.c_str());
+						//printf("stat baseObject has a modl %s\n", data.c_str());
 						rc *rc = bsa_find_more(data.c_str(), 0x1);
 						if (rc)
 						{
@@ -150,10 +169,15 @@ namespace dark2
 						}
 					}
 				}
+
+				if (baseObject->hed->type == espwrd "WEAP")
+				{
+					WEAP = new Weap(baseObject);
+				}
 			}
-			else if (base->hed->type == espwrd "LIGH")
+			else if (baseObject->hed->type == espwrd "LIGH")
 			{
-				LIGH LIGH(base);
+				Ligh LIGH(baseObject);
 
 				pointlight = new PointLight;
 				scene->Add(pointlight);
@@ -196,5 +220,74 @@ namespace dark2
 			pointlight->matrix = matrix;
 		}
 	}
+
+	float Ref::GetDistance()
+	{
+		float distance = glm::length(vec3(matrix[3]) - camera->pos);
+
+		return distance;
+	}
+
+	bool Ref::DisplayAsItem()
+	{
+		if (GetDistance() > 250)
+		{
+			return false;
+		}
+
+		char *itemName = "Sometihng";
+		if (WEAP)
+		{
+			itemName = WEAP->FULL + 0;
+		}
+
+		vec3 original = vec3(0);
+
+		mat4 model = camera->projection * camera->view * matrix;
+		mat4 projection = frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
+		vec4 viewport(0.0f, 0.0f, width, height);
+
+		vec3 projected = glm::project(original, model, projection, viewport);
+		//vec3 unprojected = glm::unProject(projected, model, projection, viewport);
+
+		ImGui::SetNextWindowPos(ImVec2(width - projected.x, projected.y));
+		ImGui::SetNextWindowSize(ImVec2(400, 300));
+		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar;
+		static bool open = true;
+		//char s[100];
+		ImGui::Begin("##Item", &open, flags);
+		ImGui::PushFont(font2);
+		ImGui::Text(itemName);
+		if (WEAP && WEAP->DESC)
+		{
+			ImGui::TextWrapped(WEAP->DESC);
+		}
+		ImGui::PopFont();
+		ImGui::End();
+		//Vec2 boo(x, y);
+
+		return true;
+	}
+
+	/*
+	Matrix m = _refr->_matrix;
+	m.setTrans(m.getTrans() + Vec3(0, 0, 15 / ONE_SKYRIM_UNIT_IN_CM));
+
+	Vec3 pos = _refr->record->_node->getBound().center() * m;
+
+	const auto inv = camera_->getViewMatrix();
+	const auto pro = camera_->getProjectionMatrix();
+
+	Vec3 proj = pos * inv * pro;
+
+	float x = ((proj.x() / 2 + .5)) * width_ / 2.0f;
+	float y = (1 - (proj.y() / 2 + .5)) * height_ / 2.0f;
+	Vec2 boo(x, y);
+
+	std::string str = "";
+	str = str + "move_item(" + std::to_string(x) + ", " + std::to_string(y) + ");";
+
+	tub_->eval(str);
+	*/
 
 } // namespace dark2

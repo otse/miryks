@@ -118,7 +118,7 @@ int main()
 {
 	using namespace dark2;
 	log_("dark2 loading");
-	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
+	cassert(exists("path to oldrim.txt"), "missing `path to oldrim.txt`");
 	pathToOldrim = fread("path to oldrim.txt");
 	get_plugins()[0] = loadPlugin("Skyrim.esm");
 	printf("loaded skyrim\n");
@@ -133,10 +133,12 @@ int main()
 	viewer_camera = new ViewerCamera;
 	OGLGo();
 	camera = first_person_camera;
+#if 0
 	rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	viewer::view(rc);
+#endif
 	//nif_test();
-	nifp_test();
+	//nifp_test();
 	dungeon = new Level("PadstowDungeon"); // <-- interior to load
 	programLoop();
 	return 1;

@@ -25,22 +25,32 @@ extern "C"
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <gui/extra.h>
 
 using namespace dark2;
 using namespace glm;
 
 GLFWwindow *window;
 
+bool hideDebugGuis = true;
+bool cursorShowing = false;
+
 namespace dark2
 {
+	ImFont *font2;
+
 	void HideCursor()
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		cursorShowing = false;
+		first_person_camera->disabled = false;
 	}
 
 	void ShowCursor()
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		cursorShowing = true;
+		first_person_camera->disabled = true;
 	}
 } // namespace dark2
 
@@ -53,6 +63,14 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 {
 	static bool F3 = false;
 
+	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
+	{
+		hideDebugGuis = !hideDebugGuis;
+		if (!hideDebugGuis)
+			ShowCursor();
+		else
+			HideCursor();
+	}
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 
@@ -65,9 +83,8 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
 	{
-		F3 = !F3;
-		F3 ? ShowCursor() : HideCursor();
-		camera->disabled = F3;
+		if (cursorShowing) HideCursor(); else ShowCursor();
+		camera->disabled = cursorShowing;
 	}
 	if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
@@ -128,8 +145,11 @@ void setupImgui()
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
+	ImFont* font1 = io.Fonts->AddFontDefault();
+	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
+	IM_ASSERT(font != NULL);
+
 	ImGui::StyleColorsDark();
-	//CustomStyle();
 
 	// Setup Platform/Renderer bindings
 	const char *glsl_version = "#version 130";
@@ -137,7 +157,7 @@ void setupImgui()
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
-	io.Fonts->AddFontDefault();
+	
 }
 
 static void glfw_error_callback(int error, const char *description)
@@ -199,10 +219,15 @@ void dark2::doImGui()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	bsa_gui();
-	nifp_gui();
-	esp_gui();
-	opengl_gui();
+	if (!hideDebugGuis)
+	{
+		bsa_gui();
+		nifp_gui();
+		esp_gui();
+		opengl_gui();
+
+		ImGui::ShowDemoWindow();
+	}
 }
 
 void dark2::renderImGui()
@@ -231,7 +256,7 @@ void dark2::programLoop()
 		if ((time - prevTime) > 1.0 || frames == 0)
 		{
 			fps = (double)frames / (time - prevTime);
-			sprintf(title, "dark2 %.0f FPS", fps);
+			sprintf(title, "dark2 %.0f fps - f1 for debug - f3 for mouse", fps);
 			glfwSetWindowTitle(window, title);
 			prevTime = time;
 			frames = 0;
