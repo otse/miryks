@@ -4,6 +4,23 @@
 
 #include "nifp.h"
 
+int nifps = 0;
+struct nifppair nifpmap[1000];
+
+api void nifp_save(void *key, struct nifp *nif) {
+	nif->key = nifps;
+	nifpmap[nifps].key = key;
+	nifpmap[nifps].value = nif;
+	nifps++;
+}
+
+api struct nifp *nifp_saved(void *key) {
+	for (int i = 0; i < nifps; i++)
+	if (nifpmap[i].key == key)
+	return nifpmap[i].value;
+	return NULL;
+}
+
 #define Hedr   nif->hdr
 #define Buf    nif->buf
 #define Pos    nif->pos
@@ -15,13 +32,13 @@
 api char *nifp_get_string(struct nifp *nif, int i) {
 	if (i == -1)
 	return NULL;
-	return Hedr.strings[i];
+	return Hedr->strings[i];
 }
 
 api char *nifp_get_block_type(struct nifp *nif, int i) {
 	if (i == -1)
 	return NULL;
-	return Hedr.block_types[Hedr.block_type_index[i]];
+	return Hedr->block_types[Hedr->block_type_index[i]];
 }
 
 api void *nifp_get_block(struct nifp *nif, int i) {
@@ -34,6 +51,7 @@ api struct nifp *malloc_nifp() {
 	struct nifp *nif = malloc(sizeof(struct nifp));
 	Pos = 0;
 	Buf = 0;
+	nif->hdr = malloc(sizeof(struct nifp_hedr));
 	return nif;
 }
 
@@ -66,8 +84,8 @@ static void hedr_read_header_string(struct nifp *nif) {
 	char *string = malloc(sizeof(char) * n);
 	strncpy(string, Buf, n);
 	string[n - 1] = '\0';
-	Hedr.header_string = string;
-	Hedr.version = string + 30;
+	Hedr->header_string = string;
+	Hedr->version = string + 30;
 	Pos += n;
 }
 
@@ -89,18 +107,18 @@ static void read_sized_strings(struct nifp *nif, char ***dest, int count) {
 
 api void nifp_read_header(struct nifp *nif) {
 	hedr_read_header_string(nif);
-	read_value(nif, &Hedr.unknown_1, 17);
-	read_short_string(nif, &Hedr.author);
-	read_short_string(nif, &Hedr.process_script);
-	read_short_string(nif, &Hedr.export_script);
-	read_value(nif, &Hedr.num_block_types, 2);
-	read_sized_strings(nif, &Hedr.block_types, Hedr.num_block_types);
-	read_array(nif, &Hedr.block_type_index, sizeof(unsigned short) * Hedr.num_blocks);
-	read_array(nif, &Hedr.block_sizes,      sizeof(unsigned int)   * Hedr.num_blocks);
-	read_value(nif, &Hedr.num_strings, 8);
-	read_sized_strings(nif, &Hedr.strings, Hedr.num_strings);
-	read_value(nif, &Hedr.num_groups, 4);
-	Hedr.end = Pos;
+	read_value(nif, &Hedr->unknown_1, 17);
+	read_short_string(nif, &Hedr->author);
+	read_short_string(nif, &Hedr->process_script);
+	read_short_string(nif, &Hedr->export_script);
+	read_value(nif, &Hedr->num_block_types, 2);
+	read_sized_strings(nif, &Hedr->block_types, Hedr->num_block_types);
+	read_array(nif, &Hedr->block_type_index, sizeof(unsigned short) * Hedr->num_blocks);
+	read_array(nif, &Hedr->block_sizes,      sizeof(unsigned int)   * Hedr->num_blocks);
+	read_value(nif, &Hedr->num_strings, 8);
+	read_sized_strings(nif, &Hedr->strings, Hedr->num_strings);
+	read_value(nif, &Hedr->num_groups, 4);
+	Hedr->end = Pos;
 }
 
 // read blockz
@@ -123,20 +141,20 @@ api void nifp_read_blocks(struct nifp *nif)
 {
 	printf("nifp path %s\n", nif->path);
 	unsigned int pos = Pos;
-	Blocks = malloc(sizeof(void *) * Hedr.num_blocks);
-	for (unsigned int i = 0; i < Hedr.num_blocks; i++)
+	Blocks = malloc(sizeof(void *) * Hedr->num_blocks);
+	for (unsigned int i = 0; i < Hedr->num_blocks; i++)
 	{
 	Blocks[i] = NULL;
 	// printf("nifp block begin at %i %04x\n", Pos, Pos);
 	read_block(nif, i);
-	pos += Hedr.block_sizes[i];
+	pos += Hedr->block_sizes[i];
 	Pos = pos;
 	}
 }
 
 void read_block(struct nifp *nif, int n)
 {
-	const char *block_type = Hedr.block_types[Hedr.block_type_index[n]];
+	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
 	if (0) ;
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) block = read_ni_node(nif, n);

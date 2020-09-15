@@ -29,19 +29,19 @@ header string: %s\
 \nnum groups: %u\
 \ngroups\
 ",
-Hedr.header_string,
-Hedr.version,
-Hedr.endian_type,
-Hedr.user_value,
-Hedr.num_blocks,
-Hedr.user_value_2,
-Hedr.author,
-Hedr.process_script,
-Hedr.export_script,
-Hedr.num_block_types,
-Hedr.num_strings,
-Hedr.max_string_length,
-Hedr.num_groups
+Hedr->header_string,
+Hedr->version,
+Hedr->endian_type,
+Hedr->user_value,
+Hedr->num_blocks,
+Hedr->user_value_2,
+Hedr->author,
+Hedr->process_script,
+Hedr->export_script,
+Hedr->num_block_types,
+Hedr->num_strings,
+Hedr->max_string_length,
+Hedr->num_groups
 );
 }
 
@@ -256,7 +256,7 @@ api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 {
 #define type(x) 0 == strcmp(block_type, x)
 	s[0] = '\0';
-	const char *block_type = Hedr.block_types[Hedr.block_type_index[n]];
+	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	if (0);
 	else if (type(NI_NODE)) print_ni_node_pointer(nif, n, s);
 	else if (type(BS_LEAF_ANIM_NODE)) print_ni_node_pointer(nif, n, s);

@@ -3,6 +3,8 @@
 
 #define api
 
+// wrote for dark2
+
 #define BSA_MAX_SEARCHES 60
 
 struct bsa_hedr

@@ -1,6 +1,7 @@
 #include "putc.h"
 
-#include "nifp.h"
+#include <nifp/nifp.h>
+
 #include "bsa.h"
 
 void test_callback(struct nifprd *, int, int);
@@ -17,14 +18,14 @@ void nifp_test()
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;
 	nifp_read(bucket);
-	//nif_save(rc, bucket);
+	nifp_save(rc, bucket);
 	struct nifprd *rd = malloc_nifprd();
 	rd->data = 0x1; // like a Mesh instance
     rd->other = test_callback;
 	nifp_rd(bucket, rd, NULL);
     char str[600];
     nifp_print_hedr(bucket, str);
-	printf("nifp hedr end %i\n", bucket->hdr.end);
+	printf("nifp hedr end %i\n", bucket->hdr->end);
     //printf("nifptest ok, hedr: %s\n", str);
 }
 

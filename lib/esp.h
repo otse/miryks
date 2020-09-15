@@ -1,7 +1,9 @@
-#ifndef C_ESP_H
-#define C_ESP_H
+#ifndef ESP_H
+#define ESP_H
 
 #define api
+
+// wrote for dark2
 
 struct form_id;
 struct record;

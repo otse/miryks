@@ -29,10 +29,10 @@ api void free_nifrd(struct nifprd **p) {
 
 api void nifp_rd(struct nifp *nif, struct nifprd *rd) {
 	// printf("nif rd\n");
-	rd->skips = malloc(sizeof(int) * Hedr.num_blocks);
-	memset(rd->skips, 0, sizeof(int) * Hedr.num_blocks);
+	rd->skips = malloc(sizeof(int) * Hedr->num_blocks);
+	memset(rd->skips, 0, sizeof(int) * Hedr->num_blocks);
 	rd->nif = nif;
-	for (int n = 0; n < Hedr.num_blocks; n++)
+	for (int n = 0; n < Hedr->num_blocks; n++)
 	{
 	visit(rd, -1, n);
 	}
@@ -49,7 +49,7 @@ static void visit(struct nifprd *rd, int p, int c)
 	return;
 	rd->parent = p; rd->current = c;
 	// skip
-	const char *block_type = Hedr.block_types[Hedr.block_type_index[c]];
+	const char *block_type = Hedr->block_types[Hedr->block_type_index[c]];
 	if (0) ;
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{

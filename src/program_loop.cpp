@@ -3,7 +3,7 @@
 extern "C"
 {
 #include <bsa.h>
-#include <nif.h>
+#include <nifp/nifp.h>
 #include <esp.h>
 }
 
@@ -200,7 +200,7 @@ void dark2::doImGui()
 	ImGui::NewFrame();
 
 	bsa_gui();
-	nif_gui();
+	nifp_gui();
 	esp_gui();
 	opengl_gui();
 }

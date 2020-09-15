@@ -1,44 +1,26 @@
-#ifndef C_NIFP_H
-#define C_NIFP_H
+#ifndef NIFP_H
+#define NIFP_H
 
 #define api
 
-// an adaptation of nif.c to use pointers
+// wrote for dark2
 
 typedef int ni_ref;
 
-#pragma pack(push, 1)
-
-struct nifp_hedr
-{
-	char *header_string;
-	char *version;
-	unsigned int unknown_1;
-	unsigned char endian_type;
-	unsigned int user_value, num_blocks, user_value_2;
-	char *author, *process_script, *export_script;
-	unsigned short num_block_types;
-	char **block_types;
-	unsigned short *block_type_index;
-	unsigned int *block_sizes, num_strings, max_string_length;
-	char **strings;
-	unsigned int num_groups, *groups;
-	int end;
-};
-
-#pragma pack(pop)
+struct nifp_hedr;
 
 struct nifp
 {
-	int n;
+	int key;
 	const char *path;
 	const unsigned char *buf;
 	unsigned pos;
-	struct nifp_hedr hdr;
+	struct nifp_hedr *hdr;
 	void **blocks;
 };
 
-struct nifprd {
+struct nifprd
+{
 	int x;
 	int *skips;
 	struct nifp *nif;
@@ -52,8 +34,6 @@ struct nifprd {
 	void(* bs_shader_texture_set)(struct nifprd *, struct bs_shader_texture_set *);
 	void(* ni_alpha_property)(struct nifprd *, struct ni_alpha_property *);
 };
-
-extern int nifs;
 
 void nifp_gui();
 void nifp_test();
@@ -77,6 +57,14 @@ api void *nifp_get_block(struct nifp *, int);
 
 api void nifp_print_hedr(struct nifp *, char *);
 api void nifp_print_block(struct nifp *, int, char [1000]);
+
+struct nifppair
+{
+	void *key;
+	struct nifp *value;
+};
+extern int nifps;
+extern struct nifppair nifpmap[1000];
 
 ///
 
@@ -117,6 +105,23 @@ struct vec_4p{ float x, y, z, w; };
 struct mat_3p{ float n[9]; };
 struct mat_4p{ float n[16]; };
 struct ushort_3p{ unsigned short x, y, z; };
+
+struct nifp_hedr
+{
+	char *header_string;
+	char *version;
+	unsigned int unknown_1;
+	unsigned char endian_type;
+	unsigned int user_value, num_blocks, user_value_2;
+	char *author, *process_script, *export_script;
+	unsigned short num_block_types;
+	char **block_types;
+	unsigned short *block_type_index;
+	unsigned int *block_sizes, num_strings, max_string_length;
+	char **strings;
+	unsigned int num_groups, *groups;
+	int end;
+};
 
 struct ni_common_layout_pointer {
 	struct
