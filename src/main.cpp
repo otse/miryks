@@ -121,6 +121,7 @@ int main()
 	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
 	pathToOldrim = fread("path to oldrim.txt");
 	get_plugins()[0] = loadPlugin("Skyrim.esm");
+	printf("loaded skyrim\n");
 	get_plugins()[1] = loadPlugin("Padstow.esp");
 	get_archives()[0] = loadArchive("Skyrim - Meshes.bsa");
 	get_archives()[1] = loadArchive("Skyrim - Textures.bsa");

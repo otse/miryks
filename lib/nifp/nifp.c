@@ -139,7 +139,7 @@ static void *read_ni_alpha_property(nifpr);
 
 api void nifp_read_blocks(struct nifp *nif)
 {
-	printf("nifp path %s\n", nif->path);
+	// printf("nifp path %s\n", nif->path);
 	unsigned int pos = Pos;
 	Blocks = malloc(sizeof(void *) * Hedr->num_blocks);
 	for (unsigned int i = 0; i < Hedr->num_blocks; i++)
@@ -195,7 +195,7 @@ static void sink_val(struct nifp *nif, char *block_pointer, int src, int size) {
 
 void *read_ni_common_layout(nifpr)
 {
-	printf("read nifp block %i\n", n);
+	// printf("read nifp commons %i\n", n);
 	struct ni_common_layout_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_common_layout_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_common_layout_pointer));
@@ -221,7 +221,7 @@ void *read_ni_node(nifpr)
 
 void *read_ni_tri_shape(nifpr)
 {
-	printf("read ni tri shape pointer\n");
+	// printf("read ni tri shape pointer\n");
 	struct ni_tri_shape_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_tri_shape_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_tri_shape_pointer));
@@ -234,7 +234,7 @@ void *read_ni_tri_shape(nifpr)
 
 void *read_ni_tri_shape_data(nifpr)
 {
-	printf("read ni tri shape data\n");
+	// printf("read ni tri shape data\n");
 	struct ni_tri_shape_data_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_tri_shape_data_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_tri_shape_data_pointer));
@@ -303,17 +303,13 @@ void *read_bs_shader_texture_set(nifpr)
 
 void *read_ni_alpha_property(nifpr)
 {
-	printf("nifp exp\n");
+	// printf("nifp exp\n");
 	struct ni_alpha_property_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_alpha_property_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_alpha_property_pointer));
-	//int of = offsetof(struct ni_alpha_property_pointer, A);
-	//printf("offsetof(struct ni_alpha_property_pointer, A) %i\n", of);
 	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, A, 8);
-	printf("fields from A %i %u\n", block_pointer->A->name, block_pointer->A->num_extra_data_list);
 	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, extra_data_list, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
 	SinkVal(nif, block_pointer, struct ni_alpha_property_pointer, C, 7);
-	printf("fields from B %i %hu %u\n", block_pointer->C->controller, block_pointer->C->flags, block_pointer->C->treshold);
 	sizeof(struct ni_alpha_property_pointer);
 	sizeof(((struct ni_alpha_property_pointer *)0)->C);
 	return block_pointer;
