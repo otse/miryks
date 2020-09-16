@@ -134,7 +134,7 @@ void Scene::BindLights(Shader *shader)
 		if (i < pointlights.size())
 			l = pointlights[i];
 
-		string index = "pointLights[" + std::to_string(i) + "]";
+		std::string index = "pointLights[" + std::to_string(i) + "]";
 
 		mat3 package;
 		package[0] = l->position_;

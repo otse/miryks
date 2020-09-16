@@ -6,7 +6,7 @@
 #include <opengl/camera.h>
 #include <opengl/scene.h>
 
-#include "files.h"
+#include <dark2/files.h>
 
 #include <glad/glad.h>
 
@@ -27,7 +27,7 @@ struct Shader
 	ShaderSource *const src;
 	GLuint id;
 
-	string header;
+	std::string header;
 
 	Shader(ShaderSource *);
 
@@ -46,6 +46,6 @@ struct Shader
 	void SetMat4(const char *, const mat4 &) const;
 
 private:
-	void checkCompileErrors(GLuint, string);
+	void checkCompileErrors(GLuint, std::string);
 };
 #endif

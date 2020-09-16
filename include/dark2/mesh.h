@@ -1,4 +1,4 @@
-#include <dark2.h>
+#include <dark2/dark2.h>
 
 extern "C"
 {

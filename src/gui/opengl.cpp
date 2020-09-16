@@ -1,11 +1,11 @@
-#include "dark2.h"
+#include <dark2/dark2.h>
 
 #include "opengl/group.h"
 #include "opengl/geometry.h"
 #include "opengl/camera.h"
 #include "opengl/shader.h"
 
-#include <glm/gtx/string_cast.hpp>
+//#include <glm/gtx/string_cast.hpp>
 #include <sstream>
 #include <imgui.h>
 
@@ -13,10 +13,10 @@
 
 using namespace dark2;
 
-static stringstream ss;
+static std::stringstream ss;
 
 #define cls           \
-	ss.str(string()); \
+	ss.str(std::string()); \
 	ss.clear();
 
 void opengl_gui()
@@ -55,7 +55,7 @@ void opengl_gui()
 		}
 		if (ImGui::BeginTabItem("camera"))
 		{
-			ss << "pos: " << glm::to_string(camera->view);
+			//ss << "pos: " << glm::to_string(camera->view);
 			ImGui::TextWrapped(ss.str().c_str());
 			cls;
 			ImGui::EndTabItem();

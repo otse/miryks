@@ -14,7 +14,7 @@ Shader *Shader::active = nullptr;
 #include <opengl/camera.h>
 #include <opengl/scene.h>
 
-#include "files.h"
+#include <dark2/files.h>
 
 #include <glad/glad.h>
 
@@ -132,7 +132,7 @@ void Shader::checkCompileErrors(GLuint shader, std::string type)
 		if (!success)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			log_("glGetShaderInfoLog for ", type, "\n", infoLog, "\n");
+			printf("glGetShaderInfoLog for ", type, "\n", infoLog, "\n");
 		}
 	}
 	else
@@ -141,7 +141,7 @@ void Shader::checkCompileErrors(GLuint shader, std::string type)
 		if (!success)
 		{
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			log_("glGetProgramInfoLog for ", type, "\n", infoLog, "\n");
+			printf("glGetProgramInfoLog for ", type, "\n", infoLog, "\n");
 		}
 	}
 }

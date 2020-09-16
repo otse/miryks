@@ -1,9 +1,8 @@
 #include <opengl/camera.h>
 
-#include "dark2.h"
+#include <dark2/dark2.h>
 
 #include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/string_cast.hpp>
 
 Camera::Camera()
 {

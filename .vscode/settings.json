@@ -80,6 +80,7 @@
         "xtr1common": "cpp",
         "arc": "cpp",
         "sstream": "cpp",
-        "renderable": "cpp"
+        "renderable": "cpp",
+        "libs": "cpp"
     }
 }

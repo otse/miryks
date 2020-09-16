@@ -1,14 +1,7 @@
-#include <dark2.h>
-
-extern "C"
-{
-#include <bsa.h>
-#include <nifp/nifp.h>
-#include <esp.h>
-}
-
-#include <mesh.h>
-#include <level.h>
+#include <dark2/dark2.h>
+#include <dark2/mesh.h>
+#include <dark2/level.h>
+#include <dark2/libs>
 
 #include <opengl/camera.h>
 #include <opengl/scene.h>
@@ -195,7 +188,7 @@ void dark2::programGo()
 	int er = gladLoadGL();
 	if (er == 0)
 	{
-		log_("glad");
+		printf("glad");
 		exit(EXIT_FAILURE);
 	}
 

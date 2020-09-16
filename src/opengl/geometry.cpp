@@ -46,7 +46,7 @@ Geometry::Geometry()
 Geometry::~Geometry()
 {
 	num--;
-	log_("delete geometry");
+	printf("delete geometry");
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);

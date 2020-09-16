@@ -1,19 +1,12 @@
-#include "ref.h"
-#include "mesh.h"
+#include <dark2/ref.h>
+#include <dark2/mesh.h>
+#include <dark2/libs>
+#include <dark2/files.h>
 
 #include <algorithm>
 #include <cctype>
 #include <string>
 
-extern "C"
-{
-//#include "putc.h"
-#include "bsa.h"
-#include <nifp/nifp.h>
-#include "esp.h"
-}
-
-#include "files.h"
 
 #include <opengl/renderable.h>
 #include <opengl/texture.h>
@@ -129,7 +122,7 @@ namespace dark2
 
 			baseObject = esp_brute_record_by_form_id(formIdName);
 
-			Assert(baseObject, "ref cant find name baseObject");
+			cassert(baseObject, "ref cant find name baseObject");
 
 			if (baseObject->hed->type == espwrd "STAT" ||
 				//baseObject->hed->type == espwrd"FURN" ||

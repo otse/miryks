@@ -1,11 +1,7 @@
-#include <dark2.h>
+#include <dark2/dark2.h>
+#include <dark2/files.h>
 
-extern "C"
-{
-#include <nifp/nifp.h>
-}
-
-#include <files.h>
+#include <dark2/libs>
 
 #include <sstream>
 #include <imgui.h>
@@ -13,12 +9,12 @@ extern "C"
 #define NIF_GUI "nifs"
 
 #define cls           \
-	ss.str(string()); \
+	ss.str(std::string()); \
 	ss.clear();
 
 using namespace dark2;
 
-static stringstream ss;
+static std::stringstream ss;
 
 void nifp_gui()
 {
@@ -95,7 +91,7 @@ void nifp_gui()
 				{
 					//ni_block_t *block = &nif->blocks[i];
 					const char *block_type = nif->hdr->block_types[nif->hdr->block_type_index[i]];
-					const char *fmt = to_string(i).c_str();
+					const char *fmt = std::to_string(i).c_str();
 					char buf[100];
 					sprintf(buf, "%i %s", i, block_type);
 					if (ImGui::TreeNode(buf))

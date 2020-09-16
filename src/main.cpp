@@ -1,4 +1,4 @@
-#include "dark2.h"
+#include <dark2/dark2.h>
 
 extern "C"
 {
@@ -16,10 +16,10 @@ extern "C"
 #include <opengl/geometry.h>
 #include <opengl/material.h>
 
-#include "files.h"
+#include <dark2/files.h>
 
-#include "level.h"
-#include "mesh.h"
+#include <dark2/level.h>
+#include <dark2/mesh.h>
 
 namespace dark2
 {
@@ -117,7 +117,7 @@ namespace dark2
 int main()
 {
 	using namespace dark2;
-	log_("dark2 loading");
+	printf("loading\n");
 	cassert(exists("path to oldrim.txt"), "missing `path to oldrim.txt`");
 	pathToOldrim = fread("path to oldrim.txt");
 	get_plugins()[0] = loadPlugin("Skyrim.esm");

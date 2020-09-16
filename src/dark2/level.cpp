@@ -1,24 +1,16 @@
-#include "level.h"
-#include "mesh.h"
+#include <dark2/level.h>
+#include <dark2/mesh.h>
+#include <dark2/libs>
 
 #include <algorithm>
 #include <cctype>
 #include <string>
 
-extern "C"
-{
-#include "putc.h"
-#include "bsa.h"
-#include <nifp/nifp.h>
-#include "esp.h"
-}
-
-#include "opengl/renderable.h"
-#include "opengl/texture.h"
-#include "opengl/camera.h"
-#include "opengl/pointlight.h"
-#include "opengl/types.h"
-
+#include <opengl/renderable.h>
+#include <opengl/texture.h>
+#include <opengl/camera.h>
+#include <opengl/pointlight.h>
+#include <opengl/types.h>
 
 namespace dark2
 {

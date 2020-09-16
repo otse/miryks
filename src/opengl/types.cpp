@@ -24,21 +24,21 @@ void detectGlfwError()
 	const char *description;
 	int code = glfwGetError(&description);
 	if (description)
-		log_("code ", code, "description ", description);
+		printf("code ", code, "description ", description);
 }
 
-void detectOpenGLError(const string where)
+void detectOpenGLError(const std::string where)
 {
 	GLenum err;
 	while ((err = glGetError()) != GL_NO_ERROR)
 	{
-		log_("ogl err ", err, " after ", where);
+		printf("ogl err ", err, " after ", where);
 	}
 }
 
 void OGLGo()
 {
-	log_("OGL go");
+	printf("OGL go\n");
 
 	camera = new Camera;
 	scene = new Scene;

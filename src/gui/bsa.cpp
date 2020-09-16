@@ -1,5 +1,5 @@
-#include "dark2.h"
-#include "files.h"
+#include <dark2/dark2.h>
+#include <dark2/files.h>
 
 extern "C"
 {
@@ -19,7 +19,7 @@ using namespace dark2;
 	ss.clear();
 
 static bool good = true;
-static stringstream ss;
+static std::stringstream ss;
 static char hedrstr[600] = { "not loaded" };
 static bsa *bsa = NULL;
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dark2.h"
+#include <dark2/dark2.h>
 
 #include "ref.h"
 

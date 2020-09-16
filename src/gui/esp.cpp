@@ -1,5 +1,5 @@
-#include "dark2.h"
-#include "files.h"
+#include <dark2/dark2.h>
+#include <dark2/files.h>
 
 extern "C"
 {
@@ -14,7 +14,7 @@ using namespace dark2;
 
 #define ESP_GUI "esp"
 
-static stringstream ss;
+static std::stringstream ss;
 
 static esp *plugin = NULL;
 

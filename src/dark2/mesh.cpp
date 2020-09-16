@@ -1,4 +1,4 @@
-#include "mesh.h"
+#include <dark2/mesh.h>
 
 #include <opengl/shader.h>
 #include <opengl/texture.h>
@@ -152,7 +152,7 @@ namespace dark2
 		Geometry *geometry = group->geometry;
 		for (int i = 0; i < block->A->num_textures; i++)
 		{
-			string path = std::string(block->textures[i]);
+			std::string path = std::string(block->textures[i]);
 			if (path.empty())
 				continue;
 			if (path.find("skyrimhd\\build\\pc\\data\\") != std::string::npos)
