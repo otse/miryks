@@ -235,12 +235,12 @@ void main()
 		normal = normal * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
 	}
 
-	float specularStrength = glossiness / 999;
+	float specularStrength = 0;// = glossiness / 999;
 
 	#ifndef DONT_USE_SPECULAR_MAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );
-		specularStrength = texelSpecular.a * 0.5;
+		specularStrength = texelSpecular.a * 0.4;
 
 	#endif
 
@@ -288,7 +288,7 @@ void main()
 
 		vec3 dust = vec3(0.15, 0.15, 0.15);
 		
-		if (normalDust.z > 0.8) {
+		if (normalDust.z > 0.88) {
 			diffuseColor.rgb = mix(dust, diffuseColor.rgb, 0.1);
 			specularStrength /= 10.0;
 		}
@@ -298,9 +298,10 @@ void main()
 	BlinnPhongMaterial material;
 	material.diffuseColor = diffuseColor.rgb;
 	//material.specularColor = vec3(17.0/255.0, 17.0/255.0, 17.0/255.0);
-	material.specularColor = specular;
+	material.specularColor = specular + vec3(0.0, 0.1, 0.5);
+	material.specularColor /= 2.0;
 	//material.specularColor = vec3(127.0/255.0, 127.0/255.0, 127.0/255.0);
-	material.specularShininess = glossiness / 1200 * 100; // shininess
+	material.specularShininess = glossiness / 3000 * 100; // shininess
 	material.specularStrength = specularStrength;
 
 	GeometricContext geometry;

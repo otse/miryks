@@ -1,13 +1,14 @@
-#include <dark2/mesh.h>
+#include <gloom/mesh.h>
 
 #include <opengl/shader.h>
 #include <opengl/texture.h>
 #include <opengl/types.h>
 
-namespace dark2
+namespace gloom
 {
 	Mesh::Mesh()
 	{
+		aabb = AABB(0);
 		baseGroup = new Group();
 		lastGroup = baseGroup;
 	}
@@ -36,6 +37,7 @@ namespace dark2
 
 	void Mesh::Construct(nifp *bucket)
 	{
+		aabb = AABB(0);
 		nifprd *rd = malloc_nifprd();
 		rd->nif = bucket;
 		rd->data = this;
@@ -78,7 +80,7 @@ namespace dark2
 		// printf("ni node callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
-		//matrix_from_common(group, block->common);
+		matrix_from_common(group, block->common);
 	}
 
 	void ni_tri_shape_callback(nifprd *rd, ni_tri_shape_pointer *block)
@@ -124,8 +126,9 @@ namespace dark2
 			if (block->G->has_vertex_colors)
 				geometry->vertices[i].color = *cast_vec_4((float *)&block->vertex_colors[i]);
 		}
-
 		geometry->SetupMesh();
+		AABB aabb = AABB::mult(geometry->aabb, group->matrix);
+		mesh->aabb.extend(aabb);
 	}
 
 	void bs_lighting_shader_property_callback(nifprd *rd, bs_lighting_shader_property_pointer *block)
@@ -162,10 +165,7 @@ namespace dark2
 			if (i == 1)
 				geometry->material->normalMap = GetProduceTexture(block->textures[i]);
 			if (i == 2)
-			{
-				printf("glowmap %s\n", block->textures[i]);
 				geometry->material->glowMap = GetProduceTexture(block->textures[i]);
-			}
 		}
 	}
 
@@ -180,4 +180,4 @@ namespace dark2
 			geometry->material->treshold = block->C->treshold / 255.f;
 		}
 	}
-} // namespace dark2
+} // namespace gloom

@@ -5,7 +5,6 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-
 struct Camera {
 	Camera();
 
@@ -13,6 +12,8 @@ struct Camera {
 	mat4 view, projection;
 	float fzoom;
 	bool disabled;
+
+	static double prev[2];
 
 	virtual void Mouse(float, float) {};
 	virtual void Update(float) {};

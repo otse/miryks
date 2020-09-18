@@ -1,7 +1,7 @@
-#include <dark2/dark2.h>
-#include <dark2/mesh.h>
-#include <dark2/level.h>
-#include <dark2/libs>
+#include <gloom/dark2.h>
+#include <gloom/mesh.h>
+#include <gloom/level.h>
+#include <gloom/libs>
 
 #include <opengl/camera.h>
 #include <opengl/scene.h>
@@ -20,7 +20,7 @@
 #include <imgui_impl_opengl3.h>
 #include <gui/extra.h>
 
-using namespace dark2;
+using namespace gloom;
 using namespace glm;
 
 GLFWwindow *window;
@@ -28,13 +28,14 @@ GLFWwindow *window;
 bool hideDebugGuis = true;
 bool cursorShowing = false;
 
-namespace dark2
+namespace gloom
 {
 	ImFont *font2;
 
 	void HideCursor()
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetCursorPos(window, Camera::prev[0], Camera::prev[1]);
 		cursorShowing = false;
 		first_person_camera->disabled = false;
 	}
@@ -45,7 +46,7 @@ namespace dark2
 		cursorShowing = true;
 		first_person_camera->disabled = true;
 	}
-} // namespace dark2
+} // namespace gloom
 
 static void error_callback(int error, const char *description)
 {
@@ -115,18 +116,18 @@ static void doKeys()
 
 void cursor_pos_callback(GLFWwindow *window, double x, double y)
 {
-	static double xx = x;
-	static double yy = y;
-	camera->Mouse(x - xx, yy - y);
-	xx = x;
-	yy = y;
+	static double x2 = x;
+	static double y2 = y;
+	camera->Mouse(x - x2, y - y2);
+	x2 = x;
+	y2 = y;
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	glViewport(0, 0, width, height);
-	dark2::width = width;
-	dark2::height = height;
+	gloom::width = width;
+	gloom::height = height;
 }
 
 void setupImgui()
@@ -140,7 +141,7 @@ void setupImgui()
 
 	ImFont* font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
-	IM_ASSERT(font != NULL);
+	IM_ASSERT(font2 != NULL);
 
 	ImGui::StyleColorsDark();
 
@@ -158,7 +159,7 @@ static void glfw_error_callback(int error, const char *description)
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-void dark2::programGo()
+void gloom::programGo()
 {
 	glfwSetErrorCallback(glfw_error_callback);
 
@@ -206,7 +207,7 @@ void dark2::programGo()
 	glfwWindowHint(GLFW_SAMPLES, 8);
 }
 
-void dark2::doImGui()
+void gloom::doImGui()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -223,13 +224,13 @@ void dark2::doImGui()
 	}
 }
 
-void dark2::renderImGui()
+void gloom::renderImGui()
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void dark2::programLoop()
+void gloom::programLoop()
 {
 	render_target = new RenderTarget(width, height);
 	RTQuad quad;
@@ -249,7 +250,7 @@ void dark2::programLoop()
 		if ((time - prevTime) > 1.0 || frames == 0)
 		{
 			fps = (double)frames / (time - prevTime);
-			sprintf(title, "dark2 %.0f fps - f1 for debug - f3 for mouse", fps);
+			sprintf(title, "gloom %.0f fps - f1 for debug - f3 for mouse", fps);
 			glfwSetWindowTitle(window, title);
 			prevTime = time;
 			frames = 0;

@@ -6,7 +6,7 @@
 #include <opengl/camera.h>
 #include <opengl/scene.h>
 
-#include <dark2/files.h>
+#include <gloom/files.h>
 
 #include <glad/glad.h>
 

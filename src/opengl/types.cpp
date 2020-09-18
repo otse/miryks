@@ -36,10 +36,8 @@ void detectOpenGLError(const std::string where)
 	}
 }
 
-void OGLGo()
+void openglScene()
 {
-	printf("OGL go\n");
-
 	camera = new Camera;
 	scene = new Scene;
 

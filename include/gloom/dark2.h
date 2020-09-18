@@ -1,5 +1,5 @@
-#ifndef DARK2_H
-#define DARK2_H
+#ifndef GLOOM_DARK2_H
+#define GLOOM_DARK2_H
 
 #define ONE_SKYRIM_UNIT_IN_CM 1.428
 
@@ -15,10 +15,11 @@ struct nifp;
 struct esp;
 struct bsa;
 
-namespace dark2
+namespace gloom
 {
 	class Level;
 	class Mesh;
+	class Object;
 
 	namespace viewer
 	{
@@ -62,7 +63,7 @@ namespace dark2
 	mat3 *cast_mat_3(float *f);
 	mat4 *cast_mat_4(float *f);
 
-} // namespace dark2
+} // namespace gloom
 
 #define READ_BSA_RESOURCE "Load"
 #define VIEW_NIF "View"

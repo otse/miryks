@@ -2,7 +2,7 @@
 
 #include <imgui.h>
 
-namespace dark2
+namespace gloom
 {
     extern ImFont *font2;
 }

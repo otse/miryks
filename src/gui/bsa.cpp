@@ -1,5 +1,5 @@
-#include <dark2/dark2.h>
-#include <dark2/files.h>
+#include <gloom/dark2.h>
+#include <gloom/files.h>
 
 extern "C"
 {
@@ -7,7 +7,7 @@ extern "C"
 #include "bsa.h"
 }
 
-using namespace dark2;
+using namespace gloom;
 
 #include <sstream>
 #include <imgui.h>

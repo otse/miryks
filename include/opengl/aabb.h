@@ -35,7 +35,8 @@ struct AABB
 
 	bool contains_vec(const vec3 &v) const;
 	float radius2() const;
-
+	float volume();
+	
 	void geometrize();
 	void draw(const mat4 &);
 	

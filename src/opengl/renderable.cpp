@@ -5,8 +5,6 @@
 #include <opengl/material.h>
 #include <opengl/shader.h>
 
-const bool DRAW_BOUNDS = false;
-
 Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)
 {
 	Separate();
@@ -43,7 +41,7 @@ void Renderable::DrawClassic()
 {
 	group->DrawClassic(matrix);
 
-	if (DRAW_BOUNDS)
+	if (true)
 	{
 		aabb.draw(mat4(1.0));
 	}
@@ -59,7 +57,7 @@ RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), ren
 
 	aabb = AABB::mult(aabb, matrix);
 
-	//if (DRAW_BOUNDS)
+	if (true)
 	{
 		aabb.geometrize();
 		obb.geometrize();
@@ -70,10 +68,10 @@ void RenderItem::Draw()
 {
 	group->Draw(renderable->matrix);
 
-	if (renderSettings.axisAlignedBoundingBoxes)
+	if (renderSettings.axisAlignedBoundingBoxes && aabb.volume() <= renderSettings.maximumBoundingVolume)
 		aabb.draw(mat4(1.0));
 
-	if (renderSettings.orientedBoundingBoxes)
+	if (renderSettings.orientedBoundingBoxes && aabb.volume() <= renderSettings.maximumBoundingVolume)
 		obb.draw(renderable->matrix * group->matrixWorld);
 }
 

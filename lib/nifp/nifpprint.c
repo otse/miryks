@@ -1,6 +1,7 @@
 #include "putc.h"
 
 #include "nifp.h"
+#include "nitypes.h"
 
 #define Hedr   nif->hdr
 #define Blocks nif->blocks

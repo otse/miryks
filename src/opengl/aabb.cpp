@@ -111,6 +111,13 @@ bool AABB::contains_vec(const vec3 &v) const
 		   v.z >= min.z && v.z <= max.z;
 }
 
+float AABB::volume()
+{
+	vec3 size = diagional();
+
+	return size.x * size.y * size.z;
+}
+
 void AABB::geometrize()
 {
 	if (geometry)
@@ -130,9 +137,9 @@ void AABB::geometrize()
 		vec3(min.x, max.y, min.z), // 2 D
 		vec3(min.x, min.y, max.z), // 3 B
 
-		vec3(max.x, max.y, max.z),  // 4 E
-		vec3(min.x, max.y, max.z),  // 5 G
-		vec3(max.x, min.y, max.z),  // 6 H
+		vec3(max.x, max.y, max.z),	// 4 E
+		vec3(min.x, max.y, max.z),	// 5 G
+		vec3(max.x, min.y, max.z),	// 6 H
 		vec3(max.x, max.y, min.z)}; // 7 F
 
 	/*GLushort*/ std::vector<GLuint> elements = {
@@ -168,10 +175,6 @@ void AABB::draw(const mat4 &matrix)
 {
 	if (!geometry)
 		return;
-	vec3 size = diagional();
-
-	float volume = size.x * size.y * size.z;
-
-	if (volume < 512000)
-		geometry->Draw(matrix);
+		
+	geometry->Draw(matrix);
 }

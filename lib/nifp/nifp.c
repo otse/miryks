@@ -3,6 +3,7 @@
 #include "putc.h"
 
 #include "nifp.h"
+#include "nitypes.h"
 
 int nifps = 0;
 struct nifppair nifpmap[1000];
@@ -89,14 +90,14 @@ static void hedr_read_header_string(struct nifp *nif) {
 	Pos += n;
 }
 
-static void read_value(struct nifp *nif, void *dest, int size) {
+static void read_mem(struct nifp *nif, void *dest, int size) {
 	memcpy(dest, Depos, size);
 	Pos += size;
 }
 
 static void read_array(struct nifp *nif, void **dest, int size) {
 	*dest = malloc(size);
-	read_value(nif, *dest, size);
+	read_mem(nif, *dest, size);
 }
 
 static void read_sized_strings(struct nifp *nif, char ***dest, int count) {
@@ -107,17 +108,17 @@ static void read_sized_strings(struct nifp *nif, char ***dest, int count) {
 
 api void nifp_read_header(struct nifp *nif) {
 	hedr_read_header_string(nif);
-	read_value(nif, &Hedr->unknown_1, 17);
+	read_mem(nif, &Hedr->unknown_1, 17);
 	read_short_string(nif, &Hedr->author);
 	read_short_string(nif, &Hedr->process_script);
 	read_short_string(nif, &Hedr->export_script);
-	read_value(nif, &Hedr->num_block_types, 2);
+	read_mem(nif, &Hedr->num_block_types, 2);
 	read_sized_strings(nif, &Hedr->block_types, Hedr->num_block_types);
 	read_array(nif, &Hedr->block_type_index, sizeof(unsigned short) * Hedr->num_blocks);
 	read_array(nif, &Hedr->block_sizes,      sizeof(unsigned int)   * Hedr->num_blocks);
-	read_value(nif, &Hedr->num_strings, 8);
+	read_mem(nif, &Hedr->num_strings, 8);
 	read_sized_strings(nif, &Hedr->strings, Hedr->num_strings);
-	read_value(nif, &Hedr->num_groups, 4);
+	read_mem(nif, &Hedr->num_groups, 4);
 	Hedr->end = Pos;
 }
 
@@ -191,7 +192,7 @@ static void sink_val(struct nifp *nif, char *block_pointer, int src, int size) {
 #define SinkVal(nif, block_pointer, layout, part, size) sink_val(nif, block_pointer, offsetof(struct layout, part), size)
 //#define SinkArr(nif, block_pointer, layout, part, size) sink_arr(nif, block_pointer, offsetof(layout, part), size)
 
-#define ArrSize(count, type) count * sizeof(type)
+#define Arr(count, type) count * sizeof(type)
 
 void *read_ni_common_layout(nifpr)
 {
@@ -200,7 +201,7 @@ void *read_ni_common_layout(nifpr)
 	block_pointer = malloc(sizeof(struct ni_common_layout_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_common_layout_pointer));
 	SinkVal(nif, block_pointer, ni_common_layout_pointer, A, 8);
-	SinkVal(nif, block_pointer, ni_common_layout_pointer, extra_data_list, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, ni_common_layout_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
 	SinkVal(nif, block_pointer, ni_common_layout_pointer, C, 4+4+12+36+4+4);
 	return block_pointer;
 }
@@ -213,9 +214,9 @@ void *read_ni_node(nifpr)
 	memset(block_pointer, NULL, sizeof(struct ni_node_pointer));
 	block_pointer->common = read_ni_common_layout(nif, n);
 	SinkVal(nif, block_pointer, ni_node_pointer, A, 4);
-	SinkVal(nif, block_pointer, ni_node_pointer, children, ArrSize(block_pointer->A->num_children, ni_ref));
+	SinkVal(nif, block_pointer, ni_node_pointer, children, Arr(block_pointer->A->num_children, ni_ref));
 	SinkVal(nif, block_pointer, ni_node_pointer, C, 4);
-	SinkVal(nif, block_pointer, ni_node_pointer, effects, ArrSize(block_pointer->C->num_effects, ni_ref));
+	SinkVal(nif, block_pointer, ni_node_pointer, effects, Arr(block_pointer->C->num_effects, ni_ref));
 	return block_pointer;
 }
 
@@ -239,7 +240,7 @@ void *read_ni_tri_shape_data(nifpr)
 	block_pointer = malloc(sizeof(struct ni_tri_shape_data_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_tri_shape_data_pointer));
 	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, A, 4+2+1+1+1);
-	const int size = ArrSize(block_pointer->A->num_vertices, struct vec_3p);
+	const int size = Arr(block_pointer->A->num_vertices, struct vec_3p);
 	if (block_pointer->A->has_vertices)
 	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, vertices, size);
 	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, C, 7);
@@ -252,14 +253,14 @@ void *read_ni_tri_shape_data(nifpr)
 	}
 	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, G, 12+4+1);
 	if (block_pointer->G->has_vertex_colors)
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, vertex_colors, ArrSize(block_pointer->A->num_vertices, struct vec_4p));
+	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, vertex_colors, Arr(block_pointer->A->num_vertices, struct vec_4p));
 	if (block_pointer->C->bs_vector_flags & 0x00000001)
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, uv_sets, ArrSize(block_pointer->A->num_vertices, struct vec_2p));
+	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, uv_sets, Arr(block_pointer->A->num_vertices, struct vec_2p));
 	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, J, 13);
 	if (block_pointer->J->has_triangles)
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, triangles, ArrSize(block_pointer->J->num_triangles, struct ushort_3p));
+	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, triangles, Arr(block_pointer->J->num_triangles, struct ushort_3p));
 	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, L, 2);
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, match_groups, ArrSize(block_pointer->L->num_match_groups, ni_ref));
+	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, match_groups, Arr(block_pointer->L->num_match_groups, ni_ref));
 	return block_pointer;
 }
 
@@ -282,7 +283,7 @@ void *read_bs_lighting_shader_property(nifpr)
 	block_pointer = malloc(sizeof(struct bs_lighting_shader_property_pointer));
 	memset(block_pointer, NULL, sizeof(struct bs_lighting_shader_property_pointer));
 	SinkVal(nif, block_pointer, bs_lighting_shader_property_pointer, A, 12);
-	SinkVal(nif, block_pointer, bs_lighting_shader_property_pointer, extra_data_list, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, bs_lighting_shader_property_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
 	SinkVal(nif, block_pointer, bs_lighting_shader_property_pointer, B, 88);
 	return block_pointer;
 }
@@ -308,7 +309,7 @@ void *read_ni_alpha_property(nifpr)
 	block_pointer = malloc(sizeof(struct ni_alpha_property_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_alpha_property_pointer));
 	SinkVal(nif, block_pointer, ni_alpha_property_pointer, A, 8);
-	SinkVal(nif, block_pointer, ni_alpha_property_pointer, extra_data_list, ArrSize(block_pointer->A->num_extra_data_list, ni_ref));
+	SinkVal(nif, block_pointer, ni_alpha_property_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
 	SinkVal(nif, block_pointer, ni_alpha_property_pointer, C, 7);
 	sizeof(struct ni_alpha_property_pointer);
 	sizeof(((struct ni_alpha_property_pointer *)0)->C);

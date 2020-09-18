@@ -1,12 +1,14 @@
-#include <dark2/ref.h>
-#include <dark2/mesh.h>
-#include <dark2/libs>
-#include <dark2/files.h>
+#include <gloom/refr.h>
+#include <gloom/object.h>
+
+#include <gloom/mesh.h>
+#include <gloom/files.h>
+
+#include <gloom/libs>
 
 #include <algorithm>
 #include <cctype>
 #include <string>
-
 
 #include <opengl/renderable.h>
 #include <opengl/texture.h>
@@ -21,58 +23,13 @@ constexpr char test_expr[] = "EDID";
 
 #define Fields object->fields
 
-namespace dark2
+namespace gloom
 {
-	Refr::Refr(record *record)
+	Ref::Ref(::record *record)
 	{
-		auto array = &record->fields;
-		for (int i = 0; i < array->size; i++)
-		{
-			auto field = (array->subrecords[i]);
-			if (field->hed->type == espwrd "EDID")
-				EDID = ((char *)field->data);
-			if (field->hed->type == espwrd "XSCL")
-				XSCL = ((float *)field->data);
-			if (field->hed->type == espwrd "NAME")
-				NAME = ((unsigned int *)field->data);
-			if (field->hed->type == espwrd "DATA")
-				DATA = ((unsigned char *)field->data);
-		}
-	}
-
-	Ligh::Ligh(record *record)
-	{
-		auto array = &record->fields;
-		for (int i = 0; i < array->size; i++)
-		{
-			auto field = (array->subrecords[i]);
-			if (field->hed->type == espwrd "EDID")
-				EDID = ((char *)field->data);
-			if (field->hed->type == espwrd "FNAM")
-				FNAM = ((float *)field->data);
-			if (field->hed->type == espwrd "DATA")
-				DATA = ((unsigned char *)field->data);
-		}
-	}
-
-	Weap::Weap(record *record)
-	{
-		auto array = &record->fields;
-		for (int i = 0; i < array->size; i++)
-		{
-			auto field = (array->subrecords[i]);
-			if (field->hed->type == espwrd "EDID")
-				EDID = ((char *)field->data);
-			if (field->hed->type == espwrd "FULL")
-				FULL = ((char *)field->data);
-			if (field->hed->type == espwrd "DESC")
-				DESC = ((char *)field->data);
-		}
-	}
-
-	Ref::Ref()
-	{
+		self = new Object(record, {""});
 		Group *group = new Group();
+		Go();
 	}
 
 	Ref::~Ref()
@@ -83,29 +40,27 @@ namespace dark2
 		delete pointlight;
 	}
 
-	void Ref::SetData(record *refr)
+	void Ref::Go()
 	{
-		REFR = Refr(refr);
-
 		matrix = mat4(1.0);
 
 		unsigned int formIdName = 0;
 
 		mat4 translation(1.0), rotation(1.0), scale(1.0);
 
-		if (REFR.EDID)
+		if (self->EDID)
 		{
-			EDID = REFR.EDID;
+			//EDID = self->EDID;
 		}
-		if (REFR.XSCL)
+		if (self->XSCL)
 		{
-			scale = glm::scale(mat4(1.0), vec3(*REFR.XSCL));
+			scale = glm::scale(mat4(1.0), vec3(*self->XSCL));
 		}
-		if (REFR.DATA)
+		if (self->DATA)
 		{
-			DATA = (float *)REFR.DATA;
-			vec3 pos = *cast_vec_3(((float *)REFR.DATA));
-			vec3 rad = *cast_vec_3(((float *)REFR.DATA + 3));
+			//DATA = (float *)self->DATA;
+			vec3 pos = *cast_vec_3(((float *)self->DATA));
+			vec3 rad = *cast_vec_3(((float *)self->DATA + 3));
 
 			translation = translate(mat4(1.0f), pos);
 
@@ -116,26 +71,27 @@ namespace dark2
 
 			matrix = translation * rotation * scale;
 		}
-		if (REFR.NAME)
+		if (self->NAME)
 		{
-			formIdName = *REFR.NAME;
+			formIdName = *self->NAME;
 
-			baseObject = esp_brute_record_by_form_id(formIdName);
+			::record *rbase = esp_brute_record_by_form_id(formIdName);
+			base = new Object(rbase, {""});
 
-			cassert(baseObject, "ref cant find name baseObject");
+			cassert(rbase, "ref cant find name baseRecord");
 
-			if (baseObject->hed->type == espwrd "STAT" ||
-				//baseObject->hed->type == espwrd"FURN" ||
-				baseObject->hed->type == espwrd "ALCH" ||
-				baseObject->hed->type == espwrd "CONT" ||
-				baseObject->hed->type == espwrd "ARMO" ||
-				baseObject->hed->type == espwrd "WEAP" ||
-				baseObject->hed->type == espwrd "FLOR" ||
-				baseObject->hed->type == espwrd "MISC")
+			if (base->record->hed->type == espwrd "STAT" ||
+				//baseRecord->hed->type == espwrd"FURN" ||
+				base->record->hed->type == espwrd "ALCH" ||
+				base->record->hed->type == espwrd "CONT" ||
+				base->record->hed->type == espwrd "ARMO" ||
+				base->record->hed->type == espwrd "WEAP" ||
+				base->record->hed->type == espwrd "FLOR" ||
+				base->record->hed->type == espwrd "MISC")
 			{
-				for (int i = 0; i < baseObject->fields.size; i++)
+				for (int i = 0; i < base->record->fields.size; i++)
 				{
-					subrecord *field = baseObject->fields.subrecords[i];
+					subrecord *field = base->record->fields.subrecords[i];
 					if (field->hed->type != espwrd "MODL")
 						continue;
 					mesh = Mesh::GetStored(field->data);
@@ -145,7 +101,7 @@ namespace dark2
 						data = "meshes\\" + data;
 						std::transform(data.begin(), data.end(), data.begin(),
 									   [](unsigned char c) { return std::tolower(c); });
-						//printf("stat baseObject has a modl %s\n", data.c_str());
+						//printf("stat baseRecord has a modl %s\n", data.c_str());
 						rc *rc = bsa_find_more(data.c_str(), 0x1);
 						if (rc)
 						{
@@ -163,35 +119,35 @@ namespace dark2
 					}
 				}
 
-				if (baseObject->hed->type == espwrd "WEAP")
+				if (base->record->hed->type == espwrd "WEAP")
 				{
-					WEAP = new Weap(baseObject);
+					//WEAP = new Weap(baseRecord);
 				}
 			}
-			else if (baseObject->hed->type == espwrd "LIGH")
+			else if (base->record->hed->type == espwrd "LIGH")
 			{
-				Ligh LIGH(baseObject);
+				//Ligh LIGH(baseRecord);
 
 				pointlight = new PointLight;
 				scene->Add(pointlight);
 
-				if (LIGH.EDID)
+				if (base->EDID)
 				{
 					//printf("ligh edid %s\n", LIGH.EDID);
 				}
-				if (LIGH.DATA)
+				if (base->DATA)
 				{
-					int time = *(int *)LIGH.DATA;
-					pointlight->distance = *((unsigned int *)LIGH.DATA + 1);
-					unsigned int rgb = *((unsigned int *)LIGH.DATA + 2);
+					int time = *(int *)base->DATA;
+					pointlight->distance = *((unsigned int *)base->DATA + 1);
+					unsigned int rgb = *((unsigned int *)base->DATA + 2);
 					unsigned char r = (rgb >> (8 * 0)) & 0xff;
 					unsigned char g = (rgb >> (8 * 1)) & 0xff;
 					unsigned char b = (rgb >> (8 * 2)) & 0xff;
 					pointlight->color = vec3(r, g, b) / 255.f;
 				}
-				if (LIGH.FNAM)
+				if (base->FNAM)
 				{
-					float fade = *LIGH.FNAM;
+					float fade = *base->FNAM;
 					fade = 1 / fade;
 					pointlight->decay = fade;
 				}
@@ -229,9 +185,9 @@ namespace dark2
 		}
 
 		char *itemName = "Sometihng";
-		if (WEAP)
+		if (base && base->FULL)
 		{
-			itemName = WEAP->FULL + 0;
+			itemName = base->FULL + 0;
 		}
 
 		vec3 original = vec3(0);
@@ -251,9 +207,9 @@ namespace dark2
 		ImGui::Begin("##Item", &open, flags);
 		ImGui::PushFont(font2);
 		ImGui::Text(itemName);
-		if (WEAP && WEAP->DESC)
+		if (base && base->DESC)
 		{
-			ImGui::TextWrapped(WEAP->DESC);
+			ImGui::TextWrapped(base->DESC);
 		}
 		ImGui::PopFont();
 		ImGui::End();
@@ -283,4 +239,4 @@ namespace dark2
 	tub_->eval(str);
 	*/
 
-} // namespace dark2
+} // namespace gloom

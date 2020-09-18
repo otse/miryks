@@ -1,4 +1,4 @@
-#include <dark2/dark2.h>
+#include <gloom/dark2.h>
 
 #include <opengl/texture.h>
 

@@ -1,6 +1,7 @@
-#include <dark2/level.h>
-#include <dark2/mesh.h>
-#include <dark2/libs>
+#include <gloom/level.h>
+#include <gloom/mesh.h>
+#include <gloom/object.h>
+#include <gloom/libs>
 
 #include <algorithm>
 #include <cctype>
@@ -12,7 +13,7 @@
 #include <opengl/pointlight.h>
 #include <opengl/types.h>
 
-namespace dark2
+namespace gloom
 {
 	Cell Level::GetCell(const char *editorId)
 	{
@@ -85,12 +86,12 @@ namespace dark2
 			void *element = grup->mixed.elements[i];
 			cassert(*(char *)element == RECORD, "mixed non record");
 			cassert(grup->mixed.records[i]->hed->type == espwrd "REFR", "not a refr");
-			auto ref = new Ref;
+			auto ref = new Ref((record *)element);
 			refs.push_back(ref);
-			ref->SetData((record *)element);
-			if (ref->EDID)
-				refEditorIDs.emplace(ref->EDID, ref);
-			if (ref->baseObject && ref->baseObject->hed->type == espwrd "WEAP")
+			if (ref->self->EDID)
+				refEditorIDs.emplace(ref->self->EDID, ref);
+			if (ref->self && ref->self->record->hed->type == espwrd "WEAP" ||
+							 ref->self->record->hed->type == espwrd "MISC")
 				iterables.push_back(ref);
 		}
 
@@ -100,7 +101,7 @@ namespace dark2
 		{
 			first_person_camera->pos = ref->second->matrix[3];
 			first_person_camera->pos.z += EYE_HEIGHT;
-			first_person_camera->fyaw = cast_vec_3(ref->second->DATA + 3)->z;
+			first_person_camera->fyaw = cast_vec_3((float *)ref->second->self->DATA + 3)->z;
 			spawned = true;
 		}
 	}
@@ -132,4 +133,4 @@ namespace dark2
 		}
 	}
 
-} // namespace dark2
+} // namespace gloom

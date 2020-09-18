@@ -1,16 +1,16 @@
 #pragma once
 
-#include <dark2/dark2.h>
+#include <gloom/dark2.h>
 
-#include "ref.h"
+#include <gloom/refr.h>
 
-#include "opengl/types.h"
-#include "opengl/scene.h"
-#include "opengl/group.h"
-#include "opengl/geometry.h"
-#include "opengl/material.h"
+#include <opengl/types.h>
+#include <opengl/scene.h>
+#include <opengl/group.h>
+#include <opengl/geometry.h>
+#include <opengl/material.h>
 
-namespace dark2
+namespace gloom
 {
 	class Ref;
 
@@ -42,4 +42,4 @@ namespace dark2
 		
 		void ParseGrup(Cell &, grup *);
 	};
-} // namespace dark2
+} // namespace gloom

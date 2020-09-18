@@ -1,4 +1,4 @@
-#include <dark2/dark2.h>
+#include <gloom/dark2.h>
 
 extern "C"
 {
@@ -16,12 +16,12 @@ extern "C"
 #include <opengl/geometry.h>
 #include <opengl/material.h>
 
-#include <dark2/files.h>
+#include <gloom/files.h>
 
-#include <dark2/level.h>
-#include <dark2/mesh.h>
+#include <gloom/level.h>
+#include <gloom/mesh.h>
 
-namespace dark2
+namespace gloom
 {
 	namespace viewer
 	{
@@ -42,9 +42,9 @@ namespace dark2
 	int width = 2560;
 	int height = 1440;
 	float delta = 1;
-} // namespace dark2
+} // namespace gloom
 
-namespace dark2
+namespace gloom
 {
 	const char *dataFolder = "Data/";
 
@@ -112,26 +112,26 @@ namespace dark2
 		viewer_camera->pos = object->aabb.center();
 		viewer_camera->radius = object->aabb.radius2() * 2;
 	}
-} // namespace dark2
+} // namespace gloom
 
 int main()
 {
-	using namespace dark2;
+	using namespace gloom;
 	printf("loading\n");
 	cassert(exists("path to oldrim.txt"), "missing `path to oldrim.txt`");
 	pathToOldrim = fread("path to oldrim.txt");
 	get_plugins()[0] = loadPlugin("Skyrim.esm");
-	printf("loaded skyrim\n");
-	get_plugins()[1] = loadPlugin("Padstow.esp");
+	printf("loaded skyrim.esm!\n");
+	get_plugins()[1] = loadPlugin("Gloom.esp");
 	get_archives()[0] = loadArchive("Skyrim - Meshes.bsa");
 	get_archives()[1] = loadArchive("Skyrim - Textures.bsa");
-	get_archives()[2] = loadArchive("HighResTexturePack01.bsa");
-	get_archives()[3] = loadArchive("HighResTexturePack02.bsa");
-	get_archives()[4] = loadArchive("HighResTexturePack03.bsa");
+	//get_archives()[2] = loadArchive("HighResTexturePack01.bsa");
+	//get_archives()[3] = loadArchive("HighResTexturePack02.bsa");
+	//get_archives()[4] = loadArchive("HighResTexturePack03.bsa");
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
-	OGLGo();
+	openglScene();
 	camera = first_person_camera;
 #if 0
 	rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);

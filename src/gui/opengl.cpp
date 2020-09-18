@@ -1,4 +1,4 @@
-#include <dark2/dark2.h>
+#include <gloom/dark2.h>
 
 #include "opengl/group.h"
 #include "opengl/geometry.h"
@@ -11,7 +11,7 @@
 
 #define OPENGL_GUI "opengl"
 
-using namespace dark2;
+using namespace gloom;
 
 static std::stringstream ss;
 
@@ -25,7 +25,7 @@ void opengl_gui()
 	ImGui::SetNextWindowSize(ImVec2(400, 0));
 	ImGui::Begin(OPENGL_GUI, nullptr, flags);
 
-	ImGui::Text(("groups: %i"), Group::num);
+	ImGui::Text("groups: %i", Group::num);
 	ImGui::Text("geometries: %i", Geometry::num);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
@@ -41,6 +41,7 @@ void opengl_gui()
 			bool e = ImGui::Checkbox("dust", &renderSettings.dust);
 			ImGui::Checkbox("axis-aligned bounding boxes", &renderSettings.axisAlignedBoundingBoxes);
 			ImGui::Checkbox("oriented bounding boxes", &renderSettings.orientedBoundingBoxes);
+            ImGui::SliderFloat("minimum size", &renderSettings.maximumBoundingVolume, 0.0f, 10000000.0f, "%.1f");
 
 			if (a||b||c||d||e)
 			{

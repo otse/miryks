@@ -1,4 +1,6 @@
-#include <dark2/dark2.h>
+#pragma once
+
+#include <gloom/dark2.h>
 
 extern "C"
 {
@@ -12,7 +14,7 @@ extern "C"
 #include <opengl/geometry.h>
 #include <opengl/material.h>
 
-namespace dark2
+namespace gloom
 {
 class Mesh
 {

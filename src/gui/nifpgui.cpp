@@ -1,7 +1,7 @@
-#include <dark2/dark2.h>
-#include <dark2/files.h>
+#include <gloom/dark2.h>
+#include <gloom/files.h>
 
-#include <dark2/libs>
+#include <gloom/libs>
 
 #include <sstream>
 #include <imgui.h>
@@ -12,7 +12,7 @@
 	ss.str(std::string()); \
 	ss.clear();
 
-using namespace dark2;
+using namespace gloom;
 
 static std::stringstream ss;
 

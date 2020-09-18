@@ -1,8 +1,10 @@
 #include <opengl/camera.h>
 
-#include <dark2/dark2.h>
+#include <gloom/dark2.h>
 
 #include <glm/gtc/matrix_transform.hpp>
+
+double Camera::prev[2] = { 0, 0 };
 
 Camera::Camera()
 {
@@ -13,7 +15,7 @@ Camera::Camera()
 }
 
 void Camera::SetProjection() {
-	float aspect = (float)dark2::width / (float)dark2::height;
+	float aspect = (float)gloom::width / (float)gloom::height;
 
 	projection = perspective(radians(fzoom), aspect, 5.0f, 10000.0f);
 }
@@ -27,9 +29,13 @@ FirstPersonCamera::FirstPersonCamera() : Camera()
 
 void FirstPersonCamera::Mouse(float x, float y)
 {
+	if (disabled)
+		return;
 	const float sensitivity = .001f;
 	fyaw += x * sensitivity;
-	fpitch -= y * sensitivity;
+	fpitch += y * sensitivity;
+	Camera::prev[0] = x;
+	Camera::prev[1] = y;
 }
 
 void FirstPersonCamera::Update(float time)

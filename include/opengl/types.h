@@ -41,7 +41,7 @@ void detectGlfwError();
 void detectOpenGLError(const std::string = "?");
 
 void opengl_gui();
-void OGLGo();
+void openglScene();
 void OGLReloadShaderSource();
 
 struct RenderSettings
@@ -53,6 +53,7 @@ struct RenderSettings
 	bool dust = true;
 	bool axisAlignedBoundingBoxes = false;
 	bool orientedBoundingBoxes = false;
+	float maximumBoundingVolume = 512000.f;
 };
 extern RenderSettings renderSettings;
 
