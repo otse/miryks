@@ -12,11 +12,15 @@ namespace gloom
 	public:
 		::record *const record;
 
-		Object(::record *, std::vector<const char *>);
-		std::vector<const char *> search;
+		Object(::record *);
+
+		bool Is(const char *) const;
+		bool IsAny(std::vector<const char *>) const;
+
+		std::map<unsigned int, ::subrecord *> fields;
 
 		unsigned int formId;
-
+		
 		unsigned int *NAME;
 		unsigned char *DATA;
 		char *EDID, *FULL, *DESC;

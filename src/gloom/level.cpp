@@ -42,9 +42,9 @@ namespace gloom
 						cell.cell = object;
 						//cassert(grup->mixed.size >= 2, "cell lacks 2 following grups");
 						if (grup->mixed.size >= 1)
-						cell.persistent = grup->mixed.grups[0];
+							cell.persistent = grup->mixed.grups[0];
 						if (grup->mixed.size >= 2)
-						cell.non_persistent = grup->mixed.grups[1];
+							cell.non_persistent = grup->mixed.grups[1];
 						return cell;
 					}
 				}
@@ -90,9 +90,12 @@ namespace gloom
 			refs.push_back(ref);
 			if (ref->self->EDID)
 				refEditorIDs.emplace(ref->self->EDID, ref);
-			if (ref->self && ref->self->record->hed->type == espwrd "WEAP" ||
-							 ref->self->record->hed->type == espwrd "MISC")
+			if (ref->base && ref->base->record->hed->type == espwrd "WEAP" ||
+				ref->base->record->hed->type == espwrd "MISC")
+			{
+				printf("weap misc item");
 				iterables.push_back(ref);
+			}
 		}
 
 		static bool spawned = false;
@@ -115,7 +118,8 @@ namespace gloom
 		}
 	}
 
-	bool myfunction (Ref *l, Ref *r) {
+	bool myfunction(Ref *l, Ref *r)
+	{
 		return l->GetDistance() < r->GetDistance();
 	}
 
@@ -127,7 +131,7 @@ namespace gloom
 		for (auto it = closest.begin(); it != closest.end(); ++it)
 		{
 			Ref *ref = *it;
-			
+
 			if (ref->DisplayAsItem())
 				return;
 		}

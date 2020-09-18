@@ -19,15 +19,11 @@
 #include <imgui.h>
 #include <gui/extra.h>
 
-constexpr char test_expr[] = "EDID";
-
-#define Fields object->fields
-
 namespace gloom
 {
 	Ref::Ref(::record *record)
 	{
-		self = new Object(record, {""});
+		self = new Object(record);
 		Group *group = new Group();
 		Go();
 	}
@@ -43,8 +39,6 @@ namespace gloom
 	void Ref::Go()
 	{
 		matrix = mat4(1.0);
-
-		unsigned int formIdName = 0;
 
 		mat4 translation(1.0), rotation(1.0), scale(1.0);
 
@@ -73,21 +67,12 @@ namespace gloom
 		}
 		if (self->NAME)
 		{
-			formIdName = *self->NAME;
-
-			::record *rbase = esp_brute_record_by_form_id(formIdName);
-			base = new Object(rbase, {""});
+			::record *rbase = esp_brute_record_by_form_id(*self->NAME);
+			base = new Object(rbase);
 
 			cassert(rbase, "ref cant find name baseRecord");
 
-			if (base->record->hed->type == espwrd "STAT" ||
-				//baseRecord->hed->type == espwrd"FURN" ||
-				base->record->hed->type == espwrd "ALCH" ||
-				base->record->hed->type == espwrd "CONT" ||
-				base->record->hed->type == espwrd "ARMO" ||
-				base->record->hed->type == espwrd "WEAP" ||
-				base->record->hed->type == espwrd "FLOR" ||
-				base->record->hed->type == espwrd "MISC")
+			if (base->IsAny({"STAT", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
 			{
 				for (int i = 0; i < base->record->fields.size; i++)
 				{
@@ -119,12 +104,12 @@ namespace gloom
 					}
 				}
 
-				if (base->record->hed->type == espwrd "WEAP")
+				if (base->Is("WEAP"))
 				{
 					//WEAP = new Weap(baseRecord);
 				}
 			}
-			else if (base->record->hed->type == espwrd "LIGH")
+			else if (base->Is("LIGH"))
 			{
 				//Ligh LIGH(baseRecord);
 
@@ -158,7 +143,7 @@ namespace gloom
 
 		if (mesh)
 		{
-			if (formIdName != 0x32)
+			if (base->record->hed->formId != 0x32)
 			{
 				renderable = new Renderable(matrix, mesh->baseGroup);
 				scene->Add(renderable);
@@ -179,15 +164,15 @@ namespace gloom
 
 	bool Ref::DisplayAsItem()
 	{
-		if (GetDistance() > 250)
+		if (GetDistance() > 275)
 		{
 			return false;
 		}
 
 		char *itemName = "Sometihng";
-		if (base && base->FULL)
+		if (base->FULL)
 		{
-			itemName = base->FULL + 0;
+			itemName = base->FULL;
 		}
 
 		vec3 original = vec3(0);
