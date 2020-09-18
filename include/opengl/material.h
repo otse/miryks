@@ -27,6 +27,7 @@ struct Material
 	Material();
 
 	bool prepared = false;
+	void RandomColor();
 	void Ready();
 	void Use();
 	static void Unuse(Material *, Material *);

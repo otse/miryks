@@ -243,6 +243,8 @@ void gloom::programLoop()
 	frames = 0;
 	prevTime = glfwGetTime();
 
+	scene->Add(first_person_camera->renderable);
+
 	do
 	{
 		// from mrdoob stats

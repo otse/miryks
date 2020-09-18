@@ -2,7 +2,7 @@
 
 #include <opengl/geometry.h>
 
-const bool DRAW_AXIS = 0;
+const bool DRAW_AXIS = 1;
 
 int Group::num = 0;
 

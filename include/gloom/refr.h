@@ -2,6 +2,7 @@
 
 #include <gloom/dark2.h>
 
+#include <opengl/aabb.h>
 #include <opengl/types.h>
 
 namespace gloom
@@ -16,9 +17,11 @@ namespace gloom
 
 		mat4 matrix;
 
-		Mesh *mesh = nullptr;
-		Renderable *renderable = nullptr;
-		PointLight *pointlight = nullptr;
+		AABB aabb;
+
+		Mesh *mesh;
+		Renderable *renderable;
+		PointLight *pointlight;
 
 		void Go();
 

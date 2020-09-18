@@ -23,6 +23,10 @@ namespace gloom
 {
 	Ref::Ref(::record *record)
 	{
+		mesh = nullptr;
+		renderable = nullptr;
+		pointlight = nullptr;
+
 		self = new Object(record);
 		Group *group = new Group();
 		Go();
@@ -148,6 +152,7 @@ namespace gloom
 				renderable = new Renderable(matrix, mesh->baseGroup);
 				scene->Add(renderable);
 			}
+			aabb = AABB::mult(mesh->aabb, matrix);
 		}
 		if (pointlight)
 		{
@@ -157,17 +162,17 @@ namespace gloom
 
 	float Ref::GetDistance()
 	{
-		float distance = glm::length(vec3(matrix[3]) - camera->pos);
+		mat4 mate = translate(mat4(1), aabb.center());
+
+		float distance = glm::length(vec3(mate[3]) - camera->pos);
 
 		return distance;
 	}
 
 	bool Ref::DisplayAsItem()
 	{
-		if (GetDistance() > 275)
-		{
+		if (GetDistance() > 600 / ONE_SKYRIM_UNIT_IN_CM)
 			return false;
-		}
 
 		char *itemName = "Sometihng";
 		if (base->FULL)
@@ -177,7 +182,10 @@ namespace gloom
 
 		vec3 original = vec3(0);
 
-		mat4 model = camera->projection * camera->view * matrix;
+		mat4 mate = translate(mat4(1), aabb.center());
+		//mate = translate(mate, vec3(0, 0, 50 / ONE_SKYRIM_UNIT_IN_CM));
+
+		mat4 model = camera->projection * camera->view * mate;
 		mat4 projection = frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 		vec4 viewport(0.0f, 0.0f, width, height);
 
@@ -192,7 +200,7 @@ namespace gloom
 		ImGui::Begin("##Item", &open, flags);
 		ImGui::PushFont(font2);
 		ImGui::Text(itemName);
-		if (base && base->DESC)
+		if (base->DESC)
 		{
 			ImGui::TextWrapped(base->DESC);
 		}

@@ -37,14 +37,17 @@ Material::Material()
 
 	composeUvTransform();
 
+	color = vec3(1, 1, 1);
+	specular = vec3(17.0 / 255.0);
+	emissive = vec3(0);
+}
+
+void Material::RandomColor()
+{
 	color = vec3(
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX,
 		(float)rand() / RAND_MAX);
-
-	color = vec3(1, 1, 1);
-	specular = vec3(17.0 / 255.0);
-	emissive = vec3(0);
 }
 
 void Material::Ready()

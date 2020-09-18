@@ -26,8 +26,8 @@ void Renderable::Separate()
 
 	for (Group *group : group->flat)
 	{
-		if (!group->geometry)
-			continue;
+		//if (!group->geometry)
+		//continue;
 
 		RenderItem render_item = RenderItem(group, this);
 
@@ -51,16 +51,20 @@ RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), ren
 {
 	SetInfo();
 
+	// following is just for aabbs
 	matrix = renderable->matrix * group->matrixWorld;
 
-	aabb = obb = group->geometry->aabb;
-
-	aabb = AABB::mult(aabb, matrix);
-
-	if (true)
+	if (group->geometry)
 	{
-		aabb.geometrize();
-		obb.geometrize();
+		aabb = obb = group->geometry->aabb;
+
+		aabb = AABB::mult(aabb, matrix);
+
+		if (true)
+		{
+			aabb.geometrize();
+			obb.geometrize();
+		}
 	}
 }
 

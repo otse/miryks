@@ -8,6 +8,8 @@
 struct Camera {
 	Camera();
 
+	Group *group;
+
 	vec3 pos;
 	mat4 view, projection;
 	float fzoom;
@@ -23,6 +25,9 @@ struct Camera {
 
 struct FirstPersonCamera : public Camera
 {
+	Group *hands;
+	Renderable *renderable;
+
 	vec3 eye;
 	float fyaw = 0, fpitch = -pif / 2;
 	bool w, a, s, d, r, f;

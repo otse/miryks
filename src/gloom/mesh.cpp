@@ -63,6 +63,13 @@ namespace gloom
 		return group;
 	}
 
+	void Mesh::Rebound(Group *group)
+	{
+		group->Update();
+		AABB rotated = AABB::mult(group->geometry->aabb, group->matrixWorld);
+		aabb.extend(rotated);
+	}
+
 	void other(nifprd *rd, int parent, int current, const char *block_type)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
@@ -90,7 +97,6 @@ namespace gloom
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, block->common);
 		group->geometry = new Geometry();
-		group->geometry->material = new Material();
 		group->geometry->material->src = &simple;
 	}
 
@@ -127,8 +133,7 @@ namespace gloom
 				geometry->vertices[i].color = *cast_vec_4((float *)&block->vertex_colors[i]);
 		}
 		geometry->SetupMesh();
-		AABB aabb = AABB::mult(geometry->aabb, group->matrix);
-		mesh->aabb.extend(aabb);
+		mesh->Rebound(group);
 	}
 
 	void bs_lighting_shader_property_callback(nifprd *rd, bs_lighting_shader_property_pointer *block)
@@ -139,6 +144,7 @@ namespace gloom
 		Geometry *geometry = group->geometry;
 		if (geometry)
 		{
+			geometry->material->color = vec3(1.0);
 			geometry->material->emissive = *cast_vec_3((float *)&block->B->emissive_color);
 			geometry->material->specular = *cast_vec_3((float *)&block->B->specular_color);
 			geometry->material->specular *= block->B->specular_strength;

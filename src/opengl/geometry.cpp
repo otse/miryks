@@ -41,6 +41,8 @@ Geometry::Geometry()
 		vertices.push_back(Vertex{v});
 	}
 	elements.insert(elements.end(), ELEMENTS.begin(), ELEMENTS.end());
+	material = new Material;
+	material->RandomColor();
 }
 
 Geometry::~Geometry()
