@@ -18,7 +18,7 @@ Renderable::~Renderable()
 
 void Renderable::Separate()
 {
-	aabb = AABB(0);
+	aabb = AABB();
 
 	objects.clear();
 

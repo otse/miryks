@@ -26,6 +26,7 @@ struct FirstPersonCamera;
 struct ViewerCamera;
 struct Scene;
 struct Group;
+struct DrawGroup;
 struct Bound;
 struct Texture;
 struct RenderTarget;

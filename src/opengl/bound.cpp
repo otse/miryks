@@ -21,11 +21,11 @@ void Bound::Update()
 
 	if (group->geometry)
 
-		aabb = obb = group->geometry->aabb;
+		aabb = group->geometry->aabb;
 	
 	else
 		
-		aabb = obb = AABB(0);
+		aabb = AABB();
 
 	for (Group *child : group->groups)
 	{
@@ -33,6 +33,12 @@ void Bound::Update()
 		aabb.extend(child->bound->aabb);
 	}
 
+	obb = aabb;
+
+	aabb = AABB::mult(aabb, group->matrix);
+
+	aabb.geometrize();
+	obb.geometrize();
 }
 
 void Bound::Draw()

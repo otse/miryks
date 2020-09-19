@@ -30,4 +30,9 @@ struct Group
 	void Flatten(Group *);
 };
 
+struct DrawGroup
+{
+
+};
+
 #endif

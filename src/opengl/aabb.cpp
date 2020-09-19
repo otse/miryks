@@ -8,29 +8,30 @@
 
 // https://github.com/openscenegraph/OpenSceneGraph/blob/master/include/osg/BoundingBox
 
-AABB::AABB(float f)
+AABB::AABB()
 {
-	min = vec3(f);
-	max = vec3(f);
+	min = vec3(0);
+	max = vec3(0);
+	first = true;
 }
 
 AABB::~AABB()
 {
-	//glDeleteBuffers(1, &vbo_vertices);
-	//glDeleteBuffers(1, &ibo_elements);
+	
 }
 
-void AABB::extend(const vec3 &v)
+void AABB::extend(const vec3 &vec)
 {
-	if (is_zero())
+	if (first)
 	{
-		min = v;
-		max = v;
+		min = vec;
+		max = vec;
+		first = false;
 	}
 	else
 	{
-		min = glm::min(v, min);
-		max = glm::max(v, max);
+		min = glm::min(vec, min);
+		max = glm::max(vec, max);
 	}
 }
 
@@ -40,11 +41,16 @@ void AABB::extend(const AABB &bb)
 	extend(bb.max);
 }
 
-void AABB::extend(const float f)
+//void AABB::extend(const float f)
+//{
+//	min -= vec3(f);
+//	max += vec3(f);
+//}
+
+void AABB::translate(const vec3 &v)
 {
-	//Assert(is_zero(), "zero aabb");
-	min -= vec3(f);
-	max += vec3(f);
+	min += v;
+	max += v;
 }
 
 vec3 AABB::diagional() const
@@ -60,12 +66,6 @@ vec3 AABB::center() const
 float AABB::radius2() const
 {
 	return sqrt(0.25f * length2(max - min));
-}
-
-void AABB::translate(const vec3 &v)
-{
-	min += v;
-	max += v;
 }
 
 // todo change that fucking enum
@@ -111,7 +111,7 @@ bool AABB::contains_vec(const vec3 &v) const
 		   v.z >= min.z && v.z <= max.z;
 }
 
-float AABB::volume()
+float AABB::volume() const
 {
 	vec3 size = diagional();
 
@@ -175,6 +175,6 @@ void AABB::draw(const mat4 &matrix)
 {
 	if (!geometry)
 		return;
-		
+			
 	geometry->Draw(matrix);
 }

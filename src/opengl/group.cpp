@@ -3,8 +3,6 @@
 #include <opengl/bound.h>
 #include <opengl/geometry.h>
 
-const bool DRAW_AXIS = 1;
-
 int Group::num = 0;
 
 Group::Group()
@@ -19,11 +17,8 @@ Group::Group()
 	matrix = mat4(1.0f);
 	matrixWorld = mat4(1.0f);
 
-	if (DRAW_AXIS)
-	{
-		axis = new Geometry;
-		axis->SetupMesh();
-	}
+	axis = new Geometry;
+	axis->SetupMesh();
 }
 
 Group::~Group()
@@ -35,8 +30,6 @@ Group::~Group()
 void Group::Add(Group *group)
 {
 	group->parent = this;
-
-	group->Update();
 
 	groups.push_back(group);
 }

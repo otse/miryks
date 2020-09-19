@@ -48,7 +48,6 @@ Geometry::Geometry()
 Geometry::~Geometry()
 {
 	num--;
-	printf("delete geometry");
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);
@@ -97,7 +96,7 @@ void Geometry::SetupMesh()
 {
 	bool uses_elements = elements.size() > 0;
 
-	aabb = AABB(0);
+	aabb = AABB();
 
 	for (Vertex &vertex : vertices)
 		aabb.extend(vertex.position);

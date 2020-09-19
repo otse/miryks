@@ -16,18 +16,14 @@ struct AABB
 
 	static AABB mult(const AABB &, const mat4 &);
 
-	AABB(float = 0);
+	AABB();
 	~AABB();
 	vec3 min, max;
+	bool first;
 
-	inline bool is_zero()
-	{
-		return min == vec3(0) && max == vec3(0);
-	};
-
-	void extend(const float);
-	void extend(const vec3 &);
+	//void extend(const float);
 	void extend(const AABB &);
+	void extend(const vec3 &);
 	void translate(const vec3 &);
 
 	vec3 diagional() const;
@@ -35,7 +31,7 @@ struct AABB
 
 	bool contains_vec(const vec3 &v) const;
 	float radius2() const;
-	float volume();
+	float volume() const;
 	
 	void geometrize();
 	void draw(const mat4 &);

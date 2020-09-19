@@ -8,7 +8,7 @@ namespace gloom
 {
 	Mesh::Mesh()
 	{
-		aabb = AABB(0);
+		aabb = AABB();
 		baseGroup = new Group();
 		lastGroup = baseGroup;
 	}
@@ -37,7 +37,7 @@ namespace gloom
 
 	void Mesh::Construct(nifp *bucket)
 	{
-		aabb = AABB(0);
+		aabb = AABB();
 		nifprd *rd = malloc_nifprd();
 		rd->nif = bucket;
 		rd->data = this;
