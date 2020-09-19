@@ -6,6 +6,8 @@
 
 // A basic 3d object with a transformation
 
+struct RenderItem;
+
 struct Renderable
 {
 	Group *const group;

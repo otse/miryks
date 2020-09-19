@@ -24,8 +24,8 @@ namespace gloom
 	namespace viewer
 	{
 		void view(rc *);
-		extern Mesh *viewed_mesh;
-		extern Renderable *viewed_object;
+		extern Mesh *mesh;
+		extern Group *group;
 	} // namespace viewer
 
 	extern unsigned int fps;
@@ -47,9 +47,6 @@ namespace gloom
 	extern float delta;
 
 	extern std::string pathToOldrim;
-
-	extern Mesh *viewed_mesh;
-	extern Renderable *viewed_object;
 
 	extern FirstPersonCamera *first_person_camera;
 	extern ViewerCamera *viewer_camera;

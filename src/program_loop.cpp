@@ -243,7 +243,7 @@ void gloom::programLoop()
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	scene->Add(first_person_camera->renderable);
+	scene->Add(first_person_camera->group);
 
 	do
 	{

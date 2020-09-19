@@ -39,8 +39,8 @@ void opengl_gui()
 			bool c = ImGui::Checkbox("specular maps", &renderSettings.specularMaps);
 			bool d = ImGui::Checkbox("glow maps", &renderSettings.glowMaps);
 			bool e = ImGui::Checkbox("dust", &renderSettings.dust);
-			ImGui::Checkbox("axis-aligned bounding boxes", &renderSettings.axisAlignedBoundingBoxes);
-			ImGui::Checkbox("oriented bounding boxes", &renderSettings.orientedBoundingBoxes);
+			ImGui::Checkbox("axis-aligned bounding boxes", &renderSettings.AABBS);
+			ImGui::Checkbox("oriented bounding boxes", &renderSettings.OBBS);
             ImGui::SliderFloat("minimum size", &renderSettings.maximumBoundingVolume, 0.0f, 10000000.0f, "%.1f");
 
 			if (a||b||c||d||e)

@@ -10,7 +10,6 @@
 #include <cctype>
 #include <string>
 
-#include <opengl/renderable.h>
 #include <opengl/texture.h>
 #include <opengl/camera.h>
 #include <opengl/pointlight.h>
@@ -24,7 +23,7 @@ namespace gloom
 	Ref::Ref(::record *record)
 	{
 		mesh = nullptr;
-		renderable = nullptr;
+		group = nullptr;
 		pointlight = nullptr;
 
 		self = new Object(record);
@@ -34,9 +33,9 @@ namespace gloom
 
 	Ref::~Ref()
 	{
-		scene->Remove(renderable);
+		scene->Remove(group);
 		scene->Remove(pointlight);
-		delete renderable;
+		delete group;
 		delete pointlight;
 	}
 
@@ -149,8 +148,11 @@ namespace gloom
 		{
 			if (base->record->hed->formId != 0x32)
 			{
-				renderable = new Renderable(matrix, mesh->baseGroup);
-				scene->Add(renderable);
+				group = new Group();
+				group->matrix = matrix;
+				group->Add(mesh->baseGroup);
+				group->Update();
+				scene->Add(group);
 			}
 			aabb = AABB::mult(mesh->aabb, matrix);
 		}

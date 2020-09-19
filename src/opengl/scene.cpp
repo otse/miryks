@@ -1,3 +1,5 @@
+#include <attic.hpp>
+
 #include <opengl/scene.h>
 
 #include <opengl/aabb.h>
@@ -29,62 +31,20 @@ void Scene::Clear()
 	//groups2.clear();
 }
 
-template <typename T>
-bool add_nullable(T t, std::vector<T> &v)
-{
-	if (t == nullptr)
-		return false;
-	std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
-	if (has == v.end())
-	{
-		// We don't have this yet, add it
-		v.push_back(t);
-		return true;
-	}
-	return false;
-}
-
-template <typename T>
-bool remove_nullable(T t, std::vector<T> &v)
-{
-	if (t == nullptr)
-		return false;
-	std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
-	if (has != v.end())
-	{
-		// We have this, erase it
-		v.erase(has);
-		return true;
-	}
-	return false;
-}
-
 void Scene::Add(PointLight *pl) {
-	add_nullable<PointLight *>(pl, pointlights);
+	gloom::add<PointLight *>(pl, pointlights);
 }
-void Scene::Remove(PointLight *pl) {
-	remove_nullable<PointLight *>(pl, pointlights);
+
+void Scene::Remove(PointLight *pl) {	
+	gloom::remove<PointLight *>(pl, pointlights);
 }
-void Scene::Add(Renderable *rb) {
-	if (add_nullable<Renderable *>(rb, renderables))
-	{
-		objects.insert(objects.end(), rb->objects.begin(), rb->objects.end());
-	}
+
+void Scene::Add(Group *group) {
+	gloom::add<Group *>(group, groups);
 }
-void Scene::Remove(Renderable *rb) {
-	if (remove_nullable<Renderable *>(rb, renderables))
-	{
-		auto it = objects.begin();
-		for (; it != objects.end();)
-		{
-			if ((*it).renderable == rb)
-			{
-				it = objects.erase(it);
-			}
-			else
-				++it;
-		}
-	}
+
+void Scene::Remove(Group *group) {
+	gloom::remove<Group *>(group, groups);
 }
 
 void Scene::DrawItems()
@@ -92,16 +52,8 @@ void Scene::DrawItems()
 	CalcLights();
 	SortLights();
 
-	//for (RenderItem &render_item : objects)
-	{
-		//render_item.Draw();
-	}
-
-	//return;
-	for (Renderable *renderable : renderables)
-	{
-		renderable->DrawClassic();
-	}
+	for (Group *group : groups)
+		group->DrawClassic(mat4(1.0));
 }
 
 void Scene::CalcLights()

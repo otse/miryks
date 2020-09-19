@@ -72,10 +72,10 @@ void RenderItem::Draw()
 {
 	group->Draw(renderable->matrix);
 
-	if (renderSettings.axisAlignedBoundingBoxes && aabb.volume() <= renderSettings.maximumBoundingVolume)
+	if (renderSettings.AABBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
 		aabb.draw(mat4(1.0));
 
-	if (renderSettings.orientedBoundingBoxes && aabb.volume() <= renderSettings.maximumBoundingVolume)
+	if (renderSettings.OBBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
 		obb.draw(renderable->matrix * group->matrixWorld);
 }
 

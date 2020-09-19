@@ -12,7 +12,6 @@ extern "C"
 #include <opengl/camera.h>
 #include <opengl/scene.h>
 #include <opengl/group.h>
-#include <opengl/renderable.h>
 #include <opengl/geometry.h>
 #include <opengl/material.h>
 
@@ -26,7 +25,7 @@ namespace gloom
 	namespace viewer
 	{
 		Mesh *mesh = nullptr;
-		Renderable *object = nullptr;
+		Group *group = nullptr;
 	} // namespace viewer
 
 	unsigned int fps = 0;
@@ -91,9 +90,9 @@ namespace gloom
 	{
 		if (mesh)
 		{
-			scene->Remove(object);
+			scene->Remove(group);
 			delete mesh;
-			delete object;
+			delete group;
 		}
 		nifp *nif = nifp_saved(rc);
 		if (nif == NULL)
@@ -103,14 +102,15 @@ namespace gloom
 		}
 		mesh = new Mesh;
 		mesh->Construct(nif);
-		mat4 mat = translate(mat4(1.0), first_person_camera->pos);
-		object = new Renderable(mat, mesh->baseGroup);
-		scene->Add(object);
+		group = new Group();
+		group->matrix = glm::translate(mat4(1.0), first_person_camera->pos);
+		group->Add(mesh->baseGroup);
+		scene->Add(group);
 		camera = viewer_camera;
 		HideCursor();
 		viewer_camera->disabled = false;
-		viewer_camera->pos = object->aabb.center();
-		viewer_camera->radius = object->aabb.radius2() * 2;
+		viewer_camera->pos = group->aabb.center();
+		viewer_camera->radius = group->aabb.radius2() * 2;
 	}
 } // namespace gloom
 

@@ -26,7 +26,6 @@ struct Camera {
 struct FirstPersonCamera : public Camera
 {
 	Group *hands;
-	Renderable *renderable;
 
 	vec3 eye;
 	float fyaw = 0, fpitch = -pif / 2;

@@ -4,18 +4,20 @@
 #include <opengl/types.h>
 #include <opengl/aabb.h>
 
-// A basic 3d object with a transformation
-
 struct Group
 {
 	static int num;
 
-	std::string name; 
+	std::string name;
 	std::vector<Group *> groups, flat;
 
 	mat4 matrix, matrixWorld;
 
+	AABB aabb, obb;
+	
 	Group *parent;
+
+	Bound *bound;
 
 	Geometry *geometry, *axis;
 

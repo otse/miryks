@@ -20,7 +20,7 @@ namespace gloom
 		AABB aabb;
 
 		Mesh *mesh;
-		Renderable *renderable;
+		Group *group;
 		PointLight *pointlight;
 
 		void Go();

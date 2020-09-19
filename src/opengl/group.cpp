@@ -1,5 +1,6 @@
 #include <opengl/group.h>
 
+#include <opengl/bound.h>
 #include <opengl/geometry.h>
 
 const bool DRAW_AXIS = 1;
@@ -13,6 +14,8 @@ Group::Group()
 	geometry = nullptr;
 	axis = nullptr;
 
+	bound = new Bound(this);
+
 	matrix = mat4(1.0f);
 	matrixWorld = mat4(1.0f);
 
@@ -21,17 +24,18 @@ Group::Group()
 		axis = new Geometry;
 		axis->SetupMesh();
 	}
-
 }
 
-Group::~Group() {
+Group::~Group()
+{
 	num--;
+
 }
 
 void Group::Add(Group *group)
 {
 	group->parent = this;
-	
+
 	group->Update();
 
 	groups.push_back(group);
@@ -39,10 +43,6 @@ void Group::Add(Group *group)
 
 void Group::Update()
 {
-	// Accumulate matrices
-
-	// https://github.com/mrdoob/three.js/blob/master/src/core/Object3D.js#L561
-	
 	if (parent == nullptr)
 
 		matrixWorld = matrix;
@@ -51,22 +51,37 @@ void Group::Update()
 
 		matrixWorld = parent->matrixWorld * matrix;
 
-	for (Group *group : groups)
+	for (Group *child : groups)
+	
+		child->Update();
+	
+	bound->Update();
+}
 
-		group->Update();
+void Group::DrawClassic(const mat4 &model)
+{
+	Draw(model);
+
+	for (Group *child : groups)
+
+		child->DrawClassic(model);
 }
 
 void Group::Draw(const mat4 &model)
 {
 	mat4 place = model * matrixWorld;
 
-	if (DRAW_AXIS)
+	if (axis)
 
 		axis->Draw(place);
-
+		
 	if (geometry)
 
 		geometry->Draw(place);
+	
+	if (bound)
+
+		bound->Draw();
 }
 
 void Group::Flatten(Group *root)
@@ -79,17 +94,7 @@ void Group::Flatten(Group *root)
 
 	root->flat.push_back(this);
 
-	for (Group *group : groups)
+	for (Group *child : groups)
 
-		group->Flatten(root);
+		child->Flatten(root);
 }
-
-void Group::DrawClassic(const mat4 &model)
-{
-	Draw(model);
-
-	for (Group *group : groups)
-
-		group->DrawClassic(model);
-}
-

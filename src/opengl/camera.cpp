@@ -3,7 +3,6 @@
 #include <opengl/camera.h>
 #include <opengl/group.h>
 #include <opengl/scene.h>
-#include <opengl/renderable.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -52,7 +51,6 @@ FirstPersonCamera::FirstPersonCamera() : Camera()
 	group->Add(e);
 	group->Add(f);
 	group->Update();
-	renderable = new Renderable(mat4(1.0), group);
 }
 
 void FirstPersonCamera::Mouse(float x, float y)
