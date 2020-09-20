@@ -35,16 +35,16 @@ void Scene::Add(PointLight *pl) {
 	gloom::add<PointLight *>(pl, pointlights);
 }
 
-void Scene::Remove(PointLight *pl) {	
+void Scene::Remove(PointLight *pl) {
 	gloom::remove<PointLight *>(pl, pointlights);
 }
 
-void Scene::Add(Group *group) {
-	gloom::add<Group *>(group, groups);
+void Scene::Add(DrawGroup *drawGroup) {
+	gloom::add<DrawGroup *>(drawGroup, drawGroups);
 }
 
-void Scene::Remove(Group *group) {
-	gloom::remove<Group *>(group, groups);
+void Scene::Remove(DrawGroup *drawGroup) {
+	gloom::remove<DrawGroup *>(drawGroup, drawGroups);
 }
 
 void Scene::DrawItems()
@@ -52,8 +52,8 @@ void Scene::DrawItems()
 	CalcLights();
 	SortLights();
 
-	for (Group *group : groups)
-		group->DrawClassic(mat4(1.0));
+	for (DrawGroup *drawGroup : drawGroups)
+		drawGroup->Draw();
 }
 
 void Scene::CalcLights()

@@ -1,3 +1,5 @@
+#if 0
+
 #include <opengl/renderable.h>
 
 #include <opengl/group.h>
@@ -5,6 +7,7 @@
 #include <opengl/material.h>
 #include <opengl/shader.h>
 
+// we use drawgroups now
 Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)
 {
 	Separate();
@@ -37,9 +40,9 @@ void Renderable::Separate()
 	}
 }
 
-void Renderable::DrawClassic()
+void Renderable::DrawBegin()
 {
-	group->DrawClassic(matrix);
+	group->DrawBegin(matrix);
 
 	if (true)
 	{
@@ -118,3 +121,5 @@ void RenderItem::SetInfo()
 	if (material && material->testing)
 		score += 1;
 }
+
+#endif

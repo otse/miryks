@@ -25,7 +25,7 @@ namespace gloom
 	{
 		void view(rc *);
 		extern Mesh *mesh;
-		extern Group *group;
+		extern DrawGroup *drawGroup;
 	} // namespace viewer
 
 	extern unsigned int fps;

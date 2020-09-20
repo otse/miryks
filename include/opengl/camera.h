@@ -9,6 +9,7 @@ struct Camera {
 	Camera();
 
 	Group *group;
+	DrawGroup *drawGroup;
 
 	vec3 pos;
 	mat4 view, projection;

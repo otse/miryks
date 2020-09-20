@@ -34,7 +34,6 @@ struct AABB
 	float volume() const;
 	
 	void geometrize();
-	void draw(const mat4 &);
 	
 	Geometry *geometry = nullptr;
 

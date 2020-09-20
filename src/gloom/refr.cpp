@@ -23,19 +23,18 @@ namespace gloom
 	Ref::Ref(::record *record)
 	{
 		mesh = nullptr;
-		group = nullptr;
+		drawGroup = nullptr;
 		pointlight = nullptr;
 
 		self = new Object(record);
-		Group *group = new Group();
 		Go();
 	}
 
 	Ref::~Ref()
 	{
-		scene->Remove(group);
+		scene->Remove(drawGroup);
 		scene->Remove(pointlight);
-		delete group;
+		delete drawGroup;
 		delete pointlight;
 	}
 
@@ -148,11 +147,8 @@ namespace gloom
 		{
 			if (base->record->hed->formId != 0x32)
 			{
-				group = new Group();
-				group->matrix = matrix;
-				group->Add(mesh->baseGroup);
-				group->Update();
-				scene->Add(group);
+				drawGroup = new DrawGroup(mesh->baseGroup, matrix);
+				scene->Add(drawGroup);
 			}
 			aabb = AABB::mult(mesh->aabb, matrix);
 		}

@@ -15,6 +15,7 @@ Camera::Camera()
 	fzoom = 45;
 	disabled = false;
 	group = new Group;
+	drawGroup = new DrawGroup(group);
 }
 
 void Camera::SetProjection() {

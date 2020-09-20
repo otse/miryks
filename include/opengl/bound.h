@@ -10,7 +10,7 @@ struct Bound
 	~Bound();
 	
 	void Update();
-	void Draw();
+	void Draw(const mat4 &);
 
 	Group * const group;
 

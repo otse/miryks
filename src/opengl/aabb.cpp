@@ -170,11 +170,3 @@ void AABB::geometrize()
 
 	geometry->SetupMesh();
 }
-
-void AABB::draw(const mat4 &matrix)
-{
-	if (!geometry)
-		return;
-			
-	geometry->Draw(matrix);
-}

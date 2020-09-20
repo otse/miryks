@@ -22,7 +22,7 @@ struct Renderable
 	~Renderable();
 
 	void Separate();
-	void DrawClassic();
+	void DrawBegin();
 };
 
 struct Triangle

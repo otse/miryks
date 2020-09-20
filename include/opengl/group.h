@@ -14,10 +14,8 @@ struct Group
 	mat4 matrix, matrixWorld;
 
 	AABB aabb, obb;
-	
-	Group *parent;
 
-	Bound *bound;
+	Group *parent;
 
 	Geometry *geometry, *axis;
 
@@ -25,14 +23,21 @@ struct Group
 	~Group();
 	void Add(Group *);
 	void Update();
-	void Draw(const mat4 &);
-	void DrawClassic(const mat4 &);
+	void DrawBegin(const mat4 &);
 	void Flatten(Group *);
+
+protected:
+	void Draw(const mat4 &);
 };
 
 struct DrawGroup
 {
-
+	Group *const group;
+	DrawGroup(Group *, mat4 = mat4(1.0));
+	void Draw();
+	void Reset();
+	AABB aabb, obb;
+	mat4 matrix;
 };
 
 #endif

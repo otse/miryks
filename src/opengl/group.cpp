@@ -1,6 +1,5 @@
 #include <opengl/group.h>
 
-#include <opengl/bound.h>
 #include <opengl/geometry.h>
 
 int Group::num = 0;
@@ -12,8 +11,6 @@ Group::Group()
 	geometry = nullptr;
 	axis = nullptr;
 
-	bound = new Bound(this);
-
 	matrix = mat4(1.0f);
 	matrixWorld = mat4(1.0f);
 
@@ -24,7 +21,6 @@ Group::Group()
 Group::~Group()
 {
 	num--;
-
 }
 
 void Group::Add(Group *group)
@@ -36,6 +32,12 @@ void Group::Add(Group *group)
 
 void Group::Update()
 {
+	aabb = AABB();
+
+	if (geometry)
+
+		aabb.extend(geometry->aabb);
+
 	if (parent == nullptr)
 
 		matrixWorld = matrix;
@@ -45,19 +47,24 @@ void Group::Update()
 		matrixWorld = parent->matrixWorld * matrix;
 
 	for (Group *child : groups)
-	
+	{
 		child->Update();
-	
-	bound->Update();
+
+		aabb.extend(child->aabb);
+	}
+
+	obb = aabb;
+
+	aabb = AABB::mult(aabb, matrix);
 }
 
-void Group::DrawClassic(const mat4 &model)
+void Group::DrawBegin(const mat4 &model)
 {
 	Draw(model);
 
 	for (Group *child : groups)
 
-		child->DrawClassic(model);
+		child->DrawBegin(model);
 }
 
 void Group::Draw(const mat4 &model)
@@ -67,14 +74,10 @@ void Group::Draw(const mat4 &model)
 	if (axis)
 
 		axis->Draw(place);
-		
+
 	if (geometry)
 
 		geometry->Draw(place);
-	
-	if (bound)
-
-		bound->Draw();
 }
 
 void Group::Flatten(Group *root)
@@ -90,4 +93,36 @@ void Group::Flatten(Group *root)
 	for (Group *child : groups)
 
 		child->Flatten(root);
+}
+
+DrawGroup::DrawGroup(Group *group, mat4 matrix) : group(group), matrix(matrix)
+{
+	Reset();
+}
+
+void DrawGroup::Reset()
+{
+	obb = aabb = group->aabb;
+
+	aabb = AABB::mult(aabb, matrix);
+
+	aabb.geometrize();
+
+	obb.geometrize();
+}
+
+void DrawGroup::Draw()
+{
+	group->DrawBegin(matrix);
+
+	mat4 place = matrix * group->matrixWorld;
+
+	if (renderSettings.AABBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
+	{
+		aabb.geometry->Draw(mat4(1.0));
+	}
+
+	if (renderSettings.OBBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
+
+		obb.geometry->Draw(place);
 }
