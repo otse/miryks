@@ -53,6 +53,8 @@ void Group::Update()
 		aabb.extend(child->aabb);
 	}
 
+	// Our aab is an obb at this point, let's store it!
+
 	obb = aabb;
 
 	aabb = AABB::mult(aabb, matrix);
@@ -71,7 +73,7 @@ void Group::Draw(const mat4 &model)
 {
 	mat4 place = model * matrixWorld;
 
-	if (axis)
+	if (axis && renderSettings.axes)
 
 		axis->Draw(place);
 
@@ -109,7 +111,11 @@ void DrawGroup::Reset()
 	aabb.geometrize();
 
 	obb.geometrize();
-}
+
+	group->Flatten(group);
+
+	flat = group->flat;
+}                
 
 void DrawGroup::Draw()
 {
@@ -118,9 +124,8 @@ void DrawGroup::Draw()
 	mat4 place = matrix * group->matrixWorld;
 
 	if (renderSettings.AABBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
-	{
+
 		aabb.geometry->Draw(mat4(1.0));
-	}
 
 	if (renderSettings.OBBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
 

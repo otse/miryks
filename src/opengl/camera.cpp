@@ -12,7 +12,7 @@ Camera::Camera()
 {
 	view = mat4(1);
 	pos = vec3(0);
-	fzoom = 45;
+	fzoom = 50;
 	disabled = false;
 	group = new Group;
 	drawGroup = new DrawGroup(group);

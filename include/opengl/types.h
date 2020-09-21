@@ -27,7 +27,6 @@ struct ViewerCamera;
 struct Scene;
 struct Group;
 struct DrawGroup;
-struct Bound;
 struct Texture;
 struct RenderTarget;
 struct Shader;
@@ -51,6 +50,7 @@ struct RenderSettings
 	bool specularMaps = true;
 	bool glowMaps = true;
 	bool dust = true;
+	bool axes = false;
 	bool AABBS = false;
 	bool OBBS = false;
 	float maximumBoundingVolume = 512000.f;
