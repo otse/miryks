@@ -17,8 +17,6 @@ namespace gloom
 
 		mat4 matrix;
 
-		AABB aabb;
-
 		Mesh *mesh;
 		DrawGroup *drawGroup;
 		PointLight *pointlight;

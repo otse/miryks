@@ -21,14 +21,11 @@ class Mesh
 public:
 	Mesh();
 
-	AABB aabb;
-
 	std::map<int, Group *> groups;
 	
 	Group *baseGroup, *lastGroup;
 
 	void Construct(nifp *);
-	void Rebound(Group *);
 	Group *Nested(nifprd *);
 
 	static void Store(void *, Mesh *);

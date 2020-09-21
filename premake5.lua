@@ -47,15 +47,15 @@ project "Dark2"
 		"src",
 		"lib",
 		"include",
-		"F:/New folder/",
-		"F:/New folder/glm",
-		"F:/New folder/glfw-3.3/include",
-		"F:/New folder/zlib-1.2.11"
+		"C:/New folder/",
+		"C:/New folder/glm",
+		"C:/New folder/glfw-3.3/include",
+		"C:/New folder/zlib-1.2.11"
 	}
 	
 	libdirs {
-		"F:/New folder/glfw-3.3-32/src/%{cfg.longname}",
-		"F:/New folder/zlib-1.2.11-32/%{cfg.longname}"
+		"C:/New folder/glfw-3.3-32/src/%{cfg.longname}",
+		"C:/New folder/zlib-1.2.11-32/%{cfg.longname}"
 	}
 
 	links {

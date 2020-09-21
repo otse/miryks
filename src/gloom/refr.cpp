@@ -150,7 +150,6 @@ namespace gloom
 				drawGroup = new DrawGroup(mesh->baseGroup, matrix);
 				scene->Add(drawGroup);
 			}
-			aabb = AABB::mult(mesh->aabb, matrix);
 		}
 		if (pointlight)
 		{
@@ -160,19 +159,34 @@ namespace gloom
 
 	float Ref::GetDistance()
 	{
-		mat4 mate = translate(mat4(1), aabb.center());
-
-		float distance = glm::length(vec3(mate[3]) - camera->pos);
+		float distance = glm::length(drawGroup->aabb.center() - camera->pos);
 
 		return distance;
 	}
 
+	/*void uncompress_subrecord(char *data)
+	{
+		char *src = data;
+		const unsigned int realSize = *(unsigned int *)src;
+		const unsigned int size = field->hed->size - 4;
+		src += 4;
+		rec->buf = malloc(realSize * sizeof(char));
+		int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);
+		cassert(ret == Z_OK, "esp zlib");
+		rec->actualSize = realSize;
+		Count.uncompress++;
+	}*/
+
 	bool Ref::DisplayAsItem()
 	{
-		if (GetDistance() > 600 / ONE_SKYRIM_UNIT_IN_CM)
-			return false;
+		float dist = GetDistance() / ONE_SKYRIM_UNIT_IN_CM;
 
-		char *itemName = "Sometihng";
+		if (dist > 150)
+		{
+			return false;
+		}
+
+		char *itemName = "Something";
 		if (base->FULL)
 		{
 			itemName = base->FULL;
@@ -180,7 +194,7 @@ namespace gloom
 
 		vec3 original = vec3(0);
 
-		mat4 mate = translate(mat4(1), aabb.center());
+		mat4 mate = translate(mat4(1), drawGroup->aabb.center());
 		//mate = translate(mate, vec3(0, 0, 50 / ONE_SKYRIM_UNIT_IN_CM));
 
 		mat4 model = camera->projection * camera->view * mate;

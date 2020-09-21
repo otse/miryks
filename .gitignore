@@ -51,3 +51,7 @@ bin/error.txt
 bin/imgui.ini
 bin/error.txt
 bin/Dark2.ilk
+*.db-shm
+*.db-wal
+*.recipe
+bin/Gloom.esp

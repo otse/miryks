@@ -6,7 +6,7 @@ namespace gloom
 {
 	Object::Object(::record *record) : record(record)
 	{
-		printf("Object");
+		// printf("Object");
 
 		NAME = nullptr;
 		DATA = nullptr;

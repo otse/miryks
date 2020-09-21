@@ -31,7 +31,7 @@ api struct bsa *bsa_load(const char *path)
 	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
 	cassert(
-		bsa->stream, BSA "can't open");
+		bsa->stream, path);
 	read(bsa, &Hedr, sizeof(struct bsa_hedr));
 	cassert(
 		strcmp(

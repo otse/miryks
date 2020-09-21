@@ -109,7 +109,6 @@ void DrawGroup::Reset()
 	aabb = AABB::mult(aabb, matrix);
 
 	aabb.geometrize();
-
 	obb.geometrize();
 
 	group->Flatten(group);

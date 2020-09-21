@@ -80,7 +80,8 @@ namespace gloom
 	bsa *loadArchive(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
-		if (exists_test3(path))
+		printf("%s\n", path.c_str());
+		if (exists(path.c_str()))
 			return bsa_load(path.c_str());
 		else
 			return bsa_load(filename);
@@ -105,11 +106,12 @@ namespace gloom
 		mesh->Construct(nif);
 		drawGroup = new DrawGroup(mesh->baseGroup, glm::translate(mat4(1.0), first_person_camera->pos));
 		scene->Add(drawGroup);
-		camera = viewer_camera;
 		HideCursor();
+		camera = viewer_camera;
 		viewer_camera->disabled = false;
-		viewer_camera->pos = drawGroup->group->aabb.center();
-		viewer_camera->radius = drawGroup->group->aabb.radius2() * 2;
+		viewer_camera->pos = drawGroup->aabb.center();
+		//viewer_camera->pos = first_person_camera->pos;
+		viewer_camera->radius = drawGroup->aabb.radius2() * 2;
 	}
 } // namespace gloom
 
@@ -117,10 +119,12 @@ int main()
 {
 	using namespace gloom;
 	printf("loading\n");
-	cassert(exists("path to oldrim.txt"), "missing `path to oldrim.txt`");
 	pathToOldrim = fread("path to oldrim.txt");
+	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
+	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe, check your path");
 	get_plugins()[0] = loadPlugin("Skyrim.esm");
-	printf("loaded skyrim.esm!\n");
+	if (get_plugins()[0])
+		printf("loaded skyrim.esm!\n");
 	get_plugins()[1] = loadPlugin("Gloom.esp");
 	get_archives()[0] = loadArchive("Skyrim - Meshes.bsa");
 	get_archives()[1] = loadArchive("Skyrim - Textures.bsa");

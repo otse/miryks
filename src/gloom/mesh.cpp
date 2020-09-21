@@ -8,7 +8,6 @@ namespace gloom
 {
 	Mesh::Mesh()
 	{
-		aabb = AABB();
 		baseGroup = new Group();
 		lastGroup = baseGroup;
 	}
@@ -37,7 +36,6 @@ namespace gloom
 
 	void Mesh::Construct(nifp *bucket)
 	{
-		aabb = AABB();
 		nifprd *rd = malloc_nifprd();
 		rd->nif = bucket;
 		rd->data = this;
@@ -61,13 +59,6 @@ namespace gloom
 		parent->Add(group);
 		lastGroup = group;
 		return group;
-	}
-
-	void Mesh::Rebound(Group *group)
-	{
-		group->Update();
-		AABB rotated = AABB::mult(group->geometry->aabb, group->matrixWorld);
-		aabb.extend(rotated);
 	}
 
 	void other(nifprd *rd, int parent, int current, const char *block_type)
@@ -133,7 +124,6 @@ namespace gloom
 				geometry->vertices[i].color = *cast_vec_4((float *)&block->vertex_colors[i]);
 		}
 		geometry->SetupMesh();
-		mesh->Rebound(group);
 	}
 
 	void bs_lighting_shader_property_callback(nifprd *rd, bs_lighting_shader_property_pointer *block)
