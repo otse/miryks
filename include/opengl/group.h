@@ -36,7 +36,6 @@ struct DrawGroup
 	DrawGroup(Group *, mat4 = mat4(1.0));
 	void Draw();
 	void Reset();
-	std::vector<Group *> flat;
 	AABB aabb, obb;
 	mat4 matrix;
 };

@@ -104,6 +104,8 @@ DrawGroup::DrawGroup(Group *group, mat4 matrix) : group(group), matrix(matrix)
 
 void DrawGroup::Reset()
 {
+	group->Update();
+
 	obb = aabb = group->aabb;
 
 	aabb = AABB::mult(aabb, matrix);
@@ -111,16 +113,14 @@ void DrawGroup::Reset()
 	aabb.geometrize();
 	obb.geometrize();
 
-	group->Flatten(group);
-
-	flat = group->flat;
-}                
+	//group->Flatten(group);
+}
 
 void DrawGroup::Draw()
 {
 	group->DrawBegin(matrix);
 
-	mat4 place = matrix * group->matrixWorld;
+	mat4 place = matrix * group->matrix;
 
 	if (renderSettings.AABBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
 

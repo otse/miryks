@@ -159,7 +159,7 @@ namespace gloom
 
 	float Ref::GetDistance()
 	{
-		float distance = glm::length(drawGroup->aabb.center() - camera->pos);
+		float distance = glm::length(drawGroup->aabb.center() - vec3(first_person_camera->hands->matrixWorld[3]));
 
 		return distance;
 	}
@@ -181,7 +181,7 @@ namespace gloom
 	{
 		float dist = GetDistance() / ONE_SKYRIM_UNIT_IN_CM;
 
-		if (dist > 150)
+		if (dist > 60)
 		{
 			return false;
 		}
@@ -194,11 +194,10 @@ namespace gloom
 
 		vec3 original = vec3(0);
 
-		mat4 mate = translate(mat4(1), drawGroup->aabb.center());
-		//mate = translate(mate, vec3(0, 0, 50 / ONE_SKYRIM_UNIT_IN_CM));
+		mat4 mate = glm::translate(mat4(1), drawGroup->aabb.center());
 
 		mat4 model = camera->projection * camera->view * mate;
-		mat4 projection = frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
+		mat4 projection = glm::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 		vec4 viewport(0.0f, 0.0f, width, height);
 
 		vec3 projected = glm::project(original, model, projection, viewport);

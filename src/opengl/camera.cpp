@@ -5,6 +5,7 @@
 #include <opengl/scene.h>
 
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 double Camera::prev[2] = { 0, 0 };
 
@@ -30,28 +31,9 @@ FirstPersonCamera::FirstPersonCamera() : Camera()
 	w = a = s = d = r = f = false;
 	shift = false;
 
-	hands = new Group();
-	hands->matrix = translate(mat4(1.0), vec3(0, 0, 0));
-	Group *a = new Group;
-	a->matrix = translate(mat4(1.0), vec3(-100, 0, 0));
-	Group *b = new Group;
-	b->matrix = translate(mat4(1.0), vec3(100, 0, 0));
-	Group *c = new Group;
-	c->matrix = translate(mat4(1.0), vec3(0, -100, 0));
-	Group *d = new Group;
-	d->matrix = translate(mat4(1.0), vec3(0, 100, 0));
-	Group *e = new Group;
-	e->matrix = translate(mat4(1.0), vec3(0, 0, -100));
-	Group *f = new Group;
-	f->matrix = translate(mat4(1.0), vec3(0, 0, 100));
+	hands = new Group;
+	hands->matrix = translate(mat4(1.0), vec3(0, 0, -100));
 	group->Add(hands);
-	group->Add(a);
-	group->Add(b);
-	group->Add(c);
-	group->Add(d);
-	group->Add(e);
-	group->Add(f);
-	group->Update();
 }
 
 void FirstPersonCamera::Mouse(float x, float y)
@@ -86,8 +68,10 @@ void FirstPersonCamera::Update(float time)
 	view = rotate(view, fyaw, vec3(0, 0, 1));
 	view = translate(view, -pos - eye);
 
-	group->matrix = glm::translate(mat4(1.0), -pos);
-	group->Update();
+	group->matrix = glm::inverse(view);
+	drawGroup->Reset();
+
+	// printf("hands matrix world %s\n", glm::to_string(vec3(hands->matrixWorld[3])));
 
 	Camera::SetProjection();
 }
