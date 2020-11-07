@@ -204,11 +204,11 @@ void main()
 	//vec3 fogColor = vec3(5.0 / 255.0, 4.0 / 255.0, 3.0 / 255.0);
 
 	// blue
-	vec3 fogColor = vec3(6.0 / 255.0, 9.0 / 255.0, 11.0 / 255.0) * 2.0;
+	vec3 fogColor = vec3(6.0 / 255.0, 9.0 / 255.0, 11.0 / 255.0) * 1.0;
 
 	float fogNear = 1000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	float fogFar = 15000.0 / ONE_SKYRIM_UNIT_IN_CM;
-	float fogDensity = 0.0011;
+	float fogDensity = 0.0018; // 0.0022 for dark dungeon 0.0011 for light
 
 	vec3 totalEmissiveRadiance = emissive;
 
@@ -235,12 +235,12 @@ void main()
 		normal = normal * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
 	}
 
-	float specularStrength = 0;// = glossiness / 999;
+	float specularStrength = 0;//glossiness / 999;
 
 	#ifndef DONT_USE_SPECULAR_MAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );
-		specularStrength = texelSpecular.a * 0.4;
+		specularStrength = texelSpecular.a * 0.5;
 
 	#endif
 
@@ -289,7 +289,7 @@ void main()
 		vec3 dust = vec3(0.15, 0.15, 0.15);
 		
 		if (normalDust.z > 0.88) {
-			diffuseColor.rgb = mix(dust, diffuseColor.rgb, 0.1);
+			diffuseColor.rgb = mix(dust, diffuseColor.rgb, 0.075);
 			specularStrength /= 10.0;
 		}
 
@@ -298,10 +298,10 @@ void main()
 	BlinnPhongMaterial material;
 	material.diffuseColor = diffuseColor.rgb;
 	//material.specularColor = vec3(17.0/255.0, 17.0/255.0, 17.0/255.0);
-	material.specularColor = specular + vec3(0.0, 0.1, 0.5);
+	material.specularColor = specular + vec3(0.0, 0.75, 0.75);
 	material.specularColor /= 2.0;
 	//material.specularColor = vec3(127.0/255.0, 127.0/255.0, 127.0/255.0);
-	material.specularShininess = glossiness / 3000 * 100; // shininess
+	material.specularShininess = glossiness / 1500 * 100; // shininess 1500 = shiny 3000 = matt
 	material.specularStrength = specularStrength;
 
 	GeometricContext geometry;
@@ -348,7 +348,8 @@ void main()
 	hemiLight.groundColor = vec3(0.03, 0.06, 0.04) * 2.0;
 
 	// ambientLightColor
-	vec3 localAmbient = vec3(100.0 / 255.0);
+	// 30 / 255 for dark dungeon
+	vec3 localAmbient = vec3(20.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
 	#define DONT_USE_A_HEMISPHERE

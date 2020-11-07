@@ -85,6 +85,8 @@ namespace gloom
 		{
 			void *element = grup->mixed.elements[i];
 			cassert(*(char *)element == RECORD, "mixed non record");
+			if (grup->mixed.records[i]->hed->type != espwrd "REFR")
+				continue;
 			cassert(grup->mixed.records[i]->hed->type == espwrd "REFR", "not a refr");
 			auto ref = new Ref((record *)element);
 			refs.push_back(ref);

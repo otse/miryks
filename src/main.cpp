@@ -142,7 +142,7 @@ int main()
 #endif
 	//nif_test();
 	//nifp_test();
-	dungeon = new Level("PadstowDungeon"); // <-- interior to load
+	dungeon = new Level("Dark2Schmuck"); // <-- interior to load
 	programLoop();
 	return 1;
 }
