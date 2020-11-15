@@ -14,30 +14,23 @@ namespace gloom
 	public:
 		::record *const record;
 
-		Object(::record *);
+		Object(::record *, int = 0);
 
-		template <typename T>
-		T Get(const char *type) const
-		{
-			auto has = fields.find(espwrd type);
-			if (has == fields.end())
-				return nullptr;
-			::subrecord *field = has->second;
-			return (T)field->data;
-		};
-		void It(int);
 		bool Is(const char *) const;
 		bool IsAny(std::vector<const char *>) const;
 
 		std::map<unsigned int, ::subrecord *> fields;
 
 		unsigned int formId;
-		/*
-		unsigned int *NAME;
-		unsigned char *DATA;
-		char *EDID, *FULL, *DESC;
-		float *XSCL, *FNAM;
-		*/
+
+		template <typename T>
+		T Get(const char *type) const
+		{
+			auto has = fields.find(*(unsigned int *)type);
+			if (has == fields.end())
+				return nullptr;
+			return (T)has->second->data;
+		};
 	};
 
 } // namespace gloom

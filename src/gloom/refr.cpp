@@ -44,10 +44,10 @@ namespace gloom
 
 		mat4 translation(1.0), rotation(1.0), scale(1.0);
 
+		auto NAME = self->Get<unsigned int *>("NAME");
 		auto EDID = self->Get<const char *>("EDID");
 		auto XSCL = self->Get<float *>("XSCL");
 		auto DATA = self->Get<float *>("DATA");
-		auto NAME = self->Get<unsigned int *>("NAME");
 
 		if (EDID)
 		{

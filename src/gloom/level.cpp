@@ -106,10 +106,10 @@ namespace gloom
 		auto ref = refEditorIDs.find("darkshackspawn");
 		if (ref != refEditorIDs.end() && !spawned)
 		{
-			float *DATA = ref->second->self->Get<float *>("DATA");
+			auto DATA = ref->second->self->Get<float *>("DATA");
 			first_person_camera->pos = ref->second->matrix[3];
 			first_person_camera->pos.z += EYE_HEIGHT;
-			first_person_camera->fyaw = cast_vec_3(DATA + 1)->z;
+			first_person_camera->fyaw = cast_vec_3(DATA + 3)->z;
 			spawned = true;
 		}
 	}

@@ -4,21 +4,14 @@
 
 namespace gloom
 {
-	Object::Object(::record *record) : record(record)
+	Object::Object(::record *record, int n) : record(record)
 	{
-		// printf("Object");
-		for (int i = 0; i < record->fields.size; i++)
+		cassert(record->x == RECORD, "Object not record");
+		for (int i = 0; i < (n ? n : record->fields.size); i++)
 		{
 			::subrecord *field = record->fields.subrecords[i];
 			fields.emplace(field->hed->type, field);
 		}
-	}
-	
-	void Object::It(int i)
-	{
-		auto array = &record->fields;
-		::subrecord *field = array->subrecords[i];
-		fields.emplace(field->hed->type, field);
 	}
 
 	bool Object::Is(const char *type) const

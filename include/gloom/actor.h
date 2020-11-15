@@ -7,12 +7,6 @@
 
 namespace gloom
 {
-	class Race : public Object {
-		Race(::record *);
-
-		
-	};
-
 	class Actor
 	{
 	public:
