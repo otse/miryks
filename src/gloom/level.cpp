@@ -90,23 +90,26 @@ namespace gloom
 			cassert(grup->mixed.records[i]->hed->type == espwrd "REFR", "not a refr");
 			auto ref = new Ref((record *)element);
 			refs.push_back(ref);
-			if (ref->self->EDID)
-				refEditorIDs.emplace(ref->self->EDID, ref);
-			if (ref->base && ref->base->record->hed->type == espwrd "WEAP" ||
+			const char *EDID = ref->self->Get<const char *>("EDID");
+			if (EDID)
+				refEditorIDs.emplace(EDID, ref);
+			if (ref->base &&
+				ref->base->record->hed->type == espwrd "WEAP" ||
 				ref->base->record->hed->type == espwrd "MISC")
 			{
-				printf("weap misc item");
+				//printf("weap misc item");
 				iterables.push_back(ref);
 			}
 		}
 
 		static bool spawned = false;
-		auto ref = refEditorIDs.find("darkshackspawn001");
+		auto ref = refEditorIDs.find("darkshackspawn");
 		if (ref != refEditorIDs.end() && !spawned)
 		{
+			float *DATA = ref->second->self->Get<float *>("DATA");
 			first_person_camera->pos = ref->second->matrix[3];
 			first_person_camera->pos.z += EYE_HEIGHT;
-			first_person_camera->fyaw = cast_vec_3((float *)ref->second->self->DATA + 3)->z;
+			first_person_camera->fyaw = cast_vec_3(DATA + 1)->z;
 			spawned = true;
 		}
 	}

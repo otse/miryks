@@ -20,6 +20,7 @@ extern "C"
 
 #include <gloom/level.h>
 #include <gloom/mesh.h>
+#include <gloom/actor.h>
 
 namespace gloom
 {
@@ -128,9 +129,9 @@ int main()
 	get_plugins()[1] = loadPlugin("Gloom.esp");
 	get_archives()[0] = loadArchive("Skyrim - Meshes.bsa");
 	get_archives()[1] = loadArchive("Skyrim - Textures.bsa");
-	get_archives()[2] = loadArchive("HighResTexturePack01.bsa");
-	get_archives()[3] = loadArchive("HighResTexturePack02.bsa");
-	get_archives()[4] = loadArchive("HighResTexturePack03.bsa");
+	//get_archives()[2] = loadArchive("HighResTexturePack01.bsa");
+	//get_archives()[3] = loadArchive("HighResTexturePack02.bsa");
+	//get_archives()[4] = loadArchive("HighResTexturePack03.bsa");
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
@@ -143,6 +144,7 @@ int main()
 	//nif_test();
 	//nifp_test();
 	dungeon = new Level("Dark2Schmuck"); // <-- interior to load
+	Actor *draugr = new Actor("DraugrRace");
 	programLoop();
 	return 1;
 }

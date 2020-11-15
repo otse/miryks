@@ -301,7 +301,7 @@ void main()
 	material.specularColor = specular + vec3(0.0, 0.75, 0.75);
 	material.specularColor /= 2.0;
 	//material.specularColor = vec3(127.0/255.0, 127.0/255.0, 127.0/255.0);
-	material.specularShininess = glossiness / 1500 * 100; // shininess 1500 = shiny 3000 = matt
+	material.specularShininess = glossiness / 2000 * 100; // shininess 1500 = shiny 3000 = matt
 	material.specularStrength = specularStrength;
 
 	GeometricContext geometry;

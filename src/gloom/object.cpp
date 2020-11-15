@@ -7,33 +7,18 @@ namespace gloom
 	Object::Object(::record *record) : record(record)
 	{
 		// printf("Object");
-
-		NAME = nullptr;
-		DATA = nullptr;
-		EDID = nullptr;
-		FULL = nullptr;
-		DESC = nullptr;
-		XSCL = nullptr;
-		FNAM = nullptr;
-
-		auto array = &record->fields;
-		for (int i = 0; i < array->size; i++)
+		for (int i = 0; i < record->fields.size; i++)
 		{
-			::subrecord *field = array->subrecords[i];
+			::subrecord *field = record->fields.subrecords[i];
 			fields.emplace(field->hed->type, field);
-			if (field->hed->type == espwrd "EDID")
-				EDID = ((char *)field->data);
-			if (field->hed->type == espwrd "XSCL")
-				XSCL = ((float *)field->data);
-			if (field->hed->type == espwrd "NAME")
-				NAME = ((unsigned int *)field->data);
-			if (field->hed->type == espwrd "DATA")
-				DATA = ((unsigned char *)field->data);
-			if (field->hed->type == espwrd "FULL")
-				FULL = ((char *)field->data);
-			if (field->hed->type == espwrd "DESC")
-				DESC = ((char *)field->data);
 		}
+	}
+	
+	void Object::It(int i)
+	{
+		auto array = &record->fields;
+		::subrecord *field = array->subrecords[i];
+		fields.emplace(field->hed->type, field);
 	}
 
 	bool Object::Is(const char *type) const

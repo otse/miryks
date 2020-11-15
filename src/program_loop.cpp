@@ -89,7 +89,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		free_plugin(&has);
 		get_plugins()[1] = loadPlugin(name);
 		delete dungeon;
-		dungeon = new Level("PadstowDungeon");
+		dungeon = new Level("Dark2Schmuck");
 	}
 	if (glfwGetKey(window, GLFW_KEY_F6))
 	{

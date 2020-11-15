@@ -44,19 +44,24 @@ namespace gloom
 
 		mat4 translation(1.0), rotation(1.0), scale(1.0);
 
-		if (self->EDID)
+		auto EDID = self->Get<const char *>("EDID");
+		auto XSCL = self->Get<float *>("XSCL");
+		auto DATA = self->Get<float *>("DATA");
+		auto NAME = self->Get<unsigned int *>("NAME");
+
+		if (EDID)
 		{
 			//EDID = self->EDID;
 		}
-		if (self->XSCL)
+		if (XSCL)
 		{
-			scale = glm::scale(mat4(1.0), vec3(*self->XSCL));
+			scale = glm::scale(mat4(1.0), vec3(*XSCL));
 		}
-		if (self->DATA)
+		if (DATA)
 		{
 			//DATA = (float *)self->DATA;
-			vec3 pos = *cast_vec_3(((float *)self->DATA));
-			vec3 rad = *cast_vec_3(((float *)self->DATA + 3));
+			vec3 pos = *cast_vec_3(DATA);
+			vec3 rad = *cast_vec_3(DATA + 3);
 
 			translation = translate(mat4(1.0f), pos);
 
@@ -67,9 +72,11 @@ namespace gloom
 
 			matrix = translation * rotation * scale;
 		}
-		if (self->NAME)
+		if (NAME)
 		{
-			::record *rbase = esp_brute_record_by_form_id(*self->NAME);
+			if (*NAME == 0x0005AD9E) // gold to orichalum
+				NAME = new unsigned int(0x0005AD99);
+			::record *rbase = esp_brute_record_by_form_id(*NAME);
 			base = new Object(rbase);
 
 			cassert(rbase, "ref cant find name baseRecord");
@@ -118,23 +125,27 @@ namespace gloom
 				pointlight = new PointLight;
 				scene->Add(pointlight);
 
-				if (base->EDID)
+				auto EDID = base->Get<const char *>("EDID");
+				auto DATA = base->Get<int *>("DATA");
+				auto FNAM = base->Get<float *>("FNAM");
+
+				if (EDID)
 				{
 					//printf("ligh edid %s\n", LIGH.EDID);
 				}
-				if (base->DATA)
+				if (DATA)
 				{
-					int time = *(int *)base->DATA;
-					pointlight->distance = *((unsigned int *)base->DATA + 1);
-					unsigned int rgb = *((unsigned int *)base->DATA + 2);
+					int time = *DATA;
+					pointlight->distance = *((unsigned int *)DATA + 1);
+					unsigned int rgb = *((unsigned int *)DATA + 2);
 					unsigned char r = (rgb >> (8 * 0)) & 0xff;
 					unsigned char g = (rgb >> (8 * 1)) & 0xff;
 					unsigned char b = (rgb >> (8 * 2)) & 0xff;
 					pointlight->color = vec3(r, g, b) / 255.f;
 				}
-				if (base->FNAM)
+				if (FNAM)
 				{
-					float fade = *base->FNAM;
+					float fade = *FNAM;
 					fade = 1 / fade;
 					pointlight->decay = fade;
 				}
@@ -186,10 +197,13 @@ namespace gloom
 			return false;
 		}
 
+		auto FULL = base->Get<char *>("FULL");
+		auto DESC = base->Get<const char *>("DESC");
+
 		char *itemName = "Something";
-		if (base->FULL)
+		if (FULL)
 		{
-			itemName = base->FULL;
+			itemName = FULL;
 		}
 
 		vec3 original = vec3(0);
@@ -211,9 +225,9 @@ namespace gloom
 		ImGui::Begin("##Item", &open, flags);
 		ImGui::PushFont(font2);
 		ImGui::Text(itemName);
-		if (base->DESC)
+		if (DESC)
 		{
-			ImGui::TextWrapped(base->DESC);
+			ImGui::TextWrapped(DESC);
 		}
 		ImGui::PopFont();
 		ImGui::End();
