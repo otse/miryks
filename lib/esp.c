@@ -73,6 +73,7 @@ struct record *read_record(struct esp *esp)
 	rec->fi = NULL;
 	// head
 	rec->x = RECORD;
+	rec->indices = 0;
 	rec->id = Count.records++;
 	rec->hed = Buf + Pos;
 	Pos += sizeof(struct record_header);
@@ -134,6 +135,7 @@ inline struct subrecord *read_field(struct esp *esp, struct record *rec, unsigne
 	sub = malloc(sizeof(struct subrecord));
 	// hed
 	sub->x = SUBRECORD;
+	sub->index = rec->indices++;
 	sub->id = Count.fields++;
 	sub->hed = buf + *pos;
 	*pos += sizeof(struct field_header);

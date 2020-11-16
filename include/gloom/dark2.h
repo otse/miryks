@@ -30,9 +30,11 @@ namespace gloom
 
 	extern unsigned int fps;
 
-	nifp *loadNif(rc *);
-	esp *loadPlugin(const char *);
-	bsa *loadArchive(const char *);
+	struct rc *loadrc(const char *, const char *, unsigned long);
+	struct nifp *loadnifp(struct rc *, int);
+
+	esp *LoadPlugin(const char *);
+	bsa *LoadArchive(const char *);
 
 	void programGo();
 	void programLoop();

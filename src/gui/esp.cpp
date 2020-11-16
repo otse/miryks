@@ -116,7 +116,7 @@ void esp_gui()
 		}
 		else
 		{
-			plugin2 = loadPlugin(buf2);
+			plugin2 = LoadPlugin(buf2);
 			if (plugin2)
 			{
 				memcpy(temporaryName, buf, 260);

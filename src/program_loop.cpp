@@ -87,7 +87,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		const char *name = plugin->name;
 		esp *has = has_plugin(name);
 		free_plugin(&has);
-		get_plugins()[1] = loadPlugin(name);
+		get_plugins()[1] = LoadPlugin(name);
 		delete dungeon;
 		dungeon = new Level("Dark2Schmuck");
 	}

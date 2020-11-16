@@ -1,5 +1,7 @@
 #include <gloom/dark2.h>
 
+#include <algorithm>
+
 extern "C"
 {
 #include "putc.h"
@@ -49,19 +51,30 @@ namespace gloom
 {
 	const char *dataFolder = "Data/";
 
-	nifp *loadNif(rc *rc)
+	struct rc *loadrc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
+	{
+		std::string str = prepend;
+		str += path;
+		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
+		struct rc *rc = bsa_find_more(str.c_str(), flags);
+		bsa_read(rc);
+		return rc;
+	}
+
+	struct nifp *loadnifp(struct rc *rc, int save)
 	{
 		cassert(rc, "mh no rc");
 		bsa_read(rc);
-		nifp *nif = malloc_nifp();
+		struct nifp *nif = malloc_nifp();
 		nif->path = rc->path;
 		nif->buf = rc->buf;
 		nifp_read(nif);
-		// nifp_save(rc, nif);
+		if (save)
+			nifp_save(rc, nif);
 		return nif;
 	}
 
-	esp *loadPlugin(const char *filename)
+	esp *LoadPlugin(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
 		char *buf;
@@ -78,7 +91,7 @@ namespace gloom
 		return plugin;
 	}
 
-	bsa *loadArchive(const char *filename)
+	bsa *LoadArchive(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
 		printf("%s\n", path.c_str());
@@ -100,7 +113,7 @@ namespace gloom
 		nifp *nif = nifp_saved(rc);
 		if (nif == NULL)
 		{
-			nif = loadNif(rc);
+			nif = loadnifp(rc, 1);
 			nifp_save(rc, nif);
 		}
 		mesh = new Mesh;
@@ -123,15 +136,15 @@ int main()
 	pathToOldrim = fread("path to oldrim.txt");
 	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
 	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe, check your path");
-	get_plugins()[0] = loadPlugin("Skyrim.esm");
+	get_plugins()[0] = LoadPlugin("Skyrim.esm");
 	if (get_plugins()[0])
 		printf("loaded skyrim.esm!\n");
-	get_plugins()[1] = loadPlugin("Gloom.esp");
-	get_archives()[0] = loadArchive("Skyrim - Meshes.bsa");
-	get_archives()[1] = loadArchive("Skyrim - Textures.bsa");
-	//get_archives()[2] = loadArchive("HighResTexturePack01.bsa");
-	//get_archives()[3] = loadArchive("HighResTexturePack02.bsa");
-	//get_archives()[4] = loadArchive("HighResTexturePack03.bsa");
+	get_plugins()[1] = LoadPlugin("Gloom.esp");
+	get_archives()[0] = LoadArchive("Skyrim - Meshes.bsa");
+	get_archives()[1] = LoadArchive("Skyrim - Textures.bsa");
+	//get_archives()[2] = LoadArchive("HighResTexturePack01.bsa");
+	//get_archives()[3] = LoadArchive("HighResTexturePack02.bsa");
+	//get_archives()[4] = LoadArchive("HighResTexturePack03.bsa");
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;

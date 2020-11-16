@@ -12,13 +12,13 @@ namespace gloom
 		lastGroup = baseGroup;
 	}
 
-	void other(nifprd *, int, int, const char *);
-	void ni_node_callback(nifprd *, ni_node_pointer *);
-	void ni_tri_shape_callback(nifprd *, ni_tri_shape_pointer *);
-	void ni_tri_shape_data_callback(nifprd *, ni_tri_shape_data_pointer *);
-	void bs_lighting_shader_property_callback(nifprd *, bs_lighting_shader_property_pointer *);
-	void bs_shader_texture_set_callback(nifprd *, bs_shader_texture_set_pointer *);
-	void ni_alpha_property_callback(nifprd *, ni_alpha_property_pointer *);
+	static void other(nifprd *, int, int, const char *);
+	static void ni_node_callback(nifprd *, ni_node_pointer *);
+	static void ni_tri_shape_callback(nifprd *, ni_tri_shape_pointer *);
+	static void ni_tri_shape_data_callback(nifprd *, ni_tri_shape_data_pointer *);
+	static void bs_lighting_shader_property_callback(nifprd *, bs_lighting_shader_property_pointer *);
+	static void bs_shader_texture_set_callback(nifprd *, bs_shader_texture_set_pointer *);
+	static void ni_alpha_property_callback(nifprd *, ni_alpha_property_pointer *);
 
 	static std::map<void *, Mesh *> store;
 
@@ -106,7 +106,7 @@ namespace gloom
 			for (int i = 0; i < block->J->num_triangles; i++)
 			{
 				unsigned short *triangle = (unsigned short *)&block->triangles[i];
-				geometry->elements.insert(geometry->elements.end(), { triangle[0], triangle[1], triangle[2] });
+				geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
 			}
 		}
 		for (int i = 0; i < block->A->num_vertices; i++)

@@ -95,6 +95,7 @@ struct grup
 struct record
 {
 	char x;
+	unsigned int indices;
 	unsigned int id;
 	const struct record_header *hed;
 	struct form_id *fi;
@@ -109,6 +110,7 @@ struct record
 struct subrecord
 {
 	char x;
+	unsigned int index;
 	unsigned int id;
 	const struct field_header *hed;
 	unsigned int actualSize;

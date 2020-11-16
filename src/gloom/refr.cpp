@@ -103,8 +103,7 @@ namespace gloom
 							nifp *nif = nifp_saved(rc);
 							if (nif == NULL)
 							{
-								nif = loadNif(rc);
-								nifp_save(rc, nif);
+								nif = loadnifp(rc, 1);
 							}
 							mesh = new Mesh;
 							mesh->Construct(nif);

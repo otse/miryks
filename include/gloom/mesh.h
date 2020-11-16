@@ -16,19 +16,19 @@ extern "C"
 
 namespace gloom
 {
-class Mesh
-{
-public:
-	Mesh();
+	class Mesh
+	{
+	public:
+		Mesh();
 
-	std::map<int, Group *> groups;
-	
-	Group *baseGroup, *lastGroup;
+		std::map<int, Group *> groups;
 
-	void Construct(nifp *);
-	Group *Nested(nifprd *);
+		Group *baseGroup, *lastGroup;
 
-	static void Store(void *, Mesh *);
-	static Mesh *GetStored(void *);
-};
-}
+		void Construct(nifp *);
+		Group *Nested(nifprd *);
+
+		static void Store(void *, Mesh *);
+		static Mesh *GetStored(void *);
+	};
+} // namespace gloom

@@ -7,12 +7,14 @@
 
 namespace gloom
 {
+	Object GetRace(const char *);
+
 	class Actor
 	{
 	public:
 		Actor(const char *);
 
-		const char *race;
+
 	};
 
 } // namespace gloom

@@ -81,6 +81,9 @@
         "arc": "cpp",
         "sstream": "cpp",
         "renderable": "cpp",
-        "libs": "cpp"
+        "libs": "cpp",
+        "atomic": "cpp",
+        "compare": "cpp",
+        "iterator": "cpp"
     }
 }

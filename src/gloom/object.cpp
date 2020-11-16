@@ -6,13 +6,38 @@ namespace gloom
 {
 	Object::Object(::record *record, int n) : record(record)
 	{
+		if (record == nullptr)
+			return;
 		cassert(record->x == RECORD, "Object not record");
-		for (int i = 0; i < (n ? n : record->fields.size); i++)
+		int l = n ? n : record->fields.size;
+		for (int i = 0; i < l; i++)
 		{
-			::subrecord *field = record->fields.subrecords[i];
+			subrecord *field = record->fields.subrecords[i];
 			fields.emplace(field->hed->type, field);
 		}
 	}
+
+	subrecord *Object::Get2(const char *type) const
+	{
+		auto has = fields.find(*(unsigned int *)type);
+		if (has == fields.end())
+			return nullptr;
+		return has->second;
+	};
+
+	/*::subrecord *Object::GetFrom(unsigned int type, int *n) const
+	{
+		for (int i = *n; i < record->fields.size; i++)
+		{
+			::subrecord *field = record->fields.subrecords[i];
+			if (type == field->hed->type)
+			{
+				*n = i;
+				return field;
+			}
+		}
+		return nullptr;
+	}*/
 
 	bool Object::Is(const char *type) const
 	{

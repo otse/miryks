@@ -1,5 +1,5 @@
-#ifndef GLOOM_BASEOBJECT_H
-#define GLOOM_BASEOBJECT_H
+#ifndef GLOOM_OBJECT_H
+#define GLOOM_OBJECT_H
 
 #include <gloom/dark2.h>
 
@@ -12,25 +12,37 @@ namespace gloom
 	class Object
 	{
 	public:
-		::record *const record;
+		unsigned int formId;
+
+		record *const record;
 
 		Object(::record *, int = 0);
 
 		bool Is(const char *) const;
 		bool IsAny(std::vector<const char *>) const;
 
-		std::map<unsigned int, ::subrecord *> fields;
+		std::multimap<unsigned int, subrecord *> fields;
 
-		unsigned int formId;
+		size_t Count(const char *type) const
+		{
+			return fields.count(*(unsigned int *)type);
+		}
 
 		template <typename T>
-		T Get(const char *type) const
+		T Get(const char *type, int skip = 0) const
 		{
-			auto has = fields.find(*(unsigned int *)type);
-			if (has == fields.end())
-				return nullptr;
-			return (T)has->second->data;
+			subrecord *sub = nullptr;
+			while (skip-- >= 0)
+			{
+				auto has = fields.find(*(unsigned int *)type);
+				if (has != fields.end())
+					sub = has->second;
+			}
+			return sub ? (T)sub->data : nullptr;
 		};
+
+		subrecord *Get2(const char *) const;
+		subrecord *GetFrom(unsigned int, int *) const;
 	};
 
 } // namespace gloom
