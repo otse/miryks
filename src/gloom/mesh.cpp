@@ -9,6 +9,7 @@ namespace gloom
 	Mesh::Mesh()
 	{
 		baseGroup = new Group();
+		groups[-1] = baseGroup;
 		lastGroup = baseGroup;
 	}
 
@@ -54,9 +55,8 @@ namespace gloom
 	Group *Mesh::Nested(nifprd *rd)
 	{
 		Group *group = new Group();
-		Group *parent = rd->parent == -1 ? baseGroup : groups[rd->parent];
 		groups[rd->current] = group;
-		parent->Add(group);
+		groups[rd->parent]->Add(group);
 		lastGroup = group;
 		return group;
 	}

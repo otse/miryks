@@ -2,6 +2,10 @@
 
 #include <gloom/actor.h>
 #include <gloom/skeleton.h>
+#include <gloom/level.h>
+
+#include <opengl/group.h>
+#include <opengl/scene.h>
 
 namespace gloom
 {
@@ -33,12 +37,19 @@ namespace gloom
 		cassert(ANAM, "no actor race anam sub");
 
 		Skeleton *skelly = new Skeleton();
-		
+
 		skelly->Load(ANAM);
 		skelly->Construct();
 
-		if (ANAM)
-			printf("race anam nif %s\n", ANAM);
+		auto ref = dungeon->refEditorIDs.find("gloomdraugrskelly");
+
+		if (ref != dungeon->refEditorIDs.end())
+		{
+			printf("make skelly drawgroup!\n");
+			DrawGroup *drawGroup = new DrawGroup(skelly->baseBone->group, ref->second->matrix);
+
+			scene->Add(drawGroup);
+		}
 	}
 
 } // namespace gloom

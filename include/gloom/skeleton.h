@@ -17,7 +17,7 @@ namespace gloom
 
 		std::map<int, Bone *> bones;
 
-		nifp *skeleton;
+		nifp *nif;
 		Bone *baseBone, *lastBone;
 
 		Bone *Nested(nifprd *);
@@ -29,11 +29,7 @@ namespace gloom
 	{
 	public:
 		Group *group;
-
-		//ni_node_pointer *block;
-
-		std::vector<Bone *> bones;
-
+		//std::vector<Bone *> bones;
 		Bone()
 		{
 			group = new Group;
