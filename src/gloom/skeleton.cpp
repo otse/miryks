@@ -57,7 +57,7 @@ namespace gloom
 
 	void ni_node_callback(nifprd *rd, ni_node_pointer *block)
 	{
-		printf("skelly ni node callback\n");
+		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
 		Bone *bone = skeleton->Nested(rd);
 		matrix_from_common(bone, block->common);

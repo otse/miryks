@@ -9,6 +9,9 @@
 namespace gloom
 {
 	class Bone;
+	class Skeleton;
+	class Skeleton;
+	class Animation;
 
 	class Skeleton
 	{
@@ -24,7 +27,7 @@ namespace gloom
 		void Load(const char *);
 		void Construct();
 	};
-
+	
 	class Bone
 	{
 	public:
@@ -34,6 +37,18 @@ namespace gloom
 		{
 			group = new Group;
 		};
+	};
+
+	class KeyFrames
+	{
+	public:
+		KeyFrames();
+	};
+
+	class Animation
+	{
+	public:
+		Animation();
 	};
 
 } // namespace gloom

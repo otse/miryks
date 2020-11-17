@@ -24,6 +24,16 @@ namespace gloom
 		return Object(nullptr, 0);
 	}
 
+	void ExportRaceBehavior(const char *list) {
+		
+		/*
+		pseudo section!
+
+
+		*/
+
+	}
+
 	Actor::Actor(const char *raceId)
 	{
 		printf("actor of race %s\n", raceId);
@@ -34,6 +44,10 @@ namespace gloom
 
 		auto ANAM = race.Get<char *>("ANAM", 0);
 
+		auto MODL = race.Get<unsigned short *>("MODL", 2);
+		auto MODLtext = race.Get<char *>("MODL", 2);
+
+		printf("MODL %u %s\n", *MODL, MODLtext);
 		cassert(ANAM, "no actor race anam sub");
 
 		Skeleton *skelly = new Skeleton();

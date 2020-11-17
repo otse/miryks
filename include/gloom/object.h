@@ -31,17 +31,11 @@ namespace gloom
 		template <typename T>
 		T Get(const char *type, int skip = 0) const
 		{
-			subrecord *sub = nullptr;
-			while (skip-- >= 0)
-			{
-				auto has = fields.find(*(unsigned int *)type);
-				if (has != fields.end())
-					sub = has->second;
-			}
-			return sub ? (T)sub->data : nullptr;
-		};
+			subrecord *field = GetField(type, skip);
+			return field ? (T)field->data : nullptr;
+		}
 
-		subrecord *Get2(const char *) const;
+		subrecord *GetField(const char *, int) const;
 		subrecord *GetFrom(unsigned int, int *) const;
 	};
 

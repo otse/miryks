@@ -17,13 +17,17 @@ namespace gloom
 		}
 	}
 
-	subrecord *Object::Get2(const char *type) const
+	subrecord *Object::GetField(const char *type, int skip) const
 	{
-		auto has = fields.find(*(unsigned int *)type);
-		if (has == fields.end())
-			return nullptr;
-		return has->second;
-	};
+		subrecord *sub = nullptr;
+		auto st = fields.equal_range(*(unsigned int *)type);
+		for (auto it = st.first; it != st.second; ++it) {
+			sub = it->second;
+			if (skip-- <= 0)
+				break;
+		}
+		return sub ? sub : nullptr;
+	}
 
 	/*::subrecord *Object::GetFrom(unsigned int type, int *n) const
 	{

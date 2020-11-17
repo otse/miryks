@@ -8,6 +8,8 @@
 namespace gloom
 {
 	Object GetRace(const char *);
+	//void Export(const char *);
+	void ExportRaceBehavior(const char *);
 
 	class Actor
 	{
