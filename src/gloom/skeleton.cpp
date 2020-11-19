@@ -40,11 +40,12 @@ namespace gloom
 		baseBone->group->Update();
 	}
 
-	Bone *Skeleton::Nested(nifprd *rd)
+	Bone *Skeleton::Nested(nifprd *rd, int name)
 	{
 		Bone *bone = new Bone();
 		bones[rd->current] = bone;
 		bones[rd->parent]->group->Add(bone->group);
+		bones_named[nifp_get_string(rd->nif, name)] = bone;
 		lastBone = bone;
 		return bone;
 	}
@@ -61,24 +62,47 @@ namespace gloom
 	{
 		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
-		Bone *bone = skeleton->Nested(rd);
+		Bone *bone = skeleton->Nested(rd, block->common->A->name);
 		matrix_from_common(bone, block->common);
 	}
 
 	void Skeleton::Step()
 	{
 		if (animation)
-			animation->Animate(this);
-		
+			animation->Step();
 	}
 
 	// kf
 
+	KeyFrames::KeyFrames(struct nifp *nif) : model(nif)
+	{
+		cassert(strcmp(model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
+
+		csp = (ni_controller_sequence_pointer *)model->blocks[0];
+	}
+
 	// animation
 
-	void Animation::Animate(Skeleton *skeleton)
+	void Animation::Step()
 	{
+		float adv = 60.f / 1.f;
 
+		if (time > kf->csp->C->stop_time)
+			time -= kf->csp->C->stop_time;
+
+		struct controlled_block_pointer *cbp;
+		for (int i = 0; i < kf->csp->A->num_controlled_blocks; i++)
+		{
+			cbp = &kf->csp->controlled_blocks[i];
+			// Match node_name to a skeleton bone
+
+			auto has = skeleton->bones_named.find(nifp_get_string(kf->model, cbp->node_name));
+			if (has == skeleton->bones_named.end())
+				continue;
+			
+			
+		}
+		//printf("cbp %i", cbp->controller);
 	}
 
 	template <typename T, typename Y>
@@ -92,16 +116,12 @@ namespace gloom
 	// If loop is true then also interpolate between
 	// Last and first
 
-#include <algorithm>
-
 	template <typename T, typename Y>
 	Lol<T, Y> interpolate(Animation *an, int num, const std::vector<T> &vector)
 	{
 		struct ni_controller_sequence_pointer *controllerSequence = an->model->blocks[0];
 
-		cassert(
-			strcmp(an->model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0,
-			"block 0 not a controller sequence");
+		cassert(strcmp(an->model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
 
 		Lol<T, Y> s;
 		s.one = nullptr;

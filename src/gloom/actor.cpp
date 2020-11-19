@@ -121,6 +121,9 @@ namespace gloom
 		cassert(ANAM, "no actor race anam sub");
 
 		skelly = new Skeleton();
+		Animation *attack = new Animation(draugrAttack);
+		attack->skeleton = skelly;
+		skelly->animation = attack;
 
 		skelly->Load(ANAM);
 		skelly->Construct();

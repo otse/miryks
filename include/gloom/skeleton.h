@@ -19,17 +19,19 @@ namespace gloom
 		Skeleton();
 
 		std::map<int, Bone *> bones;
+		std::map<const std::string, Bone *> bones_named;
 
 		nifp *nif;
 		Bone *baseBone, *lastBone;
 		Animation *animation;
 
-		Bone *Nested(nifprd *);
+		Bone *Nested(nifprd *, int);
+
 		void Load(const char *);
 		void Construct();
 		void Step();
 	};
-	
+
 	class Bone
 	{
 	public:
@@ -44,24 +46,23 @@ namespace gloom
 	class KeyFrames
 	{
 	public:
-		KeyFrames(struct nifp *nif) : model(nif) {}
-
+		KeyFrames(struct nifp *);
 		struct nifp *model;
-
+		struct ni_controller_sequence_pointer *csp;
 		bool loop = false;
 	};
 
 	class Animation
 	{
 	public:
-		Animation() {};
-
-		void Animate(Skeleton *);
-
+		Animation(KeyFrames *kf) : kf(kf)
+		{
+			//csp
+		}
+		void Step();
+		Skeleton *skeleton = nullptr;
 		float time = 0;
-
 		bool play = true;
-
 		KeyFrames *kf;
 	};
 
