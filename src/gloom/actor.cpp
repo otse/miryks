@@ -25,6 +25,8 @@ namespace gloom
 		return Object(nullptr, 0);
 	}
 
+	KeyFrames *draugrAttack = nullptr;
+
 	void ExportRaceHkxToKf(const char *raceId)
 	{
 		if (strcmp(raceId, "DraugrRace") == 0)
@@ -84,6 +86,7 @@ namespace gloom
 				fbuf(path, &(char *)nif->buf);
 				nifp_read(nif);
 				nifp_save(nif, nif);
+				draugrAttack = new KeyFrames(nif);
 			}
 		}
 
@@ -92,7 +95,6 @@ namespace gloom
 
 		/*
 		pseudo section!
-
 
 		*/
 	}
@@ -118,7 +120,7 @@ namespace gloom
 
 		cassert(ANAM, "no actor race anam sub");
 
-		Skeleton *skelly = new Skeleton();
+		skelly = new Skeleton();
 
 		skelly->Load(ANAM);
 		skelly->Construct();
@@ -128,10 +130,19 @@ namespace gloom
 		if (ref != dungeon->refEditorIDs.end())
 		{
 			printf("make skelly drawgroup!\n");
-			DrawGroup *drawGroup = new DrawGroup(skelly->baseBone->group, ref->second->matrix);
+			drawGroup = new DrawGroup(skelly->baseBone->group, ref->second->matrix);
 
 			scene->Add(drawGroup);
 		}
+	}
+
+	void Actor::Step()
+	{
+		if (skelly)
+			skelly->Step();
+		const float merry = 0.002;
+		if (drawGroup)
+			drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
 	}
 
 } // namespace gloom

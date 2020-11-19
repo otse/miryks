@@ -1,6 +1,7 @@
 #include <gloom/dark2.h>
 #include <gloom/mesh.h>
 #include <gloom/level.h>
+#include <gloom/actor.h>
 #include <gloom/libs>
 
 #include <opengl/camera.h>
@@ -270,6 +271,9 @@ void gloom::programLoop()
 		doKeys();
 
 		camera->Update(0.016);
+
+		// someDraugr
+		someDraugr->Step();
 
 		dungeon->Update();
 

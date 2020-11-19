@@ -35,6 +35,7 @@ namespace gloom
 	unsigned int fps = 0;
 
 	Level *dungeon;
+	Actor *someDraugr;
 
 	std::string pathToOldrim;
 
@@ -158,7 +159,7 @@ int main()
 	//nif_test();
 	//nifp_test();
 	dungeon = new Level("Dark2Schmuck"); // <-- interior to load
-	Actor *draugr = new Actor("DraugrRace");
+	someDraugr = new Actor("DraugrRace");
 	programLoop();
 	return 1;
 }

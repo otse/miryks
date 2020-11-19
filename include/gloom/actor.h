@@ -16,7 +16,13 @@ namespace gloom
 	public:
 		Actor(const char *);
 
+		Skeleton *skelly = nullptr;
 
+		DrawGroup *drawGroup = nullptr;
+		
+		float merry = 0;
+		
+		void Step();
 	};
 
 } // namespace gloom

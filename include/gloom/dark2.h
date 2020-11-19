@@ -17,9 +17,11 @@ struct bsa;
 
 namespace gloom
 {
+	class Object;
 	class Level;
 	class Mesh;
-	class Object;
+	class Actor;
+	class Skeleton;
 
 	namespace viewer
 	{
@@ -55,6 +57,7 @@ namespace gloom
 	extern RenderTarget *render_target;
 
 	extern Level *dungeon;
+	extern Actor *someDraugr;
 
 	vec2 *cast_vec_2(float *f);
 	vec3 *cast_vec_3(float *f);
