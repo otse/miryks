@@ -325,7 +325,8 @@ void *read_ni_controller_sequence(nifpr)
 	memset(block_pointer, NULL, sizeof(struct ni_controller_sequence_pointer));
 	SinkVal(nif, block_pointer, ni_controller_sequence_pointer, A, 12);
 	SinkVal(nif, block_pointer, ni_controller_sequence_pointer, controlled_blocks, Arr(block_pointer->A->num_controlled_blocks, struct controlled_block_pointer));
-	//SinkVal(nif, block_pointer, ni_controller_sequence_pointer, C, 7);
+	SinkVal(nif, block_pointer, ni_controller_sequence_pointer, C, sizeof(((struct ni_controller_sequence_pointer *)0)->C));
+	//printf("ni ct se num_controlled_blocks %u\n", block_pointer->A->num_controlled_blocks);
 	sizeof(struct ni_controller_sequence_pointer);
 	sizeof(((struct ni_controller_sequence_pointer *)0)->A);
 	return block_pointer;

@@ -78,8 +78,6 @@ namespace gloom
 			else
 			{
 				const char *path = "temp/draugr/kf/1hmattackf.kf";
-				if (exists(path))
-					printf("random kf exists\n");
 				printf("fetching random draugr kf\n");
 				struct nifp *nif = malloc_nifp();
 				nif->path = path;

@@ -334,6 +334,41 @@ block_pointer->textures[8]
 );
 }
 
+static void print_ni_controller_sequence_pointer(struct nifp *nif, int n, char s[1000])
+{
+	struct ni_controller_sequence_pointer *block_pointer = Blocks[n];
+	snprintf(
+		s, 1000,
+		"\
+name: %i\
+\nnum_controlled_blocks: %u\
+\narray_grow_by: %u\
+\ncontrolled block (skipped)\
+\nweight: %f\
+\ntext_Keys: %i\
+\ncycle_type: %u\
+\nfrequency: %f\
+\nstart_time: %f\
+\nstop_time: %f\
+\nmanager: %i\
+\naccum_root_name: %i\
+\nnum_anim_note_arrays: %hu\
+",
+block_pointer->A->name,
+block_pointer->A->num_controlled_blocks,
+block_pointer->A->array_grow_by,
+block_pointer->C->weight,
+block_pointer->C->text_keys,
+block_pointer->C->cycle_type,
+block_pointer->C->frequency,
+block_pointer->C->start_time,
+block_pointer->C->stop_time,
+block_pointer->C->manager,
+block_pointer->C->accum_root_name,
+block_pointer->C->num_anim_note_arrays
+);
+}
+
 api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 {
 #define type(x) 0 == strcmp(block_type, x)
@@ -347,4 +382,6 @@ api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 	else if (type(NI_TRI_SHAPE_DATA)) print_ni_tri_shape_data_pointer(nif, n, s);
 	else if (type(BS_LIGHTING_SHADER_PROPERTY)) print_bs_lighting_shader_property_pointer(nif, n, s);
 	else if (type(BS_SHADER_TEXTURE_SET)) print_bs_shader_texture_set_pointer(nif, n, s);
+	else if (type(NI_CONTROLLER_SEQUENCE)) print_ni_controller_sequence_pointer(nif, n, s);
+
 }
