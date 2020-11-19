@@ -138,6 +138,8 @@ static void *read_bs_lighting_shader_property(nifpr);
 static void *read_bs_shader_texture_set(nifpr);
 static void *read_ni_alpha_property(nifpr);
 static void *read_ni_controller_sequence(nifpr);
+static void *read_ni_transform_interpolator(nifpr);
+static void *read_ni_transform_data(nifpr);
 
 api void nifp_read_blocks(struct nifp *nif)
 {
@@ -177,8 +179,8 @@ void read_block(struct nifp *nif, int n)
 	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) block = read_ni_controller_sequence(nif, n);
 	else if ( ni_is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
 	else if ( ni_is_type(NI_STRING_EXTRA_DATA) ) 0;
-	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) 0;
-	else if ( ni_is_type(NI_TRANSFORM_DATA) ) 0;
+	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) block = read_ni_transform_interpolator(nif, n);
+	else if ( ni_is_type(NI_TRANSFORM_DATA) ) block = read_ni_transform_data(nif, n);
 	else if ( ni_is_type(BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA) ) 0;
 	Blocks[n] = block;
 }
@@ -299,7 +301,7 @@ void *read_bs_shader_texture_set(nifpr)
 	block_pointer->textures = malloc(sizeof(char *) * block_pointer->A->num_textures);
 	memset(block_pointer->textures, '\0', block_pointer->A->num_textures);
 	for (int i = 0; i < block_pointer->A->num_textures; i++)
-	block_pointer->textures[i] = nif_read_sized_string(nif);
+	block_pointer->textures[i] = nif_read_sized_string(nif); 
 	return block_pointer;
 }
 
@@ -329,5 +331,43 @@ void *read_ni_controller_sequence(nifpr)
 	//printf("ni ct se num_controlled_blocks %u\n", block_pointer->A->num_controlled_blocks);
 	sizeof(struct ni_controller_sequence_pointer);
 	sizeof(((struct ni_controller_sequence_pointer *)0)->A);
+	return block_pointer;
+}
+
+void *read_ni_transform_interpolator(nifpr)
+{
+	//printf("read_ni_transform_interpolator\n");
+	struct ni_transform_interpolator_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_transform_interpolator_pointer));
+	memset(block_pointer, NULL, sizeof(struct ni_transform_interpolator_pointer));
+	SinkVal(nif, block_pointer, ni_transform_interpolator_pointer, transform, 32);
+	SinkVal(nif, block_pointer, ni_transform_interpolator_pointer, B, 4);
+	return block_pointer;
+}
+
+void *read_ni_transform_data(nifpr)
+{
+	//printf("read_ni_transform_data\n");
+	struct ni_transform_data_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_transform_data_pointer));
+	memset(block_pointer, NULL, sizeof(struct ni_transform_data_pointer));
+	SinkVal(nif, block_pointer, ni_transform_data_pointer, A, 4);
+	if (block_pointer->A->num_rotation_keys > 0)
+	{
+	SinkVal(nif, block_pointer, ni_transform_data_pointer, B, 4);
+	if (block_pointer->B->rotation_type == 2) // quadratic key
+	{
+	SinkVal(nif, block_pointer, ni_transform_data_pointer, quaternion_keys, Arr(block_pointer->A->num_rotation_keys, struct quaternion_key_pointer));
+	}
+	else
+	{
+	printf("cant read this rotation type or quatkey type\n");
+	return;
+	}
+	}
+	SinkVal(nif, block_pointer, ni_transform_data_pointer, translations, 8);
+	SinkVal(nif, block_pointer, ni_transform_data_pointer, translation_keys, Arr(block_pointer->translations->num_keys, struct translation_key_pointer));
+	SinkVal(nif, block_pointer, ni_transform_data_pointer, scales, 4);
+	SinkVal(nif, block_pointer, ni_transform_data_pointer, scale_keys, Arr(block_pointer->scales->num_keys, 4));
 	return block_pointer;
 }

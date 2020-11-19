@@ -263,7 +263,7 @@ static void print_bs_lighting_shader_property_pointer(struct nifp *nif, int n, c
 skyrim_shader_type: %u\
 \nname: %s [%i]\
 \nnum_extra_data_list: %u\
-\nextra_data_list\
+\nextra_data_list: -\
 \ncontroller: %i\
 \nshader_flags_1: %u\
 \nshader_flags_2: %u\
@@ -343,7 +343,7 @@ static void print_ni_controller_sequence_pointer(struct nifp *nif, int n, char s
 name: %i\
 \nnum_controlled_blocks: %u\
 \narray_grow_by: %u\
-\ncontrolled block (skipped)\
+\ncontrolled blocks: -\
 \nweight: %f\
 \ntext_Keys: %i\
 \ncycle_type: %u\
@@ -369,6 +369,51 @@ block_pointer->C->num_anim_note_arrays
 );
 }
 
+static void print_ni_transform_interpolator(struct nifp *nif, int n, char s[1000])
+{
+	char a[200], b[200], c[200], d[200];
+	struct ni_transform_interpolator_pointer *block_pointer = Blocks[n];
+	snprintf(
+		s, 1000,
+		"\
+transform:\
+\n translation: %s\
+\n rotation: %s\
+\n scale: %f\
+\ndata: %i\
+",
+print_vec_3(a, block_pointer->transform->translation),
+print_vec_4(b, block_pointer->transform->rotation),
+block_pointer->transform->scale,
+block_pointer->B->data
+);
+}
+
+static void print_ni_transform_data(struct nifp *nif, int n, char s[1000])
+{
+	struct ni_transform_data_pointer *block_pointer = Blocks[n];
+	snprintf(
+		s, 1000,
+		"\
+num_rotation_keys: %u\
+\nrotation_type: %u\
+\nquaternion_keys: -\
+\ntranslations:\
+\n num_keys: %u\
+\n interpolation: %u\
+\n keys: -\
+\nscales:\
+\n num_keys: %u\
+\n keys: -\
+",
+block_pointer->A->num_rotation_keys,
+block_pointer->A->num_rotation_keys > 0 ? block_pointer->B->rotation_type : 0,
+block_pointer->translations->num_keys,
+block_pointer->translations->interpolation,
+block_pointer->scales->num_keys
+);
+}
+
 api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 {
 #define type(x) 0 == strcmp(block_type, x)
@@ -383,5 +428,6 @@ api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 	else if (type(BS_LIGHTING_SHADER_PROPERTY)) print_bs_lighting_shader_property_pointer(nif, n, s);
 	else if (type(BS_SHADER_TEXTURE_SET)) print_bs_shader_texture_set_pointer(nif, n, s);
 	else if (type(NI_CONTROLLER_SEQUENCE)) print_ni_controller_sequence_pointer(nif, n, s);
-
+	else if (type(NI_TRANSFORM_INTERPOLATOR)) print_ni_transform_interpolator(nif, n, s);
+	else if (type(NI_TRANSFORM_DATA)) print_ni_transform_data(nif, n, s);
 }
