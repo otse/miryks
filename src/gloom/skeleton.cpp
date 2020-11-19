@@ -6,6 +6,8 @@
 #include <opengl/group.h>
 #include <opengl/types.h>
 
+#include <glm/gtc/quaternion.hpp>
+
 namespace gloom
 {
 	static void ni_node_callback(nifprd *, ni_node_pointer *);
@@ -52,10 +54,10 @@ namespace gloom
 
 	void matrix_from_common(Bone *bone, ni_common_layout_pointer *common)
 	{
-		// Slightly different from mesh code
 		bone->group->matrix = translate(bone->group->matrix, *cast_vec_3((float *)&common->C->translation));
 		bone->group->matrix *= glm::inverse(mat4((*cast_mat_3((float *)&common->C->rotation))));
 		bone->group->matrix = scale(bone->group->matrix, vec3(common->C->scale));
+		bone->rest = bone->group->matrix;
 	}
 
 	void ni_node_callback(nifprd *rd, ni_node_pointer *block)
@@ -72,7 +74,7 @@ namespace gloom
 			animation->Step();
 	}
 
-	// kf
+	// keyframes
 
 	KeyFrames::KeyFrames(struct nifp *nif) : model(nif)
 	{
@@ -82,28 +84,6 @@ namespace gloom
 	}
 
 	// animation
-
-	void Animation::Step()
-	{
-		float adv = 60.f / 1.f;
-
-		if (time > kf->csp->C->stop_time)
-			time -= kf->csp->C->stop_time;
-
-		struct controlled_block_pointer *cbp;
-		for (int i = 0; i < kf->csp->A->num_controlled_blocks; i++)
-		{
-			cbp = &kf->csp->controlled_blocks[i];
-			// Match node_name to a skeleton bone
-
-			auto has = skeleton->bones_named.find(nifp_get_string(kf->model, cbp->node_name));
-			if (has == skeleton->bones_named.end())
-				continue;
-			
-			
-		}
-		//printf("cbp %i", cbp->controller);
-	}
 
 	template <typename T, typename Y>
 	struct Lol
@@ -117,21 +97,21 @@ namespace gloom
 	// Last and first
 
 	template <typename T, typename Y>
-	Lol<T, Y> interpolate(Animation *an, int num, const std::vector<T> &vector)
+	Lol<T, Y> interpolate(Animation *animation, int num, const T *keys)
 	{
-		struct ni_controller_sequence_pointer *controllerSequence = an->model->blocks[0];
+		struct nifp *nif = animation->keyframes->model;
 
-		cassert(strcmp(an->model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
+		auto csp = animation->keyframes->csp;
 
 		Lol<T, Y> s;
 		s.one = nullptr;
 		s.two = nullptr;
 		s.ratio = 1;
 
-		const auto loop = an->kf->loop;
+		const auto loop = animation->keyframes->loop;
 
 		int i, j;
-		//num = vector.size();
+		//num = keys.size();
 		if (num > 1)
 		{
 			i = num - (loop ? 1 : 2);
@@ -139,20 +119,20 @@ namespace gloom
 			for (; i >= 0; i--)
 			{
 				//loop:
-				const T &key_a = vector[i];
+				const T &key_a = keys[i];
 				j = i + 1;
 				const bool got_two = j <= num - 1;
 
-				if (key_a._time <= an->time /*&& got_two && vector[j]._time >= a._t*/)
+				if (key_a.time <= animation->time /*&& got_two && keys[j]._time >= a._t*/)
 				{
 					s.one = &key_a;
 					if (got_two)
-						s.two = &vector.at(j);
+						s.two = &keys[j];
 
 					// todo, this needs work
-					else if (an->kf->loop)
+					else if (animation->keyframes->loop)
 					{
-						s.two = &vector.at(0);
+						s.two = &keys[0];
 					}
 
 					break;
@@ -162,16 +142,108 @@ namespace gloom
 
 		if (s.one && s.two)
 		{
-			float t_1 = s.one->_time;
-			float t_2 = s.two->_time;
+			float t_1 = s.one->time;
+			float t_2 = s.two->time;
 			// todo, does t_2 need negation here
 			if (loop && t_2 < t_1)
-				t_2 = t_2 - controllerSequence._stop_time;
-			float ratio = (an->time - t_2) / (t_2 - t_1) + 1.0f;
+				t_2 = t_2 - csp->C->stop_time;
+			float ratio = (animation->time - t_2) / (t_2 - t_1) + 1.0f;
 			s.ratio = ratio <= 0 ? 0 : ratio >= 1 ? 1 : ratio;
 		}
 
 		return s;
+	}
+
+	void Animation::Step()
+	{
+		float adv = 1.f / 60.f;
+
+		if (play)
+		{
+			time += adv;
+		}
+
+		if (time > keyframes->csp->C->stop_time)
+			time -= keyframes->csp->C->stop_time;
+
+		struct nifp *model = keyframes->model;
+
+		struct controlled_block_pointer *cbp;
+		for (int i = 0; i < keyframes->csp->A->num_controlled_blocks; i++)
+		{
+			cbp = &keyframes->csp->controlled_blocks[i];
+			// Match node_name to a skeleton bone
+
+			auto has = skeleton->bones_named.find(nifp_get_string(model, cbp->node_name));
+			if (has == skeleton->bones_named.end())
+				continue;
+
+			Bone *bone = has->second;
+
+			auto tip = (ni_transform_interpolator_pointer *)nifp_get_block(model, cbp->interpolator);
+			auto tdp = (ni_transform_data_pointer *)nifp_get_block(model, tip->B->data);
+
+			if (tip == NULL || tdp == NULL)
+				continue;
+
+			glm::mat4 m;
+			glm::quat q;
+
+			int num = tdp->A->num_rotation_keys;
+			if (num > 1)
+			{
+				auto res = interpolate<quaternion_key_pointer, vec4>(this, num, tdp->quaternion_keys);
+				printf(" res ratio %f\n", res.ratio);
+				if (res.one && res.two)
+				{
+					vec4 q_1 = *cast_vec_4((float *)&res.one->value);
+					vec4 q_2 = *cast_vec_4((float *)&res.two->value);
+					// todo, what does this fix? yoyo fingrs?
+					//if ((q_1.asVec4() * q_2.asVec4()) < 0)
+					//	q_1 = -q_1;
+					q = glm::slerp(quat(q_1), quat(q_2), res.ratio);
+				}
+			}
+			// used for clutched hands
+			else if (num == 1)
+			{
+				/*const auto &key = td._quaternion_keys.at(0);
+				if (key._time <= _t)
+					q = key._value;*/
+			}
+
+			m = glm::mat4_cast(q);
+
+			vec3 v = *cast_vec_3((float *)&tip->transform->translation);
+
+			num = tdp->translations->num_keys;
+			auto res2 = interpolate<translation_key_pointer, vec3>(this, num, tdp->translation_keys);
+			if (res2.one && res2.two)
+			{
+				const vec3 v_1 = *cast_vec_3((float *)&res2.one->value) * (1.0f - res2.ratio);
+				const vec3 v_2 = *cast_vec_3((float *)&res2.two->value) * res2.ratio;
+				v = v_1 + v_2;
+			}
+			else if (res2.one)
+				v = *cast_vec_3((float *)&res2.one->value);
+
+			//if (_tween /*&& bone->_v.length()*/)
+			//{
+				// if (bone->_v.length())
+				//v = (v * _t_tween) + (bone->_v_2 * (1.0f - _t_tween));
+			//}
+			//else
+			//	bone->_v_2 = v;
+
+			m[3] = vec4(v, 1);
+
+			bone->mod = m;
+			bone->group->matrix = bone->rest * bone->mod;
+
+			//printf("matchhh");
+		}
+		skeleton->baseBone->group->Update();
+		//printf("cbp %i", cbp->controller);
 	}
 
 } // namespace gloom

@@ -41,6 +41,7 @@ namespace gloom
 		{
 			group = new Group;
 		};
+		mat4 rest, mod;
 	};
 
 	class KeyFrames
@@ -49,13 +50,13 @@ namespace gloom
 		KeyFrames(struct nifp *);
 		struct nifp *model;
 		struct ni_controller_sequence_pointer *csp;
-		bool loop = false;
+		bool loop = true;
 	};
 
 	class Animation
 	{
 	public:
-		Animation(KeyFrames *kf) : kf(kf)
+		Animation(KeyFrames *keyframes) : keyframes(keyframes)
 		{
 			//csp
 		}
@@ -63,7 +64,7 @@ namespace gloom
 		Skeleton *skeleton = nullptr;
 		float time = 0;
 		bool play = true;
-		KeyFrames *kf;
+		KeyFrames *keyframes;
 	};
 
 } // namespace gloom
