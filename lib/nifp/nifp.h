@@ -33,6 +33,7 @@ struct nifprd
 	void(* bs_lighting_shader_property)(struct nifprd *, struct bs_lighting_shader_property_pointer *);
 	void(* bs_shader_texture_set)(struct nifprd *, struct bs_shader_texture_set_pointer *);
 	void(* ni_alpha_property)(struct nifprd *, struct ni_alpha_property_pointer *);
+	void(* ni_controller_sequence)(struct nifprd *, struct ni_controller_sequence_pointer *);
 };
 
 void nifp_gui();
@@ -235,6 +236,75 @@ struct ni_alpha_property_pointer {
 	unsigned char treshold;
 	} *C;
 };
+
+struct ni_controller_sequence_pointer {
+	struct {
+	int name;
+	unsigned int num_controlled_blocks;
+	unsigned int array_grow_by;
+	} *A;
+	struct controlled_block_pointer *controlled_blocks;
+	struct {
+	float weight;
+	ni_ref text_keys;
+	unsigned int cycle_type;
+	float frequency;
+	float start_time;
+	float stop_time;
+	ni_ref manager;
+	int accum_root_name;
+	unsigned short num_anim_note_arrays;
+	} *C;
+	ni_ref *anim_note_arrays;
+};
+
+struct controlled_block_pointer {
+	ni_ref interpolator;
+	ni_ref controller;
+	unsigned char priority;
+	int node_name;
+	int property_type;
+	int controller_type;
+	int controller_id;
+	int interpolator_id;
+};
+
+struct ni_transform_interpolator {
+	struct {
+	struct vec_3p translation;
+	struct vec_3p rotation;
+	float scale;
+	} *NiQuatTransform;
+	struct {
+	ni_ref data;
+	} *B;
+};
+
+struct ni_transform_data {
+	struct {
+	unsigned int num_rotation_keys;
+	unsigned int quaternion_keys;
+	} *A;
+	struct {
+	unsigned int num_keys;
+	unsigned int interpolation;
+	} *translations;
+	ni_ref *translation_keys;
+	struct {
+	unsigned int num_keys;
+	} *scales;
+	ni_ref *scale_keys;
+};
+
+struct ni_text_key_extra_data_pointer {
+	struct {
+	int name;
+	unsigned int num_text_keys;
+	} *A;
+	ni_ref *text_keys;
+};
+
+
 
 #pragma pack(pop)
 

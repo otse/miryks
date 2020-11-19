@@ -137,6 +137,7 @@ static void *read_ni_tri_shape_data(nifpr);
 static void *read_bs_lighting_shader_property(nifpr);
 static void *read_bs_shader_texture_set(nifpr);
 static void *read_ni_alpha_property(nifpr);
+static void *read_ni_controller_sequence(nifpr);
 
 api void nifp_read_blocks(struct nifp *nif)
 {
@@ -173,7 +174,7 @@ void read_block(struct nifp *nif, int n)
 	else if ( ni_is_type(NI_FLOAT_DATA) ) 0;
 	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) block = read_bs_lighting_shader_property(nif, n);
 	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) block = read_bs_shader_texture_set(nif, n);
-	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) 0;
+	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) block = read_ni_controller_sequence(nif, n);
 	else if ( ni_is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
 	else if ( ni_is_type(NI_STRING_EXTRA_DATA) ) 0;
 	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) 0;
@@ -313,5 +314,19 @@ void *read_ni_alpha_property(nifpr)
 	SinkVal(nif, block_pointer, ni_alpha_property_pointer, C, 7);
 	sizeof(struct ni_alpha_property_pointer);
 	sizeof(((struct ni_alpha_property_pointer *)0)->C);
+	return block_pointer;
+}
+
+void *read_ni_controller_sequence(nifpr)
+{
+	printf("read_ni_controller_sequence\n");
+	struct ni_controller_sequence_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_controller_sequence_pointer));
+	memset(block_pointer, NULL, sizeof(struct ni_controller_sequence_pointer));
+	SinkVal(nif, block_pointer, ni_controller_sequence_pointer, A, 12);
+	SinkVal(nif, block_pointer, ni_controller_sequence_pointer, controlled_blocks, Arr(block_pointer->A->num_controlled_blocks, struct controlled_block_pointer));
+	//SinkVal(nif, block_pointer, ni_controller_sequence_pointer, C, 7);
+	sizeof(struct ni_controller_sequence_pointer);
+	sizeof(((struct ni_controller_sequence_pointer *)0)->A);
 	return block_pointer;
 }

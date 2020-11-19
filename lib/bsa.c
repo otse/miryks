@@ -100,7 +100,7 @@ void bsa_rc_path(struct bsa *bsa, int i, int r)
 	strcpy(path, bsa->ca[i]);
 	strcat(path, "\\");
 	strcat(path, bsa->cb[r]);
-	return path;
+	//return path;
 }
 
 void resources(struct bsa *bsa)

@@ -55,3 +55,6 @@ bin/Dark2.ilk
 *.db-wal
 *.recipe
 bin/Gloom.esp
+*.hkx
+bin/temp/draugr/kf/1hmattacka.kf
+*.kf

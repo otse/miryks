@@ -34,6 +34,7 @@ int w = snprintf(s, 200, "\
 id: %u\
 \ntype: %.4s\
 \nsize: %u\
+\noffset: %u\
 \nflags: %u\
 \nformId: %u\
 \nformId: %08X\
@@ -43,6 +44,7 @@ id: %u\
 record->id,
 (char *)&record->hed->type,
 record->hed->size,
+record->offset,
 record->hed->flags,
 record->hed->formId,
 record->hed->formId,
@@ -74,12 +76,14 @@ int w = snprintf(s, 400, "\
 id: %u\
 \ntype: %.4s\
 \nsize: %u\
+\noffset: %u\
 \ndata: %p\
 \nvalue: %s\
 ",
 field->id,
 (char *)&field->hed->type,
 field->actualSize,
+field->offset,
 &field->data,
 specifics(esp, x, field)
 );

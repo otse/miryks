@@ -97,6 +97,7 @@ struct record
 	char x;
 	unsigned int indices;
 	unsigned int id;
+	long offset;
 	const struct record_header *hed;
 	struct form_id *fi;
 	struct esp_array fields;
@@ -112,6 +113,7 @@ struct subrecord
 	char x;
 	unsigned int index;
 	unsigned int id;
+	long offset;
 	const struct field_header *hed;
 	unsigned int actualSize;
 	unsigned char *data;
