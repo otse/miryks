@@ -159,24 +159,40 @@ namespace gloom
 		float adv = 1.f / 60.f;
 
 		if (play)
-		{
 			time += adv;
-		}
 
 		if (time > keyframes->csp->C->stop_time)
 			time -= keyframes->csp->C->stop_time;
 
+		//printf("time %f\n", time);
+
+		SimpleNonInterpolated();
+
+		skeleton->baseBone->group->Update();
+		//printf("cbp %i", cbp->controller);
+	}
+
+	void Animation::SimpleNonInterpolated()
+	{
 		struct nifp *model = keyframes->model;
 
 		struct controlled_block_pointer *cbp;
+
 		for (int i = 0; i < keyframes->csp->A->num_controlled_blocks; i++)
 		{
-			cbp = &keyframes->csp->controlled_blocks[i];
 			// Match node_name to a skeleton bone
 
-			auto has = skeleton->bones_named.find(nifp_get_string(model, cbp->node_name));
+			cbp = &keyframes->csp->controlled_blocks[i];
+
+			char *name = nifp_get_string(model, cbp->node_name);
+
+			auto has = skeleton->bones_named.find(name);
 			if (has == skeleton->bones_named.end())
+			{
+				//printf("cant find bone %s\n", name);
+				// cant find shield, weapon, quiver
 				continue;
+			}
 
 			Bone *bone = has->second;
 
@@ -186,30 +202,74 @@ namespace gloom
 			if (tip == NULL || tdp == NULL)
 				continue;
 
-			glm::mat4 m;
-			glm::quat q;
+			vec4 ro = *cast_vec_4((float *)&tip->transform->rotation);
 
 			int num = tdp->A->num_rotation_keys;
+			if (num > 0)
+			{
+				for (int i = num - 1; i >= 0; i--)
+				{
+					auto key = &tdp->quaternion_keys[i];
+					//printf("qk %i time %f\n", i, key->time);
+					if (key->time <= time)
+					{
+						ro = *cast_vec_4((float *)&key->value);
+						break;
+					}
+				}
+			}
+
+			vec3 tr = *cast_vec_3((float *)&tip->transform->translation);
+
+			num = tdp->translations->num_keys;
+			if (num > 0)
+			{
+				for (int i = num - 1; i >= 0; i--)
+				{
+					auto key = &tdp->translation_keys[i];
+					if (key->time <= time)
+					{
+						//printf("tr time %f\n", key->time);
+						tr = *cast_vec_3((float *)&key->value);
+						break;
+					}
+				}
+			}
+
+			quat qu = quat(ro[0], ro[1], ro[2], ro[3]);
+
+			mat4 matrix = mat4_cast(qu);
+			matrix[3] = vec4(tr, 1);
+
+			bone->mod = matrix;
+			bone->group->matrix = bone->mod;
+		}
+	}
+
+} // namespace gloom
+
+/*
+int num = tdp->A->num_rotation_keys;
 			if (num > 1)
 			{
 				auto res = interpolate<quaternion_key_pointer, vec4>(this, num, tdp->quaternion_keys);
-				printf(" res ratio %f\n", res.ratio);
+				//printf(" res ratio %f\n", res.ratio);
 				if (res.one && res.two)
 				{
-					vec4 q_1 = *cast_vec_4((float *)&res.one->value);
-					vec4 q_2 = *cast_vec_4((float *)&res.two->value);
+					vec4 q1 = *cast_vec_4((float *)&res.one->value);
+					vec4 q2 = *cast_vec_4((float *)&res.two->value);
 					// todo, what does this fix? yoyo fingrs?
-					//if ((q_1.asVec4() * q_2.asVec4()) < 0)
-					//	q_1 = -q_1;
-					q = glm::slerp(quat(q_1), quat(q_2), res.ratio);
+					//if ((q1.asVec4() * q2.asVec4()) < 0)
+					//	q1 = -q1;
+					q = glm::slerp(quat(q1), quat(q2), res.ratio);
 				}
 			}
 			// used for clutched hands
 			else if (num == 1)
 			{
-				/*const auto &key = td._quaternion_keys.at(0);
-				if (key._time <= _t)
-					q = key._value;*/
+				auto key = &tdp->quaternion_keys[0];
+				if (key->time <= time)
+					q = quat(*cast_vec_4((float *)&key->value));
 			}
 
 			m = glm::mat4_cast(q);
@@ -217,33 +277,24 @@ namespace gloom
 			vec3 v = *cast_vec_3((float *)&tip->transform->translation);
 
 			num = tdp->translations->num_keys;
-			auto res2 = interpolate<translation_key_pointer, vec3>(this, num, tdp->translation_keys);
-			if (res2.one && res2.two)
+			if (num > 0)
 			{
-				const vec3 v_1 = *cast_vec_3((float *)&res2.one->value) * (1.0f - res2.ratio);
-				const vec3 v_2 = *cast_vec_3((float *)&res2.two->value) * res2.ratio;
-				v = v_1 + v_2;
+				auto res2 = interpolate<translation_key_pointer, vec3>(this, num, tdp->translation_keys);
+				if (res2.one && res2.two)
+				{
+					const vec3 v1 = *cast_vec_3((float *)&res2.one->value) * (1.0f - res2.ratio);
+					const vec3 v2 = *cast_vec_3((float *)&res2.two->value) * res2.ratio;
+					v = v1 + v2;
+				}
+				else if (res2.one)
+					v = *cast_vec_3((float *)&res2.one->value);
 			}
-			else if (res2.one)
-				v = *cast_vec_3((float *)&res2.one->value);
 
-			//if (_tween /*&& bone->_v.length()*/)
+			//if (_tween && bone->_v.length())
 			//{
-				// if (bone->_v.length())
-				//v = (v * _t_tween) + (bone->_v_2 * (1.0f - _t_tween));
+			// if (bone->_v.length())
+			//v = (v * _t_tween) + (bone->_v_2 * (1.0f - _t_tween));
 			//}
 			//else
 			//	bone->_v_2 = v;
-
-			m[3] = vec4(v, 1);
-
-			bone->mod = m;
-			bone->group->matrix = bone->rest * bone->mod;
-
-			//printf("matchhh");
-		}
-		skeleton->baseBone->group->Update();
-		//printf("cbp %i", cbp->controller);
-	}
-
-} // namespace gloom
+			*/

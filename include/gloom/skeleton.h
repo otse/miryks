@@ -61,6 +61,7 @@ namespace gloom
 			//csp
 		}
 		void Step();
+		void SimpleNonInterpolated();
 		Skeleton *skeleton = nullptr;
 		float time = 0;
 		bool play = true;
