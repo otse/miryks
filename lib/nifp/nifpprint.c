@@ -414,20 +414,40 @@ block_pointer->scales->num_keys
 );
 }
 
+static void print_ni_skin_instance(struct nifp *nif, int n, char s[1000])
+{
+	struct ni_skin_instance_pointer *block_pointer = Blocks[n];
+	snprintf(
+		s, 1000,
+		"\
+data: %i\
+\nskin_partition: %i\
+\nskeleton_root: %i\
+\nnum_bones: %u\
+\nbones: -\
+\nnum_partitions: %i\
+\npartitions: -\
+",
+block_pointer->A->data,
+block_pointer->A->skin_partition,
+block_pointer->A->skeleton_root,
+block_pointer->A->num_bones,
+block_pointer->B->num_partitions
+);
+}
+
 api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 {
-#define type(x) 0 == strcmp(block_type, x)
 	s[0] = '\0';
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	if (0);
-	else if (type(NI_NODE)) print_ni_node_pointer(nif, n, s);
-	else if (type(BS_LEAF_ANIM_NODE)) print_ni_node_pointer(nif, n, s);
-	else if (type(BS_FADE_NODE)) print_ni_node_pointer(nif, n, s);
-	else if (type(NI_TRI_SHAPE)) print_ni_tri_shape_pointer(nif, n, s);
-	else if (type(NI_TRI_SHAPE_DATA)) print_ni_tri_shape_data_pointer(nif, n, s);
-	else if (type(BS_LIGHTING_SHADER_PROPERTY)) print_bs_lighting_shader_property_pointer(nif, n, s);
-	else if (type(BS_SHADER_TEXTURE_SET)) print_bs_shader_texture_set_pointer(nif, n, s);
-	else if (type(NI_CONTROLLER_SEQUENCE)) print_ni_controller_sequence_pointer(nif, n, s);
-	else if (type(NI_TRANSFORM_INTERPOLATOR)) print_ni_transform_interpolator(nif, n, s);
-	else if (type(NI_TRANSFORM_DATA)) print_ni_transform_data(nif, n, s);
+	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) print_ni_node_pointer(nif, n, s);
+	else if ( ni_is_type(NI_TRI_SHAPE) ) print_ni_tri_shape_pointer(nif, n, s);
+	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) print_ni_tri_shape_data_pointer(nif, n, s);
+	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) print_bs_lighting_shader_property_pointer(nif, n, s);
+	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) print_bs_shader_texture_set_pointer(nif, n, s);
+	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) print_ni_controller_sequence_pointer(nif, n, s);
+	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) print_ni_transform_interpolator(nif, n, s);
+	else if ( ni_is_type(NI_TRANSFORM_DATA) ) print_ni_transform_data(nif, n, s);
+	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) print_ni_skin_instance(nif, n, s);
 }
