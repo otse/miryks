@@ -21,7 +21,7 @@ Material::Material()
 	
 	map = normalMap = glowMap = nullptr;
 
-	transparent = doubleSided = blending = testing = decal = false;
+	transparent = doubleSided = blending = testing = decal = skinning = false;
 
 	opacity = 1;
 	treshold = 0;
@@ -62,6 +62,8 @@ void Material::Ready()
 		header += "#define DONT_USE_NORMAL_MAP\n";
 	if (!glowMap)
 		header += "#define DONT_USE_GLOW_MAP\n";
+	if (!skinning)
+		header += "#define DONT_USE_SKINNING\n";
 
 	if (Shader::shaders.count(header))
 	{

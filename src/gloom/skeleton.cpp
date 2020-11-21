@@ -55,7 +55,7 @@ namespace gloom
 	void matrix_from_common(Bone *bone, ni_common_layout_pointer *common)
 	{
 		bone->group->matrix = translate(bone->group->matrix, *cast_vec_3((float *)&common->C->translation));
-		bone->group->matrix *= glm::inverse(mat4((*cast_mat_3((float *)&common->C->rotation))));
+		bone->group->matrix *= inverse(mat4((*cast_mat_3((float *)&common->C->rotation))));
 		bone->group->matrix = scale(bone->group->matrix, vec3(common->C->scale));
 		bone->rest = bone->group->matrix;
 	}
@@ -196,8 +196,11 @@ namespace gloom
 
 			Bone *bone = has->second;
 
-			auto tip = (ni_transform_interpolator_pointer *)nifp_get_block(model, cbp->interpolator);
-			auto tdp = (ni_transform_data_pointer *)nifp_get_block(model, tip->B->data);
+			ni_transform_interpolator_pointer *tip = (ni_transform_interpolator_pointer *)
+				nifp_get_block(model, cbp->interpolator);
+
+			ni_transform_data_pointer *tdp = (ni_transform_data_pointer *)
+				nifp_get_block(model, tip->B->data);
 
 			if (tip == NULL || tdp == NULL)
 				continue;

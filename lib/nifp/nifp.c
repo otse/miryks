@@ -269,8 +269,14 @@ void *read_ni_tri_shape_data(nifpr)
 
 void *read_ni_skin_instance(nifpr)
 {
-	//read_block_save(nif, n, block);
-	return NULL;
+	struct ni_skin_instance_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_skin_instance_pointer));
+	memset(block_pointer, NULL, sizeof(struct ni_skin_instance_pointer));
+	SinkVal(nif, block_pointer, ni_skin_instance_pointer, A, 16);
+	SinkVal(nif, block_pointer, ni_skin_instance_pointer, bones, Arr(block_pointer->A->num_bones, ni_ref));
+	SinkVal(nif, block_pointer, ni_skin_instance_pointer, B, 4);
+	SinkVal(nif, block_pointer, ni_skin_instance_pointer, partitions, Arr(block_pointer->B->num_partitions, struct body_part_list));
+	return block_pointer;
 }
 
 void *read_ni_skin_data(nifpr)

@@ -34,6 +34,7 @@ struct nifprd
 	void (*bs_shader_texture_set)(struct nifprd *, struct bs_shader_texture_set_pointer *);
 	void (*ni_alpha_property)(struct nifprd *, struct ni_alpha_property_pointer *);
 	void (*ni_controller_sequence)(struct nifprd *, struct ni_controller_sequence_pointer *);
+	void (*ni_skin_instance)(struct nifprd *, struct ni_skin_instance_pointer *);
 };
 
 void nifp_gui();
@@ -157,7 +158,25 @@ struct bs_tri_shape_pointer_pointer
 
 struct ni_skin_instance_pointer
 {
-	int end;
+	struct
+	{
+		ni_ref data;
+		ni_ref skin_partition;
+		ni_ref skeleton_root;
+		unsigned int num_bones;
+	} * A;
+	ni_ref *bones;
+	struct
+	{
+		int num_partitions;
+	} * B;
+	struct body_part_list *partitions;
+};
+
+struct body_part_list
+{
+	unsigned short part_flag;
+	unsigned short body_part;
 };
 
 struct ni_tri_shape_data_pointer

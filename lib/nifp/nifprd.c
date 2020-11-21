@@ -95,6 +95,11 @@ static void visit(struct nifprd *rd, int parent, int current)
 	needs_parent;
 	rd->ni_alpha_property(rd, Blocks[current]);
 	}
+	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) )
+	{
+	needs_parent;
+	rd->ni_skin_instance(rd, Blocks[current]);
+	}
 }
 
 static void visit_other(struct nifprd *rd, int parent, int current) {}
