@@ -132,6 +132,7 @@ static void *read_ni_common_layout(nifpr);
 static void *read_ni_node(nifpr);
 static void *read_ni_skin_instance(nifpr);
 static void *read_ni_skin_data(nifpr);
+static void *read_ni_skin_partition(nifpr);
 static void *read_ni_tri_shape(nifpr);
 static void *read_ni_tri_shape_data(nifpr);
 static void *read_bs_lighting_shader_property(nifpr);
@@ -164,7 +165,7 @@ void read_block(struct nifp *nif, int n)
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) block = read_ni_node(nif, n);
 	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) block = read_ni_skin_instance(nif, n);
 	else if ( ni_is_type(NI_SKIN_DATA) ) block = read_ni_skin_data(nif, n);
-	else if ( ni_is_type(NI_SKIN_PARTITION) ) 0;
+	else if ( ni_is_type(NI_SKIN_PARTITION) ) block = read_ni_skin_partition(nif, n);
 	else if ( ni_is_type(BS_TRI_SHAPE) ) 0;
 	else if ( ni_is_type(BS_DYNAMIC_TRI_SHAPE) ) 0;
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) block = read_ni_tri_shape(nif, n);
@@ -301,8 +302,36 @@ void *read_ni_skin_data(nifpr)
 	Sink(nif, bone_data, bone_data, B, 12 + 4 + 2);
 	Sink(nif, bone_data, bone_data, vertex_weights, Arr(bone_data->B->num_vertices, struct bone_vert_data));
 	}
-	return NULL;
+	return block_pointer;
 }
+
+void *read_ni_skin_partition(nifpr)
+{
+	printf("read ni skin partition\n");
+	struct ni_skin_partition_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct ni_skin_partition_pointer));
+	memset(block_pointer, NULL, sizeof(struct ni_skin_partition_pointer));
+	Sink(nif, block_pointer, ni_skin_partition_pointer, num_skin_partition_blocks, 4);
+	block_pointer->skin_partition_blocks = malloc(sizeof(struct skin_partition *) * *block_pointer->num_skin_partition_blocks);
+	for (int i = 0; i < *block_pointer->num_skin_partition_blocks; i++)
+	{
+	block_pointer->skin_partition_blocks[i] = malloc(sizeof(struct skin_partition));
+	struct skin_partition *skin_partition = block_pointer->skin_partition_blocks[i];
+	Sink(nif, skin_partition, skin_partition, A, 10);
+	Sink(nif, skin_partition, skin_partition, bones, Arr(skin_partition->A->num_bones, unsigned short));
+	Sink(nif, skin_partition, skin_partition, has_vertex_map, 1);
+	Sink(nif, skin_partition, skin_partition, vertex_map, Arr(skin_partition->A->num_vertices, unsigned short));
+	Sink(nif, skin_partition, skin_partition, has_vertex_weights, 1);
+	Sink(nif, skin_partition, skin_partition, vertex_weights, Arr(skin_partition->A->num_vertices, struct vec_4p));
+	Sink(nif, skin_partition, skin_partition, strip_lengths, Arr(skin_partition->A->num_strips, unsigned short));
+	Sink(nif, skin_partition, skin_partition, has_faces, 1);
+	Sink(nif, skin_partition, skin_partition, triangles, Arr(skin_partition->A->num_triangles, struct ushort_3p));
+	Sink(nif, skin_partition, skin_partition, has_bone_indices, 1);
+	Sink(nif, skin_partition, skin_partition, bone_indices, Arr(skin_partition->A->num_vertices, unsigned char));
+	Sink(nif, skin_partition, skin_partition, unknown_short, 2);
+	}
+	return block_pointer;
+};
 
 void *read_bs_lighting_shader_property(nifpr)
 {

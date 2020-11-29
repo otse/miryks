@@ -199,10 +199,8 @@ namespace gloom
 		nifp *nif = skinnedMesh->mesh->nif;
 		// Safety check
 		cassert(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "dismember < ntirishape");
-
 		ni_tri_shape_pointer *ntsp = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
-	
-
+		
 		//mesh->groups[rd->parent]
 		//skinnedMesh->mesh->groups[rd->parent]
 		//rd->parent

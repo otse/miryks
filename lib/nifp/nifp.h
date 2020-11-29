@@ -219,6 +219,35 @@ struct bone_vert_data
 	float weight;
 };
 
+struct ni_skin_partition_pointer
+{
+	unsigned int *num_skin_partition_blocks;
+	struct skin_partition **skin_partition_blocks;
+};
+
+struct skin_partition
+{
+	struct
+	{
+		unsigned short num_vertices;
+		unsigned short num_triangles;
+		unsigned short num_bones;
+		unsigned short num_strips;
+		unsigned short num_weights_per_vertex;
+	} * A;
+	unsigned short *bones;
+	unsigned char *has_vertex_map;
+	unsigned short *vertex_map;
+	unsigned char *has_vertex_weights;
+	struct vec_4p *vertex_weights;
+	unsigned short *strip_lengths;
+	unsigned char *has_faces;
+	struct ushort_3p *triangles;
+	unsigned char *has_bone_indices;
+	unsigned char *bone_indices;
+	unsigned short *unknown_short;
+};
+
 struct ni_tri_shape_data_pointer
 {
 	struct
