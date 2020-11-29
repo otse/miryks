@@ -35,6 +35,8 @@ struct nifprd
 	void (*ni_alpha_property)(struct nifprd *, struct ni_alpha_property_pointer *);
 	void (*ni_controller_sequence)(struct nifprd *, struct ni_controller_sequence_pointer *);
 	void (*ni_skin_instance)(struct nifprd *, struct ni_skin_instance_pointer *);
+	void (*ni_skin_data)(struct nifprd *, struct ni_skin_data_pointer *);
+	void (*ni_skin_partition)(struct nifprd *, struct ni_skin_partition_pointer *);
 };
 
 void nifp_gui();

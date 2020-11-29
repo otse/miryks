@@ -23,6 +23,8 @@ namespace gloom
 	static void bs_shader_texture_set_callback(nifprd *, bs_shader_texture_set_pointer *);
 	static void ni_alpha_property_callback(nifprd *, ni_alpha_property_pointer *);
 	static void ni_skin_instance_callback(nifprd *, ni_skin_instance_pointer *);
+	static void ni_skin_data_callback(nifprd *, ni_skin_data_pointer *);
+	static void ni_skin_partition_callback(nifprd *, ni_skin_partition_pointer *);
 
 	static std::map<void *, Mesh *> store;
 
@@ -63,6 +65,8 @@ namespace gloom
 		rd->data = this;
 		rd->other = other;
 		rd->ni_skin_instance = ni_skin_instance_callback;
+		rd->ni_skin_data = ni_skin_data_callback;
+		rd->ni_skin_partition = ni_skin_partition_callback;
 		nifp_rd(rd);
 		free_nifprd(&rd);
 	}
@@ -212,5 +216,9 @@ namespace gloom
 
 	}
 
+	void ni_skin_partition_callback(nifprd *rd, ni_skin_partition_pointer *block)
+	{
+		
+	}
 
 } // namespace gloom
