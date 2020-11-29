@@ -25,4 +25,4 @@
 #define BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA        "BSDecalPlacementVectorExtraData"
 
 #define ni_is_type(x) 0 == strcmp(block_type, x)
-#define ni_is_any(x, y, z) ni_is_type(x) || (y ? ni_is_type(y) : 0) || (z ? ni_is_type(z) : 0)
+#define ni_is_any(x, y, z) (ni_is_type(x)) || (y ? ni_is_type(y) : 0) || (z ? ni_is_type(z) : 0)

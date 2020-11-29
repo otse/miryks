@@ -37,7 +37,7 @@ namespace gloom
 		rd->data = this;
 		//rd->other = other;
 		rd->ni_node = ni_node_callback;
-		nifp_rd(nif, rd, this);
+		nifp_rd(rd);
 		free_nifprd(&rd);
 		baseBone->group->Update();
 	}

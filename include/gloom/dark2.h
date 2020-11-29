@@ -20,6 +20,7 @@ namespace gloom
 	class Object;
 	class Level;
 	class Mesh;
+	class SkinnedMesh;
 	class Actor;
 	class Skeleton;
 

@@ -26,7 +26,7 @@ struct nifprd
 	struct nifp *nif;
 	void *data;
 	int parent, current;
-	void (*other)(struct nifprd *, int, int, const char *);
+	void (*other)(struct nifprd *, void *block_pointer);
 	void (*ni_node)(struct nifprd *, struct ni_node_pointer *);
 	void (*ni_tri_shape)(struct nifprd *, struct ni_tri_shape_pointer *);
 	void (*ni_tri_shape_data)(struct nifprd *, struct ni_tri_shape_data_pointer *);
@@ -48,7 +48,7 @@ api struct nifprd *malloc_nifprd();
 
 api void free_nifp(struct nifp **);
 api void free_nifprd(struct nifprd **);
-api void nifp_rd(struct nifp *, struct nifprd *, void *);
+api void nifp_rd(struct nifprd *);
 
 api void nifp_read(struct nifp *);
 api void nifp_save(void *, struct nifp *);
@@ -166,6 +166,7 @@ struct ni_skin_instance_pointer
 		unsigned int num_bones;
 	} * A;
 	ni_ref *bones;
+	// dismemberment fields
 	struct
 	{
 		int num_partitions;
@@ -177,6 +178,45 @@ struct body_part_list
 {
 	unsigned short part_flag;
 	unsigned short body_part;
+};
+
+struct ni_skin_data_pointer
+{
+	struct
+	{
+		struct mat_3p rotation;
+		struct vec_3p translation;
+		float scale;
+	} * skin_transform;
+	struct
+	{
+		unsigned int num_bones;
+		unsigned char has_vertex_weights;
+	} * B;
+	struct bone_data **bone_list;
+};
+
+struct bone_data
+{
+	struct
+	{
+		struct mat_3p rotation;
+		struct vec_3p translation;
+		float scale;
+	} * skin_transform;
+	struct
+	{
+		struct vec_3p bounding_sphere_offset;
+		float bounding_sphere_radius;
+		unsigned short num_vertices;
+	} * B;
+	struct bone_vert_data *vertex_weights;
+};
+
+struct bone_vert_data
+{
+	unsigned short index;
+	float weight;
 };
 
 struct ni_tri_shape_data_pointer

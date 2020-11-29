@@ -192,7 +192,7 @@ static void sink_val(struct nifp *nif, char *block_pointer, int src, int size) {
 }
 
 // sizeof(((layout *)0)->part)
-#define SinkVal(nif, block_pointer, layout, part, size) sink_val(nif, block_pointer, offsetof(struct layout, part), size)
+#define Sink(nif, block_pointer, layout, part, size) sink_val(nif, block_pointer, offsetof(struct layout, part), size)
 //#define SinkArr(nif, block_pointer, layout, part, size) sink_arr(nif, block_pointer, offsetof(layout, part), size)
 
 #define Arr(count, type) count * sizeof(type)
@@ -203,9 +203,9 @@ void *read_ni_common_layout(nifpr)
 	struct ni_common_layout_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_common_layout_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_common_layout_pointer));
-	SinkVal(nif, block_pointer, ni_common_layout_pointer, A, 8);
-	SinkVal(nif, block_pointer, ni_common_layout_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
-	SinkVal(nif, block_pointer, ni_common_layout_pointer, C, 4+4+12+36+4+4);
+	Sink(nif, block_pointer, ni_common_layout_pointer, A, 8);
+	Sink(nif, block_pointer, ni_common_layout_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
+	Sink(nif, block_pointer, ni_common_layout_pointer, C, 4+4+12+36+4+4);
 	return block_pointer;
 }
 
@@ -216,10 +216,10 @@ void *read_ni_node(nifpr)
 	block_pointer = malloc(sizeof(struct ni_node_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_node_pointer));
 	block_pointer->common = read_ni_common_layout(nif, n);
-	SinkVal(nif, block_pointer, ni_node_pointer, A, 4);
-	SinkVal(nif, block_pointer, ni_node_pointer, children, Arr(block_pointer->A->num_children, ni_ref));
-	SinkVal(nif, block_pointer, ni_node_pointer, C, 4);
-	SinkVal(nif, block_pointer, ni_node_pointer, effects, Arr(block_pointer->C->num_effects, ni_ref));
+	Sink(nif, block_pointer, ni_node_pointer, A, 4);
+	Sink(nif, block_pointer, ni_node_pointer, children, Arr(block_pointer->A->num_children, ni_ref));
+	Sink(nif, block_pointer, ni_node_pointer, C, 4);
+	Sink(nif, block_pointer, ni_node_pointer, effects, Arr(block_pointer->C->num_effects, ni_ref));
 	return block_pointer;
 }
 
@@ -230,9 +230,9 @@ void *read_ni_tri_shape(nifpr)
 	block_pointer = malloc(sizeof(struct ni_tri_shape_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_tri_shape_pointer));
 	block_pointer->common = read_ni_common_layout(nif, n);
-	SinkVal(nif, block_pointer, ni_tri_shape_pointer, A, 8);
+	Sink(nif, block_pointer, ni_tri_shape_pointer, A, 8);
 	Pos += 9;
-	SinkVal(nif, block_pointer, ni_tri_shape_pointer, B, 8);
+	Sink(nif, block_pointer, ni_tri_shape_pointer, B, 8);
 	return block_pointer;
 }
 
@@ -242,28 +242,28 @@ void *read_ni_tri_shape_data(nifpr)
 	struct ni_tri_shape_data_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_tri_shape_data_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_tri_shape_data_pointer));
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, A, 4+2+1+1+1);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, A, 4+2+1+1+1);
 	const int size = Arr(block_pointer->A->num_vertices, struct vec_3p);
 	if (block_pointer->A->has_vertices)
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, vertices, size);
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, C, 7);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, vertices, size);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, C, 7);
 	if (block_pointer->C->has_normals)
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, normals, size);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, normals, size);
 	if (block_pointer->C->bs_vector_flags & 0x00001000)
 	{
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, tangents, size);
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, bitangents, size);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, tangents, size);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, bitangents, size);
 	}
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, G, 12+4+1);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, G, 12+4+1);
 	if (block_pointer->G->has_vertex_colors)
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, vertex_colors, Arr(block_pointer->A->num_vertices, struct vec_4p));
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, vertex_colors, Arr(block_pointer->A->num_vertices, struct vec_4p));
 	if (block_pointer->C->bs_vector_flags & 0x00000001)
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, uv_sets, Arr(block_pointer->A->num_vertices, struct vec_2p));
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, J, 13);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, uv_sets, Arr(block_pointer->A->num_vertices, struct vec_2p));
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, J, 13);
 	if (block_pointer->J->has_triangles)
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, triangles, Arr(block_pointer->J->num_triangles, struct ushort_3p));
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, L, 2);
-	SinkVal(nif, block_pointer, ni_tri_shape_data_pointer, match_groups, Arr(block_pointer->L->num_match_groups, ni_ref));
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, triangles, Arr(block_pointer->J->num_triangles, struct ushort_3p));
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, L, 2);
+	Sink(nif, block_pointer, ni_tri_shape_data_pointer, match_groups, Arr(block_pointer->L->num_match_groups, ni_ref));
 	return block_pointer;
 }
 
@@ -272,16 +272,35 @@ void *read_ni_skin_instance(nifpr)
 	struct ni_skin_instance_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_skin_instance_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_skin_instance_pointer));
-	SinkVal(nif, block_pointer, ni_skin_instance_pointer, A, 16);
-	SinkVal(nif, block_pointer, ni_skin_instance_pointer, bones, Arr(block_pointer->A->num_bones, ni_ref));
-	SinkVal(nif, block_pointer, ni_skin_instance_pointer, B, 4);
-	SinkVal(nif, block_pointer, ni_skin_instance_pointer, partitions, Arr(block_pointer->B->num_partitions, struct body_part_list));
+	Sink(nif, block_pointer, ni_skin_instance_pointer, A, 16);
+	Sink(nif, block_pointer, ni_skin_instance_pointer, bones, Arr(block_pointer->A->num_bones, ni_ref));
+	char *block_type = nifp_get_block_type(nif, n);
+	if (ni_is_type(BS_DISMEMBER_SKIN_INSTANCE))
+	{
+	Sink(nif, block_pointer, ni_skin_instance_pointer, B, 4);
+	Sink(nif, block_pointer, ni_skin_instance_pointer, partitions, Arr(block_pointer->B->num_partitions, struct body_part_list));
+	}
 	return block_pointer;
 }
 
 void *read_ni_skin_data(nifpr)
 {
-	//read_block_save(nif, n, block);
+#define Type ni_skin_data_pointer
+	printf("read ni skin data\n");
+	struct Type *block_pointer;
+	block_pointer = malloc(sizeof(struct Type));
+	memset(block_pointer, NULL, sizeof(struct Type));
+	Sink(nif, block_pointer, Type, skin_transform, 36 + 12 + 4);
+	Sink(nif, block_pointer, Type, B, 5);
+	block_pointer->bone_list = malloc(sizeof(struct bone_data *) * block_pointer->B->num_bones);
+	for (int i = 0; i < block_pointer->B->num_bones; i++)
+	{
+	block_pointer->bone_list[i] = malloc(sizeof(struct bone_data));
+	struct bone_data *bone_data = block_pointer->bone_list[i];
+	Sink(nif, bone_data, bone_data, skin_transform, 36 + 12 + 4);
+	Sink(nif, bone_data, bone_data, B, 12 + 4 + 2);
+	Sink(nif, bone_data, bone_data, vertex_weights, Arr(bone_data->B->num_vertices, struct bone_vert_data));
+	}
 	return NULL;
 }
 
@@ -291,9 +310,9 @@ void *read_bs_lighting_shader_property(nifpr)
 	struct bs_lighting_shader_property_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct bs_lighting_shader_property_pointer));
 	memset(block_pointer, NULL, sizeof(struct bs_lighting_shader_property_pointer));
-	SinkVal(nif, block_pointer, bs_lighting_shader_property_pointer, A, 12);
-	SinkVal(nif, block_pointer, bs_lighting_shader_property_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
-	SinkVal(nif, block_pointer, bs_lighting_shader_property_pointer, B, 88);
+	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, A, 12);
+	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
+	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, B, 88);
 	return block_pointer;
 }
 
@@ -303,7 +322,7 @@ void *read_bs_shader_texture_set(nifpr)
 	struct bs_shader_texture_set_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct bs_shader_texture_set_pointer));
 	memset(block_pointer, NULL, sizeof(struct bs_shader_texture_set_pointer));
-	SinkVal(nif, block_pointer, bs_shader_texture_set_pointer, A, 4);
+	Sink(nif, block_pointer, bs_shader_texture_set_pointer, A, 4);
 	block_pointer->textures = malloc(sizeof(char *) * block_pointer->A->num_textures);
 	memset(block_pointer->textures, '\0', block_pointer->A->num_textures);
 	for (int i = 0; i < block_pointer->A->num_textures; i++)
@@ -317,9 +336,9 @@ void *read_ni_alpha_property(nifpr)
 	struct ni_alpha_property_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_alpha_property_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_alpha_property_pointer));
-	SinkVal(nif, block_pointer, ni_alpha_property_pointer, A, 8);
-	SinkVal(nif, block_pointer, ni_alpha_property_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
-	SinkVal(nif, block_pointer, ni_alpha_property_pointer, C, 7);
+	Sink(nif, block_pointer, ni_alpha_property_pointer, A, 8);
+	Sink(nif, block_pointer, ni_alpha_property_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
+	Sink(nif, block_pointer, ni_alpha_property_pointer, C, 7);
 	sizeof(struct ni_alpha_property_pointer);
 	sizeof(((struct ni_alpha_property_pointer *)0)->C);
 	return block_pointer;
@@ -331,9 +350,9 @@ void *read_ni_controller_sequence(nifpr)
 	struct ni_controller_sequence_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_controller_sequence_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_controller_sequence_pointer));
-	SinkVal(nif, block_pointer, ni_controller_sequence_pointer, A, 12);
-	SinkVal(nif, block_pointer, ni_controller_sequence_pointer, controlled_blocks, Arr(block_pointer->A->num_controlled_blocks, struct controlled_block_pointer));
-	SinkVal(nif, block_pointer, ni_controller_sequence_pointer, C, sizeof(((struct ni_controller_sequence_pointer *)0)->C));
+	Sink(nif, block_pointer, ni_controller_sequence_pointer, A, 12);
+	Sink(nif, block_pointer, ni_controller_sequence_pointer, controlled_blocks, Arr(block_pointer->A->num_controlled_blocks, struct controlled_block_pointer));
+	Sink(nif, block_pointer, ni_controller_sequence_pointer, C, sizeof(((struct ni_controller_sequence_pointer *)0)->C));
 	//printf("ni ct se num_controlled_blocks %u\n", block_pointer->A->num_controlled_blocks);
 	sizeof(struct ni_controller_sequence_pointer);
 	sizeof(((struct ni_controller_sequence_pointer *)0)->A);
@@ -346,8 +365,8 @@ void *read_ni_transform_interpolator(nifpr)
 	struct ni_transform_interpolator_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_transform_interpolator_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_transform_interpolator_pointer));
-	SinkVal(nif, block_pointer, ni_transform_interpolator_pointer, transform, 32);
-	SinkVal(nif, block_pointer, ni_transform_interpolator_pointer, B, 4);
+	Sink(nif, block_pointer, ni_transform_interpolator_pointer, transform, 32);
+	Sink(nif, block_pointer, ni_transform_interpolator_pointer, B, 4);
 	return block_pointer;
 }
 
@@ -357,13 +376,13 @@ void *read_ni_transform_data(nifpr)
 	struct ni_transform_data_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_transform_data_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_transform_data_pointer));
-	SinkVal(nif, block_pointer, ni_transform_data_pointer, A, 4);
+	Sink(nif, block_pointer, ni_transform_data_pointer, A, 4);
 	if (block_pointer->A->num_rotation_keys > 0)
 	{
-	SinkVal(nif, block_pointer, ni_transform_data_pointer, B, 4);
+	Sink(nif, block_pointer, ni_transform_data_pointer, B, 4);
 	if (block_pointer->B->rotation_type == 2) // quadratic key
 	{
-	SinkVal(nif, block_pointer, ni_transform_data_pointer, quaternion_keys, Arr(block_pointer->A->num_rotation_keys, struct quaternion_key_pointer));
+	Sink(nif, block_pointer, ni_transform_data_pointer, quaternion_keys, Arr(block_pointer->A->num_rotation_keys, struct quaternion_key_pointer));
 	}
 	else
 	{
@@ -371,9 +390,9 @@ void *read_ni_transform_data(nifpr)
 	return;
 	}
 	}
-	SinkVal(nif, block_pointer, ni_transform_data_pointer, translations, 8);
-	SinkVal(nif, block_pointer, ni_transform_data_pointer, translation_keys, Arr(block_pointer->translations->num_keys, struct translation_key_pointer));
-	SinkVal(nif, block_pointer, ni_transform_data_pointer, scales, 4);
-	SinkVal(nif, block_pointer, ni_transform_data_pointer, scale_keys, Arr(block_pointer->scales->num_keys, 4));
+	Sink(nif, block_pointer, ni_transform_data_pointer, translations, 8);
+	Sink(nif, block_pointer, ni_transform_data_pointer, translation_keys, Arr(block_pointer->translations->num_keys, struct translation_key_pointer));
+	Sink(nif, block_pointer, ni_transform_data_pointer, scales, 4);
+	Sink(nif, block_pointer, ni_transform_data_pointer, scale_keys, Arr(block_pointer->scales->num_keys, 4));
 	return block_pointer;
 }

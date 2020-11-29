@@ -1,3 +1,5 @@
+#include <gloom/libs>
+
 #include <gloom/mesh.h>
 
 #include <opengl/shader.h>
@@ -13,13 +15,14 @@ namespace gloom
 		lastGroup = baseGroup;
 	}
 
-	static void other(nifprd *, int, int, const char *);
+	static void other(nifprd *, void *);
 	static void ni_node_callback(nifprd *, ni_node_pointer *);
 	static void ni_tri_shape_callback(nifprd *, ni_tri_shape_pointer *);
 	static void ni_tri_shape_data_callback(nifprd *, ni_tri_shape_data_pointer *);
 	static void bs_lighting_shader_property_callback(nifprd *, bs_lighting_shader_property_pointer *);
 	static void bs_shader_texture_set_callback(nifprd *, bs_shader_texture_set_pointer *);
 	static void ni_alpha_property_callback(nifprd *, ni_alpha_property_pointer *);
+	static void ni_skin_instance_callback(nifprd *, ni_skin_instance_pointer *);
 
 	static std::map<void *, Mesh *> store;
 
@@ -37,6 +40,7 @@ namespace gloom
 
 	void Mesh::Construct(nifp *bucket)
 	{
+		nif = bucket;
 		nifprd *rd = malloc_nifprd();
 		rd->nif = bucket;
 		rd->data = this;
@@ -47,9 +51,20 @@ namespace gloom
 		rd->bs_lighting_shader_property = bs_lighting_shader_property_callback;
 		rd->bs_shader_texture_set = bs_shader_texture_set_callback;
 		rd->ni_alpha_property = ni_alpha_property_callback;
-		nifp_rd(bucket, rd, this);
+		nifp_rd(rd);
 		free_nifprd(&rd);
 		baseGroup->Update();
+	}
+
+	void SkinnedMesh::Construct()
+	{
+		nifprd *rd = malloc_nifprd();
+		rd->nif = mesh->nif;
+		rd->data = this;
+		rd->other = other;
+		rd->ni_skin_instance = ni_skin_instance_callback;
+		nifp_rd(rd);
+		free_nifprd(&rd);
 	}
 
 	Group *Mesh::Nested(nifprd *rd)
@@ -61,9 +76,10 @@ namespace gloom
 		return group;
 	}
 
-	void other(nifprd *rd, int parent, int current, const char *block_type)
+	void other(nifprd *rd, void *block_pointer)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
+		//printf("nifprd unhandled other block type %s\n", nifp_get_block_type(rd->nif, rd->current));
 	}
 
 	void matrix_from_common(Group *group, ni_common_layout_pointer *common)
@@ -176,4 +192,27 @@ namespace gloom
 			geometry->material->treshold = block->C->treshold / 255.f;
 		}
 	}
+
+	void ni_skin_instance_callback(nifprd *rd, ni_skin_instance_pointer *block)
+	{
+		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
+		nifp *nif = skinnedMesh->mesh->nif;
+		// Safety check
+		cassert(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "dismember < ntirishape");
+
+		ni_tri_shape_pointer *ntsp = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
+	
+
+		//mesh->groups[rd->parent]
+		//skinnedMesh->mesh->groups[rd->parent]
+		//rd->parent
+	}
+
+	void ni_skin_data_callback(nifprd *rd, ni_skin_data_pointer *block)
+	{
+		// what does the bone list > vertex weights do?
+
+	}
+
+
 } // namespace gloom

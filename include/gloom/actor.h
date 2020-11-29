@@ -14,7 +14,7 @@ namespace gloom
 	class Actor
 	{
 	public:
-		Actor(const char *);
+		Actor(const char *, const char *);
 
 		Skeleton *skelly = nullptr;
 

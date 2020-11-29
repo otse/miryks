@@ -4,6 +4,7 @@
 #include <gloom/actor.h>
 #include <gloom/skeleton.h>
 #include <gloom/level.h>
+#include <gloom/mesh.h>
 
 #include <opengl/group.h>
 #include <opengl/scene.h>
@@ -99,7 +100,7 @@ namespace gloom
 		*/
 	}
 
-	Actor::Actor(const char *raceId)
+	Actor::Actor(const char *raceId, const char *model)
 	{
 		printf("actor of race %s\n", raceId);
 
@@ -120,6 +121,19 @@ namespace gloom
 
 		cassert(ANAM, "no actor race anam sub");
 
+		struct rc *rc = bsa_find(get_archives()[0], model);
+		bsa_read(rc);
+		struct nifp *character = malloc_nifp();
+		character->path = model;
+		character->buf = rc->buf;
+		nifp_read(character);
+		nifp_save((void *)model, character);
+
+		Mesh *mesh = new Mesh();
+		mesh->Construct(character);
+		SkinnedMesh *sm = new SkinnedMesh(mesh);
+		sm->Construct();
+
 		skelly = new Skeleton();
 		Animation *attack = new Animation(draugrAttack);
 		attack->skeleton = skelly;
@@ -132,8 +146,11 @@ namespace gloom
 
 		if (ref != dungeon->refEditorIDs.end())
 		{
+			Group *group = new Group();
+			group->Add(skelly->baseBone->group);
+			group->Add(mesh->baseGroup);
 			printf("make skelly drawgroup!\n");
-			drawGroup = new DrawGroup(skelly->baseBone->group, ref->second->matrix);
+			drawGroup = new DrawGroup(group, ref->second->matrix);
 
 			scene->Add(drawGroup);
 		}

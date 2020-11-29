@@ -225,6 +225,12 @@ void main()
 		diffuseColor.rgba *= vColor.rgba;
 	
 	#endif
+
+	#ifndef DONT_USE_SKINNING
+
+		diffuseColor.rgba = vec4(0, 1, 1, 1);
+
+	#endif
 	
 	if (diffuseColor.a <= alphaTest)
 		discard;

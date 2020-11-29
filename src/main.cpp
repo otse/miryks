@@ -159,7 +159,7 @@ int main()
 	//nif_test();
 	//nifp_test();
 	dungeon = new Level("Dark2Schmuck"); // <-- interior to load
-	someDraugr = new Actor("DraugrRace");
+	someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
 	programLoop();
 	return 1;
 }

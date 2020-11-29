@@ -20,7 +20,9 @@ namespace gloom
 	{
 	public:
 		Mesh();
-
+		
+		struct nifp *nif;
+		
 		std::map<int, Group *> groups;
 
 		Group *baseGroup, *lastGroup;
@@ -30,5 +32,19 @@ namespace gloom
 
 		static void Store(void *, Mesh *);
 		static Mesh *GetStored(void *);
+	};
+
+	class SkinnedMesh
+	{
+	public:
+		Mesh *mesh;
+		
+		SkinnedMesh(Mesh *mesh) : mesh(mesh)
+		{
+			
+		}
+
+		void Construct();
+
 	};
 } // namespace gloom

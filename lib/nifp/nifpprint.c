@@ -436,6 +436,18 @@ block_pointer->B->num_partitions
 );
 }
 
+static void print_ni_skin_data(struct nifp *nif, int n, char s[1000])
+{
+	struct ni_skin_data_pointer *block_pointer = Blocks[n];
+
+}
+
+static void print_ni_skin_partition(struct nifp *nif, int n, char s[1000])
+{
+	struct ni_skin_partition_pointer *block_pointer = Blocks[n];
+
+}
+
 api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 {
 	s[0] = '\0';
@@ -450,4 +462,6 @@ api void nifp_print_block(struct nifp *nif, int n, char s[1000])
 	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) print_ni_transform_interpolator(nif, n, s);
 	else if ( ni_is_type(NI_TRANSFORM_DATA) ) print_ni_transform_data(nif, n, s);
 	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) print_ni_skin_instance(nif, n, s);
+	else if ( ni_is_type(NI_SKIN_DATA) ) print_ni_skin_data(nif, n, s);
+	else if ( ni_is_type(NI_SKIN_PARTITION) ) print_ni_skin_partition(nif, n, s);
 }
