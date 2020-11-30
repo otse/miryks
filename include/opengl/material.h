@@ -20,7 +20,10 @@ struct Material
 	vec2 offset, repeat, center;
 	vec3 color, specular, emissive;
 
+	mat4 bindMatrix;
 	mat3 uvTransform;
+
+	struct skin_partition *skin_partition;
 
 	std::string header;
 

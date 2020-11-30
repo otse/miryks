@@ -22,9 +22,9 @@ namespace gloom
 	{
 	public:
 		Mesh();
-		
+
 		struct nifp *nif;
-		
+
 		std::map<int, Group *> groups;
 
 		Group *baseGroup, *lastGroup;
@@ -39,21 +39,38 @@ namespace gloom
 	class SkinnedMesh
 	{
 	public:
-		Mesh *mesh;
+		Mesh *const mesh;
+
+		Skeleton *skeleton;
 
 		Group *lastShape;
 
-		std::vector<struct ni_tri_shape_pointer *> roots;
-		
+		std::vector<ni_ref> shapes;
+		std::vector<SkinPartition *> parts;
+
 		SkinnedMesh(Mesh *mesh) : mesh(mesh)
 		{
 			lastShape = nullptr;
+			skeleton = nullptr;
 		}
 
 		void Construct();
 		void Initial();
-
 		void Forward();
+	};
 
+	class SkinPartition
+	{
+	public:
+		ni_ref shape;
+
+		SkinnedMesh *const smesh;
+
+		std::vector<Bone *> bones;
+
+		SkinPartition(SkinnedMesh *smesh, ni_ref shape) : smesh(smesh), shape(shape)
+		{
+			//for ()
+		}
 	};
 } // namespace gloom

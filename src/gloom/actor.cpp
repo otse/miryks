@@ -131,35 +131,38 @@ namespace gloom
 
 		Mesh *mesh = new Mesh();
 		mesh->Construct(character);
-		SkinnedMesh *sm = new SkinnedMesh(mesh);
-		sm->Construct();
 
-		skelly = new Skeleton();
+		Skeleton *skeleton = new Skeleton();
+		skeleton->Load(ANAM);
+		skeleton->Construct();
+
+		SkinnedMesh *smesh = new SkinnedMesh(mesh);
+		smesh->skeleton = skeleton;
+		smesh->Construct();
+		
+		this->smesh = smesh;
+
 		Animation *attack = new Animation(draugrAttack);
-		attack->skeleton = skelly;
-		skelly->animation = attack;
-
-		skelly->Load(ANAM);
-		skelly->Construct();
+		attack->skeleton = skeleton;
+		skeleton->animation = attack;
 
 		auto ref = dungeon->refEditorIDs.find("gloomdraugrskelly");
 
 		if (ref != dungeon->refEditorIDs.end())
 		{
 			Group *group = new Group();
-			group->Add(skelly->baseBone->group);
+			group->Add(smesh->skeleton->baseBone->group);
 			group->Add(mesh->baseGroup);
-			printf("make skelly drawgroup!\n");
+			printf("make smesh->skeleton drawgroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
-
 			scene->Add(drawGroup);
 		}
 	}
 
 	void Actor::Step()
 	{
-		if (skelly)
-			skelly->Step();
+		if (smesh->skeleton)
+			smesh->skeleton->Step();
 		const float merry = 0.002;
 		//if (drawGroup)
 			//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));

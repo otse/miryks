@@ -40,6 +40,8 @@ Material::Material()
 	color = vec3(1, 1, 1);
 	specular = vec3(17.0 / 255.0);
 	emissive = vec3(0);
+
+	skin_partition = nullptr;
 }
 
 void Material::RandomColor()
@@ -136,6 +138,13 @@ void Material::Use()
 	shader->SetFloat("shininess", shininess);
 	shader->SetFloat("glossiness", glossiness);
 	shader->SetFloat("alphaTest", treshold);
+
+	if (skinning)
+	{
+		shader->SetMat4("bindMatrix", bindMatrix);
+		shader->SetMat4("bindMatrixInverse", glm::inverse(bindMatrix));
+		shader->SetMat4("boneMatrices[i]", glm::inverse(bindMatrix));
+	}
 
 	if (map)
 	{

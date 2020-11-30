@@ -21,6 +21,7 @@ namespace gloom
 	class Level;
 	class Mesh;
 	class SkinnedMesh;
+	class SkinPartition;
 	class Actor;
 	class Skeleton;
 

@@ -287,7 +287,7 @@ void *read_ni_skin_instance(nifpr)
 void *read_ni_skin_data(nifpr)
 {
 #define Type ni_skin_data_pointer
-	printf("read ni skin data\n");
+	//printf("read ni skin data\n");
 	struct Type *block_pointer;
 	block_pointer = malloc(sizeof(struct Type));
 	memset(block_pointer, NULL, sizeof(struct Type));
@@ -307,7 +307,7 @@ void *read_ni_skin_data(nifpr)
 
 void *read_ni_skin_partition(nifpr)
 {
-	printf("read ni skin partition\n");
+	//printf("read ni skin partition\n");
 	struct ni_skin_partition_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_skin_partition_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_skin_partition_pointer));
@@ -379,7 +379,7 @@ void *read_ni_alpha_property(nifpr)
 
 void *read_ni_controller_sequence(nifpr)
 {
-	printf("read_ni_controller_sequence\n");
+	//printf("read_ni_controller_sequence\n");
 	struct ni_controller_sequence_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_controller_sequence_pointer));
 	memset(block_pointer, NULL, sizeof(struct ni_controller_sequence_pointer));

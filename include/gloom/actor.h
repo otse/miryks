@@ -16,7 +16,7 @@ namespace gloom
 	public:
 		Actor(const char *, const char *);
 
-		Skeleton *skelly = nullptr;
+		SkinnedMesh *smesh = nullptr;
 
 		DrawGroup *drawGroup = nullptr;
 		

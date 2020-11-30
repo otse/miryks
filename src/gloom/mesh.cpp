@@ -61,6 +61,7 @@ namespace gloom
 
 	void SkinnedMesh::Construct()
 	{
+		cassert(skeleton, "smesh needs skeleton");
 		nifprd *rd = malloc_nifprd();
 		rd->nif = mesh->nif;
 		rd->data = this;
@@ -76,17 +77,18 @@ namespace gloom
 
 	void SkinnedMesh::Initial()
 	{
-		for (ni_tri_shape_pointer *ntsp : roots)
+		for (ni_ref index : shapes)
 		{
-			printf("we got a nsip\n");
+			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
+			Group *group = mesh->groups[index];
+			printf("got shape\n");
 		}
 	}
 
-	void Forward(){
+	void SkinnedMesh::Forward(){
 		// set each bones uniforms difference-matrix
-		//for (ni_tri_shape_pointer *ntsp : roots)
+		//for (ni_tri_shape_pointer *ntsp : shapes)
 		//{
-
 		//}
 	};
 
@@ -135,8 +137,8 @@ namespace gloom
 
 	void ni_tri_shape_callback_2(nifprd *rd, ni_tri_shape_pointer *block)
 	{
-		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
-		skinnedMesh->lastShape = skinnedMesh->mesh->groups[rd->current];
+		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
+		smesh->lastShape = smesh->mesh->groups[rd->current];
 	}
 
 	void ni_tri_shape_data_callback(nifprd *rd, ni_tri_shape_data_pointer *block)
@@ -228,11 +230,11 @@ namespace gloom
 
 	void ni_skin_instance_callback(nifprd *rd, ni_skin_instance_pointer *block)
 	{
-		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
-		struct nifp *nif = skinnedMesh->mesh->nif;
+		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
+		struct nifp *nif = smesh->mesh->nif;
 		cassert(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
 		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
-		skinnedMesh->roots.push_back(shape);
+		smesh->shapes.push_back(rd->parent);
 	}
 
 	void ni_skin_data_callback(nifprd *rd, ni_skin_data_pointer *block)
@@ -242,9 +244,9 @@ namespace gloom
 
 	void ni_skin_partition_callback(nifprd *rd, ni_skin_partition_pointer *block)
 	{
-		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
-		auto nif = skinnedMesh->mesh->nif;
-		auto shape = skinnedMesh->roots.back();
+		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
+		auto nif = smesh->mesh->nif;
+		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, smesh->shapes.back());
 		auto data = (ni_tri_shape_data_pointer *)nifp_get_block(nif, shape->A->data);
 		for (int k = 0; k < *block->num_skin_partition_blocks; k++)
 		{
@@ -281,14 +283,14 @@ namespace gloom
 				if (data->G->has_vertex_colors) 
 					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[j]);
 			}
-			geometry->material = new Material(*skinnedMesh->lastShape->geometry->material);
-			geometry->material->RandomColor();
+			geometry->material = new Material(*smesh->lastShape->geometry->material);
+			//geometry->material->RandomColor();
 			geometry->SetupMesh();
 			group->geometry = geometry;
-			skinnedMesh->lastShape->Add(group);
+			smesh->lastShape->Add(group);
 
 		}
-		skinnedMesh->lastShape->Update();
+		smesh->lastShape->Update();
 	}
 
 } // namespace gloom
