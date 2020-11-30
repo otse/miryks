@@ -320,14 +320,18 @@ void *read_ni_skin_partition(nifpr)
 	Sink(nif, skin_partition, skin_partition, A, 10);
 	Sink(nif, skin_partition, skin_partition, bones, Arr(skin_partition->A->num_bones, unsigned short));
 	Sink(nif, skin_partition, skin_partition, has_vertex_map, 1);
+	if (*skin_partition->has_vertex_map)
 	Sink(nif, skin_partition, skin_partition, vertex_map, Arr(skin_partition->A->num_vertices, unsigned short));
 	Sink(nif, skin_partition, skin_partition, has_vertex_weights, 1);
+	if (*skin_partition->has_vertex_weights)
 	Sink(nif, skin_partition, skin_partition, vertex_weights, Arr(skin_partition->A->num_vertices, struct vec_4p));
 	Sink(nif, skin_partition, skin_partition, strip_lengths, Arr(skin_partition->A->num_strips, unsigned short));
 	Sink(nif, skin_partition, skin_partition, has_faces, 1);
+	if (*skin_partition->has_faces)
 	Sink(nif, skin_partition, skin_partition, triangles, Arr(skin_partition->A->num_triangles, struct ushort_3p));
 	Sink(nif, skin_partition, skin_partition, has_bone_indices, 1);
-	Sink(nif, skin_partition, skin_partition, bone_indices, Arr(skin_partition->A->num_vertices, struct vec_4p));
+	if (*skin_partition->has_bone_indices)
+	Sink(nif, skin_partition, skin_partition, bone_indices, Arr(skin_partition->A->num_vertices, struct byte_4p));
 	Sink(nif, skin_partition, skin_partition, unknown_short, 2);
 	}
 	return block_pointer;

@@ -79,6 +79,7 @@ struct vec_4p{ float x, y, z, w; };
 struct mat_3p{ float n[9]; };
 struct mat_4p{ float n[16]; };
 struct ushort_3p{ unsigned short x, y, z; };
+struct byte_4p{ unsigned char a, b, c, d; };
 
 struct nifp_hedr
 {
@@ -246,7 +247,7 @@ struct skin_partition
 	unsigned char *has_faces;
 	struct ushort_3p *triangles;
 	unsigned char *has_bone_indices;
-	struct vec_4p *bone_indices;
+	struct byte_4p *bone_indices;
 	unsigned short *unknown_short;
 };
 

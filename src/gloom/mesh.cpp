@@ -233,14 +233,11 @@ namespace gloom
 		cassert(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
 		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
 		skinnedMesh->roots.push_back(shape);
-		//Group *group = skinnedMesh->mesh->groups[rd->parent];
-		//Geometry *geometry = group->geometry;
-		//geometry->material->RandomColor();
 	}
 
 	void ni_skin_data_callback(nifprd *rd, ni_skin_data_pointer *block)
 	{
-		// just ignore
+		
 	}
 
 	void ni_skin_partition_callback(nifprd *rd, ni_skin_partition_pointer *block)
@@ -249,40 +246,45 @@ namespace gloom
 		auto nif = skinnedMesh->mesh->nif;
 		auto shape = skinnedMesh->roots.back();
 		auto data = (ni_tri_shape_data_pointer *)nifp_get_block(nif, shape->A->data);
-		for (int i = 0; i < *block->num_skin_partition_blocks; i++)
+		for (int k = 0; k < *block->num_skin_partition_blocks; k++)
 		{
 			// printf("skin partition %i of shape %s\n", i, nifp_get_string(nif, shape->common->A->name));
-			struct skin_partition *skin_partition = block->skin_partition_blocks[i];
+			struct skin_partition *skin_partition = block->skin_partition_blocks[k];
 			Group *group = new Group;
 			Geometry *geometry = new Geometry();
 			geometry->Clear(0, 0);
 			if (!data->A->num_vertices)
-				return;
-			if (data->J->has_triangles)
+				continue;
+			if (skin_partition->A->num_triangles > 0)
 			{
-				geometry->Clear(data->A->num_vertices, data->J->num_triangles * 3);
-				for (int i = 0; i < data->J->num_triangles; i++)
+				geometry->Clear(skin_partition->A->num_vertices, skin_partition->A->num_triangles * 3);
+				for (int i = 0; i < skin_partition->A->num_triangles; i++)
 				{
-					unsigned short *triangle = (unsigned short *)&data->triangles[i];
+					unsigned short *triangle = (unsigned short *)&skin_partition->triangles[i];
 					geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
 				}
 			}
-			for (int i = 0; i < data->A->num_vertices; i++)
+			for (int i = 0; i < skin_partition->A->num_vertices; i++)
 			{
-				geometry->vertices[i].position = *cast_vec_3((float *)&data->vertices[i]);
+				if (!*skin_partition->has_vertex_map)
+					break;
+				unsigned short j = skin_partition->vertex_map[i];
+				geometry->vertices[i].position = *cast_vec_3((float *)&data->vertices[j]);
 				if (data->C->bs_vector_flags & 0x00000001)
-					geometry->vertices[i].uv = *cast_vec_2((float *)&data->uv_sets[i]);
-				geometry->vertices[i].normal = *cast_vec_3((float *)&data->normals[i]);
+					geometry->vertices[i].uv = *cast_vec_2((float *)&data->uv_sets[j]);
+				geometry->vertices[i].normal = *cast_vec_3((float *)&data->normals[j]);
 				if (data->C->bs_vector_flags & 0x00001000)
 				{
-					geometry->vertices[i].tangent = *cast_vec_3((float *)&data->tangents[i]);
-					geometry->vertices[i].bitangent = *cast_vec_3((float *)&data->bitangents[i]);
+					geometry->vertices[i].tangent = *cast_vec_3((float *)&data->tangents[j]);
+					geometry->vertices[i].bitangent = *cast_vec_3((float *)&data->bitangents[j]);
 				}
-				if (data->G->has_vertex_colors)
-					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[i]);
+				if (data->G->has_vertex_colors) 
+					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[j]);
 			}
+			Material &material = *skinnedMesh->lastShape->geometry->material;
+			geometry->material = &material;
+			geometry->material->RandomColor();
 			geometry->SetupMesh();
-			geometry->material = skinnedMesh->lastShape->geometry->material;
 			group->geometry = geometry;
 			skinnedMesh->lastShape->Add(group);
 
