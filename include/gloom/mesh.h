@@ -41,11 +41,13 @@ namespace gloom
 	public:
 		Mesh *mesh;
 
+		Group *lastShape;
+
 		std::vector<struct ni_tri_shape_pointer *> roots;
 		
 		SkinnedMesh(Mesh *mesh) : mesh(mesh)
 		{
-			
+			lastShape = nullptr;
 		}
 
 		void Construct();

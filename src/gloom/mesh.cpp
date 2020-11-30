@@ -18,6 +18,7 @@ namespace gloom
 	static void other(nifprd *, void *);
 	static void ni_node_callback(nifprd *, ni_node_pointer *);
 	static void ni_tri_shape_callback(nifprd *, ni_tri_shape_pointer *);
+	static void ni_tri_shape_callback_2(nifprd *, ni_tri_shape_pointer *);
 	static void ni_tri_shape_data_callback(nifprd *, ni_tri_shape_data_pointer *);
 	static void bs_lighting_shader_property_callback(nifprd *, bs_lighting_shader_property_pointer *);
 	static void bs_shader_texture_set_callback(nifprd *, bs_shader_texture_set_pointer *);
@@ -64,6 +65,7 @@ namespace gloom
 		rd->nif = mesh->nif;
 		rd->data = this;
 		rd->other = other;
+		rd->ni_tri_shape = ni_tri_shape_callback_2;
 		rd->ni_skin_instance = ni_skin_instance_callback;
 		rd->ni_skin_data = ni_skin_data_callback;
 		rd->ni_skin_partition = ni_skin_partition_callback;
@@ -124,19 +126,24 @@ namespace gloom
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, block->common);
-		if (block->A->skin_instance == -1)
+		//if (block->A->skin_instance == -1)
 		{
 			group->geometry = new Geometry();
 			group->geometry->material->src = &simple;
 		}
 	}
 
+	void ni_tri_shape_callback_2(nifprd *rd, ni_tri_shape_pointer *block)
+	{
+		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
+		skinnedMesh->lastShape = skinnedMesh->mesh->groups[rd->current];
+	}
+
 	void ni_tri_shape_data_callback(nifprd *rd, ni_tri_shape_data_pointer *block)
 	{
 		// printf("ni tri shape data callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
-		Group *group = mesh->lastGroup;
-		Geometry *geometry = group->geometry;
+		Geometry *geometry = mesh->lastGroup->geometry;
 		geometry->Clear(0, 0);
 		if (!block->A->num_vertices)
 			return;
@@ -170,8 +177,7 @@ namespace gloom
 	{
 		// printf("bs lighting shader property callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
-		Group *group = mesh->lastGroup;
-		Geometry *geometry = group->geometry;
+		Geometry *geometry = mesh->lastGroup->geometry;
 		if (geometry)
 		{
 			geometry->material->color = vec3(1.0);
@@ -245,11 +251,10 @@ namespace gloom
 		auto data = (ni_tri_shape_data_pointer *)nifp_get_block(nif, shape->A->data);
 		for (int i = 0; i < *block->num_skin_partition_blocks; i++)
 		{
+			// printf("skin partition %i of shape %s\n", i, nifp_get_string(nif, shape->common->A->name));
 			struct skin_partition *skin_partition = block->skin_partition_blocks[i];
 			Group *group = new Group;
-			group->geometry = new Geometry();
-			group->geometry->material->src = &simple;
-			Geometry *geometry = group->geometry;
+			Geometry *geometry = new Geometry();
 			geometry->Clear(0, 0);
 			if (!data->A->num_vertices)
 				return;
@@ -277,7 +282,12 @@ namespace gloom
 					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[i]);
 			}
 			geometry->SetupMesh();
+			geometry->material = skinnedMesh->lastShape->geometry->material;
+			group->geometry = geometry;
+			skinnedMesh->lastShape->Add(group);
+
 		}
+		skinnedMesh->lastShape->Update();
 	}
 
 } // namespace gloom
