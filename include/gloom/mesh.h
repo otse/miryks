@@ -2,6 +2,8 @@
 
 #include <gloom/dark2.h>
 
+#include <gloom/skeleton.h>
+
 extern "C"
 {
 #include <bsa.h>
@@ -38,6 +40,8 @@ namespace gloom
 	{
 	public:
 		Mesh *mesh;
+
+		std::vector<struct ni_tri_shape_pointer *> roots;
 		
 		SkinnedMesh(Mesh *mesh) : mesh(mesh)
 		{
@@ -45,6 +49,9 @@ namespace gloom
 		}
 
 		void Construct();
+		void Initial();
+
+		void Forward();
 
 	};
 } // namespace gloom

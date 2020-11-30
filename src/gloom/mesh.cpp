@@ -69,7 +69,24 @@ namespace gloom
 		rd->ni_skin_partition = ni_skin_partition_callback;
 		nifp_rd(rd);
 		free_nifprd(&rd);
+		Initial();
 	}
+
+	void SkinnedMesh::Initial()
+	{
+		for (ni_tri_shape_pointer *ntsp : roots)
+		{
+			printf("we got a nsip\n");
+		}
+	}
+
+	void Forward(){
+		// set each bones uniforms difference-matrix
+		//for (ni_tri_shape_pointer *ntsp : roots)
+		//{
+
+		//}
+	};
 
 	Group *Mesh::Nested(nifprd *rd)
 	{
@@ -107,8 +124,11 @@ namespace gloom
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, block->common);
-		group->geometry = new Geometry();
-		group->geometry->material->src = &simple;
+		if (block->A->skin_instance == -1)
+		{
+			group->geometry = new Geometry();
+			group->geometry->material->src = &simple;
+		}
 	}
 
 	void ni_tri_shape_data_callback(nifprd *rd, ni_tri_shape_data_pointer *block)
@@ -169,19 +189,22 @@ namespace gloom
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
 		Geometry *geometry = group->geometry;
-		for (int i = 0; i < block->A->num_textures; i++)
+		if (geometry)
 		{
-			std::string path = std::string(block->textures[i]);
-			if (path.empty())
-				continue;
-			if (path.find("skyrimhd\\build\\pc\\data\\") != std::string::npos)
-				path = path.substr(23, std::string::npos);
-			if (i == 0)
-				geometry->material->map = GetProduceTexture(block->textures[i]);
-			if (i == 1)
-				geometry->material->normalMap = GetProduceTexture(block->textures[i]);
-			if (i == 2)
-				geometry->material->glowMap = GetProduceTexture(block->textures[i]);
+			for (int i = 0; i < block->A->num_textures; i++)
+			{
+				std::string path = std::string(block->textures[i]);
+				if (path.empty())
+					continue;
+				if (path.find("skyrimhd\\build\\pc\\data\\") != std::string::npos)
+					path = path.substr(23, std::string::npos);
+				if (i == 0)
+					geometry->material->map = GetProduceTexture(block->textures[i]);
+				if (i == 1)
+					geometry->material->normalMap = GetProduceTexture(block->textures[i]);
+				if (i == 2)
+					geometry->material->glowMap = GetProduceTexture(block->textures[i]);
+			}
 		}
 	}
 
@@ -200,25 +223,61 @@ namespace gloom
 	void ni_skin_instance_callback(nifprd *rd, ni_skin_instance_pointer *block)
 	{
 		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
-		nifp *nif = skinnedMesh->mesh->nif;
-		// Safety check
-		cassert(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "dismember < ntirishape");
-		ni_tri_shape_pointer *ntsp = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
-		
-		//mesh->groups[rd->parent]
-		//skinnedMesh->mesh->groups[rd->parent]
-		//rd->parent
+		struct nifp *nif = skinnedMesh->mesh->nif;
+		cassert(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
+		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
+		skinnedMesh->roots.push_back(shape);
+		//Group *group = skinnedMesh->mesh->groups[rd->parent];
+		//Geometry *geometry = group->geometry;
+		//geometry->material->RandomColor();
 	}
 
 	void ni_skin_data_callback(nifprd *rd, ni_skin_data_pointer *block)
 	{
-		// what does the bone list > vertex weights do?
-
+		// just ignore
 	}
 
 	void ni_skin_partition_callback(nifprd *rd, ni_skin_partition_pointer *block)
 	{
-		
+		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
+		auto nif = skinnedMesh->mesh->nif;
+		auto shape = skinnedMesh->roots.back();
+		auto data = (ni_tri_shape_data_pointer *)nifp_get_block(nif, shape->A->data);
+		for (int i = 0; i < *block->num_skin_partition_blocks; i++)
+		{
+			struct skin_partition *skin_partition = block->skin_partition_blocks[i];
+			Group *group = new Group;
+			group->geometry = new Geometry();
+			group->geometry->material->src = &simple;
+			Geometry *geometry = group->geometry;
+			geometry->Clear(0, 0);
+			if (!data->A->num_vertices)
+				return;
+			if (data->J->has_triangles)
+			{
+				geometry->Clear(data->A->num_vertices, data->J->num_triangles * 3);
+				for (int i = 0; i < data->J->num_triangles; i++)
+				{
+					unsigned short *triangle = (unsigned short *)&data->triangles[i];
+					geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
+				}
+			}
+			for (int i = 0; i < data->A->num_vertices; i++)
+			{
+				geometry->vertices[i].position = *cast_vec_3((float *)&data->vertices[i]);
+				if (data->C->bs_vector_flags & 0x00000001)
+					geometry->vertices[i].uv = *cast_vec_2((float *)&data->uv_sets[i]);
+				geometry->vertices[i].normal = *cast_vec_3((float *)&data->normals[i]);
+				if (data->C->bs_vector_flags & 0x00001000)
+				{
+					geometry->vertices[i].tangent = *cast_vec_3((float *)&data->tangents[i]);
+					geometry->vertices[i].bitangent = *cast_vec_3((float *)&data->bitangents[i]);
+				}
+				if (data->G->has_vertex_colors)
+					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[i]);
+			}
+			geometry->SetupMesh();
+		}
 	}
 
 } // namespace gloom

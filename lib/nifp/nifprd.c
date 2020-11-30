@@ -76,8 +76,10 @@ static void visit(struct nifprd *rd, int parent, int current)
 	struct ni_tri_shape_pointer *block_pointer = Blocks[current];
 	if (rd->ni_tri_shape)
 		rd->ni_tri_shape(rd, Blocks[current]);
-	visit(rd, current, block_pointer->A->data);
-	visit(rd, current, block_pointer->A->skin_instance);
+	if (block_pointer->A->skin_instance == -1)
+		visit(rd, current, block_pointer->A->data);
+	else
+		visit(rd, current, block_pointer->A->skin_instance);
 	visit(rd, current, block_pointer->B->shader_property);
 	visit(rd, current, block_pointer->B->alpha_property);
 	}
@@ -110,8 +112,24 @@ static void visit(struct nifprd *rd, int parent, int current)
 	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) )
 	{
 	needs_parent;
+	struct ni_skin_instance_pointer *block_pointer = Blocks[current];
 	if (rd->ni_skin_instance)
 		rd->ni_skin_instance(rd, Blocks[current]);
+	visit(rd, current, block_pointer->A->data);
+	visit(rd, current, block_pointer->A->skin_partition);
+	//visit(rd, current, block_pointer->A->skeleton_root);
+	}
+	else if ( ni_is_type(NI_SKIN_DATA) )
+	{
+	needs_parent;
+	if (rd->ni_skin_data)
+		rd->ni_skin_data(rd, Blocks[current]);
+	}
+	else if ( ni_is_type(NI_SKIN_PARTITION) )
+	{
+	needs_parent;
+	if (rd->ni_skin_partition)
+		rd->ni_skin_partition(rd, Blocks[current]);
 	}
 	else
 	{

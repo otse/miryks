@@ -153,7 +153,7 @@ struct ni_tri_shape_pointer
 	} * B;
 };
 
-struct bs_tri_shape_pointer_pointer
+struct bs_tri_shape_pointer
 {
 	int end;
 };
@@ -246,7 +246,7 @@ struct skin_partition
 	unsigned char *has_faces;
 	struct ushort_3p *triangles;
 	unsigned char *has_bone_indices;
-	unsigned char *bone_indices;
+	struct vec_4p *bone_indices;
 	unsigned short *unknown_short;
 };
 

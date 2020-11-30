@@ -21,11 +21,11 @@ namespace gloom
 		std::map<int, Bone *> bones;
 		std::map<const std::string, Bone *> bones_named;
 
-		nifp *nif;
+		struct nifp *nif;
 		Bone *baseBone, *lastBone;
 		Animation *animation;
 
-		Bone *Nested(nifprd *, int);
+		Bone *Nested(struct nifprd *, int);
 
 		void Load(const char *);
 		void Construct();

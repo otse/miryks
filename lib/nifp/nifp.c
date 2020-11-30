@@ -291,15 +291,15 @@ void *read_ni_skin_data(nifpr)
 	struct Type *block_pointer;
 	block_pointer = malloc(sizeof(struct Type));
 	memset(block_pointer, NULL, sizeof(struct Type));
-	Sink(nif, block_pointer, Type, skin_transform, 36 + 12 + 4);
+	Sink(nif, block_pointer, Type, skin_transform, 36+12+4);
 	Sink(nif, block_pointer, Type, B, 5);
 	block_pointer->bone_list = malloc(sizeof(struct bone_data *) * block_pointer->B->num_bones);
 	for (int i = 0; i < block_pointer->B->num_bones; i++)
 	{
 	block_pointer->bone_list[i] = malloc(sizeof(struct bone_data));
 	struct bone_data *bone_data = block_pointer->bone_list[i];
-	Sink(nif, bone_data, bone_data, skin_transform, 36 + 12 + 4);
-	Sink(nif, bone_data, bone_data, B, 12 + 4 + 2);
+	Sink(nif, bone_data, bone_data, skin_transform, 36+12+4);
+	Sink(nif, bone_data, bone_data, B, 12+4+2);
 	Sink(nif, bone_data, bone_data, vertex_weights, Arr(bone_data->B->num_vertices, struct bone_vert_data));
 	}
 	return block_pointer;
@@ -327,7 +327,7 @@ void *read_ni_skin_partition(nifpr)
 	Sink(nif, skin_partition, skin_partition, has_faces, 1);
 	Sink(nif, skin_partition, skin_partition, triangles, Arr(skin_partition->A->num_triangles, struct ushort_3p));
 	Sink(nif, skin_partition, skin_partition, has_bone_indices, 1);
-	Sink(nif, skin_partition, skin_partition, bone_indices, Arr(skin_partition->A->num_vertices, unsigned char));
+	Sink(nif, skin_partition, skin_partition, bone_indices, Arr(skin_partition->A->num_vertices, struct vec_4p));
 	Sink(nif, skin_partition, skin_partition, unknown_short, 2);
 	}
 	return block_pointer;
