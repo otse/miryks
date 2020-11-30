@@ -25,6 +25,10 @@ struct Material
 	std::string header;
 
 	Material();
+	//Material(const Material& other)
+	//{
+	//	
+	//};
 
 	bool prepared = false;
 	void RandomColor();

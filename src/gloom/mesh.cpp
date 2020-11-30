@@ -281,8 +281,7 @@ namespace gloom
 				if (data->G->has_vertex_colors) 
 					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[j]);
 			}
-			Material &material = *skinnedMesh->lastShape->geometry->material;
-			geometry->material = &material;
+			geometry->material = new Material(*skinnedMesh->lastShape->geometry->material);
 			geometry->material->RandomColor();
 			geometry->SetupMesh();
 			group->geometry = geometry;
