@@ -226,11 +226,11 @@ void main()
 	
 	#endif
 
-	#ifndef DONT_USE_SKINNING
+	//#ifndef DONT_USE_SKINNING
 
-		diffuseColor.rgba = vec4(0, 1, 1, 1);
+	//	diffuseColor.rgba = vec4(0, 1, 1, 1);
 
-	#endif
+	//#endif
 	
 	if (diffuseColor.a <= alphaTest)
 		discard;

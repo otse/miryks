@@ -79,17 +79,18 @@ namespace gloom
 	{
 		for (ni_ref index : shapes)
 		{
-			Group *group = mesh->groups[index];
-			Material *material = group->geometry->material;
+			//Group *group = mesh->groups[index];
 			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
 			auto skin_instance = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
 			auto skin_partition = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
 			for (int k = 0; k < *skin_partition->num_skin_partition_blocks; k++)
 			{
 				struct skin_partition *part = skin_partition->skin_partition_blocks[k];
+				Group *group = mesh->groups[index]->groups[k];
+				Material *material = group->geometry->material;
 				material->bones = part->A->num_bones;
-				material->boneMatrices.reserve(part->A->num_bones);
 				material->boneMatrices.clear();
+				material->boneMatrices.reserve(part->A->num_bones);
 				material->bindMatrix = group->matrix;
 				for (int i = 0; i < part->A->num_bones; i++)
 				{
@@ -99,7 +100,7 @@ namespace gloom
 					if (has == skeleton->bones_named.end())
 						continue;
 					Bone *bone = has->second;
-					material->boneMatrices[i] = bone->diff;
+					material->boneMatrices[i] = bone->group->matrixWorld * inverse(bone->rest);
 				}
 			}
 		}
@@ -309,10 +310,10 @@ namespace gloom
 					geometry->vertices[i].skin_weight = *cast_vec_4((float *)&part->vertex_weights[i]);
 			}
 			geometry->material = new Material(*smesh->lastShape->geometry->material);
+			geometry->material->bones = part->A->num_bones;
 			geometry->material->skinning = true;
 			geometry->material->prepared = false;
-			geometry->material->RandomColor();
-			geometry->material->Ready();
+			//geometry->material->RandomColor();
 			geometry->SetupMesh();
 			group->geometry = geometry;
 			smesh->lastShape->Add(group);

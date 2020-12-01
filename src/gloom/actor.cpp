@@ -164,6 +164,8 @@ namespace gloom
 	{
 		if (smesh->skeleton)
 			smesh->skeleton->Step();
+		if (smesh)
+			smesh->Forward();
 		const float merry = 0.002;
 		//if (drawGroup)
 			//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));

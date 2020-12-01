@@ -57,7 +57,8 @@ namespace gloom
 		bone->group->matrix = translate(bone->group->matrix, *cast_vec_3((float *)&common->C->translation));
 		bone->group->matrix *= inverse(mat4((*cast_mat_3((float *)&common->C->rotation))));
 		bone->group->matrix = scale(bone->group->matrix, vec3(common->C->scale));
-		bone->rest = bone->group->matrix;
+		bone->group->Update();
+		bone->rest = bone->group->matrixWorld;
 	}
 
 	void ni_node_callback(nifprd *rd, ni_node_pointer *block)
@@ -245,8 +246,9 @@ namespace gloom
 			matrix[3] = vec4(tr, 1);
 
 			bone->mod = matrix;
-			bone->diff = matrix * glm::inverse(bone->rest);
-			bone->group->matrix = bone->mod;
+			bone->group->matrix = matrix;
+			bone->diff = inverse(matrix) * bone->rest;
+			bone->group->Update();
 		}
 	}
 

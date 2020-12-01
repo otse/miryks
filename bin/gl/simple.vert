@@ -92,6 +92,8 @@ void main()
 	#ifndef DONT_USE_SKINNING
 
 		//vColor.r = SkinWeight.x;
+		//vColor.g = SkinWeight.y;
+		//vColor.b = SkinWeight.z;
 
 		mat4 skinMatrix = mat4( 0.0 );
 		skinMatrix += SkinWeight.x * boneMatX;
@@ -124,7 +126,7 @@ void main()
 		skinned += boneMatZ * skinVertex * SkinWeight.z;
 		skinned += boneMatW * skinVertex * SkinWeight.w;
 
-		/// transformed = ( bindMatrixInverse * skinned ).xyz;
+		transformed = ( bindMatrixInverse * skinned ).xyz;
 
 	#endif
 	
