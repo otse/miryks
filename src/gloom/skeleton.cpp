@@ -162,7 +162,7 @@ namespace gloom
 		if (play)
 			time += adv;
 
-		if (time > keyframes->csp->C->stop_time)
+		if (time >= keyframes->csp->C->stop_time)
 			time -= keyframes->csp->C->stop_time;
 
 		//printf("time %f\n", time);
@@ -209,29 +209,31 @@ namespace gloom
 			vec4 ro = *cast_vec_4((float *)&tip->transform->rotation);
 
 			int num = tdp->A->num_rotation_keys;
-			if (num > 0)
+			if (num)
 			{
 				for (int i = num - 1; i >= 0; i--)
 				{
 					auto key = &tdp->quaternion_keys[i];
 					//printf("qk %i time %f\n", i, key->time);
-					if (key->time <= time)
+					if (key->time <= time || num == 1)
 					{
 						ro = *cast_vec_4((float *)&key->value);
 						break;
 					}
 				}
 			}
+			// else if (num == 1)
+			// 	ro = *cast_vec_4((float *)(&tdp->quaternion_keys[0].value));
 
 			vec3 tr = *cast_vec_3((float *)&tip->transform->translation);
 
 			num = tdp->translations->num_keys;
-			if (num > 0)
+			if (num)
 			{
 				for (int i = num - 1; i >= 0; i--)
 				{
 					auto key = &tdp->translation_keys[i];
-					if (key->time <= time)
+					if (key->time <= time || num == 1)
 					{
 						//printf("tr time %f\n", key->time);
 						tr = *cast_vec_3((float *)&key->value);
@@ -239,6 +241,8 @@ namespace gloom
 					}
 				}
 			}
+			// else if (num == 1)
+			// 	tr = *cast_vec_3((float *)&tdp->translation_keys[0].value);
 
 			quat qu = quat(ro[0], ro[1], ro[2], ro[3]);
 

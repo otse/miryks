@@ -88,10 +88,9 @@ namespace gloom
 				struct skin_partition *part = skin_partition->skin_partition_blocks[k];
 				Group *group = mesh->groups[index]->groups[k];
 				Material *material = group->geometry->material;
-				material->bones = part->A->num_bones;
 				material->boneMatrices.clear();
 				material->boneMatrices.reserve(part->A->num_bones);
-				material->bindMatrix = group->matrix;
+				material->bindMatrix = group->matrixWorld;
 				for (int i = 0; i < part->A->num_bones; i++)
 				{
 					auto node = (ni_node_pointer *)nifp_get_block(mesh->nif, skin_instance->bones[part->bones[i]]);
