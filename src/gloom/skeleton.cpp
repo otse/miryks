@@ -245,6 +245,7 @@ namespace gloom
 			matrix[3] = vec4(tr, 1);
 
 			bone->mod = matrix;
+			bone->diff = matrix * glm::inverse(bone->rest);
 			bone->group->matrix = bone->mod;
 		}
 	}

@@ -79,18 +79,36 @@ namespace gloom
 	{
 		for (ni_ref index : shapes)
 		{
-			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
 			Group *group = mesh->groups[index];
-			printf("got shape\n");
+			Material *material = group->geometry->material;
+			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
+			auto skin_instance = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
+			auto skin_partition = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
+			for (int k = 0; k < *skin_partition->num_skin_partition_blocks; k++)
+			{
+				struct skin_partition *part = skin_partition->skin_partition_blocks[k];
+				material->bones = part->A->num_bones;
+				material->boneMatrices.reserve(part->A->num_bones);
+				material->boneMatrices.clear();
+				material->bindMatrix = group->matrix;
+				for (int i = 0; i < part->A->num_bones; i++)
+				{
+					auto node = (ni_node_pointer *)nifp_get_block(mesh->nif, skin_instance->bones[part->bones[i]]);
+					char *name = nifp_get_string(mesh->nif, node->common->A->name);
+					auto has = skeleton->bones_named.find(name);
+					if (has == skeleton->bones_named.end())
+						continue;
+					Bone *bone = has->second;
+					material->boneMatrices[i] = bone->diff;
+				}
+			}
 		}
 	}
 
-	void SkinnedMesh::Forward(){
-		// set each bones uniforms difference-matrix
-		//for (ni_tri_shape_pointer *ntsp : shapes)
-		//{
-		//}
-	};
+	void SkinnedMesh::Forward()
+	{
+		Initial();
+	}
 
 	Group *Mesh::Nested(nifprd *rd)
 	{
@@ -239,7 +257,6 @@ namespace gloom
 
 	void ni_skin_data_callback(nifprd *rd, ni_skin_data_pointer *block)
 	{
-		
 	}
 
 	void ni_skin_partition_callback(nifprd *rd, ni_skin_partition_pointer *block)
@@ -251,26 +268,28 @@ namespace gloom
 		for (int k = 0; k < *block->num_skin_partition_blocks; k++)
 		{
 			// printf("skin partition %i of shape %s\n", i, nifp_get_string(nif, shape->common->A->name));
-			struct skin_partition *skin_partition = block->skin_partition_blocks[k];
+			struct skin_partition *part = block->skin_partition_blocks[k];
+			//SkinPartition skinPartition = new SkinPartition(smesh, shape, skin_partition);
 			Group *group = new Group;
 			Geometry *geometry = new Geometry();
+			geometry->skinning = true;
 			geometry->Clear(0, 0);
 			if (!data->A->num_vertices)
 				continue;
-			if (skin_partition->A->num_triangles > 0)
+			if (part->A->num_triangles > 0)
 			{
-				geometry->Clear(skin_partition->A->num_vertices, skin_partition->A->num_triangles * 3);
-				for (int i = 0; i < skin_partition->A->num_triangles; i++)
+				geometry->Clear(part->A->num_vertices, part->A->num_triangles * 3);
+				for (int i = 0; i < part->A->num_triangles; i++)
 				{
-					unsigned short *triangle = (unsigned short *)&skin_partition->triangles[i];
+					unsigned short *triangle = (unsigned short *)&part->triangles[i];
 					geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
 				}
 			}
-			for (int i = 0; i < skin_partition->A->num_vertices; i++)
+			for (int i = 0; i < part->A->num_vertices; i++)
 			{
-				if (!*skin_partition->has_vertex_map)
+				if (!*part->has_vertex_map)
 					break;
-				unsigned short j = skin_partition->vertex_map[i];
+				unsigned short j = part->vertex_map[i];
 				geometry->vertices[i].position = *cast_vec_3((float *)&data->vertices[j]);
 				if (data->C->bs_vector_flags & 0x00000001)
 					geometry->vertices[i].uv = *cast_vec_2((float *)&data->uv_sets[j]);
@@ -280,15 +299,23 @@ namespace gloom
 					geometry->vertices[i].tangent = *cast_vec_3((float *)&data->tangents[j]);
 					geometry->vertices[i].bitangent = *cast_vec_3((float *)&data->bitangents[j]);
 				}
-				if (data->G->has_vertex_colors) 
+				if (data->G->has_vertex_colors)
 					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[j]);
+				if (*part->has_bone_indices) {
+					auto a = part->bone_indices[i];
+					geometry->vertices[i].skin_index = vec4(a.a, a.b, a.c, a.d);
+				}
+				if (*part->has_vertex_weights)
+					geometry->vertices[i].skin_weight = *cast_vec_4((float *)&part->vertex_weights[i]);
 			}
 			geometry->material = new Material(*smesh->lastShape->geometry->material);
-			//geometry->material->RandomColor();
+			geometry->material->skinning = true;
+			geometry->material->prepared = false;
+			geometry->material->RandomColor();
+			geometry->material->Ready();
 			geometry->SetupMesh();
 			group->geometry = geometry;
 			smesh->lastShape->Add(group);
-
 		}
 		smesh->lastShape->Update();
 	}

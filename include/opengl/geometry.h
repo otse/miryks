@@ -13,6 +13,8 @@ struct Vertex
 	vec4 color = vec4(1, 1, 1, 1);
 	vec3 tangent;
 	vec3 bitangent;
+	vec4 skin_index;
+	vec4 skin_weight;
 };
 
 struct Geometry
@@ -21,16 +23,19 @@ struct Geometry
 	bool created = false;
 	bool lines = false;
 	bool collide = true;
+	bool skinning = false;
 
 	GLuint vao, vbo, ebo;
 
 	AABB aabb;
 	
 	Group *parent = nullptr;
+
 	Material *material = nullptr;
 	//std::vector<texture_t> textures;
 
 	std::vector<Vertex> vertices;
+	
 	std::vector<GLuint> elements;
 
 	Geometry();

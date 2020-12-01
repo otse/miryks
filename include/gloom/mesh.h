@@ -39,36 +39,42 @@ namespace gloom
 	class SkinnedMesh
 	{
 	public:
-		Mesh *const mesh;
+		Mesh *mesh;
 
 		Skeleton *skeleton;
 
 		Group *lastShape;
 
 		std::vector<ni_ref> shapes;
-		std::vector<SkinPartition *> parts;
 
-		SkinnedMesh(Mesh *mesh) : mesh(mesh)
+		std::vector<SkinPartition *> skins;
+
+		SkinnedMesh()
 		{
-			lastShape = nullptr;
+			mesh = nullptr;
 			skeleton = nullptr;
+			lastShape = nullptr;
 		}
 
 		void Construct();
 		void Initial();
 		void Forward();
+		void SmeshToSkelBone();
 	};
 
 	class SkinPartition
 	{
 	public:
-		ni_ref shape;
-
 		SkinnedMesh *const smesh;
+
+		skin_partition *const skin_partition;
+
+		ni_ref shape;
 
 		std::vector<Bone *> bones;
 
-		SkinPartition(SkinnedMesh *smesh, ni_ref shape) : smesh(smesh), shape(shape)
+		SkinPartition(SkinnedMesh *smesh, ni_ref shape, struct skin_partition *skin_partition)
+			: smesh(smesh), shape(shape), skin_partition(skin_partition)
 		{
 			//for ()
 		}

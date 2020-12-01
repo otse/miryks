@@ -1,6 +1,7 @@
 #ifndef GLOOM_SKELETON_H
 #define GLOOM_SKELETON_H
 
+#include <gloom/libs>
 #include <gloom/dark2.h>
 
 #include <opengl/types.h>
@@ -18,7 +19,7 @@ namespace gloom
 	public:
 		Skeleton();
 
-		std::map<int, Bone *> bones;
+		std::map<ni_ref, Bone *> bones;
 		std::map<const std::string, Bone *> bones_named;
 
 		struct nifp *nif;
@@ -41,7 +42,7 @@ namespace gloom
 		{
 			group = new Group;
 		};
-		mat4 rest, mod;
+		mat4 rest, mod, diff;
 	};
 
 	class KeyFrames

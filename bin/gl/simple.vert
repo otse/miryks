@@ -9,6 +9,10 @@ layout (location = 2) in vec3 Normal;
 layout (location = 3) in vec4 Color;
 layout (location = 4) in vec3 Tangent;
 layout (location = 5) in vec3 Bitangent;
+#ifndef DONT_USE_SKINNING
+layout (location = 6) in vec4 SkinIndex;
+layout (location = 7) in vec4 SkinWeight;
+#endif
 
 uniform mat4 view;
 uniform mat4 projection;
@@ -30,8 +34,10 @@ out float fogDepth;
 
 #define USE_TANGENT
 
-#ifndef DONT_USE_SKINNING
+#define MAX_BONES 60
 
+#ifndef DONT_USE_SKINNING
+	
 	uniform mat4 bindMatrix;
 	uniform mat4 bindMatrixInverse;
 
@@ -75,21 +81,23 @@ void main()
 
 	#ifndef DONT_USE_SKINNING
 
-		mat4 boneMatX = getBoneMatrix( skinIndex.x );
-		mat4 boneMatY = getBoneMatrix( skinIndex.y );
-		mat4 boneMatZ = getBoneMatrix( skinIndex.z );
-		mat4 boneMatW = getBoneMatrix( skinIndex.w );
+		mat4 boneMatX = getBoneMatrix( SkinIndex.x );
+		mat4 boneMatY = getBoneMatrix( SkinIndex.y );
+		mat4 boneMatZ = getBoneMatrix( SkinIndex.z );
+		mat4 boneMatW = getBoneMatrix( SkinIndex.w );
 
 	#endif
 
 
 	#ifndef DONT_USE_SKINNING
 
+		//vColor.r = SkinWeight.x;
+
 		mat4 skinMatrix = mat4( 0.0 );
-		skinMatrix += skinWeight.x * boneMatX;
-		skinMatrix += skinWeight.y * boneMatY;
-		skinMatrix += skinWeight.z * boneMatZ;
-		skinMatrix += skinWeight.w * boneMatW;
+		skinMatrix += SkinWeight.x * boneMatX;
+		skinMatrix += SkinWeight.y * boneMatY;
+		skinMatrix += SkinWeight.z * boneMatZ;
+		skinMatrix += SkinWeight.w * boneMatW;
 		skinMatrix  = bindMatrixInverse * skinMatrix * bindMatrix;
 
 		objectNormal = vec4( skinMatrix * vec4( objectNormal, 0.0 ) ).xyz;
@@ -111,12 +119,12 @@ void main()
 		vec4 skinVertex = bindMatrix * vec4( transformed, 1.0 );
 
 		vec4 skinned = vec4( 0.0 );
-		skinned += boneMatX * skinVertex * skinWeight.x;
-		skinned += boneMatY * skinVertex * skinWeight.y;
-		skinned += boneMatZ * skinVertex * skinWeight.z;
-		skinned += boneMatW * skinVertex * skinWeight.w;
+		skinned += boneMatX * skinVertex * SkinWeight.x;
+		skinned += boneMatY * skinVertex * SkinWeight.y;
+		skinned += boneMatZ * skinVertex * SkinWeight.z;
+		skinned += boneMatW * skinVertex * SkinWeight.w;
 
-		transformed = ( bindMatrixInverse * skinned ).xyz;
+		/// transformed = ( bindMatrixInverse * skinned ).xyz;
 
 	#endif
 	

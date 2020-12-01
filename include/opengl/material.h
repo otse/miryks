@@ -20,6 +20,8 @@ struct Material
 	vec2 offset, repeat, center;
 	vec3 color, specular, emissive;
 
+	int bones;
+	std::vector<mat4> boneMatrices;
 	mat4 bindMatrix;
 	mat3 uvTransform;
 

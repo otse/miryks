@@ -28,6 +28,7 @@ Material::Material()
 	shininess = 5;
 	glossiness = 100;
 	rotation = 0;
+	bones = 0;
 
 	depth_func = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
 
@@ -143,7 +144,12 @@ void Material::Use()
 	{
 		shader->SetMat4("bindMatrix", bindMatrix);
 		shader->SetMat4("bindMatrixInverse", glm::inverse(bindMatrix));
-		shader->SetMat4("boneMatrices[i]", glm::inverse(bindMatrix));
+		for (unsigned int u = 0; u < bones; u ++)
+		{
+			char s[100];
+			snprintf(s, 100, "boneMatrices[%u]", u);
+			shader->SetMat4(s, boneMatrices[u]);
+		}
 	}
 
 	if (map)

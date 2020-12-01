@@ -128,18 +128,19 @@ namespace gloom
 		character->buf = rc->buf;
 		nifp_read(character);
 		nifp_save((void *)model, character);
-
-		Mesh *mesh = new Mesh();
-		mesh->Construct(character);
-
+		
 		Skeleton *skeleton = new Skeleton();
 		skeleton->Load(ANAM);
 		skeleton->Construct();
 
-		SkinnedMesh *smesh = new SkinnedMesh(mesh);
+		Mesh *mesh = new Mesh();
+		mesh->Construct(character);
+
+		SkinnedMesh *smesh = new SkinnedMesh();
+		smesh->mesh = mesh;
 		smesh->skeleton = skeleton;
 		smesh->Construct();
-		
+
 		this->smesh = smesh;
 
 		Animation *attack = new Animation(draugrAttack);
