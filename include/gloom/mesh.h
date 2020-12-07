@@ -59,24 +59,5 @@ namespace gloom
 		void Construct();
 		void Initial();
 		void Forward();
-		void SmeshToSkelBone();
-	};
-
-	class SkinPartition
-	{
-	public:
-		SkinnedMesh *const smesh;
-
-		skin_partition *const skin_partition;
-
-		ni_ref shape;
-
-		std::vector<Bone *> bones;
-
-		SkinPartition(SkinnedMesh *smesh, ni_ref shape, struct skin_partition *skin_partition)
-			: smesh(smesh), shape(shape), skin_partition(skin_partition)
-		{
-			//for ()
-		}
 	};
 } // namespace gloom

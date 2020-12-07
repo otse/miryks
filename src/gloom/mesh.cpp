@@ -267,9 +267,7 @@ namespace gloom
 		auto data = (ni_tri_shape_data_pointer *)nifp_get_block(nif, shape->A->data);
 		for (int k = 0; k < *block->num_skin_partition_blocks; k++)
 		{
-			// printf("skin partition %i of shape %s\n", i, nifp_get_string(nif, shape->common->A->name));
 			struct skin_partition *part = block->skin_partition_blocks[k];
-			//SkinPartition skinPartition = new SkinPartition(smesh, shape, skin_partition);
 			Group *group = new Group;
 			Geometry *geometry = new Geometry();
 			geometry->skinning = true;
@@ -312,7 +310,6 @@ namespace gloom
 			geometry->material->bones = part->A->num_bones;
 			geometry->material->skinning = true;
 			geometry->material->prepared = false;
-			//geometry->material->RandomColor();
 			geometry->SetupMesh();
 			group->geometry = geometry;
 			smesh->lastShape->Add(group);

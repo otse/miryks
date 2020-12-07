@@ -158,7 +158,7 @@ int main()
 #endif
 	//nif_test();
 	//nifp_test();
-	dungeon = new Level("GloomBound"); // <-- interior to load
+	dungeon = new Level("GloomGen"); // <-- interior to load
 	someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
 	programLoop();
 	return 1;
