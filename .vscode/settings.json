@@ -84,6 +84,10 @@
         "libs": "cpp",
         "atomic": "cpp",
         "compare": "cpp",
-        "iterator": "cpp"
+        "iterator": "cpp",
+        "cerrno": "cpp",
+        "cfloat": "cpp",
+        "climits": "cpp",
+        "string_view": "cpp"
     }
 }

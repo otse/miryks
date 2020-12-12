@@ -15,7 +15,9 @@ struct Material
 	Shader *shader;
 	Texture *map, *normalMap, *glowMap;
 
-	bool transparent, doubleSided, blending, testing, decal, skinning;
+	bool transparent, doubleSided, blending, testing, decal, tangents, skinning;
+	bool dust, modelSpaceNormals, vertexColors;
+
 	float opacity, treshold, shininess, glossiness, rotation;
 	vec2 offset, repeat, center;
 	vec3 color, specular, emissive;

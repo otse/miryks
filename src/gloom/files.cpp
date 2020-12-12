@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <direct.h>
 #include <filesystem>
 
 #include <string>
@@ -25,6 +26,11 @@ int fbuf(const char *path, char **dest, bool cap)
 		return end;
 	}
 	return -1;
+}
+
+int fmkdir(const char *path)
+{
+	return mkdir(path);
 }
 
 std::string fread(const std::string &a)

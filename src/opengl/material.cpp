@@ -21,7 +21,8 @@ Material::Material()
 	
 	map = normalMap = glowMap = nullptr;
 
-	transparent = doubleSided = blending = testing = decal = skinning = false;
+	transparent = doubleSided = blending = testing = decal = tangents = skinning = false;
+	dust = modelSpaceNormals = vertexColors = false;
 
 	opacity = 1;
 	treshold = 0;
@@ -59,14 +60,28 @@ void Material::Ready()
 	char pepper[20];
 	snprintf(pepper, 20, "// %s\n", (*src)[0]);
 	header += pepper;
+
+	if (skinning)
+	{
+		dust = false;
+		glowMap = nullptr;
+	}
+
 	if (!map)
 		header += "#define DONT_USE_DIFFUSE_MAP\n";
 	if (!normalMap)
 		header += "#define DONT_USE_NORMAL_MAP\n";
+	if (modelSpaceNormals)
+		header += "#define MODEL_SPACE_NORMALS\n";
+	if (tangents)
+		header += "#define USE_TANGENT\n";
+	if (!dust)
+		header += "#define DONT_USE_DUST\n";
 	if (!glowMap)
 		header += "#define DONT_USE_GLOW_MAP\n";
 	if (!skinning)
 		header += "#define DONT_USE_SKINNING\n";
+
 
 	if (Shader::shaders.count(header))
 	{

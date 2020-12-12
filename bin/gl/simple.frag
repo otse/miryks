@@ -26,7 +26,6 @@ uniform sampler2D glowMap;
 #define USE_A_HEMISPHERE
 
 #define USE_SPECULARMAP
-#define USE_TANGENT
 
 vec2 normalScale = vec2(1.0);
 
@@ -275,7 +274,30 @@ void main()
 				mapN.xy = normalScale * mapN.xy;
 				normal = normalize( vTBN * mapN );
 
+				// diffuseColor.rgb *= vec3(2, 0, 0);
+
 			#endif
+
+			#ifdef MODEL_SPACE_NORMALS
+
+				// x
+				vec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;
+				//normal = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;
+
+				// dark flip much needd
+				float temp = mapN.b;
+				mapN.b = mapN.g;
+				mapN.g = temp;
+
+				if (doubleSided)
+					mapN = mapN * ( float( gl_FrontFacing ) * 2.0 - 1.0 );
+
+				normal = normalize( normalMatrix * mapN );
+
+				diffuseColor.rgb = vec3(1, 1, 5);
+
+			#endif
+
 	#endif
 
 	#ifndef DONT_USE_GLOW_MAP

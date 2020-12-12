@@ -32,8 +32,6 @@ out mat4 modelView;
 
 out float fogDepth;
 
-#define USE_TANGENT
-
 #define MAX_BONES 60
 
 #ifndef DONT_USE_SKINNING

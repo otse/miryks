@@ -32,6 +32,11 @@ namespace gloom
 	{
 		if (strcmp(raceId, "DraugrRace") == 0)
 		{
+			fmkdir("temp/");
+			fmkdir("temp/draugr");
+			fmkdir("temp/draugr/hkx");
+			fmkdir("temp/draugr/kf");
+
 			if (!exists("temp/draugr/hkx/skeleton.hkx"))
 			{
 				bsa *animations = get_archives()[2];
@@ -93,7 +98,6 @@ namespace gloom
 
 		// we exported the hkx to kf
 
-
 		/*
 		pseudo section!
 
@@ -117,7 +121,7 @@ namespace gloom
 
 		subrecord *modl = race.GetField("MODL", 2);
 
-		printf("modl size %u str %s offset %u", modl->hed->type, (char *)modl->data, modl->offset);
+		//printf("modl size %u str %s offset %u", modl->hed->type, (char *)modl->data, modl->offset);
 
 		cassert(ANAM, "no actor race anam sub");
 
@@ -128,26 +132,30 @@ namespace gloom
 		character->buf = rc->buf;
 		nifp_read(character);
 		nifp_save((void *)model, character);
-		
-		Skeleton *skeleton = new Skeleton();
+
+		skeleton = new Skeleton();
 		skeleton->Load(ANAM);
 		skeleton->Construct();
 
-		Mesh *mesh = new Mesh();
+		mesh = new Mesh();
 		mesh->Construct(character);
 
-		SkinnedMesh *smesh = new SkinnedMesh();
+		smesh = new SkinnedMesh();
 		smesh->mesh = mesh;
 		smesh->skeleton = skeleton;
 		smesh->Construct();
 
-		this->smesh = smesh;
+		if (raceId == "DraugrRace")
+		{
+			animation = new Animation(draugrAttack);
+			animation->skeleton = skeleton;
+			skeleton->animation = animation;
+		}
+	}
 
-		Animation *attack = new Animation(draugrAttack);
-		attack->skeleton = skeleton;
-		skeleton->animation = attack;
-
-		auto ref = dungeon->refEditorIDs.find("gloomdraugrskelly");
+	void Actor::PutDown(const char *q)
+	{
+		auto ref = dungeon->refEditorIDs.find(q);
 
 		if (ref != dungeon->refEditorIDs.end())
 		{
@@ -157,6 +165,10 @@ namespace gloom
 			printf("make smesh->skeleton drawgroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
 			scene->Add(drawGroup);
+		}
+		else
+		{
+			printf("actor put down cant find %s\n", q);
 		}
 	}
 
@@ -168,7 +180,7 @@ namespace gloom
 			smesh->Forward();
 		const float merry = 0.002;
 		//if (drawGroup)
-			//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
+		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
 	}
 
 } // namespace gloom

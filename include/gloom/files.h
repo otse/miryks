@@ -5,6 +5,7 @@
 #include <vector>
 
 int fbuf(const char *, char **, bool = false);
+int fmkdir(const char *);
 
 void fwrite(const std::string &, const std::string &);
 std::string fread(const std::string &);

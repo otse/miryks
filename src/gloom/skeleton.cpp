@@ -23,6 +23,8 @@ namespace gloom
 
 	void Skeleton::Load(const char *ANAM)
 	{
+		printf("skeleton load anam %s\n", ANAM);
+		
 		rc *rc = loadrc("meshes\\", ANAM, 0x1);
 
 		nif = loadnifp(rc, 1);

@@ -97,9 +97,12 @@ namespace gloom
 					char *name = nifp_get_string(mesh->nif, node->common->A->name);
 					auto has = skeleton->bones_named.find(name);
 					if (has == skeleton->bones_named.end())
+					{
+						material->boneMatrices.push_back(mat4(1.0));
 						continue;
+					}
 					Bone *bone = has->second;
-					material->boneMatrices[i] = bone->group->matrixWorld * inverse(bone->rest);
+					material->boneMatrices.push_back(bone->group->matrixWorld * inverse(bone->rest));
 				}
 			}
 		}
@@ -184,6 +187,7 @@ namespace gloom
 			geometry->vertices[i].normal = *cast_vec_3((float *)&block->normals[i]);
 			if (block->C->bs_vector_flags & 0x00001000)
 			{
+				geometry->material->tangents = true;
 				geometry->vertices[i].tangent = *cast_vec_3((float *)&block->tangents[i]);
 				geometry->vertices[i].bitangent = *cast_vec_3((float *)&block->bitangents[i]);
 			}
@@ -206,6 +210,14 @@ namespace gloom
 			geometry->material->specular *= block->B->specular_strength;
 			geometry->material->opacity = block->B->alpha;
 			geometry->material->glossiness = block->B->glossiness;
+			if (block->B->shader_flags_1 & 0x00000002)
+				geometry->material->skinning = true;
+			if (block->B->shader_flags_1 & 0x00001000) {
+				printf("Model_Space_Normals\n");
+				geometry->material->modelSpaceNormals = true;
+			}
+			if (block->B->shader_flags_2 & 0x00000020)
+				geometry->material->vertexColors = true;
 		}
 	}
 
@@ -291,7 +303,8 @@ namespace gloom
 				geometry->vertices[i].position = *cast_vec_3((float *)&data->vertices[j]);
 				if (data->C->bs_vector_flags & 0x00000001)
 					geometry->vertices[i].uv = *cast_vec_2((float *)&data->uv_sets[j]);
-				geometry->vertices[i].normal = *cast_vec_3((float *)&data->normals[j]);
+				if (data->C->has_normals)
+					geometry->vertices[i].normal = *cast_vec_3((float *)&data->normals[j]);
 				if (data->C->bs_vector_flags & 0x00001000)
 				{
 					geometry->vertices[i].tangent = *cast_vec_3((float *)&data->tangents[j]);
@@ -299,7 +312,8 @@ namespace gloom
 				}
 				if (data->G->has_vertex_colors)
 					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[j]);
-				if (*part->has_bone_indices) {
+				if (*part->has_bone_indices)
+				{
 					auto a = part->bone_indices[i];
 					geometry->vertices[i].skin_index = vec4(a.a, a.b, a.c, a.d);
 				}
@@ -308,7 +322,7 @@ namespace gloom
 			}
 			geometry->material = new Material(*smesh->lastShape->geometry->material);
 			geometry->material->bones = part->A->num_bones;
-			geometry->material->skinning = true;
+			//geometry->material->skinning = true;
 			geometry->material->prepared = false;
 			geometry->SetupMesh();
 			group->geometry = geometry;

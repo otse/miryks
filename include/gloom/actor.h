@@ -16,13 +16,18 @@ namespace gloom
 	public:
 		Actor(const char *, const char *);
 
+		Mesh *mesh = nullptr;
 		SkinnedMesh *smesh = nullptr;
+		Skeleton *skeleton = nullptr;
+		Animation *animation = nullptr;
 
 		DrawGroup *drawGroup = nullptr;
 		
 		float merry = 0;
 		
 		void Step();
+
+		void PutDown(const char *);
 	};
 
 } // namespace gloom
