@@ -110,6 +110,8 @@ namespace gloom
 
 	void SkinnedMesh::Forward()
 	{
+		if (skeleton)
+			skeleton->Step();
 		Initial();
 	}
 
@@ -212,6 +214,8 @@ namespace gloom
 			geometry->material->glossiness = block->B->glossiness;
 			if (block->B->shader_flags_1 & 0x00000002)
 				geometry->material->skinning = true;
+			else
+				geometry->material->dust = true;
 			if (block->B->shader_flags_1 & 0x00001000) {
 				printf("Model_Space_Normals\n");
 				geometry->material->modelSpaceNormals = true;

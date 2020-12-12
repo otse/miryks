@@ -275,6 +275,7 @@ void gloom::programLoop()
 		// someDraugr
 		someDraugr->Step();
 		meanSkelly->Step();
+		someHuman->Step();
 
 		dungeon->Update();
 

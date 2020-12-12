@@ -37,6 +37,7 @@ namespace gloom
 	Level *dungeon;
 	Actor *someDraugr;
 	Actor *meanSkelly;
+	Human *someHuman;
 
 	std::string pathToOldrim;
 
@@ -165,14 +166,12 @@ int main()
 	meanSkelly = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
 	meanSkelly->PutDown("gloomgenskeleton");
 
-	Actor *head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
+	/*Actor *head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
 	Actor *body = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malebody_0.nif");
 	Actor *hands = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehands_0.nif");
-	Actor *feet = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malefeet_0.nif");
-	head->PutDown("gloomgenman");
-	body->PutDown("gloomgenman");
-	hands->PutDown("gloomgenman");
-	feet->PutDown("gloomgenman");
+	Actor *feet = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malefeet_0.nif");*/
+	someHuman = new Human();
+
 	programLoop();
 	return 1;
 }

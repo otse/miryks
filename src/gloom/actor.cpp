@@ -27,6 +27,7 @@ namespace gloom
 	}
 
 	KeyFrames *draugrAttack = nullptr;
+	KeyFrames *humanIdle = nullptr;
 
 	void ExportRaceHkxToKf(const char *raceId)
 	{
@@ -96,6 +97,72 @@ namespace gloom
 			}
 		}
 
+		if (strcmp(raceId, "ImperialRace") == 0)
+		{
+			fmkdir("temp/");
+			fmkdir("temp/character");
+			fmkdir("temp/character/hkx");
+			fmkdir("temp/character/kf");
+
+			if (!exists("temp/character/hkx/skeleton.hkx"))
+			{
+				bsa *animations = get_archives()[2];
+				rc *skeleton = bsa_find(animations, "meshes\\actors\\character\\character assets\\skeleton.hkx");
+
+				if (skeleton)
+					printf("found character.hkx for character / imperial race\n");
+
+				const char *fld = "meshes\\actors\\character\\animations";
+				int i = 0;
+				int good = 0;
+				for (; i < animations->hdr.folders; i++)
+				{
+					int cmp = strcmp(fld, animations->ca[i]);
+					if (cmp == 0)
+					{
+						good = 1;
+						break;
+					}
+				}
+
+				int r = animations->r[i];
+				for (int j = 0; j < animations->fld[i].num; j++)
+				{
+					rc *rc = animations->rc[r];
+					bsa_read(rc);
+					char path[255];
+					strcpy(path, "temp/character/hkx/");
+					strcat(path, "/");
+					strcat(path, animations->cb[r]);
+					cfout2(path, rc->buf, rc->size);
+					//printf("ok %s\n", animations->cb[r]);
+					r++;
+				}
+				cassert(good, "cant find bsa fld for hkxtokf race anims");
+
+				bsa_read(skeleton);
+
+				cfout2("temp/character/hkx/skeleton.hkx", skeleton->buf, skeleton->size);
+
+				printf("Sec, exporting hkx to kf");
+				system("hkxcmd.exe exportkf \"temp/character/hkx/skeleton.hkx\" \"temp/character/hkx/\" \"temp/character/kf\"");
+
+				if (skeleton)
+					printf("skeleton hkx skeleton found %i\n", skeleton);
+			}
+			else
+			{
+				const char *path = "temp/character/kf/1hm_idle.kf";
+				printf("fetching human idle kf\n");
+				struct nifp *nif = malloc_nifp();
+				nif->path = path;
+				fbuf(path, &(char *)nif->buf);
+				nifp_read(nif);
+				nifp_save(nif, nif);
+				humanIdle = new KeyFrames(nif);
+			}
+		}
+
 		// we exported the hkx to kf
 
 		/*
@@ -151,6 +218,13 @@ namespace gloom
 			animation->skeleton = skeleton;
 			skeleton->animation = animation;
 		}
+
+		if (raceId == "ImperialRace")
+		{
+			animation = new Animation(humanIdle);
+			animation->skeleton = skeleton;
+			skeleton->animation = animation;
+		}
 	}
 
 	void Actor::PutDown(const char *q)
@@ -174,11 +248,9 @@ namespace gloom
 
 	void Actor::Step()
 	{
-		if (smesh->skeleton)
-			smesh->skeleton->Step();
 		if (smesh)
 			smesh->Forward();
-		const float merry = 0.002;
+		//const float merry = 0.002;
 		//if (drawGroup)
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
 	}

@@ -294,7 +294,7 @@ void main()
 
 				normal = normalize( normalMatrix * mapN );
 
-				diffuseColor.rgb = vec3(1, 1, 5);
+				// diffuseColor.rgb = vec3(1, 1, 5);
 
 			#endif
 
