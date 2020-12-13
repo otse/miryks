@@ -90,7 +90,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		free_plugin(&has);
 		get_plugins()[1] = LoadPlugin(name);
 		delete dungeon;
-		dungeon = new Level("Dark2Schmuck");
+		dungeon = new Level("GloomGen");
 	}
 	if (glfwGetKey(window, GLFW_KEY_F6))
 	{
@@ -275,8 +275,9 @@ void gloom::programLoop()
 		// someDraugr
 		someDraugr->Step();
 		meanSkelly->Step();
-		someHuman->Step();
-
+		//someHuman->Step();
+		player1->Step();
+		
 		dungeon->Update();
 
 		scene->Order();

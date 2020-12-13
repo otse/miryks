@@ -34,10 +34,11 @@ namespace gloom
 
 	unsigned int fps = 0;
 
-	Level *dungeon;
-	Actor *someDraugr;
-	Actor *meanSkelly;
-	Human *someHuman;
+	Level *dungeon = nullptr;
+	Actor *someDraugr = nullptr;
+	Actor *meanSkelly = nullptr;
+	Human *someHuman = nullptr;
+	Player *player1 = nullptr;
 
 	std::string pathToOldrim;
 
@@ -159,18 +160,16 @@ int main()
 	viewer::view(rc);
 #endif
 	//nif_test();
-	//nifp_test();
+	nifp_test();
 	dungeon = new Level("GloomGen"); // <-- interior to load
 	someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
 	someDraugr->PutDown("gloomgendraugr");
 	meanSkelly = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
 	meanSkelly->PutDown("gloomgenskeleton");
+	//someHuman = new Human();
+	//someHuman->Place("gloomgenman");
 
-	/*Actor *head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
-	Actor *body = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malebody_0.nif");
-	Actor *hands = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehands_0.nif");
-	Actor *feet = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malefeet_0.nif");*/
-	someHuman = new Human();
+	player1 = new Player();
 
 	programLoop();
 	return 1;

@@ -10,6 +10,7 @@ Group::Group()
 	parent = nullptr;
 	geometry = nullptr;
 	axis = nullptr;
+	visible = true;
 
 	matrix = mat4(1.0f);
 	matrixWorld = mat4(1.0f);
@@ -62,6 +63,9 @@ void Group::Update()
 
 void Group::DrawBegin(const mat4 &model)
 {
+	if (!visible)
+		return;
+
 	Draw(model);
 
 	for (Group *child : groups)
@@ -104,7 +108,7 @@ DrawGroup::DrawGroup(Group *group, mat4 matrix) : group(group), matrix(matrix)
 
 void DrawGroup::Reset()
 {
-	group->Update();
+	//group->Update();
 
 	obb = aabb = group->aabb;
 

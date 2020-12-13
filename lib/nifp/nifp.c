@@ -56,6 +56,12 @@ api struct nifp *malloc_nifp() {
 	return nif;
 }
 
+api void free_nifp(struct nifprd **p) {
+	struct nifprd *nif = *p;
+	free(nif);
+	*p = NULL;
+}
+
 api void nifp_read(struct nifp *nif) {
 	cassert(Buf, "nifp_read Buf not set");
 	nifp_read_header(nif);

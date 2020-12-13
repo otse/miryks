@@ -8,6 +8,7 @@
 
 #include <opengl/group.h>
 #include <opengl/scene.h>
+#include <opengl/camera.h>
 
 namespace gloom
 {
@@ -203,6 +204,7 @@ namespace gloom
 		skeleton = new Skeleton();
 		skeleton->Load(ANAM);
 		skeleton->Construct();
+		skeleton->baseBone->group->visible = false;
 
 		mesh = new Mesh();
 		mesh->Construct(character);
@@ -234,9 +236,9 @@ namespace gloom
 		if (ref != dungeon->refEditorIDs.end())
 		{
 			Group *group = new Group();
-			group->Add(smesh->skeleton->baseBone->group);
+			group->Add(skeleton->baseBone->group);
 			group->Add(mesh->baseGroup);
-			printf("make smesh->skeleton drawgroup!\n");
+			printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
 			scene->Add(drawGroup);
 		}
@@ -253,6 +255,62 @@ namespace gloom
 		//const float merry = 0.002;
 		//if (drawGroup)
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
+	}
+
+	Human::Human()
+	{
+		head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
+		body = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonerclothes_0.nif");
+		hands = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonercuffs_0.nif");
+		feet = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonershoes_0.nif");
+
+		group = new Group;
+		//group->matrix = glm::translate(mat4(1), vec3(0, 0, 200));
+		group->Add(head->mesh->baseGroup);
+		group->Add(body->mesh->baseGroup);
+		group->Add(hands->mesh->baseGroup);
+		group->Add(feet->mesh->baseGroup);
+
+		drawGroup = new DrawGroup(group, mat4());
+	};
+
+	void Human::Place(const char *q)
+	{
+		auto ref = dungeon->refEditorIDs.find(q);
+		if (ref == dungeon->refEditorIDs.end())
+			return;
+		drawGroup->matrix = ref->second->matrix;
+		scene->Add(drawGroup);
+		DrawGroup *test = new DrawGroup(group, mat4());
+		test->matrix = drawGroup->matrix;
+		test->matrix = glm::translate(test->matrix, vec3(50, 0, 0));
+		scene->Add(test);
+	}
+
+	void Human::Step()
+	{
+		head->Step();
+		body->Step();
+		hands->Step();
+		feet->Step();
+	}
+
+	Player::Player()
+	{
+		human = new Human();
+		human->Place("gloomgenman");
+		drawGroup = new DrawGroup(human->group, mat4());
+		scene->Add(drawGroup);
+		//camera->group->Add(human->group);
+	}
+
+	void Player::Step()
+	{
+		human->Step();
+		//drawGroup->matrix = glm::translate(human->drawGroup->matrix, vec3(0, 50, 0));
+		drawGroup->matrix = glm::translate(mat4(1.0), first_person_camera->pos);
+		if (!dynamic_cast<FirstPersonCamera *>(camera))
+			return;
 	}
 
 } // namespace gloom

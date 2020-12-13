@@ -5,21 +5,24 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-struct Camera {
+struct Camera
+{
+public:
 	Camera();
 
 	Group *group;
 	DrawGroup *drawGroup;
 
 	vec3 pos;
-	mat4 view, projection;
+	mat4 view, matrix, projection;
+
 	float fzoom;
 	bool disabled;
 
 	static double prev[2];
 
-	virtual void Mouse(float, float) {};
-	virtual void Update(float) {};
+	virtual void Mouse(float, float){};
+	virtual void Update(float){};
 
 	void SetProjection();
 };

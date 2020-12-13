@@ -8,6 +8,8 @@ struct Group
 {
 	static int num;
 
+	bool visible;
+
 	std::string name;
 	std::vector<Group *> groups, flat;
 

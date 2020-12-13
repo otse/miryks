@@ -33,26 +33,27 @@ namespace gloom
 	class Human
 	{
 		Actor *head, *body, *hands, *feet;
-	public:
-		Human()
-		{
-			head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
-			body = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonerclothes_0.nif");
-			hands = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonercuffs_0.nif");
-			feet = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonershoes_0.nif");
-			head->PutDown("gloomgenman");
-			body->PutDown("gloomgenman");
-			hands->PutDown("gloomgenman");
-			feet->PutDown("gloomgenman");
-		};
 
-		void Step()
-		{
-			head->Step();
-			body->Step();
-			hands->Step();
-			feet->Step();
-		}
+	public:
+		Group *group;
+		DrawGroup *drawGroup = nullptr;
+		
+		Human();
+
+		void Step();
+
+		void Place(const char *);
+	};
+
+	class Player
+	{
+	public:
+		Human *human;
+		DrawGroup *drawGroup = nullptr;
+		
+		Player();
+
+		void Step();
 	};
 
 } // namespace gloom

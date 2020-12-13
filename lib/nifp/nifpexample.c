@@ -22,9 +22,12 @@ void nifp_test()
 	nifp_read(bucket);
 	nifp_save(rc, bucket);
 	struct nifprd *rd = malloc_nifprd();
+	rd->nif = bucket;
 	rd->data = 0xf; // like a Mesh instance
     rd->other = test_callback;
-	nifp_rd(bucket, rd, NULL);
+	nifp_rd(rd);
+	free_nifprd(&rd);
+	free_nifp(&bucket);
     //char str[600];
     //nifp_print_hedr(bucket, str);
 	//printf("nifp hedr end %i\n", bucket->hdr->end);

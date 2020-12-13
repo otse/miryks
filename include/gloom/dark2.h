@@ -24,6 +24,7 @@ namespace gloom
 	class SkinPartition;
 	class Actor;
 	class Human;
+	class Player;
 	class Bone;
 	class Skeleton;
 	class KeyFrames;
@@ -66,6 +67,7 @@ namespace gloom
 	extern Actor *someDraugr;
 	extern Actor *meanSkelly;
 	extern Human *someHuman;
+	extern Player *player1;
 
 	vec2 *cast_vec_2(float *f);
 	vec3 *cast_vec_3(float *f);

@@ -17,6 +17,7 @@ namespace gloom
 
 	static void other(nifprd *, void *);
 	static void ni_node_callback(nifprd *, ni_node_pointer *);
+	static void ni_node_callback_2(nifprd *, ni_node_pointer *);
 	static void ni_tri_shape_callback(nifprd *, ni_tri_shape_pointer *);
 	static void ni_tri_shape_callback_2(nifprd *, ni_tri_shape_pointer *);
 	static void ni_tri_shape_data_callback(nifprd *, ni_tri_shape_data_pointer *);
@@ -66,6 +67,7 @@ namespace gloom
 		rd->nif = mesh->nif;
 		rd->data = this;
 		rd->other = other;
+		rd->ni_node = ni_node_callback_2;
 		rd->ni_tri_shape = ni_tri_shape_callback_2;
 		rd->ni_skin_instance = ni_skin_instance_callback;
 		rd->ni_skin_data = ni_skin_data_callback;
@@ -158,6 +160,17 @@ namespace gloom
 		}
 	}
 
+	void ni_node_callback_2(nifprd *rd, ni_node_pointer *block)
+	{
+		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
+		if (rd->current == 0)
+			return;
+		Group *group = smesh->mesh->groups[rd->current];
+		//group->visible = false;
+		//if (group->geometry)
+		//	group->geometry->material->color = vec3(1);
+	}
+
 	void ni_tri_shape_callback_2(nifprd *rd, ni_tri_shape_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
@@ -216,7 +229,8 @@ namespace gloom
 				geometry->material->skinning = true;
 			else
 				geometry->material->dust = true;
-			if (block->B->shader_flags_1 & 0x00001000) {
+			if (block->B->shader_flags_1 & 0x00001000)
+			{
 				printf("Model_Space_Normals\n");
 				geometry->material->modelSpaceNormals = true;
 			}
