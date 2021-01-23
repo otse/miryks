@@ -25,9 +25,11 @@ struct bsa_file
 	unsigned long size, offset;
 };
 
+typedef struct bsa Bsa;
+
 struct rc
 {
-	struct bsa *bsa;
+	Bsa *bsa;
 	int i, j, r;
 	int size;
 	const char *name;
@@ -49,23 +51,24 @@ struct bsa
 	int loadlisted;
 };
 
-api struct bsa *bsa_load(const char *);
-api void bsa_free(struct bsa **);
 
-api void bsa_print_hedr(struct bsa *, char *s);
-api void bsa_print_fld_rcd(struct bsa *, char *s, int);
-api void bsa_print_fle_rcd(struct bsa *, char *s, int, int);
-api void bsa_print_rc(struct bsa *, char *s, int);
+api Bsa *bsa_load(const char *);
+api void bsa_free(Bsa **);
+
+api void bsa_print_hedr(Bsa *, char *s);
+api void bsa_print_fld_rcd(Bsa *, char *s, int);
+api void bsa_print_fle_rcd(Bsa *, char *s, int, int);
+api void bsa_print_rc(Bsa *, char *s, int);
 
 api int bsa_read(struct rc *);
-api struct rc *bsa_find(struct bsa *, const char *);
+api struct rc *bsa_find(Bsa *, const char *);
 api struct rc *bsa_find_more(const char *, unsigned long);
 
-api void bsa_search(struct bsa *, struct rc *[BSA_MAX_SEARCHES], const char *, int *);
+api void bsa_search(Bsa *, struct rc *[BSA_MAX_SEARCHES], const char *, int *);
 
-api struct bsa **get_archives();
+api Bsa **get_archives();
 
-api struct bsa *bsa_get(const char *);
+api Bsa *bsa_get(const char *);
 
 #define BSA_MESHES   0x1
 #define BSA_TEXTURES 0x2

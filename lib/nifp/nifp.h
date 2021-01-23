@@ -9,6 +9,9 @@ typedef int ni_ref;
 
 struct nifp_hedr;
 
+typedef struct nifp Nifp;
+typedef struct nifprd Nifprd;
+
 struct nifp
 {
 	int key;
@@ -23,50 +26,51 @@ struct nifprd
 {
 	int x;
 	char *skips;
-	struct nifp *nif;
+	Nifp *nif;
 	void *data;
 	int parent, current;
-	void (*other)(struct nifprd *, void *block_pointer);
-	void (*ni_node)(struct nifprd *, struct ni_node_pointer *);
-	void (*ni_tri_shape)(struct nifprd *, struct ni_tri_shape_pointer *);
-	void (*ni_tri_shape_data)(struct nifprd *, struct ni_tri_shape_data_pointer *);
-	void (*bs_lighting_shader_property)(struct nifprd *, struct bs_lighting_shader_property_pointer *);
-	void (*bs_shader_texture_set)(struct nifprd *, struct bs_shader_texture_set_pointer *);
-	void (*ni_alpha_property)(struct nifprd *, struct ni_alpha_property_pointer *);
-	void (*ni_controller_sequence)(struct nifprd *, struct ni_controller_sequence_pointer *);
-	void (*ni_skin_instance)(struct nifprd *, struct ni_skin_instance_pointer *);
-	void (*ni_skin_data)(struct nifprd *, struct ni_skin_data_pointer *);
-	void (*ni_skin_partition)(struct nifprd *, struct ni_skin_partition_pointer *);
+	void (*other)(Nifprd *, void *block_pointer);
+	void (*ni_node)(Nifprd *, struct ni_node_pointer *);
+	void (*ni_tri_shape)(Nifprd *, struct ni_tri_shape_pointer *);
+	void (*ni_tri_shape_data)(Nifprd *, struct ni_tri_shape_data_pointer *);
+	void (*bs_lighting_shader_property)(Nifprd *, struct bs_lighting_shader_property_pointer *);
+	void (*bs_shader_texture_set)(Nifprd *, struct bs_shader_texture_set_pointer *);
+	void (*ni_alpha_property)(Nifprd *, struct ni_alpha_property_pointer *);
+	void (*ni_controller_sequence)(Nifprd *, struct ni_controller_sequence_pointer *);
+	void (*ni_skin_instance)(Nifprd *, struct ni_skin_instance_pointer *);
+	void (*ni_skin_data)(Nifprd *, struct ni_skin_data_pointer *);
+	void (*ni_skin_partition)(Nifprd *, struct ni_skin_partition_pointer *);
 };
+
 
 void nifp_gui();
 void nifp_test();
 
-void nifp_read_header(struct nifp *);
-void nifp_read_blocks(struct nifp *);
+void nifp_read_header(Nifp *);
+void nifp_read_blocks(Nifp *);
 
-api struct nifp   *malloc_nifp();
-api struct nifprd *malloc_nifprd();
+api Nifp   *malloc_nifp();
+api Nifprd *malloc_nifprd();
 
-api void free_nifp(struct nifp **);
-api void free_nifprd(struct nifprd **);
-api void nifp_rd(struct nifprd *);
+api void free_nifp(Nifp **);
+api void free_nifprd(Nifprd **);
+api void nifp_rd(Nifprd *);
 
-api void nifp_read(struct nifp *);
-api void nifp_save(void *, struct nifp *);
-api struct nifp *nifp_saved(void *);
+api void nifp_read(Nifp *);
+api void nifp_save(void *, Nifp *);
+api Nifp *nifp_saved(void *);
 
-api char *nifp_get_string(struct nifp *, int);
-api char *nifp_get_block_type(struct nifp *, int);
-api void *nifp_get_block(struct nifp *, int);
+api char *nifp_get_string(Nifp *, int);
+api char *nifp_get_block_type(Nifp *, int);
+api void *nifp_get_block(Nifp *, int);
 
-api void nifp_print_hedr(struct nifp *, char *);
-api void nifp_print_block(struct nifp *, int, char [1000]);
+api void nifp_print_hedr(Nifp *, char *);
+api void nifp_print_block(Nifp *, int, char [1000]);
 
 struct nifppair
 {
 	void *key;
-	struct nifp *value;
+	Nifp *value;
 };
 extern int nifps;
 extern struct nifppair nifpmap[1000];

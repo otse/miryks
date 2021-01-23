@@ -8,14 +8,14 @@
 int nifps = 0;
 struct nifppair nifpmap[1000];
 
-api void nifp_save(void *key, struct nifp *nif) {
+api void nifp_save(void *key, Nifp *nif) {
 	nif->key = nifps;
 	nifpmap[nifps].key = key;
 	nifpmap[nifps].value = nif;
 	nifps++;
 }
 
-api struct nifp *nifp_saved(void *key) {
+api Nifp *nifp_saved(void *key) {
 	for (int i = 0; i < nifps; i++)
 	if (nifpmap[i].key == key)
 	return nifpmap[i].value;
@@ -30,52 +30,52 @@ api struct nifp *nifp_saved(void *key) {
 
 #define FromBuf(x) *(x*)(Depos); Pos += sizeof(x); // todo remove
 
-api char *nifp_get_string(struct nifp *nif, int i) {
+api char *nifp_get_string(Nifp *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Hedr->strings[i];
 }
 
-api char *nifp_get_block_type(struct nifp *nif, int i) {
+api char *nifp_get_block_type(Nifp *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Hedr->block_types[Hedr->block_type_index[i]];
 }
 
-api void *nifp_get_block(struct nifp *nif, int i) {
+api void *nifp_get_block(Nifp *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Blocks[i];
 }
 
-api struct nifp *malloc_nifp() {
-	struct nifp *nif = malloc(sizeof(struct nifp));
+api Nifp *malloc_nifp() {
+	Nifp *nif = malloc(sizeof(Nifp));
 	Pos = 0;
 	Buf = 0;
 	nif->hdr = malloc(sizeof(struct nifp_hedr));
 	return nif;
 }
 
-api void free_nifp(struct nifprd **p) {
-	struct nifprd *nif = *p;
+api void free_nifp(Nifprd **p) {
+	Nifprd *nif = *p;
 	free(nif);
 	*p = NULL;
 }
 
-api void nifp_read(struct nifp *nif) {
+api void nifp_read(Nifp *nif) {
 	cassert(Buf, "nifp_read Buf not set");
 	nifp_read_header(nif);
 	nifp_read_blocks(nif);
 }
 
-static void read_short_string(struct nifp *nif, char **string) {
+static void read_short_string(Nifp *nif, char **string) {
 	char len = FromBuf(char);
 	*string = malloc(sizeof(char) * len);
 	strncpy(*string, Depos, len);
 	Pos += len;
 }
 
-static void read_sized_string(struct nifp *nif, char **string) {
+static void read_sized_string(Nifp *nif, char **string) {
 	unsigned int len = FromBuf(unsigned int);
 	*string = malloc(sizeof(char) * len + 1);
 	strncpy(*string, Depos, len);
@@ -85,7 +85,7 @@ static void read_sized_string(struct nifp *nif, char **string) {
 
 // begin hedr
 
-static void hedr_read_header_string(struct nifp *nif) {
+static void hedr_read_header_string(Nifp *nif) {
 	// Gamebryo File Format, Version 20.2.0.7\n
 	int n = strchr(Buf, '\n') - Buf + 1;
 	char *string = malloc(sizeof(char) * n);
@@ -96,23 +96,23 @@ static void hedr_read_header_string(struct nifp *nif) {
 	Pos += n;
 }
 
-static void read_mem(struct nifp *nif, void *dest, int size) {
+static void read_mem(Nifp *nif, void *dest, int size) {
 	memcpy(dest, Depos, size);
 	Pos += size;
 }
 
-static void read_array(struct nifp *nif, void **dest, int size) {
+static void read_array(Nifp *nif, void **dest, int size) {
 	*dest = malloc(size);
 	read_mem(nif, *dest, size);
 }
 
-static void read_sized_strings(struct nifp *nif, char ***dest, int count) {
+static void read_sized_strings(Nifp *nif, char ***dest, int count) {
 	*dest = malloc(count * sizeof(char *));
 	for (int i = 0; i < count; i++)
 	read_sized_string(nif, &(*dest)[i]);
 }
 
-api void nifp_read_header(struct nifp *nif) {
+api void nifp_read_header(Nifp *nif) {
 	hedr_read_header_string(nif);
 	read_mem(nif, &Hedr->unknown_1, 17);
 	read_short_string(nif, &Hedr->author);
@@ -130,9 +130,9 @@ api void nifp_read_header(struct nifp *nif) {
 
 // read blockz
 
-#define nifpr struct nifp *nif, int n
+#define nifpr Nifp *nif, int n
 
-static void read_block(struct nifp *, int);
+static void read_block(Nifp *, int);
 
 static void *read_ni_common_layout(nifpr);
 static void *read_ni_node(nifpr);
@@ -148,7 +148,7 @@ static void *read_ni_controller_sequence(nifpr);
 static void *read_ni_transform_interpolator(nifpr);
 static void *read_ni_transform_data(nifpr);
 
-api void nifp_read_blocks(struct nifp *nif)
+api void nifp_read_blocks(Nifp *nif)
 {
 	// printf("nifp path %s\n", nif->path);
 	unsigned int pos = Pos;
@@ -163,7 +163,7 @@ api void nifp_read_blocks(struct nifp *nif)
 	}
 }
 
-void read_block(struct nifp *nif, int n)
+void read_block(Nifp *nif, int n)
 {
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
@@ -192,7 +192,7 @@ void read_block(struct nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-static void sink_val(struct nifp *nif, char *block_pointer, int src, int size) {
+static void sink_val(Nifp *nif, char *block_pointer, int src, int size) {
 	char **dest = block_pointer + src;
 	*dest = Depos;
 	Pos += size;

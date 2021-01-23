@@ -30,6 +30,11 @@ struct esp_array
 	size_t capacity;
 };
 
+typedef struct esp Esp;
+typedef struct grup Grup;
+typedef struct record Record;
+typedef struct subrecord Subrecord;
+
 struct esp
 {
 	const char *name;
@@ -38,7 +43,7 @@ struct esp
 	const char *buf;
 	long filesize;
 	int active;
-	struct record *header;
+	Record *header;
 	struct esp_array grups, records;
 	struct form_id *formIds;
 	const char **tops;
@@ -56,10 +61,10 @@ struct esp
 
 struct form_id
 {
-	struct esp *esp;
+	Esp *esp;
 	unsigned int formId, modIndex, objectIndex;
 	char hex[9];
-	struct record *record;
+	Record *record;
 	void *plugin;
 };
 
@@ -124,25 +129,25 @@ struct subrecord
 
 void esp_gui();
 
-api struct esp *plugin_slate();
-api int plugin_load(struct esp *);
+api Esp *plugin_slate();
+api int plugin_load(Esp *);
 
-api void esp_print_form_id(struct esp *, char *, struct form_id *);
-api void esp_print_grup(struct esp *, char *, struct grup *);
-api void esp_print_record(struct esp *, char *, struct record *);
-api void esp_print_field(struct esp *, char *, struct subrecord *);
+api void esp_print_form_id(Esp *, char *, struct form_id *);
+api void esp_print_grup(Esp *, char *, struct grup *);
+api void esp_print_record(Esp *, char *, Record *);
+api void esp_print_field(Esp *, char *, Subrecord *);
 
-api struct esp **get_plugins();
+api Esp **get_plugins();
 
-api struct esp *has_plugin(const char *);
+api Esp *has_plugin(const char *);
 
-api struct esp_array *esp_filter_objects(const struct esp *, const char [5]);
+api struct esp_array *esp_filter_objects(const Esp *, const char [5]);
 
-api struct record *esp_brute_record_by_form_id(unsigned int);
+api Record *esp_brute_record_by_form_id(unsigned int);
 
-api struct grup *esp_get_top_grup(const struct esp *, const char [5]);
+api struct grup *esp_get_top_grup(const Esp *, const char [5]);
 
-api void free_plugin(struct esp **);
+api void free_plugin(Esp **);
 api void free_esp_array(struct esp_array *);
 
 #endif

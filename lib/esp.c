@@ -9,8 +9,8 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
-struct record *read_record(struct esp *);
-struct grup *read_grup(struct esp *);
+Record *read_record(Esp *);
+Grup *read_grup(Esp *);
 
 #define Buf esp->buf
 #define Pos esp->pos
@@ -18,7 +18,7 @@ struct grup *read_grup(struct esp *);
 
 int esp_skip_fields = 0;
 
-static struct esp *plugins[5] = { NULL, NULL, NULL, NULL, NULL };
+static Esp *plugins[5] = { NULL, NULL, NULL, NULL, NULL };
 
 const char *esp_types[] = {"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"};
 
@@ -28,24 +28,24 @@ inline void array(struct esp_array *, size_t);
 inline void grow(struct esp_array *);
 inline void insert(struct esp_array *, void *);
 
-void make_top_grups(struct esp *);
-void make_form_ids(struct esp *);
+void make_top_grups(Esp *);
+void make_form_ids(Esp *);
 
-unsigned int hedr_num_records(struct esp *esp)
+unsigned int hedr_num_records(Esp *esp)
 {
 	if (esp_skip_fields)
 	return 200;
 	return *(unsigned int *)(esp->header->fields.subrecords[0]->data + 4);
 }
 
-struct esp *plugin_slate()
+Esp *plugin_slate()
 {
-	struct esp *plugin = malloc(sizeof(struct esp));
-	memset(plugin, 0, sizeof(struct esp));
+	Esp *plugin = malloc(sizeof(Esp));
+	memset(plugin, 0, sizeof(Esp));
 	return plugin;
 }
 
-api int plugin_load(struct esp *esp)
+api int plugin_load(Esp *esp)
 {
 	cassert(esp->buf,      "need buf");
 	cassert(esp->filesize, "need filesize");
@@ -55,7 +55,7 @@ api int plugin_load(struct esp *esp)
 	array(&esp->records, hedr_num_records(esp));
 	while(Pos < esp->filesize)
 	{
-	struct grup *grup = read_grup(esp);
+	Grup *grup = read_grup(esp);
 	insert(&esp->grups, grup);
 	}
 	make_top_grups(esp);
@@ -63,13 +63,13 @@ api int plugin_load(struct esp *esp)
 	return 1;
 }
 
-void uncompress_record(struct esp *, struct record *);
-inline void read_record_fields(struct esp *, struct record *);
+void uncompress_record(Esp *, Record *);
+inline void read_record_fields(Esp *, Record *);
 
-struct record *read_record(struct esp *esp)
+Record *read_record(Esp *esp)
 {
-	struct record *rec;
-	rec = malloc(sizeof(struct record));
+	Record *rec;
+	rec = malloc(sizeof(Record));
 	rec->fi = NULL;
 	// head
 	rec->x = RECORD;
@@ -102,9 +102,9 @@ struct record *read_record(struct esp *esp)
 	return rec;
 }
 
-inline struct subrecord *read_field(struct esp *, struct record *, unsigned int);
+inline Subrecord *read_field(Esp *, Record *, unsigned int);
 
-inline void read_record_fields(struct esp *esp, struct record *rec)
+inline void read_record_fields(Esp *esp, Record *rec)
 {
 	long *pos = &Pos;
 	if (rec->hed->flags & 0x00040000)
@@ -113,7 +113,7 @@ inline void read_record_fields(struct esp *esp, struct record *rec)
 	unsigned int large = 0;
 	while(*pos - start < rec->actualSize)
 	{
-	struct subrecord *sub;
+	Subrecord *sub;
 	sub = read_field(esp, rec, large);
 	large = 0;
 	if (sub->hed->type == *(unsigned int *)"XXXX")
@@ -123,7 +123,7 @@ inline void read_record_fields(struct esp *esp, struct record *rec)
 	}
 }
 
-inline struct subrecord *read_field(struct esp *esp, struct record *rec, unsigned int override)
+inline Subrecord *read_field(Esp *esp, Record *rec, unsigned int override)
 {
 	long *pos = &Pos;
 	char *buf = Buf;
@@ -132,8 +132,8 @@ inline struct subrecord *read_field(struct esp *esp, struct record *rec, unsigne
 	pos = &rec->pos;
 	buf = rec->buf;
 	}
-	struct subrecord *sub;
-	sub = malloc(sizeof(struct subrecord));
+	Subrecord *sub;
+	sub = malloc(sizeof(Subrecord));
 	// hed
 	sub->x = SUBRECORD;
 	sub->index = rec->indices++;
@@ -149,11 +149,11 @@ inline struct subrecord *read_field(struct esp *esp, struct record *rec, unsigne
 	return sub;
 }
 
-inline void read_grup_records(struct esp *, struct grup *);
+inline void read_grup_records(Esp *, Grup *);
 
-struct grup *read_grup(struct esp *esp)
+Grup *read_grup(Esp *esp)
 {
-	struct grup *grup = malloc(sizeof(struct grup));
+	Grup *grup = malloc(sizeof(Grup));
 	//grup->lowest = grup->highest = 0;
 	// hed
 	grup->x = GRUP;
@@ -170,12 +170,12 @@ struct grup *read_grup(struct esp *esp)
 	return grup;
 }
 
-const unsigned int peek_type(struct esp *esp)
+const unsigned int peek_type(Esp *esp)
 {
 	return espwrd (Buf + Pos);
 }
 
-inline void read_grup_records(struct esp *esp, struct grup *grup)
+inline void read_grup_records(Esp *esp, Grup *grup)
 {
 	long size = grup->hed->size - sizeof(struct grup_header) - 16;
 	long start = Pos;
@@ -188,14 +188,14 @@ inline void read_grup_records(struct esp *esp, struct grup *grup)
 	}
 }
 
-void make_top_grups(struct esp *esp)
+void make_top_grups(Esp *esp)
 {
 	const int max = COUNT_OF(esp_types);
 	esp->tops = malloc(sizeof(const char *) * max);
 	for (int i = 0; i < esp->grups.size; i++)
 	{
 	esp->tops[i] = "None";
-	const struct grup *grup = esp->grups.elements[i];
+	const Grup *grup = esp->grups.elements[i];
 	dive:
 	if (grup->mixed.size == 0)
 	continue;
@@ -204,7 +204,7 @@ void make_top_grups(struct esp *esp)
 	grup = grup->mixed.elements[0];
 	goto dive;
 	}
-	struct record *first = grup->mixed.elements[0];
+	Record *first = grup->mixed.elements[0];
 	for (int j = 0; j < max; j++)
 	if (first->hed->type == *(unsigned int *)esp_types[j])
 	{
@@ -214,7 +214,7 @@ void make_top_grups(struct esp *esp)
 	}
 }
 
-api struct grup *esp_get_top_grup(const struct esp *esp, const char type[5])
+api Grup *esp_get_top_grup(const Esp *esp, const char type[5])
 {
 	for (int i = 0; i < esp->grups.size; i++)
 	if (*(unsigned int *)type == *(unsigned int *)esp->tops[i])
@@ -222,7 +222,7 @@ api struct grup *esp_get_top_grup(const struct esp *esp, const char type[5])
 	return NULL;
 }
 
-inline void build_form_id(struct esp *esp, struct record *record, struct form_id *fi)
+inline void build_form_id(Esp *esp, Record *record, struct form_id *fi)
 {
 	fi->esp = esp;
 	record->fi = fi;
@@ -239,7 +239,7 @@ inline void build_form_id(struct esp *esp, struct record *record, struct form_id
 	//fi->plugin = masters[fi->modIndex];
 }
 
-void make_form_ids(struct esp *esp)
+void make_form_ids(Esp *esp)
 {
 	struct esp_array *array = &esp->records;
 	esp->formIds = malloc(sizeof(struct form_id) * array->size);
@@ -247,16 +247,16 @@ void make_form_ids(struct esp *esp)
 	build_form_id(esp, array->elements[i], &esp->formIds[i]);
 }
 
-api struct record *esp_brute_record_by_form_id(unsigned int formId)
+api Record *esp_brute_record_by_form_id(unsigned int formId)
 {
 	for (int i = 5; i --> 0; )
 	{
-	struct esp *esp = plugins[i];
+	Esp *esp = plugins[i];
 	if (esp == NULL)
 	continue;
 	for (int j = 0; j < esp->records.size; j++)
 	{
-	struct record *rec = esp->records.elements[j];
+	Record *rec = esp->records.elements[j];
 	if (rec->fi->formId == formId)
 	return rec;
 	}
@@ -265,7 +265,7 @@ api struct record *esp_brute_record_by_form_id(unsigned int formId)
 }
 
 /*
-api void esp_array_loop(struct esp_array *array, void (*func)(struct subrecord *field, void *data), void *data)
+api void esp_array_loop(struct esp_array *array, void (*func)(Subrecord *field, void *data), void *data)
 {
 	for (int i = 0; i < array->size; i++)
 	{
@@ -274,21 +274,21 @@ api void esp_array_loop(struct esp_array *array, void (*func)(struct subrecord *
 }
 */
 
-api struct esp_array *esp_filter_objects(const struct esp *esp, const char type[5])
+api struct esp_array *esp_filter_objects(const Esp *esp, const char type[5])
 {
 	struct esp_array *filtered;
 	filtered = malloc(sizeof(struct esp_array));
 	array(filtered, 100);
 	for (int i = 0; i < esp->records.size; i++)
 	{
-	struct record *record = esp->records.elements[i];
+	Record *record = esp->records.elements[i];
 	if (record->hed->type == *(unsigned int *)type)
 	insert(filtered, record);
 	}
 	return filtered;
 }
 
-void uncompress_record(struct esp *esp, struct record *rec)
+void uncompress_record(Esp *esp, Record *rec)
 {
 	char *src = rec->data;
 	const unsigned int realSize = *(unsigned int *)src;
@@ -301,12 +301,12 @@ void uncompress_record(struct esp *esp, struct record *rec)
 	Count.uncompress++;
 }
 
-api struct esp **get_plugins()
+api Esp **get_plugins()
 {
 	return plugins;
 }
 
-api struct esp *has_plugin(const char *name)
+api Esp *has_plugin(const char *name)
 {
 	for (int i = 5; i-- > 0;)
 	if (plugins[i] != NULL && 0 == strcmp(name, plugins[i]->name))
@@ -314,9 +314,9 @@ api struct esp *has_plugin(const char *name)
 	return NULL;
 }
 
-api void free_plugin(struct esp **p)
+api void free_plugin(Esp **p)
 {
-	struct esp *esp = *p;
+	Esp *esp = *p;
 	*p = NULL;
 	if (esp == NULL)
 	return;
@@ -325,7 +325,7 @@ api void free_plugin(struct esp **p)
 	plugins[i] = NULL;
 	for (int i = 0; i < esp->records.size; i++)
 	{
-	struct record *record = esp->records.elements[i];
+	Record *record = esp->records.elements[i];
 	if (record->hed->flags & 0x00040000)
 	free(record->buf);
 	free_esp_array(&record->fields);

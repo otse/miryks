@@ -13,20 +13,20 @@
 
 #define Hedr bsa->hdr
 
-static int read(struct bsa *, void *, unsigned);
-static int seek(struct bsa *, unsigned);
+static int read(Bsa *, void *, unsigned);
+static int seek(Bsa *, unsigned);
 
-char *bsa_read_bzstring(struct bsa *);
+char *bsa_read_bzstring(Bsa *);
 
-void read_folder_records(struct bsa *);
-void read_file_records(struct bsa *);
-void read_filenames(struct bsa *);
-void resources(struct bsa *);
+void read_folder_records(Bsa *);
+void read_file_records(Bsa *);
+void read_filenames(Bsa *);
+void resources(Bsa *);
 
-api struct bsa *bsa_load(const char *path)
+api Bsa *bsa_load(const char *path)
 {
-	struct bsa *bsa = malloc(sizeof(struct bsa));
-	memset(bsa, 0, sizeof(struct bsa));
+	Bsa *bsa = malloc(sizeof(Bsa));
+	memset(bsa, 0, sizeof(Bsa));
 	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
 	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
@@ -49,13 +49,13 @@ api struct bsa *bsa_load(const char *path)
 	return bsa;
 }
 
-void read_folder_records(struct bsa *bsa)
+void read_folder_records(Bsa *bsa)
 {
 	bsa->fld = malloc(sizeof(struct bsa_fld) * Hedr.folders);
 	read(bsa, bsa->fld, Hedr.folders * sizeof(struct bsa_fld));
 }
 
-char *bsa_read_bzstring(struct bsa *bsa)
+char *bsa_read_bzstring(Bsa *bsa)
 {
 	int c = 0;
 	read(bsa, &c, 1);
@@ -64,7 +64,7 @@ char *bsa_read_bzstring(struct bsa *bsa)
 	return name;
 }
 
-void read_file_records(struct bsa *bsa)
+void read_file_records(Bsa *bsa)
 {
 	bsa->file = malloc(sizeof(struct bsa_file *) * Hedr.folders);
 	bsa->ca = malloc(sizeof(char *) * Hedr.folders);
@@ -77,7 +77,7 @@ void read_file_records(struct bsa *bsa)
 	}
 }
 
-void read_filenames(struct bsa *bsa)
+void read_filenames(Bsa *bsa)
 {
 	char *buf = malloc(sizeof(char) * Hedr.filesl);
 	bsa->cb = malloc(sizeof(char *) * Hedr.files);
@@ -94,7 +94,7 @@ void read_filenames(struct bsa *bsa)
 	}
 }
 
-void bsa_rc_path(struct bsa *bsa, int i, int r)
+void bsa_rc_path(Bsa *bsa, int i, int r)
 {
 	char *path = bsa->rc[r]->path;
 	strcpy(path, bsa->ca[i]);
@@ -103,7 +103,7 @@ void bsa_rc_path(struct bsa *bsa, int i, int r)
 	//return path;
 }
 
-void resources(struct bsa *bsa)
+void resources(Bsa *bsa)
 {
 	bsa->rc = malloc(sizeof(struct rc *) * Hedr.files);
 	bsa->r = malloc(sizeof(int) * Hedr.folders);
@@ -121,7 +121,7 @@ void resources(struct bsa *bsa)
 	}
 }
 
-api struct rc *bsa_find(struct bsa *bsa, const char *p)
+api struct rc *bsa_find(Bsa *bsa, const char *p)
 {
 	char stem[260], name[260];
 	FileStem(stem, p, '\\');
@@ -146,7 +146,7 @@ api struct rc *bsa_find(struct bsa *bsa, const char *p)
 	return NULL;
 }
 
-api void bsa_search(struct bsa *bsa, struct rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num)
+api void bsa_search(Bsa *bsa, struct rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num)
 {
 	char *str;
 	int r;
@@ -192,7 +192,7 @@ api int bsa_read(struct rc *rc) {
 	return 0;
 	if (rc->buf)
 	return 1;
-	struct bsa *bsa = rc->bsa;
+	Bsa *bsa = rc->bsa;
 	struct bsa_file *f = &bsa->file[rc->i][rc->j];
 	int offset = f->offset;
 	int size = f->size;
@@ -217,9 +217,9 @@ api int bsa_read(struct rc *rc) {
 	return 1;
 }
 
-api void bsa_free(struct bsa **b)
+api void bsa_free(Bsa **b)
 {
-	struct bsa *bsa = *b;
+	Bsa *bsa = *b;
 	*b = NULL;
 	fclose(bsa->stream);
 	return;
@@ -246,18 +246,18 @@ api void bsa_free(struct bsa **b)
 
 // archive ext stuff below
 
-static struct bsa *archives[10];
+static Bsa *archives[10];
 
-api struct bsa **get_archives()
+api Bsa **get_archives()
 {
 	return archives;
 }
 
-api struct bsa *bsa_get(const char *path)
+api Bsa *bsa_get(const char *path)
 {
 	for (int i = 10; i --> 0; )
 	{
-	struct bsa *bsa = archives[i];
+	Bsa *bsa = archives[i];
 	if (bsa==NULL)
 	continue;
 	if (0 == strcmp(path, bsa->path))
@@ -271,7 +271,7 @@ api struct rc *bsa_find_more(const char *p, unsigned long flags)
 	struct rc *rc = NULL;
 	for (int i = 10; i --> 0; )
 	{
-	struct bsa *bsa = archives[i];
+	Bsa *bsa = archives[i];
 	if (bsa==NULL)
 	continue;
 	int test = Hedr.file_flags & flags;
@@ -283,12 +283,12 @@ api struct rc *bsa_find_more(const char *p, unsigned long flags)
 	return rc;
 }
 
-static int read(struct bsa *bsa, void *data, unsigned size)
+static int read(Bsa *bsa, void *data, unsigned size)
 {
 	return fread(data, 1, size, (FILE *)bsa->stream);
 }
 
-static int seek(struct bsa *bsa, unsigned offset)
+static int seek(Bsa *bsa, unsigned offset)
 {
 	return fseek((FILE *)bsa->stream, offset, SEEK_SET);
 }
