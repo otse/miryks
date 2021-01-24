@@ -84,9 +84,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
 		printf("F5!\n");
-		esp *plugin = get_plugins()[1];
+		Esp *plugin = get_plugins()[1];
 		const char *name = plugin->name;
-		esp *has = has_plugin(name);
+		Esp *has = has_plugin(name);
 		free_plugin(&has);
 		get_plugins()[1] = LoadPlugin(name);
 		delete dungeon;

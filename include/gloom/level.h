@@ -17,9 +17,9 @@ namespace gloom
 	struct Cell
 	{
 		bool good;
-		record *cell;
-		grup *persistent = nullptr;
-		grup *non_persistent = nullptr;
+		Record *cell;
+		Grup *persistent = nullptr;
+		Grup *non_persistent = nullptr;
 	};
 
 	class Level
@@ -40,6 +40,6 @@ namespace gloom
 		void LoadCell(Cell &);
 		void Unload();
 		
-		void ParseGrup(Cell &, grup *);
+		void ParseGrup(Cell &, Grup *);
 	};
 } // namespace gloom

@@ -6,9 +6,10 @@
 // wrote for dark2
 
 struct form_id;
-struct record;
-struct subrecord;
-struct grup;
+
+struct Grup;
+struct Record;
+struct Subrecord;
 
 #define Fields object->fields
 
@@ -22,20 +23,15 @@ struct esp_array
 {
 	union{
 	void **elements;
-	struct grup **grups;
-	struct record **records;
-	struct subrecord **subrecords;
+	struct Grup **grups;
+	struct Record **records;
+	struct Subrecord **subrecords;
 	};
 	size_t size;
 	size_t capacity;
 };
 
-typedef struct esp Esp;
-typedef struct grup Grup;
-typedef struct record Record;
-typedef struct subrecord Subrecord;
-
-struct esp
+typedef struct Esp
 {
 	const char *name;
 	void *file;
@@ -43,7 +39,7 @@ struct esp
 	const char *buf;
 	long filesize;
 	int active;
-	Record *header;
+	struct Record *header;
 	struct esp_array grups, records;
 	struct form_id *formIds;
 	const char **tops;
@@ -51,7 +47,7 @@ struct esp
 	{
 	unsigned int grups, records, fields, uncompress;
 	} count;
-};
+} Esp;
 
 #define GRUP 1
 #define RECORD 2
@@ -64,7 +60,7 @@ struct form_id
 	Esp *esp;
 	unsigned int formId, modIndex, objectIndex;
 	char hex[9];
-	Record *record;
+	struct Record *record;
 	void *plugin;
 };
 
@@ -88,16 +84,16 @@ struct field_header
 	unsigned short size;
 };
 
-struct grup
+typedef struct Grup
 {
 	char x;
 	unsigned int id;
 	const struct grup_header *hed;
 	unsigned char *data;
 	struct esp_array mixed;
-};
+} Grup;
 
-struct record
+typedef struct Record
 {
 	char x;
 	unsigned int indices;
@@ -111,9 +107,9 @@ struct record
 	// compression related
 	long pos;
 	char *buf;
-};
+} Record;
 
-struct subrecord
+typedef struct Subrecord
 {
 	char x;
 	unsigned int index;
@@ -122,8 +118,7 @@ struct subrecord
 	const struct field_header *hed;
 	unsigned int actualSize;
 	unsigned char *data;
-};
-
+} Subrecord;
 
 #pragma pack(pop)
 
@@ -133,7 +128,7 @@ api Esp *plugin_slate();
 api int plugin_load(Esp *);
 
 api void esp_print_form_id(Esp *, char *, struct form_id *);
-api void esp_print_grup(Esp *, char *, struct grup *);
+api void esp_print_grup(Esp *, char *, Grup *);
 api void esp_print_record(Esp *, char *, Record *);
 api void esp_print_field(Esp *, char *, Subrecord *);
 
@@ -145,7 +140,7 @@ api struct esp_array *esp_filter_objects(const Esp *, const char [5]);
 
 api Record *esp_brute_record_by_form_id(unsigned int);
 
-api struct grup *esp_get_top_grup(const Esp *, const char [5]);
+api Grup *esp_get_top_grup(const Esp *, const char [5]);
 
 api void free_plugin(Esp **);
 api void free_esp_array(struct esp_array *);

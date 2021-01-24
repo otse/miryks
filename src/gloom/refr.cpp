@@ -20,7 +20,7 @@
 
 namespace gloom
 {
-	Ref::Ref(::record *record)
+	Ref::Ref(::Record *record)
 	{
 		mesh = nullptr;
 		drawGroup = nullptr;
@@ -76,7 +76,7 @@ namespace gloom
 		{
 			if (*NAME == 0x0005AD9E) // gold to orichalum
 				NAME = new unsigned int(0x0005AD99);
-			::record *rbase = esp_brute_record_by_form_id(*NAME);
+			::Record *rbase = esp_brute_record_by_form_id(*NAME);
 			base = new Object(rbase);
 
 			cassert(rbase, "ref cant find name baseRecord");
@@ -85,7 +85,7 @@ namespace gloom
 			{
 				for (int i = 0; i < base->record->fields.size; i++)
 				{
-					subrecord *field = base->record->fields.subrecords[i];
+					Subrecord *field = base->record->fields.subrecords[i];
 					if (field->hed->type != espwrd "MODL")
 						continue;
 					mesh = Mesh::GetStored(field->data);

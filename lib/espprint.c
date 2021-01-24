@@ -2,7 +2,7 @@
 
 #include "esp.h"
 
-api void esp_print_form_id(struct esp *esp, char *s, struct form_id *fi)
+api void esp_print_form_id(Esp *esp, char *s, struct form_id *fi)
 {
 int w = snprintf(s, 200, "\
 modIndex: %u\
@@ -13,7 +13,7 @@ fi->objectIndex
 );
 }
 
-api void esp_print_grup(struct esp *esp, char *s, struct grup *grup)
+api void esp_print_grup(Esp *esp, char *s, Grup *grup)
 {
 int w = snprintf(s, 200, "\
 id: %u\
@@ -28,7 +28,7 @@ grup->mixed.size
 );
 }
 
-api void esp_print_record(struct esp *esp, char *s, struct record *record)
+api void esp_print_record(Esp *esp, char *s, Record *record)
 {
 int w = snprintf(s, 200, "\
 id: %u\
@@ -53,7 +53,7 @@ record->fields.size
 );
 }
 
-char *specifics(struct esp *esp, char *s, struct subrecord *field)
+char *specifics(Esp *esp, char *s, Subrecord *field)
 {
 if (field->hed->type == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
@@ -69,7 +69,7 @@ snprintf(s, 300, "\
 	return s;
 }
 
-api void esp_print_field(struct esp *esp, char *s, struct subrecord *field)
+api void esp_print_field(Esp *esp, char *s, Subrecord *field)
 {
 char x[300] = "Not Handled\0";
 int w = snprintf(s, 400, "\

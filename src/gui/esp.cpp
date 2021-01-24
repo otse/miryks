@@ -16,13 +16,13 @@ using namespace gloom;
 
 static std::stringstream ss;
 
-static esp *plugin = NULL;
+static Esp *plugin = NULL;
 
-void im_grup(grup *, int);
-void im_record(record *);
-void im_subrecord(subrecord *);
+void im_grup(Grup *, int);
+void im_record(Record *);
+void im_subrecord(Subrecord *);
 
-void im_grup(grup *grup, int top_grup = -1)
+void im_grup(Grup *grup, int top_grup = -1)
 {
 	char t[100];
 	snprintf(t, 100, "GRUP %i %s", grup->id, top_grup != -1 ? plugin->tops[top_grup] : "");
@@ -45,10 +45,10 @@ void im_grup(grup *grup, int top_grup = -1)
 	}
 }
 
-void im_record(record *record)
+void im_record(Record *record)
 {
 	char *edid = nullptr;
-	subrecord *first = record->fields.subrecords[0];
+	Subrecord *first = record->fields.subrecords[0];
 	if (first->hed->type == espwrd "EDID")
 	{
 		edid = (char *)first->data;
@@ -78,7 +78,7 @@ void im_record(record *record)
 	}
 }
 
-void im_subrecord(subrecord *field)
+void im_subrecord(Subrecord *field)
 {
 	char t[100];
 	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->type, field->id);
@@ -108,7 +108,7 @@ void esp_gui()
 	if (strcmp(buf, buf2))
 	{
 		memcpy(buf2, buf, 260);
-		esp *plugin2 = has_plugin(buf);
+		Esp *plugin2 = has_plugin(buf);
 		if (plugin2)
 		{
 			pluginUsedByGame = true;
@@ -158,7 +158,7 @@ void esp_gui()
 			//if (ImGui::TreeNode("Grups"))
 			//{
 			for (int i = 0; i < plugin->grups.size; i++)
-				im_grup((grup *)plugin->grups.elements[i], i);
+				im_grup((Grup *)plugin->grups.elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();
@@ -192,7 +192,7 @@ void esp_gui()
 				const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
 				const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
 				for (int i = 0; i < filtered->size; i++)
-					im_record((record *)filtered->elements[i]);
+					im_record((Record *)filtered->elements[i]);
 				ImGui::EndChild();
 			}
 			ImGui::EndTabItem();

@@ -7,12 +7,12 @@
 
 #include <opengl/types.h>
 
-struct grup;
-struct record;
-struct subrecord;
+struct Grup;
+struct Record;
+struct Subrecord;
 struct rc;
 struct nifp;
-struct esp;
+struct Esp;
 struct bsa;
 
 namespace gloom
@@ -42,7 +42,7 @@ namespace gloom
 	struct rc *loadrc(const char *, const char *, unsigned long);
 	struct nifp *loadnifp(struct rc *, int);
 
-	esp *LoadPlugin(const char *);
+	Esp *LoadPlugin(const char *);
 	bsa *LoadArchive(const char *);
 
 	void programGo();

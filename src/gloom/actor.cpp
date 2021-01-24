@@ -14,7 +14,7 @@ namespace gloom
 {
 	Object GetRace(const char *raceId)
 	{
-		grup *top = esp_get_top_grup(get_plugins()[0], "RACE");
+		Grup *top = esp_get_top_grup(get_plugins()[0], "RACE");
 
 		cassert(top, "no race top grup");
 
@@ -187,7 +187,7 @@ namespace gloom
 		auto MODL = race.Get<unsigned short *>("MODL", 2);
 		auto MODLCHAR = race.Get<char *>("MODL", 2);
 
-		subrecord *modl = race.GetField("MODL", 2);
+		Subrecord *modl = race.GetField("MODL", 2);
 
 		//printf("modl size %u str %s offset %u", modl->hed->type, (char *)modl->data, modl->offset);
 

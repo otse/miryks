@@ -19,20 +19,20 @@ namespace gloom
 	{
 		Cell cell = {false};
 
-		grup *top = esp_get_top_grup(get_plugins()[1], "CELL");
+		Grup *top = esp_get_top_grup(get_plugins()[1], "CELL");
 
 		cassert(top, "no cells top grup");
 
 		for (int i = 0; i < top->mixed.size; i++)
 		{
-			grup *A = (grup *)top->mixed.elements[i];
+			Grup *A = (Grup *)top->mixed.elements[i];
 			for (int j = 0; j < A->mixed.size; j++)
 			{
-				grup *B = (grup *)A->mixed.elements[j];
+				Grup *B = (Grup *)A->mixed.elements[j];
 				for (int k = 0; k < B->mixed.size; k += 2)
 				{
-					record *object = B->mixed.records[k];
-					grup *grup = B->mixed.grups[k + 1];
+					Record *object = B->mixed.records[k];
+					Grup *grup = B->mixed.grups[k + 1];
 					cassert(object->hed->type == *(unsigned int *)"CELL", "not a cell");
 					const char *cellEdid = (char *)object->fields.subrecords[0]->data;
 					//printf("Found cell %s\n", cellEdid);
@@ -77,7 +77,7 @@ namespace gloom
 		ParseGrup(cell, cell.non_persistent);
 	}
 
-	void Level::ParseGrup(Cell &cell, grup *grup)
+	void Level::ParseGrup(Cell &cell, Grup *grup)
 	{
 		if (grup == nullptr)
 			return;
@@ -88,7 +88,7 @@ namespace gloom
 			if (grup->mixed.records[i]->hed->type != espwrd "REFR")
 				continue;
 			cassert(grup->mixed.records[i]->hed->type == espwrd "REFR", "not a refr");
-			auto ref = new Ref((record *)element);
+			auto ref = new Ref((Record *)element);
 			refs.push_back(ref);
 			const char *EDID = ref->self->Get<const char *>("EDID");
 			if (EDID)

@@ -10,7 +10,7 @@ namespace gloom
 	class Ref
 	{
 	public:
-		Ref(record *);
+		Ref(Record *);
 		~Ref();
 
 		Object *self, *base;

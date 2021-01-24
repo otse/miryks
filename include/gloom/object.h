@@ -14,14 +14,14 @@ namespace gloom
 	public:
 		unsigned int formId;
 
-		record *const record;
+		Record *const record;
 
-		Object(::record *, int = 0);
+		Object(::Record *, int = 0);
 
 		bool Is(const char *) const;
 		bool IsAny(std::vector<const char *>) const;
 
-		std::multimap<unsigned int, subrecord *> fields;
+		std::multimap<unsigned int, Subrecord *> fields;
 
 		size_t Count(const char *type) const
 		{
@@ -31,12 +31,12 @@ namespace gloom
 		template <typename T>
 		T Get(const char *type, int skip = 0) const
 		{
-			subrecord *field = GetField(type, skip);
+			Subrecord *field = GetField(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
 
-		subrecord *GetField(const char *, int) const;
-		subrecord *GetFrom(unsigned int, int *) const;
+		Subrecord *GetField(const char *, int) const;
+		Subrecord *GetFrom(unsigned int, int *) const;
 	};
 
 } // namespace gloom

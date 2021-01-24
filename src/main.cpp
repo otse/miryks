@@ -78,7 +78,7 @@ namespace gloom
 		return nif;
 	}
 
-	esp *LoadPlugin(const char *filename)
+	Esp *LoadPlugin(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
 		char *buf;
@@ -87,7 +87,7 @@ namespace gloom
 		(ret = fbuf(path.c_str(), &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
 		if (ret == -1)
 			return nullptr;
-		esp *plugin = plugin_slate();
+		Esp *plugin = plugin_slate();
 		plugin->name = filename;
 		plugin->buf = buf;
 		plugin->filesize = ret;

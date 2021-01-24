@@ -4,7 +4,7 @@
 
 namespace gloom
 {
-	Object::Object(::record *record, int n) : record(record)
+	Object::Object(::Record *record, int n) : record(record)
 	{
 		if (record == nullptr)
 			return;
@@ -12,14 +12,14 @@ namespace gloom
 		int l = n ? n : record->fields.size;
 		for (int i = 0; i < l; i++)
 		{
-			subrecord *field = record->fields.subrecords[i];
+			Subrecord *field = record->fields.subrecords[i];
 			fields.emplace(field->hed->type, field);
 		}
 	}
 
-	subrecord *Object::GetField(const char *type, int skip) const
+	Subrecord *Object::GetField(const char *type, int skip) const
 	{
-		subrecord *sub = nullptr;
+		Subrecord *sub = nullptr;
 		auto st = fields.equal_range(*(unsigned int *)type);
 		for (auto it = st.first; it != st.second; ++it) {
 			sub = it->second;
