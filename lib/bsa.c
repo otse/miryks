@@ -105,7 +105,7 @@ void bsa_rc_path(Bsa *bsa, int i, int r)
 
 void resources(Bsa *bsa)
 {
-	bsa->rc = malloc(sizeof(struct rc *) * Hedr.files);
+	bsa->rc = malloc(sizeof(Rc *) * Hedr.files);
 	bsa->r = malloc(sizeof(int) * Hedr.folders);
 	int r = 0;
 	for (int i = 0; i < Hedr.folders; i++)
@@ -113,15 +113,15 @@ void resources(Bsa *bsa)
 	bsa->r[i] = r;
 	for (int j = 0; j < bsa->fld[i].num; j++)
 	{
-	bsa->rc[r] = malloc(sizeof(struct rc));
-	*bsa->rc[r] = (struct rc){bsa, i, j, r, -1, bsa->cb[r], NULL};
+	bsa->rc[r] = malloc(sizeof(Rc));
+	*bsa->rc[r] = (Rc){bsa, i, j, r, -1, bsa->cb[r], NULL};
 	bsa_rc_path(bsa, i, r);
 	r++;
 	}
 	}
 }
 
-api struct rc *bsa_find(Bsa *bsa, const char *p)
+api Rc *bsa_find(Bsa *bsa, const char *p)
 {
 	char stem[260], name[260];
 	FileStem(stem, p, '\\');
@@ -146,7 +146,7 @@ api struct rc *bsa_find(Bsa *bsa, const char *p)
 	return NULL;
 }
 
-api void bsa_search(Bsa *bsa, struct rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num)
+api void bsa_search(Bsa *bsa, Rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num)
 {
 	char *str;
 	int r;
@@ -169,7 +169,7 @@ api void bsa_search(Bsa *bsa, struct rc *rcs[BSA_MAX_SEARCHES], const char *s, i
 	*num=n;
 }
 
-char *bsa_uncompress(struct rc *rc)
+char *bsa_uncompress(Rc *rc)
 {
 	char *src = rc->buf;
 	uint32_t size = *(uint32_t *)&src[0];
@@ -187,7 +187,7 @@ char *bsa_uncompress(struct rc *rc)
 #define INVERT_COMPRESSED 0x40000000
 
 // todo embed files names fuffed this up real good
-api int bsa_read(struct rc *rc) {
+api int bsa_read(Rc *rc) {
 	if (rc == NULL)
 	return 0;
 	if (rc->buf)
@@ -266,9 +266,9 @@ api Bsa *bsa_get(const char *path)
 	}
 }
 
-api struct rc *bsa_find_more(const char *p, unsigned long flags)
+api Rc *bsa_find_more(const char *p, unsigned long flags)
 {
-	struct rc *rc = NULL;
+	Rc *rc = NULL;
 	for (int i = 10; i --> 0; )
 	{
 	Bsa *bsa = archives[i];

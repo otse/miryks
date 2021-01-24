@@ -189,7 +189,7 @@ group_id: %i\
 \nvertices\
 \nvertices 1: %s \
 \nvertices %i: %s \
-\nbs_vector_flags\
+\nbs_vector_flags dec: %hu\
 \nmaterial crc: %i\
 \nhas_normals: %i\
 \nnormals\
@@ -230,6 +230,7 @@ block->has_vertices,
 print_vec_3(a, block->vertices[0]),
 block->num_vertices,
 print_vec_3(b, block->vertices[block->num_vertices-1]),
+block->bs_vector_flags,
 block->material_crc,
 block->has_normals,
 block->has_normals ? print_vec_3(c, block->normals[0]) : "",

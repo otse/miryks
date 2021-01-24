@@ -55,21 +55,21 @@ namespace gloom
 {
 	const char *dataFolder = "Data/";
 
-	struct rc *loadrc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
+	Rc *loadrc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
 	{
 		std::string str = prepend;
 		str += path;
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
-		struct rc *rc = bsa_find_more(str.c_str(), flags);
+		Rc *rc = bsa_find_more(str.c_str(), flags);
 		bsa_read(rc);
 		return rc;
 	}
 
-	struct nifp *loadnifp(struct rc *rc, int save)
+	Nifp *loadnifp(Rc *rc, int save)
 	{
 		cassert(rc, "mh no rc");
 		bsa_read(rc);
-		struct nifp *nif = malloc_nifp();
+		Nifp *nif = malloc_nifp();
 		nif->path = rc->path;
 		nif->buf = rc->buf;
 		nifp_read(nif);
@@ -95,7 +95,7 @@ namespace gloom
 		return plugin;
 	}
 
-	bsa *LoadArchive(const char *filename)
+	Bsa *LoadArchive(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
 		printf("%s\n", path.c_str());
@@ -106,7 +106,7 @@ namespace gloom
 		return nullptr;
 	}
 
-	void viewer::view(rc *rc)
+	void viewer::view(Rc *rc)
 	{
 		if (mesh)
 		{
@@ -114,7 +114,7 @@ namespace gloom
 			delete mesh;
 			delete drawGroup;
 		}
-		nifp *nif = nifp_saved(rc);
+		Nifp *nif = nifp_saved(rc);
 		if (nif == NULL)
 		{
 			nif = loadnifp(rc, 1);

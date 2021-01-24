@@ -22,11 +22,11 @@ namespace gloom
 		std::map<ni_ref, Bone *> bones;
 		std::map<const std::string, Bone *> bones_named;
 
-		struct nifp *nif;
+		Nifp *nif;
 		Bone *baseBone, *lastBone;
 		Animation *animation;
 
-		Bone *Nested(struct nifprd *, int);
+		Bone *Nested(NifpRd *, int);
 
 		void Load(const char *);
 		void Construct();
@@ -48,8 +48,8 @@ namespace gloom
 	class KeyFrames
 	{
 	public:
-		KeyFrames(struct nifp *);
-		struct nifp *model;
+		KeyFrames(Nifp *);
+		Nifp *model;
 		struct ni_controller_sequence_pointer *csp;
 		bool loop = true;
 	};

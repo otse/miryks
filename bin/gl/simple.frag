@@ -263,6 +263,8 @@ void main()
 
 	#ifndef DONT_USE_NORMAL_MAP
 
+			// diffuseColor.rgb *= vec3(1, 0, 0);
+
 			#ifdef USE_TANGENT
 
 				mat3 vTBN = mat3( tangent, bitangent, normal );

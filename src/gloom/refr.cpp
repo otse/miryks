@@ -96,11 +96,11 @@ namespace gloom
 						std::transform(data.begin(), data.end(), data.begin(),
 									   [](unsigned char c) { return std::tolower(c); });
 						//printf("stat baseRecord has a modl %s\n", data.c_str());
-						rc *rc = bsa_find_more(data.c_str(), 0x1);
+						Rc *rc = bsa_find_more(data.c_str(), 0x1);
 						if (rc)
 						{
 							//printf("found a rc %p\n", rc);
-							nifp *nif = nifp_saved(rc);
+							Nifp *nif = nifp_saved(rc);
 							if (nif == NULL)
 							{
 								nif = loadnifp(rc, 1);

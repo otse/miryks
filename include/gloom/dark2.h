@@ -10,10 +10,11 @@
 struct Grup;
 struct Record;
 struct Subrecord;
-struct rc;
-struct nifp;
+struct Rc;
+
+struct Nifp;
 struct Esp;
-struct bsa;
+struct Bsa;
 
 namespace gloom
 {
@@ -32,18 +33,18 @@ namespace gloom
 
 	namespace viewer
 	{
-		void view(rc *);
+		void view(Rc *);
 		extern Mesh *mesh;
 		extern DrawGroup *drawGroup;
 	} // namespace viewer
 
 	extern unsigned int fps;
 
-	struct rc *loadrc(const char *, const char *, unsigned long);
-	struct nifp *loadnifp(struct rc *, int);
+	Rc *loadrc(const char *, const char *, unsigned long);
+	Nifp *loadnifp(Rc *, int);
 
 	Esp *LoadPlugin(const char *);
-	bsa *LoadArchive(const char *);
+	Bsa *LoadArchive(const char *);
 
 	void programGo();
 	void programLoop();

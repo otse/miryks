@@ -4,9 +4,9 @@
 
 #define INVERT_COMPRESSED 0x40000000
 
-api void bsa_print_rc(struct bsa *b, char *s, int r)
+api void bsa_print_rc(Bsa *b, char *s, int r)
 {
-	struct rc *rc = b->rc[r];
+	Rc *rc = b->rc[r];
 	int w = snprintf(s, 200, "\
 resource: %i\
 \nfilename: %s\
@@ -22,7 +22,7 @@ rc->buf,
 );
 }
 
-api void bsa_print_fle_rcd(struct bsa *b, char *s, int i, int j)
+api void bsa_print_fle_rcd(Bsa *b, char *s, int i, int j)
 {
 	struct bsa_file *rcd = &b->file[i][j];
 	int w = snprintf(s, 200, "\
@@ -38,7 +38,7 @@ rcd->offset
 );
 }
 
-api void bsa_print_fld_rcd(struct bsa *b, char *s, int n)
+api void bsa_print_fld_rcd(Bsa *b, char *s, int n)
 {
 	struct bsa_fld *rcd = &b->fld[n];
 	int w = snprintf(s, 200, "\
@@ -54,7 +54,7 @@ rcd->offset
 );
 }
 
-api void bsa_print_hedr(struct bsa *b, char *s)
+api void bsa_print_hedr(Bsa *b, char *s)
 {
 #define hedr b->hdr
 	int w = snprintf(s, 600, "\

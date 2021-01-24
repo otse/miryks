@@ -27,7 +27,7 @@ void nifp_gui()
 	
 	for (int i = 0; i < nifps; i++)
 	{
-		nifp *nif = nifpmap[i].value;
+		Nifp *nif = nifpmap[i].value;
 
 		//if (!nif->path)
 			//continue;
@@ -112,7 +112,7 @@ void nifp_gui()
 
 			if (ImGui::Button(VIEW_NIF))
 			{
-				viewer::view((struct rc*)nifpmap[i].key);
+				viewer::view((Rc*)nifpmap[i].key);
 			}
 
 			ImGui::TreePop();

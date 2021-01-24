@@ -41,8 +41,8 @@ namespace gloom
 
 			if (!exists("temp/draugr/hkx/skeleton.hkx"))
 			{
-				bsa *animations = get_archives()[2];
-				rc *skeleton = bsa_find(animations, "meshes\\actors\\draugr\\character assets\\skeleton.hkx");
+				Bsa *animations = get_archives()[2];
+				Rc *skeleton = bsa_find(animations, "meshes\\actors\\draugr\\character assets\\skeleton.hkx");
 
 				if (skeleton)
 					printf("hkxcmd for draugr skeleton.hkx!\n");
@@ -63,7 +63,7 @@ namespace gloom
 				int r = animations->r[i];
 				for (int j = 0; j < animations->fld[i].num; j++)
 				{
-					rc *rc = animations->rc[r];
+					Rc *rc = animations->rc[r];
 					bsa_read(rc);
 					char path[255];
 					strcpy(path, "temp/draugr/hkx/");
@@ -89,7 +89,7 @@ namespace gloom
 			{
 				const char *path = "temp/draugr/kf/1hmattackf.kf";
 				printf("fetching random draugr kf\n");
-				struct nifp *nif = malloc_nifp();
+				Nifp *nif = malloc_nifp();
 				nif->path = path;
 				fbuf(path, &(char *)nif->buf);
 				nifp_read(nif);
@@ -107,8 +107,8 @@ namespace gloom
 
 			if (!exists("temp/character/hkx/skeleton.hkx"))
 			{
-				bsa *animations = get_archives()[2];
-				rc *skeleton = bsa_find(animations, "meshes\\actors\\character\\character assets\\skeleton.hkx");
+				Bsa *animations = get_archives()[2];
+				Rc *skeleton = bsa_find(animations, "meshes\\actors\\character\\character assets\\skeleton.hkx");
 
 				if (skeleton)
 					printf("found character.hkx for character / imperial race\n");
@@ -129,7 +129,7 @@ namespace gloom
 				int r = animations->r[i];
 				for (int j = 0; j < animations->fld[i].num; j++)
 				{
-					rc *rc = animations->rc[r];
+					Rc *rc = animations->rc[r];
 					bsa_read(rc);
 					char path[255];
 					strcpy(path, "temp/character/hkx/");
@@ -155,7 +155,7 @@ namespace gloom
 			{
 				const char *path = "temp/character/kf/1hm_idle.kf";
 				printf("fetching human idle kf\n");
-				struct nifp *nif = malloc_nifp();
+				Nifp *nif = malloc_nifp();
 				nif->path = path;
 				fbuf(path, &(char *)nif->buf);
 				nifp_read(nif);
@@ -193,9 +193,9 @@ namespace gloom
 
 		cassert(ANAM, "no actor race anam sub");
 
-		struct rc *rc = bsa_find(get_archives()[0], model);
+		Rc *rc = bsa_find(get_archives()[0], model);
 		bsa_read(rc);
-		struct nifp *character = malloc_nifp();
+		Nifp *character = malloc_nifp();
 		character->path = model;
 		character->buf = rc->buf;
 		nifp_read(character);

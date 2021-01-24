@@ -9,13 +9,13 @@
 
 // rundown / visitor
 
-void visit(struct nifprd *, int, int);
-void visit_other(struct nifprd *, int, int);
-void visit_block(struct nifprd *, void *);
+void visit(NifpRd *, int, int);
+void visit_other(NifpRd *, int, int);
+void visit_block(NifpRd *, void *);
 
-api struct nifprd *malloc_nifprd() {
-	struct nifprd *rd = malloc(sizeof(struct nifprd));
-	memset(rd, 0, sizeof(struct nifprd));
+api NifpRd *malloc_nifprd() {
+	NifpRd *rd = malloc(sizeof(NifpRd));
+	memset(rd, 0, sizeof(NifpRd));
 	rd->other = visit_other;
 	/*rd->ni_node = rd->ni_tri_shape
 				= rd->ni_tri_shape_data
@@ -28,16 +28,16 @@ api struct nifprd *malloc_nifprd() {
 	return rd;
 }
 
-api void free_nifprd(struct nifprd **p) {
-	struct nifprd *rd = *p;
+api void free_nifprd(NifpRd **p) {
+	NifpRd *rd = *p;
 	free(rd->skips);
 	free(rd);
 	*p = NULL;
 }
 
-api void nifp_rd(struct nifprd *rd) {
+api void nifp_rd(NifpRd *rd) {
 	// printf("nif rd\n");
-	struct nifp *nif = rd->nif;
+	Nifp *nif = rd->nif;
 	cassert(rd->nif, "nifprd nif not set");
 	rd->skips = malloc(sizeof(char) * Hedr->num_blocks);
 	memset(rd->skips, 0, sizeof(char) * Hedr->num_blocks);
@@ -46,10 +46,10 @@ api void nifp_rd(struct nifprd *rd) {
 	visit(rd, -1, n);
 }
 
-static void visit(struct nifprd *rd, int parent, int current)
+static void visit(NifpRd *rd, int parent, int current)
 {
 #define needs_parent if (-1 == parent) return;
-	struct nifp *nif = rd->nif;
+	Nifp *nif = rd->nif;
 	if (-1 == current)
 	return;
 	if (rd->skips[current])
@@ -138,5 +138,5 @@ static void visit(struct nifprd *rd, int parent, int current)
 	}
 }
 
-static void visit_other(struct nifprd *rd, void *block_pointer) {}
-static void visit_block(struct nifprd *rd, void *block_pointer) {}
+static void visit_other(NifpRd *rd, void *block_pointer) {}
+static void visit_block(NifpRd *rd, void *block_pointer) {}

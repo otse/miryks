@@ -10,7 +10,7 @@
 
 namespace gloom
 {
-	static void ni_node_callback(nifprd *, ni_node_pointer *);
+	static void ni_node_callback(NifpRd *, ni_node_pointer *);
 
 	Skeleton::Skeleton()
 	{
@@ -25,7 +25,7 @@ namespace gloom
 	{
 		printf("skeleton load anam %s\n", ANAM);
 		
-		rc *rc = loadrc("meshes\\", ANAM, 0x1);
+		Rc *rc = loadrc("meshes\\", ANAM, 0x1);
 
 		nif = loadnifp(rc, 1);
 
@@ -34,7 +34,7 @@ namespace gloom
 
 	void Skeleton::Construct()
 	{
-		nifprd *rd = malloc_nifprd();
+		NifpRd *rd = malloc_nifprd();
 		rd->nif = nif;
 		rd->data = this;
 		//rd->other = other;
@@ -44,7 +44,7 @@ namespace gloom
 		baseBone->group->Update();
 	}
 
-	Bone *Skeleton::Nested(nifprd *rd, int name)
+	Bone *Skeleton::Nested(NifpRd *rd, int name)
 	{
 		Bone *bone = new Bone();
 		bones[rd->current] = bone;
@@ -63,7 +63,7 @@ namespace gloom
 		bone->rest = bone->group->matrixWorld;
 	}
 
-	void ni_node_callback(nifprd *rd, ni_node_pointer *block)
+	void ni_node_callback(NifpRd *rd, ni_node_pointer *block)
 	{
 		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
@@ -79,7 +79,7 @@ namespace gloom
 
 	// keyframes
 
-	KeyFrames::KeyFrames(struct nifp *nif) : model(nif)
+	KeyFrames::KeyFrames(Nifp *nif) : model(nif)
 	{
 		cassert(strcmp(model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
 
@@ -102,7 +102,7 @@ namespace gloom
 	template <typename T, typename Y>
 	Lol<T, Y> interpolate(Animation *animation, int num, const T *keys)
 	{
-		struct nifp *nif = animation->keyframes->model;
+		Nifp *nif = animation->keyframes->model;
 
 		auto csp = animation->keyframes->csp;
 
@@ -177,7 +177,7 @@ namespace gloom
 
 	void Animation::SimpleNonInterpolated()
 	{
-		struct nifp *model = keyframes->model;
+		Nifp *model = keyframes->model;
 
 		struct controlled_block_pointer *cbp;
 

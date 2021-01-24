@@ -56,8 +56,8 @@ api Nifp *malloc_nifp() {
 	return nif;
 }
 
-api void free_nifp(Nifprd **p) {
-	Nifprd *nif = *p;
+api void free_nifp(NifpRd **p) {
+	NifpRd *nif = *p;
 	free(nif);
 	*p = NULL;
 }

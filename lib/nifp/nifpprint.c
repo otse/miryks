@@ -6,7 +6,7 @@
 #define Hedr   nif->hdr
 #define Blocks nif->blocks
 
-api void nifp_print_hedr(struct nifp *nif, char *s)
+api void nifp_print_hedr(Nifp *nif, char *s)
 {
 	snprintf(
 		s, 600,
@@ -101,7 +101,7 @@ static char *print_mat_4p(char *s, float *v)
 	return s;
 }
 
-static char *print_ni_common_layout_pointer(struct nifp *nif, char s[600], struct ni_common_layout_pointer *block_pointer)
+static char *print_ni_common_layout_pointer(Nifp *nif, char s[600], struct ni_common_layout_pointer *block_pointer)
 {
 	char x[200], y[200];
 	snprintf(
@@ -129,7 +129,7 @@ name: %s [%i]\
 	return s;
 }
 
-static void print_ni_node_pointer(struct nifp *nif, int n, char s[1000])
+static void print_ni_node_pointer(Nifp *nif, int n, char s[1000])
 {
 	char x[600];
 	struct ni_node_pointer *block_pointer = Blocks[n];
@@ -147,7 +147,7 @@ static void print_ni_node_pointer(struct nifp *nif, int n, char s[1000])
 		block_pointer->C->num_effects);
 }
 
-static void print_ni_tri_shape_pointer(struct nifp *nif, int n, char s[1000])
+static void print_ni_tri_shape_pointer(Nifp *nif, int n, char s[1000])
 {
 	char x[600];
 	struct ni_tri_shape_pointer *block_pointer = Blocks[n];
@@ -169,7 +169,7 @@ static void print_ni_tri_shape_pointer(struct nifp *nif, int n, char s[1000])
 		block_pointer->B->alpha_property);
 }
 
-static void print_ni_tri_shape_data_pointer(struct nifp *nif, int n, char s[1000])
+static void print_ni_tri_shape_data_pointer(Nifp *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200], e[200], f[200], g[200], h[200], i[200], j[200], k[200], l[200], m[200], o[200], p[200];
 	struct ni_tri_shape_data_pointer *block_pointer = Blocks[n];
@@ -184,7 +184,7 @@ group_id: %i\
 \nvertices\
 \nvertices 1: %s \
 \nvertices %i: %s \
-\nbs_vector_flags\
+\nbs_vector_flags dec: %hu\
 \nmaterial crc: %i\
 \nhas_normals: %i\
 \nnormals\
@@ -225,6 +225,7 @@ group_id: %i\
 		print_vec_3(a, block_pointer->vertices[0]),
 		block_pointer->A->num_vertices,
 		print_vec_3(b, block_pointer->vertices[block_pointer->A->num_vertices - 1]),
+		block_pointer->C->bs_vector_flags,
 		block_pointer->C->material_crc,
 		block_pointer->C->has_normals,
 		block_pointer->C->has_normals ? print_vec_3(c, block_pointer->normals[0]) : "",
@@ -257,7 +258,7 @@ group_id: %i\
 		block_pointer->match_groups);
 }
 
-static void print_bs_lighting_shader_property_pointer(struct nifp *nif, int n, char s[1000])
+static void print_bs_lighting_shader_property_pointer(Nifp *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
 	struct bs_lighting_shader_property_pointer *block_pointer = Blocks[n];
@@ -307,7 +308,7 @@ skyrim_shader_type: %u\
 		block_pointer->B->lighting_effect_2);
 }
 
-static void print_bs_shader_texture_set_pointer(struct nifp *nif, int n, char s[1000])
+static void print_bs_shader_texture_set_pointer(Nifp *nif, int n, char s[1000])
 {
 	struct bs_shader_texture_set_pointer *block_pointer = Blocks[n];
 	snprintf(
@@ -336,7 +337,7 @@ num_textures: %i\
 		block_pointer->textures[8]);
 }
 
-static void print_ni_controller_sequence_pointer(struct nifp *nif, int n, char s[1000])
+static void print_ni_controller_sequence_pointer(Nifp *nif, int n, char s[1000])
 {
 	struct ni_controller_sequence_pointer *block_pointer = Blocks[n];
 	snprintf(
@@ -370,7 +371,7 @@ name: %i\
 		block_pointer->C->num_anim_note_arrays);
 }
 
-static void print_ni_transform_interpolator(struct nifp *nif, int n, char s[1000])
+static void print_ni_transform_interpolator(Nifp *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
 	struct ni_transform_interpolator_pointer *block_pointer = Blocks[n];
@@ -389,7 +390,7 @@ transform:\
 		block_pointer->B->data);
 }
 
-static void print_ni_transform_data(struct nifp *nif, int n, char s[1000])
+static void print_ni_transform_data(Nifp *nif, int n, char s[1000])
 {
 	struct ni_transform_data_pointer *block_pointer = Blocks[n];
 	snprintf(
@@ -413,7 +414,7 @@ num_rotation_keys: %u\
 		block_pointer->scales->num_keys);
 }
 
-static void print_ni_skin_instance(struct nifp *nif, int n, char s[1000])
+static void print_ni_skin_instance(Nifp *nif, int n, char s[1000])
 {
 	struct ni_skin_instance_pointer *block_pointer = Blocks[n];
 	snprintf(
@@ -434,7 +435,7 @@ data: %i\
 		block_pointer->B->num_partitions);
 }
 
-static void print_ni_skin_data(struct nifp *nif, int n, char s[1000])
+static void print_ni_skin_data(Nifp *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
 	struct ni_skin_data_pointer *block_pointer = Blocks[n];
@@ -458,7 +459,7 @@ skin_transform:\
 
 static char *print_skin_partition(char *, struct skin_partition *);
 
-static void print_ni_skin_partition(struct nifp *nif, int n, char s[1000])
+static void print_ni_skin_partition(Nifp *nif, int n, char s[1000])
 {
 	char a[1000];
 	struct ni_skin_partition_pointer *block_pointer = Blocks[n];
@@ -502,7 +503,7 @@ static char *print_skin_partition(char *s, struct skin_partition *skin_partition
 	return s;
 }
 
-api void nifp_print_block(struct nifp *nif, int n, char s[1000])
+api void nifp_print_block(Nifp *nif, int n, char s[1000])
 {
 	s[0] = '\0';
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];

@@ -9,8 +9,8 @@ void test_callback(struct rd *, int, int);
 
 void nif_test()
 {
-	struct bsa *meshes = get_archives()[0];
-	struct rc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
+	Bsa *meshes = get_archives()[0];
+	Rc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	// or
 	// struct rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	cassert(rc, "mh no bucket02a");
