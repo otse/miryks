@@ -76,7 +76,7 @@ Record *read_record(Esp *esp)
 	rec->indices = 0;
 	rec->id = Count.records++;
 	rec->offset = Pos;
-	rec->hed = Buf + Pos;
+	rec->hed = Buf + Pos; // Todo cast to a record_header
 	Pos += sizeof(struct record_header);
 	Pos += 8;
 	rec->actualSize = rec->hed->size;
@@ -91,7 +91,7 @@ Record *read_record(Esp *esp)
 	{
 	if (rec->hed->flags & 0x00040000)
 	{
-	rec->buf = rec->pos = 0;
+	rec->buf = 0; rec->pos = 0;
 	uncompress_record(esp, rec);
 	read_record_fields(esp, rec);
 	Pos += rec->hed->size;
@@ -139,7 +139,7 @@ inline Subrecord *read_field(Esp *esp, Record *rec, unsigned int override)
 	sub->index = rec->indices++;
 	sub->id = Count.fields++;
 	sub->offset = Pos;
-	sub->hed = buf + *pos;
+	sub->hed = buf + *pos; // Cast to field_header
 	*pos += sizeof(struct field_header);
 	sub->actualSize = override == 0 ? sub->hed->size : override;
 	// data
@@ -192,7 +192,7 @@ void make_top_grups(Esp *esp)
 {
 	const int max = COUNT_OF(esp_types);
 	esp->tops = malloc(sizeof(const char *) * max);
-	for (int i = 0; i < esp->grups.size; i++)
+	for (unsigned int i = 0; i < esp->grups.size; i++)
 	{
 	esp->tops[i] = "None";
 	const Grup *grup = esp->grups.elements[i];
@@ -216,7 +216,7 @@ void make_top_grups(Esp *esp)
 
 api Grup *esp_get_top_grup(const Esp *esp, const char type[5])
 {
-	for (int i = 0; i < esp->grups.size; i++)
+	for (unsigned int i = 0; i < esp->grups.size; i++)
 	if (*(unsigned int *)type == *(unsigned int *)esp->tops[i])
 	return esp->grups.elements[i];
 	return NULL;
@@ -243,7 +243,7 @@ void make_form_ids(Esp *esp)
 {
 	struct esp_array *array = &esp->records;
 	esp->formIds = malloc(sizeof(struct form_id) * array->size);
-	for (int i = 0; i < array->size; i++)
+	for (unsigned int i = 0; i < array->size; i++)
 	build_form_id(esp, array->elements[i], &esp->formIds[i]);
 }
 
@@ -254,7 +254,7 @@ api Record *esp_brute_record_by_form_id(unsigned int formId)
 	Esp *esp = plugins[i];
 	if (esp == NULL)
 	continue;
-	for (int j = 0; j < esp->records.size; j++)
+	for (unsigned int j = 0; j < esp->records.size; j++)
 	{
 	Record *rec = esp->records.elements[j];
 	if (rec->fi->formId == formId)
@@ -279,7 +279,7 @@ api struct esp_array *esp_filter_objects(const Esp *esp, const char type[5])
 	struct esp_array *filtered;
 	filtered = malloc(sizeof(struct esp_array));
 	array(filtered, 100);
-	for (int i = 0; i < esp->records.size; i++)
+	for (unsigned int i = 0; i < esp->records.size; i++)
 	{
 	Record *record = esp->records.elements[i];
 	if (record->hed->type == *(unsigned int *)type)
@@ -323,7 +323,7 @@ api void free_plugin(Esp **p)
 	for (int i = 5; i --> 0; )
 	if (esp == plugins[i])
 	plugins[i] = NULL;
-	for (int i = 0; i < esp->records.size; i++)
+	for (unsigned int i = 0; i < esp->records.size; i++)
 	{
 	Record *record = esp->records.elements[i];
 	if (record->hed->flags & 0x00040000)

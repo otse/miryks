@@ -42,6 +42,10 @@ project "Dark2"
 		"include/**",
 	}
 
+	excludes {
+		"lib/graveyard/*"
+	}
+
 	includedirs {
 		"dep",
 		"src",

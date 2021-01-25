@@ -51,8 +51,9 @@ void nifp_read_blocks(Nifp *);
 api Nifp   *malloc_nifp();
 api NifpRd *malloc_nifprd();
 
-api void free_nifp(Nifp **);
+api void free_nifp  (Nifp **);
 api void free_nifprd(NifpRd **);
+
 api void nifp_rd(NifpRd *);
 
 api void nifp_read(Nifp *);

@@ -31,7 +31,7 @@ void im_grup(Grup *grup, int top_grup = -1)
 		char s[100];
 		esp_print_grup(plugin, s, grup);
 		ImGui::Text(s);
-		for (int i = 0; i < grup->mixed.size; i++)
+		for (unsigned int i = 0; i < grup->mixed.size; i++)
 		{
 			void *element = grup->mixed.elements[i];
 			if (*(char *)element == GRUP)
@@ -70,7 +70,7 @@ void im_record(Record *record)
 			}
 			ImGui::TreePop();
 		}
-		for (int i = 0; i < record->fields.size; i++)
+		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			im_subrecord(record->fields.subrecords[i]);
 		}
@@ -157,7 +157,7 @@ void esp_gui()
 			//}
 			//if (ImGui::TreeNode("Grups"))
 			//{
-			for (int i = 0; i < plugin->grups.size; i++)
+			for (unsigned int i = 0; i < plugin->grups.size; i++)
 				im_grup((Grup *)plugin->grups.elements[i], i);
 			//ImGui::TreePop();
 			//}
@@ -191,7 +191,7 @@ void esp_gui()
 				const ImGuiWindowFlags child_flags = 0;
 				const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
 				const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
-				for (int i = 0; i < filtered->size; i++)
+				for (unsigned int i = 0; i < filtered->size; i++)
 					im_record((Record *)filtered->elements[i]);
 				ImGui::EndChild();
 			}

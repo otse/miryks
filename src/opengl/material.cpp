@@ -40,7 +40,7 @@ Material::Material()
 	composeUvTransform();
 
 	color = vec3(1, 1, 1);
-	specular = vec3(17.0 / 255.0);
+	specular = vec3(17.0f / 255.0f);
 	emissive = vec3(0);
 
 	skin_partition = nullptr;
@@ -159,7 +159,7 @@ void Material::Use()
 	{
 		shader->SetMat4("bindMatrix", bindMatrix);
 		shader->SetMat4("bindMatrixInverse", glm::inverse(bindMatrix));
-		for (unsigned int u = 0; u < bones; u ++)
+		for (unsigned int u = 0; u < (unsigned)bones; u ++)
 		{
 			char s[100];
 			snprintf(s, 100, "boneMatrices[%u]", u);

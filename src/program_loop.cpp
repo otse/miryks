@@ -273,9 +273,12 @@ void gloom::programLoop()
 		camera->Update(0.016);
 
 		// someDraugr
+		if (someDraugr)
 		someDraugr->Step();
+		if (meanSkelly)
 		meanSkelly->Step();
 		//someHuman->Step();
+		if (player1)
 		player1->Step();
 		
 		dungeon->Update();

@@ -55,7 +55,7 @@ void bsa_gui()
 			{
 				printf("unloading non load ordered %s\n", bsa->path);
 				bsa_free(&bsa);
-				printf("bsa after bsa_free: %i\n", bsa);
+				printf("bsa after bsa_free: %i\n", (int) bsa);
 			}
 			bsa = bsa_get(path->c_str());
 			if (bsa == NULL)

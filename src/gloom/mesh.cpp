@@ -288,6 +288,7 @@ namespace gloom
 
 	void ni_skin_data_callback(NifpRd *rd, ni_skin_data_pointer *block)
 	{
+		// used below
 	}
 
 	void ni_skin_partition_callback(NifpRd *rd, ni_skin_partition_pointer *block)

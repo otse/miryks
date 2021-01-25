@@ -68,7 +68,7 @@ void read_file_records(Bsa *bsa)
 {
 	bsa->file = malloc(sizeof(struct bsa_file *) * Hedr.folders);
 	bsa->ca = malloc(sizeof(char *) * Hedr.folders);
-	for (int i = 0; i < Hedr.folders; i++)
+	for (unsigned int i = 0; i < Hedr.folders; i++)
 	{
 	const int num = bsa->fld[i].num;
 	bsa->file[i] = malloc(sizeof(struct bsa_file) * num);
@@ -82,7 +82,7 @@ void read_filenames(Bsa *bsa)
 	char *buf = malloc(sizeof(char) * Hedr.filesl);
 	bsa->cb = malloc(sizeof(char *) * Hedr.files);
 	read(bsa, buf, Hedr.filesl);
-	int i = 0, j = 0, n = 0;
+	unsigned int i = 0, j = 0, n = 0;
 	while (i++ < Hedr.filesl)
 	{
 	if (buf[i] != '\0')
@@ -108,10 +108,10 @@ void resources(Bsa *bsa)
 	bsa->rc = malloc(sizeof(Rc *) * Hedr.files);
 	bsa->r = malloc(sizeof(int) * Hedr.folders);
 	int r = 0;
-	for (int i = 0; i < Hedr.folders; i++)
+	for (unsigned int i = 0; i < Hedr.folders; i++)
 	{
 	bsa->r[i] = r;
-	for (int j = 0; j < bsa->fld[i].num; j++)
+	for (unsigned int j = 0; j < bsa->fld[i].num; j++)
 	{
 	bsa->rc[r] = malloc(sizeof(Rc));
 	*bsa->rc[r] = (Rc){bsa, i, j, r, -1, bsa->cb[r], NULL};
@@ -127,15 +127,15 @@ api Rc *bsa_find(Bsa *bsa, const char *p)
 	FileStem(stem, p, '\\');
 	FileName(name, p, '\\');
 	if (stem==NULL||name==NULL)
-	return;
+	return NULL;
 	int cmp;
 	int r;
-	for (int i = 0; i < Hedr.folders; i++)
+	for (unsigned int i = 0; i < Hedr.folders; i++)
 	{
 	cmp = strcmp(stem, bsa->ca[i]);
 	if (cmp) continue;
 	r = bsa->r[i];
-	for (int j = 0; j < bsa->fld[i].num; j++)
+	for (unsigned int j = 0; j < bsa->fld[i].num; j++)
 	{
 	cmp = strcmp(name, bsa->cb[r]);
 	if (0 == cmp)
@@ -151,10 +151,10 @@ api void bsa_search(Bsa *bsa, Rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num
 	char *str;
 	int r;
 	int n = 0;
-	for (int i = 0; i < Hedr.folders; i++)
+	for (unsigned int i = 0; i < Hedr.folders; i++)
 	{
 	r = bsa->r[i];
-	for (int j = 0; j < bsa->fld[i].num; j++)
+	for (unsigned int j = 0; j < bsa->fld[i].num; j++)
 	{
 	str = strstr(bsa->cb[r], s);
 	if (str!=NULL) {
@@ -226,7 +226,7 @@ api void bsa_free(Bsa **b)
 	// Delete file records
 	if (Hedr.folders)
 	{
-	for (int i = 0; i < Hedr.folders; i++)
+	for (unsigned int i = 0; i < Hedr.folders; i++)
 	{
 	free(bsa->file[i]);
 	free(bsa->ca[i]);

@@ -122,8 +122,8 @@ name: %s [%i]\
 		block_pointer->A->num_extra_data_list,
 		block_pointer->C->controller,
 		block_pointer->C->flags,
-		print_vec_3(x, block_pointer->C->translation),
-		print_mat_3(y, block_pointer->C->rotation),
+		print_vec_3p(x, block_pointer->C->translation),
+		print_mat_3p(y, block_pointer->C->rotation),
 		block_pointer->C->scale,
 		block_pointer->C->collision_object);
 	return s;
@@ -206,7 +206,7 @@ group_id: %i\
 \nuv_sets 1: %s\
 \nuv_sets %i: %s\
 \nconsistency_flags: %hu\
-\nadditional_data: %i\
+\nadditional_data: %u\
 \nnum_triangles: %hu\
 \nnum_triangle_points: %hu\
 \nhas_triangles: %i\
@@ -215,47 +215,45 @@ group_id: %i\
 \ntriangles %i: %s\
 \nnum_match_groups: %hu\
 \nmatch_groups\
-\nmatch_group: %i\
 ",
 		block_pointer->A->group_id,
 		block_pointer->A->num_vertices,
 		block_pointer->A->keep_flags,
 		block_pointer->A->compress_flags,
 		block_pointer->A->has_vertices,
-		print_vec_3(a, block_pointer->vertices[0]),
+		print_vec_3p(a, block_pointer->vertices[0]),
 		block_pointer->A->num_vertices,
-		print_vec_3(b, block_pointer->vertices[block_pointer->A->num_vertices - 1]),
+		print_vec_3p(b, block_pointer->vertices[block_pointer->A->num_vertices - 1]),
 		block_pointer->C->bs_vector_flags,
 		block_pointer->C->material_crc,
 		block_pointer->C->has_normals,
-		block_pointer->C->has_normals ? print_vec_3(c, block_pointer->normals[0]) : "",
+		block_pointer->C->has_normals ? print_vec_3p(c, block_pointer->normals[0]) : "",
 		block_pointer->A->num_vertices,
-		block_pointer->C->has_normals ? print_vec_3(d, block_pointer->normals[block_pointer->A->num_vertices - 1]) : "",
-		print_vec_3(e, block_pointer->tangents[0]),
+		block_pointer->C->has_normals ? print_vec_3p(d, block_pointer->normals[block_pointer->A->num_vertices - 1]) : "",
+		print_vec_3p(e, block_pointer->tangents[0]),
 		block_pointer->A->num_vertices,
-		print_vec_3(f, block_pointer->tangents[block_pointer->A->num_vertices - 1]),
-		print_vec_3(g, block_pointer->bitangents[0]),
+		print_vec_3p(f, block_pointer->tangents[block_pointer->A->num_vertices - 1]),
+		print_vec_3p(g, block_pointer->bitangents[0]),
 		block_pointer->A->num_vertices,
-		print_vec_3(h, block_pointer->bitangents[block_pointer->A->num_vertices - 1]),
-		print_vec_3(i, block_pointer->G->center),
+		print_vec_3p(h, block_pointer->bitangents[block_pointer->A->num_vertices - 1]),
+		print_vec_3p(i, block_pointer->G->center),
 		block_pointer->G->radius,
 		block_pointer->G->has_vertex_colors,
-		block_pointer->G->has_vertex_colors ? print_vec_4(j, block_pointer->vertex_colors[0]) : "",
+		block_pointer->G->has_vertex_colors ? print_vec_4p(j, block_pointer->vertex_colors[0]) : "",
 		block_pointer->A->num_vertices,
-		block_pointer->G->has_vertex_colors ? print_vec_4(k, block_pointer->vertex_colors[block_pointer->A->num_vertices - 1]) : "",
-		print_vec_2(l, block_pointer->uv_sets[0]),
+		block_pointer->G->has_vertex_colors ? print_vec_4p(k, block_pointer->vertex_colors[block_pointer->A->num_vertices - 1]) : "",
+		print_vec_2p(l, block_pointer->uv_sets[0]),
 		block_pointer->A->num_vertices,
-		print_vec_2(m, block_pointer->uv_sets[block_pointer->A->num_vertices - 1]),
+		print_vec_2p(m, block_pointer->uv_sets[block_pointer->A->num_vertices - 1]),
 		block_pointer->J->consistency_flags,
 		block_pointer->J->additional_data,
 		block_pointer->J->num_triangles,
 		block_pointer->J->num_triangle_points,
 		block_pointer->J->has_triangles,
-		print_ushort_3(o, block_pointer->triangles[0]),
+		print_ushort_3p(o, block_pointer->triangles[0]),
 		block_pointer->J->num_triangles,
-		block_pointer->J->has_triangles ? print_ushort_3(p, block_pointer->triangles[block_pointer->J->num_triangles - 1]) : "",
-		block_pointer->L->num_match_groups,
-		block_pointer->match_groups);
+		block_pointer->J->has_triangles ? print_ushort_3p(p, block_pointer->triangles[block_pointer->J->num_triangles - 1]) : "",
+		block_pointer->L->num_match_groups);
 }
 
 static void print_bs_lighting_shader_property_pointer(Nifp *nif, int n, char s[1000])
@@ -293,16 +291,16 @@ skyrim_shader_type: %u\
 		block_pointer->B->controller,
 		block_pointer->B->shader_flags_1,
 		block_pointer->B->shader_flags_2,
-		print_vec_2(a, block_pointer->B->uv_offset),
-		print_vec_2(b, block_pointer->B->uv_scale),
+		print_vec_2p(a, block_pointer->B->uv_offset),
+		print_vec_2p(b, block_pointer->B->uv_scale),
 		block_pointer->B->texture_set,
-		print_vec_3(c, block_pointer->B->emissive_color),
+		print_vec_3p(c, block_pointer->B->emissive_color),
 		block_pointer->B->emissive_multiple,
 		block_pointer->B->texture_clamp_mode,
 		block_pointer->B->alpha,
 		block_pointer->B->refraction_strength,
 		block_pointer->B->glossiness,
-		print_vec_3(d, block_pointer->B->specular_color),
+		print_vec_3p(d, block_pointer->B->specular_color),
 		block_pointer->B->specular_strength,
 		block_pointer->B->lighting_effect_1,
 		block_pointer->B->lighting_effect_2);
@@ -373,7 +371,7 @@ name: %i\
 
 static void print_ni_transform_interpolator(Nifp *nif, int n, char s[1000])
 {
-	char a[200], b[200], c[200], d[200];
+	char a[200], b[200];//, c[200], d[200];
 	struct ni_transform_interpolator_pointer *block_pointer = Blocks[n];
 	snprintf(
 		s, 1000,
@@ -384,8 +382,8 @@ transform:\
 \n scale: %f\
 \ndata: %i\
 ",
-		print_vec_3(a, block_pointer->transform->translation),
-		print_vec_4(b, block_pointer->transform->rotation),
+		print_vec_3p(a, block_pointer->transform->translation),
+		print_vec_4p(b, block_pointer->transform->rotation),
 		block_pointer->transform->scale,
 		block_pointer->B->data);
 }
@@ -437,7 +435,7 @@ data: %i\
 
 static void print_ni_skin_data(Nifp *nif, int n, char s[1000])
 {
-	char a[200], b[200], c[200], d[200];
+	char a[200], b[200];//, c[200], d[200];
 	struct ni_skin_data_pointer *block_pointer = Blocks[n];
 	snprintf(
 		s, 1000,

@@ -56,8 +56,8 @@ api Nifp *malloc_nifp() {
 	return nif;
 }
 
-api void free_nifp(NifpRd **p) {
-	NifpRd *nif = *p;
+api void free_nifp(Nifp **p) {
+	Nifp *nif = *p;
 	free(nif);
 	*p = NULL;
 }
@@ -186,7 +186,7 @@ void read_block(Nifp *nif, int n)
 	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) block = read_ni_controller_sequence(nif, n);
 	else if ( ni_is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
 	else if ( ni_is_type(NI_STRING_EXTRA_DATA) ) 0;
-	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) block = read_ni_transform_interpolator(nif, n);
+	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) block = read_ni_transform_interpolator(nif, n); 
 	else if ( ni_is_type(NI_TRANSFORM_DATA) ) block = read_ni_transform_data(nif, n);
 	else if ( ni_is_type(BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA) ) 0;
 	Blocks[n] = block;
@@ -362,10 +362,7 @@ void *read_bs_shader_texture_set(nifpr)
 	block_pointer = malloc(sizeof(struct bs_shader_texture_set_pointer));
 	memset(block_pointer, NULL, sizeof(struct bs_shader_texture_set_pointer));
 	Sink(nif, block_pointer, bs_shader_texture_set_pointer, A, 4);
-	block_pointer->textures = malloc(sizeof(char *) * block_pointer->A->num_textures);
-	memset(block_pointer->textures, '\0', block_pointer->A->num_textures);
-	for (int i = 0; i < block_pointer->A->num_textures; i++)
-	block_pointer->textures[i] = nif_read_sized_string(nif); 
+	read_sized_strings(nif, &block_pointer->textures, block_pointer->A->num_textures);
 	return block_pointer;
 }
 

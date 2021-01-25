@@ -9,7 +9,7 @@
 
 // rundown / visitor
 
-void visit(NifpRd *, int, int);
+void visit      (NifpRd *, int, int);
 void visit_other(NifpRd *, int, int);
 void visit_block(NifpRd *, void *);
 
