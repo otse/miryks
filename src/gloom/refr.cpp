@@ -83,7 +83,7 @@ namespace gloom
 
 			if (base->IsAny({"STAT", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
 			{
-				for (int i = 0; i < base->record->fields.size; i++)
+				for (unsigned int i = 0; i < base->record->fields.size; i++)
 				{
 					Subrecord *field = base->record->fields.subrecords[i];
 					if (field->hed->type != espwrd "MODL")

@@ -48,7 +48,7 @@ namespace gloom
 					printf("hkxcmd for draugr skeleton.hkx!\n");
 
 				const char *fld = "meshes\\actors\\draugr\\animations";
-				int i = 0;
+				unsigned int i = 0;
 				int good = 0;
 				for (; i < animations->hdr.folders; i++)
 				{
@@ -61,7 +61,7 @@ namespace gloom
 				}
 
 				int r = animations->r[i];
-				for (int j = 0; j < animations->fld[i].num; j++)
+				for (unsigned int j = 0; j < animations->fld[i].num; j++)
 				{
 					Rc *rc = animations->rc[r];
 					bsa_read(rc);
@@ -83,7 +83,7 @@ namespace gloom
 				system("hkxcmd.exe exportkf \"temp/draugr/hkx/skeleton.hkx\" \"temp/draugr/hkx/\" \"temp/draugr/kf\"");
 
 				if (skeleton)
-					printf("draugr hkx skeleton found %i\n", skeleton);
+					printf("draugr hkx skeleton found %i\n", (int) skeleton);
 			}
 			else
 			{
@@ -114,7 +114,7 @@ namespace gloom
 					printf("found character.hkx for character / imperial race\n");
 
 				const char *fld = "meshes\\actors\\character\\animations";
-				int i = 0;
+				unsigned int i = 0;
 				int good = 0;
 				for (; i < animations->hdr.folders; i++)
 				{
@@ -127,7 +127,7 @@ namespace gloom
 				}
 
 				int r = animations->r[i];
-				for (int j = 0; j < animations->fld[i].num; j++)
+				for (unsigned int j = 0; j < animations->fld[i].num; j++)
 				{
 					Rc *rc = animations->rc[r];
 					bsa_read(rc);
@@ -149,7 +149,7 @@ namespace gloom
 				system("hkxcmd.exe exportkf \"temp/character/hkx/skeleton.hkx\" \"temp/character/hkx/\" \"temp/character/kf\"");
 
 				if (skeleton)
-					printf("skeleton hkx skeleton found %i\n", skeleton);
+					printf("skeleton hkx skeleton found %i\n", (int) skeleton);
 			}
 			else
 			{

@@ -23,13 +23,13 @@ namespace gloom
 
 		cassert(top, "no cells top grup");
 
-		for (int i = 0; i < top->mixed.size; i++)
+		for (unsigned int i = 0; i < top->mixed.size; i++)
 		{
 			Grup *A = (Grup *)top->mixed.elements[i];
-			for (int j = 0; j < A->mixed.size; j++)
+			for (unsigned int j = 0; j < A->mixed.size; j++)
 			{
 				Grup *B = (Grup *)A->mixed.elements[j];
-				for (int k = 0; k < B->mixed.size; k += 2)
+				for (unsigned int k = 0; k < B->mixed.size; k += 2)
 				{
 					Record *object = B->mixed.records[k];
 					Grup *grup = B->mixed.grups[k + 1];
@@ -81,7 +81,7 @@ namespace gloom
 	{
 		if (grup == nullptr)
 			return;
-		for (int i = 0; i < grup->mixed.size; i++)
+		for (unsigned int i = 0; i < grup->mixed.size; i++)
 		{
 			void *element = grup->mixed.elements[i];
 			cassert(*(char *)element == RECORD, "mixed non record");

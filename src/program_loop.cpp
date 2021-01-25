@@ -119,7 +119,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 {
 	static double x2 = x;
 	static double y2 = y;
-	camera->Mouse(x - x2, y - y2);
+	camera->Mouse((float)(x - x2), (float)(y - y2));
 	x2 = x;
 	y2 = y;
 }
@@ -270,7 +270,7 @@ void gloom::programLoop()
 
 		doKeys();
 
-		camera->Update(0.016);
+		camera->Update(0.016f);
 
 		// someDraugr
 		if (someDraugr)

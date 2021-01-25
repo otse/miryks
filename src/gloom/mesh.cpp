@@ -86,7 +86,7 @@ namespace gloom
 			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
 			auto skin_instance = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
 			auto skin_partition = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
-			for (int k = 0; k < *skin_partition->num_skin_partition_blocks; k++)
+			for (unsigned int k = 0; k < *skin_partition->num_skin_partition_blocks; k++)
 			{
 				struct skin_partition *part = skin_partition->skin_partition_blocks[k];
 				Group *group = mesh->groups[index]->groups[k];
@@ -297,7 +297,7 @@ namespace gloom
 		auto nif = smesh->mesh->nif;
 		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, smesh->shapes.back());
 		auto data = (ni_tri_shape_data_pointer *)nifp_get_block(nif, shape->A->data);
-		for (int k = 0; k < *block->num_skin_partition_blocks; k++)
+		for (unsigned int k = 0; k < *block->num_skin_partition_blocks; k++)
 		{
 			struct skin_partition *part = block->skin_partition_blocks[k];
 			Group *group = new Group;

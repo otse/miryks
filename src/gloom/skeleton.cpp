@@ -181,7 +181,7 @@ namespace gloom
 
 		struct controlled_block_pointer *cbp;
 
-		for (int i = 0; i < keyframes->csp->A->num_controlled_blocks; i++)
+		for (unsigned int i = 0; i < keyframes->csp->A->num_controlled_blocks; i++)
 		{
 			// Match node_name to a skeleton bone
 

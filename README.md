@@ -7,6 +7,5 @@ Thanks for reading.
 premake5 vs2019
 &
 msbuild /property:Configuration=Release
-
-also
--target:Clean
+msbuild /property:Configuration=Release -target:Clean
+msbuild /property:Configuration=Release -target:Rebuild
