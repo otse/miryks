@@ -1,4 +1,4 @@
-#include <gloom/libs>
+#include <libs>
 
 #include <gloom/mesh.h>
 

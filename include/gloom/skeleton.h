@@ -1,7 +1,7 @@
 #ifndef GLOOM_SKELETON_H
 #define GLOOM_SKELETON_H
 
-#include <gloom/libs>
+#include <libs>
 #include <gloom/dark2.h>
 
 #include <opengl/types.h>

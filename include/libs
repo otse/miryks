@@ -1,0 +1,8 @@
+extern "C"
+{
+#include <putc.h>
+#include <bsa.h>
+#include <nifp/nifp.h>
+#include <nifp/nitypes.h>
+#include <esp.h>
+}

@@ -29,17 +29,17 @@ typedef struct NifpRd
 	Nifp *nif;
 	void *data;
 	int parent, current;
-	void (*other)(struct NifpRd *, void *block_pointer);
-	void (*ni_node)(struct NifpRd *, struct ni_node_pointer *);
-	void (*ni_tri_shape)(struct NifpRd *, struct ni_tri_shape_pointer *);
-	void (*ni_tri_shape_data)(struct NifpRd *, struct ni_tri_shape_data_pointer *);
-	void (*bs_lighting_shader_property)(struct NifpRd *, struct bs_lighting_shader_property_pointer *);
-	void (*bs_shader_texture_set)(struct NifpRd *, struct bs_shader_texture_set_pointer *);
-	void (*ni_alpha_property)(struct NifpRd *, struct ni_alpha_property_pointer *);
-	void (*ni_controller_sequence)(struct NifpRd *, struct ni_controller_sequence_pointer *);
-	void (*ni_skin_instance)(struct NifpRd *, struct ni_skin_instance_pointer *);
-	void (*ni_skin_data)(struct NifpRd *, struct ni_skin_data_pointer *);
-	void (*ni_skin_partition)(struct NifpRd *, struct ni_skin_partition_pointer *);
+	void (*other)						(struct NifpRd *, void *block_pointer);
+	void (*ni_node)						(struct NifpRd *, struct ni_node_pointer *);
+	void (*ni_tri_shape)				(struct NifpRd *, struct ni_tri_shape_pointer *);
+	void (*ni_tri_shape_data)			(struct NifpRd *, struct ni_tri_shape_data_pointer *);
+	void (*bs_lighting_shader_property)	(struct NifpRd *, struct bs_lighting_shader_property_pointer *);
+	void (*bs_shader_texture_set)		(struct NifpRd *, struct bs_shader_texture_set_pointer *);
+	void (*ni_alpha_property)			(struct NifpRd *, struct ni_alpha_property_pointer *);
+	void (*ni_controller_sequence)		(struct NifpRd *, struct ni_controller_sequence_pointer *);
+	void (*ni_skin_instance)			(struct NifpRd *, struct ni_skin_instance_pointer *);
+	void (*ni_skin_data)				(struct NifpRd *, struct ni_skin_data_pointer *);
+	void (*ni_skin_partition)			(struct NifpRd *, struct ni_skin_partition_pointer *);
 } NifpRd;
 
 void nifp_gui();

@@ -1,4 +1,4 @@
-// based on ortham libespm
+// based on ortham/libespm
 
 // the words subrecords and fields are used interchangeably
 
@@ -35,7 +35,7 @@ unsigned int hedr_num_records(Esp *esp)
 {
 	if (esp_skip_fields)
 	return 200;
-	//return *(unsigned int *)(esp->header->fields.subrecords[0]->data + 4);
+	return *(unsigned int *)(esp->header->fields.subrecords[0]->data + 4);
 }
 
 Esp *plugin_slate()

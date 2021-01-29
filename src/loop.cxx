@@ -2,7 +2,7 @@
 #include <gloom/mesh.h>
 #include <gloom/level.h>
 #include <gloom/actor.h>
-#include <gloom/libs>
+#include <libs>
 
 #include <opengl/camera.h>
 #include <opengl/scene.h>
@@ -88,7 +88,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		const char *name = plugin->name;
 		Esp *has = has_plugin(name);
 		free_plugin(&has);
-		get_plugins()[1] = LoadPlugin(name);
+		get_plugins()[1] = loadEsp(name);
 		delete dungeon;
 		dungeon = new Level("GloomGen");
 	}

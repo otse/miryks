@@ -1,7 +1,7 @@
 #include <gloom/dark2.h>
 #include <gloom/files.h>
 
-#include <gloom/libs>
+#include <libs>
 
 #include <sstream>
 #include <imgui.h>

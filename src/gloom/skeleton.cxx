@@ -1,6 +1,6 @@
 #include <algorithm>
 
-#include <gloom/libs>
+#include <libs>
 #include <gloom/skeleton.h>
 
 #include <opengl/group.h>
@@ -24,11 +24,8 @@ namespace gloom
 	void Skeleton::Load(const char *ANAM)
 	{
 		printf("skeleton load anam %s\n", ANAM);
-		
-		Rc *rc = loadrc("meshes\\", ANAM, 0x1);
-
-		nif = loadnifp(rc, 1);
-
+		Rc *rc = loadRc("meshes\\", ANAM, 0x1);
+		nif = loadNifp(rc, 1);
 		printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
 
@@ -62,7 +59,7 @@ namespace gloom
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
 	}
-
+	
 	void ni_node_callback(NifpRd *rd, ni_node_pointer *block)
 	{
 		//printf("skelly ni node callback\n");
@@ -70,7 +67,6 @@ namespace gloom
 		Bone *bone = skeleton->Nested(rd, block->common->A->name);
 		matrix_from_common(bone, block->common);
 	}
-
 	void Skeleton::Step()
 	{
 		if (animation)

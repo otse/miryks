@@ -4,7 +4,7 @@
 #include <gloom/mesh.h>
 #include <gloom/files.h>
 
-#include <gloom/libs>
+#include <libs>
 
 #include <algorithm>
 #include <cctype>
@@ -103,7 +103,7 @@ namespace gloom
 							Nifp *nif = nifp_saved(rc);
 							if (nif == NULL)
 							{
-								nif = loadnifp(rc, 1);
+								nif = loadNifp(rc, 1);
 							}
 							mesh = new Mesh;
 							mesh->Construct(nif);

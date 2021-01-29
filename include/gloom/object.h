@@ -3,7 +3,7 @@
 
 #include <gloom/dark2.h>
 
-#include <gloom/libs>
+#include <libs>
 
 namespace gloom
 {

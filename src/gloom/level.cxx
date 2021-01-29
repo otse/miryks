@@ -1,7 +1,7 @@
 #include <gloom/level.h>
 #include <gloom/mesh.h>
 #include <gloom/object.h>
-#include <gloom/libs>
+#include <libs>
 
 #include <algorithm>
 #include <cctype>

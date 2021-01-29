@@ -53,9 +53,15 @@ namespace gloom
 
 namespace gloom
 {
+	vec2 *cast_vec_2(float *f) { return reinterpret_cast<vec2 *>(f); }
+	vec3 *cast_vec_3(float *f) { return reinterpret_cast<vec3 *>(f); }
+	vec4 *cast_vec_4(float *f) { return reinterpret_cast<vec4 *>(f); }
+	mat3 *cast_mat_3(float *f) { return reinterpret_cast<mat3 *>(f); }
+	mat4 *cast_mat_4(float *f) { return reinterpret_cast<mat4 *>(f); }
+
 	const char *dataFolder = "Data/";
 
-	Rc *loadrc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
+	Rc *loadRc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
 	{
 		std::string str = prepend;
 		str += path;
@@ -65,7 +71,7 @@ namespace gloom
 		return rc;
 	}
 
-	Nifp *loadnifp(Rc *rc, int save)
+	Nifp *loadNifp(Rc *rc, int save)
 	{
 		cassert(rc, "mh no rc");
 		bsa_read(rc);
@@ -78,7 +84,7 @@ namespace gloom
 		return nif;
 	}
 
-	Esp *LoadPlugin(const char *filename)
+	Esp *loadEsp(const char *filename)
 	{
 		printf("LoadPlugin %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
@@ -86,7 +92,8 @@ namespace gloom
 		int ret;
 		// Try load plugin from skyrim else local folder
 		(ret = fbuf(path.c_str(), &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
-		if (ret == -1) {
+		if (ret == -1)
+		{
 			printf("Cant fbuf %s !\n", filename);
 			cassert(false, "Esp unfound");
 			return nullptr;
@@ -99,7 +106,7 @@ namespace gloom
 		return plugin;
 	}
 
-	Bsa *LoadArchive(const char *filename)
+	Bsa *loadBsa(const char *filename)
 	{
 		std::string path = pathToOldrim + dataFolder + filename;
 		printf("%s\n", path.c_str());
@@ -121,7 +128,7 @@ namespace gloom
 		Nifp *nif = nifp_saved(rc);
 		if (nif == NULL)
 		{
-			nif = loadnifp(rc, 1);
+			nif = loadNifp(rc, 1);
 			nifp_save(rc, nif);
 		}
 		mesh = new Mesh;
@@ -144,16 +151,16 @@ int main()
 	pathToOldrim = fread("path to oldrim.txt");
 	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
 	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe, check your path");
-	get_plugins()[0] = LoadPlugin("Skyrim.esm");
+	get_plugins()[0] = loadEsp("Skyrim.esm");
 	if (get_plugins()[0])
 		printf("loaded skyrim.esm!\n");
-	get_plugins()[1] = LoadPlugin("Gloom.esp");
-	get_archives()[0] = LoadArchive("Skyrim - Meshes.bsa");
-	get_archives()[1] = LoadArchive("Skyrim - Textures.bsa");
-	get_archives()[2] = LoadArchive("Skyrim - Animations.bsa");
-	//get_archives()[3] = LoadArchive("HighResTexturePack01.bsa");
-	//get_archives()[4] = LoadArchive("HighResTexturePack02.bsa");
-	//get_archives()[5] = LoadArchive("HighResTexturePack03.bsa");
+	get_plugins()[1] = loadEsp("Gloom.esp");
+	get_archives()[0] = loadBsa("Skyrim - Meshes.bsa");
+	get_archives()[1] = loadBsa("Skyrim - Textures.bsa");
+	get_archives()[2] = loadBsa("Skyrim - Animations.bsa");
+	//get_archives()[3] = loadBsa("HighResTexturePack01.bsa");
+	//get_archives()[4] = loadBsa("HighResTexturePack02.bsa");
+	//get_archives()[5] = loadBsa("HighResTexturePack03.bsa");
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
@@ -166,12 +173,12 @@ int main()
 	//nif_test();
 	nifp_test();
 	dungeon = new Level("GloomGen"); // <-- interior to load
-	//someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
-	//someDraugr->PutDown("gloomgendraugr");
-	//meanSkelly = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
-	//meanSkelly->PutDown("gloomgenskeleton");
-	//someHuman = new Human();
-	//someHuman->Place("gloomgenman");
+	someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
+	someDraugr->PutDown("gloomgendraugr");
+	meanSkelly = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
+	meanSkelly->PutDown("gloomgenskeleton");
+	someHuman = new Human();
+	someHuman->Place("gloomgenman");
 
 	//player1 = new Player();
 
