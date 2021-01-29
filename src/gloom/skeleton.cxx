@@ -53,8 +53,8 @@ namespace gloom
 
 	void matrix_from_common(Bone *bone, ni_common_layout_pointer *common)
 	{
-		bone->group->matrix = translate(bone->group->matrix, *cast_vec_3((float *)&common->C->translation));
-		bone->group->matrix *= inverse(mat4((*cast_mat_3((float *)&common->C->rotation))));
+		bone->group->matrix = translate(bone->group->matrix, Gloom_Vec_3(common->C->translation));
+		bone->group->matrix *= inverse(mat4(Gloom_Mat_3(common->C->rotation)));
 		bone->group->matrix = scale(bone->group->matrix, vec3(common->C->scale));
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
@@ -204,7 +204,7 @@ namespace gloom
 			if (tip == NULL || tdp == NULL)
 				continue;
 
-			vec4 ro = *cast_vec_4((float *)&tip->transform->rotation);
+			vec4 ro = Gloom_Vec_4(tip->transform->rotation);
 
 			int num = tdp->A->num_rotation_keys;
 			if (num)
@@ -215,7 +215,7 @@ namespace gloom
 					//printf("qk %i time %f\n", i, key->time);
 					if (key->time <= time || num == 1)
 					{
-						ro = *cast_vec_4((float *)&key->value);
+						ro = Gloom_Vec_4(key->value);
 						break;
 					}
 				}
@@ -223,7 +223,7 @@ namespace gloom
 			// else if (num == 1)
 			// 	ro = *cast_vec_4((float *)(&tdp->quaternion_keys[0].value));
 
-			vec3 tr = *cast_vec_3((float *)&tip->transform->translation);
+			vec3 tr = Gloom_Vec_3(tip->transform->translation);
 
 			num = tdp->translations->num_keys;
 			if (num)
@@ -234,13 +234,13 @@ namespace gloom
 					if (key->time <= time || num == 1)
 					{
 						//printf("tr time %f\n", key->time);
-						tr = *cast_vec_3((float *)&key->value);
+						tr = Gloom_Vec_3(key->value);
 						break;
 					}
 				}
 			}
 			// else if (num == 1)
-			// 	tr = *cast_vec_3((float *)&tdp->translation_keys[0].value);
+			// 	tr = Gloom_Vec_3(tdp->translation_keys[0].value);
 
 			quat qu = quat(ro[0], ro[1], ro[2], ro[3]);
 
@@ -264,8 +264,8 @@ int num = tdp->A->num_rotation_keys;
 				//printf(" res ratio %f\n", res.ratio);
 				if (res.one && res.two)
 				{
-					vec4 q1 = *cast_vec_4((float *)&res.one->value);
-					vec4 q2 = *cast_vec_4((float *)&res.two->value);
+					vec4 q1 = Gloom_Vec_4(res.one->value);
+					vec4 q2 = Gloom_Vec_4(res.two->value);
 					// todo, what does this fix? yoyo fingrs?
 					//if ((q1.asVec4() * q2.asVec4()) < 0)
 					//	q1 = -q1;
@@ -277,12 +277,12 @@ int num = tdp->A->num_rotation_keys;
 			{
 				auto key = &tdp->quaternion_keys[0];
 				if (key->time <= time)
-					q = quat(*cast_vec_4((float *)&key->value));
+					q = quat(Gloom_Vec_4(key->value));
 			}
 
 			m = glm::mat4_cast(q);
 
-			vec3 v = *cast_vec_3((float *)&tip->transform->translation);
+			vec3 v = Gloom_Vec_3(tip->transform->translation);
 
 			num = tdp->translations->num_keys;
 			if (num > 0)
@@ -290,12 +290,12 @@ int num = tdp->A->num_rotation_keys;
 				auto res2 = interpolate<translation_key_pointer, vec3>(this, num, tdp->translation_keys);
 				if (res2.one && res2.two)
 				{
-					const vec3 v1 = *cast_vec_3((float *)&res2.one->value) * (1.0f - res2.ratio);
-					const vec3 v2 = *cast_vec_3((float *)&res2.two->value) * res2.ratio;
+					const vec3 v1 = Gloom_Vec_3(res2.one->value) * (1.0f - res2.ratio);
+					const vec3 v2 = Gloom_Vec_3(res2.two->value) * res2.ratio;
 					v = v1 + v2;
 				}
 				else if (res2.one)
-					v = *cast_vec_3((float *)&res2.one->value);
+					v = Gloom_Vec_3(res2.one->value);
 			}
 
 			//if (_tween && bone->_v.length())

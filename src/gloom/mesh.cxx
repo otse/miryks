@@ -16,17 +16,17 @@ namespace gloom
 	}
 
 	static void other(NifpRd *, void *);
-	static void ni_node_callback(NifpRd *, ni_node_pointer *);
-	static void ni_node_callback_2(NifpRd *, ni_node_pointer *);
-	static void ni_tri_shape_callback(NifpRd *, ni_tri_shape_pointer *);
-	static void ni_tri_shape_callback_2(NifpRd *, ni_tri_shape_pointer *);
-	static void ni_tri_shape_data_callback(NifpRd *, ni_tri_shape_data_pointer *);
-	static void bs_lighting_shader_property_callback(NifpRd *, bs_lighting_shader_property_pointer *);
-	static void bs_shader_texture_set_callback(NifpRd *, bs_shader_texture_set_pointer *);
-	static void ni_alpha_property_callback(NifpRd *, ni_alpha_property_pointer *);
-	static void ni_skin_instance_callback(NifpRd *, ni_skin_instance_pointer *);
-	static void ni_skin_data_callback(NifpRd *, ni_skin_data_pointer *);
-	static void ni_skin_partition_callback(NifpRd *, ni_skin_partition_pointer *);
+	static void ni_node_callback						(NifpRd *, ni_node_pointer *);
+	static void ni_node_callback_2						(NifpRd *, ni_node_pointer *);
+	static void ni_tri_shape_callback					(NifpRd *, ni_tri_shape_pointer *);
+	static void ni_tri_shape_callback_2					(NifpRd *, ni_tri_shape_pointer *);
+	static void ni_tri_shape_data_callback				(NifpRd *, ni_tri_shape_data_pointer *);
+	static void bs_lighting_shader_property_callback	(NifpRd *, bs_lighting_shader_property_pointer *);
+	static void bs_shader_texture_set_callback			(NifpRd *, bs_shader_texture_set_pointer *);
+	static void ni_alpha_property_callback				(NifpRd *, ni_alpha_property_pointer *);
+	static void ni_skin_instance_callback				(NifpRd *, ni_skin_instance_pointer *);
+	static void ni_skin_data_callback					(NifpRd *, ni_skin_data_pointer *);
+	static void ni_skin_partition_callback				(NifpRd *, ni_skin_partition_pointer *);
 
 	static std::map<void *, Mesh *> store;
 
@@ -83,9 +83,9 @@ namespace gloom
 		for (ni_ref index : shapes)
 		{
 			//Group *group = mesh->groups[index];
-			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
-			auto skin_instance = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
-			auto skin_partition = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
+			auto shape = 			(ni_tri_shape_pointer *)		nifp_get_block(mesh->nif, index);
+			auto skin_instance = 	(ni_skin_instance_pointer *)	nifp_get_block(mesh->nif, shape->A->skin_instance);
+			auto skin_partition = 	(ni_skin_partition_pointer *)	nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
 			for (unsigned int k = 0; k < *skin_partition->num_skin_partition_blocks; k++)
 			{
 				struct skin_partition *part = skin_partition->skin_partition_blocks[k];
@@ -135,8 +135,8 @@ namespace gloom
 
 	void matrix_from_common(Group *group, ni_common_layout_pointer *common)
 	{
-		group->matrix = translate(group->matrix, *cast_vec_3((float *)&common->C->translation));
-		group->matrix *= mat4((*cast_mat_3((float *)&common->C->rotation)));
+		group->matrix = translate(group->matrix, Gloom_Vec_3(common->C->translation));
+		group->matrix *= mat4(Gloom_Mat_3(common->C->rotation));
 		group->matrix = scale(group->matrix, vec3(common->C->scale));
 	}
 
@@ -197,18 +197,18 @@ namespace gloom
 		}
 		for (int i = 0; i < block->A->num_vertices; i++)
 		{
-			geometry->vertices[i].position = *cast_vec_3((float *)&block->vertices[i]);
+			geometry->vertices[i].position = Gloom_Vec_3(block->vertices[i]);
 			if (block->C->bs_vector_flags & 0x00000001)
 				geometry->vertices[i].uv = *cast_vec_2((float *)&block->uv_sets[i]);
-			geometry->vertices[i].normal = *cast_vec_3((float *)&block->normals[i]);
+			geometry->vertices[i].normal = Gloom_Vec_3(block->normals[i]);
 			if (block->C->bs_vector_flags & 0x00001000)
 			{
 				geometry->material->tangents = true;
-				geometry->vertices[i].tangent = *cast_vec_3((float *)&block->tangents[i]);
-				geometry->vertices[i].bitangent = *cast_vec_3((float *)&block->bitangents[i]);
+				geometry->vertices[i].tangent = Gloom_Vec_3(block->tangents[i]);
+				geometry->vertices[i].bitangent = Gloom_Vec_3(block->bitangents[i]);
 			}
 			if (block->G->has_vertex_colors)
-				geometry->vertices[i].color = *cast_vec_4((float *)&block->vertex_colors[i]);
+				geometry->vertices[i].color = Gloom_Vec_4(block->vertex_colors[i]);
 		}
 		geometry->SetupMesh();
 	}
@@ -221,8 +221,8 @@ namespace gloom
 		if (geometry)
 		{
 			geometry->material->color = vec3(1.0);
-			geometry->material->emissive = *cast_vec_3((float *)&block->B->emissive_color);
-			geometry->material->specular = *cast_vec_3((float *)&block->B->specular_color);
+			geometry->material->emissive = Gloom_Vec_3(block->B->emissive_color);
+			geometry->material->specular = Gloom_Vec_3(block->B->specular_color);
 			geometry->material->specular *= block->B->specular_strength;
 			geometry->material->opacity = block->B->alpha;
 			geometry->material->glossiness = block->B->glossiness;
@@ -320,26 +320,26 @@ namespace gloom
 				if (!*part->has_vertex_map)
 					break;
 				unsigned short j = part->vertex_map[i];
-				geometry->vertices[i].position = *cast_vec_3((float *)&data->vertices[j]);
+				geometry->vertices[i].position = Gloom_Vec_3(data->vertices[j]);
 				if (data->C->bs_vector_flags & 0x00000001)
 					geometry->vertices[i].uv = *cast_vec_2((float *)&data->uv_sets[j]);
 				if (data->C->has_normals)
-					geometry->vertices[i].normal = *cast_vec_3((float *)&data->normals[j]);
+					geometry->vertices[i].normal = Gloom_Vec_3(data->normals[j]);
 				if (data->C->bs_vector_flags & 0x00001000)
 				{
 					smesh->lastShape->geometry->material->tangents = true;
-					geometry->vertices[i].tangent = *cast_vec_3((float *)&data->tangents[j]);
-					geometry->vertices[i].bitangent = *cast_vec_3((float *)&data->bitangents[j]);
+					geometry->vertices[i].tangent = Gloom_Vec_3(data->tangents[j]);
+					geometry->vertices[i].bitangent = Gloom_Vec_3(data->bitangents[j]);
 				}
 				if (data->G->has_vertex_colors)
-					geometry->vertices[i].color = *cast_vec_4((float *)&data->vertex_colors[j]);
+					geometry->vertices[i].color = Gloom_Vec_4(data->vertex_colors[j]);
 				if (*part->has_bone_indices)
 				{
 					auto a = part->bone_indices[i];
 					geometry->vertices[i].skin_index = vec4(a.a, a.b, a.c, a.d);
 				}
 				if (*part->has_vertex_weights)
-					geometry->vertices[i].skin_weight = *cast_vec_4((float *)&part->vertex_weights[i]);
+					geometry->vertices[i].skin_weight = Gloom_Vec_4(part->vertex_weights[i]);
 			}
 			//if (smesh->lastShape->geometry->material->tangents)
 			//	printf("has tangents");

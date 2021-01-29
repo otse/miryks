@@ -76,6 +76,10 @@ namespace gloom
 	mat3 *cast_mat_3(float *f);
 	mat4 *cast_mat_4(float *f);
 
+	#define Gloom_Vec_3(X) *cast_vec_3( (float *) & X )
+	#define Gloom_Vec_4(X) *cast_vec_4( (float *) & X )
+	#define Gloom_Mat_3(X) *cast_mat_3( (float *) & X )
+
 } // namespace gloom
 
 #define READ_BSA_RESOURCE "Load"
