@@ -19,7 +19,9 @@
 #include <gui/extra.h>
 
 namespace gloom
-{
+{	
+	// Todo, Setting nullptrs here always looks archaic
+
 	Ref::Ref(::Record *record)
 	{
 		mesh = nullptr;
@@ -29,6 +31,8 @@ namespace gloom
 		self = new Object(record);
 		Go();
 	}
+
+	// Todo, Can we use different stylization for squigly globals like this ?
 
 	Ref::~Ref()
 	{
@@ -44,11 +48,14 @@ namespace gloom
 
 		mat4 translation(1.0), rotation(1.0), scale(1.0);
 
+		// Todo, Restyle this templated object getter and shouty words
+
 		auto NAME = self->Get<unsigned int *>("NAME");
 		auto EDID = self->Get<const char *>("EDID");
 		auto XSCL = self->Get<float *>("XSCL");
 		auto DATA = self->Get<float *>("DATA");
 
+		// Todo, Capitalize shouty words here ? Do something with it
 		if (EDID)
 		{
 			//EDID = self->EDID;
@@ -72,6 +79,9 @@ namespace gloom
 
 			matrix = translation * rotation * scale;
 		}
+
+		// Todo, Work on esp's dynamic unioned arrays for looping please
+
 		if (NAME)
 		{
 			if (*NAME == 0x0005AD9E) // gold to orichalum
@@ -117,6 +127,8 @@ namespace gloom
 					//WEAP = new Weap(baseRecord);
 				}
 			}
+
+			// Todo, This
 			else if (base->Is("LIGH"))
 			{
 				//Ligh LIGH(baseRecord);
@@ -153,6 +165,8 @@ namespace gloom
 			}
 		}
 
+		// Todo, This is too far away
+
 		if (mesh)
 		{
 			if (base->record->hed->formId != 0x32)
@@ -167,6 +181,7 @@ namespace gloom
 		}
 	}
 
+	// Todo, Yikes what
 	float Ref::GetDistance()
 	{
 		float distance = glm::length(drawGroup->aabb.center() - vec3(first_person_camera->hands->matrixWorld[3]));
@@ -186,6 +201,8 @@ namespace gloom
 		rec->actualSize = realSize;
 		Count.uncompress++;
 	}*/
+
+	// Todo, Omg !
 
 	bool Ref::DisplayAsItem()
 	{

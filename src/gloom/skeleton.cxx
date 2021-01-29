@@ -82,6 +82,8 @@ namespace gloom
 		csp = (ni_controller_sequence_pointer *)model->blocks[0];
 	}
 
+	// Todo, This is a big dump from Messiah (before Dark (so long before Dark2))
+	// Pasted this here to see if it would compile. It won't since it's templated >_< And I can't use it because it's dumb. 
 	// animation
 
 	template <typename T, typename Y>

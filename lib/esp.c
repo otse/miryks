@@ -1,7 +1,3 @@
-// based on ortham/libespm
-
-// the words subrecords and fields are used interchangeably
-
 #include "putc.h"
 
 #include "esp.h"
@@ -9,17 +5,20 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
+// Subrecord *read_subrecord ?
 Record *read_record(Esp *);
 Grup *read_grup(Esp *);
 
 #define Buf esp->buf
 #define Pos esp->pos
+
 #define Count esp->count
 
 int esp_skip_fields = 0;
 
 static Esp *plugins[5] = { NULL, NULL, NULL, NULL, NULL };
 
+// Todo, wooo
 const char *esp_types[] = {"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS", "FACT", "HDPT", "HAIR", "EYES", "RACE", "SOUN", "ASPC", "MGEF", "SCPT", "LTEX", "ENCH", "SPEL", "SCRL", "ACTI", "TACT", "ARMO", "BOOK", "CONT", "DOOR", "INGR", "LIGH", "MISC", "APPA", "STAT", "SCOL", "MSTT", "PWAT", "GRAS", "TREE", "CLDC", "FLOR", "FURN", "WEAP", "AMMO", "NPC_", "LVLN", "KEYM", "ALCH", "IDLM", "COBJ", "PROJ", "HAZD", "SLGM", "LVLI", "WTHR", "CLMT", "SPGD", "RFCT", "REGN", "NAVI", "CELL", "WRLD", "DIAL", "QUST", "IDLE", "PACK", "CSTY", "LSCR", "LVSP", "ANIO", "WATR", "EFSH", "EXPL", "DEBR", "IMGS", "IMAD", "FLST", "PERK", "BPTD", "ADDN", "AVIF", "CAMS", "CPTH", "VTYP", "MATT", "IPCT", "IPDS", "ARMA", "ECZN", "LCTN", "MESG", "RGDL", "DOBJ", "LGTM", "MUSC", "FSTP", "FSTS", "SMBN", "SMQN", "SMEN", "DLBR", "MUST", "DLVW", "WOOP", "SHOU", "EQUP", "RELA", "SCEN", "ASTP", "OTFT", "ARTO", "MATO", "MOVT", "HAZD", "SNDR", "DUAL", "SNCT", "SOPM", "COLL", "CLFM", "REVB"};
 
 #define COUNT_OF(x) sizeof(x) / sizeof(0[x])
@@ -68,6 +67,7 @@ inline void read_record_fields(Esp *, Record *);
 
 Record *read_record(Esp *esp)
 {
+	// Todo, clean big unclear assignments lik these thruout the program
 	Record *rec;
 	rec = malloc(sizeof(Record));
 	rec->fi = NULL;
@@ -76,7 +76,7 @@ Record *read_record(Esp *esp)
 	rec->indices = 0;
 	rec->id = Count.records++;
 	rec->offset = Pos;
-	rec->hed = Buf + Pos; // Todo cast to a record_header
+	rec->hed = Buf + Pos;
 	Pos += sizeof(struct record_header);
 	Pos += 8;
 	rec->actualSize = rec->hed->size;
@@ -139,7 +139,7 @@ inline Subrecord *read_field(Esp *esp, Record *rec, unsigned int override)
 	sub->index = rec->indices++;
 	sub->id = Count.fields++;
 	sub->offset = Pos;
-	sub->hed = buf + *pos; // Cast to field_header
+	sub->hed = buf + *pos;
 	*pos += sizeof(struct field_header);
 	sub->actualSize = override == 0 ? sub->hed->size : override;
 	// data
@@ -150,6 +150,7 @@ inline Subrecord *read_field(Esp *esp, Record *rec, unsigned int override)
 }
 
 inline void read_grup_records(Esp *, Grup *);
+
 
 Grup *read_grup(Esp *esp)
 {
@@ -232,7 +233,6 @@ inline void build_form_id(Esp *esp, Record *record, struct form_id *fi)
 	//form_id.hex = 0;
 	fi->modIndex = fi->formId >> 24;
 	fi->objectIndex = fi->formId & ~(fi->modIndex << 24);
-
 	//if (modIndex >= masters.size())
 	//fi->plugin = parentPluginName;
 	//else
@@ -241,6 +241,7 @@ inline void build_form_id(Esp *esp, Record *record, struct form_id *fi)
 
 void make_form_ids(Esp *esp)
 {
+	// Unused
 	struct esp_array *array = &esp->records;
 	esp->formIds = malloc(sizeof(struct form_id) * array->size);
 	for (unsigned int i = 0; i < array->size; i++)
@@ -274,6 +275,7 @@ api void esp_array_loop(struct esp_array *array, void (*func)(Subrecord *field, 
 }
 */
 
+// Util code I did for imgui, kinda useless once I learned about top grups
 api struct esp_array *esp_filter_objects(const Esp *esp, const char type[5])
 {
 	struct esp_array *filtered;
@@ -290,6 +292,7 @@ api struct esp_array *esp_filter_objects(const Esp *esp, const char type[5])
 
 void uncompress_record(Esp *esp, Record *rec)
 {
+	// Workhorse code that is similar to how Bsa does it
 	char *src = rec->data;
 	const unsigned int realSize = *(unsigned int *)src;
 	const unsigned int size = rec->hed->size - 4;
@@ -335,6 +338,8 @@ api void free_plugin(Esp **p)
 	free(esp->buf);
 	free(esp);
 }
+
+// Horrible growable c array stolen from GitHub
 
 api void free_esp_array(struct esp_array *array)
 {

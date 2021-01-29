@@ -12,6 +12,12 @@
 
 namespace gloom
 {
+
+	// Wrote really fast while hitting compile a lot.
+	// The most dreadful Gloom class written
+	// Does a bunch of hxkcmd stuff. Export intto a separate bsa inherent into the github?
+	// Will need a rainy sunday to get fucked.
+
 	Object GetRace(const char *raceId)
 	{
 		Grup *top = esp_get_top_grup(get_plugins()[0], "RACE");

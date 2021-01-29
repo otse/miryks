@@ -4,6 +4,7 @@
 #define api
 
 // wrote for dark2
+// based on https://github.com/Ortham/libbsa/blob/master/src/api/tes4bsa.cpp
 
 #define BSA_MAX_SEARCHES 60
 

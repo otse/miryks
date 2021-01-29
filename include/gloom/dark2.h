@@ -40,9 +40,9 @@ namespace gloom
 
 	extern unsigned int fps;
 
+	// maybe make a loaders.cxx file for these
 	Rc *loadRc(const char *, const char *, unsigned long);
 	Nifp *loadNifp(Rc *, int);
-
 	Esp *loadEsp(const char *);
 	Bsa *loadBsa(const char *);
 
@@ -60,6 +60,7 @@ namespace gloom
 
 	extern std::string pathToOldrim;
 
+	// Todo, these globals just
 	extern FirstPersonCamera *first_person_camera;
 	extern ViewerCamera *viewer_camera;
 	extern RenderTarget *render_target;
@@ -70,6 +71,7 @@ namespace gloom
 	extern Human *someHuman;
 	extern Player *player1;
 
+	// nobody knows this is just for turning nifp's unpadded float structs into glms
 	vec2 *cast_vec_2(float *f);
 	vec3 *cast_vec_3(float *f);
 	vec4 *cast_vec_4(float *f);

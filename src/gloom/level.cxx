@@ -15,6 +15,7 @@
 
 namespace gloom
 {
+	// Todo, Again the c arrays and for loops are dreadful. Will wrap in a high level c++ solution soon. 
 	Cell Level::GetCell(const char *editorId)
 	{
 		Cell cell = {false};
@@ -77,6 +78,7 @@ namespace gloom
 		ParseGrup(cell, cell.non_persistent);
 	}
 
+	// Todo, Actually quite good, but again the c arrays from esp are death
 	void Level::ParseGrup(Cell &cell, Grup *grup)
 	{
 		if (grup == nullptr)
@@ -114,6 +116,7 @@ namespace gloom
 		}
 	}
 
+	// Nice
 	void Level::Unload()
 	{
 		for (auto it = refs.begin(); it != refs.end(); ++it)
@@ -128,6 +131,7 @@ namespace gloom
 		return l->GetDistance() < r->GetDistance();
 	}
 
+	// Perfect
 	void Level::Update()
 	{
 		std::vector<Ref *> closest = iterables;

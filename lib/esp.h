@@ -4,6 +4,7 @@
 #define api
 
 // wrote for dark2
+// based on https://github.com/Ortham/libespm
 
 struct form_id;
 

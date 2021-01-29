@@ -2,9 +2,6 @@
 
 #include "bsa.h"
 
-// based on
-// https://github.com/Ortham/libbsa/blob/master/src/api/tes4bsa.cpp
-
 #include <zlib.h>
 
 #define BSA "bsa - "
