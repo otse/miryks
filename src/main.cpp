@@ -80,13 +80,17 @@ namespace gloom
 
 	Esp *LoadPlugin(const char *filename)
 	{
+		printf("LoadPlugin %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
 		char *buf;
 		int ret;
 		// Try load plugin from skyrim else local folder
 		(ret = fbuf(path.c_str(), &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
-		if (ret == -1)
+		if (ret == -1) {
+			printf("Cant fbuf %s !\n", filename);
+			cassert(false, "Esp unfound");
 			return nullptr;
+		}
 		Esp *plugin = plugin_slate();
 		plugin->name = filename;
 		plugin->buf = buf;
