@@ -138,13 +138,6 @@ namespace gloom
 	void matrix_from_common(Group *group, ni_common_layout_pointer *common)
 	{
 		group->matrix = translate(group->matrix, Gloom_Vec_3(common->C->translation));
-		group->matrix *= mat4(Gloom_Mat_3(common->C->rotation));
-		group->matrix = scale(group->matrix, vec3(common->C->scale));
-	}
-
-	void matrix_from_common_2(Group *group, ni_common_layout_pointer *common)
-	{
-		group->matrix = translate(group->matrix, Gloom_Vec_3(common->C->translation));
 		group->matrix *= inverse(mat4(Gloom_Mat_3(common->C->rotation)));
 		group->matrix = scale(group->matrix, vec3(common->C->scale));
 	}
@@ -162,9 +155,7 @@ namespace gloom
 		// printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
-		matrix_from_common_2(group, block->common);
-		// testing here
-		// group->matrix = glm::inverse(group->matrix);
+		matrix_from_common(group, block->common);
 		//if (block->A->skin_instance == -1)
 		{
 			group->geometry = new Geometry();
