@@ -40,7 +40,7 @@ namespace gloom
 
 	extern unsigned int fps;
 
-	// maybe make a loaders.cxx file for these
+	// -- loaders.cxx
 	Rc *loadRc(const char *, const char *, unsigned long);
 	Nifp *loadNifp(Rc *, int);
 	Esp *loadEsp(const char *);

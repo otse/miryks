@@ -5,6 +5,11 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
+// only for oldrim!
+
+// wrote for gloom/dark
+// 100% based on https://github.com/Ortham/libespm
+
 // Subrecord *read_subrecord ?
 Record *read_record(Esp *);
 Grup *read_grup(Esp *);

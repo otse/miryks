@@ -151,8 +151,6 @@ void setupImgui()
 
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init(glsl_version);
-
-	
 }
 
 static void glfw_error_callback(int error, const char *description)

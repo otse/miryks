@@ -1,10 +1,12 @@
 #ifndef ESP_H
 #define ESP_H
 
-#define api
+// only for oldrim!
 
-// wrote for dark2
-// based on https://github.com/Ortham/libespm
+// wrote for gloom/dark
+// 100% based on https://github.com/Ortham/libespm
+
+#define api
 
 struct form_id;
 
@@ -67,16 +69,12 @@ struct form_id
 
 struct grup_header
 {
-	unsigned int type;
-	unsigned int size;
+	unsigned int type, size;
 };
 
 struct record_header
 {
-	unsigned int type;
-	unsigned int size;
-	unsigned int flags;
-	unsigned int formId;
+	unsigned int type, size, flags, formId;
 };
 
 struct field_header
