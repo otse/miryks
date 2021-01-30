@@ -89,7 +89,7 @@ int main()
 	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe, check your path");
 	get_plugins()[0] = loadEsp("Skyrim.esm");
 	if (get_plugins()[0])
-		printf("loaded skyrim.esm!\n");
+		printf("Ok, loaded Skyrim.esm wooo\n");
 	get_plugins()[1] = loadEsp("Gloom.esp");
 	get_archives()[0] = loadBsa("Skyrim - Meshes.bsa");
 	get_archives()[1] = loadBsa("Skyrim - Textures.bsa");

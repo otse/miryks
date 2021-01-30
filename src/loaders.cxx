@@ -34,7 +34,7 @@ namespace gloom
 
 	Esp *loadEsp(const char *filename)
 	{
-		printf("LoadPlugin %s\n", filename);
+		printf("loadEsp %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
 		char *buf;
 		int ret;
@@ -42,8 +42,8 @@ namespace gloom
 		(ret = fbuf(path.c_str(), &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
 		if (ret == -1)
 		{
-			printf("Cant fbuf %s !\n", filename);
-			cassert(false, "Esp unfound");
+			printf("Couldn't find or otherwise load %s :(", filename);
+			exit(1);
 			return nullptr;
 		}
 		Esp *plugin = plugin_slate();
