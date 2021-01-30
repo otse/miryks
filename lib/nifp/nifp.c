@@ -1,5 +1,8 @@
 // nif but with pointers
 
+// wrote for gloom/dark
+// for oldrim
+
 #include "putc.h"
 
 #include "nifp.h"
@@ -142,6 +145,7 @@ static void *read_ni_skin_partition(nifpr);
 static void *read_ni_tri_shape(nifpr);
 static void *read_ni_tri_shape_data(nifpr);
 static void *read_bs_lighting_shader_property(nifpr);
+static void *read_bs_effect_shader_property(nifpr);
 static void *read_bs_shader_texture_set(nifpr);
 static void *read_ni_alpha_property(nifpr);
 static void *read_ni_controller_sequence(nifpr);
@@ -177,11 +181,11 @@ void read_block(Nifp *nif, int n)
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) block = read_ni_tri_shape(nif, n);
 	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) block = read_ni_alpha_property(nif, n);
 	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) block = read_ni_tri_shape_data(nif, n);
-	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) ) 0;
+	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) block = read_bs_lighting_shader_property(nif, n);
+	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) ) block = read_bs_effect_shader_property(nif, n);
 	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) ) 0;
 	else if ( ni_is_type(NI_FLOAT_INTERPOLATOR) ) 0;
 	else if ( ni_is_type(NI_FLOAT_DATA) ) 0;
-	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) block = read_bs_lighting_shader_property(nif, n);
 	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) block = read_bs_shader_texture_set(nif, n);
 	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) block = read_ni_controller_sequence(nif, n);
 	else if ( ni_is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
@@ -352,6 +356,21 @@ void *read_bs_lighting_shader_property(nifpr)
 	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, A, 12);
 	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
 	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, B, 88);
+	return block_pointer;
+}
+
+void *read_bs_effect_shader_property(nifpr)
+{
+	printf(" read_bs_effect_shader_property\n ");
+	struct bs_effect_shader_property_pointer *block_pointer;
+	block_pointer = malloc(sizeof(struct bs_effect_shader_property_pointer));
+	memset(block_pointer, 0, sizeof(struct bs_effect_shader_property_pointer));
+	Sink(nif, block_pointer, bs_effect_shader_property_pointer, A, 8);
+	Sink(nif, block_pointer, bs_effect_shader_property_pointer, extra_data_list, Arr(block_pointer->A->num_extra_data_list, ni_ref));
+	Sink(nif, block_pointer, bs_effect_shader_property_pointer, B, 12+8+8);
+	read_sized_string(nif, &block_pointer->source_texture);
+	Sink(nif, block_pointer, bs_effect_shader_property_pointer, C, 4+16+16+8);
+	read_sized_string(nif, &block_pointer->greyscale_texture);
 	return block_pointer;
 }
 

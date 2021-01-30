@@ -3,7 +3,8 @@
 
 #define api
 
-// wrote for dark2
+// wrote for gloom/dark
+// for oldrim
 
 typedef int ni_ref;
 
@@ -34,6 +35,7 @@ typedef struct NifpRd
 	void (*ni_tri_shape)				(struct NifpRd *, struct ni_tri_shape_pointer *);
 	void (*ni_tri_shape_data)			(struct NifpRd *, struct ni_tri_shape_data_pointer *);
 	void (*bs_lighting_shader_property)	(struct NifpRd *, struct bs_lighting_shader_property_pointer *);
+	void (*bs_effect_shader_property)	(struct NifpRd *, struct bs_effect_shader_property_pointer *);
 	void (*bs_shader_texture_set)		(struct NifpRd *, struct bs_shader_texture_set_pointer *);
 	void (*ni_alpha_property)			(struct NifpRd *, struct ni_alpha_property_pointer *);
 	void (*ni_controller_sequence)		(struct NifpRd *, struct ni_controller_sequence_pointer *);
@@ -328,6 +330,39 @@ struct bs_lighting_shader_property_pointer
 		float lighting_effect_1;
 		float lighting_effect_2;
 	} * B;
+};
+
+struct bs_effect_shader_property_pointer {
+	struct
+	{
+		int name;
+		unsigned int num_extra_data_list;
+	} * A;
+	ni_ref *extra_data_list;
+	struct
+	{
+		ni_ref controller;
+		unsigned int shader_flags_1;
+		unsigned int shader_flags_2;
+		struct vec_2p uv_offset;
+		struct vec_2p uv_scale;
+	} * B;
+	char *source_texture; // sized string
+	struct
+	{
+		unsigned char texture_clamp_mode;
+		unsigned char lighting_influence;
+		unsigned char env_map_min_lod;
+		unsigned char unknown_byte;
+		float falloff_start_angle;
+		float falloff_stop_angle;
+		float falloff_start_opacity;
+		float falloff_stop_opacity;
+		struct vec_4p emissive_color;
+		float emissive_multiple;
+		float soft_falloff_depth;
+	} * C;
+	char *greyscale_texture; // sized string
 };
 
 struct bs_shader_texture_set_pointer

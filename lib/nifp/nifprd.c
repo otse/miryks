@@ -97,6 +97,13 @@ static void visit(NifpRd *rd, int parent, int current)
 		rd->bs_lighting_shader_property(rd, Blocks[current]);
 	visit(rd, current, block_pointer->B->texture_set);
 	}
+	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) )
+	{
+	needs_parent;
+	struct bs_effect_shader_property_pointer *block_pointer = Blocks[current];
+	if (rd->bs_effect_shader_property)
+		rd->bs_effect_shader_property(rd, Blocks[current]);
+	}
 	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) )
 	{
 	needs_parent;

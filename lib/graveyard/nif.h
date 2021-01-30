@@ -3,6 +3,8 @@
 
 #define api
 
+// this is graveyard code, look at nifp for v2
+
 typedef struct nif Nif;
 typedef struct rd Rd;
 
@@ -208,6 +210,25 @@ struct bs_lighting_shader_property {
 	int end;
 	char *name_string;
 };
+
+struct bs_effect_shader_property {
+	int name;
+	unsigned int num_extra_data_list;
+	ni_ref *extra_data_list, controller;
+	unsigned int shader_flags_1, shader_flags_2;
+	struct vec_2 uv_offset, uv_scale;
+	char *source_texture;
+	unsigned char source_texture;
+	struct vec_3 emissive_color;
+	float emissive_multiple;
+	unsigned int texture_clamp_mode;
+	float alpha, refraction_strength, glossiness;
+	struct vec_3 specular_color;
+	float specular_strength, lighting_effect_1, lighting_effect_2;
+	int end;
+	char *name_string;
+};
+
 
 struct bs_shader_texture_set {
 	int num_textures;

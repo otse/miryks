@@ -22,6 +22,7 @@ namespace gloom
 	static void ni_tri_shape_callback_2					(NifpRd *, ni_tri_shape_pointer *);
 	static void ni_tri_shape_data_callback				(NifpRd *, ni_tri_shape_data_pointer *);
 	static void bs_lighting_shader_property_callback	(NifpRd *, bs_lighting_shader_property_pointer *);
+	static void bs_effect_shader_property_callback		(NifpRd *, bs_effect_shader_property_pointer *);
 	static void bs_shader_texture_set_callback			(NifpRd *, bs_shader_texture_set_pointer *);
 	static void ni_alpha_property_callback				(NifpRd *, ni_alpha_property_pointer *);
 	static void ni_skin_instance_callback				(NifpRd *, ni_skin_instance_pointer *);
@@ -53,6 +54,7 @@ namespace gloom
 		rd->ni_tri_shape = ni_tri_shape_callback;
 		rd->ni_tri_shape_data = ni_tri_shape_data_callback;
 		rd->bs_lighting_shader_property = bs_lighting_shader_property_callback;
+		rd->bs_effect_shader_property = bs_effect_shader_property_callback;
 		rd->bs_shader_texture_set = bs_shader_texture_set_callback;
 		rd->ni_alpha_property = ni_alpha_property_callback;
 		nifp_rd(rd);
@@ -140,6 +142,13 @@ namespace gloom
 		group->matrix = scale(group->matrix, vec3(common->C->scale));
 	}
 
+	void matrix_from_common_2(Group *group, ni_common_layout_pointer *common)
+	{
+		group->matrix = translate(group->matrix, Gloom_Vec_3(common->C->translation));
+		group->matrix *= inverse(mat4(Gloom_Mat_3(common->C->rotation)));
+		group->matrix = scale(group->matrix, vec3(common->C->scale));
+	}
+
 	void ni_node_callback(NifpRd *rd, ni_node_pointer *block)
 	{
 		// printf("ni node callback\n");
@@ -153,7 +162,9 @@ namespace gloom
 		// printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
-		matrix_from_common(group, block->common);
+		matrix_from_common_2(group, block->common);
+		// testing here
+		// group->matrix = glm::inverse(group->matrix);
 		//if (block->A->skin_instance == -1)
 		{
 			group->geometry = new Geometry();
@@ -240,6 +251,21 @@ namespace gloom
 		}
 	}
 
+	void bs_effect_shader_property_callback(NifpRd *rd, bs_effect_shader_property_pointer *block)
+	{
+		printf(" mesh bs effect shader cb ");
+		Mesh *mesh = (Mesh *)rd->data;
+		Geometry *geometry = mesh->lastGroup->geometry;
+		if (geometry)
+		{
+			geometry->material->src = &basic;
+			geometry->material->color = vec3(1.0);
+			geometry->material->emissive = Gloom_Vec_3(block->C->emissive_color);
+			geometry->material->map = GetProduceTexture(block->source_texture);
+			printf("source texture is %s\n", block->source_texture);
+		}
+	}
+	
 	void bs_shader_texture_set_callback(NifpRd *rd, bs_shader_texture_set_pointer *block)
 	{
 		// printf("bs shader texture set callback\n");
