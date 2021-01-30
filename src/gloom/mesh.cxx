@@ -156,6 +156,8 @@ namespace gloom
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->Nested(rd);
 		matrix_from_common(group, block->common);
+		if (strstr(nifp_get_string(rd->nif, block->common->A->name), "Marker") != NULL)
+			group->visible = false;
 		//if (block->A->skin_instance == -1)
 		{
 			group->geometry = new Geometry();
@@ -249,11 +251,17 @@ namespace gloom
 		Geometry *geometry = mesh->lastGroup->geometry;
 		if (geometry)
 		{
-			geometry->material->src = &basic;
+			//geometry->material->src = &basic;
 			geometry->material->color = vec3(1.0);
 			geometry->material->emissive = Gloom_Vec_3(block->C->emissive_color);
 			geometry->material->map = GetProduceTexture(block->source_texture);
 			printf("source texture is %s\n", block->source_texture);
+			if (block->B->shader_flags_1 & 0x80000000)
+				geometry->material->testing = true;
+			if (block->B->shader_flags_2 & 0x00000020)
+				geometry->material->vertexColors = true;
+			if (block->B->shader_flags_2 & 0x00000001)
+				geometry->material->testing = true;
 		}
 	}
 	
