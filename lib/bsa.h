@@ -85,6 +85,5 @@ api Bsa *bsa_get(const char *);
 #define BSA_MISC     0x100
 
 void bsa_test();
-void bsa_gui();
 
 #endif

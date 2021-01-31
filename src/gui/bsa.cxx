@@ -1,25 +1,11 @@
 #include <gloom/dark2.h>
 #include <gloom/files.h>
-
-extern "C"
-{
-#include "putc.h"
-#include "bsa.h"
-}
+#include <libs>
 
 using namespace gloom;
 
-#include <sstream>
 #include <imgui.h>
 
-#define BSA_GUI "bsa"
-
-#define cls           \
-	ss.str(string()); \
-	ss.clear();
-
-static bool good = true;
-static std::stringstream ss;
 static char hedrstr[600] = { "not loaded" };
 
 Bsa *bsa = NULL;
@@ -30,7 +16,7 @@ void bsa_gui()
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
-	ImGui::Begin(BSA_GUI, nullptr, flags);
+	ImGui::Begin("bsa", nullptr, flags);
 
 #define MAX 230
 	static char buf[MAX] = "Skyrim - Meshes.bsa";

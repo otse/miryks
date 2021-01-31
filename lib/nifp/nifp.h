@@ -44,7 +44,6 @@ typedef struct NifpRd
 	void (*ni_skin_partition)			(struct NifpRd *, struct ni_skin_partition_pointer *);
 } NifpRd;
 
-void nifp_gui();
 void nifp_test();
 
 void nifp_read_header(Nifp *);

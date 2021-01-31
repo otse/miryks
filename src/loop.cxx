@@ -145,6 +145,7 @@ void setupImgui()
 	IM_ASSERT(font2 != NULL);
 
 	ImGui::StyleColorsDark();
+	ImGui::StyleColorsLight();
 
 	// Setup Platform/Renderer bindings
 	const char *glsl_version = "#version 130";
@@ -217,6 +218,7 @@ void gloom::doImGui()
 		bsa_gui();
 		nifp_gui();
 		esp_gui();
+		cell_gui();
 		opengl_gui();
 
 		ImGui::ShowDemoWindow();

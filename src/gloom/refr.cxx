@@ -181,7 +181,6 @@ namespace gloom
 		}
 	}
 
-	// Todo, Yikes what
 	float Ref::GetDistance()
 	{
 		float distance = glm::length(drawGroup->aabb.center() - vec3(first_person_camera->hands->matrixWorld[3]));
@@ -208,11 +207,13 @@ namespace gloom
 	{
 		float dist = GetDistance() / ONE_SKYRIM_UNIT_IN_CM;
 
+		// printf(" display as item %f\n", dist);
+
 		if (dist > 60)
 		{
 			return false;
 		}
-
+		
 		auto FULL = base->Get<char *>("FULL");
 		auto DESC = base->Get<const char *>("DESC");
 

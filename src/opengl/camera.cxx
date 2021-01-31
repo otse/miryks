@@ -73,6 +73,7 @@ void FirstPersonCamera::Update(float time)
 	matrix = glm::inverse(matrix);
 	group->matrix = glm::inverse(view);
 	
+	group->Update(); // Important
 	drawGroup->Reset();
 
 	// printf("hands matrix world %s\n", glm::to_string(vec3(hands->matrixWorld[3])));

@@ -72,17 +72,22 @@ namespace gloom
 	extern Player *player1;
 
 	// nobody knows this is just for turning nifp's unpadded float structs into glms
-	vec2 *cast_vec_2(float *f);
-	vec3 *cast_vec_3(float *f);
-	vec4 *cast_vec_4(float *f);
-	mat3 *cast_mat_3(float *f);
-	mat4 *cast_mat_4(float *f);
+	vec2 *cast_vec_2(float *);
+	vec3 *cast_vec_3(float *);
+	vec4 *cast_vec_4(float *);
+	mat3 *cast_mat_3(float *);
+	mat4 *cast_mat_4(float *);
 
 	#define Gloom_Vec_3(X) *cast_vec_3( (float *) & X )
 	#define Gloom_Vec_4(X) *cast_vec_4( (float *) & X )
 	#define Gloom_Mat_3(X) *cast_mat_3( (float *) & X )
 
 } // namespace gloom
+
+void esp_gui();
+void bsa_gui();
+void nifp_gui();
+void cell_gui();
 
 #define READ_BSA_RESOURCE "Load"
 #define VIEW_NIF "View"

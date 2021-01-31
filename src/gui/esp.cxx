@@ -94,9 +94,8 @@ void im_subrecord(Subrecord *field)
 void esp_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
-	ImGui::SetNextWindowPos(ImVec2(450, 0));
-
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
+	ImGui::SetNextWindowPos(ImVec2(450, 0));
 	ImGui::Begin(ESP_GUI, nullptr, flags);
 
 	static bool pluginUsedByGame = false;

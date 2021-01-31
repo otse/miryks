@@ -121,8 +121,6 @@ typedef struct Subrecord
 
 #pragma pack(pop)
 
-void esp_gui();
-
 api Esp *plugin_slate();
 api int plugin_load(Esp *);
 

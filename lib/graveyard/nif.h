@@ -61,7 +61,6 @@ struct nmap_t {
 extern struct nmap_t nmap[1000];
 extern int nifs;
 
-void nif_gui();
 void nif_test();
 
 char *nif_read_short_string(struct nif *);
