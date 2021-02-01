@@ -22,7 +22,7 @@ extern int esp_skip_fields;
 
 extern const char *esp_types[];
 
-struct esp_array
+typedef struct EspArray
 {
 	union{
 	void **elements;
@@ -32,7 +32,7 @@ struct esp_array
 	};
 	size_t size;
 	size_t capacity;
-};
+} EspArray;
 
 typedef struct Esp
 {
@@ -43,7 +43,7 @@ typedef struct Esp
 	long filesize;
 	int active;
 	struct Record *header;
-	struct esp_array grups, records;
+	EspArray grups, records;
 	struct form_id *formIds;
 	const char **tops;
 	struct
@@ -89,7 +89,7 @@ typedef struct Grup
 	unsigned int id;
 	const struct grup_header *hed;
 	unsigned char *data;
-	struct esp_array mixed;
+	EspArray mixed;
 } Grup;
 
 typedef struct Record
@@ -100,7 +100,7 @@ typedef struct Record
 	long offset;
 	const struct record_header *hed;
 	struct form_id *fi;
-	struct esp_array fields;
+	EspArray fields;
 	unsigned char *data;
 	unsigned int actualSize;
 	// compression related
@@ -133,13 +133,13 @@ api Esp **get_plugins();
 
 api Esp *has_plugin(const char *);
 
-api struct esp_array *esp_filter_objects(const Esp *, const char [5]);
+api EspArray *esp_filter_objects(const Esp *, const char [5]);
 
 api Record *esp_brute_record_by_form_id(unsigned int);
 
 api Grup *esp_get_top_grup(const Esp *, const char [5]);
 
 api void free_plugin(Esp **);
-api void free_esp_array(struct esp_array *);
+api void free_esp_array(EspArray *);
 
 #endif

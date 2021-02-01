@@ -28,10 +28,12 @@ GLFWwindow *window;
 
 bool hideDebugGuis = true;
 bool cursorShowing = false;
+bool f10 = true;
 
 namespace gloom
 {
 	ImFont *font2;
+	ImFont *font3;
 
 	void HideCursor()
 	{
@@ -78,7 +80,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
 	{
-		if (cursorShowing) HideCursor(); else ShowCursor();
+		if (cursorShowing)
+			HideCursor();
+		else
+			ShowCursor();
 		camera->disabled = cursorShowing;
 	}
 	if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
@@ -92,13 +97,18 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		delete dungeon;
 		dungeon = new Level("GloomGen");
 	}
-	if (glfwGetKey(window, GLFW_KEY_F6))
+	if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
 	{
 		SetShaderSources();
 		for (auto &pair : Shader::shaders)
 		{
 			pair.second->Compile();
 		}
+	}
+	if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
+	{
+		printf("f10");
+		f10 = ! f10;
 	}
 }
 
@@ -140,9 +150,11 @@ void setupImgui()
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-	ImFont* font1 = io.Fonts->AddFontDefault();
+	ImFont *font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
+	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 55.0f);
 	IM_ASSERT(font2 != NULL);
+	IM_ASSERT(font3 != NULL);
 
 	ImGui::StyleColorsDark();
 	ImGui::StyleColorsLight();
@@ -213,6 +225,9 @@ void gloom::doImGui()
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
+	render_stats(&f10);
+	hero_menu();
+
 	if (!hideDebugGuis)
 	{
 		bsa_gui();
@@ -257,12 +272,13 @@ void gloom::programLoop()
 			glfwSetWindowTitle(window, title);
 			prevTime = time;
 			frames = 0;
+			gloom::fps = (int)fps;
 		}
 		frames++;
 
 		//rt.Bind();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glfwPollEvents();
 
@@ -274,13 +290,17 @@ void gloom::programLoop()
 
 		// someDraugr
 		if (someDraugr)
-		someDraugr->Step();
+			someDraugr->Step();
+
 		if (meanSkelly)
-		meanSkelly->Step();
-		//someHuman->Step();
-		if (player1)
-		player1->Step();
+			meanSkelly->Step();
+
+		if (someHuman)
+			someHuman->Step();
 		
+		if (player1)
+			player1->Step();
+
 		dungeon->Update();
 
 		scene->Order();
@@ -295,8 +315,7 @@ void gloom::programLoop()
 		quad.geometry->Draw(mat4(1.0));
 
 		glfwSwapBuffers(window);
-	}
-	while (!glfwWindowShouldClose(window));
+	} while (!glfwWindowShouldClose(window));
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

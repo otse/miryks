@@ -12,8 +12,6 @@ using namespace gloom;
 #include <sstream>
 #include <imgui.h>
 
-#define ESP_GUI "esp"
-
 static std::stringstream ss;
 
 static Esp *plugin = NULL;
@@ -96,7 +94,7 @@ void esp_gui()
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::SetNextWindowPos(ImVec2(450, 0));
-	ImGui::Begin(ESP_GUI, nullptr, flags);
+	ImGui::Begin("Esp", nullptr, flags);
 
 	static bool pluginUsedByGame = false;
 	static char buf[260] = "Skyrim.esm";
@@ -165,7 +163,7 @@ void esp_gui()
 		}
 		if (ImGui::BeginTabItem("filter"))
 		{
-			static esp_array *filtered = NULL;
+			EspArray *filtered = NULL;
 			static char filter[5] = "NPC_";
 			static char buf[5] = {'\0'};
 			ImGui::InputText("##espfilter", filter, 5);

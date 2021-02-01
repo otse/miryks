@@ -58,16 +58,13 @@ namespace gloom
 	Level::~Level()
 	{
 		loadedCell;
-
 		Unload();
 	}
 
 	Level::Level(const char *edid)
 	{
 		Group *group = new Group();
-
 		Cell cell = GetCell(edid);
-
 		LoadCell(cell);
 	}
 
@@ -78,7 +75,6 @@ namespace gloom
 		ParseGrup(cell, cell.non_persistent);
 	}
 
-	// Todo, Actually quite good, but again the c arrays from esp are death
 	void Level::ParseGrup(Cell &cell, Grup *grup)
 	{
 		if (grup == nullptr)

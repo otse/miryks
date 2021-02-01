@@ -12,11 +12,7 @@
 
 namespace gloom
 {
-
-	// Wrote really fast while hitting compile a lot.
-	// The most dreadful Gloom class written
-	// Does a bunch of hxkcmd stuff. Export intto a separate bsa inherent into the github?
-	// Will need a rainy sunday to get fucked.
+	// Does a bunch of hxkcmd stuff. Export into a separate bsa inherent into the github?
 
 	Object GetRace(const char *raceId)
 	{
@@ -287,10 +283,11 @@ namespace gloom
 			return;
 		drawGroup->matrix = ref->second->matrix;
 		scene->Add(drawGroup);
-		DrawGroup *test = new DrawGroup(group, mat4());
-		test->matrix = drawGroup->matrix;
-		test->matrix = glm::translate(test->matrix, vec3(50, 0, 0));
-		scene->Add(test);
+		// Create an offsetted mirror of Man
+		/*DrawGroup *mirror = new DrawGroup(group, mat4());
+		mirror->matrix = drawGroup->matrix;
+		mirror->matrix = glm::translate(mirror->matrix, vec3(50, 0, 0));*/
+		//scene->Add(mirror);
 	}
 
 	void Human::Step()
@@ -304,7 +301,7 @@ namespace gloom
 	Player::Player()
 	{
 		human = new Human();
-		human->Place("gloomgenman");
+		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4());
 		scene->Add(drawGroup);
 		//camera->group->Add(human->group);
@@ -314,7 +311,8 @@ namespace gloom
 	{
 		human->Step();
 		//drawGroup->matrix = glm::translate(human->drawGroup->matrix, vec3(0, 50, 0));
-		drawGroup->matrix = glm::translate(mat4(1.0), first_person_camera->pos);
+		vec3 down = vec3(0, 0, -150 / ONE_SKYRIM_UNIT_IN_CM);
+		drawGroup->matrix = glm::translate(mat4(1.0), down + first_person_camera->pos);
 		if (!dynamic_cast<FirstPersonCamera *>(camera))
 			return;
 	}

@@ -16,7 +16,7 @@ void bsa_gui()
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
-	ImGui::Begin("bsa", nullptr, flags);
+	ImGui::Begin("Bsa", nullptr, flags);
 
 #define MAX 230
 	static char buf[MAX] = "Skyrim - Meshes.bsa";
@@ -129,7 +129,7 @@ void bsa_gui()
 			rc = rcs[item_current];
 
 			char found[100];
-			snprintf(found, 100, "search returned %i results", num);
+			snprintf(found, 100, "search returned %i results out of configured max %i", num, BSA_MAX_SEARCHES);
 			ImGui::Text(found);
 
 			if (!(item_current > num) && rc)

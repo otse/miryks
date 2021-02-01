@@ -9,13 +9,14 @@
 #include "nitypes.h"
 
 int nifps = 0;
-struct nifppair nifpmap[1000];
+struct nifppair nifpmap[5000];
 
 api void nifp_save(void *key, Nifp *nif) {
 	nif->key = nifps;
 	nifpmap[nifps].key = key;
 	nifpmap[nifps].value = nif;
 	nifps++;
+	cassert(nifps<5000, "nifps > 5000");
 }
 
 api Nifp *nifp_saved(void *key) {

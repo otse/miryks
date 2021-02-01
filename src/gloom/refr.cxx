@@ -19,7 +19,7 @@
 #include <gui/extra.h>
 
 namespace gloom
-{	
+{
 	// Todo, Setting nullptrs here always looks archaic
 
 	Ref::Ref(::Record *record)
@@ -209,11 +209,11 @@ namespace gloom
 
 		// printf(" display as item %f\n", dist);
 
-		if (dist > 60)
+		if (dist > 30)
 		{
 			return false;
 		}
-		
+
 		auto FULL = base->Get<char *>("FULL");
 		auto DESC = base->Get<const char *>("DESC");
 
@@ -240,8 +240,11 @@ namespace gloom
 		static bool open = true;
 		//char s[100];
 		ImGui::Begin("##Item", &open, flags);
-		ImGui::PushFont(font2);
-		ImGui::Text(itemName);
+		ImGui::PushFont(font3);
+		//ImGui::PushStyleColor(IMGUI_FON)
+		//ImGui::Text(itemName);
+		ImGui::TextColored(ImVec4(1, 1, 1, 1), itemName);
+
 		if (DESC)
 		{
 			ImGui::TextWrapped(DESC);

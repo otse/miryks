@@ -74,7 +74,7 @@ struct nifppair
 	Nifp *value;
 };
 extern int nifps;
-extern struct nifppair nifpmap[1000];
+extern struct nifppair nifpmap[5000];
 
 #pragma pack(push, 1)
 

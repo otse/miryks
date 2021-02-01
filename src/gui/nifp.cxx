@@ -6,8 +6,6 @@
 #include <sstream>
 #include <imgui.h>
 
-#define NIF_GUI "nifs"
-
 #define cls           \
 	ss.str(std::string()); \
 	ss.clear();
@@ -21,7 +19,7 @@ void nifp_gui()
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;// | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::SetNextWindowPos(ImVec2(900, 0));
-	ImGui::Begin(NIF_GUI, nullptr, flags);
+	ImGui::Begin("Nifp", nullptr, flags);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	

@@ -39,6 +39,12 @@ namespace gloom
 		Subrecord *GetFrom(unsigned int, int *) const;
 	};
 
+	class ObjectArray
+	{
+	public:
+
+	};
+
 } // namespace gloom
 
 #endif
