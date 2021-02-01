@@ -83,6 +83,10 @@ struct field_header
 	unsigned short size;
 };
 
+typedef struct TypeDud {
+	char x;
+} TypeDud;
+
 typedef struct Grup
 {
 	char x;

@@ -7,28 +7,28 @@
 
 namespace gloom
 {
-    // wraps espcarray
+    // wraps espcarray, see the example
+
+    void gloom_object_array_example(EspCArray *);
 
     class ObjectArray
     {
     public:
-        ObjectArray(EspCArray *);
-
         EspCArray *const array;
+
+        ObjectArray(EspCArray *);
 
         template <class UnaryFunction>
         void ForEach(int type, UnaryFunction f)
         {
-            for (unsigned int i = 0; i < array->size; i++)
+            for (size_t i = 0; i < array->size; i++)
             {
                 void *t = array->elements[i];
-                if (type == 0 || ((Record *)t)->x == type)
-                    f(t);
+                if (type == 0 || ((TypeDud *)t)->x == type)
+                    f(t, i);
             }
         }
     };
-
-    void gloom_object_array_example(EspCArray *);
 
 } // namespace gloom
 

@@ -7,7 +7,9 @@
 
 namespace gloom
 {
-	// raiiable multi-mapped high level esp record
+	// multimapped high level esp record, see the example
+
+	void gloom_objects_example(Record *);
 
 	class Object
 	{
@@ -38,8 +40,6 @@ namespace gloom
 		Subrecord *GetField(const char *, int) const;
 		Subrecord *GetFrom(unsigned int, int *) const;
 	};
-
-	void gloom_objects_example(Record *);
 
 } // namespace gloom
 
