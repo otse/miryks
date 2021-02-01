@@ -1,18 +1,18 @@
 #ifndef GLOOM_OBJECT_H
 #define GLOOM_OBJECT_H
 
-#include <gloom/dark2.h>
+#include <Gloom/Dark2.h>
 
 #include <libs>
 
 namespace gloom
 {
-	// high level record
+	// raiiable multi-mapped high level esp record
 
 	class Object
 	{
 	public:
-		unsigned int formId;
+		// unsigned int formId;
 
 		Record *const record;
 
@@ -28,7 +28,7 @@ namespace gloom
 			return fields.count(*(unsigned int *)type);
 		}
 
-		template <typename T>
+		template <typename T=void *>
 		T Get(const char *type, int skip = 0) const
 		{
 			Subrecord *field = GetField(type, skip);
@@ -39,11 +39,7 @@ namespace gloom
 		Subrecord *GetFrom(unsigned int, int *) const;
 	};
 
-	class ObjectArray
-	{
-	public:
-
-	};
+	void gloom_objects_example(Record *);
 
 } // namespace gloom
 

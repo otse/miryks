@@ -1,6 +1,6 @@
 #include <libs>
 
-#include <gloom/mesh.h>
+#include <Gloom/Mesh.h>
 
 #include <opengl/shader.h>
 #include <opengl/texture.h>

@@ -28,9 +28,9 @@ const char *esp_types[] = {"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS
 
 #define COUNT_OF(x) sizeof(x) / sizeof(0[x])
 
-inline void array(EspArray *, size_t);
-inline void grow(EspArray *);
-inline void insert(EspArray *, void *);
+inline void array(EspCArray *, size_t);
+inline void grow(EspCArray *);
+inline void insert(EspCArray *, void *);
 
 void make_top_grups(Esp *);
 void make_form_ids(Esp *);
@@ -247,7 +247,7 @@ inline void build_form_id(Esp *esp, Record *record, struct form_id *fi)
 void make_form_ids(Esp *esp)
 {
 	// Unused
-	EspArray *array = &esp->records;
+	EspCArray *array = &esp->records;
 	esp->formIds = malloc(sizeof(struct form_id) * array->size);
 	for (unsigned int i = 0; i < array->size; i++)
 	build_form_id(esp, array->elements[i], &esp->formIds[i]);
@@ -271,7 +271,7 @@ api Record *esp_brute_record_by_form_id(unsigned int formId)
 }
 
 /*
-api void esp_array_loop(EspArray *array, void (*func)(Subrecord *field, void *data), void *data)
+api void esp_array_loop(EspCArray *array, void (*func)(Subrecord *field, void *data), void *data)
 {
 	for (int i = 0; i < array->size; i++)
 	{
@@ -281,10 +281,10 @@ api void esp_array_loop(EspArray *array, void (*func)(Subrecord *field, void *da
 */
 
 // Util code I did for imgui, kinda useless once I learned about top grups
-api EspArray *esp_filter_objects(const Esp *esp, const char type[5])
+api EspCArray *esp_filter_objects(const Esp *esp, const char type[5])
 {
-	EspArray *filtered;
-	filtered = malloc(sizeof(EspArray));
+	EspCArray *filtered;
+	filtered = malloc(sizeof(EspCArray));
 	array(filtered, 100);
 	for (unsigned int i = 0; i < esp->records.size; i++)
 	{
@@ -346,25 +346,25 @@ api void free_plugin(Esp **p)
 
 // Horrible growable c array stolen from GitHub
 
-api void free_esp_array(EspArray *array)
+api void free_esp_array(EspCArray *array)
 {
 	free(array->elements);
 }
 
-inline void array(EspArray *a, size_t initial) {
+inline void array(EspCArray *a, size_t initial) {
 	a->capacity = initial;
 	a->size = 0;
 	a->elements = malloc(a->capacity * sizeof(void *));
 }
 
-inline void grow(EspArray *a) {
+inline void grow(EspCArray *a) {
 	if (a->size != a->capacity)
 	return;
 	a->capacity *= 2;
 	a->elements = realloc(a->elements, a->capacity * sizeof(void *));
 }
 
-inline void insert(EspArray *a, void *element) {
+inline void insert(EspCArray *a, void *element) {
 	grow(a);
 	a->elements[a->size++] = element;
 }

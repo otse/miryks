@@ -4,11 +4,37 @@
 
 namespace gloom
 {
+	void gloom_objects_example(Record *record)
+	{
+		Object object(record);
+		cassert(object.Is("REFR"), "object not refr");
+		auto formId = object.Get<unsigned int *>("NAME");
+		auto editorId = object.Get<const char *>("EDID");
+		if (formId)
+		{
+			Object baseObject((Record *)0x1);
+			// Handle a plant or weapon
+			if (baseObject.IsAny({"FLOR", "WEAP"}))
+			{
+			}
+		}
+		if (editorId)
+		{
+			// Store in a table
+		}
+		// Useful counting of subrecords
+		if (object.Count("MEOW") > 2)
+		{
+			// Get the third meow field
+			auto third = object.Get("MEOW", 2);
+		}
+	}
+
 	Object::Object(::Record *record, int n) : record(record)
 	{
 		if (record == nullptr)
 			return;
-		cassert(record->x == RECORD, "Object not record");
+		cassert(record->x == 2, "object not record");
 		int l = n ? n : record->fields.size;
 		for (int i = 0; i < l; i++)
 		{
@@ -21,12 +47,13 @@ namespace gloom
 	{
 		Subrecord *sub = nullptr;
 		auto st = fields.equal_range(*(unsigned int *)type);
-		for (auto it = st.first; it != st.second; ++it) {
+		for (auto it = st.first; it != st.second; ++it)
+		{
 			sub = it->second;
 			if (skip-- <= 0)
 				break;
 		}
-		return sub ? sub : nullptr;
+		return sub;// ? sub : nullptr;
 	}
 
 	/*::subrecord *Object::GetFrom(unsigned int type, int *n) const

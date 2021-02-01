@@ -163,7 +163,7 @@ void esp_gui()
 		}
 		if (ImGui::BeginTabItem("filter"))
 		{
-			EspArray *filtered = NULL;
+			EspCArray *filtered = NULL;
 			static char filter[5] = "NPC_";
 			static char buf[5] = {'\0'};
 			ImGui::InputText("##espfilter", filter, 5);
