@@ -32,7 +32,7 @@ namespace gloom
 
 	Actor::Actor(const char *raceId, const char *model)
 	{
-		printf("actor of race %s\n", raceId);
+		//printf("actor of race %s\n", raceId);
 
 		Object race = GetRace(raceId);
 
@@ -96,7 +96,7 @@ namespace gloom
 			Group *group = new Group();
 			group->Add(skeleton->baseBone->group);
 			group->Add(mesh->baseGroup);
-			printf("make smesh->skeleton drawGroup!\n");
+			//printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
 			scene->Add(drawGroup);
 		}

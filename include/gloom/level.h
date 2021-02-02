@@ -2,7 +2,7 @@
 
 #include <gloom/dark2.h>
 
-#include <gloom/refr.h>
+#include <gloom/ref.h>
 
 #include <opengl/types.h>
 #include <opengl/scene.h>

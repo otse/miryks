@@ -13,7 +13,8 @@ namespace gloom
 	void gloom_objects_example(Record *);
 
 	// an object wraps a record
-	// has powerful getters that give you access to its sub-records (and their important data!)
+	// has powerful getters that give you
+	// access to its sub-records (and their important data!)
 
 	class Object
 	{

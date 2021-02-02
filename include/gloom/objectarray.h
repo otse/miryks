@@ -7,28 +7,29 @@
 
 namespace gloom
 {
+	using Objects = ObjectArray;
+
 	// see the example
 	void gloom_object_array_example(Grup *);
 
 	// an objectarray is a wrapper for a grup
 
-	// (a grup doesnt handle subrecords
-	// use gloom/object for that!)
+	// a grup doesnt handle subrecords
+	// use Gloom/Object for that
 
 	class ObjectArray
 	{
 	public:
 		Grup *const grup;
-		//EspCArray *array;
 
 		ObjectArray(Grup *);
 
-		int Type(size_t i) const
+		inline int Type(size_t i) const
 		{
 			return (int)((TypeDud *)Get(i))->x;
 		}
 
-		size_t Size() const
+		inline size_t Size() const
 		{
 			return grup->mixed.size;
 		}

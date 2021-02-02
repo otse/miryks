@@ -29,8 +29,8 @@ namespace gloom
 				Bsa *animations = get_archives()[2];
 				Rc *skeleton = bsa_find(animations, "meshes\\actors\\draugr\\character assets\\skeleton.hkx");
 
-				if (skeleton)
-					printf("hkxcmd for draugr skeleton.hkx!\n");
+				//if (skeleton)
+				//	printf("hkxcmd for draugr skeleton.hkx!\n");
 
 				const char *fld = "meshes\\actors\\draugr\\animations";
 				unsigned int i = 0;
@@ -64,16 +64,16 @@ namespace gloom
 
 				cfout2("temp/draugr/hkx/skeleton.hkx", skeleton->buf, skeleton->size);
 
-				printf("Sec, exporting hkx to kf");
+				//printf("Sec, exporting hkx to kf");
 				system("hkxcmd.exe exportkf \"temp/draugr/hkx/skeleton.hkx\" \"temp/draugr/hkx/\" \"temp/draugr/kf\"");
 
-				if (skeleton)
-					printf("draugr hkx skeleton found %i\n", (int) skeleton);
+				//if (skeleton)
+				//	printf("draugr hkx skeleton found %i\n", (int) skeleton);
 			}
 			else
 			{
 				const char *path = "temp/draugr/kf/1hmattackf.kf";
-				printf("fetching random draugr kf\n");
+				//printf("fetching random draugr kf\n");
 				Nifp *nif = malloc_nifp();
 				nif->path = path;
 				fbuf(path, &(char *)nif->buf);
@@ -95,8 +95,8 @@ namespace gloom
 				Bsa *animations = get_archives()[2];
 				Rc *skeleton = bsa_find(animations, "meshes\\actors\\character\\character assets\\skeleton.hkx");
 
-				if (skeleton)
-					printf("found character.hkx for character / imperial race\n");
+				//if (skeleton)
+				//	printf("found character.hkx for character / imperial race\n");
 
 				const char *fld = "meshes\\actors\\character\\animations";
 				unsigned int i = 0;
@@ -130,16 +130,16 @@ namespace gloom
 
 				cfout2("temp/character/hkx/skeleton.hkx", skeleton->buf, skeleton->size);
 
-				printf("Sec, exporting hkx to kf");
+				//printf("Sec, exporting hkx to kf");
 				system("hkxcmd.exe exportkf \"temp/character/hkx/skeleton.hkx\" \"temp/character/hkx/\" \"temp/character/kf\"");
 
-				if (skeleton)
-					printf("skeleton hkx skeleton found %i\n", (int) skeleton);
+				//if (skeleton)
+				//	printf("skeleton hkx skeleton found %i\n", (int) skeleton);
 			}
 			else
 			{
 				const char *path = "temp/character/kf/1hm_idle.kf";
-				printf("fetching human idle kf\n");
+				//printf("fetching human idle kf\n");
 				Nifp *nif = malloc_nifp();
 				nif->path = path;
 				fbuf(path, &(char *)nif->buf);

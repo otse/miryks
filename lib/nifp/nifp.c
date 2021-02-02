@@ -305,7 +305,7 @@ void *read_ni_skin_data(nifpr)
 	Sink(nif, block_pointer, Type, skin_transform, 36+12+4);
 	Sink(nif, block_pointer, Type, B, 5);
 	block_pointer->bone_list = malloc(sizeof(struct bone_data *) * block_pointer->B->num_bones);
-	for (int i = 0; i < block_pointer->B->num_bones; i++)
+	for (unsigned int i = 0; i < block_pointer->B->num_bones; i++)
 	{
 	block_pointer->bone_list[i] = malloc(sizeof(struct bone_data));
 	struct bone_data *bone_data = block_pointer->bone_list[i];
@@ -362,7 +362,7 @@ void *read_bs_lighting_shader_property(nifpr)
 
 void *read_bs_effect_shader_property(nifpr)
 {
-	printf(" read_bs_effect_shader_property\n ");
+	//printf(" read_bs_effect_shader_property\n ");
 	struct bs_effect_shader_property_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct bs_effect_shader_property_pointer));
 	memset(block_pointer, 0, sizeof(struct bs_effect_shader_property_pointer));

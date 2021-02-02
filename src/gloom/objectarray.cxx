@@ -18,7 +18,7 @@ namespace gloom
 			Object object(oa.GetRecord(i));
 		});
 
-		// Default mixed mode
+		// Another unfiltered example
 		Objects(in).ForEach(0, stop, [&](Objects &oa, size_t &i) {
 			i += 4;
 			int type = oa.Type(i);

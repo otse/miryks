@@ -17,7 +17,7 @@
 
 namespace gloom
 {
-	Cell Level::GetCell(const char *editorId)
+	Cell Level::GetCell(const char *name)
 	{
 		Cell cell = {false};
 
@@ -25,18 +25,13 @@ namespace gloom
 
 		bool stop = false;
 
-		using Objects = ObjectArray;
-
 		Objects(top).ForEach(0, stop, [&](Objects &oa, size_t i) {
-			
 			Objects(oa.GetGrup(i)).ForEach(0, stop, [&](Objects &oa, size_t j) {
-
 				Objects(oa.GetGrup(j)).ForEach(0, stop, [&](Objects &oa, size_t &k) {
-
 					Object object(oa.GetRecord(k));
 					Grup *grup = oa.GetGrup(k + 1);
-					const char *editorId2 = object.Get<const char *>("EDID", 0);
-					if (0 == strcmp(editorId, editorId2))
+					const char *editorId = object.Get<const char *>("EDID", 0);
+					if (0 == strcmp(name, editorId))
 					{
 						Objects C(grup);
 						cell.cell = object.record;
@@ -54,7 +49,7 @@ namespace gloom
 
 		return cell;
 
-		//return cell;
+		/*
 		for (unsigned int i = 0; i < top->mixed.size; i++)
 		{
 			Grup *A = (Grup *)top->mixed.elements[i];
@@ -83,8 +78,7 @@ namespace gloom
 				}
 			}
 		}
-
-		return cell;
+		*/
 	}
 
 	Level::~Level()
@@ -111,6 +105,24 @@ namespace gloom
 	{
 		if (grup == nullptr)
 			return;
+
+		bool stop = false;
+
+		Objects(grup).ForEach(0, stop, [&](Objects &oa, size_t i) {
+			Record *record = oa.GetRecord(i);
+			Object object(record);
+			cassert(object.Is("REFR"), "fus ro dah");
+			Ref *ref = new Ref(record);
+			refs.push_back(ref);
+			const char *editorId = object.Get<const char *>("EDID", 0);
+			if (editorId)
+				this->refEditorIDs.emplace(editorId, ref);
+			if (ref->base && ref->base->IsAny({"WEAP", "MISC"}))
+			{
+				iterables.push_back(ref);
+			}
+		});
+		/*
 		for (unsigned int i = 0; i < grup->mixed.size; i++)
 		{
 			void *element = grup->mixed.elements[i];
@@ -131,7 +143,7 @@ namespace gloom
 				iterables.push_back(ref);
 			}
 		}
-
+		*/
 		static bool spawned = false;
 		auto ref = refEditorIDs.find("darkshackspawn");
 		if (ref != refEditorIDs.end() && !spawned)
