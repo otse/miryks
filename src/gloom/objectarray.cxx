@@ -7,22 +7,22 @@ namespace gloom
 {
 	void gloom_object_array_example(Grup *in)
 	{
+		using Objects = ObjectArray;
+
 		ObjectArray objectArray(in);
 		
 		bool stop = false;
 		
-		// Default mode
-		// Shows intent and filters types
-		objectArray.ForEach(RECORD, stop, [&](ObjectArray &oa, size_t &i) {
-			Object object(objectArray.GetRecord(i));
-			stop = true;
+		// Filter mode
+		objectArray.ForEach(RECORD, stop, [&](Objects &oa, size_t &i) {
+			Object object(oa.GetRecord(i));
 		});
 
-		// Mixed mode
-		// Useful when you want the mixed unfiltered c-array
-		objectArray.ForEach(0, stop, [&](ObjectArray &oa, size_t &i) {
-			int type = objectArray.Type(i);
+		// Default mixed mode
+		Objects(in).ForEach(0, stop, [&](Objects &oa, size_t &i) {
 			i += 4;
+			int type = oa.Type(i);
+			stop = true;
 		});
 	}
 
