@@ -1,3 +1,5 @@
+#include <cstdarg>
+
 #include <libs>
 
 #include <gloom/Object.h>
@@ -12,20 +14,12 @@ namespace gloom
 		auto editorId = object.Get<const char *>("EDID");
 		if (formId)
 		{
-			Object baseObject((Record *)0x1);
-			// Handle a plant or weapon
-			if (baseObject.IsAny({"FLOR", "WEAP"}))
-			{
-			}
+			Object baseObject((Record *)formId);
+			bool plant_or_weapon = baseObject.IsAny({"FLOR", "WEAP"});
 		}
-		if (editorId)
-		{
-			// Store in a table
-		}
-		// Useful counting of subrecords
 		if (object.Count("MEOW") > 2)
 		{
-			// Get the third meow field
+			// Get the third field
 			auto third = object.Get("MEOW", 2);
 		}
 	}
@@ -34,7 +28,7 @@ namespace gloom
 	{
 		if (record == nullptr)
 			return;
-		cassert(record->x == 2, "object not record");
+		cassert(((TypeDud *)record)->x == 2, "Gloom/Object Record x");
 		int l = n ? n : record->fields.size;
 		for (int i = 0; i < l; i++)
 		{
@@ -43,7 +37,7 @@ namespace gloom
 		}
 	}
 
-	Subrecord *Object::GetField(const char *type, int skip) const
+	Subrecord *Object::GetSubrecord(const char *type, int skip) const
 	{
 		Subrecord *sub = nullptr;
 		auto st = fields.equal_range(*(unsigned int *)type);
@@ -53,7 +47,8 @@ namespace gloom
 			if (skip-- <= 0)
 				break;
 		}
-		return sub;// ? sub : nullptr;
+		cassert(skip <= 0, "field skip unsuccessful\n");
+		return sub;
 	}
 
 	/*::subrecord *Object::GetFrom(unsigned int type, int *n) const
@@ -82,4 +77,16 @@ namespace gloom
 				return true;
 		return false;
 	}
+
+	// crash
+	/*bool Object::AnyV(const char *fmt...) const
+	{
+		va_list args;
+		va_start(args, fmt);
+		if (Is(fmt))
+			return true;
+		va_end(args);
+		return false;
+	}*/
+
 } // namespace gloom

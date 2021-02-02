@@ -41,7 +41,7 @@ namespace gloom
 	RenderTarget *render_target;
 
 	int width = 2560;
-	int height = 1440;
+	int height = 1800;
 	float delta = 1;
 } // namespace gloom
 

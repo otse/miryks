@@ -6,6 +6,8 @@
 // wrote for gloom/dark
 // 100% based on https://github.com/Ortham/libespm
 
+// sorry but uses the words fields / subrecords interchangeably
+
 #define api
 
 struct form_id;

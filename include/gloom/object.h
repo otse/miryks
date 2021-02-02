@@ -1,13 +1,15 @@
 #ifndef GLOOM_OBJECT_H
 #define GLOOM_OBJECT_H
 
+#include <cstdarg>
+
 #include <Gloom/Dark2.h>
 
 #include <libs>
 
 namespace gloom
 {
-	// multimapped high level esp record, see the example
+	// esp record wrapper that uses cool std::multimap, see the example
 
 	void gloom_objects_example(Record *);
 
@@ -22,6 +24,7 @@ namespace gloom
 
 		bool Is(const char *) const;
 		bool IsAny(std::vector<const char *>) const;
+		// bool AnyV(const char *fmt...) const;
 
 		std::multimap<unsigned int, Subrecord *> fields;
 
@@ -30,14 +33,15 @@ namespace gloom
 			return fields.count(*(unsigned int *)type);
 		}
 
+		// Data Getter !
 		template <typename T=void *>
-		T Get(const char *type, int skip = 0) const
+		T Get(const char *type, int skip = 0) const // Data Getter !
 		{
-			Subrecord *field = GetField(type, skip);
+			Subrecord *field = GetSubrecord(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
 
-		Subrecord *GetField(const char *, int) const;
+		Subrecord *GetSubrecord(const char *, int) const;
 		Subrecord *GetFrom(unsigned int, int *) const;
 	};
 

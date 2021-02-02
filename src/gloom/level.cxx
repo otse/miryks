@@ -1,7 +1,8 @@
 #include <Gloom/Level.h>
+#include <Gloom/Mesh.h>
+#include <Gloom/Object.h>
+#include <Gloom/ObjectArray.h>
 
-#include <gloom/mesh.h>
-#include <gloom/object.h>
 #include <libs>
 
 #include <algorithm>
@@ -16,9 +17,13 @@
 
 namespace gloom
 {
-	// Todo, Again the c arrays and for loops are dreadful. Will wrap in a high level c++ solution soon. 
-	Cell Level::GetCell(const char *editorId)
+	// Todo, Again the c arrays and for loops are dreadful. Will wrap in a high level c++ solution soon.
+	Cell /*Level::*/ GetCell(const char *editorId)
 	{
+		return Cell{false};
+
+		// Look below for rewrite with objectarray wrapper
+
 		Cell cell = {false};
 
 		Grup *top = esp_get_top_grup(get_plugins()[1], "CELL");
@@ -52,6 +57,80 @@ namespace gloom
 				}
 			}
 		}
+
+		return cell;
+	}
+
+	Cell Level::GetCell(const char *editorId)
+	{
+		Cell cell = {false};
+
+		Grup *top = esp_get_top_grup(get_plugins()[1], "CELL");
+
+		cassert(top, "no cells top grup ?!");
+
+		ObjectArray Top(top);
+
+		Top.ForEach(GRUP, [&](void *element, size_t &i) {
+			ObjectArray A(Top.GetAsGrup(i));
+
+			A.ForEach(GRUP, [&](void *element, size_t &j) {
+				ObjectArray B(A.GetAsGrup(j));
+
+				B.ForEach(0, [&](void *element, size_t &k) {
+					printf("b foreach2 k %u\n", k);
+					Object object(B.GetAsRecord(k));
+					Grup *grup = B.GetAsGrup(k + 1);
+					cassert(object.Is("CELL"), "not a cell");
+
+					const char *editorId2 = object.Get<const char *>("EDID", 0);
+					if (0 == strcmp(editorId, editorId2))
+					{
+						ObjectArray C(grup);
+						printf("!!!!!!Found your cell!!!!!! %s\n", editorId);
+						cell.cell = object.record;
+						//cassert(grup->mixed.size >= 2, "cell lacks 2 following grups");
+						if (grup->mixed.size >= 1)
+							cell.persistent = grup->mixed.grups[0];
+						if (grup->mixed.size >= 2)
+							cell.non_persistent = grup->mixed.grups[1];
+						/*if (C.Length() >= 1)
+							cell.persistent = C.GetAsGrup(0);
+						if (C.Length() >= 2)
+							cell.non_persistent = C.GetAsGrup(1);*/
+						return cell;
+					}
+					k++;
+				});
+			});
+		});
+		/*for (unsigned int i = 0; i < top->mixed.size; i++)
+		{
+			Grup *A = (Grup *)top->mixed.elements[i];
+			for (unsigned int j = 0; j < A->mixed.size; j++)
+			{
+				Grup *B = (Grup *)A->mixed.elements[j];
+				for (unsigned int k = 0; k < B->mixed.size; k += 2)
+				{
+					Record *object = B->mixed.records[k];
+					Grup *grup = B->mixed.grups[k + 1];
+					cassert(object->hed->type == *(unsigned int *)"CELL", "not a cell");
+					const char *cellEdid = (char *)object->fields.subrecords[0]->data;
+					//printf("Found cell %s\n", cellEdid);
+					if (0 == strcmp(cellEdid, editorId))
+					{
+						printf("Found your cell %s\n", cellEdid);
+						cell.cell = object;
+						//cassert(grup->mixed.size >= 2, "cell lacks 2 following grups");
+						if (grup->mixed.size >= 1)
+							cell.persistent = grup->mixed.grups[0];
+						if (grup->mixed.size >= 2)
+							cell.non_persistent = grup->mixed.grups[1];
+						return cell;
+					}
+				}
+			}
+		}*/
 
 		return cell;
 	}
@@ -93,7 +172,7 @@ namespace gloom
 			if (EDID)
 				refEditorIDs.emplace(EDID, ref);
 			if (ref->base &&
-				ref->base->record->hed->type == espwrd "WEAP" ||
+					ref->base->record->hed->type == espwrd "WEAP" ||
 				ref->base->record->hed->type == espwrd "MISC")
 			{
 				//printf("weap misc item");

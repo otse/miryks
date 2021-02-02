@@ -5,9 +5,9 @@
 
 namespace gloom
 {
-	void gloom_object_array_example(EspCArray *array)
+	void gloom_object_array_example(Grup *in)
 	{
-		ObjectArray objectArray(array);
+		ObjectArray objectArray(in);
 
 		// Default mode
 		// Shows intent and safely filters types
@@ -17,14 +17,15 @@ namespace gloom
 		});
 
 		// Mixed mode
-		// Useful when you want the mixed unfiltered carray
+		// Useful when you want the mixed unfiltered c-array
 		objectArray.ForEach(0, [](void *element, size_t i) {
+			// or simply use ObjectArray.safe(i, x)
 			int type = ((TypeDud *)element)->x;
 		});
 	}
 
-	ObjectArray::ObjectArray(::EspCArray *array) : array(array)
+	ObjectArray::ObjectArray(Grup *grup) : grup(grup)
 	{
-		cassert(array, "null esp array");
+		cassert(grup, "objectarray grup null");
 	}
 } // namespace gloom

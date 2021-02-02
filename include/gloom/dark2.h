@@ -19,6 +19,7 @@ struct Bsa;
 namespace gloom
 {
 	class Object;
+	class ObjectArray;
 	class Level;
 	class Mesh;
 	class SkinnedMesh;

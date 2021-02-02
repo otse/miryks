@@ -45,7 +45,7 @@ namespace gloom
 		auto MODL = race.Get<unsigned short *>("MODL", 2);
 		auto MODLCHAR = race.Get<char *>("MODL", 2);
 
-		Subrecord *modl = race.GetField("MODL", 2);
+		Subrecord *modl = race.GetSubrecord("MODL", 2);
 
 		//printf("modl size %u str %s offset %u", modl->hed->type, (char *)modl->data, modl->offset);
 
