@@ -9,40 +9,42 @@
 
 namespace gloom
 {
-	// esp record wrapper that uses cool std::multimap, see the example
-
+	// see the example
 	void gloom_objects_example(Record *);
+
+	// an object wraps a record
+	// has powerful getters that give you access to its sub-records (and their important data!)
 
 	class Object
 	{
 	public:
 		// unsigned int formId;
-
 		Record *const record;
+		std::multimap<unsigned int, Subrecord *> fields;
 
-		Object(::Record *, int = 0);
+		Object(Record *, int = 0);
 
 		bool Is(const char *) const;
 		bool IsAny(std::vector<const char *>) const;
 		// bool AnyV(const char *fmt...) const;
 
-		std::multimap<unsigned int, Subrecord *> fields;
 
 		size_t Count(const char *type) const
 		{
 			return fields.count(*(unsigned int *)type);
 		}
 
-		// Data Getter !
+		Subrecord *GetSubrecord(const char *, int) const;
+		//Subrecord *GetFrom(unsigned int, int *) const;
+
+		// Data Getter ! :
 		template <typename T=void *>
-		T Get(const char *type, int skip = 0) const // Data Getter !
+		T Get(const char *type, int skip = 0) const
 		{
 			Subrecord *field = GetSubrecord(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
 
-		Subrecord *GetSubrecord(const char *, int) const;
-		Subrecord *GetFrom(unsigned int, int *) const;
 	};
 
 } // namespace gloom

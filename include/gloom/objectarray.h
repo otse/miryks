@@ -7,11 +7,13 @@
 
 namespace gloom
 {
-	// high level esp grup wrapper, see the example
-
-	// remember a grup doesnt have subrecords
-
+	// see the example
 	void gloom_object_array_example(Grup *);
+
+	// an objectarray is a wrapper for a grup
+
+	// (a grup doesnt handle subrecords
+	// use gloom/object for that!)
 
 	class ObjectArray
 	{
@@ -21,45 +23,47 @@ namespace gloom
 
 		ObjectArray(Grup *);
 
-		bool safe(size_t i, int type) const
+		int Type(size_t i) const
 		{
-			return !type || ((TypeDud *)GetElement(i))->x == type;
+			return (int)((TypeDud *)Get(i))->x;
 		}
 
-		size_t Length() const
+		size_t Size() const
 		{
 			return grup->mixed.size;
 		}
 
-		void *GetElement(size_t i) const
+		void *Get(size_t i) const
 		{
+			cassert(i < Size(), "objectarray bounds");
 			return grup->mixed.elements[i];
 		}
 
-		void *GetElementSafe(size_t i, int type) const
+		void *GetSafe(size_t i, int type) const
 		{
-			cassert(safe(i, type), "objectarray typex");
-			return GetElement(i);
+			cassert(type == Type(i), "objectarray type x");
+			return Get(i);
 		}
 
-		Grup *GetAsGrup(size_t i) const
+		Grup *GetGrup(size_t i) const
 		{
-			return (Grup *)GetElementSafe(i, GRUP);
+			return (Grup *)GetSafe(i, GRUP);
 		}
 
-		Record *GetAsRecord(size_t i) const
+		Record *GetRecord(size_t i) const
 		{
-			return (Record *)GetElementSafe(i, RECORD);
+			return (Record *)GetSafe(i, RECORD);
 		}
 
 		template <class UnaryFunction>
-		void ForEach(int type, UnaryFunction f)
+		void ForEach(int type, bool &stop, UnaryFunction f)
 		{
-			for (size_t i = 0; i < grup->mixed.size; i++)
+			for (size_t i = 0; i < Size(); i++)
 			{
-				void *t = GetElement(i);
-				if (safe(i, type))
-					f(t, i);
+				if (type == 0 || Type(i) == type)
+					f(*this, i);
+				if (stop)
+					break;
 			}
 		}
 
