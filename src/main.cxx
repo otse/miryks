@@ -1,4 +1,4 @@
-#include <gloom/dark2.h>
+#include <Gloom/Dark2.h>
 
 #include <algorithm>
 
@@ -116,7 +116,7 @@ int main()
 	someHuman = new Human();
 	someHuman->Place("gloomgenman");
 
-	//player1 = new Player();
+	player1 = new Player();
 
 	programLoop();
 	return 1;

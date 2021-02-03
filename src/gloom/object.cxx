@@ -3,6 +3,7 @@
 #include <libs>
 
 #include <gloom/Object.h>
+#include <gloom/ObjectArray.h>
 
 namespace gloom
 {

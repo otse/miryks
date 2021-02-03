@@ -40,9 +40,7 @@ namespace gloom
 	{
 	public:
 		Mesh *mesh;
-
 		Skeleton *skeleton;
-
 		Group *lastShape;
 
 		std::vector<ni_ref> shapes;

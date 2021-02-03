@@ -32,7 +32,6 @@ void hero_menu()
 	ImGui::PopFont();
 
 	ImGui::PopStyleColor(4);
-
-
+	
 	ImGui::End();
 }

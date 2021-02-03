@@ -165,10 +165,14 @@ namespace gloom
 
 	void Player::Step()
 	{
+		
 		human->Step();
-		//drawGroup->matrix = glm::translate(human->drawGroup->matrix, vec3(0, 50, 0));
 		vec3 down = vec3(0, 0, -150 / ONE_SKYRIM_UNIT_IN_CM);
 		drawGroup->matrix = glm::translate(mat4(1.0), down + first_person_camera->pos);
+		drawGroup->matrix = rotate(drawGroup->matrix, -first_person_camera->fyaw, vec3(0, 0, 1));
+		drawGroup->group->visible = false;
+
+		
 		if (!dynamic_cast<FirstPersonCamera *>(camera))
 			return;
 	}

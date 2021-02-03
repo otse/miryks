@@ -27,6 +27,7 @@ namespace gloom
 	class Actor;
 	class Human;
 	class Player;
+	class Collider;
 	class Bone;
 	class Skeleton;
 	class KeyFrames;

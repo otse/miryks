@@ -1,8 +1,8 @@
 -- premake5.lua
-workspace "Dark2"
+workspace "gloom"
 	configurations { "Debug", "Release" }
 
-project "Dark2"
+project "gloom"
 	kind "ConsoleApp"
 	language "C++"
 	architecture "x86"

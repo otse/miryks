@@ -15,7 +15,7 @@ namespace gloom
 	// an object wraps a record
 	// has powerful getters that give you
 	// access to its sub-records (and their important data!)
-
+	
 	class Object
 	{
 	public:
@@ -28,8 +28,7 @@ namespace gloom
 		bool Is(const char *) const;
 		bool IsAny(std::vector<const char *>) const;
 		// bool AnyV(const char *fmt...) const;
-
-
+		
 		size_t Count(const char *type) const
 		{
 			return fields.count(*(unsigned int *)type);

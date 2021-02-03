@@ -12,10 +12,8 @@ namespace gloom
 	// see the example
 	void gloom_object_array_example(Grup *);
 
-	// an objectarray is a wrapper for a grup
-
-	// a grup doesnt handle subrecords
-	// use Gloom/Object for that
+	// an objectarray wraps a grup
+	// it makes iterating safer and better looking
 
 	class ObjectArray
 	{

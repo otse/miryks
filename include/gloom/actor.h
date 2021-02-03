@@ -33,11 +33,17 @@ namespace gloom
 		void PutDown(const char *);
 	};
 
+	class BZZ
+	{
+		
+	};
+
 	class Human
 	{
 		Actor *head, *body, *hands, *feet;
 
 	public:
+		Collider *collider;
 		Group *group;
 		DrawGroup *drawGroup = nullptr;
 		

@@ -29,6 +29,7 @@ GLFWwindow *window;
 bool hideDebugGuis = true;
 bool cursorShowing = false;
 bool f10 = true;
+bool h_pop = false;
 
 namespace gloom
 {
@@ -109,6 +110,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		printf("f10");
 		f10 = ! f10;
+	}
+	if (key == GLFW_KEY_H && action == GLFW_PRESS)
+	{
+		h_pop = ! h_pop;
 	}
 }
 
@@ -226,7 +231,9 @@ void gloom::doImGui()
 	ImGui::NewFrame();
 
 	render_stats(&f10);
-	hero_menu();
+
+	if (h_pop)
+		hero_menu();
 
 	if (!hideDebugGuis)
 	{

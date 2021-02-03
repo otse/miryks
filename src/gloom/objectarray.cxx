@@ -5,21 +5,19 @@
 
 namespace gloom
 {
-	void gloom_object_array_example(Grup *in)
+	void gloom_object_array_example(Grup *grup)
 	{
 		using Objects = ObjectArray;
 
-		ObjectArray objectArray(in);
+		ObjectArray objectArray(grup);
 		
 		bool stop = false;
 		
-		// Filter mode
 		objectArray.ForEach(RECORD, stop, [&](Objects &oa, size_t &i) {
 			Object object(oa.GetRecord(i));
 		});
 
-		// Another unfiltered example
-		Objects(in).ForEach(0, stop, [&](Objects &oa, size_t &i) {
+		Objects(grup).ForEach(0, stop, [&](Objects &oa, size_t &i) {
 			i += 4;
 			int type = oa.Type(i);
 			stop = true;
