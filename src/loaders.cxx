@@ -43,34 +43,38 @@ namespace gloom
 
 	Esp *loadEsp(const char *filename)
 	{
-		printf("loadEsp %s\n", filename);
+		printf("Load Plugin %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
 		char *buf;
 		int ret;
-		// Try load plugin from skyrim else local folder
-		(ret = fbuf(path.c_str(), &buf)) == -1 ? (ret = fbuf(filename, &buf)) : void();
+		if ((ret = fbuf(filename, &buf)) == -1)
+			ret = fbuf(path.c_str(), &buf);
 		if (ret == -1)
 		{
-			printf("Couldn't find or otherwise load %s :(", filename);
+			printf(" Couldn't resolve (Data/)%s \n", filename);
 			exit(1);
 			return nullptr;
 		}
-		Esp *plugin = plugin_slate();
-		plugin->name = filename;
-		plugin->buf = buf;
-		plugin->filesize = ret;
-		plugin_load(plugin);
-		return plugin;
+		Esp *esp = plugin_slate();
+		esp->name = filename;
+		esp->buf = buf;
+		esp->filesize = ret;
+		plugin_load(esp);
+		return esp;
 	}
 
 	Bsa *loadBsa(const char *filename)
 	{
+		printf("Load Archive %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
-		printf("%s\n", path.c_str());
 		if (exists(path.c_str()))
 			return bsa_load(path.c_str());
 		else
 			return bsa_load(filename);
+		return nullptr;
+	}
+
+	Mesh *loadMesh() {
 		return nullptr;
 	}
 

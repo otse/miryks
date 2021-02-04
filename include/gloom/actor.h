@@ -10,7 +10,7 @@ namespace gloom
 	extern KeyFrames *draugrAttack;
 	extern KeyFrames *humanIdle;
 
-	Object GetRace(const char *);
+	Record *GetRace(const char *);
 	//void Export(const char *);
 	void ExportRaceHkxToKf(const char *);
 

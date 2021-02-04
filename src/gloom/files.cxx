@@ -1,4 +1,4 @@
-#include <gloom/files.h>
+#include <Gloom/Files.h>
 
 #include <fstream>
 #include <iostream>

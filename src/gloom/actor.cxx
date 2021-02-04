@@ -2,6 +2,8 @@
 
 #include <Gloom/Actor.h>
 #include <Gloom/Collision.h>
+#include <Gloom/Object.h>
+#include <Gloom/ObjectArray.h>
 
 #include <Gloom/Files.h>
 #include <Gloom/Skeleton.h>
@@ -16,26 +18,35 @@ namespace gloom
 {
 	// Does a bunch of hxkcmd stuff. Export into a separate bsa inherent into the github?
 
-	Object GetRace(const char *raceId)
+	Record *GetRace(const char *raceId)
 	{
 		Grup *top = esp_get_top_grup(get_plugins()[0], "RACE");
 
 		cassert(top, "no race top grup");
 
-		for (size_t i = 0; i < top->mixed.size; i++)
-		{
-			if (strcmp(Object(top->mixed.records[i], 1).Get<char *>("EDID"), raceId) == 0)
-				return Object(top->mixed.records[i], 0);
-		}
-		cassert(false, "GetRace");
-		return Object(nullptr, 0);
+		Record *race = nullptr;
+		
+		bool stop = false;
+
+		Objects(top).ForEach(0, stop, [&](Objects &oa, size_t &i) {
+			Record *record = oa.GetRecord(i);
+			auto editorId = GetEditorIdOnly(record);
+			if (strcmp(editorId, raceId) == 0) {
+				race = record;
+				stop = true;
+			}
+		});
+
+		cassert(stop, "No such raceId !");
+
+		return race;
 	}
 
 	Actor::Actor(const char *raceId, const char *model)
 	{
 		//printf("actor of race %s\n", raceId);
 
-		Object race = GetRace(raceId);
+		Object race = Object(GetRace(raceId));
 
 		ExportRaceHkxToKf(raceId);
 
@@ -141,7 +152,7 @@ namespace gloom
 		if (ref == dungeon->editorIds.end())
 			return;
 		drawGroup->matrix = ref->second->matrix;
-		csphere = new CSphere(vec3(drawGroup->matrix[3])/*+vec3(0, 0, 1)*/);
+		csphere = new CSphere(vec3(drawGroup->matrix[3]) /*+vec3(0, 0, 1)*/);
 		scene->Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
@@ -156,7 +167,8 @@ namespace gloom
 		body->Step();
 		hands->Step();
 		feet->Step();
-		if (csphere) {
+		if (csphere)
+		{
 			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());
 			drawGroup->matrix = translate(mat4(1.0), csphere->GetWorldTransform());
 			//drawGroup->Reset();
@@ -181,7 +193,6 @@ namespace gloom
 		drawGroup->matrix = rotate(drawGroup->matrix, -first_person_camera->fyaw, vec3(0, 0, 1));
 		drawGroup->group->visible = false;
 
-		
 		if (!dynamic_cast<FirstPersonCamera *>(camera))
 			return;
 	}

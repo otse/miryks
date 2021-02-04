@@ -253,7 +253,7 @@ void make_form_ids(Esp *esp)
 	build_form_id(esp, array->elements[i], &esp->formIds[i]);
 }
 
-api Record *esp_brute_record_by_form_id(unsigned int formId)
+api Record *esp_get_form_id(unsigned int formId)
 {
 	for (int i = 5; i --> 0; )
 	{

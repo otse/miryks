@@ -15,37 +15,52 @@ namespace gloom
 	// an object wraps a record
 	// has powerful getters that give you
 	// access to its sub-records (and their important data!)
-	
+
 	class Object
 	{
 	public:
-		// unsigned int formId;
-		Record *const record;
+		Record *const record = nullptr;
 		std::multimap<unsigned int, Subrecord *> fields;
 
-		Object(Record *, int = 0);
+		Object(Record *);
 
-		bool Is(const char *) const;
-		bool IsAny(std::vector<const char *>) const;
-		// bool AnyV(const char *fmt...) const;
-		
-		size_t Count(const char *type) const
+		Subrecord *GetSubrecord(const char *, int) const;
+		Subrecord *GetSubrecordIndex(unsigned int) const;
+
+		bool Type(const char *type) const
+		{
+			return *(unsigned int *)type == record->hed->type;
+		}
+
+		bool TypeAny(std::vector<const char *> types) const
+		{
+			for (const char *type : types)
+				if (*(unsigned int *)type == record->hed->type)
+					return true;
+			return false;
+		}
+
+		unsigned int Count(const char *type) const
 		{
 			return fields.count(*(unsigned int *)type);
 		}
 
-		Subrecord *GetSubrecord(const char *, int) const;
-		//Subrecord *GetFrom(unsigned int, int *) const;
-
-		// Data Getter ! :
-		template <typename T=void *>
+		// Data Getter :
+		template <typename T = void *>
 		T Get(const char *type, int skip = 0) const
 		{
 			Subrecord *field = GetSubrecord(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
 
+		unsigned int Size() const
+		{
+			return record->fields.size;
+		}
+		
 	};
+
+	const char *GetEditorIdOnly(Record *record);
 
 } // namespace gloom
 

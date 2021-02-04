@@ -13,7 +13,7 @@ namespace gloom
 		Ref(Record *);
 		~Ref();
 
-		Object *self, *base;
+		Object *self, *baseObject;
 
 		mat4 matrix;
 

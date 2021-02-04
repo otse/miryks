@@ -50,7 +50,7 @@ namespace gloom
 
 		// Todo, Restyle this templated object getter and shouty words
 
-		auto NAME = self->Get<unsigned int *>("NAME");
+		auto baseId = self->Get<unsigned int *>("NAME");
 		auto editorId = self->Get<const char *>("EDID");
 		auto XSCL = self->Get<float *>("XSCL");
 		auto DATA = self->Get<float *>("DATA");
@@ -82,63 +82,56 @@ namespace gloom
 
 		// Todo, Work on esp's dynamic unioned arrays for looping please
 
-		if (NAME)
+		if (baseId)
 		{
-			if (*NAME == 0x0005AD9E) // gold to orichalum
-				NAME = new unsigned int(0x0005AD99);
-			::Record *rbase = esp_brute_record_by_form_id(*NAME);
-			base = new Object(rbase);
+			if (*baseId == 0x0005AD9E) // gold to orichalum
+				baseId = new unsigned int(0x0005AD99);
 
-			cassert(rbase, "ref cant find name baseRecord");
+			baseObject = new Object(esp_get_form_id(*baseId));
 
-			if (base->IsAny({"STAT", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
+			cassert(baseObject, "cant find baseId record");
+
+			if (baseObject->TypeAny({"STAT", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
 			{
-				for (unsigned int i = 0; i < base->record->fields.size; i++)
+				auto modl = baseObject->Get<const char *>("MODL");
+				if (modl)
 				{
-					Subrecord *field = base->record->fields.subrecords[i];
-					if (field->hed->type != espwrd "MODL")
-						continue;
-					mesh = Mesh::GetStored(field->data);
+					mesh = Mesh::GetStored((void *)modl);
 					if (!mesh)
 					{
-						std::string data = (char *)field->data;
-						data = "meshes\\" + data;
-						std::transform(data.begin(), data.end(), data.begin(),
-									   [](unsigned char c) { return std::tolower(c); });
-						//printf("stat baseRecord has a modl %s\n", data.c_str());
-						Rc *rc = bsa_find_more(data.c_str(), 0x1);
+						Rc *rc = loadRc("meshes\\", modl, 0x1);
 						if (rc)
 						{
-							//printf("found a rc %p\n", rc);
 							Nifp *nif = loadNifp(rc, true);
 							mesh = new Mesh;
 							mesh->Construct(nif);
-							Mesh::Store(field->data, mesh);
+							Mesh::Store((void *)modl, mesh);
 						}
 					}
 				}
 
-				if (base->Is("WEAP"))
+				if (baseObject->Type("WEAP"))
 				{
 					//WEAP = new Weap(baseRecord);
 				}
 			}
 
 			// Todo, This
-			else if (base->Is("LIGH"))
+			else if (baseObject->Type("LIGH"))
 			{
 				//Ligh LIGH(baseRecord);
 
 				pointlight = new PointLight;
+
 				scene->Add(pointlight);
 
-				auto baseEditorId = base->Get<const char *>("EDID");
-				auto DATA = base->Get<int *>("DATA");
-				auto FNAM = base->Get<float *>("FNAM");
+				auto baseId = baseObject->Get<const char *>("EDID");
+				auto DATA = baseObject->Get<int *>("DATA");
+				auto FNAM = baseObject->Get<float *>("FNAM");
 
-				if (baseEditorId)
+				if (baseId)
 				{
-					//printf("ligh edid %s\n", LIGH.baseEditorId);
+					//printf("ligh edid %s\n", LIGH.baseId);
 				}
 				if (DATA)
 				{
@@ -165,7 +158,7 @@ namespace gloom
 
 		if (mesh)
 		{
-			if (base->record->hed->formId != 0x32)
+			if (baseObject->record->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroup(mesh->baseGroup, matrix);
 				scene->Add(drawGroup);
@@ -210,8 +203,8 @@ namespace gloom
 			return false;
 		}
 
-		auto FULL = base->Get<char *>("FULL");
-		auto DESC = base->Get<const char *>("DESC");
+		auto FULL = baseObject->Get<char *>("FULL");
+		auto DESC = baseObject->Get<const char *>("DESC");
 
 		char *itemName = "Something";
 		if (FULL)

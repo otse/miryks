@@ -141,7 +141,7 @@ api Esp *has_plugin(const char *);
 
 api EspCArray *esp_filter_objects(const Esp *, const char [5]);
 
-api Record *esp_brute_record_by_form_id(unsigned int);
+api Record *esp_get_form_id(unsigned int);
 
 api Grup *esp_get_top_grup(const Esp *, const char [5]);
 

@@ -76,13 +76,13 @@ namespace gloom
 		Objects(grup).ForEach(0, stop, [&](Objects &oa, size_t i) {
 			Record *record = oa.GetRecord(i);
 			Object object(record);
-			cassert(object.Is("REFR"), "fus ro dah");
+			cassert(object.Type("REFR"), "fus ro dah");
 			Ref *ref = new Ref(record);
 			refs.push_back(ref);
 			const char *editorId = object.Get<const char *>("EDID", 0);
 			if (editorId)
 				editorIds.emplace(editorId, ref);
-			if (ref->base && ref->base->IsAny({"WEAP", "MISC"}))
+			if (ref->baseObject && ref->baseObject->TypeAny({"WEAP", "MISC"}))
 			{
 				iterables.push_back(ref);
 			}

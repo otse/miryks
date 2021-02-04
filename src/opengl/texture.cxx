@@ -35,7 +35,7 @@ Texture::Texture(const std::string &path) : path(path)
 	//printf("new texture %s\n", path.c_str());
 	Rc *rc = bsa_find_more(path.c_str(), 0x2);
 	if (rc == NULL) {
-		printf("cant find %s\n", path.c_str());
+		printf("cant find texture: %s\n", path.c_str());
 		return;
 	}
 	bsa_read(rc);
