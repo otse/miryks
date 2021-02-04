@@ -4,6 +4,7 @@
 
 #include <opengl/group.h>
 #include <opengl/geometry.h>
+#include <opengl/material.h>
 
 RenderTarget::RenderTarget(int width, int height)
 {
@@ -13,7 +14,7 @@ RenderTarget::RenderTarget(int width, int height)
 	glGenTextures(1, &renderedTexture);
 	glBindTexture(GL_TEXTURE_2D, renderedTexture);
 
-	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0,GL_RGB, GL_UNSIGNED_BYTE, 0);
+	glTexImage2D(GL_TEXTURE_2D, 0,GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
@@ -57,7 +58,7 @@ RenderTarget::~RenderTarget()
 {
 }
 
-RTQuad::RTQuad()
+RTQuad::RTQuad(RenderTarget *rt)
 {
 	const std::vector<vec3> quad = {
 		vec3(-1.0f, -1.0f, 0.0f),
@@ -70,6 +71,8 @@ RTQuad::RTQuad()
 
 	geometry = new Geometry();
 	geometry->Clear(0, 0);
+	geometry->material->src = &postquad;
+	geometry->material->Ready();
 	
 	for (const vec3 &v : quad)
 	{
@@ -77,7 +80,10 @@ RTQuad::RTQuad()
 	}
 }
 
-void RTQuad::Draw()
+void RTQuad::Draw(RenderTarget *rt)
 {
-
+	glActiveTexture(GL_TEXTURE0 + 0);
+	glBindTexture(GL_TEXTURE_2D, rt->renderedTexture);
+	geometry->material->shader->SetInt("renderedTexture", 0);
+	geometry->Draw(mat4(1.0));
 }

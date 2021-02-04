@@ -11,6 +11,10 @@ using namespace gloom;
 
 void hero_menu()
 {
+    ImGuiIO& io = ImGui::GetIO();
+
+	io.DisplaySize.x;
+
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration;
 	ImGui::SetNextWindowSize(ImVec2(600, 600));
 	ImGui::SetNextWindowPos(ImVec2(300, 300));

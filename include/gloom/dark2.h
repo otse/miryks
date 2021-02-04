@@ -69,7 +69,7 @@ namespace gloom
 	// Todo, these globals just
 	extern FirstPersonCamera *first_person_camera;
 	extern ViewerCamera *viewer_camera;
-	extern RenderTarget *render_target;
+	extern RenderTarget *renderRarget;
 
 	extern Interior *dungeon;
 	extern Actor *someDraugr;

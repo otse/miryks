@@ -88,6 +88,7 @@
         "cerrno": "cpp",
         "cfloat": "cpp",
         "climits": "cpp",
-        "string_view": "cpp"
+        "string_view": "cpp",
+        "cstdarg": "cpp"
     }
 }

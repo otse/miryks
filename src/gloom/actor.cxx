@@ -90,9 +90,9 @@ namespace gloom
 
 	void Actor::PutDown(const char *q)
 	{
-		auto ref = dungeon->refEditorIds.find(q);
+		auto ref = dungeon->editorIds.find(q);
 
-		if (ref != dungeon->refEditorIds.end())
+		if (ref != dungeon->editorIds.end())
 		{
 			Group *group = new Group();
 			group->Add(skeleton->baseBone->group);
@@ -137,8 +137,8 @@ namespace gloom
 
 	void Human::Place(const char *q)
 	{
-		auto ref = dungeon->refEditorIds.find(q);
-		if (ref == dungeon->refEditorIds.end())
+		auto ref = dungeon->editorIds.find(q);
+		if (ref == dungeon->editorIds.end())
 			return;
 		drawGroup->matrix = ref->second->matrix;
 		csphere = new CSphere(vec3(drawGroup->matrix[3])/*+vec3(0, 0, 1)*/);

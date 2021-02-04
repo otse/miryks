@@ -9,7 +9,7 @@
 
 namespace gloom
 {
-	void collision_inits();
+	void collision_init();
 	void collision_simulate();
 	void collision_cleanup();
 

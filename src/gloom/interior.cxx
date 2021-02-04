@@ -17,6 +17,20 @@
 
 namespace gloom
 {
+	Interior::Interior(const char *edid)
+	{
+		Group *group = new Group();
+		Cell cell = GetCell(edid);
+		LoadCell(cell);
+	}
+
+	void Interior::LoadCell(Cell &cell)
+	{
+		loadedCell = cell;
+		ParseGrup(cell, cell.persistent);
+		ParseGrup(cell, cell.non_persistent);
+	}
+
 	Cell Interior::GetCell(const char *name)
 	{
 		Cell cell;
@@ -35,7 +49,7 @@ namespace gloom
 					{
 						Objects C(grup);
 						cell.cell = object.record;
-						printf("ForEach found your cell %s\n", editorId);
+						printf("ForEach found your interior `%s`\n", editorId);
 						if (C.Size() >= 1)
 							cell.persistent = C.GetGrup(0);
 						if (C.Size() >= 2)
@@ -50,25 +64,7 @@ namespace gloom
 		return cell;
 	}
 
-	Interior::~Interior()
-	{
-		loadedCell;
-		Unload();
-	}
-
-	Interior::Interior(const char *edid)
-	{
-		Group *group = new Group();
-		Cell cell = GetCell(edid);
-		LoadCell(cell);
-	}
-
-	void Interior::LoadCell(Cell &cell)
-	{
-		loadedCell = cell;
-		ParseGrup(cell, cell.persistent);
-		ParseGrup(cell, cell.non_persistent);
-	}
+	static void PlaceCamera(Interior *);
 
 	void Interior::ParseGrup(Cell &cell, Grup *grup)
 	{
@@ -85,15 +81,20 @@ namespace gloom
 			refs.push_back(ref);
 			const char *editorId = object.Get<const char *>("EDID", 0);
 			if (editorId)
-				this->refEditorIds.emplace(editorId, ref);
+				editorIds.emplace(editorId, ref);
 			if (ref->base && ref->base->IsAny({"WEAP", "MISC"}))
 			{
 				iterables.push_back(ref);
 			}
 		});
+
+		PlaceCamera(this);
+	}
+
+	static void PlaceCamera(Interior *interior) {
 		static bool spawned = false;
-		auto ref = refEditorIds.find("darkshackspawn");
-		if (ref != refEditorIds.end() && !spawned)
+		auto ref = interior->editorIds.find("darkshackspawn");
+		if (ref != interior->editorIds.end() && !spawned)
 		{
 			auto DATA = ref->second->self->Get<float *>("DATA");
 			first_person_camera->pos = ref->second->matrix[3];
@@ -101,6 +102,11 @@ namespace gloom
 			first_person_camera->fyaw = cast_vec_3(DATA + 3)->z;
 			spawned = true;
 		}
+	}
+
+	Interior::~Interior()
+	{
+		Unload();
 	}
 
 	void Interior::Unload()
@@ -116,7 +122,7 @@ namespace gloom
 	{
 		return l->GetDistance() < r->GetDistance();
 	}
-	
+
 	void Interior::Update()
 	{
 		std::vector<Ref *> closest = iterables;

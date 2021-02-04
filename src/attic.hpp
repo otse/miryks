@@ -3,7 +3,7 @@
 namespace gloom
 {
 	template <typename T>
-	bool add(T t, std::vector<T> &v)
+	bool Add(T t, std::vector<T> &v)
 	{
 		std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
 		if (has == v.end())
@@ -16,7 +16,7 @@ namespace gloom
 	}
 
 	template <typename T>
-	bool remove(T t, std::vector<T> &v)
+	bool Remove(T t, std::vector<T> &v)
 	{
 		std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
 		if (has != v.end())

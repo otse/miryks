@@ -40,6 +40,7 @@ namespace gloom
 	{
 		if (store.count(key))
 			return store[key];
+		//printf("GetStored 0");
 		return nullptr;
 	}
 

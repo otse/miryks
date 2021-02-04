@@ -37,7 +37,7 @@ namespace gloom
 		//}
 	}
 
-	void collision_inits()
+	void collision_init()
 	{
 		///-----includes_end-----
 
@@ -226,7 +226,7 @@ namespace gloom
 
 	CShape::CShape(vec3 pos)
 	{
-		
+
 	}
 
 } // namespace gloom

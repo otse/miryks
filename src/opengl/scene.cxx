@@ -1,4 +1,4 @@
-#include <attic.hpp>
+#include <Attic.hpp>
 
 #include <opengl/scene.h>
 
@@ -32,19 +32,19 @@ void Scene::Clear()
 }
 
 void Scene::Add(PointLight *pl) {
-	gloom::add<PointLight *>(pl, pointlights);
+	gloom::Add<PointLight *>(pl, pointlights);
 }
 
 void Scene::Remove(PointLight *pl) {
-	gloom::remove<PointLight *>(pl, pointlights);
+	gloom::Remove<PointLight *>(pl, pointlights);
 }
 
 void Scene::Add(DrawGroup *drawGroup) {
-	gloom::add<DrawGroup *>(drawGroup, drawGroups);
+	gloom::Add<DrawGroup *>(drawGroup, drawGroups);
 }
 
 void Scene::Remove(DrawGroup *drawGroup) {
-	gloom::remove<DrawGroup *>(drawGroup, drawGroups);
+	gloom::Remove<DrawGroup *>(drawGroup, drawGroups);
 }
 
 void Scene::DrawItems()

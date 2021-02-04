@@ -1,4 +1,5 @@
 #include <Gloom/Dark2.h>
+#include <Gloom/Obj.h>
 
 #include <algorithm>
 
@@ -39,7 +40,7 @@ namespace gloom
 
 	FirstPersonCamera *first_person_camera;
 	ViewerCamera *viewer_camera;
-	RenderTarget *render_target;
+	RenderTarget *renderRarget;
 
 	int width = 2560;
 	int height = 1800;
@@ -102,7 +103,8 @@ int main()
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
 	openglScene();
-	collision_inits();
+	objs_init();
+	collision_init();
 	camera = first_person_camera;
 #if 0
 	rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);

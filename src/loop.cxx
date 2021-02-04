@@ -257,8 +257,8 @@ void gloom::renderImGui()
 
 void gloom::programLoop()
 {
-	render_target = new RenderTarget(width, height);
-	RTQuad quad;
+	renderRarget = new RenderTarget(width, height);
+	RTQuad quad(renderRarget);
 
 	double fps;
 	int frames;
@@ -285,9 +285,9 @@ void gloom::programLoop()
 		}
 		frames++;
 
-		//rt.Bind();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		//renderRarget->Bind();
 
 		glfwPollEvents();
 
@@ -321,9 +321,12 @@ void gloom::programLoop()
 
 		Shader::active = nullptr;
 
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		renderImGui();
 
-		quad.geometry->Draw(mat4(1.0));
+		//quad.Draw(renderRarget);
 
 		glfwSwapBuffers(window);
 	} while (!glfwWindowShouldClose(window));

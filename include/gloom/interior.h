@@ -32,7 +32,7 @@ namespace gloom
 
 		std::vector<Ref *> refs, iterables;
 
-		std::map<std::string, Ref *> refEditorIds;
+		std::map<std::string, Ref *> editorIds;
 
 		static Cell GetCell(const char *);
 		void Update();

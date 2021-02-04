@@ -1,8 +1,8 @@
-#include <gloom/ref.h>
-#include <gloom/object.h>
+#include <Gloom/Ref.h>
+#include <Gloom/Object.h>
 
-#include <gloom/mesh.h>
-#include <gloom/files.h>
+#include <Gloom/Mesh.h>
+#include <Gloom/Files.h>
 
 #include <libs>
 

@@ -13,12 +13,12 @@ struct RenderTarget
 
 struct RTQuad
 {
+    RTQuad(RenderTarget *rt);
     Geometry *geometry;
     Shader *shader;
     GLuint quad_VertexArrayID, quad_vertexbuffer;
     GLuint texID, timeID;
-    void Draw();
-    RTQuad();
+    void Draw(RenderTarget *);
 };
 
 #endif
