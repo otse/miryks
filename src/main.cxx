@@ -22,12 +22,6 @@
 
 namespace gloom
 {
-	namespace viewer
-	{
-		Mesh *mesh = nullptr;
-		DrawGroup *drawGroup = nullptr;
-	} // namespace viewer
-
 	unsigned int fps = 0;
 
 	Interior *dungeon = nullptr;
@@ -45,41 +39,6 @@ namespace gloom
 	int width = 2560;
 	int height = 1800;
 	float delta = 1;
-} // namespace gloom
-
-namespace gloom
-{
-	vec2 *cast_vec_2(float *f) { return reinterpret_cast<vec2 *>(f); }
-	vec3 *cast_vec_3(float *f) { return reinterpret_cast<vec3 *>(f); }
-	vec4 *cast_vec_4(float *f) { return reinterpret_cast<vec4 *>(f); }
-	mat3 *cast_mat_3(float *f) { return reinterpret_cast<mat3 *>(f); }
-	mat4 *cast_mat_4(float *f) { return reinterpret_cast<mat4 *>(f); }
-
-	void viewer::view(Rc *rc)
-	{
-		if (mesh)
-		{
-			scene->Remove(drawGroup);
-			delete mesh;
-			delete drawGroup;
-		}
-		Nifp *nif = nifp_saved(rc);
-		if (nif == NULL)
-		{
-			nif = loadNifp(rc, 1);
-			nifp_save(rc, nif);
-		}
-		mesh = new Mesh;
-		mesh->Construct(nif);
-		drawGroup = new DrawGroup(mesh->baseGroup, glm::translate(mat4(1.0), first_person_camera->pos));
-		scene->Add(drawGroup);
-		HideCursor();
-		camera = viewer_camera;
-		viewer_camera->disabled = false;
-		viewer_camera->pos = drawGroup->aabb.center();
-		//viewer_camera->pos = first_person_camera->pos;
-		viewer_camera->radius = drawGroup->aabb.radius2() * 2;
-	}
 } // namespace gloom
 
 int main()

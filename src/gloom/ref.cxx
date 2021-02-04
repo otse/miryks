@@ -110,11 +110,7 @@ namespace gloom
 						if (rc)
 						{
 							//printf("found a rc %p\n", rc);
-							Nifp *nif = nifp_saved(rc);
-							if (nif == NULL)
-							{
-								nif = loadNifp(rc, 1);
-							}
+							Nifp *nif = loadNifp(rc, true);
 							mesh = new Mesh;
 							mesh->Construct(nif);
 							Mesh::Store(field->data, mesh);

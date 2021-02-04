@@ -37,18 +37,13 @@ namespace gloom
 	class KeyFrames;
 	class Animation;
 
-	namespace viewer
-	{
-		void view(Rc *);
-		extern Mesh *mesh;
-		extern DrawGroup *drawGroup;
-	} // namespace viewer
+	void View(Rc *);
 
 	extern unsigned int fps;
 
 	// -- loaders.cxx
 	Rc *loadRc(const char *, const char *, unsigned long);
-	Nifp *loadNifp(Rc *, int);
+	Nifp *loadNifp(Rc *, bool useCache = true);
 	Esp *loadEsp(const char *);
 	Bsa *loadBsa(const char *);
 
@@ -79,14 +74,15 @@ namespace gloom
 
 	// Nifp float structs to glm:
 
-	vec2 *cast_vec_2(float *);
-	vec3 *cast_vec_3(float *);
-	vec4 *cast_vec_4(float *);
-	mat3 *cast_mat_3(float *);
-	mat4 *cast_mat_4(float *);
-	#define Gloom_Vec_3(X) *cast_vec_3( (float *) & X )
-	#define Gloom_Vec_4(X) *cast_vec_4( (float *) & X )
-	#define Gloom_Mat_3(X) *cast_mat_3( (float *) & X )
+	inline vec2 *cast_vec_2(float *f) { return reinterpret_cast<vec2 *>(f); }
+	inline vec3 *cast_vec_3(float *f) { return reinterpret_cast<vec3 *>(f); }
+	inline vec4 *cast_vec_4(float *f) { return reinterpret_cast<vec4 *>(f); }
+	inline mat3 *cast_mat_3(float *f) { return reinterpret_cast<mat3 *>(f); }
+	inline mat4 *cast_mat_4(float *f) { return reinterpret_cast<mat4 *>(f); }
+
+#define Gloom_Vec_3(X) *cast_vec_3((float *)&X)
+#define Gloom_Vec_4(X) *cast_vec_4((float *)&X)
+#define Gloom_Mat_3(X) *cast_mat_3((float *)&X)
 
 } // namespace gloom
 

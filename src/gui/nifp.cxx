@@ -6,7 +6,7 @@
 #include <sstream>
 #include <imgui.h>
 
-#define cls           \
+#define cls                \
 	ss.str(std::string()); \
 	ss.clear();
 
@@ -16,19 +16,19 @@ static std::stringstream ss;
 
 void nifp_gui()
 {
-	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;// | ImGuiWindowFlags_NoSavedSettings;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::SetNextWindowPos(ImVec2(900, 0));
 	ImGui::Begin("Nifp", nullptr, flags);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-	
+
 	for (int i = 0; i < nifps; i++)
 	{
 		Nifp *nif = nifpmap[i].value;
 
 		//if (!nif->path)
-			//continue;
+		//continue;
 
 		if (ImGui::TreeNode(nif->path))
 		{
@@ -110,7 +110,7 @@ void nifp_gui()
 
 			if (ImGui::Button(VIEW_NIF))
 			{
-				viewer::view((Rc*)nifpmap[i].key);
+				View((Rc *)nifpmap[i].key);
 			}
 
 			ImGui::TreePop();

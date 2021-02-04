@@ -16,7 +16,7 @@ api void nifp_save(void *key, Nifp *nif) {
 	nifpmap[nifps].key = key;
 	nifpmap[nifps].value = nif;
 	nifps++;
-	cassert(nifps<5000, "nifps > 5000");
+	cassert(nifps < 5000, "nifp overflow");
 }
 
 api Nifp *nifp_saved(void *key) {

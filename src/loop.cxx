@@ -41,7 +41,7 @@ namespace gloom
 	void HideCursor()
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		glfwSetCursorPos(window, Camera::prev[0], Camera::prev[1]);
+		//glfwSetCursorPos(window, Camera::prev[0], Camera::prev[1]);
 		cursorShowing = false;
 		first_person_camera->disabled = false;
 	}
@@ -61,8 +61,6 @@ static void error_callback(int error, const char *description)
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-	static bool F3 = false;
-
 	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
 	{
 		hideDebugGuis = !hideDebugGuis;
@@ -71,17 +69,21 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		else
 			HideCursor();
 	}
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GLFW_TRUE);
-
-	if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
+	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		camera = first_person_camera;
-		camera->disabled = false;
-		HideCursor();
-		F3 = false;
+		if (first_person_camera->disabled)
+		{
+			camera = first_person_camera;
+			camera->disabled = false;
+			HideCursor();
+		}
+		else
+		{
+			glfwSetWindowShouldClose(window, GLFW_TRUE);
+		}
 	}
-	if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
+
+	else if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
 	{
 		if (cursorShowing)
 			HideCursor();
@@ -89,9 +91,12 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 			ShowCursor();
 		camera->disabled = cursorShowing;
 	}
-	if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
+	else if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
 	{
-		printf("F5!\n");
+	}
+	else if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
+	{
+		printf(" reload esp ! \n");
 		Esp *plugin = get_plugins()[1];
 		const char *name = plugin->name;
 		Esp *has = has_plugin(name);
@@ -100,22 +105,23 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		delete dungeon;
 		dungeon = new Interior("GloomGen");
 	}
-	if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
+	else if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
 	{
+		printf(" reload shaders ! \n");
 		SetShaderSources();
 		for (auto &pair : Shader::shaders)
 		{
 			pair.second->Compile();
 		}
 	}
-	if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
+	else if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
 	{
 		printf("f10");
-		f10 = ! f10;
+		f10 = !f10;
 	}
-	if (key == GLFW_KEY_H && action == GLFW_PRESS)
+	else if (key == GLFW_KEY_H && action == GLFW_PRESS)
 	{
-		h_pop = ! h_pop;
+		h_pop = !h_pop;
 	}
 }
 
@@ -306,7 +312,7 @@ void gloom::programLoop()
 
 		if (someHuman)
 			someHuman->Step();
-		
+
 		if (player1)
 			player1->Step();
 
