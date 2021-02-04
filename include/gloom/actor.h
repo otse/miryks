@@ -1,7 +1,7 @@
 #ifndef GLOOM_ACTOR_H
 #define GLOOM_ACTOR_H
 
-#include <gloom/dark2.h>
+#include <Gloom/Dark2.h>
 
 #include "object.h"
 
@@ -43,7 +43,7 @@ namespace gloom
 		Actor *head, *body, *hands, *feet;
 
 	public:
-		Collider *collider;
+		CSphere *csphere;
 		Group *group;
 		DrawGroup *drawGroup = nullptr;
 		

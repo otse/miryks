@@ -18,6 +18,8 @@ struct Bsa;
 
 namespace gloom
 {
+	class Obj;
+	class Ref;
 	class Object;
 	class ObjectArray;
 	class Level;
@@ -27,6 +29,8 @@ namespace gloom
 	class Actor;
 	class Human;
 	class Player;
+	class CSphere;
+	class CShape;
 	class Collider;
 	class Bone;
 	class Skeleton;

@@ -236,7 +236,7 @@ namespace gloom
 				geometry->material->dust = true;
 			if (block->B->shader_flags_1 & 0x00001000)
 			{
-				printf("Model_Space_Normals\n");
+				//printf("Model_Space_Normals\n");
 				geometry->material->modelSpaceNormals = true;
 			}
 			if (block->B->shader_flags_2 & 0x00000020)
@@ -246,7 +246,7 @@ namespace gloom
 
 	void bs_effect_shader_property_callback(NifpRd *rd, bs_effect_shader_property_pointer *block)
 	{
-		printf(" mesh bs effect shader cb ");
+		//printf(" mesh bs effect shader cb ");
 		Mesh *mesh = (Mesh *)rd->data;
 		Geometry *geometry = mesh->lastGroup->geometry;
 		if (geometry)
@@ -255,7 +255,7 @@ namespace gloom
 			geometry->material->color = vec3(1.0);
 			geometry->material->emissive = Gloom_Vec_3(block->C->emissive_color);
 			geometry->material->map = GetProduceTexture(block->source_texture);
-			printf("source texture is %s\n", block->source_texture);
+			//printf("source texture is %s\n", block->source_texture);
 			if (block->B->shader_flags_1 & 0x80000000)
 				geometry->material->testing = true;
 			if (block->B->shader_flags_2 & 0x00000020)

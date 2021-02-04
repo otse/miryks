@@ -1,10 +1,10 @@
 #include <libs>
 
-#include <gloom/files.h>
-#include <gloom/actor.h>
-#include <gloom/skeleton.h>
-#include <gloom/level.h>
-#include <gloom/mesh.h>
+#include <Gloom/Files.h>
+#include <Gloom/Actor.h>
+#include <Gloom/Skeleton.h>
+#include <Gloom/Interior.h>
+#include <Gloom/Mesh.h>
 
 #include <opengl/group.h>
 #include <opengl/scene.h>

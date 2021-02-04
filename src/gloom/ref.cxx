@@ -51,14 +51,14 @@ namespace gloom
 		// Todo, Restyle this templated object getter and shouty words
 
 		auto NAME = self->Get<unsigned int *>("NAME");
-		auto EDID = self->Get<const char *>("EDID");
+		auto editorId = self->Get<const char *>("EDID");
 		auto XSCL = self->Get<float *>("XSCL");
 		auto DATA = self->Get<float *>("DATA");
 
 		// Todo, Capitalize shouty words here ? Do something with it
-		if (EDID)
+		if (editorId)
 		{
-			//EDID = self->EDID;
+			//editorId = self->editorId;
 		}
 		if (XSCL)
 		{
@@ -136,13 +136,13 @@ namespace gloom
 				pointlight = new PointLight;
 				scene->Add(pointlight);
 
-				auto EDID = base->Get<const char *>("EDID");
+				auto baseEditorId = base->Get<const char *>("EDID");
 				auto DATA = base->Get<int *>("DATA");
 				auto FNAM = base->Get<float *>("FNAM");
 
-				if (EDID)
+				if (baseEditorId)
 				{
-					//printf("ligh edid %s\n", LIGH.EDID);
+					//printf("ligh edid %s\n", LIGH.baseEditorId);
 				}
 				if (DATA)
 				{

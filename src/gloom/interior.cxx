@@ -1,4 +1,4 @@
-#include <Gloom/Level.h>
+#include <Gloom/Interior.h>
 #include <Gloom/Mesh.h>
 #include <Gloom/Object.h>
 #include <Gloom/ObjectArray.h>
@@ -19,7 +19,7 @@ namespace gloom
 {
 	Cell Level::GetCell(const char *name)
 	{
-		Cell cell = {false};
+		Cell cell;
 
 		Grup *top = esp_get_top_grup(get_plugins()[1], "CELL");
 
@@ -85,15 +85,15 @@ namespace gloom
 			refs.push_back(ref);
 			const char *editorId = object.Get<const char *>("EDID", 0);
 			if (editorId)
-				this->refEditorIDs.emplace(editorId, ref);
+				this->refEditorIds.emplace(editorId, ref);
 			if (ref->base && ref->base->IsAny({"WEAP", "MISC"}))
 			{
 				iterables.push_back(ref);
 			}
 		});
 		static bool spawned = false;
-		auto ref = refEditorIDs.find("darkshackspawn");
-		if (ref != refEditorIDs.end() && !spawned)
+		auto ref = refEditorIds.find("darkshackspawn");
+		if (ref != refEditorIds.end() && !spawned)
 		{
 			auto DATA = ref->second->self->Get<float *>("DATA");
 			first_person_camera->pos = ref->second->matrix[3];

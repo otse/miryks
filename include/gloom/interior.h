@@ -1,8 +1,8 @@
 #pragma once
 
-#include <gloom/dark2.h>
+#include <Gloom/Dark2.h>
 
-#include <gloom/ref.h>
+#include <Gloom/Ref.h>
 
 #include <opengl/types.h>
 #include <opengl/scene.h>
@@ -16,8 +16,8 @@ namespace gloom
 
 	struct Cell
 	{
-		bool good;
-		Record *cell;
+		bool good = false;
+		Record *cell = nullptr;
 		Grup *persistent = nullptr;
 		Grup *non_persistent = nullptr;
 	};
@@ -30,12 +30,11 @@ namespace gloom
 
 		Cell loadedCell;
 
-		static Cell GetCell(const char *);
-
 		std::vector<Ref *> refs, iterables;
 
-		std::map<std::string, Ref *> refEditorIDs;
+		std::map<std::string, Ref *> refEditorIds;
 
+		static Cell GetCell(const char *);
 		void Update();
 		void LoadCell(Cell &);
 		void Unload();

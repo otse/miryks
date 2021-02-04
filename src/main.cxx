@@ -12,11 +12,12 @@
 #include <opengl/geometry.h>
 #include <opengl/material.h>
 
-#include <gloom/files.h>
+#include <Gloom/Files.h>
 
-#include <gloom/level.h>
-#include <gloom/mesh.h>
-#include <gloom/actor.h>
+#include <Gloom/Interior.h>
+#include <Gloom/Collision.h>
+#include <Gloom/Mesh.h>
+#include <Gloom/Actor.h>
 
 namespace gloom
 {
@@ -101,6 +102,7 @@ int main()
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;
 	openglScene();
+	collision_inits();
 	camera = first_person_camera;
 #if 0
 	rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);

@@ -7,23 +7,15 @@
 
 namespace gloom
 {
-	class Ref
+	class Obj
 	{
 	public:
-		Ref(Record *);
-		~Ref();
-
-		Object *self, *base;
+		Obj();
+		~Obj();
 
 		mat4 matrix;
 
 		Mesh *mesh;
 		DrawGroup *drawGroup;
-		PointLight *pointlight;
-
-		void Go();
-
-		float GetDistance();
-		bool DisplayAsItem();
 	};
 } // namespace gloom

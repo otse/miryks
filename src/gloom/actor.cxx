@@ -1,11 +1,12 @@
 #include <libs>
 
 #include <Gloom/Actor.h>
+#include <Gloom/Collision.h>
 
-#include <gloom/files.h>
-#include <gloom/skeleton.h>
-#include <gloom/level.h>
-#include <gloom/mesh.h>
+#include <Gloom/Files.h>
+#include <Gloom/Skeleton.h>
+#include <Gloom/Interior.h>
+#include <Gloom/Mesh.h>
 
 #include <opengl/group.h>
 #include <opengl/scene.h>
@@ -89,9 +90,9 @@ namespace gloom
 
 	void Actor::PutDown(const char *q)
 	{
-		auto ref = dungeon->refEditorIDs.find(q);
+		auto ref = dungeon->refEditorIds.find(q);
 
-		if (ref != dungeon->refEditorIDs.end())
+		if (ref != dungeon->refEditorIds.end())
 		{
 			Group *group = new Group();
 			group->Add(skeleton->baseBone->group);
@@ -130,14 +131,17 @@ namespace gloom
 		group->Add(feet->mesh->baseGroup);
 
 		drawGroup = new DrawGroup(group, mat4());
+
+		csphere = nullptr;
 	};
 
 	void Human::Place(const char *q)
 	{
-		auto ref = dungeon->refEditorIDs.find(q);
-		if (ref == dungeon->refEditorIDs.end())
+		auto ref = dungeon->refEditorIds.find(q);
+		if (ref == dungeon->refEditorIds.end())
 			return;
 		drawGroup->matrix = ref->second->matrix;
+		csphere = new CSphere(vec3(drawGroup->matrix[3])/*+vec3(0, 0, 1)*/);
 		scene->Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
@@ -152,6 +156,11 @@ namespace gloom
 		body->Step();
 		hands->Step();
 		feet->Step();
+		if (csphere) {
+			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());
+			drawGroup->matrix = translate(mat4(1.0), csphere->GetWorldTransform());
+			//drawGroup->Reset();
+		}
 	}
 
 	Player::Player()
@@ -165,7 +174,7 @@ namespace gloom
 
 	void Player::Step()
 	{
-		
+
 		human->Step();
 		vec3 down = vec3(0, 0, -150 / ONE_SKYRIM_UNIT_IN_CM);
 		drawGroup->matrix = glm::translate(mat4(1.0), down + first_person_camera->pos);

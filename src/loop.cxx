@@ -1,8 +1,10 @@
-#include <gloom/dark2.h>
-#include <gloom/mesh.h>
-#include <gloom/level.h>
-#include <gloom/actor.h>
+#include <Gloom/Dark2.h>
 #include <libs>
+
+#include <Gloom/Mesh.h>
+#include <Gloom/Interior.h>
+#include <Gloom/Actor.h>
+#include <Gloom/Collision.h>
 
 #include <opengl/camera.h>
 #include <opengl/scene.h>
@@ -187,7 +189,7 @@ void gloom::programGo()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(width, height, "Dork", NULL, NULL);
+	window = glfwCreateWindow(width, height, "gloom", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
@@ -309,6 +311,8 @@ void gloom::programLoop()
 			player1->Step();
 
 		dungeon->Update();
+
+		collision_simulate();
 
 		scene->Order();
 		scene->DrawItems();
