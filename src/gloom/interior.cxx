@@ -17,7 +17,7 @@
 
 namespace gloom
 {
-	Cell Level::GetCell(const char *name)
+	Cell Interior::GetCell(const char *name)
 	{
 		Cell cell;
 
@@ -50,27 +50,27 @@ namespace gloom
 		return cell;
 	}
 
-	Level::~Level()
+	Interior::~Interior()
 	{
 		loadedCell;
 		Unload();
 	}
 
-	Level::Level(const char *edid)
+	Interior::Interior(const char *edid)
 	{
 		Group *group = new Group();
 		Cell cell = GetCell(edid);
 		LoadCell(cell);
 	}
 
-	void Level::LoadCell(Cell &cell)
+	void Interior::LoadCell(Cell &cell)
 	{
 		loadedCell = cell;
 		ParseGrup(cell, cell.persistent);
 		ParseGrup(cell, cell.non_persistent);
 	}
 
-	void Level::ParseGrup(Cell &cell, Grup *grup)
+	void Interior::ParseGrup(Cell &cell, Grup *grup)
 	{
 		if (grup == nullptr)
 			return;
@@ -103,8 +103,7 @@ namespace gloom
 		}
 	}
 
-	// Nice
-	void Level::Unload()
+	void Interior::Unload()
 	{
 		for (auto it = refs.begin(); it != refs.end(); ++it)
 		{
@@ -117,9 +116,8 @@ namespace gloom
 	{
 		return l->GetDistance() < r->GetDistance();
 	}
-
-	// Perfect
-	void Level::Update()
+	
+	void Interior::Update()
 	{
 		std::vector<Ref *> closest = iterables;
 		std::sort(iterables.begin(), iterables.end(), myfunction);

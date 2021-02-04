@@ -22,7 +22,7 @@ namespace gloom
 	class Ref;
 	class Object;
 	class ObjectArray;
-	class Level;
+	class Interior;
 	class Mesh;
 	class SkinnedMesh;
 	class SkinPartition;
@@ -71,7 +71,7 @@ namespace gloom
 	extern ViewerCamera *viewer_camera;
 	extern RenderTarget *render_target;
 
-	extern Level *dungeon;
+	extern Interior *dungeon;
 	extern Actor *someDraugr;
 	extern Actor *meanSkelly;
 	extern Human *someHuman;

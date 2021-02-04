@@ -98,7 +98,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		free_plugin(&has);
 		get_plugins()[1] = loadEsp(name);
 		delete dungeon;
-		dungeon = new Level("GloomGen");
+		dungeon = new Interior("GloomGen");
 	}
 	if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
 	{

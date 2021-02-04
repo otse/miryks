@@ -22,11 +22,11 @@ namespace gloom
 		Grup *non_persistent = nullptr;
 	};
 
-	class Level
+	class Interior
 	{
 	public:
-		Level(const char *);
-		~Level();
+		Interior(const char *);
+		~Interior();
 
 		Cell loadedCell;
 

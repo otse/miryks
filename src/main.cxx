@@ -29,7 +29,7 @@ namespace gloom
 
 	unsigned int fps = 0;
 
-	Level *dungeon = nullptr;
+	Interior *dungeon = nullptr;
 	Actor *someDraugr = nullptr;
 	Actor *meanSkelly = nullptr;
 	Human *someHuman = nullptr;
@@ -110,7 +110,7 @@ int main()
 #endif
 	//nif_test();
 	nifp_test();
-	dungeon = new Level("GloomGen"); // <-- interior to load
+	dungeon = new Interior("GloomGen"); // <-- interior to load
 	someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
 	someDraugr->PutDown("gloomgendraugr");
 	meanSkelly = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
