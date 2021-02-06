@@ -33,7 +33,7 @@ namespace gloom
 		Group *Nested(NifpRd *);
 
 		static void Store(void *, Mesh *);
-		static Mesh *GetStored(void *);
+		static Mesh *Cached(void *);
 	};
 
 	class SkinnedMesh

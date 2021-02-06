@@ -65,8 +65,10 @@ void Geometry::Clear(int num_vertices, int num_elements)
 
 void Geometry::Draw(const mat4 &model)
 {
-	if (!created)
+	if (!created) {
+		//printf("geometry draw but not setup properly\n");
 		return;
+	}
 
 	bool uses_elements = elements.size() > 0;
 

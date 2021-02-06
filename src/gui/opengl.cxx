@@ -13,7 +13,7 @@ using namespace gloom;
 
 static std::stringstream ss;
 
-#define cls           \
+#define cls                \
 	ss.str(std::string()); \
 	ss.clear();
 
@@ -29,7 +29,7 @@ void opengl_gui()
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))
 	{
-		
+
 		if (ImGui::BeginTabItem("settings"))
 		{
 			bool a = ImGui::Checkbox("diffuse maps", &renderSettings.diffuseMaps);
@@ -40,10 +40,10 @@ void opengl_gui()
 			ImGui::Checkbox("center axes", &renderSettings.axes);
 			ImGui::Checkbox("axis-aligned bounding boxes", &renderSettings.AABBS);
 			ImGui::Checkbox("oriented bounding boxes", &renderSettings.OBBS);
-            ImGui::SliderFloat("cull big boxers", &renderSettings.maximumBoundingVolume, 0.0f, 15000000.0f, "%.1f");
-            ImGui::SliderFloat("t pose to anim ratio", &renderSettings.restRatio, 0.0f, 1.0f, "%.1f");
+			ImGui::SliderFloat("cull big boxers", &renderSettings.maximumBoundingVolume, 0.0f, 15000000.0f, "%.1f");
+			ImGui::SliderFloat("t pose to anim ratio", &renderSettings.restRatio, 0.0f, 1.0f, "%.1f");
 
-			if (a||b||c||d||e)
+			if (a || b || c || d || e)
 			{
 				for (auto &pair : Shader::shaders)
 				{
@@ -51,7 +51,16 @@ void opengl_gui()
 				}
 			}
 
-			ImGui::Image((void*)(intptr_t)7, ImVec2(512,512));
+			ImVec4 color = ImVec4(scene->ambient.x, scene->ambient.y, scene->ambient.z, 1);
+
+			ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_None;
+
+			ImGui::Text("Color widget:");
+			ImGui::ColorEdit3("MyColor##1", (float *)&color, misc_flags);
+
+			scene->ambient = vec3(color.x, color.y, color.z);
+
+			ImGui::Image((void *)(intptr_t)7, ImVec2(512, 512));
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("camera"))

@@ -195,15 +195,18 @@ void gloom::programGo()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow(width, height, "gloom", NULL, NULL);
+#if 1
+	auto monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+	width = mode->width;
+	height = mode->height;
+	window = glfwCreateWindow(width, height, "gloom", glfwGetPrimaryMonitor(), NULL);
+	glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+#endif
+
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
-#if 0
-	auto monitor = glfwGetPrimaryMonitor();
-	const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-	glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-#endif
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
@@ -264,7 +267,7 @@ void gloom::renderImGui()
 void gloom::programLoop()
 {
 	renderRarget = new RenderTarget(width, height);
-	RTQuad quad(renderRarget);
+	Quadt quad;
 
 	double fps;
 	int frames;
@@ -330,9 +333,9 @@ void gloom::programLoop()
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		renderImGui();
+		quad.Draw(renderRarget);
 
-		//quad.Draw(renderRarget);
+		renderImGui();
 
 		glfwSwapBuffers(window);
 	} while (!glfwWindowShouldClose(window));

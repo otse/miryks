@@ -19,7 +19,7 @@ Scene::Scene()
 	black->distance = 0;
 	black->intensity = 0;
 
-	ambient = vec3(1.0);
+	ambient = vec3(20.f / 255.f);
 	//ambient = vec3(1, 1, 1);
 };
 

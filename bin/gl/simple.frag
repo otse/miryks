@@ -207,7 +207,7 @@ void main()
 
 	float fogNear = 1000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	float fogFar = 15000.0 / ONE_SKYRIM_UNIT_IN_CM;
-	float fogDensity = 0.0018; // 0.0022 for dark dungeon 0.0011 for light
+	float fogDensity = 0.0011; // 0.0022 for dark dungeon 0.0011 for light
 
 	vec3 totalEmissiveRadiance = emissive;
 
@@ -379,7 +379,7 @@ void main()
 
 	// ambientLightColor
 	// 30 / 255 for dark dungeon
-	vec3 localAmbient = vec3(20.0 / 255.0);
+	vec3 localAmbient = ambientLightColor; // vec3(20.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
 	#define DONT_USE_A_HEMISPHERE

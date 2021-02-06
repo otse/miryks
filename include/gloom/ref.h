@@ -13,15 +13,23 @@ namespace gloom
 		Ref(Record *);
 		~Ref();
 
+		const char *editorId = nullptr;
+
 		Object *self, *baseObject;
 
 		mat4 matrix;
+
+		mat4 translation, rotation, scale;
 
 		Mesh *mesh;
 		DrawGroup *drawGroup;
 		PointLight *pointlight;
 
 		void Go();
+		
+		void forScale(float *);
+		void forLocationalData(float *);
+		void forBaseId(unsigned int *);
 
 		float GetDistance();
 		bool DisplayAsItem();

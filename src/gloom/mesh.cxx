@@ -36,11 +36,11 @@ namespace gloom
 		store.emplace(key, mesh);
 	}
 
-	Mesh *Mesh::GetStored(void *key)
+	Mesh *Mesh::Cached(void *key)
 	{
 		if (store.count(key))
 			return store[key];
-		//printf("GetStored 0");
+		//printf("Cached 0");
 		return nullptr;
 	}
 

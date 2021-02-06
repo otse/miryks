@@ -20,8 +20,7 @@
 
 namespace gloom
 {
-	// Todo, Setting nullptrs here always looks archaic
-
+	
 	Ref::Ref(::Record *record)
 	{
 		mesh = nullptr;
@@ -31,8 +30,6 @@ namespace gloom
 		self = new Object(record);
 		Go();
 	}
-
-	// Todo, Can we use different stylization for squigly globals like this ?
 
 	Ref::~Ref()
 	{
@@ -46,115 +43,120 @@ namespace gloom
 	{
 		matrix = mat4(1.0);
 
-		mat4 translation(1.0), rotation(1.0), scale(1.0);
-
-		// Todo, Restyle this templated object getter and shouty words
+		translation = rotation = scale = mat4(1.0);
 
 		auto baseId = self->Get<unsigned int *>("NAME");
 		auto editorId = self->Get<const char *>("EDID");
 		auto XSCL = self->Get<float *>("XSCL");
-		auto DATA = self->Get<float *>("DATA");
+		auto locationalData = self->Get<float *>("DATA");
 
-		// Todo, Capitalize shouty words here ? Do something with it
 		if (editorId)
 		{
-			//editorId = self->editorId;
+			this->editorId = editorId;
 		}
 		if (XSCL)
 		{
 			scale = glm::scale(mat4(1.0), vec3(*XSCL));
 		}
-		if (DATA)
+
+		forLocationalData(locationalData);
+		forBaseId(baseId);
+	}
+
+	void Ref::forLocationalData(float *locationalData)
+	{
+		if (!locationalData)
+			return;
+
+		//DATA = (float *)self->DATA;
+		vec3 pos = *cast_vec_3(locationalData);
+		vec3 rad = *cast_vec_3(locationalData + 3);
+
+		translation = translate(mat4(1.0f), pos);
+
+		//glm::quat rot = glm::angleAxis(glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f))
+		rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
+		rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
+		rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
+
+		matrix = translation * rotation * scale;
+	}
+
+	void Ref::forBaseId(unsigned int *baseId)
+	{
+		if (!baseId)
+			return;
+
+		if (*baseId == 0x0005AD9E) // Gold ingots to Orichalum ingots
+			baseId = new unsigned int(0x0005AD99);
+
+		baseObject = new Object(esp_get_form_id(*baseId));
+
+		cassert(baseObject, "cant find baseId record");
+
+		if (baseObject->TypeAny({"STAT", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
 		{
-			//DATA = (float *)self->DATA;
-			vec3 pos = *cast_vec_3(DATA);
-			vec3 rad = *cast_vec_3(DATA + 3);
-
-			translation = translate(mat4(1.0f), pos);
-
-			//glm::quat rot = glm::angleAxis(glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f))
-			rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
-			rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
-			rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
-
-			matrix = translation * rotation * scale;
-		}
-
-		// Todo, Work on esp's dynamic unioned arrays for looping please
-
-		if (baseId)
-		{
-			if (*baseId == 0x0005AD9E) // gold to orichalum
-				baseId = new unsigned int(0x0005AD99);
-
-			baseObject = new Object(esp_get_form_id(*baseId));
-
-			cassert(baseObject, "cant find baseId record");
-
-			if (baseObject->TypeAny({"STAT", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
+			auto modl = baseObject->Get<const char *>("MODL", 0);
+			if (modl)
 			{
-				auto modl = baseObject->Get<const char *>("MODL");
-				if (modl)
+				mesh = Mesh::Cached((void *)modl);
+				if (!mesh)
 				{
-					mesh = Mesh::GetStored((void *)modl);
-					if (!mesh)
+					Rc *rc = loadRc("meshes\\", modl, 0x1);
+					if (rc)
 					{
-						Rc *rc = loadRc("meshes\\", modl, 0x1);
-						if (rc)
-						{
-							Nifp *nif = loadNifp(rc, true);
-							mesh = new Mesh;
-							mesh->Construct(nif);
-							Mesh::Store((void *)modl, mesh);
-						}
+						Nifp *nif = loadNifp(rc, true);
+						mesh = new Mesh;
+						mesh->Construct(nif);
+						Mesh::Store((void *)modl, mesh);
 					}
-				}
-
-				if (baseObject->Type("WEAP"))
-				{
-					//WEAP = new Weap(baseRecord);
+					else
+						printf(" No rc for refr modl \n");
 				}
 			}
 
-			// Todo, This
-			else if (baseObject->Type("LIGH"))
+			if (baseObject->Type("WEAP"))
 			{
-				//Ligh LIGH(baseRecord);
-
-				pointlight = new PointLight;
-
-				scene->Add(pointlight);
-
-				auto baseId = baseObject->Get<const char *>("EDID");
-				auto DATA = baseObject->Get<int *>("DATA");
-				auto FNAM = baseObject->Get<float *>("FNAM");
-
-				if (baseId)
-				{
-					//printf("ligh edid %s\n", LIGH.baseId);
-				}
-				if (DATA)
-				{
-					int time = *DATA;
-					pointlight->distance = *((unsigned int *)DATA + 1);
-					unsigned int rgb = *((unsigned int *)DATA + 2);
-					unsigned char r = (rgb >> (8 * 0)) & 0xff;
-					unsigned char g = (rgb >> (8 * 1)) & 0xff;
-					unsigned char b = (rgb >> (8 * 2)) & 0xff;
-					pointlight->color = vec3(r, g, b) / 255.f;
-				}
-				if (FNAM)
-				{
-					float fade = *FNAM;
-					fade = 1 / fade;
-					pointlight->decay = fade;
-				}
-
-				//point_light->decay = _j["Falloff Exponent"];
+				//WEAP = new Weap(baseRecord);
 			}
 		}
 
-		// Todo, This is too far away
+		// Todo, This
+		else if (baseObject->Type("LIGH"))
+		{
+			//Ligh LIGH(baseRecord);
+
+			pointlight = new PointLight;
+
+			scene->Add(pointlight);
+
+			auto baseId = baseObject->Get<const char *>("EDID");
+			auto DATA = baseObject->Get<int *>("DATA");
+			auto FNAM = baseObject->Get<float *>("FNAM");
+
+			if (baseId)
+			{
+				//printf("ligh edid %s\n", LIGH.baseId);
+			}
+			if (DATA)
+			{
+				int time = *DATA;
+				pointlight->distance = *((unsigned int *)DATA + 1);
+				unsigned int rgb = *((unsigned int *)DATA + 2);
+				unsigned char r = (rgb >> (8 * 0)) & 0xff;
+				unsigned char g = (rgb >> (8 * 1)) & 0xff;
+				unsigned char b = (rgb >> (8 * 2)) & 0xff;
+				pointlight->color = vec3(r, g, b) / 255.f;
+			}
+			if (FNAM)
+			{
+				float fade = *FNAM;
+				fade = 1 / fade;
+				pointlight->decay = fade;
+			}
+
+			//point_light->decay = _j["Falloff Exponent"];
+		}
 
 		if (mesh)
 		{
