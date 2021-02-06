@@ -266,7 +266,7 @@ void gloom::renderImGui()
 
 void gloom::programLoop()
 {
-	renderRarget = new RenderTarget(width, height);
+	renderRarget = new RenderTarget(gloom::width, gloom::height);
 	Quadt quad;
 
 	double fps;
@@ -296,7 +296,8 @@ void gloom::programLoop()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		//renderRarget->Bind();
+
+		renderRarget->Bind();
 
 		glfwPollEvents();
 
@@ -332,6 +333,8 @@ void gloom::programLoop()
 
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		quad.Draw(renderRarget);
 

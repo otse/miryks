@@ -5,7 +5,7 @@
 
 struct RenderTarget
 {
-    GLuint framebufferName, renderedTexture, depthrenderbuffer;
+    GLuint fbo, texture, rbo;
     void Bind();
 	RenderTarget(int, int);
 	~RenderTarget();

@@ -66,8 +66,9 @@ int main()
 	collision_init();
 	camera = first_person_camera;
 #if 0
-	rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	viewer::view(rc);
+	// Secret bucket beginning
+	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	View(rc);
 #endif
 	//nif_test();
 	nifp_test();
