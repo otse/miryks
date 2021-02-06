@@ -1,3 +1,5 @@
+#include <Gloom/Dark2.h>
+
 #include <opengl/rt.h>
 
 #include <opengl/shader.h>
@@ -14,7 +16,7 @@ RenderTarget::RenderTarget(int width, int height)
 
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gloom::width, gloom::height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -24,7 +26,7 @@ RenderTarget::RenderTarget(int width, int height)
 
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 800, 600); 
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, gloom::width, gloom::height); 
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
@@ -63,19 +65,25 @@ Quadt::Quadt()
 {
 	shader = new Shader(&postquad);
 	shader->header = "#version 330 core\n";
+	shader->header += "// post quad :)\n";
 	shader->Compile();
+	Shader::shaders.emplace(shader->header, shader);
 
 	glGenVertexArrays(1, &vao);
 
 	glBindVertexArray(vao);
 
-	static const GLfloat texas[] = {
-		-1.0f, -1.0f, 0.0f,
-		 1.0f, -1.0f, 0.0f,
-		-1.0f,  1.0f, 0.0f,
-		-1.0f,  1.0f, 0.0f,
-		 1.0f, -1.0f, 0.0f,
-		 1.0f,  1.0f, 0.0f,
+	float size = .5f;
+
+	float texas[] = {
+	//   positions     texture coordinates
+        -size,  size,  0.0f, 1.0f,
+        -size, -size,  0.0f, 0.0f,
+         size, -size,  1.0f, 0.0f,
+
+        -size,  size,  0.0f, 1.0f,
+         size, -size,  1.0f, 0.0f,
+         size,  size,  1.0f, 1.0f
 	};
 
 	glGenBuffers(1, &vbo);
@@ -83,7 +91,10 @@ Quadt::Quadt()
 	glBufferData(GL_ARRAY_BUFFER, sizeof(texas), texas, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, (void *)0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void *)0);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void *)(sizeof(float) * 2));
 
 	glBindVertexArray(0);
 }

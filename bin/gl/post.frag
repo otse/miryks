@@ -15,7 +15,8 @@ void main()
 	//vec4 diffuseColor = vec4(color, opacity);
 
 	FragColor = tex;
-	//FragColor.rgba = vec4(1, 0, 1, 1);
+	FragColor.rgba += vec4(1, 0, 1, 1) * 0.2;
+	FragColor.a = 0.5;
 
 	//FragColor += tex * 0.5;
 }

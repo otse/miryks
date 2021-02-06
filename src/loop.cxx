@@ -59,6 +59,8 @@ static void error_callback(int error, const char *description)
 	fprintf(stderr, "Error: %s\n", description);
 }
 
+static bool useFbo = false;
+
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
@@ -93,6 +95,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
 	{
+		useFbo = ! useFbo;
 	}
 	else if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
@@ -207,7 +210,6 @@ void gloom::programGo()
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1);
 
-
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -294,10 +296,15 @@ void gloom::programLoop()
 		}
 		frames++;
 
+		static bool doOnce = true;
+
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		renderRarget->Bind();
+		glViewport(0, 0, gloom::width, gloom::height);
+
+		if (useFbo)
+			renderRarget->Bind();
 
 		glfwPollEvents();
 
@@ -335,8 +342,11 @@ void gloom::programLoop()
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+		glViewport(0, 0, gloom::width, gloom::height);
+		
 		quad.Draw(renderRarget);
+
+		doOnce = false;
 
 		renderImGui();
 

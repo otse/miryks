@@ -1,10 +1,12 @@
-layout (location = 0) in vec3 Position;
+layout (location = 0) in vec2 Position;
+layout (location = 1) in vec2 Uv;
 
 out vec2 uv;
 
 void main() 
 {
-	uv = vec2(Position.xy) * 2.0;
+	vec2 Calc = Position.xy + vec2(1, 1);
+	uv = Uv;
 
-	gl_Position = vec4(Position, 1.0);
+	gl_Position = vec4(Position.x, Position.y, 0, 1.0);
 }
