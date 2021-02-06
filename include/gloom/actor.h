@@ -40,7 +40,7 @@ namespace gloom
 
 	class Human
 	{
-		Actor *head, *body, *hands, *feet;
+		Actor *hat, *head, *body, *hands, *feet;
 
 	public:
 		CSphere *csphere;

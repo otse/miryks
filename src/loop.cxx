@@ -303,8 +303,8 @@ void gloom::programLoop()
 
 		glViewport(0, 0, gloom::width, gloom::height);
 
-		if (useFbo)
-			renderRarget->Bind();
+		//if (useFbo)
+		renderRarget->Bind();
 
 		glfwPollEvents();
 
@@ -343,7 +343,7 @@ void gloom::programLoop()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glViewport(0, 0, gloom::width, gloom::height);
-		
+
 		quad.Draw(renderRarget);
 
 		doOnce = false;

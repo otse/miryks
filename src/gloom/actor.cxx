@@ -129,6 +129,7 @@ namespace gloom
 
 	Human::Human()
 	{
+		hat = new Actor("ImperialRace", "meshes\\clothes\\beggarclothes\\hatm_0.nif");
 		head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
 		body = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonerclothes_0.nif");
 		hands = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonercuffs_0.nif");
@@ -136,6 +137,7 @@ namespace gloom
 
 		group = new Group;
 		//group->matrix = glm::translate(mat4(1), vec3(0, 0, 200));
+		group->Add(hat->mesh->baseGroup);
 		group->Add(head->mesh->baseGroup);
 		group->Add(body->mesh->baseGroup);
 		group->Add(hands->mesh->baseGroup);
@@ -163,6 +165,7 @@ namespace gloom
 
 	void Human::Step()
 	{
+		hat->Step();
 		head->Step();
 		body->Step();
 		hands->Step();
