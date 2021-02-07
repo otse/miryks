@@ -25,6 +25,21 @@ namespace gloom
 		}
 	}
 
+	const char *GetEditorIdOnly(Record *record)
+	{
+		return (const char *)record->fields.subrecords[0]->data;
+	}
+
+	unsigned int Object::Count(const char *type) const
+	{
+		return fields.count(*(unsigned int *)type);
+	}
+
+	unsigned int Object::Size() const
+	{
+		return record->fields.size;
+	}
+
 	Object::Object(Record *record) : record(record)
 	{
 		if (record == nullptr)
@@ -56,9 +71,14 @@ namespace gloom
 		return sub;
 	}
 
-	const char *GetEditorIdOnly(Record *record)
+	const char *Object::EditorId()
 	{
-		return (const char *)record->fields.subrecords[0]->data;
+		return Get<const char *>("EDID", 0);
+	}
+
+	unsigned int *Object::BaseId()
+	{
+		return Get<unsigned int *>("NAME", 0);
 	}
 
 	/*::subrecord *Object::GetFrom(unsigned int type, int *n) const

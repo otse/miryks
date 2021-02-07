@@ -63,7 +63,7 @@ namespace gloom
 		return cell;
 	}
 
-	static void PlaceCamera(Interior *);
+	static void PlaceCameraDud(Interior *);
 
 	void Interior::ParseGrup(Cell &cell, Grup *grup)
 	{

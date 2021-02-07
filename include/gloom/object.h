@@ -24,8 +24,14 @@ namespace gloom
 
 		Object(Record *);
 
+		unsigned int Size() const;
+		unsigned int Count(const char *) const;
+		const char *EditorId();
+		unsigned int *BaseId();
+
 		Subrecord *GetSubrecord(const char *, int) const;
 		Subrecord *GetSubrecordIndex(unsigned int) const;
+
 
 		bool Type(const char *type) const
 		{
@@ -40,24 +46,12 @@ namespace gloom
 			return false;
 		}
 
-		unsigned int Count(const char *type) const
-		{
-			return fields.count(*(unsigned int *)type);
-		}
-
-		// Data Getter :
 		template <typename T = void *>
 		T Get(const char *type, int skip = 0) const
 		{
 			Subrecord *field = GetSubrecord(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
-
-		unsigned int Size() const
-		{
-			return record->fields.size;
-		}
-		
 	};
 
 	const char *GetEditorIdOnly(Record *record);
