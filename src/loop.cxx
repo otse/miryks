@@ -2,6 +2,7 @@
 #include <libs>
 
 #include <Gloom/Mesh.h>
+#include <Gloom/Object.h>
 #include <Gloom/Interior.h>
 #include <Gloom/Actor.h>
 #include <Gloom/Collision.h>
@@ -100,13 +101,20 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	else if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
 		printf(" reload esp ! \n");
+		// Save current cell name
+		Object object(dungeon->loadedCell.record);
+		const char *cellName = object.Get<const char *>("EDID", 0);
+		char dest[512];
+		strcpy(dest, cellName);
 		Esp *plugin = get_plugins()[1];
 		const char *name = plugin->name;
 		Esp *has = has_plugin(name);
 		free_plugin(&has);
 		get_plugins()[1] = loadEsp(name);
 		delete dungeon;
-		dungeon = new Interior("GloomGen");
+		dungeon = new Interior(dest);
+		dungeon->alreadyTeleported = true;
+		dungeon->LoadCell();
 	}
 	else if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
 	{
@@ -173,7 +181,7 @@ void setupImgui()
 	IM_ASSERT(font3 != NULL);
 
 	ImGui::StyleColorsDark();
-	ImGui::StyleColorsLight();
+	//ImGui::StyleColorsLight();
 
 	// Setup Platform/Renderer bindings
 	const char *glsl_version = "#version 130";

@@ -37,6 +37,8 @@ namespace gloom
 		scene->Remove(pointlight);
 		delete drawGroup;
 		delete pointlight;
+		delete self;
+		delete baseObject;
 	}
 
 	void Ref::Go()
@@ -94,7 +96,7 @@ namespace gloom
 
 		cassert(baseObject, "cant find baseId record");
 
-		if (baseObject->TypeAny({"STAT", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
+		if (baseObject->TypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
 		{
 			auto modl = baseObject->Get<const char *>("MODL", 0);
 			if (modl)

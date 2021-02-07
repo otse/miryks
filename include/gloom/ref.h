@@ -15,7 +15,7 @@ namespace gloom
 
 		const char *editorId = nullptr;
 
-		Object *self, *baseObject;
+		Object *self = nullptr, *baseObject = nullptr;
 
 		mat4 matrix;
 

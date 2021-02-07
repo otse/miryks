@@ -25,13 +25,14 @@ namespace gloom
 		cassert(top, "no race top grup");
 
 		Record *race = nullptr;
-		
+
 		bool stop = false;
 
 		Objects(top).ForEach(0, stop, [&](Objects &oa, size_t &i) {
 			Record *record = oa.GetRecord(i);
 			auto editorId = GetEditorIdOnly(record);
-			if (strcmp(editorId, raceId) == 0) {
+			if (strcmp(editorId, raceId) == 0)
+			{
 				race = record;
 				stop = true;
 			}
@@ -129,19 +130,37 @@ namespace gloom
 
 	Human::Human()
 	{
-		hat = new Actor("ImperialRace", "meshes\\clothes\\beggarclothes\\hatm_0.nif");
-		head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
-		body = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonerclothes_0.nif");
-		hands = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonercuffs_0.nif");
-		feet = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonershoes_0.nif");
+		hat = head = body = hands = feet = nullptr;
+
+		const bool beggar = true;
+		const bool greybeard = false;
+		if (beggar)
+		{
+			hat = new Actor("ImperialRace", "meshes\\clothes\\beggarclothes\\hatm_0.nif");
+			head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
+			body = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonerclothes_0.nif");
+			hands = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonercuffs_0.nif");
+			feet = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonershoes_0.nif");
+		}
+		if (greybeard)
+		{
+			//head = new Actor("ImperialRace", "meshes\\clothes\\graybeardrobe\\greybeardhat_0.nif");
+			//body = new Actor("ImperialRace", "meshes\\clothes\\graybeardrobe\\greyboardrobe_0.nif");
+			//feet = new Actor("ImperialRace", "meshes\\clothes\\graybeardrobe\\greybeardboots_0.nif");
+		}
 
 		group = new Group;
 		//group->matrix = glm::translate(mat4(1), vec3(0, 0, 200));
-		group->Add(hat->mesh->baseGroup);
-		group->Add(head->mesh->baseGroup);
-		group->Add(body->mesh->baseGroup);
-		group->Add(hands->mesh->baseGroup);
-		group->Add(feet->mesh->baseGroup);
+		if (hat)
+			group->Add(hat->mesh->baseGroup);
+		if (head)
+			group->Add(head->mesh->baseGroup);
+		if (body)
+			group->Add(body->mesh->baseGroup);
+		if (hands)
+			group->Add(hands->mesh->baseGroup);
+		if (feet)
+			group->Add(feet->mesh->baseGroup);
 
 		drawGroup = new DrawGroup(group, mat4());
 
@@ -165,11 +184,16 @@ namespace gloom
 
 	void Human::Step()
 	{
-		hat->Step();
-		head->Step();
-		body->Step();
-		hands->Step();
-		feet->Step();
+		if (hat)
+			hat->Step();
+		if (head)
+			head->Step();
+		if (body)
+			body->Step();
+		if (hands)
+			hands->Step();
+		if (feet)
+			feet->Step();
 		if (csphere)
 		{
 			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());

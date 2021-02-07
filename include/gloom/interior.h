@@ -17,7 +17,7 @@ namespace gloom
 	struct Cell
 	{
 		bool good = false;
-		Record *cell = nullptr;
+		Record *record = nullptr;
 		Grup *persistent = nullptr;
 		Grup *non_persistent = nullptr;
 	};
@@ -28,6 +28,10 @@ namespace gloom
 		Interior(const char *);
 		~Interior();
 
+		const char *editorId;
+
+		bool alreadyTeleported = false;
+
 		Cell loadedCell;
 
 		std::vector<Ref *> refs, iterables;
@@ -35,9 +39,11 @@ namespace gloom
 		std::map<std::string, Ref *> editorIds;
 
 		static Cell GetCell(const char *);
+		
 		void Update();
-		void LoadCell(Cell &);
+		void LoadCell();
 		void Unload();
+		void PlaceCamera();
 		
 		void ParseGrup(Cell &, Grup *);
 	};

@@ -9,15 +9,26 @@
 #include <opengl/material.h>
 #include <opengl/shader.h>
 
+#define BEST_PRECISIONX
+
+#ifdef BEST_PRECISION
+	#define GLOOM_INTERAL_FORMAT GL_RGBA32F
+#else
+	#define GLOOM_INTERAL_FORMAT GL_RGBA16F
+#endif
+
 RenderTarget::RenderTarget(int width, int height)
 {
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
+	// Gloom note
+	// GL_RGB is a lot faster than GL_RGBA for doing post
+
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gloom::width, gloom::height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, gloom::width, gloom::height, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GLOOM_INTERAL_FORMAT, gloom::width, gloom::height, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);

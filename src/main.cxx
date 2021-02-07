@@ -73,10 +73,11 @@ int main()
 	//nif_test();
 	nifp_test();
 	dungeon = new Interior("GloomGen"); // <-- interior to load
-	someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
-	someDraugr->PutDown("gloomgendraugr");
-	meanSkelly = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
-	meanSkelly->PutDown("gloomgenskeleton");
+	dungeon->LoadCell();
+	//someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
+	//someDraugr->PutDown("gloomgendraugr");
+	//meanSkelly = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
+	//meanSkelly->PutDown("gloomgenskeleton");
 	someHuman = new Human();
 	someHuman->Place("gloomgenman");
 

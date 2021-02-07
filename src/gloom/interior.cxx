@@ -19,16 +19,15 @@ namespace gloom
 {
 	Interior::Interior(const char *edid)
 	{
+		editorId = edid;
 		Group *group = new Group();
-		Cell cell = GetCell(edid);
-		LoadCell(cell);
 	}
 
-	void Interior::LoadCell(Cell &cell)
+	void Interior::LoadCell()
 	{
-		loadedCell = cell;
-		ParseGrup(cell, cell.persistent);
-		ParseGrup(cell, cell.non_persistent);
+		loadedCell = GetCell(editorId);
+		ParseGrup(loadedCell, loadedCell.persistent);
+		ParseGrup(loadedCell, loadedCell.non_persistent);
 	}
 
 	Cell Interior::GetCell(const char *name)
@@ -48,7 +47,7 @@ namespace gloom
 					if (0 == strcmp(name, editorId))
 					{
 						Objects C(grup);
-						cell.cell = object.record;
+						cell.record = object.record;
 						printf("ForEach found your interior `%s`\n", editorId);
 						if (C.Size() >= 1)
 							cell.persistent = C.GetGrup(0);
@@ -76,6 +75,8 @@ namespace gloom
 		Objects(grup).ForEach(0, stop, [&](Objects &oa, size_t i) {
 			Record *record = oa.GetRecord(i);
 			Object object(record);
+			if (!object.Type("REFR"))
+				return;
 			cassert(object.Type("REFR"), "fus ro dah");
 			Ref *ref = new Ref(record);
 			refs.push_back(ref);
@@ -88,20 +89,31 @@ namespace gloom
 			}
 		});
 
-		PlaceCamera(this);
+		PlaceCamera();
 	}
 
-	static void PlaceCamera(Interior *interior) {
-		static bool spawned = false;
-		auto ref = interior->editorIds.find("darkshackspawn");
-		if (ref != interior->editorIds.end() && !spawned)
-		{
-			auto DATA = ref->second->self->Get<float *>("DATA");
-			first_person_camera->pos = ref->second->matrix[3];
-			first_person_camera->pos.z += EYE_HEIGHT;
-			first_person_camera->fyaw = cast_vec_3(DATA + 3)->z;
-			spawned = true;
-		}
+	void Interior::PlaceCamera()
+	{
+		if (alreadyTeleported)
+			return;
+
+		bool stop = false;
+
+		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &oa, size_t i) {
+			Object object(oa.GetRecord(i));
+			const char *baseId = object.Get<const char *>("NAME", 0);
+			const char *editorId = object.Get<const char *>("EDID", 0);
+			float *locationalData = object.Get<float *>("DATA");
+			if (*baseId == 0x0000003B) //  XMarker
+			{
+				printf(" xmarker ! \n");
+				first_person_camera->pos = *cast_vec_3(locationalData);
+				first_person_camera->pos.z += EYE_HEIGHT;
+				first_person_camera->fyaw = cast_vec_3(locationalData + 3)->z;
+				alreadyTeleported = true;
+				stop = true;
+			}
+		});
 	}
 
 	Interior::~Interior()
