@@ -102,7 +102,7 @@ namespace gloom
 		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &oa, size_t i) {
 			Object object(oa.GetRecord(i));
 			if (*object.BaseId() == 0x0000003B) //  XMarker
-			{wwwwwwwww
+			{
 				float *locationalData = object.Data<float *>("DATA");
 				printf(" xmarker ! \n");
 				first_person_camera->pos = *cast_vec_3(locationalData);
