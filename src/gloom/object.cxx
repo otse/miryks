@@ -11,8 +11,8 @@ namespace gloom
 	{
 		Object object(record);
 		cassert(object.Type("REFR"), "object not refr");
-		auto formId = object.Get<unsigned int *>("NAME");
-		auto editorId = object.Get<const char *>("EDID");
+		auto formId = object.Data<unsigned int *>("NAME");
+		auto editorId = object.Data<const char *>("EDID");
 		if (formId)
 		{
 			Object baseObject((Record *)formId);
@@ -21,7 +21,7 @@ namespace gloom
 		if (object.Count("MEOW") > 2)
 		{
 			// Get the third field
-			auto third = object.Get("MEOW", 2);
+			auto third = object.Data("MEOW", 2);
 		}
 	}
 
@@ -73,12 +73,12 @@ namespace gloom
 
 	const char *Object::EditorId()
 	{
-		return Get<const char *>("EDID", 0);
+		return Data<const char *>("EDID", 0);
 	}
 
 	unsigned int *Object::BaseId()
 	{
-		return Get<unsigned int *>("NAME", 0);
+		return Data<unsigned int *>("NAME", 0);
 	}
 
 	/*::subrecord *Object::GetFrom(unsigned int type, int *n) const

@@ -37,7 +37,7 @@ void cell_gui()
 
 			Object object(dungeon->loadedCell.record);
 
-			const char *editorId = object.Get<const char *>("EDID", 0);
+			const char *editorId = object.Data<const char *>("EDID", 0);
 
 			if (0 != strcmp(items[current], editorId))
 			{

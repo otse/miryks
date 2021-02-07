@@ -47,7 +47,7 @@ namespace gloom
 		}
 
 		template <typename T = void *>
-		T Get(const char *type, int skip = 0) const
+		T Data(const char *type, int skip = 0) const
 		{
 			Subrecord *field = GetSubrecord(type, skip);
 			return field ? (T)field->data : nullptr;

@@ -43,7 +43,7 @@ namespace gloom
 				Objects(oa.GetGrup(j)).ForEach(0, stop, [&](Objects &oa, size_t &k) {
 					Object object(oa.GetRecord(k));
 					Grup *grup = oa.GetGrup(k + 1);
-					const char *editorId = object.Get<const char *>("EDID", 0);
+					const char *editorId = object.Data<const char *>("EDID", 0);
 					if (0 == strcmp(name, editorId))
 					{
 						Objects C(grup);
@@ -80,7 +80,7 @@ namespace gloom
 			cassert(object.Type("REFR"), "fus ro dah");
 			Ref *ref = new Ref(record);
 			refs.push_back(ref);
-			const char *editorId = object.Get<const char *>("EDID", 0);
+			const char *editorId = object.Data<const char *>("EDID", 0);
 			if (editorId)
 				editorIds.emplace(editorId, ref);
 			if (ref->baseObject && ref->baseObject->TypeAny({"WEAP", "MISC"}))
@@ -101,11 +101,9 @@ namespace gloom
 
 		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &oa, size_t i) {
 			Object object(oa.GetRecord(i));
-			const char *baseId = object.Get<const char *>("NAME", 0);
-			const char *editorId = object.Get<const char *>("EDID", 0);
-			float *locationalData = object.Get<float *>("DATA");
-			if (*baseId == 0x0000003B) //  XMarker
-			{
+			if (*object.BaseId() == 0x0000003B) //  XMarker
+			{wwwwwwwww
+				float *locationalData = object.Data<float *>("DATA");
 				printf(" xmarker ! \n");
 				first_person_camera->pos = *cast_vec_3(locationalData);
 				first_person_camera->pos.z += EYE_HEIGHT;

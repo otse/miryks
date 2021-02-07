@@ -53,10 +53,10 @@ namespace gloom
 
 		// cassert(race.Count("ANAM") == 2, "race count anam");
 
-		auto ANAM = race.Get<char *>("ANAM", 0);
+		auto ANAM = race.Data<char *>("ANAM", 0);
 
-		auto MODL = race.Get<unsigned short *>("MODL", 2);
-		auto MODLCHAR = race.Get<char *>("MODL", 2);
+		auto MODL = race.Data<unsigned short *>("MODL", 2);
+		auto MODLCHAR = race.Data<char *>("MODL", 2);
 
 		Subrecord *modl = race.GetSubrecord("MODL", 2);
 

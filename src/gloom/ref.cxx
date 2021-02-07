@@ -47,10 +47,10 @@ namespace gloom
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = self->Get<unsigned int *>("NAME");
-		auto editorId = self->Get<const char *>("EDID");
-		auto XSCL = self->Get<float *>("XSCL");
-		auto locationalData = self->Get<float *>("DATA");
+		auto baseId = self->Data<unsigned int *>("NAME");
+		auto editorId = self->Data<const char *>("EDID");
+		auto XSCL = self->Data<float *>("XSCL");
+		auto locationalData = self->Data<float *>("DATA");
 
 		if (editorId)
 		{
@@ -98,7 +98,7 @@ namespace gloom
 
 		if (baseObject->TypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "MISC"}))
 		{
-			auto modl = baseObject->Get<const char *>("MODL", 0);
+			auto modl = baseObject->Data<const char *>("MODL", 0);
 			if (modl)
 			{
 				mesh = Mesh::Cached((void *)modl);
@@ -132,9 +132,9 @@ namespace gloom
 
 			scene->Add(pointlight);
 
-			auto baseId = baseObject->Get<const char *>("EDID");
-			auto DATA = baseObject->Get<int *>("DATA");
-			auto FNAM = baseObject->Get<float *>("FNAM");
+			auto baseId = baseObject->Data<const char *>("EDID");
+			auto DATA = baseObject->Data<int *>("DATA");
+			auto FNAM = baseObject->Data<float *>("FNAM");
 
 			if (baseId)
 			{
@@ -207,8 +207,8 @@ namespace gloom
 			return false;
 		}
 
-		auto FULL = baseObject->Get<char *>("FULL");
-		auto DESC = baseObject->Get<const char *>("DESC");
+		auto FULL = baseObject->Data<char *>("FULL");
+		auto DESC = baseObject->Data<const char *>("DESC");
 
 		char *itemName = "Something";
 		if (FULL)
