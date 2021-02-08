@@ -221,7 +221,12 @@ void main()
 
 	#ifndef DONT_USE_VERTEX_COLOR
 		
-		diffuseColor.rgba *= vColor.rgba;
+		//#ifdef VERTEX_ALPHA
+		#ifndef TREE_ANIM
+			diffuseColor.rgba *= vColor.rgba;
+		#else
+			diffuseColor.rgb *= vColor.rgb;
+		#endif
 	
 	#endif
 
@@ -261,6 +266,13 @@ void main()
 
 	#endif
 
+	#ifdef TREE_ANIM
+
+		specularStrength /= 2.0;
+		normalScale /= 3.0;
+
+	#endif
+	
 	#ifndef DONT_USE_NORMAL_MAP
 
 			// diffuseColor.rgb *= vec3(1, 0, 0);
@@ -313,25 +325,29 @@ void main()
 
 	// #define DONT_USE_DUST
 	#ifndef DONT_USE_DUST
-		
+
+	#ifndef TREE_ANIM
+
 		vec3 normalDust = normalize(normal) * mat3(view);
 
 		vec3 dust = vec3(0.15, 0.15, 0.15);
 		
-		if (normalDust.z > 0.88) {
+		if (normalDust.z > 0.85) { // .88
 			diffuseColor.rgb = mix(dust, diffuseColor.rgb, 0.075);
-			specularStrength /= 10.0;
+			specularStrength /= 1.0;
 		}
+
+	#endif
 
 	#endif
 
 	BlinnPhongMaterial material;
 	material.diffuseColor = diffuseColor.rgb;
 	//material.specularColor = vec3(17.0/255.0, 17.0/255.0, 17.0/255.0);
-	material.specularColor = specular + vec3(0.0, 0.75, 0.75);
-	material.specularColor /= 2.0;
+	material.specularColor = specular + vec3(0.0, 0.8, 0.5);
+	material.specularColor /= 4.0;
 	//material.specularColor = vec3(127.0/255.0, 127.0/255.0, 127.0/255.0);
-	material.specularShininess = glossiness / 2000 * 100; // shininess 1500 = shiny 3000 = matt
+	material.specularShininess = glossiness / 1000 * 100; // shininess 1000 = shiny, 3000 = matt, 2000 = default
 	material.specularStrength = specularStrength;
 
 	GeometricContext geometry;
@@ -374,7 +390,7 @@ void main()
 
 	HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));
-	hemiLight.skyColor = vec3(0.02, 0.02, 0.06) * 0.0;
+	hemiLight.skyColor = vec3(0.02, 0.02, 0.06) * 0.22;
 	hemiLight.groundColor = vec3(0.03, 0.06, 0.04) * 2.0;
 
 	// ambientLightColor
@@ -382,7 +398,7 @@ void main()
 	vec3 localAmbient = ambientLightColor; // vec3(20.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
-	#define DONT_USE_A_HEMISPHERE
+	#define DONT_USE_A_HEMISPHEREx
 	#ifndef DONT_USE_A_HEMISPHERE
 
 		float dot_nl = dot( geometry.normal, hemiLight.direction );

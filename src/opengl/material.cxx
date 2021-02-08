@@ -57,6 +57,7 @@ void Material::RandomColor()
 void Material::Ready()
 {
 	header = "#version 330 core\n";
+	header += defines;
 	char pepper[20];
 	snprintf(pepper, 20, "// %s\n", (*src)[0]);
 	header += pepper;

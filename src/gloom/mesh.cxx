@@ -242,6 +242,13 @@ namespace gloom
 			}
 			if (block->B->shader_flags_2 & 0x00000020)
 				geometry->material->vertexColors = true;
+			if (block->B->shader_flags_2 & 0x00000010)
+				geometry->material->doubleSided = true;
+			if (block->B->shader_flags_1 & 0x00000008)
+				geometry->material->defines += "#define VERTEX_ALPHA\n";
+			if (block->B->shader_flags_2 & 0x20000000) {
+				geometry->material->defines += "#define TREE_ANIM\n";
+			}
 		}
 	}
 

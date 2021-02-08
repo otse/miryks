@@ -29,7 +29,7 @@ struct Material
 
 	struct skin_partition *skin_partition;
 
-	std::string header;
+	std::string header, defines;
 
 	Material();
 	//Material(const Material& other)
