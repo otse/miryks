@@ -16,8 +16,6 @@
 
 namespace gloom
 {
-	// Does a bunch of hxkcmd stuff. Export into a separate bsa inherent into the github?
-
 	Record *GetRace(const char *raceId)
 	{
 		Grup *top = esp_get_top_grup(get_plugins()[0], "RACE");

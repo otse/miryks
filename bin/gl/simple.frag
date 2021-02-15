@@ -332,7 +332,7 @@ void main()
 
 		vec3 dust = vec3(0.15, 0.15, 0.15);
 		
-		if (normalDust.z > 0.85) { // .88
+		if (normalDust.z > 0.83) { // .88
 			diffuseColor.rgb = mix(dust, diffuseColor.rgb, 0.075);
 			specularStrength /= 1.0;
 		}
@@ -391,7 +391,7 @@ void main()
 	HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));
 	hemiLight.skyColor = vec3(0.02, 0.02, 0.06) * 0.22;
-	hemiLight.groundColor = vec3(0.03, 0.06, 0.04) * 2.0;
+	hemiLight.groundColor = vec3(0.03, 0.05, 0.04) * 2.0;
 
 	// ambientLightColor
 	// 30 / 255 for dark dungeon

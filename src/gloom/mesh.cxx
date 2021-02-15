@@ -86,9 +86,9 @@ namespace gloom
 		for (ni_ref index : shapes)
 		{
 			//Group *group = mesh->groups[index];
-			auto shape = 			(ni_tri_shape_pointer *)		nifp_get_block(mesh->nif, index);
-			auto skin_instance = 	(ni_skin_instance_pointer *)	nifp_get_block(mesh->nif, shape->A->skin_instance);
-			auto skin_partition = 	(ni_skin_partition_pointer *)	nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
+			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
+			auto skin_instance = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
+			auto skin_partition = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
 			for (unsigned int k = 0; k < *skin_partition->num_skin_partition_blocks; k++)
 			{
 				struct skin_partition *part = skin_partition->skin_partition_blocks[k];
@@ -235,20 +235,19 @@ namespace gloom
 				geometry->material->skinning = true;
 			else
 				geometry->material->dust = true;
+			if (block->B->shader_flags_1 & 0x40000000)
+				geometry->material->decal = true;
 			if (block->B->shader_flags_1 & 0x00001000)
-			{
 				//printf("Model_Space_Normals\n");
 				geometry->material->modelSpaceNormals = true;
-			}
 			if (block->B->shader_flags_2 & 0x00000020)
 				geometry->material->vertexColors = true;
 			if (block->B->shader_flags_2 & 0x00000010)
 				geometry->material->doubleSided = true;
 			if (block->B->shader_flags_1 & 0x00000008)
 				geometry->material->defines += "#define VERTEX_ALPHA\n";
-			if (block->B->shader_flags_2 & 0x20000000) {
+			if (block->B->shader_flags_2 & 0x20000000)
 				geometry->material->defines += "#define TREE_ANIM\n";
-			}
 		}
 	}
 
@@ -272,7 +271,7 @@ namespace gloom
 				geometry->material->testing = true;
 		}
 	}
-	
+
 	void bs_shader_texture_set_callback(NifpRd *rd, bs_shader_texture_set_pointer *block)
 	{
 		// printf("bs shader texture set callback\n");

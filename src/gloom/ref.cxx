@@ -24,7 +24,7 @@ namespace gloom
 	Ref::Ref(::Record *record)
 	{
 		mesh = nullptr;
-		drawGroup = nullptr;
+		drawGroup = nullptr;S
 		pointlight = nullptr;
 
 		self = new Object(record);
@@ -113,7 +113,7 @@ namespace gloom
 						Mesh::Store((void *)modl, mesh);
 					}
 					else
-						printf(" No rc for refr modl \n");
+						printf("no rc for refr modl\n");
 				}
 			}
 
@@ -202,7 +202,7 @@ namespace gloom
 
 		// printf(" display as item %f\n", dist);
 
-		if (dist > 30)
+		if (dist > 40)
 		{
 			return false;
 		}
