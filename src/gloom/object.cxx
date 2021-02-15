@@ -7,12 +7,27 @@
 
 namespace gloom
 {
+	const char *GetEditorIdOnly(Record *record)
+	{
+		return (const char *)record->fields.subrecords[0]->data;
+	}
+
+	const char *GetEditorId(Object &object)
+	{
+		return object.Data<const char *>("EDID", 0);
+	}
+
+	unsigned int *GetBaseId(Object &object)
+	{
+		return object.Data<unsigned int *>("NAME", 0);
+	}
+
 	void gloom_objects_example(Record *record)
 	{
 		Object object(record);
 		cassert(object.Type("REFR"), "object not refr");
-		auto formId = object.Data<unsigned int *>("NAME");
-		auto editorId = object.Data<const char *>("EDID");
+		auto formId = GetBaseId(object); // object.Data<unsigned int *>("NAME");
+		auto editorId = GetEditorId(object); // object.Data<const char *>("EDID");
 		if (formId)
 		{
 			Object baseObject((Record *)formId);
@@ -23,21 +38,6 @@ namespace gloom
 			// Get the third field
 			auto third = object.Data("MEOW", 2);
 		}
-	}
-
-	const char *GetEditorIdOnly(Record *record)
-	{
-		return (const char *)record->fields.subrecords[0]->data;
-	}
-
-	unsigned int Object::Count(const char *type) const
-	{
-		return fields.count(*(unsigned int *)type);
-	}
-
-	unsigned int Object::Size() const
-	{
-		return record->fields.size;
 	}
 
 	Object::Object(Record *record) : record(record)
@@ -69,16 +69,6 @@ namespace gloom
 		}
 		cassert(skip <= 0, "field skip unsuccessful\n");
 		return sub;
-	}
-
-	const char *Object::EditorId()
-	{
-		return Data<const char *>("EDID", 0);
-	}
-
-	unsigned int *Object::BaseId()
-	{
-		return Data<unsigned int *>("NAME", 0);
 	}
 
 	/*::subrecord *Object::GetFrom(unsigned int type, int *n) const

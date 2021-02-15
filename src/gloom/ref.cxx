@@ -24,7 +24,7 @@ namespace gloom
 	Ref::Ref(::Record *record)
 	{
 		mesh = nullptr;
-		drawGroup = nullptr;S
+		drawGroup = nullptr;
 		pointlight = nullptr;
 
 		self = new Object(record);
@@ -47,8 +47,8 @@ namespace gloom
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = self->Data<unsigned int *>("NAME");
-		auto editorId = self->Data<const char *>("EDID");
+		auto baseId = GetBaseId(*self); // self->Data<unsigned int *>("NAME");
+		auto editorId = GetEditorId(*self); // self->Data<const char *>("EDID");
 		auto XSCL = self->Data<float *>("XSCL");
 		auto locationalData = self->Data<float *>("DATA");
 

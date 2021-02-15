@@ -103,7 +103,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		printf(" reload esp ! \n");
 		// Save current cell name
 		Object object(dungeon->loadedCell.record);
-		const char *cellName = object.Data<const char *>("EDID", 0);
+		const char *cellName = GetEditorId(object); // object.Data<const char *>("EDID", 0);
 		char dest[512];
 		strcpy(dest, cellName);
 		Esp *plugin = get_plugins()[1];

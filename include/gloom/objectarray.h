@@ -34,13 +34,13 @@ namespace gloom
 
 		void *Get(size_t i) const
 		{
-			cassert(i < Size(), "objectarray bounds");
+			cassert(i < Size(), "objects bounds");
 			return grup->mixed.elements[i];
 		}
 
 		void *GetSafe(size_t i, int type) const
 		{
-			cassert(type == Type(i), "objectarray type x");
+			cassert(type == Type(i), "objects type x");
 			return Get(i);
 		}
 

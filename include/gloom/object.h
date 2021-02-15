@@ -9,6 +9,11 @@
 
 namespace gloom
 {
+	// util
+	const char *GetEditorIdOnly(Record *);
+	const char *GetEditorId(Object &);
+	unsigned int *GetBaseId(Object &);
+
 	// see the example
 	void gloom_objects_example(Record *);
 
@@ -24,14 +29,8 @@ namespace gloom
 
 		Object(Record *);
 
-		unsigned int Size() const;
-		unsigned int Count(const char *) const;
-		const char *EditorId();
-		unsigned int *BaseId();
-
 		Subrecord *GetSubrecord(const char *, int) const;
 		Subrecord *GetSubrecordIndex(unsigned int) const;
-
 
 		bool Type(const char *type) const
 		{
@@ -52,9 +51,17 @@ namespace gloom
 			Subrecord *field = GetSubrecord(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
-	};
 
-	const char *GetEditorIdOnly(Record *record);
+		unsigned int Object::Count(const char *type) const
+		{
+			return fields.count(*(unsigned int *)type);
+		}
+
+		unsigned int Object::Size() const
+		{
+			return record->fields.size;
+		}
+	};
 
 } // namespace gloom
 

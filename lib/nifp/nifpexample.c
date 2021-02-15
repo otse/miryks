@@ -10,22 +10,26 @@ void test_callback(NifpRd *, int, int);
 
 void nifp_test()
 {
+	// We use Rc from bsa.h
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	// or
 	// struct bsa *meshes = get_archives()[0];
-	// struct rc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
+	// struct Rc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	cassert(rc, "mh no bucket02a");
 	bsa_read(rc);
+	// Nifp
 	Nifp *bucket = malloc_nifp();
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;
 	nifp_read(bucket);
 	nifp_save(rc, bucket);
+	// NifpRd
 	NifpRd *rd = malloc_nifprd();
 	rd->nif = bucket;
 	rd->data = 0xf; // like a Mesh instance
     rd->other = test_callback;
 	nifp_rd(rd);
+	// Cleanup
 	free_nifprd(&rd);
 	free_nifp(&bucket);
     //char str[600];
