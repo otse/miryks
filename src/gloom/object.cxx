@@ -22,16 +22,21 @@ namespace gloom
 		return object.Data<unsigned int *>("NAME", 0);
 	}
 
+	//Subrecord *GetField(Record *record, unsigned int i)
+	//{
+	//	return (Subrecord *)record->fields.subrecords[i];
+	//}
+
 	void gloom_objects_example(Record *record)
 	{
 		Object object(record);
-		cassert(object.Type("REFR"), "object not refr");
+		cassert(object.IsType("REFR"), "object not refr");
 		auto formId = GetBaseId(object); // object.Data<unsigned int *>("NAME");
 		auto editorId = GetEditorId(object); // object.Data<const char *>("EDID");
 		if (formId)
 		{
 			Object baseObject((Record *)formId);
-			bool plant_or_weapon = baseObject.TypeAny({"FLOR", "WEAP"});
+			bool plant_or_weapon = baseObject.IsTypeAny({"FLOR", "WEAP"});
 		}
 		if (object.Count("MEOW") > 2)
 		{
@@ -52,12 +57,7 @@ namespace gloom
 		}
 	}
 
-	Subrecord *Object::GetSubrecordIndex(unsigned int i) const
-	{
-		return (Subrecord *)record->fields.subrecords[i];
-	}
-
-	Subrecord *Object::GetSubrecord(const char *type, int skip) const
+	Subrecord *Object::EqualRange(const char *type, int skip) const
 	{
 		Subrecord *sub = nullptr;
 		auto st = fields.equal_range(*(unsigned int *)type);

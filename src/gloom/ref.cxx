@@ -96,7 +96,7 @@ namespace gloom
 
 		cassert(baseObject, "cant find baseId record");
 
-		if (baseObject->TypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
+		if (baseObject->IsTypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
 			auto modl = baseObject->Data<const char *>("MODL", 0);
 			if (modl)
@@ -117,14 +117,14 @@ namespace gloom
 				}
 			}
 
-			if (baseObject->Type("WEAP"))
+			if (baseObject->IsType("WEAP"))
 			{
 				//WEAP = new Weap(baseRecord);
 			}
 		}
 
 		// Todo, This
-		else if (baseObject->Type("LIGH"))
+		else if (baseObject->IsType("LIGH"))
 		{
 			//Ligh LIGH(baseRecord);
 

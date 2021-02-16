@@ -30,6 +30,7 @@ Texture *GetProduceTexture(const char *path)
 }
 
 int outed = 0;
+
 Texture::Texture(const std::string &path) : path(path)
 {
 	//printf("new texture %s\n", path.c_str());

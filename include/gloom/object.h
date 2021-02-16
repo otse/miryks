@@ -7,40 +7,44 @@
 
 #include <libs>
 
+// an object wraps a record
+// has nifty interface to access fields (and their important data!)
+
 namespace gloom
 {
-	// util
 	const char *GetEditorIdOnly(Record *);
 	const char *GetEditorId(Object &);
 	unsigned int *GetBaseId(Object &);
 
-	// see the example
-	void gloom_objects_example(Record *);
+	// Subrecord *GetField(Record *, unsigned int);
 
-	// an object wraps a record
-	// has powerful getters that give you
-	// access to its sub-records (and their important data!)
+	void gloom_objects_example(Record *);
 
 	class Object
 	{
 	public:
 		Record *const record = nullptr;
+		
 		std::multimap<unsigned int, Subrecord *> fields;
 
 		Object(Record *);
 
-		Subrecord *GetSubrecord(const char *, int) const;
-		Subrecord *GetSubrecordIndex(unsigned int) const;
+		Subrecord *EqualRange(const char *, int) const;
 
-		bool Type(const char *type) const
+		unsigned int Count(const char *type) const
+		{
+			return fields.count(*(unsigned int *)type);
+		}
+
+		bool IsType(const char *type) const
 		{
 			return *(unsigned int *)type == record->hed->type;
 		}
 
-		bool TypeAny(std::vector<const char *> types) const
+		bool IsTypeAny(std::vector<const char *> types) const
 		{
 			for (const char *type : types)
-				if (*(unsigned int *)type == record->hed->type)
+				if (IsType(type))
 					return true;
 			return false;
 		}
@@ -48,19 +52,10 @@ namespace gloom
 		template <typename T = void *>
 		T Data(const char *type, int skip = 0) const
 		{
-			Subrecord *field = GetSubrecord(type, skip);
+			Subrecord *field = EqualRange(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
 
-		unsigned int Object::Count(const char *type) const
-		{
-			return fields.count(*(unsigned int *)type);
-		}
-
-		unsigned int Object::Size() const
-		{
-			return record->fields.size;
-		}
 	};
 
 } // namespace gloom

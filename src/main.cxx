@@ -63,6 +63,7 @@ int main()
 	viewer_camera = new ViewerCamera;
 	openglScene();
 	objs_init();
+	setup_esc_menu();
 	collision_init();
 	camera = first_person_camera;
 #if 0

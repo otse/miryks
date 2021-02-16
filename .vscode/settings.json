@@ -89,6 +89,7 @@
         "cfloat": "cpp",
         "climits": "cpp",
         "string_view": "cpp",
-        "cstdarg": "cpp"
+        "cstdarg": "cpp",
+        "*.rh": "cpp"
     }
 }

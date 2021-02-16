@@ -7,8 +7,6 @@ namespace gloom
 {
 	void gloom_object_array_example(Grup *grup)
 	{
-		using Objects = ObjectArray;
-
 		ObjectArray objectArray(grup);
 		
 		bool stop = false;
@@ -16,6 +14,8 @@ namespace gloom
 		objectArray.ForEach(RECORD, stop, [&](Objects &oa, size_t &i) {
 			Object object(oa.GetRecord(i));
 		});
+
+		using Objects = ObjectArray;
 
 		Objects(grup).ForEach(0, stop, [&](Objects &oa, size_t &i) {
 			i += 4;

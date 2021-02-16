@@ -75,15 +75,15 @@ namespace gloom
 		Objects(grup).ForEach(0, stop, [&](Objects &oa, size_t i) {
 			Record *record = oa.GetRecord(i);
 			Object object(record);
-			if (!object.Type("REFR"))
+			if (!object.IsType("REFR"))
 				return;
-			cassert(object.Type("REFR"), "fus ro dah");
+			cassert(object.IsType("REFR"), "fus ro dah");
 			Ref *ref = new Ref(record);
 			refs.push_back(ref);
 			const char *editorId = GetEditorId(object); // object.Data<const char *>("EDID", 0);
 			if (editorId)
 				editorIds.emplace(editorId, ref);
-			if (ref->baseObject && ref->baseObject->TypeAny({"WEAP", "MISC"}))
+			if (ref->baseObject && ref->baseObject->IsTypeAny({"WEAP", "MISC"}))
 			{
 				iterables.push_back(ref);
 			}

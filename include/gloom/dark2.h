@@ -29,19 +29,18 @@ namespace gloom
 	class Actor;
 	class Human;
 	class Player;
+	class Skeleton;
+	class Bone;
+	class KeyFrames;
+	class Animation;
 	class CSphere;
 	class CShape;
 	class Collider;
-	class Bone;
-	class Skeleton;
-	class KeyFrames;
-	class Animation;
 
 	void View(Rc *);
 
 	extern unsigned int fps;
 
-	// -- loaders.cxx
 	Rc *loadRc(const char *, const char *, unsigned long);
 	Nifp *loadNifp(Rc *, bool useCache = true);
 	Esp *loadEsp(const char *);
@@ -92,6 +91,9 @@ void nifp_gui();
 void cell_gui();
 void hero_menu();
 void render_stats(bool *);
+
+void setup_esc_menu();
+void esc_menu(bool *);
 
 #define READ_BSA_RESOURCE "Load"
 #define VIEW_NIF "View"

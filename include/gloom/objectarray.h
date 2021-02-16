@@ -5,15 +5,14 @@
 
 #include <libs>
 
+// an objectarray wraps a grup
+// it makes iterating safer, more runtime resistent and better looking
+
 namespace gloom
 {
 	using Objects = ObjectArray;
 
-	// see the example
 	void gloom_object_array_example(Grup *);
-
-	// an objectarray wraps a grup
-	// it makes iterating safer and better looking
 
 	class ObjectArray
 	{
@@ -24,7 +23,7 @@ namespace gloom
 
 		inline int Type(size_t i) const
 		{
-			return (int)((TypeDud *)Get(i))->x;
+			return (int)((TypeDud *)_Get(i))->x;
 		}
 
 		inline size_t Size() const
@@ -32,7 +31,7 @@ namespace gloom
 			return grup->mixed.size;
 		}
 
-		void *Get(size_t i) const
+		void *_Get(size_t i) const
 		{
 			cassert(i < Size(), "objects bounds");
 			return grup->mixed.elements[i];
@@ -41,7 +40,7 @@ namespace gloom
 		void *GetSafe(size_t i, int type) const
 		{
 			cassert(type == Type(i), "objects type x");
-			return Get(i);
+			return _Get(i);
 		}
 
 		Grup *GetGrup(size_t i) const

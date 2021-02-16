@@ -28,7 +28,7 @@ RenderTarget::RenderTarget(int width, int height)
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gloom::width, gloom::height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexImage2D(GL_TEXTURE_2D, 0, GLOOM_INTERAL_FORMAT, gloom::width, gloom::height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GLOOM_INTERAL_FORMAT, width, height, 0, GL_RGB, GL_FLOAT, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -38,7 +38,7 @@ RenderTarget::RenderTarget(int width, int height)
 
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, gloom::width, gloom::height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
