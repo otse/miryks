@@ -91,6 +91,8 @@
         "string_view": "cpp",
         "cstdarg": "cpp",
         "*.rh": "cpp",
-        "skyrim_units": "cpp"
+        "skyrim_units": "cpp",
+        "skyrim_libs": "cpp",
+        "units": "cpp"
     }
 }

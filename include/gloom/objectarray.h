@@ -1,9 +1,8 @@
 #ifndef GLOOM_OBJECT_ARRAY_H
 #define GLOOM_OBJECT_ARRAY_H
 
-#include <Gloom/Dark2.h>
-
 #include <libs>
+#include <Gloom/Dark2.h>
 
 // an objectarray wraps a grup
 // it makes iterating safer, more runtime resistent and better looking

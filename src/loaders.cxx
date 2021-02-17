@@ -1,7 +1,5 @@
-#include <Gloom/Dark2.h>
-
 #include <libs>
-
+#include <Gloom/Dark2.h>
 #include <Gloom/Mesh.h>
 #include <Gloom/Files.h>
 
@@ -26,7 +24,7 @@ namespace gloom
 		return rc;
 	}
 
-	Nif *LoadNif(Rc *rc, bool useCache)
+	Nif *LoadNif(Rc *rc, bool useCache = true)
 	{
 		cassert(rc, "mh no rc");
 		Nif *nif;

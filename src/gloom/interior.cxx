@@ -1,12 +1,10 @@
-#include <Gloom/Dark2.h>
 #include <skyrim_units>
-
+#include <libs>
 #include <Gloom/Interior.h>
+
 #include <Gloom/Mesh.h>
 #include <Gloom/Object.h>
 #include <Gloom/ObjectArray.h>
-
-#include <libs>
 
 #include <algorithm>
 #include <cctype>

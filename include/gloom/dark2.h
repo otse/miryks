@@ -44,11 +44,10 @@ namespace gloom
 	class Collider;
 
 	Rc *LoadRc(const char *, const char *, unsigned long);
-	Nif *LoadNif(Rc *, bool useCache = true);
+	Nif *LoadNif(Rc *, bool);
 	Plugin *LoadPlugin(const char *);
 	Archive *LoadArchive(const char *);
 
-	const auto newId = LoadRc;
 	extern unsigned int fps;
 
 	void programGo();

@@ -1,9 +1,8 @@
+#include <libs>
 #include <Gloom/Dark2.h>
 #include <Gloom/Obj.h>
 
 #include <algorithm>
-
-#include <libs>
 
 #include <opengl/types.h>
 #include <opengl/camera.h>
