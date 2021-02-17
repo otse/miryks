@@ -1,0 +1,10 @@
+// https://www.creationkit.com/index.php?title=Unit
+
+#define ONE_SKYRIM_UNIT_IN_CM 1.428
+
+constexpr float SU_TO_CM(float n)
+{
+	return n * ONE_SKYRIM_UNIT_IN_CM;
+}
+
+#define EYE_HEIGHT 160 / ONE_SKYRIM_UNIT_IN_CM

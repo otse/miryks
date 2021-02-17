@@ -11,7 +11,7 @@ namespace gloom
 {
 	class Bone;
 	class Skeleton;
-	class KeyFrames;
+	class Keyframes;
 	class Animation;
 
 	class Skeleton
@@ -45,10 +45,10 @@ namespace gloom
 		mat4 rest, mod, diff;
 	};
 
-	class KeyFrames
+	class Keyframes
 	{
 	public:
-		KeyFrames(Nif *);
+		Keyframes(Nif *);
 		Nif *model;
 		struct ni_controller_sequence_pointer *csp;
 		bool loop = true;
@@ -57,7 +57,7 @@ namespace gloom
 	class Animation
 	{
 	public:
-		Animation(KeyFrames *keyframes) : keyframes(keyframes)
+		Animation(Keyframes *keyframes) : keyframes(keyframes)
 		{
 			//csp
 		}
@@ -66,7 +66,7 @@ namespace gloom
 		Skeleton *skeleton = nullptr;
 		float time = 0;
 		bool play = true;
-		KeyFrames *keyframes;
+		Keyframes *keyframes;
 	};
 
 } // namespace gloom

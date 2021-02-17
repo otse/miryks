@@ -7,8 +7,8 @@
 
 namespace gloom
 {
-	extern KeyFrames *draugrAttack;
-	extern KeyFrames *humanIdle;
+	extern Keyframes *draugrAttack;
+	extern Keyframes *humanIdle;
 
 	Record *GetRace(const char *);
 	//void Export(const char *);

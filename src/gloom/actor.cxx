@@ -1,4 +1,7 @@
 #include <libs>
+#include <skyrim_units>
+
+#include <Gloom/Dark2.h>
 
 #include <Gloom/Actor.h>
 #include <Gloom/Collision.h>
@@ -213,7 +216,7 @@ namespace gloom
 	{
 
 		human->Step();
-		vec3 down = vec3(0, 0, -150 / ONE_SKYRIM_UNIT_IN_CM);
+		vec3 down = vec3(0, 0, SU_TO_CM(-150));
 		drawGroup->matrix = glm::translate(mat4(1.0), down + first_person_camera->pos);
 		drawGroup->matrix = rotate(drawGroup->matrix, -first_person_camera->fyaw, vec3(0, 0, 1));
 		drawGroup->group->visible = false;

@@ -1,3 +1,5 @@
+#include <Gloom/Dark2.h>
+
 #include <Gloom/Ref.h>
 #include <Gloom/Object.h>
 
@@ -5,6 +7,7 @@
 #include <Gloom/Files.h>
 
 #include <libs>
+#include <skyrim_units>
 
 #include <algorithm>
 #include <cctype>
@@ -198,7 +201,7 @@ namespace gloom
 
 	bool Ref::DisplayAsItem()
 	{
-		float dist = GetDistance() / ONE_SKYRIM_UNIT_IN_CM;
+		float dist = GetDistance() * ONE_SKYRIM_UNIT_IN_CM;
 
 		// printf(" display as item %f\n", dist);
 
@@ -251,7 +254,7 @@ namespace gloom
 
 	/*
 	Matrix m = _refr->_matrix;
-	m.setTrans(m.getTrans() + Vec3(0, 0, 15 / ONE_SKYRIM_UNIT_IN_CM));
+	m.setTrans(m.getTrans() + Vec3(0, 0, 15 * ONE_SKYRIM_UNIT_IN_CM));
 
 	Vec3 pos = _refr->record->_node->getBound().center() * m;
 

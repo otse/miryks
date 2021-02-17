@@ -1,10 +1,6 @@
 #ifndef GLOOM_DARK2_H
 #define GLOOM_DARK2_H
 
-#define ONE_SKYRIM_UNIT_IN_CM 1.428
-
-#define EYE_HEIGHT 160 / ONE_SKYRIM_UNIT_IN_CM
-
 #include <opengl/types.h>
 
 struct Grup;
@@ -22,7 +18,9 @@ typedef Bsa Archive;
 typedef Nifp Nif;
 typedef NifpRd Rd;
 
-namespace gloom {};
+namespace gloom
+{
+};
 namespace Glm = gloom;
 
 namespace gloom
@@ -34,21 +32,20 @@ namespace gloom
 	class Interior;
 	class Mesh;
 	class SkinnedMesh;
-	class SkinPartition;
 	class Actor;
 	class Human;
 	class Player;
 	class Skeleton;
 	class Bone;
-	class KeyFrames;
+	class Keyframes;
 	class Animation;
 	class CSphere;
 	class CShape;
 	class Collider;
 
 	Rc *LoadRc(const char *, const char *, unsigned long);
-	Nif      *LoadNif(Rc *, bool useCache = true);
-	Plugin  *LoadPlugin(const char *);
+	Nif *LoadNif(Rc *, bool useCache = true);
+	Plugin *LoadPlugin(const char *);
 	Archive *LoadArchive(const char *);
 
 	const auto newId = LoadRc;

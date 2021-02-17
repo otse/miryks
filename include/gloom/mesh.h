@@ -45,7 +45,7 @@ namespace gloom
 
 		std::vector<ni_ref> shapes;
 
-		std::vector<SkinPartition *> skins;
+		//std::vector<SkinPartition *> skins;
 
 		SkinnedMesh()
 		{

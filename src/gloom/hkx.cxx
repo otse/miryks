@@ -12,8 +12,8 @@
 
 namespace gloom
 {
-	KeyFrames *draugrAttack = nullptr;
-	KeyFrames *humanIdle = nullptr;
+	Keyframes *draugrAttack = nullptr;
+	Keyframes *humanIdle = nullptr;
 
 	void ExportRaceHkxToKf(const char *raceId)
 	{
@@ -79,7 +79,7 @@ namespace gloom
 				fbuf(path, &(char *)nif->buf);
 				nifp_read(nif);
 				nifp_save(nif, nif);
-				draugrAttack = new KeyFrames(nif);
+				draugrAttack = new Keyframes(nif);
 			}
 		}
 
@@ -145,7 +145,7 @@ namespace gloom
 				fbuf(path, &(char *)nif->buf);
 				nifp_read(nif);
 				nifp_save(nif, nif);
-				humanIdle = new KeyFrames(nif);
+				humanIdle = new Keyframes(nif);
 			}
 		}
 	}

@@ -76,7 +76,7 @@ namespace gloom
 
 	// keyframes
 
-	KeyFrames::KeyFrames(Nif *nif) : model(nif)
+	Keyframes::Keyframes(Nif *nif) : model(nif)
 	{
 		cassert(strcmp(model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
 

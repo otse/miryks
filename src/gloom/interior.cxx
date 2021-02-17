@@ -1,3 +1,6 @@
+#include <Gloom/Dark2.h>
+#include <skyrim_units>
+
 #include <Gloom/Interior.h>
 #include <Gloom/Mesh.h>
 #include <Gloom/Object.h>

@@ -90,6 +90,7 @@
         "climits": "cpp",
         "string_view": "cpp",
         "cstdarg": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "skyrim_units": "cpp"
     }
 }
