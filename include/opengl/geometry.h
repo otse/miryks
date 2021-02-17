@@ -19,7 +19,7 @@ struct Vertex
 
 struct Geometry
 {
-	static int num;
+	static int Num;
 	bool created = false;
 	bool lines = false;
 	bool collide = true;
@@ -27,7 +27,7 @@ struct Geometry
 
 	GLuint vao, vbo, ebo;
 
-	AABB aabb;
+	Aabb aabb;
 	
 	Group *parent = nullptr;
 

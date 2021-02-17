@@ -4,7 +4,7 @@
 #include <opengl/camera.h>
 #include <opengl/material.h>
 
-int Geometry::num = 0;
+int Geometry::Num = 0;
 
 // useful for aabbs and cubic axes
 // refract maybe
@@ -35,7 +35,7 @@ const std::vector<GLuint> ELEMENTS = {
 
 Geometry::Geometry()
 {
-	num++;
+	Num++;
 	for (const vec3 &v : VERTICES)
 	{
 		vertices.push_back(Vertex{v});
@@ -47,7 +47,7 @@ Geometry::Geometry()
 
 Geometry::~Geometry()
 {
-	num--;
+	Num--;
 	glDeleteBuffers(1, &vbo);
 	glDeleteBuffers(1, &ebo);
 	glDeleteVertexArrays(1, &vao);
@@ -98,7 +98,7 @@ void Geometry::SetupMesh()
 {
 	bool uses_elements = elements.size() > 0;
 
-	aabb = AABB();
+	aabb = Aabb();
 
 	for (Vertex &vertex : vertices)
 		aabb.extend(vertex.position);

@@ -8,19 +8,19 @@
 
 // https://github.com/openscenegraph/OpenSceneGraph/blob/master/include/osg/BoundingBox
 
-AABB::AABB()
+Aabb::Aabb()
 {
 	min = vec3(0);
 	max = vec3(0);
 	first = true;
 }
 
-AABB::~AABB()
+Aabb::~Aabb()
 {
 	
 }
 
-void AABB::extend(const vec3 &vec)
+void Aabb::extend(const vec3 &vec)
 {
 	if (first)
 	{
@@ -35,41 +35,41 @@ void AABB::extend(const vec3 &vec)
 	}
 }
 
-void AABB::extend(const AABB &bb)
+void Aabb::extend(const Aabb &bb)
 {
 	extend(bb.min);
 	extend(bb.max);
 }
 
-//void AABB::extend(const float f)
+//void Aabb::extend(const float f)
 //{
 //	min -= vec3(f);
 //	max += vec3(f);
 //}
 
-void AABB::translate(const vec3 &v)
+void Aabb::translate(const vec3 &v)
 {
 	min += v;
 	max += v;
 }
 
-vec3 AABB::diagional() const
+vec3 Aabb::diagional() const
 {
 	return max - min;
 }
 
-vec3 AABB::center() const
+vec3 Aabb::center() const
 {
 	return (min + max) * 0.5f;
 }
 
-float AABB::radius2() const
+float Aabb::radius2() const
 {
 	return sqrt(0.25f * length2(max - min));
 }
 
 // todo change that fucking enum
-AABB::INTERSECTION AABB::intersect(const AABB &b) const
+Aabb::INTERSECTION Aabb::intersect(const Aabb &b) const
 {
 	if (max.x < b.min.x || min.x > b.max.x ||
 		max.y < b.min.y || min.y > b.max.y ||
@@ -84,9 +84,9 @@ AABB::INTERSECTION AABB::intersect(const AABB &b) const
 	return INTERSECT;
 }
 
-AABB AABB::mult(const AABB &b, const mat4 &m)
+Aabb Aabb::mult(const Aabb &b, const mat4 &m)
 {
-	AABB a;
+	Aabb a;
 	std::vector<vec3> points = {
 		vec3(b.min.x, b.min.y, b.min.z),
 		vec3(b.max.x, b.min.y, b.min.z),
@@ -104,21 +104,21 @@ AABB AABB::mult(const AABB &b, const mat4 &m)
 	return a;
 }
 
-bool AABB::contains_vec(const vec3 &v) const
+bool Aabb::contains_vec(const vec3 &v) const
 {
 	return v.x >= min.x && v.x <= max.x &&
 		   v.y >= min.y && v.y <= max.y &&
 		   v.z >= min.z && v.z <= max.z;
 }
 
-float AABB::volume() const
+float Aabb::volume() const
 {
 	vec3 size = diagional();
 
 	return size.x * size.y * size.z;
 }
 
-void AABB::geometrize()
+void Aabb::geometrize()
 {
 	if (geometry)
 		delete geometry;

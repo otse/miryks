@@ -6,30 +6,41 @@
 
 struct Group
 {
-	static int num;
-
-	bool visible;
-
-	std::string name;
-	std::vector<Group *> groups, flat;
+	static int Num;
 
 	mat4 matrix, matrixWorld;
 
-	AABB aabb, obb;
+	bool visible = true;
 
-	Group *parent;
+	std::string name;
 
-	Geometry *geometry, *axis;
+	Group *parent = nullptr;
+	Geometry *geometry = nullptr;
+
+	std::vector<Group *> groups, flat;
 
 	Group();
-	~Group();
+	Group::~Group()
+	{
+		Num--;
+	}
 	void Add(Group *);
-	void Update();
+	void Remove(Group *);
 	void DrawBegin(const mat4 &);
 	void Flatten(Group *);
-
+	virtual void Update();
 protected:
-	void Draw(const mat4 &);
+	virtual void Draw(const mat4 &);
+};
+struct BoundedGroup : Group
+{
+	BoundedGroup();
+	~BoundedGroup(){};
+	Aabb aabb, obb;
+	Geometry *axis = nullptr;
+	virtual void Update();
+protected:
+	virtual void Draw(const mat4 &);
 };
 
 struct DrawGroup
@@ -38,7 +49,7 @@ struct DrawGroup
 	DrawGroup(Group *, mat4 = mat4(1.0));
 	void Draw();
 	void Reset();
-	AABB aabb, obb;
+	Aabb aabb, obb;
 	mat4 matrix;
 };
 

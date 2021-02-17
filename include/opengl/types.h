@@ -17,7 +17,7 @@ const float pif = pi<float>();
 
 typedef char *ShaderSource[3];
 
-struct AABB;
+struct Aabb;
 
 struct Geometry;
 struct Material;

@@ -3,7 +3,7 @@
 
 #include <opengl/types.h>
 
-struct AABB
+struct Aabb
 {
 	enum INTERSECTION
 	{
@@ -12,17 +12,17 @@ struct AABB
 		INTERSECT
 	};
 
-	INTERSECTION intersect(const AABB &) const;
+	INTERSECTION intersect(const Aabb &) const;
 
-	static AABB mult(const AABB &, const mat4 &);
+	static Aabb mult(const Aabb &, const mat4 &);
 
-	AABB();
-	~AABB();
+	Aabb();
+	~Aabb();
 	vec3 min, max;
 	bool first;
 
 	//void extend(const float);
-	void extend(const AABB &);
+	void extend(const Aabb &);
 	void extend(const vec3 &);
 	void translate(const vec3 &);
 

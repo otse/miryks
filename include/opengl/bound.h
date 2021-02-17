@@ -14,7 +14,7 @@ struct Bound
 
 	Group * const group;
 
-	AABB aabb, obb;
+	Aabb aabb, obb;
 };
 
 #endif

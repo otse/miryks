@@ -23,8 +23,8 @@ void opengl_gui()
 	ImGui::SetNextWindowSize(ImVec2(400, 0));
 	ImGui::Begin("OpenGL", nullptr, flags);
 
-	ImGui::Text("groups: %i", Group::num);
-	ImGui::Text("geometries: %i", Geometry::num);
+	ImGui::Text("groups: %i", Group::Num);
+	ImGui::Text("geometries: %i", Geometry::Num);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))

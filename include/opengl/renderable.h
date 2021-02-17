@@ -12,7 +12,7 @@ struct Renderable
 {
 	Group *const group;
 
-	AABB aabb;
+	Aabb aabb;
 
 	mat4 matrix;
 
@@ -39,7 +39,7 @@ protected:
 	RenderItem(Group *, Renderable *);
 
 public:
-	AABB aabb, obb;
+	Aabb aabb, obb;
 
 	Group *group;
 	Renderable *renderable;

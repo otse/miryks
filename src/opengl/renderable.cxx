@@ -21,7 +21,7 @@ Renderable::~Renderable()
 
 void Renderable::Separate()
 {
-	aabb = AABB();
+	aabb = Aabb();
 
 	objects.clear();
 
@@ -61,7 +61,7 @@ RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), ren
 	{
 		aabb = obb = group->geometry->aabb;
 
-		aabb = AABB::mult(aabb, matrix);
+		aabb = Aabb::mult(aabb, matrix);
 
 		if (true)
 		{
