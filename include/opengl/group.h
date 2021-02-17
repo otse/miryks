@@ -32,10 +32,10 @@ struct Group
 protected:
 	virtual void Draw(const mat4 &);
 };
-struct BoundedGroup : Group
+struct GroupBounded : Group
 {
-	BoundedGroup();
-	~BoundedGroup(){};
+	GroupBounded();
+	~GroupBounded(){};
 	Aabb aabb, obb;
 	Geometry *axis = nullptr;
 	virtual void Update();

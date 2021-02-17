@@ -10,7 +10,7 @@ namespace gloom
 {
 	Mesh::Mesh()
 	{
-		baseGroup = new Group();
+		baseGroup = new GroupBounded();
 		groups[-1] = baseGroup;
 		lastGroup = baseGroup;
 	}
@@ -123,7 +123,7 @@ namespace gloom
 
 	Group *Mesh::Nested(Rd *rd)
 	{
-		Group *group = new Group();
+		Group *group = new GroupBounded();
 		groups[rd->current] = group;
 		groups[rd->parent]->Add(group);
 		lastGroup = group;
