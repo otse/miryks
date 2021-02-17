@@ -2,7 +2,7 @@
 #define GLOOM_SKELETON_H
 
 #include <libs>
-#include <gloom/dark2.h>
+#include <Gloom/Dark2.h>
 
 #include <opengl/types.h>
 #include <opengl/group.h>

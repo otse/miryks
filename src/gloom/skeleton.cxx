@@ -1,7 +1,7 @@
 #include <algorithm>
 
 #include <libs>
-#include <gloom/skeleton.h>
+#include <Gloom/Skeleton.h>
 
 #include <opengl/group.h>
 #include <opengl/types.h>
@@ -25,7 +25,7 @@ namespace gloom
 	{
 		// printf("skeleton load anam %s\n", ANAM);
 		Rc *rc = loadRc("meshes\\", ANAM, 0x1);
-		nif = loadNifp(rc, true);
+		nif = loadNif(rc, true);
 		// printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
 
@@ -67,6 +67,7 @@ namespace gloom
 		Bone *bone = skeleton->Nested(rd, block->common->A->name);
 		matrix_from_common(bone, block->common);
 	}
+	
 	void Skeleton::Step()
 	{
 		if (animation)

@@ -4,11 +4,10 @@
 
 #include <opengl/aabb.h>
 #include <opengl/group.h>
-#include <opengl/renderable.h>
+// #include <opengl/renderable.h>
 #include <opengl/material.h>
 #include <opengl/shader.h>
 #include <opengl/pointlight.h>
-
 
 static PointLight *black;
 
@@ -31,20 +30,24 @@ void Scene::Clear()
 	//groups2.clear();
 }
 
-void Scene::Add(PointLight *pl) {
-	gloom::Add<PointLight *>(pl, pointlights);
+void Scene::Add(PointLight *pl)
+{
+	SafeAdd<PointLight *>(pl, pointlights);
 }
 
-void Scene::Remove(PointLight *pl) {
-	gloom::Remove<PointLight *>(pl, pointlights);
+void Scene::Remove(PointLight *pl)
+{
+	SafeRemove<PointLight *>(pl, pointlights);
 }
 
-void Scene::Add(DrawGroup *drawGroup) {
-	gloom::Add<DrawGroup *>(drawGroup, drawGroups);
+void Scene::Add(DrawGroup *drawGroup)
+{
+	SafeAdd<DrawGroup *>(drawGroup, drawGroups);
 }
 
-void Scene::Remove(DrawGroup *drawGroup) {
-	gloom::Remove<DrawGroup *>(drawGroup, drawGroups);
+void Scene::Remove(DrawGroup *drawGroup)
+{
+	SafeRemove<DrawGroup *>(drawGroup, drawGroups);
 }
 
 void Scene::DrawItems()

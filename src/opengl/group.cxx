@@ -1,5 +1,4 @@
 #include <opengl/group.h>
-
 #include <opengl/geometry.h>
 
 int Group::num = 0;

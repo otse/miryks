@@ -9,7 +9,7 @@
 #include <cctype>
 #include <string>
 
-#include <opengl/renderable.h>
+// #include <opengl/renderable.h>
 #include <opengl/texture.h>
 #include <opengl/camera.h>
 #include <opengl/pointlight.h>
@@ -43,7 +43,7 @@ namespace gloom
 				Objects(oa.GetGrup(j)).ForEach(0, stop, [&](Objects &oa, size_t &k) {
 					Object object(oa.GetRecord(k));
 					Grup *grup = oa.GetGrup(k + 1);
-					const char *editorId = GetEditorId(object); // object.Data<const char *>("EDID", 0);
+					const char *editorId = GetEditorId(object);
 					if (0 == strcmp(name, editorId))
 					{
 						Objects C(grup);
@@ -75,17 +75,17 @@ namespace gloom
 		Objects(grup).ForEach(0, stop, [&](Objects &oa, size_t i) {
 			Record *record = oa.GetRecord(i);
 			Object object(record);
-			if (!object.IsType("REFR"))
-				return;
-			cassert(object.IsType("REFR"), "fus ro dah");
-			Ref *ref = new Ref(record);
-			refs.push_back(ref);
-			const char *editorId = GetEditorId(object); // object.Data<const char *>("EDID", 0);
-			if (editorId)
-				editorIds.emplace(editorId, ref);
-			if (ref->baseObject && ref->baseObject->IsTypeAny({"WEAP", "MISC"}))
+			if (object.IsType("REFR"))
 			{
-				iterables.push_back(ref);
+				Ref *ref = new Ref(record);
+				refs.push_back(ref);
+				const char *editorId = GetEditorId(object);
+				if (editorId)
+					editorIds.emplace(editorId, ref);
+				if (ref->baseObject && ref->baseObject->IsTypeAny({"WEAP", "MISC"}))
+				{
+					iterables.push_back(ref);
+				}
 			}
 		});
 
@@ -99,6 +99,8 @@ namespace gloom
 
 		bool stop = false;
 
+		// Place at first XMarker that you find
+		
 		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &oa, size_t i) {
 			Object object(oa.GetRecord(i));
 			if (*GetBaseId(object) == 0x0000003B) //  "XMarker"

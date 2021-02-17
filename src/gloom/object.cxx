@@ -2,8 +2,8 @@
 
 #include <libs>
 
-#include <gloom/Object.h>
-#include <gloom/ObjectArray.h>
+#include <Gloom/Object.h>
+#include <Gloom/ObjectArray.h>
 
 namespace gloom
 {
@@ -30,18 +30,20 @@ namespace gloom
 	void gloom_objects_example(Record *record)
 	{
 		Object object(record);
-		cassert(object.IsType("REFR"), "object not refr");
-		auto formId = GetBaseId(object); // object.Data<unsigned int *>("NAME");
-		auto editorId = GetEditorId(object); // object.Data<const char *>("EDID");
-		if (formId)
+		if (object.IsType("REFR"))
 		{
-			Object baseObject((Record *)formId);
-			bool plant_or_weapon = baseObject.IsTypeAny({"FLOR", "WEAP"});
-		}
-		if (object.Count("MEOW") > 2)
-		{
-			// Get the third field
-			auto third = object.Data("MEOW", 2);
+			auto formId = GetBaseId(object);
+			auto editorId = GetEditorId(object);
+			if (formId)
+			{
+				Object baseObject((Record *)formId);
+				bool plant_or_weapon = baseObject.IsTypeAny({"FLOR", "WEAP"});
+			}
+			if (object.Count("MEOW") > 2)
+			{
+				// Get the third field
+				auto third = object.Data("MEOW", 2);
+			}
 		}
 	}
 

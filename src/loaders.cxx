@@ -26,7 +26,7 @@ namespace gloom
 		return rc;
 	}
 
-	Nifp *loadNifp(Rc *rc, bool useCache)
+	Nifp *loadNif(Rc *rc, bool useCache)
 	{
 		cassert(rc, "mh no rc");
 		Nifp *nif;
@@ -90,7 +90,7 @@ namespace gloom
 			delete mesh;
 			delete drawGroup;
 		}
-		Nifp *nif = loadNifp(rc, false); // Note no use of cache
+		Nifp *nif = loadNif(rc, false); // Note no use of cache
 		nifp_save(rc, nif);
 		mesh = new Mesh;
 		mesh->Construct(nif);

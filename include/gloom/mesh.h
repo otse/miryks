@@ -1,8 +1,8 @@
 #pragma once
 
-#include <gloom/dark2.h>
+#include <Gloom/Dark2.h>
 
-#include <gloom/skeleton.h>
+#include <Gloom/Skeleton.h>
 
 extern "C"
 {

@@ -1,5 +1,5 @@
-#include <gloom/dark2.h>
-#include <gloom/files.h>
+#include <Gloom/Dark2.h>
+#include <Gloom/Files.h>
 
 #include <libs>
 

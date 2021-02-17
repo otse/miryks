@@ -107,7 +107,7 @@ namespace gloom
 					Rc *rc = loadRc("meshes\\", modl, 0x1);
 					if (rc)
 					{
-						Nifp *nif = loadNifp(rc, true);
+						Nifp *nif = loadNif(rc, true);
 						mesh = new Mesh;
 						mesh->Construct(nif);
 						Mesh::Store((void *)modl, mesh);

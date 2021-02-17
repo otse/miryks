@@ -13,8 +13,12 @@ struct Subrecord;
 struct Rc;
 
 struct Nifp;
+typedef Nif = Nifp;
 struct Esp;
 struct Bsa;
+
+namespace gloom {};
+namespace Glm = gloom;
 
 namespace gloom
 {
@@ -41,11 +45,13 @@ namespace gloom
 
 	extern unsigned int fps;
 
-	Rc *loadRc(const char *, const char *, unsigned long);
-	Nifp *loadNifp(Rc *, bool useCache = true);
+	Rc  *loadRc(const char *, const char *, unsigned long);
+	Nif *loadNif(Rc *, bool useCache = true);
 	Esp *loadEsp(const char *);
 	Bsa *loadBsa(const char *);
 
+	const auto newId = loadRc;
+	
 	void programGo();
 	void programLoop();
 
