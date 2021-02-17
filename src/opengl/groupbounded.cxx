@@ -17,18 +17,18 @@ void GroupBounded::Draw(const mat4 &model)
 
 void GroupBounded::Update()
 {
-	Group::Update();
 	aabb = Aabb();
+	Group::Update();
+	// Once everything is updated:
 	if (geometry)
 		aabb.extend(geometry->aabb);
-	for (Group *child : groups)
-	{
-		GroupBounded *bounded = dynamic_cast<GroupBounded *>(child);
-		if (bounded)
-			aabb.extend(bounded->aabb);
-	}
-	obb = aabb;
 	aabb = Aabb::mult(aabb, matrix);
+	if (parent)
+	{
+		GroupBounded *bounded = dynamic_cast<GroupBounded *>(parent);
+		if (bounded)
+			bounded->aabb.extend(aabb);
+	}
 }
 
 DrawGroup::DrawGroup(Group *group, mat4 matrix) : group(group), matrix(matrix)
@@ -47,12 +47,12 @@ void DrawGroup::Reset()
 	aabb = Aabb::mult(aabb, matrix);
 	aabb.geometrize();
 	obb.geometrize();
-	//group->Flatten(group);w
+	//group->Flatten(group);
 }
 
 void DrawGroup::Draw()
 {
-	group->DrawBegin(matrix);
+	group->Draws(matrix);
 	mat4 place = matrix * group->matrix;
 	if (renderSettings.AABBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
 		aabb.geometry->Draw(mat4(1.0));

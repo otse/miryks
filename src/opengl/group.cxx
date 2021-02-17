@@ -11,6 +11,11 @@ Group::Group()
 	matrix = matrixWorld = mat4(1.0f);
 }
 
+Group::~Group()
+{
+	Num--;
+}
+
 void Group::Add(Group *group)
 {
 	group->parent = this;
@@ -33,20 +38,20 @@ void Group::Update()
 		child->Update();
 }
 
-void Group::DrawBegin(const mat4 &model)
-{
-	if (!visible)
-		return;
-	Draw(model);
-	for (Group *child : groups)
-		child->DrawBegin(model);
-}
-
 void Group::Draw(const mat4 &model)
 {
 	mat4 place = model * matrixWorld;
 	if (geometry)
 		geometry->Draw(place);
+}
+
+void Group::Draws(const mat4 &model)
+{
+	if (!visible)
+		return;
+	Draw(model);
+	for (Group *child : groups)
+		child->Draws(model);
 }
 
 void Group::Flatten(Group *root)

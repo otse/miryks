@@ -1,0 +1,20 @@
+---
+--- A +
+        B
+        C
+        D
+        E +
+            F
+            G
+            H
+
+A Update    > B Update
+            > C Update
+            > D Update
+            > E Update      > F Update
+                            > G Update
+                            > H Update  > H After
+                            
+                            < G After
+                            < F After
+            < E After

@@ -40,9 +40,9 @@ void Renderable::Separate()
 	}
 }
 
-void Renderable::DrawBegin()
+void Renderable::BeginDraws()
 {
-	group->DrawBegin(matrix);
+	group->BeginDraws(matrix);
 
 	if (true)
 	{

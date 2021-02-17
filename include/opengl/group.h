@@ -7,39 +7,27 @@
 struct Group
 {
 	static int Num;
-
 	mat4 matrix, matrixWorld;
-
 	bool visible = true;
-
-	std::string name;
-
 	Group *parent = nullptr;
 	Geometry *geometry = nullptr;
-
 	std::vector<Group *> groups, flat;
-
 	Group();
-	Group::~Group()
-	{
-		Num--;
-	}
+	virtual Group::~Group();
 	void Add(Group *);
 	void Remove(Group *);
-	void DrawBegin(const mat4 &);
+	void Draws(const mat4 &);
 	void Flatten(Group *);
 	virtual void Update();
-protected:
 	virtual void Draw(const mat4 &);
 };
 struct GroupBounded : Group
 {
-	GroupBounded();
-	~GroupBounded(){};
 	Aabb aabb, obb;
 	Geometry *axis = nullptr;
+	GroupBounded();
+	virtual ~GroupBounded(){};
 	virtual void Update();
-protected:
 	virtual void Draw(const mat4 &);
 };
 
