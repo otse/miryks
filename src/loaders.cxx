@@ -16,7 +16,7 @@ namespace gloom
 {
 	const char *dataFolder = "Data/";
 
-	Rc *loadRc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
+	Rc *LoadRc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
 	{
 		std::string str = prepend;
 		str += path;
@@ -26,10 +26,10 @@ namespace gloom
 		return rc;
 	}
 
-	Nifp *loadNif(Rc *rc, bool useCache)
+	Nif *LoadNif(Rc *rc, bool useCache)
 	{
 		cassert(rc, "mh no rc");
-		Nifp *nif;
+		Nif *nif;
 		nif = nifp_saved(rc);
 		if (useCache && nif != NULL)
 			return nif;
@@ -43,7 +43,7 @@ namespace gloom
 		return nif;
 	}
 
-	Esp *loadEsp(const char *filename)
+	Plugin *LoadPlugin(const char *filename)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
@@ -57,7 +57,7 @@ namespace gloom
 			exit(1);
 			return nullptr;
 		}
-		Esp *esp = plugin_slate();
+		Plugin *esp = plugin_slate();
 		esp->name = filename;
 		esp->buf = buf;
 		esp->filesize = ret;
@@ -65,7 +65,7 @@ namespace gloom
 		return esp;
 	}
 
-	Bsa *loadBsa(const char *filename)
+	Archive *LoadArchive(const char *filename)
 	{
 		printf("Load Archive %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
@@ -90,7 +90,7 @@ namespace gloom
 			delete mesh;
 			delete drawGroup;
 		}
-		Nifp *nif = loadNif(rc, false); // Note no use of cache
+		Nif *nif = LoadNif(rc, false); // Note no use of cache
 		nifp_save(rc, nif);
 		mesh = new Mesh;
 		mesh->Construct(nif);

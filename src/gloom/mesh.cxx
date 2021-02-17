@@ -15,19 +15,19 @@ namespace gloom
 		lastGroup = baseGroup;
 	}
 
-	static void other(NifpRd *, void *);
-	static void ni_node_callback						(NifpRd *, ni_node_pointer *);
-	static void ni_node_callback_2						(NifpRd *, ni_node_pointer *);
-	static void ni_tri_shape_callback					(NifpRd *, ni_tri_shape_pointer *);
-	static void ni_tri_shape_callback_2					(NifpRd *, ni_tri_shape_pointer *);
-	static void ni_tri_shape_data_callback				(NifpRd *, ni_tri_shape_data_pointer *);
-	static void bs_lighting_shader_property_callback	(NifpRd *, bs_lighting_shader_property_pointer *);
-	static void bs_effect_shader_property_callback		(NifpRd *, bs_effect_shader_property_pointer *);
-	static void bs_shader_texture_set_callback			(NifpRd *, bs_shader_texture_set_pointer *);
-	static void ni_alpha_property_callback				(NifpRd *, ni_alpha_property_pointer *);
-	static void ni_skin_instance_callback				(NifpRd *, ni_skin_instance_pointer *);
-	static void ni_skin_data_callback					(NifpRd *, ni_skin_data_pointer *);
-	static void ni_skin_partition_callback				(NifpRd *, ni_skin_partition_pointer *);
+	static void other(Rd *, void *);
+	static void ni_node_callback						(Rd *, ni_node_pointer *);
+	static void ni_node_callback_2						(Rd *, ni_node_pointer *);
+	static void ni_tri_shape_callback					(Rd *, ni_tri_shape_pointer *);
+	static void ni_tri_shape_callback_2					(Rd *, ni_tri_shape_pointer *);
+	static void ni_tri_shape_data_callback				(Rd *, ni_tri_shape_data_pointer *);
+	static void bs_lighting_shader_property_callback	(Rd *, bs_lighting_shader_property_pointer *);
+	static void bs_effect_shader_property_callback		(Rd *, bs_effect_shader_property_pointer *);
+	static void bs_shader_texture_set_callback			(Rd *, bs_shader_texture_set_pointer *);
+	static void ni_alpha_property_callback				(Rd *, ni_alpha_property_pointer *);
+	static void ni_skin_instance_callback				(Rd *, ni_skin_instance_pointer *);
+	static void ni_skin_data_callback					(Rd *, ni_skin_data_pointer *);
+	static void ni_skin_partition_callback				(Rd *, ni_skin_partition_pointer *);
 
 	static std::map<void *, Mesh *> store;
 
@@ -44,10 +44,10 @@ namespace gloom
 		return nullptr;
 	}
 
-	void Mesh::Construct(Nifp *bucket)
+	void Mesh::Construct(Nif *bucket)
 	{
 		nif = bucket;
-		NifpRd *rd = malloc_nifprd();
+		Rd *rd = malloc_nifprd();
 		rd->nif = bucket;
 		rd->data = this;
 		rd->other = other;
@@ -67,7 +67,7 @@ namespace gloom
 	{
 		cassert(skeleton, "smesh needs skeleton");
 		// "Second pass rundown"
-		NifpRd *rd = malloc_nifprd();
+		Rd *rd = malloc_nifprd();
 		rd->nif = mesh->nif;
 		rd->data = this;
 		rd->other = other;
@@ -121,7 +121,7 @@ namespace gloom
 		Initial();
 	}
 
-	Group *Mesh::Nested(NifpRd *rd)
+	Group *Mesh::Nested(Rd *rd)
 	{
 		Group *group = new Group();
 		groups[rd->current] = group;
@@ -130,10 +130,10 @@ namespace gloom
 		return group;
 	}
 
-	void other(NifpRd *rd, void *block_pointer)
+	void other(Rd *rd, void *block_pointer)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
-		//printf("NifpRd unhandled other block type %s\n", nifp_get_block_type(rd->nif, rd->current));
+		//printf("Rd unhandled other block type %s\n", nifp_get_block_type(rd->nif, rd->current));
 	}
 
 	void matrix_from_common(Group *group, ni_common_layout_pointer *common)
@@ -143,7 +143,7 @@ namespace gloom
 		group->matrix = scale(group->matrix, vec3(common->C->scale));
 	}
 
-	void ni_node_callback(NifpRd *rd, ni_node_pointer *block)
+	void ni_node_callback(Rd *rd, ni_node_pointer *block)
 	{
 		// printf("ni node callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -151,7 +151,7 @@ namespace gloom
 		matrix_from_common(group, block->common);
 	}
 
-	void ni_tri_shape_callback(NifpRd *rd, ni_tri_shape_pointer *block)
+	void ni_tri_shape_callback(Rd *rd, ni_tri_shape_pointer *block)
 	{
 		// printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
@@ -166,7 +166,7 @@ namespace gloom
 		}
 	}
 
-	void ni_node_callback_2(NifpRd *rd, ni_node_pointer *block)
+	void ni_node_callback_2(Rd *rd, ni_node_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		if (rd->current == 0)
@@ -177,13 +177,13 @@ namespace gloom
 		//	group->geometry->material->color = vec3(1);
 	}
 
-	void ni_tri_shape_callback_2(NifpRd *rd, ni_tri_shape_pointer *block)
+	void ni_tri_shape_callback_2(Rd *rd, ni_tri_shape_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		smesh->lastShape = smesh->mesh->groups[rd->current];
 	}
 
-	void ni_tri_shape_data_callback(NifpRd *rd, ni_tri_shape_data_pointer *block)
+	void ni_tri_shape_data_callback(Rd *rd, ni_tri_shape_data_pointer *block)
 	{
 		// printf("ni tri shape data callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -218,7 +218,7 @@ namespace gloom
 		geometry->SetupMesh();
 	}
 
-	void bs_lighting_shader_property_callback(NifpRd *rd, bs_lighting_shader_property_pointer *block)
+	void bs_lighting_shader_property_callback(Rd *rd, bs_lighting_shader_property_pointer *block)
 	{
 		// printf("bs lighting shader property callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -251,7 +251,7 @@ namespace gloom
 		}
 	}
 
-	void bs_effect_shader_property_callback(NifpRd *rd, bs_effect_shader_property_pointer *block)
+	void bs_effect_shader_property_callback(Rd *rd, bs_effect_shader_property_pointer *block)
 	{
 		//printf(" mesh bs effect shader cb ");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -272,7 +272,7 @@ namespace gloom
 		}
 	}
 
-	void bs_shader_texture_set_callback(NifpRd *rd, bs_shader_texture_set_pointer *block)
+	void bs_shader_texture_set_callback(Rd *rd, bs_shader_texture_set_pointer *block)
 	{
 		// printf("bs shader texture set callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -297,7 +297,7 @@ namespace gloom
 		}
 	}
 
-	void ni_alpha_property_callback(NifpRd *rd, ni_alpha_property_pointer *block)
+	void ni_alpha_property_callback(Rd *rd, ni_alpha_property_pointer *block)
 	{
 		// printf("ni alpha property");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -309,21 +309,21 @@ namespace gloom
 		}
 	}
 
-	void ni_skin_instance_callback(NifpRd *rd, ni_skin_instance_pointer *block)
+	void ni_skin_instance_callback(Rd *rd, ni_skin_instance_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
-		Nifp *nif = smesh->mesh->nif;
+		Nif *nif = smesh->mesh->nif;
 		cassert(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
 		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
 		smesh->shapes.push_back(rd->parent);
 	}
 
-	void ni_skin_data_callback(NifpRd *rd, ni_skin_data_pointer *block)
+	void ni_skin_data_callback(Rd *rd, ni_skin_data_pointer *block)
 	{
 		// used below
 	}
 
-	void ni_skin_partition_callback(NifpRd *rd, ni_skin_partition_pointer *block)
+	void ni_skin_partition_callback(Rd *rd, ni_skin_partition_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		auto nif = smesh->mesh->nif;

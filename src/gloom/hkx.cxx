@@ -26,7 +26,7 @@ namespace gloom
 
 			if (!exists("temp/draugr/hkx/skeleton.hkx"))
 			{
-				Bsa *animations = get_archives()[2];
+				Archive *animations = get_archives()[2];
 				Rc *skeleton = bsa_find(animations, "meshes\\actors\\draugr\\character assets\\skeleton.hkx");
 
 				//if (skeleton)
@@ -74,7 +74,7 @@ namespace gloom
 			{
 				const char *path = "temp/draugr/kf/1hmattackf.kf";
 				//printf("fetching random draugr kf\n");
-				Nifp *nif = malloc_nifp();
+				Nif *nif = malloc_nifp();
 				nif->path = path;
 				fbuf(path, &(char *)nif->buf);
 				nifp_read(nif);
@@ -92,7 +92,7 @@ namespace gloom
 
 			if (!exists("temp/character/hkx/skeleton.hkx"))
 			{
-				Bsa *animations = get_archives()[2];
+				Archive *animations = get_archives()[2];
 				Rc *skeleton = bsa_find(animations, "meshes\\actors\\character\\character assets\\skeleton.hkx");
 
 				//if (skeleton)
@@ -140,7 +140,7 @@ namespace gloom
 			{
 				const char *path = "temp/character/kf/1hm_idle.kf";
 				//printf("fetching human idle kf\n");
-				Nifp *nif = malloc_nifp();
+				Nif *nif = malloc_nifp();
 				nif->path = path;
 				fbuf(path, &(char *)nif->buf);
 				nifp_read(nif);

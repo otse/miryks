@@ -64,7 +64,7 @@ namespace gloom
 
 		Rc *rc = bsa_find(get_archives()[0], model);
 		bsa_read(rc);
-		Nifp *character = malloc_nifp();
+		Nif *character = malloc_nifp();
 		character->path = model;
 		character->buf = rc->buf;
 		nifp_read(character);

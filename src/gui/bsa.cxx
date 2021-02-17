@@ -8,7 +8,7 @@ using namespace gloom;
 
 static char hedrstr[600] = { "not loaded" };
 
-Bsa *bsa = NULL;
+Archive *bsa = NULL;
 
 void bsa_gui()
 {

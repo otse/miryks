@@ -48,16 +48,16 @@ int main()
 	pathToOldrim = fread("path to oldrim.txt");
 	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
 	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe, check your path");
-	get_plugins()[0] = loadEsp("Skyrim.esm");
+	get_plugins()[0] = LoadPlugin("Skyrim.esm");
 	if (get_plugins()[0])
 		printf("Phew, Loaded Skyrim.esm\n");
-	get_plugins()[1] = loadEsp("Gloom.esp");
-	get_archives()[0] = loadBsa("Skyrim - Meshes.bsa");
-	get_archives()[1] = loadBsa("Skyrim - Textures.bsa");
-	get_archives()[2] = loadBsa("Skyrim - Animations.bsa");
-	//get_archives()[3] = loadBsa("HighResTexturePack01.bsa");
-	//get_archives()[4] = loadBsa("HighResTexturePack02.bsa");
-	//get_archives()[5] = loadBsa("HighResTexturePack03.bsa");
+	get_plugins()[1] = LoadPlugin("Gloom.esp");
+	get_archives()[0] = LoadArchive("Skyrim - Meshes.bsa");
+	get_archives()[1] = LoadArchive("Skyrim - Textures.bsa");
+	get_archives()[2] = LoadArchive("Skyrim - Animations.bsa");
+	//get_archives()[3] = LoadArchive("HighResTexturePack01.bsa");
+	//get_archives()[4] = LoadArchive("HighResTexturePack02.bsa");
+	//get_archives()[5] = LoadArchive("HighResTexturePack03.bsa");
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;

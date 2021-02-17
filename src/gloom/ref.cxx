@@ -104,10 +104,10 @@ namespace gloom
 				mesh = Mesh::Cached((void *)modl);
 				if (!mesh)
 				{
-					Rc *rc = loadRc("meshes\\", modl, 0x1);
+					Rc *rc = LoadRc("meshes\\", modl, 0x1);
 					if (rc)
 					{
-						Nifp *nif = loadNif(rc, true);
+						Nif *nif = LoadNif(rc, true);
 						mesh = new Mesh;
 						mesh->Construct(nif);
 						Mesh::Store((void *)modl, mesh);

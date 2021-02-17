@@ -14,7 +14,7 @@ using namespace gloom;
 
 static std::stringstream ss;
 
-static Esp *plugin = NULL;
+static Plugin *plugin = NULL;
 
 void im_grup(Grup *, int);
 void im_record(Record *);
@@ -94,7 +94,7 @@ void esp_gui()
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::SetNextWindowPos(ImVec2(450, 0));
-	ImGui::Begin("Esp", nullptr, flags);
+	ImGui::Begin("Plugin", nullptr, flags);
 
 	static bool pluginUsedByGame = false;
 	static char buf[260] = "Skyrim.esm";
@@ -105,7 +105,7 @@ void esp_gui()
 	if (strcmp(buf, buf2))
 	{
 		memcpy(buf2, buf, 260);
-		Esp *plugin2 = has_plugin(buf);
+		Plugin *plugin2 = has_plugin(buf);
 		if (plugin2)
 		{
 			pluginUsedByGame = true;
@@ -113,7 +113,7 @@ void esp_gui()
 		}
 		else
 		{
-			plugin2 = loadEsp(buf2);
+			plugin2 = LoadPlugin(buf2);
 			if (plugin2)
 			{
 				memcpy(temporaryName, buf, 260);

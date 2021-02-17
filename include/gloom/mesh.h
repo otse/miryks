@@ -23,14 +23,14 @@ namespace gloom
 	public:
 		Mesh();
 
-		Nifp *nif;
+		Nif *nif;
 
 		std::map<int, Group *> groups;
 
 		Group *baseGroup, *lastGroup;
 
-		void Construct(Nifp *);
-		Group *Nested(NifpRd *);
+		void Construct(Nif *);
+		Group *Nested(Rd *);
 
 		static void Store(void *, Mesh *);
 		static Mesh *Cached(void *);

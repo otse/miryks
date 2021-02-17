@@ -11,11 +11,16 @@ struct Grup;
 struct Record;
 struct Subrecord;
 struct Rc;
-
-struct Nifp;
-typedef Nif = Nifp;
 struct Esp;
 struct Bsa;
+
+struct Nifp;
+struct NifpRd;
+
+typedef Esp Plugin;
+typedef Bsa Archive;
+typedef Nifp Nif;
+typedef NifpRd Rd;
 
 namespace gloom {};
 namespace Glm = gloom;
@@ -41,20 +46,18 @@ namespace gloom
 	class CShape;
 	class Collider;
 
-	void View(Rc *);
+	Rc *LoadRc(const char *, const char *, unsigned long);
+	Nif      *LoadNif(Rc *, bool useCache = true);
+	Plugin  *LoadPlugin(const char *);
+	Archive *LoadArchive(const char *);
 
+	const auto newId = LoadRc;
 	extern unsigned int fps;
 
-	Rc  *loadRc(const char *, const char *, unsigned long);
-	Nif *loadNif(Rc *, bool useCache = true);
-	Esp *loadEsp(const char *);
-	Bsa *loadBsa(const char *);
-
-	const auto newId = loadRc;
-	
 	void programGo();
 	void programLoop();
 
+	void View(Rc *);
 	void doImGui();
 	void renderImGui();
 
