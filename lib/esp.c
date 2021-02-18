@@ -28,7 +28,7 @@ const char *esp_types[] = {"GMST", "KYWD", "LCRT", "AACT", "TXST", "GLOB", "CLAS
 
 #define COUNT_OF(x) sizeof(x) / sizeof(0[x])
 
-inline void array(EspCArray *, size_t);
+inline void array(EspCArray *, unsigned int);
 inline void grow(EspCArray *);
 inline void insert(EspCArray *, void *);
 
@@ -351,7 +351,7 @@ api void free_esp_array(EspCArray *array)
 	free(array->elements);
 }
 
-inline void array(EspCArray *a, size_t initial) {
+inline void array(EspCArray *a, unsigned int initial) {
 	a->capacity = initial;
 	a->size = 0;
 	a->elements = malloc(a->capacity * sizeof(void *));

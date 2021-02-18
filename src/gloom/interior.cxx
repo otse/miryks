@@ -39,9 +39,9 @@ namespace gloom
 
 		bool stop = false;
 
-		Objects(top).ForEach(0, stop, [&](Objects &oa, size_t i) {
-			Objects(oa.GetGrup(i)).ForEach(0, stop, [&](Objects &oa, size_t j) {
-				Objects(oa.GetGrup(j)).ForEach(0, stop, [&](Objects &oa, size_t &k) {
+		Objects(top).ForEach(0, stop, [&](Objects &oa, unsigned int i) {
+			Objects(oa.GetGrup(i)).ForEach(0, stop, [&](Objects &oa, unsigned int j) {
+				Objects(oa.GetGrup(j)).ForEach(0, stop, [&](Objects &oa, unsigned int &k) {
 					Object object(oa.GetRecord(k));
 					Grup *grup = oa.GetGrup(k + 1);
 					const char *editorId = GetEditorId(object);
@@ -73,7 +73,7 @@ namespace gloom
 
 		bool stop = false;
 
-		Objects(grup).ForEach(0, stop, [&](Objects &oa, size_t i) {
+		Objects(grup).ForEach(0, stop, [&](Objects &oa, unsigned int i) {
 			Record *record = oa.GetRecord(i);
 			Object object(record);
 			if (object.IsType("REFR"))
@@ -102,7 +102,7 @@ namespace gloom
 
 		// Place at first XMarker that you find
 		
-		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &oa, size_t i) {
+		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &oa, unsigned int i) {
 			Object object(oa.GetRecord(i));
 			if (*GetBaseId(object) == 0x0000003B) //  "XMarker"
 			{

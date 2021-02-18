@@ -3,6 +3,7 @@
 
 GroupBounded::GroupBounded() : Group()
 {
+	aabb = Aabb();
 	axis = new Geometry;
 	axis->SetupMesh();
 }

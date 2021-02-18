@@ -89,7 +89,7 @@ void RenderItem::TransformVertices()
 	if (triangles.size() > 0)
 		return;
 
-	for (size_t i = 0, j = group->geometry->elements.size(); i < j; i += 3)
+	for (unsigned int i = 0, j = group->geometry->elements.size(); i < j; i += 3)
 	{
 		auto a = group->geometry->elements[i + 0];
 		auto b = group->geometry->elements[i + 1];

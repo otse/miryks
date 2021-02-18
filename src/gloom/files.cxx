@@ -17,7 +17,7 @@ int fbuf(const char *path, char **dest, bool cap)
 	std::ifstream is(path, mode);
 	if (is)
 	{
-		size_t end = is.tellg();
+		unsigned int end = is.tellg();
 		*dest = (char *)malloc(end + (cap ? 1 : 0));
 		is.seekg(0, is.beg);
 		is.read((char *)*dest, end);
@@ -39,7 +39,7 @@ std::string fread(const std::string &a)
 	std::ifstream is(a, mode);
 	if (is)
 	{
-		size_t end = is.tellg();
+		auto end = is.tellg();
 		std::string str(end, ' ');
 		is.seekg(0, is.beg);
 		is.read(&str[0], end);

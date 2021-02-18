@@ -32,8 +32,8 @@ typedef struct EspCArray
 	struct Record **records;
 	struct Subrecord **subrecords;
 	};
-	size_t size;
-	size_t capacity;
+	unsigned int size;
+	unsigned int capacity;
 } EspCArray;
 
 typedef struct Esp

@@ -40,10 +40,7 @@ namespace gloom
 				bool plant_or_weapon = baseObject.IsTypeAny({"FLOR", "WEAP"});
 			}
 			if (object.Count("MEOW") > 2)
-			{
-				// Get the third field
-				auto third = object.Data("MEOW", 2);
-			}
+				auto third = object.Data("MEOW", 2); // Get the third field
 		}
 	}
 

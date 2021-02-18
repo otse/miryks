@@ -28,7 +28,7 @@ namespace gloom
 
 		bool stop = false;
 
-		Objects(top).ForEach(0, stop, [&](Objects &oa, size_t &i) {
+		Objects(top).ForEach(0, stop, [&](Objects &oa, unsigned int &i) {
 			Record *record = oa.GetRecord(i);
 			auto editorId = GetEditorIdOnly(record);
 			if (strcmp(editorId, raceId) == 0)
