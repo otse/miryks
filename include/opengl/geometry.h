@@ -16,7 +16,6 @@ struct Vertex
 	vec4 skin_index;
 	vec4 skin_weight;
 };
-
 struct Geometry
 {
 	static int Num;
@@ -24,27 +23,17 @@ struct Geometry
 	bool lines = false;
 	bool collide = true;
 	bool skinning = false;
-
 	GLuint vao, vbo, ebo;
-
 	Aabb aabb;
-	
 	Group *parent = nullptr;
-
 	Material *material = nullptr;
 	//std::vector<texture_t> textures;
-
 	std::vector<Vertex> vertices;
-	
 	std::vector<GLuint> elements;
-
 	Geometry();
 	~Geometry();
-
 	void Draw(const mat4 &);
-
 	void Clear(int, int);
-
 	void SetupMesh();
 };
 

@@ -1,12 +1,12 @@
 #ifndef ESP_H
 #define ESP_H
 
-// only for oldrim!
+// for oldrim
 
-// wrote for gloom/dark
+// wrote for gloom
 // 100% based on https://github.com/Ortham/libespm
 
-// sorry but uses the words fields / subrecords interchangeably
+// field subrecord same thing
 
 #define api
 

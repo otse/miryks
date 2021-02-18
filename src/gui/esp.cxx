@@ -18,7 +18,7 @@ static Plugin *plugin = NULL;
 
 void im_grup(Grup *, int);
 void im_record(Record *);
-void im_subrecord(Subrecord *);
+void im_subrecord(Field *);
 
 void im_grup(Grup *grup, int top_grup = -1)
 {
@@ -46,7 +46,7 @@ void im_grup(Grup *grup, int top_grup = -1)
 void im_record(Record *record)
 {
 	char *edid = nullptr;
-	Subrecord *first = record->fields.subrecords[0];
+	Field *first = record->fields.subrecords[0];
 	if (first->hed->type == espwrd "EDID")
 	{
 		edid = (char *)first->data;
@@ -76,7 +76,7 @@ void im_record(Record *record)
 	}
 }
 
-void im_subrecord(Subrecord *field)
+void im_subrecord(Field *field)
 {
 	char t[100];
 	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->type, field->id);

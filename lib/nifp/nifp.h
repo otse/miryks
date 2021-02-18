@@ -3,8 +3,9 @@
 
 #define api
 
-// wrote for gloom/dark
 // for oldrim
+
+// wrote for gloom
 
 typedef int ni_ref;
 

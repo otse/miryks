@@ -22,9 +22,9 @@ namespace gloom
 		return object.Data<unsigned int *>("NAME", 0);
 	}
 
-	//Subrecord *GetField(Record *record, unsigned int i)
+	//Field *GetField(Record *record, unsigned int i)
 	//{
-	//	return (Subrecord *)record->fields.subrecords[i];
+	//	return (Field *)record->fields.subrecords[i];
 	//}
 
 	void gloom_objects_example(Record *record)
@@ -51,14 +51,14 @@ namespace gloom
 		cassert(((TypeDud *)record)->x == 2, "Gloom/Object Not Record");
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
-			Subrecord *field = record->fields.subrecords[i];
+			Field *field = record->fields.subrecords[i];
 			fields.emplace(field->hed->type, field);
 		}
 	}
 
-	Subrecord *Object::EqualRange(const char *type, int skip) const
+	Field *Object::EqualRange(const char *type, int skip) const
 	{
-		Subrecord *sub = nullptr;
+		Field *sub = nullptr;
 		auto st = fields.equal_range(*(unsigned int *)type);
 		for (auto it = st.first; it != st.second; ++it)
 		{

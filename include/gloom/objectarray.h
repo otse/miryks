@@ -19,7 +19,7 @@ namespace gloom
 		{
 			return (int)((TypeDud *)_Get(i))->x;
 		}
-		inline unsigned int Size() const
+		unsigned int Size() const
 		{
 			return grup->mixed.size;
 		}

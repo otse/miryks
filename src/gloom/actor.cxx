@@ -58,7 +58,7 @@ namespace gloom
 		auto MODL = race.Data<unsigned short *>("MODL", 2);
 		auto MODLCHAR = race.Data<char *>("MODL", 2);
 
-		Subrecord *modl = race.EqualRange("MODL", 2);
+		Field *modl = race.EqualRange("MODL", 2);
 
 		//printf("modl size %u str %s offset %u", modl->hed->type, (char *)modl->data, modl->offset);
 

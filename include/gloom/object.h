@@ -12,6 +12,8 @@ namespace gloom
 	const char *GetEditorId(Object &);
 	unsigned int *GetBaseId(Object &);
 
+	// Field *GetField(Record *, unsigned int);
+
 	void gloom_objects_example(Record *);
 
 	class Object
@@ -20,8 +22,8 @@ namespace gloom
 		Record *const record = nullptr;
 		Object(Record *);
 		~Object(){};
-		std::multimap<unsigned int, Subrecord *> fields;
-		Subrecord *EqualRange(const char *, int) const;
+		std::multimap<unsigned int, Field *> fields;
+		Field *EqualRange(const char *, int) const;
 		unsigned int Count(const char *type) const
 		{
 			return fields.count(*(unsigned int *)type);
@@ -40,7 +42,7 @@ namespace gloom
 		template <typename T = void *>
 		T Data(const char *type, int skip = 0) const
 		{
-			Subrecord *field = EqualRange(type, skip);
+			Field *field = EqualRange(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
 	};

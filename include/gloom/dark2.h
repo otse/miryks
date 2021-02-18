@@ -17,6 +17,7 @@ typedef Esp Plugin;
 typedef Bsa Archive;
 typedef Nifp Nif;
 typedef NifpRd Rd;
+typedef Subrecord Field;
 
 namespace gloom
 {
