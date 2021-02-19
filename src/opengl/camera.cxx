@@ -1,8 +1,8 @@
 #include <Gloom/Dark2.h>
 
-#include <opengl/camera.h>
-#include <opengl/group.h>
-#include <opengl/scene.h>
+#include <OpenGL/Camera.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/Scene.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>

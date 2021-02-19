@@ -4,8 +4,8 @@
 #include <libs>
 #include <Gloom/Dark2.h>
 
-#include <opengl/types.h>
-#include <opengl/group.h>
+#include <OpenGL/Types.h>
+#include <OpenGL/Group.h>
 
 namespace gloom
 {

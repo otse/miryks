@@ -1,5 +1,5 @@
-#include <opengl/group.h>
-#include <opengl/geometry.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/Geometry.h>
 
 GroupBounded::GroupBounded() : Group()
 {
@@ -20,7 +20,8 @@ void GroupBounded::Update()
 {
 	aabb = Aabb();
 	Group::Update();
-	// Once everything is updated:
+	// Once everything is updated,
+	// Run back to front
 	if (geometry)
 		aabb.extend(geometry->aabb);
 	aabb = Aabb::mult(aabb, matrix);

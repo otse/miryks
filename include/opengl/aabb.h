@@ -1,7 +1,7 @@
 #ifndef OGL_AABB_H
 #define OGL_AABB_H
 
-#include <opengl/types.h>
+#include <OpenGL/Types.h>
 
 struct Aabb
 {

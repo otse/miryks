@@ -1,7 +1,7 @@
 #ifndef OPENGL_TEXTURE_H
 #define OPENGL_TEXTURE_H
 
-#include <opengl/types.h>
+#include <OpenGL/Types.h>
 
 // https://learnopengl.com/Getting-started/Textures
 

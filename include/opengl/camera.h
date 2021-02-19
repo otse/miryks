@@ -1,7 +1,7 @@
 #ifndef OPENGL_CAMERA_H
 #define OPENGL_CAMERA_H
 
-#include <opengl/types.h>
+#include <OpenGL/Types.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 

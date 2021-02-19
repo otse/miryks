@@ -10,11 +10,11 @@
 #include <cctype>
 #include <string>
 
-// #include <opengl/renderable.h>
-#include <opengl/texture.h>
-#include <opengl/camera.h>
-#include <opengl/pointlight.h>
-#include <opengl/types.h>
+// #include <OpenGL/renderable.h>
+#include <OpenGL/Texture.h>
+#include <OpenGL/Camera.h>
+#include <OpenGL/PointLight.h>
+#include <OpenGL/Types.h>
 
 namespace gloom
 {

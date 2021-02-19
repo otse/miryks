@@ -13,12 +13,12 @@ namespace gloom
 
 	void Objs::Add(Obj *obj)
 	{
-		SafeAdd<Obj *>(obj, objs);
+		VectorAdd<Obj *>(obj, objs);
 	}
 
 	void Objs::Remove(Obj *obj)
 	{
-		SafeRemove<Obj *>(obj, objs);
+		VectorRemove<Obj *>(obj, objs);
 	}
 
 	Obj::Obj()

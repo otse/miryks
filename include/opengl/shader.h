@@ -1,10 +1,10 @@
 #ifndef OPENGL_SHADER_H
 #define OPENGL_SHADER_H
 
-#include <opengl/types.h>
+#include <OpenGL/Types.h>
 
-#include <opengl/camera.h>
-#include <opengl/scene.h>
+#include <OpenGL/Camera.h>
+#include <OpenGL/Scene.h>
 
 #include <Gloom/Files.h>
 

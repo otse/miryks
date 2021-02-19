@@ -10,10 +10,10 @@
 #include <cctype>
 #include <string>
 
-#include <opengl/texture.h>
-#include <opengl/camera.h>
-#include <opengl/pointlight.h>
-#include <opengl/types.h>
+#include <OpenGL/Texture.h>
+#include <OpenGL/Camera.h>
+#include <OpenGL/PointLight.h>
+#include <OpenGL/Types.h>
 
 #include <imgui.h>
 #include <gui/extra.h>
@@ -33,8 +33,8 @@ namespace gloom
 
 	Ref::~Ref()
 	{
-		scene->Remove(drawGroup);
-		scene->Remove(pointlight);
+		scene->drawGroups.Remove(drawGroup);
+		scene->pointLights.Remove(pointlight);
 		delete drawGroup;
 		delete pointlight;
 		delete self;
@@ -130,7 +130,7 @@ namespace gloom
 
 			pointlight = new PointLight;
 
-			scene->Add(pointlight);
+			scene->pointLights.Add(pointlight);
 
 			auto baseId = baseObject->Data<const char *>("EDID");
 			auto DATA = baseObject->Data<int *>("DATA");
@@ -165,7 +165,7 @@ namespace gloom
 			if (baseObject->record->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroup(mesh->baseGroup, matrix);
-				scene->Add(drawGroup);
+				scene->drawGroups.Add(drawGroup);
 			}
 		}
 		if (pointlight)

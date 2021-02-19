@@ -1,7 +1,7 @@
 #ifndef OPENGL_RT_H
 #define OPENGL_RT_H
 
-#include <opengl/types.h>
+#include <OpenGL/Types.h>
 
 struct RenderTarget
 {

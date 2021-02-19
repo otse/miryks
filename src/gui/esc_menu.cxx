@@ -2,7 +2,7 @@
 #include <Gloom/Dark2.h>
 #include <Gloom/Files.h>
 
-#include <opengl/rt.h>
+#include <OpenGL/RT.h>
 
 #include "extra.h"
 

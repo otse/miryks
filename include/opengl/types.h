@@ -19,19 +19,22 @@ typedef char *ShaderSource[3];
 
 struct Aabb;
 
-struct Geometry;
-struct Material;
-struct Camera;
-struct FirstPersonCamera;
-struct ViewerCamera;
-struct Scene;
+struct List;
 struct Group;
 struct DrawGroup;
+
 struct Texture;
-struct RenderTarget;
+struct Geometry;
+struct Material;
 struct Shader;
 struct Program;
+
+struct Scene;
+struct Camera;
 struct PointLight;
+struct FirstPersonCamera;
+struct ViewerCamera;
+struct RenderTarget;
 
 extern Camera *camera;
 extern Scene *scene;

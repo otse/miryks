@@ -1,13 +1,13 @@
 #include <Attic.hpp>
 
-#include <opengl/scene.h>
+#include <OpenGL/Scene.h>
 
-#include <opengl/aabb.h>
-#include <opengl/group.h>
-// #include <opengl/renderable.h>
-#include <opengl/material.h>
-#include <opengl/shader.h>
-#include <opengl/pointlight.h>
+#include <OpenGL/Aabb.h>
+#include <OpenGL/Group.h>
+// #include <OpenGL/renderable.h>
+#include <OpenGL/Material.h>
+#include <OpenGL/Shader.h>
+#include <OpenGL/PointLight.h>
 
 static PointLight *black;
 
@@ -30,38 +30,23 @@ void Scene::Clear()
 	//groups2.clear();
 }
 
-void Scene::Add(PointLight *pl)
-{
-	SafeAdd<PointLight *>(pl, pointlights);
-}
-
-void Scene::Remove(PointLight *pl)
-{
-	SafeRemove<PointLight *>(pl, pointlights);
-}
-
-void Scene::Add(DrawGroup *drawGroup)
-{
-	SafeAdd<DrawGroup *>(drawGroup, drawGroups);
-}
-
-void Scene::Remove(DrawGroup *drawGroup)
-{
-	SafeRemove<DrawGroup *>(drawGroup, drawGroups);
-}
+/*void Scene::Add(PointLight *pl) 			{ VectorAdd<PointLight *>(pl, pointLights); }
+void Scene::Add(DrawGroup *drawGroup) 		{ VectorAdd<DrawGroup *>(drawGroup, drawGroups); }
+void Scene::Remove(PointLight *pl) 			{ VectorRemove<PointLight *>(pl, pointLights); }
+void Scene::Remove(DrawGroup *drawGroup) 	{ VectorRemove<DrawGroup *>(drawGroup, drawGroups); }*/
 
 void Scene::DrawItems()
 {
 	CalcLights();
 	SortLights();
 
-	for (DrawGroup *drawGroup : drawGroups)
+	for (DrawGroup *drawGroup : drawGroups.ts)
 		drawGroup->Draw();
 }
 
 void Scene::CalcLights()
 {
-	for (PointLight *pl : pointlights)
+	for (PointLight *pl : pointLights.ts)
 		pl->Calc();
 }
 
@@ -75,7 +60,7 @@ void Scene::SortLights()
 		return false;
 	};
 
-	sort(pointlights.begin(), pointlights.end(), sort_distance);
+	sort(pointLights.ts.begin(), pointLights.ts.end(), sort_distance);
 }
 
 void Scene::BindLights(Shader *shader)
@@ -86,8 +71,8 @@ void Scene::BindLights(Shader *shader)
 	{
 		PointLight *l = black;
 
-		if (i < pointlights.size())
-			l = pointlights[i];
+		if (i < pointLights.ts.size())
+			l = pointLights.ts[i];
 
 		std::string index = "pointLights[" + std::to_string(i) + "]";
 

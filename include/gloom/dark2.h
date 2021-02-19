@@ -1,7 +1,7 @@
 #ifndef GLOOM_DARK2_H
 #define GLOOM_DARK2_H
 
-#include <opengl/types.h>
+#include <OpenGL/Types.h>
 
 struct Grup;
 struct Record;
@@ -9,7 +9,6 @@ struct Subrecord;
 struct Rc;
 struct Esp;
 struct Bsa;
-
 struct Nifp;
 struct NifpRd;
 

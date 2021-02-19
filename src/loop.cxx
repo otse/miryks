@@ -8,11 +8,11 @@
 #include <Gloom/Actor.h>
 #include <Gloom/Collision.h>
 
-#include <opengl/camera.h>
-#include <opengl/scene.h>
-#include <opengl/material.h>
-#include <opengl/shader.h>
-#include <opengl/rt.h>
+#include <OpenGL/Camera.h>
+#include <OpenGL/Scene.h>
+#include <OpenGL/Material.h>
+#include <OpenGL/Shader.h>
+#include <OpenGL/RT.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -288,7 +288,7 @@ void gloom::programLoop()
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	scene->Add(first_person_camera->drawGroup);
+	scene->drawGroups.Add(first_person_camera->drawGroup);
 
 	do
 	{

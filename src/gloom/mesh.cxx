@@ -2,9 +2,9 @@
 
 #include <Gloom/Mesh.h>
 
-#include <opengl/shader.h>
-#include <opengl/texture.h>
-#include <opengl/types.h>
+#include <OpenGL/Shader.h>
+#include <OpenGL/Texture.h>
+#include <OpenGL/Types.h>
 
 namespace gloom
 {

@@ -1,8 +1,8 @@
 #ifndef OPENGL_BOUND_H
 #define OPENGL_BOUND_H
 
-#include <opengl/types.h>
-#include <opengl/aabb.h>
+#include <OpenGL/Types.h>
+#include <OpenGL/Aabb.h>
 
 struct Bound
 {

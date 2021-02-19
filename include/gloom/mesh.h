@@ -10,11 +10,11 @@ extern "C"
 #include <nifp/nifp.h>
 }
 
-#include <opengl/types.h>
-#include <opengl/scene.h>
-#include <opengl/group.h>
-#include <opengl/geometry.h>
-#include <opengl/material.h>
+#include <OpenGL/Types.h>
+#include <OpenGL/Scene.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/Geometry.h>
+#include <OpenGL/Material.h>
 
 namespace gloom
 {

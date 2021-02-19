@@ -1,10 +1,10 @@
 #ifndef OPENGL_POINTLIGHT_H
 #define OPENGL_POINTLIGHT_H
 
-#include <opengl/types.h>
+#include <OpenGL/Types.h>
 
-#include <opengl/camera.h>
-#include <opengl/group.h>
+#include <OpenGL/Camera.h>
+#include <OpenGL/Group.h>
 
 struct PointLight
 {

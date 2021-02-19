@@ -1,4 +1,4 @@
-#include <opengl/pointlight.h>
+#include <OpenGL/PointLight.h>
 
 // https://community.khronos.org/t/uniform-buffer-objects-dynamic-sized-arrays-and-lights/70415
 

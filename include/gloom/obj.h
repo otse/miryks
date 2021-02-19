@@ -2,8 +2,8 @@
 
 #include <Gloom/Dark2.h>
 
-#include <opengl/aabb.h>
-#include <opengl/types.h>
+#include <OpenGL/Aabb.h>
+#include <OpenGL/Types.h>
 
 namespace gloom
 {

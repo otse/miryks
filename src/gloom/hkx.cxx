@@ -6,9 +6,9 @@
 #include <Gloom/Interior.h>
 #include <Gloom/Mesh.h>
 
-#include <opengl/group.h>
-#include <opengl/scene.h>
-#include <opengl/camera.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/Scene.h>
+#include <OpenGL/Camera.h>
 
 namespace gloom
 {

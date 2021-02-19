@@ -3,8 +3,8 @@
 #include <libs>
 #include <Gloom/Skeleton.h>
 
-#include <opengl/group.h>
-#include <opengl/types.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/Types.h>
 
 #include <glm/gtc/quaternion.hpp>
 

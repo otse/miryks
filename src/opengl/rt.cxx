@@ -1,13 +1,13 @@
 #include <Gloom/Dark2.h>
 
-#include <opengl/rt.h>
+#include <OpenGL/RT.h>
 
-#include <opengl/shader.h>
+#include <OpenGL/Shader.h>
 
-#include <opengl/group.h>
-#include <opengl/geometry.h>
-#include <opengl/material.h>
-#include <opengl/shader.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/Geometry.h>
+#include <OpenGL/Material.h>
+#include <OpenGL/Shader.h>
 
 #define BEST_PRECISIONX
 

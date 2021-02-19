@@ -1,7 +1,7 @@
 #include <Attic.hpp>
 
-#include <opengl/group.h>
-#include <opengl/geometry.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/Geometry.h>
 
 int Group::Num = 0;
 
@@ -19,13 +19,13 @@ Group::~Group()
 void Group::Add(Group *group)
 {
 	group->parent = this;
-	SafeAdd<Group *>(group, groups);
+	VectorAdd<Group *>(group, groups);
 }
 
 void Group::Remove(Group *group)
 {
 	group->parent = nullptr;
-	SafeRemove<Group *>(group, groups);
+	VectorRemove<Group *>(group, groups);
 }
 
 void Group::Update()

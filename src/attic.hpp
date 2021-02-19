@@ -1,7 +1,9 @@
+#pragma once
+
 #include <vector>
 
 template <typename T>
-bool SafeAdd(T t, std::vector<T> &v)
+static bool VectorAdd(T t, std::vector<T> &v)
 {
 	std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
 	if (has == v.end())
@@ -14,7 +16,7 @@ bool SafeAdd(T t, std::vector<T> &v)
 }
 
 template <typename T>
-bool SafeRemove(T t, std::vector<T> &v)
+static bool VectorRemove(T t, std::vector<T> &v)
 {
 	std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
 	if (has != v.end())

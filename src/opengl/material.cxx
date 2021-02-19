@@ -1,14 +1,14 @@
-#include <opengl/material.h>
+#include <OpenGL/Material.h>
 
 extern "C"
 {
 #include "putc.h"
 }
 
-#include <opengl/texture.h>
-#include <opengl/camera.h>
-#include <opengl/shader.h>
-#include <opengl/scene.h>
+#include <OpenGL/Texture.h>
+#include <OpenGL/Camera.h>
+#include <OpenGL/Shader.h>
+#include <OpenGL/Scene.h>
 
 Material *Material::active = nullptr;
 

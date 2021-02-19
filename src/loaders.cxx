@@ -84,7 +84,7 @@ namespace gloom
 		static DrawGroup *drawGroup = nullptr;
 		if (mesh)
 		{
-			scene->Remove(drawGroup);
+			scene->drawGroups.Remove(drawGroup);
 			delete mesh;
 			delete drawGroup;
 		}
@@ -93,7 +93,7 @@ namespace gloom
 		mesh = new Mesh;
 		mesh->Construct(nif);
 		drawGroup = new DrawGroup(mesh->baseGroup, glm::translate(mat4(1.0), first_person_camera->pos));
-		scene->Add(drawGroup);
+		scene->drawGroups.Add(drawGroup);
 		HideCursor();
 		first_person_camera->disabled = true;
 		viewer_camera->disabled = false;

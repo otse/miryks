@@ -12,9 +12,9 @@
 #include <Gloom/Interior.h>
 #include <Gloom/Mesh.h>
 
-#include <opengl/group.h>
-#include <opengl/scene.h>
-#include <opengl/camera.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/Scene.h>
+#include <OpenGL/Camera.h>
 
 namespace gloom
 {
@@ -111,7 +111,7 @@ namespace gloom
 			group->Add(mesh->baseGroup);
 			//printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
-			scene->Add(drawGroup);
+			scene->drawGroups.Add(drawGroup);
 		}
 		else
 		{
@@ -174,7 +174,7 @@ namespace gloom
 			return;
 		drawGroup->matrix = ref->second->matrix;
 		csphere = new CSphere(vec3(drawGroup->matrix[3]) /*+vec3(0, 0, 1)*/);
-		scene->Add(drawGroup);
+		scene->drawGroups.Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
 		mirror->matrix = drawGroup->matrix;
@@ -207,7 +207,7 @@ namespace gloom
 		human = new Human();
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4());
-		scene->Add(drawGroup);
+		scene->drawGroups.Add(drawGroup);
 		//camera->group->Add(human->group);
 	}
 
