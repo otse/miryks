@@ -12,6 +12,7 @@ struct Bsa;
 struct Nifp;
 struct NifpRd;
 
+// straightforwarddefs
 typedef Esp Plugin;
 typedef Bsa Archive;
 typedef Nifp Nif;

@@ -2,6 +2,7 @@
 #define OGL_RENDERABLE_H
 
 #include <OpenGL/Types.h>
+
 #include <OpenGL/Aabb.h>
 
 // A basic 3d object with a transformation

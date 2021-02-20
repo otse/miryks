@@ -1,9 +1,11 @@
 #pragma once
 
 #include <Gloom/Dark2.h>
+#include <Gloom/Object.h>
+
+#include <OpenGL/Types.h>
 
 #include <OpenGL/Aabb.h>
-#include <OpenGL/Types.h>
 
 namespace gloom
 {
@@ -15,7 +17,7 @@ namespace gloom
 
 		const char *editorId = nullptr;
 
-		Object *self = nullptr, *baseObject = nullptr;
+		Object self, baseObject;
 
 		mat4 matrix;
 
@@ -23,13 +25,14 @@ namespace gloom
 
 		Mesh *mesh;
 		DrawGroup *drawGroup;
-		PointLight *pointlight;
+		PointLight *pointLight;
+		//SpotLight *spotLight;
 
 		void Go();
 		
 		void forScale(float *);
 		void forLocationalData(float *);
-		void forBaseId(unsigned int *);
+		void forBaseId(unsigned int);
 
 		float GetDistance();
 		bool DisplayAsItem();

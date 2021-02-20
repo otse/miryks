@@ -12,7 +12,7 @@
 
 #include <OpenGL/Texture.h>
 #include <OpenGL/Camera.h>
-#include <OpenGL/PointLight.h>
+#include <OpenGL/Lights.h>
 #include <OpenGL/Types.h>
 
 #include <imgui.h>
@@ -20,25 +20,22 @@
 
 namespace gloom
 {
-	
 	Ref::Ref(::Record *record)
 	{
 		mesh = nullptr;
 		drawGroup = nullptr;
-		pointlight = nullptr;
+		pointLight = nullptr;
 
-		self = new Object(record);
+		self.Set(record);
 		Go();
 	}
 
 	Ref::~Ref()
 	{
 		scene->drawGroups.Remove(drawGroup);
-		scene->pointLights.Remove(pointlight);
+		scene->pointLights.Remove(pointLight);
 		delete drawGroup;
-		delete pointlight;
-		delete self;
-		delete baseObject;
+		delete pointLight;
 	}
 
 	void Ref::Go()
@@ -47,10 +44,10 @@ namespace gloom
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = GetBaseId(*self); // self->Data<unsigned int *>("NAME");
-		auto editorId = GetEditorId(*self); // self->Data<const char *>("EDID");
-		auto XSCL = self->Data<float *>("XSCL");
-		auto locationalData = self->Data<float *>("DATA");
+		auto baseId = *GetBaseId(self); // self->Data<unsigned int *>("NAME");
+		auto editorId = GetEditorId(self); // self->Data<const char *>("EDID");
+		auto XSCL = self.Data<float *>("XSCL");
+		auto locationalData = self.Data<float *>("DATA");
 
 		if (editorId)
 		{
@@ -70,13 +67,11 @@ namespace gloom
 		if (!locationalData)
 			return;
 
-		//DATA = (float *)self->DATA;
 		vec3 pos = *cast_vec_3(locationalData);
 		vec3 rad = *cast_vec_3(locationalData + 3);
 
 		translation = translate(mat4(1.0f), pos);
 
-		//glm::quat rot = glm::angleAxis(glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f))
 		rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
 		rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
 		rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
@@ -84,21 +79,21 @@ namespace gloom
 		matrix = translation * rotation * scale;
 	}
 
-	void Ref::forBaseId(unsigned int *baseId)
+	void Ref::forBaseId(unsigned int baseId)
 	{
 		if (!baseId)
 			return;
 
-		if (*baseId == 0x0005AD9E) // Gold ingots to Orichalum ingots
-			baseId = new unsigned int(0x0005AD99);
+		if (baseId == 0x0005AD9E) // Gold ingots to Orichalum ingots
+			baseId = 0x0005AD99;
 
-		baseObject = new Object(esp_get_form_id(*baseId));
+		baseObject.Set(esp_get_form_id(baseId));
 
-		cassert(baseObject, "cant find baseId record");
+		cassert(baseObject.Valid(), "cant find baseId record");
 
-		if (baseObject->IsTypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
+		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
-			auto modl = baseObject->Data<const char *>("MODL", 0);
+			auto modl = baseObject.Data<const char *>("MODL", 0);
 			if (modl)
 			{
 				mesh = Mesh::Cached((void *)modl);
@@ -117,44 +112,44 @@ namespace gloom
 				}
 			}
 
-			if (baseObject->IsType("WEAP"))
+			if (baseObject.IsType("WEAP"))
 			{
 				//WEAP = new Weap(baseRecord);
 			}
 		}
 
 		// Todo, This
-		else if (baseObject->IsType("LIGH"))
+		else if (baseObject.IsType("LIGH"))
 		{
 			//Ligh LIGH(baseRecord);
 
-			pointlight = new PointLight;
+			pointLight = new PointLight;
 
-			scene->pointLights.Add(pointlight);
+			scene->pointLights.Add(pointLight);
 
-			auto baseId = baseObject->Data<const char *>("EDID");
-			auto DATA = baseObject->Data<int *>("DATA");
-			auto FNAM = baseObject->Data<float *>("FNAM");
+			auto editorId = GetEditorId(baseObject);
+			auto DATA = baseObject.Data<int *>("DATA");
+			auto FNAM = baseObject.Data<float *>("FNAM");
 
-			if (baseId)
+			if (editorId)
 			{
 				//printf("ligh edid %s\n", LIGH.baseId);
 			}
 			if (DATA)
 			{
 				int time = *DATA;
-				pointlight->distance = *((unsigned int *)DATA + 1);
+				pointLight->distance = *((unsigned int *)DATA + 1);
 				unsigned int rgb = *((unsigned int *)DATA + 2);
 				unsigned char r = (rgb >> (8 * 0)) & 0xff;
 				unsigned char g = (rgb >> (8 * 1)) & 0xff;
 				unsigned char b = (rgb >> (8 * 2)) & 0xff;
-				pointlight->color = vec3(r, g, b) / 255.f;
+				pointLight->color = vec3(r, g, b) / 255.f;
 			}
 			if (FNAM)
 			{
 				float fade = *FNAM;
 				fade = 1 / fade;
-				pointlight->decay = fade;
+				pointLight->decay = fade;
 			}
 
 			//point_light->decay = _j["Falloff Exponent"];
@@ -162,15 +157,15 @@ namespace gloom
 
 		if (mesh)
 		{
-			if (baseObject->record->hed->formId != 0x32)
+			if (baseObject.record->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroup(mesh->baseGroup, matrix);
 				scene->drawGroups.Add(drawGroup);
 			}
 		}
-		if (pointlight)
+		if (pointLight)
 		{
-			pointlight->matrix = matrix;
+			pointLight->matrix = matrix;
 		}
 	}
 
@@ -207,8 +202,8 @@ namespace gloom
 			return false;
 		}
 
-		auto FULL = baseObject->Data<char *>("FULL");
-		auto DESC = baseObject->Data<const char *>("DESC");
+		auto FULL = baseObject.Data<char *>("FULL");
+		auto DESC = baseObject.Data<const char *>("DESC");
 
 		char *itemName = "Something";
 		if (FULL)

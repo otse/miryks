@@ -44,11 +44,17 @@ namespace gloom
 		}
 	}
 
-	Object::Object(Record *record) : record(record)
+	Object::Object(Record *record)
 	{
+		Set(record);
+	}
+
+	void Object::Set(Record *record) {
 		if (record == nullptr)
 			return;
-		cassert(((TypeDud *)record)->x == 2, "Gloom/Object Not Record");
+		this->record = record;
+		cassert(((TypeDud *)record)->x == 2, "Gloom/Object Not Record ??");
+		fields.clear();
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			Field *field = record->fields.subrecords[i];

@@ -7,20 +7,20 @@
 
 struct Texture
 {
-    friend Texture *GetProduceTexture(const char *);
+	friend Texture *GetProduceTexture(const char *);
 
-    GLuint tid;
+	GLuint tid;
 
-    int size;
-    const unsigned char *buf = nullptr;
+	int size;
+	const unsigned char *buf = nullptr;
 
-    const std::string path;
+	const std::string path;
 
 protected:
-    Texture(const std::string &);
-    ~Texture();
+	Texture(const std::string &);
+	~Texture();
 
-    void Load();
+	void Load();
 };
 
 #endif

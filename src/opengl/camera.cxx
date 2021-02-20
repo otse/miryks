@@ -22,7 +22,7 @@ Camera::Camera()
 void Camera::SetProjection() {
 	float aspect = (float)gloom::width / (float)gloom::height;
 
-	projection = perspective(radians(fzoom), aspect, 5.0f, 10000.0f);
+	projection = glm::perspective(radians(fzoom), aspect, 5.0f, 10000.0f);
 }
 
 FirstPersonCamera::FirstPersonCamera() : Camera()
@@ -32,7 +32,7 @@ FirstPersonCamera::FirstPersonCamera() : Camera()
 	shift = false;
 
 	hands = new Group;
-	hands->matrix = translate(mat4(1.0), vec3(0, 0, -100));
+	hands->matrix = glm::translate(mat4(1.0), vec3(0, 0, -100));
 	group->Add(hands);
 }
 
@@ -64,16 +64,18 @@ void FirstPersonCamera::Update(float time)
 	fpitch = fmaxf(-pif, fminf(0, fpitch));
 
 	view = mat4(1.0f);
-	view = rotate(view, fpitch, vec3(1, 0, 0));
-	view = rotate(view, fyaw, vec3(0, 0, 1));
-	view = translate(view, -pos);
-	matrix = view;
-	view = translate(matrix, -eye);
+	view = glm::rotate(view, fpitch, vec3(1, 0, 0));
+	view = glm::rotate(view, fyaw, vec3(0, 0, 1));
+	view = glm::translate(view, -pos);
+	view = glm::translate(view, -eye);
 
-	matrix = glm::inverse(matrix);
+	//matrix = view; // Why here
+	//matrix = glm::inverse(matrix);
+
 	group->matrix = glm::inverse(view);
 	
 	group->Update(); // Important
+	
 	drawGroup->Reset();
 
 	// printf("hands matrix world %s\n", glm::to_string(vec3(hands->matrixWorld[3])));
@@ -134,13 +136,13 @@ void ViewerCamera::Mouse(float x, float y)
 void ViewerCamera::Update(float time)
 {
 	view = mat4(1.0f);
-	view = rotate(view, pitch, vec3(1, 0, 0));
-	view = rotate(view, yaw, vec3(0, 0, 1));
+	view = glm::rotate(view, pitch, vec3(1, 0, 0));
+	view = glm::rotate(view, yaw, vec3(0, 0, 1));
 
 	vec3 pan = vec3(0, 0, radius) * mat3(view);
 
-	view = translate(view, -pan);
-	view = translate(view, -pos);
+	view = glm::translate(view, -pan);
+	view = glm::translate(view, -pos);
 
 	Camera::SetProjection();
 }

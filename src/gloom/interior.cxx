@@ -13,7 +13,7 @@
 // #include <OpenGL/renderable.h>
 #include <OpenGL/Texture.h>
 #include <OpenGL/Camera.h>
-#include <OpenGL/PointLight.h>
+#include <OpenGL/Lights.h>
 #include <OpenGL/Types.h>
 
 namespace gloom
@@ -83,7 +83,7 @@ namespace gloom
 				const char *editorId = GetEditorId(object);
 				if (editorId)
 					editorIds.emplace(editorId, ref);
-				if (ref->baseObject && ref->baseObject->IsTypeAny({"WEAP", "MISC"}))
+				if (ref->baseObject.Valid() && ref->baseObject.IsTypeAny({"WEAP", "MISC"}))
 				{
 					iterables.push_back(ref);
 				}

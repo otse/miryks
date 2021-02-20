@@ -19,9 +19,12 @@ namespace gloom
 	class Object
 	{
 	public:
-		Record *const record = nullptr;
+		Record *record = nullptr;
+		Object(){};
 		Object(Record *);
 		~Object(){};
+		void Set(Record *);
+		bool Valid() { return record != nullptr; };
 		std::multimap<unsigned int, Field *> fields;
 		Field *EqualRange(const char *, int) const;
 		unsigned int Count(const char *type) const

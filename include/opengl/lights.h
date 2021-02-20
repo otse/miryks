@@ -1,10 +1,28 @@
-#ifndef OPENGL_POINTLIGHT_H
-#define OPENGL_POINTLIGHT_H
+#ifndef OPENGL_LIGHTS_H
+#define OPENGL_LIGHTS_H
 
 #include <OpenGL/Types.h>
 
 #include <OpenGL/Camera.h>
 #include <OpenGL/Group.h>
+
+struct ShadowMapRenderer;
+
+struct Light;
+struct LightShadow;
+struct DirectionalLight;
+struct DirectionalLightShadow;
+struct PointLight;
+struct PointLightShadow;
+
+struct Light
+{
+	typedef LightShadow Shadow;
+
+	Shadow *shadow;
+	mat4 matrix;
+	mat4 matrixWorld;
+};
 
 struct PointLight
 {

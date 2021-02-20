@@ -7,7 +7,7 @@
 // #include <OpenGL/renderable.h>
 #include <OpenGL/Material.h>
 #include <OpenGL/Shader.h>
-#include <OpenGL/PointLight.h>
+#include <OpenGL/Lights.h>
 
 static PointLight *black;
 

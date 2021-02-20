@@ -17,7 +17,7 @@
 	#define GLOOM_INTERAL_FORMAT GL_RGBA16F
 #endif
 
-RenderTarget::RenderTarget(int width, int height)
+RenderTarget::RenderTarget(int width, int height, GLenum format = GL_RGB, GLenum type = GL_UNSIGNED_BYTE)
 {
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
@@ -28,7 +28,7 @@ RenderTarget::RenderTarget(int width, int height)
 	glGenTextures(1, &texture);
 	glBindTexture(GL_TEXTURE_2D, texture);
 	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, gloom::width, gloom::height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexImage2D(GL_TEXTURE_2D, 0, GLOOM_INTERAL_FORMAT, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GLOOM_INTERAL_FORMAT, width, height, 0, format, type, NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);

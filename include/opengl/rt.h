@@ -7,7 +7,7 @@ struct RenderTarget
 {
     GLuint fbo, texture, rbo;
     void Bind();
-	RenderTarget(int, int);
+	RenderTarget(int, int, GLenum, GLenum);
 	~RenderTarget();
 };
 

@@ -277,7 +277,7 @@ void gloom::renderImGui()
 
 void gloom::programLoop()
 {
-	renderRarget = new RenderTarget(gloom::width, gloom::height);
+	renderRarget = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
 	double fps;

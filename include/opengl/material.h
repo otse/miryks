@@ -3,7 +3,6 @@
 
 #include <OpenGL/Types.h>
 
-
 struct Material
 {
 	static Material *active;

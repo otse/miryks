@@ -1,8 +1,10 @@
 #include <libs>
+
 #include <Gloom/Dark2.h>
+
 #include <Gloom/Files.h>
 
-#include "extra.h"
+#include "../gui/extra.h"
 
 using namespace gloom;
 

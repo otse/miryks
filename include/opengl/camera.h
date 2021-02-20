@@ -14,7 +14,7 @@ public:
 	DrawGroup *drawGroup;
 
 	vec3 pos;
-	mat4 view, matrix, projection;
+	mat4 view, /*matrix,*/ projection;
 
 	float fzoom;
 	bool disabled;

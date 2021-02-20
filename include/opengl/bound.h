@@ -1,7 +1,6 @@
 #ifndef OPENGL_BOUND_H
 #define OPENGL_BOUND_H
 
-#include <OpenGL/Types.h>
 #include <OpenGL/Aabb.h>
 
 struct Bound

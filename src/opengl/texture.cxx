@@ -43,8 +43,9 @@ Texture::Texture(const std::string &path) : path(path)
 	buf = rc->buf;
 	size = rc->size;
 	// Write out test.dds
-	// Typically a bucket
-#if 0
+	// Usually this was a bucket
+	// But recently its just dirt
+#if 1
 	if (!outed)
 	{
 		outed = 1;

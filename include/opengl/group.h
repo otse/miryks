@@ -2,12 +2,13 @@
 #define OPENGL_GROUP_H
 
 #include <OpenGL/Types.h>
+
 #include <OpenGL/Aabb.h>
 
 struct List {
 	List();
 };
-struct Group : List
+struct Group // : List
 {
 	static int Num;
 	bool visible = true;

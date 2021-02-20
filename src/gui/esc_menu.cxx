@@ -11,10 +11,10 @@ using namespace gloom;
 #include <imgui.h>
 
 RenderTarget *rt;
-void setup_esc_menu() {
-	
-	rt = new RenderTarget(gloom::width, gloom::height);
+void setup_esc_menu()
+{
 
+	rt = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_UNSIGNED_BYTE);
 	
 }
 
@@ -23,7 +23,7 @@ void esc_menu(bool *open)
 	if (!*open)
 		return;
 
-    ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO &io = ImGui::GetIO();
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings;
 
