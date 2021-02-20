@@ -1,43 +1,11 @@
-#ifndef OPENGL_LIGHTSHADOW_H
-#define OPENGL_LIGHTSHADOW_H
+#ifndef OPENGL_SHADOWS_H
+#define OPENGL_SHADOWS_H
 
 #include <OpenGL/Types.h>
 
 #include <OpenGL/Camera.h>
+#include <OpenGL/Lights.h>
 #include <OpenGL/RT.h>
-
-struct ShadowMapRenderer;
-struct Light;
-struct LightShadow;
-struct DirectionalLight;
-struct DirectionalLightShadow;
-struct PointLight;
-struct PointLightShadow;
-
-struct Light
-{
-	typedef LightShadow Shadow;
-
-	Shadow *shadow;
-	mat4 matrix;
-	mat4 matrixWorld;
-};
-
-struct PointLight : Light
-{
-	typedef PointLightShadow Shadow;
-
-	//Shadow *shadow;
-	float distance, decay;
-};
-
-struct DirectionalLight : Light
-{
-	typedef DirectionalLightShadow Shadow;
-
-	//Shadow *shadow;
-	vec3 target;
-};
 
 // https://github.com/mrdoob/three.js/blob/master/src/lights/LightShadow.js
 

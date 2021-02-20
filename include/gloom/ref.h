@@ -17,11 +17,10 @@ namespace gloom
 
 		const char *editorId = nullptr;
 
-		Object self, baseObject;
-
-		mat4 matrix;
+		Object selfObject, baseObject;
 
 		mat4 translation, rotation, scale;
+		mat4 matrix;
 
 		Mesh *mesh;
 		DrawGroup *drawGroup;
@@ -32,7 +31,7 @@ namespace gloom
 		
 		void forScale(float *);
 		void forLocationalData(float *);
-		void forBaseId(unsigned int);
+		void forBaseId(unsigned int *);
 
 		float GetDistance();
 		bool DisplayAsItem();

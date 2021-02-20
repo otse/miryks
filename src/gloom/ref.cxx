@@ -20,13 +20,13 @@
 
 namespace gloom
 {
-	Ref::Ref(::Record *record)
+	Ref::Ref(::Record *record) : selfObject(record)
 	{
 		mesh = nullptr;
 		drawGroup = nullptr;
 		pointLight = nullptr;
 
-		self.Set(record);
+		//selfObject.Set(record);
 		Go();
 	}
 
@@ -44,10 +44,10 @@ namespace gloom
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = *GetBaseId(self); // self->Data<unsigned int *>("NAME");
-		auto editorId = GetEditorId(self); // self->Data<const char *>("EDID");
-		auto XSCL = self.Data<float *>("XSCL");
-		auto locationalData = self.Data<float *>("DATA");
+		auto baseId = GetBaseId(selfObject);
+		auto editorId = GetEditorId(selfObject);
+		auto XSCL = selfObject.Data<float *>("XSCL");
+		auto locationalData = selfObject.Data<float *>("DATA");
 
 		if (editorId)
 		{
@@ -72,24 +72,26 @@ namespace gloom
 
 		translation = translate(mat4(1.0f), pos);
 
-		rotation = rotate(rotation, -rad.x, vec3(1, 0, 0));
-		rotation = rotate(rotation, -rad.y, vec3(0, 1, 0));
-		rotation = rotate(rotation, -rad.z, vec3(0, 0, 1));
+		rotation = glm::rotate(rotation, -rad.x, vec3(1, 0, 0));
+		rotation = glm::rotate(rotation, -rad.y, vec3(0, 1, 0));
+		rotation = glm::rotate(rotation, -rad.z, vec3(0, 0, 1));
 
 		matrix = translation * rotation * scale;
 	}
 
-	void Ref::forBaseId(unsigned int baseId)
+	void Ref::forBaseId(unsigned int *baseId)
 	{
 		if (!baseId)
 			return;
+		
+		unsigned int id = *baseId;
 
-		if (baseId == 0x0005AD9E) // Gold ingots to Orichalum ingots
-			baseId = 0x0005AD99;
+		if (id == 0x0005AD9E) // Gold ingots to Orichalum ingots
+			id = 0x0005AD99;
 
-		baseObject.Set(esp_get_form_id(baseId));
+		baseObject.Set(esp_get_form_id(id));
 
-		cassert(baseObject.Valid(), "cant find baseId record");
+		cassert(baseObject.Valid(), "cant find refs Name-BaseId record");
 
 		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
@@ -108,7 +110,7 @@ namespace gloom
 						Mesh::Store((void *)modl, mesh);
 					}
 					else
-						printf("no rc for refr modl\n");
+						printf("no rc for refr-modl\n");
 				}
 			}
 

@@ -6,47 +6,32 @@
 #include <OpenGL/Camera.h>
 #include <OpenGL/Group.h>
 
-struct ShadowMapRenderer;
-
-struct Light;
-struct LightShadow;
-struct DirectionalLight;
-struct DirectionalLightShadow;
-struct PointLight;
-struct PointLightShadow;
-
 struct Light
 {
 	typedef LightShadow Shadow;
-
+	Light();
 	Shadow *shadow;
 	mat4 matrix;
 	mat4 matrixWorld;
-};
-
-struct PointLight
-{
-	mat4 matrix = mat4(1.0);
-
-	vec3 color = vec3(0, 0, 1);
-	float distance = 500 * 1.428;
-	float decay = 1.2f;
-	float intensity = 1.f;
-
-	vec3 flick;
-	vec4 axes;
-	bool flicker = false;
-
-	vec3 aim;
-
-	vec3 position_;
-	vec3 color_;
-
-	float GetDist() const;
-
+	vec3 color;
+	float intensity;
+	float CalcDist() const;
 	void Calc();
-
-	//P
+};
+struct PointLight : Light
+{
+	PointLight();
+	float distance, decay;
+};
+struct SpotLight : Light
+{
+	SpotLight();
+	float distance, angle, penumbra, decay;
+};
+struct DirectionalLight : Light
+{
+	DirectionalLight();
+	vec3 target;
 };
 
 #endif

@@ -14,9 +14,9 @@ static PointLight *black;
 Scene::Scene()
 {
 	black = new PointLight;
-	black->color = vec3(0);
-	black->distance = 0;
-	black->intensity = 0;
+	black->color = vec3(0.f);
+	black->distance = 0.f;
+	black->intensity = 0.f;
 
 	ambient = vec3(20.f / 255.f);
 	//ambient = vec3(1, 1, 1);
@@ -30,14 +30,9 @@ void Scene::Clear()
 	//groups2.clear();
 }
 
-/*void Scene::Add(PointLight *pl) 			{ VectorAdd<PointLight *>(pl, pointLights); }
-void Scene::Add(DrawGroup *drawGroup) 		{ VectorAdd<DrawGroup *>(drawGroup, drawGroups); }
-void Scene::Remove(PointLight *pl) 			{ VectorRemove<PointLight *>(pl, pointLights); }
-void Scene::Remove(DrawGroup *drawGroup) 	{ VectorRemove<DrawGroup *>(drawGroup, drawGroups); }*/
-
 void Scene::DrawItems()
 {
-	CalcLights();
+	//CalcLights();
 	SortLights();
 
 	for (DrawGroup *drawGroup : drawGroups.ts)
@@ -46,16 +41,16 @@ void Scene::DrawItems()
 
 void Scene::CalcLights()
 {
-	for (PointLight *pl : pointLights.ts)
-		pl->Calc();
+	//for (PointLight *pl : pointLights.ts)
+		//pl->Calc();
 }
 
 #include <algorithm>
 
 void Scene::SortLights()
 {
-	auto sort_distance = [](const PointLight *a, const PointLight *b) -> bool {
-		if (a->GetDist() < b->GetDist())
+	auto sort_distance = [](const Light *a, const Light *b) -> bool {
+		if (a->CalcDist() < b->CalcDist())
 			return true;
 		return false;
 	};
@@ -67,7 +62,7 @@ void Scene::BindLights(Shader *shader)
 {
 	shader->SetVec3("ambientLightColor", ambient);
 
-	for (unsigned i = 0; i < 9; i++)
+	for (unsigned int i = 0; i < 9; i++)
 	{
 		PointLight *l = black;
 
@@ -76,9 +71,14 @@ void Scene::BindLights(Shader *shader)
 
 		std::string index = "pointLights[" + std::to_string(i) + "]";
 
+		vec3 position, color;
+		position = vec3(l->matrix[3]) * mat3(inverse(camera->view));
+		position += vec3(camera->view[3]);
+		color = l->color * l->intensity;
+
 		mat3 package;
-		package[0] = l->position_;
-		package[1] = l->color_;
+		package[0] = position;
+		package[1] = color;
 		package[2][0] = l->distance;
 		package[2][1] = l->decay;
 		package[2][2] = -1;

@@ -50,11 +50,11 @@ namespace gloom
 	}
 
 	void Object::Set(Record *record) {
+		fields.clear();
+		this->record = record;
 		if (record == nullptr)
 			return;
-		this->record = record;
 		cassert(((TypeDud *)record)->x == 2, "Gloom/Object Not Record ??");
-		fields.clear();
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			Field *field = record->fields.subrecords[i];

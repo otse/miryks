@@ -18,6 +18,14 @@ const float pif = pi<float>();
 typedef char *ShaderSource[3];
 
 struct Aabb;
+struct ShadowMapRenderer;
+
+struct Light;
+struct LightShadow;
+struct DirectionalLight;
+struct DirectionalLightShadow;
+struct PointLight;
+struct PointLightShadow;
 
 struct List;
 struct Group;
