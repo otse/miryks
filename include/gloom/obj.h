@@ -1,5 +1,7 @@
 #pragma once
 
+// part of gloom
+
 #include <Gloom/Dark2.h>
 
 #include <OpenGL/Aabb.h>

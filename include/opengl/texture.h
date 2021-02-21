@@ -1,6 +1,8 @@
 #ifndef OPENGL_TEXTURE_H
 #define OPENGL_TEXTURE_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 // https://learnopengl.com/Getting-started/Textures

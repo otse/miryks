@@ -1,6 +1,8 @@
 #ifndef GLOOM_ACTOR_H
 #define GLOOM_ACTOR_H
 
+// part of gloom
+
 #include <Gloom/Dark2.h>
 
 #include "object.h"

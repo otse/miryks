@@ -25,6 +25,7 @@ namespace gloom
 		mesh = nullptr;
 		drawGroup = nullptr;
 		pointLight = nullptr;
+		spotLight = nullptr;
 
 		//selfObject.Set(record);
 		Go();
@@ -83,7 +84,7 @@ namespace gloom
 	{
 		if (!baseId)
 			return;
-		
+
 		unsigned int id = *baseId;
 
 		if (id == 0x0005AD9E) // Gold ingots to Orichalum ingots
@@ -123,35 +124,62 @@ namespace gloom
 		// Todo, This
 		else if (baseObject.IsType("LIGH"))
 		{
-			//Ligh LIGH(baseRecord);
+			struct Struct
+			{
+				unsigned int time;
+				unsigned int radius;
+				unsigned int color;
+				unsigned int flags;
+			};
 
-			pointLight = new PointLight;
+			float fade = 1;
+			vec3 color(0, 0, 1);
 
-			scene->pointLights.Add(pointLight);
+			Light *light = nullptr;
 
 			auto editorId = GetEditorId(baseObject);
 			auto DATA = baseObject.Data<int *>("DATA");
 			auto FNAM = baseObject.Data<float *>("FNAM");
 
+			Struct *data = (Struct *)DATA;
+
 			if (editorId)
 			{
 				//printf("ligh edid %s\n", LIGH.baseId);
 			}
-			if (DATA)
+			if (data)
 			{
-				int time = *DATA;
-				pointLight->distance = *((unsigned int *)DATA + 1);
-				unsigned int rgb = *((unsigned int *)DATA + 2);
+				unsigned int rgb = data->color;
 				unsigned char r = (rgb >> (8 * 0)) & 0xff;
 				unsigned char g = (rgb >> (8 * 1)) & 0xff;
 				unsigned char b = (rgb >> (8 * 2)) & 0xff;
-				pointLight->color = vec3(r, g, b) / 255.f;
+				color = vec3(r, g, b) / 255.f;
 			}
 			if (FNAM)
 			{
-				float fade = *FNAM;
+				fade = *FNAM;
 				fade = 1 / fade;
-				pointLight->decay = fade;
+			}
+
+			if (data->flags & 0x04)
+			{
+				light = spotLight = new SpotLight;
+				// scene->pointLights.Add(spotLight);
+			}
+			else
+			{
+				light = pointLight = new PointLight;
+				scene->pointLights.Add(pointLight);
+				if (data->flags & 0x1)
+					0; // pointLight->shadow->enabled = true;
+			}
+
+			if (light)
+			{
+				light->color = color;
+				light->decay = fade;
+				light->distance = data->radius;
+				light->matrix = matrix;
 			}
 
 			//point_light->decay = _j["Falloff Exponent"];
@@ -164,10 +192,6 @@ namespace gloom
 				drawGroup = new DrawGroup(mesh->baseGroup, matrix);
 				scene->drawGroups.Add(drawGroup);
 			}
-		}
-		if (pointLight)
-		{
-			pointLight->matrix = matrix;
 		}
 	}
 
@@ -195,7 +219,7 @@ namespace gloom
 
 	bool Ref::DisplayAsItem()
 	{
-		float dist = GetDistance() * ONE_SKYRIM_UNIT_IN_CM;
+		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;
 
 		// printf(" display as item %f\n", dist);
 

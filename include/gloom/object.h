@@ -1,6 +1,8 @@
 #ifndef GLOOM_OBJECT_H
 #define GLOOM_OBJECT_H
 
+// part of gloom
+
 #include <cstdarg>
 
 #include <libs>

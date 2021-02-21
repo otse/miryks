@@ -1,6 +1,8 @@
 #ifndef OPENGL_GEOMETRY_H
 #define OPENGL_GEOMETRY_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 #include <OpenGL/Aabb.h>

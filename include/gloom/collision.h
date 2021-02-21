@@ -1,6 +1,8 @@
 #ifndef GLOOM_COLLIDER_H
 #define GLOOM_COLLIDER_H
 
+// part of gloom
+
 #include <Gloom/Dark2.h>
 
 #include <btBulletDynamicsCommon.h>

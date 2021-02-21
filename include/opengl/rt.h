@@ -1,6 +1,8 @@
 #ifndef OPENGL_RT_H
 #define OPENGL_RT_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 struct RenderTarget

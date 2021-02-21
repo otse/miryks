@@ -1,6 +1,8 @@
 #ifndef GLOOM_OBJECT_ARRAY_H
 #define GLOOM_OBJECT_ARRAY_H
 
+// part of gloom
+
 #include <libs>
 #include <Gloom/Dark2.h>
 

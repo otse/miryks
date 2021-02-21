@@ -1,6 +1,8 @@
 #ifndef OPENGL_MATERIAL_H
 #define OPENGL_MATERIAL_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 struct Material

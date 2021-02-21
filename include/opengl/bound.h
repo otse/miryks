@@ -1,6 +1,8 @@
 #ifndef OPENGL_BOUND_H
 #define OPENGL_BOUND_H
 
+// part of gloom
+
 #include <OpenGL/Aabb.h>
 
 struct Bound

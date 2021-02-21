@@ -1,6 +1,8 @@
 #ifndef OGL_RENDERABLE_H
 #define OGL_RENDERABLE_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 #include <OpenGL/Aabb.h>

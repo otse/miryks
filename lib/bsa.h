@@ -1,9 +1,10 @@
 #ifndef C_BSA_H
 #define C_BSA_H
 
+// part of gloom
+
 // for oldrim
 
-// wrote for gloom
 // 100% based on https://github.com/Ortham/libbsa
 
 #define api

@@ -1,11 +1,12 @@
 #ifndef NIFP_H
 #define NIFP_H
 
-#define api
+// part of gloom
 
 // for oldrim
 
-// wrote for gloom
+#define api
+
 
 typedef int ni_ref;
 

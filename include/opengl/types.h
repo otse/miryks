@@ -1,6 +1,8 @@
 #ifndef OPENGL_TYPES_H
 #define OPENGL_TYPES_H
 
+// part of gloom
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -26,6 +28,8 @@ struct DirectionalLight;
 struct DirectionalLightShadow;
 struct PointLight;
 struct PointLightShadow;
+struct SpotLight;
+struct SpotLightShadow;
 
 struct List;
 struct Group;
@@ -36,13 +40,12 @@ struct Geometry;
 struct Material;
 struct Shader;
 struct Program;
+struct RenderTarget;
 
 struct Scene;
 struct Camera;
-struct PointLight;
 struct FirstPersonCamera;
 struct ViewerCamera;
-struct RenderTarget;
 
 extern Camera *camera;
 extern Scene *scene;

@@ -4,7 +4,7 @@
 
 // only for oldrim!
 
-// wrote for gloom/dark
+// part of gloom/dark
 // 100% based on https://github.com/Ortham/libbsa
 
 #include <zlib.h>

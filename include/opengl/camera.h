@@ -1,6 +1,8 @@
 #ifndef OPENGL_CAMERA_H
 #define OPENGL_CAMERA_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 #include <glm/gtc/matrix_transform.hpp>

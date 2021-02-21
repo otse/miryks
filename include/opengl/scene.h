@@ -1,6 +1,8 @@
 #ifndef OPENGL_SCENE_H
 #define OPENGL_SCENE_H
 
+// part of gloom
+
 #include <Attic.hpp>
 
 #include <OpenGL/Types.h>

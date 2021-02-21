@@ -1,6 +1,8 @@
 #ifndef GLOOM_DARK2_H
 #define GLOOM_DARK2_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 struct Grup;

@@ -1,6 +1,8 @@
 #ifndef OPENGL_LIGHTS_H
 #define OPENGL_LIGHTS_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 #include <OpenGL/Camera.h>
@@ -12,21 +14,20 @@ struct Light
 	Light();
 	Shadow *shadow;
 	mat4 matrix;
-	mat4 matrixWorld;
 	vec3 color;
-	float intensity;
+	float intensity, distance, decay;
 	float CalcDist() const;
 	void Calc();
 };
 struct PointLight : Light
 {
 	PointLight();
-	float distance, decay;
 };
 struct SpotLight : Light
 {
 	SpotLight();
-	float distance, angle, penumbra, decay;
+	float angle, penumbra;
+	vec3 target;
 };
 struct DirectionalLight : Light
 {

@@ -1,5 +1,7 @@
 #pragma once
 
+// part of gloom
+
 #include <Gloom/Dark2.h>
 #include <Gloom/Object.h>
 
@@ -25,7 +27,7 @@ namespace gloom
 		Mesh *mesh;
 		DrawGroup *drawGroup;
 		PointLight *pointLight;
-		//SpotLight *spotLight;
+		SpotLight *spotLight;
 
 		void Go();
 		

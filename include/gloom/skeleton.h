@@ -1,6 +1,8 @@
 #ifndef GLOOM_SKELETON_H
 #define GLOOM_SKELETON_H
 
+// part of gloom
+
 #include <libs>
 #include <Gloom/Dark2.h>
 

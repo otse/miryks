@@ -1,6 +1,8 @@
 #ifndef OPENGL_SHADER_H
 #define OPENGL_SHADER_H
 
+// stolen for gloom
+
 #include <OpenGL/Types.h>
 
 #include <OpenGL/Camera.h>

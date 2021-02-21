@@ -1,9 +1,10 @@
 #ifndef ESP_H
 #define ESP_H
 
+// part of gloom
+
 // for oldrim
 
-// wrote for gloom
 // 100% based on https://github.com/Ortham/libespm
 
 // field subrecord same thing

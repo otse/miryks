@@ -1,6 +1,8 @@
 #ifndef OPENGL_SHADOWS_H
 #define OPENGL_SHADOWS_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 #include <OpenGL/Camera.h>
@@ -101,7 +103,7 @@ struct DirectionalLightShadow : LightShadow
 	{
 		vec3 position;
 
-		lightPositionWorld = vec3(light->matrixWorld[3]);
+		lightPositionWorld = vec3(light->matrix[3]);
 		shadowCamera->view[3] = vec4(lightPositionWorld, 1);
 		lookTarget = light->target;
 

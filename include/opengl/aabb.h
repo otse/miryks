@@ -1,6 +1,8 @@
 #ifndef OGL_AABB_H
 #define OGL_AABB_H
 
+// part of gloom
+
 #include <OpenGL/Types.h>
 
 struct Aabb

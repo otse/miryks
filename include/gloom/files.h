@@ -1,6 +1,8 @@
 #ifndef FILES_H
 #define FILES_H
 
+// part of gloom
+
 #include <string>
 #include <vector>
 

@@ -15,8 +15,6 @@ Scene::Scene()
 {
 	black = new PointLight;
 	black->color = vec3(0.f);
-	black->distance = 0.f;
-	black->intensity = 0.f;
 
 	ambient = vec3(20.f / 255.f);
 	//ambient = vec3(1, 1, 1);

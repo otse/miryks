@@ -88,29 +88,73 @@ struct HemisphereLight {
 	vec3 groundColor;
 };
 
-struct PointLight {
-	vec3 position;
-	//float pad3;
+float punctualLightIntensityToIrradianceFactor( const in float lightDistance, const in float cutoffDistance, const in float decayExponent ) {
+	if( cutoffDistance > 0.0 && decayExponent > 0.0 ) {
+		return pow( saturate( -lightDistance / cutoffDistance + 1.0 ), decayExponent );
+	}
+	return 1.0;
+}
 
-	vec3 color;
-	//float pad7;
+#define NUM_POINT_LIGHTS 9
+
+#if NUM_POINT_LIGHTS > 0
+
+	struct PointLight {
+		vec3 position;
+		//float pad3;
+
+		vec3 color;
+		//float pad7;
+		
+		float distance;
+		float decay;
+
+		mat3 package;
+		//float pad10;
+		//float pad11;
+	};
+
+	uniform PointLight pointLights[ NUM_POINT_LIGHTS ];
 	
-	float distance;
-	float decay;
+	// directLight is an out parameter as having it as a return value caused compiler errors on some devices
+	void getPointDirectLightIrradiance( const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight directLight ) {
 
-	mat3 package;
-	//float pad10;
-	//float pad11;
-};
+		vec3 lVector = pointLight.position - geometry.position;
+		directLight.direction = normalize( lVector );
 
-#define MAX_NUM_TOTAL_LIGHTS 20
+		float lightDistance = length( lVector );
 
-layout (std140) uniform pointlights {
-	vec4 numPointLights;
-	PointLight pointLights2[MAX_NUM_TOTAL_LIGHTS];
-}; // semi colon or else
+		directLight.color = pointLight.color;
+		directLight.color *= punctualLightIntensityToIrradianceFactor( lightDistance, pointLight.distance, pointLight.decay );
+		directLight.visible = ( directLight.color != vec3( 0.0 ) );
 
-uniform PointLight pointLights[MAX_NUM_TOTAL_LIGHTS];
+	}
+
+#endif
+
+#define NUM_SPOT_LIGHTS 0
+
+#if NUM_SPOT_LIGHTS > 0
+
+	struct SpotLight {
+		vec3 position;
+		vec3 direction;
+		vec3 color;
+		float distance;
+		float decay;
+		float coneCos;
+		float penumbraCos;
+
+		int shadow;
+		float shadowBias;
+		float shadowRadius;
+		vec2 shadowMapSize;
+	};
+
+	uniform SpotLight spotLights[ NUM_SPOT_LIGHTS ];
+
+#endif
+
 
 vec3 BRDF_Diffuse_Lambert( const in vec3 diffuseColor ) {
 
@@ -130,24 +174,6 @@ vec3 F_Schlick( const in vec3 specularColor, const in float dotLH ) {
 	return ( 1.0 - specularColor ) * fresnel + specularColor;
 
 } // validated
-
-void calcPointLight(
-	const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight directLight) {
-
-	vec3 lVector = pointLight.position - geometry.position;
-	directLight.direction = normalize( lVector );
-
-	float lightDistance = length( lVector );
-
-	directLight.color = pointLight.color;
-
-	if( lightDistance > 0.0 && pointLight.decay > 0.0 ) {
-		directLight.color *= pow( saturate( -lightDistance / pointLight.distance + 1.0 ), pointLight.decay );
-	}
-	
-	directLight.visible = ( directLight.color != vec3( 0.0 ) );
-
-}
 
 float G_BlinnPhong_Implicit( /* const in float dotNL, const in float dotNV */ ) {
 
@@ -358,22 +384,13 @@ void main()
 
 	IncidentLight directLight;
 	ReflectedLight reflectedLight;
-
-	/*PointLight pointLight_;
-
-	pointLight_.position = vec3(0, 300, 0) - vViewPosition;
-	pointLight_.distance = 200;
-	pointLight_.color = vec3(0, 0, 1) * 10;
-	pointLight_.decay = 0.1;
-
-	calcPointLight( pointLight_, geometry, directLight );
-		
-	RE_Direct( directLight, geometry, material, reflectedLight );*/
 	
+#if ( NUM_POINT_LIGHTS > 0 )
+
 	PointLight a;
 	PointLight b;
 
-	for ( int i = 0; i < 10; i ++ ) {
+	for ( int i = 0; i < NUM_POINT_LIGHTS; i ++ ) {
 		a = pointLights[ i ];
 
 		PointLight b = PointLight(
@@ -383,10 +400,12 @@ void main()
 			a.package[2][1],
 			mat3(0.0));
 
-		calcPointLight( b, geometry, directLight );
+		getPointDirectLightIrradiance( b, geometry, directLight );
 		
 		RE_Direct( directLight, geometry, material, reflectedLight );
 	}
+
+#endif
 
 	HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));
