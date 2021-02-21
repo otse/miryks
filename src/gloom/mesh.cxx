@@ -15,6 +15,10 @@ namespace gloom
 		lastGroup = baseGroup;
 	}
 
+	Mesh::~Mesh()
+	{		
+	}
+
 	static void other(Rd *, void *);
 	static void ni_node_callback						(Rd *, ni_node_pointer *);
 	static void ni_node_callback_2						(Rd *, ni_node_pointer *);
@@ -36,11 +40,10 @@ namespace gloom
 		store.emplace(key, mesh);
 	}
 
-	Mesh *Mesh::Cached(void *key)
+	Mesh *Mesh::Stored(void *key)
 	{
 		if (store.count(key))
 			return store[key];
-		//printf("Cached 0");
 		return nullptr;
 	}
 
@@ -66,7 +69,7 @@ namespace gloom
 	void SkinnedMesh::Construct()
 	{
 		cassert(skeleton, "smesh needs skeleton");
-		// "Second pass rundown"
+		// "Second pass" Rd
 		Rd *rd = malloc_nifprd();
 		rd->nif = mesh->nif;
 		rd->data = this;

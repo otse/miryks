@@ -1,5 +1,6 @@
 #include <skyrim_units>
 #include <libs>
+
 #include <Gloom/Util.h>
 
 #include <Gloom/Mesh.h>
@@ -7,15 +8,17 @@
 
 namespace gloom
 {
-	Mesh *GrantMesh(Object &baseObject)
+	namespace util
 	{
-		Mesh *mesh = nullptr;
-		auto modl = baseObject.Data<const char *>("MODL", 0);
-		if (!modl)
-			return nullptr;
-		mesh = Mesh::Cached((void *)modl);
-		if (!mesh)
+		Mesh *GrantMesh(Object &baseObject)
 		{
+			Mesh *mesh = nullptr;
+			auto modl = baseObject.Data<const char *>("MODL", 0);
+			if (!modl)
+				return nullptr;
+			mesh = Mesh::Stored((void *)modl);
+			if (mesh)
+				return mesh;
 			Rc *rc = LoadRc("meshes\\", modl, 0x1);
 			if (rc)
 			{
@@ -26,7 +29,7 @@ namespace gloom
 			}
 			else
 				printf("no rc for refr-modl\n");
+			return mesh;
 		}
-		return mesh;
 	}
 };

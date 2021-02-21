@@ -23,14 +23,15 @@ namespace gloom
 	class Mesh
 	{
 	public:
+		static void Store(void *, Mesh *);
+		static Mesh *Stored(void *);
 		Mesh();
+		~Mesh();
 		Nif *nif;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
 		void Construct(Nif *);
 		Group *Nested(Rd *);
-		static void Store(void *, Mesh *);
-		static Mesh *Cached(void *);
 	};
 
 	class SkinnedMesh

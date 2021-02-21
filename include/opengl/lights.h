@@ -18,6 +18,8 @@ struct Light
 	float intensity, distance, decay;
 	float CalcDist() const;
 	void Calc();
+	
+	vec3 target;
 };
 struct PointLight : Light
 {

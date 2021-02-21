@@ -20,14 +20,14 @@ struct LightShadow
 	vec2 mapSize = vec2(512, 512);
 	RenderTarget *rt = nullptr;
 	Texture *map = nullptr;
-	void *mapPass = nullptr;
-	mat4 shadowMatrix;
+	void *mapPass = nullptr; // for vsmshadowmap ?
+	mat4 matrix;
 	bool autoUpdate = true;
 	bool needsUpdate = false;
-	int frustum;
+	int frustum = -1;
 	vec2 frameExtents = vec2(1, 1);
-	int viewportCount;
-	int viewports;
+	int viewportCount = 1;
+	std::vector<glm::vec4> viewports = {glm::vec4(0, 0, 1, 1)};
 
 	mat4 projScreenMatrix;
 	vec3 lightPositionWorld;
@@ -35,20 +35,29 @@ struct LightShadow
 
 	int getFrustum() { return 1; };
 
-	int getViewport(int index)
+	int getViewportCount()
 	{
-		return 2;
+		return viewportCount;
 	}
+
+	glm::vec4 getViewport(int index)
+	{
+		return viewports[index];
+	}
+
 	vec2 getFrameExtents()
 	{
 		return frameExtents;
 	}
+
+	virtual void updateMatrices(Light *);
 };
 
 struct ShadowMapRenderer
 {
 	vec2 shadowMapSize;
 	vec2 viewportSize;
+	vec4 viewport;
 	int *depthMaterials;
 	int *distanceMaterials;
 	int materialCache;
@@ -57,36 +66,7 @@ struct ShadowMapRenderer
 	bool autoUpdate = true;
 	bool needsUpdate = true;
 
-	void Render(std::vector<Light *> &lights, Scene *scene, Camera *camera)
-	{
-		glDisable(GL_BLEND);
-
-		// render depth map
-		for (int i = 0, il = lights.size(); i < il; i++)
-		{
-			Light *light = lights[i];
-			LightShadow *shadow = light->shadow;
-
-			shadowMapSize = shadow->mapSize;
-
-			vec2 shadowFrameExtents = shadow->getFrameExtents();
-
-			shadowMapSize *= shadowFrameExtents;
-
-			viewportSize = shadow->mapSize;
-
-			if (shadow->map == nullptr)
-			{
-				shadow->rt  = new RenderTarget( shadowMapSize.x, shadowMapSize.y, GL_RGBA, GL_UNSIGNED_BYTE );
-				shadow->map = nullptr;
-				//shadow->map->name = light.name + '.shadowMap';
-
-				//shadow.camera.updateProjectionMatrix();
-			}
-
-			//if (shadow.)
-		}
-	};
+	void Render(std::vector<Light *> &lights, Scene *scene, Camera *camera);
 };
 
 struct DirectionalLightShadow : LightShadow
@@ -98,33 +78,13 @@ struct DirectionalLightShadow : LightShadow
 	{
 		//shadowCamera = new OrthographicCamera(-5, 5, 5, -5, 0.5, 500));
 	}
+};
 
-	void updateMatrices(DirectionalLight *light)
-	{
-		vec3 position;
+struct SpotLightShadow : LightShadow
+{
+	SpotLightShadow();
 
-		lightPositionWorld = vec3(light->matrix[3]);
-		shadowCamera->view[3] = vec4(lightPositionWorld, 1);
-		lookTarget = light->target;
-
-		position = shadowCamera->view[3];
-		shadowCamera->view = glm::lookAt(position, lookTarget, vec3(0, 0, 1));
-
-		mat4 reverse = glm::inverse(shadowCamera->view);
-
-		projScreenMatrix = shadowCamera->projection * reverse;
-
-		frustum; // set from projection
-
-		shadowMatrix = mat4(
-			0.5, 0.0, 0.0, 0.5,
-			0.0, 0.5, 0.0, 0.5,
-			0.0, 0.0, 0.5, 0.5,
-			0.0, 0.0, 0.0, 1.0);
-
-		shadowMatrix *= shadowCamera->projection;
-		shadowMatrix *= reverse;
-	};
+	virtual void updateMatrices(Light *);
 };
 
 struct PointLightShadow : LightShadow
@@ -141,26 +101,7 @@ struct PointLightShadow : LightShadow
 		// this._viewportCount = 6;
 	}
 
-	/*updateMatrices( light, viewportIndex = 0 ) {
-
-		const camera = this.camera;
-		const shadowMatrix = this.matrix;
-
-		_lightPositionWorld.setFromMatrixPosition( light.matrixWorld );
-		camera.position.copy( _lightPositionWorld );
-
-		_lookTarget.copy( camera.position );
-		_lookTarget.add( this._cubeDirections[ viewportIndex ] );
-		camera.up.copy( this._cubeUps[ viewportIndex ] );
-		camera.lookAt( _lookTarget );
-		camera.updateMatrixWorld();
-
-		shadowMatrix.makeTranslation( - _lightPositionWorld.x, - _lightPositionWorld.y, - _lightPositionWorld.z );
-
-		_projScreenMatrix.multiplyMatrices( camera.projectionMatrix, camera.matrixWorldInverse );
-		this._frustum.setFromProjectionMatrix( _projScreenMatrix );
-
-	}*/
+	virtual void updateMatrices(Light *);
 };
 
 #endif

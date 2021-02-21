@@ -71,10 +71,8 @@ namespace gloom
 	{
 		if (grup == nullptr)
 			return;
-
 		bool stop = false;
-
-		Objects(grup).ForEach(0, stop, [&](Objects &objects, unsigned int i) {
+		auto func = [&](Objects &objects, unsigned int i) {
 			Record *record = objects.GetRecord(i);
 			Object object(record);
 			if (object.IsType("REFR"))
@@ -89,8 +87,8 @@ namespace gloom
 					iterables.push_back(ref);
 				}
 			}
-		});
-
+		};
+		Objects(grup).ForEach(0, stop, func);
 		PlaceCamera();
 	}
 
@@ -98,15 +96,12 @@ namespace gloom
 	{
 		if (alreadyTeleported)
 			return;
-
 		bool stop = false;
-
-		// Place at first XMarker that you find
-		
-		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &objects, unsigned int i) {
+		auto func = [&](Objects &objects, unsigned int i) {
 			Object object(objects.GetRecord(i));
-			if (*GetBaseId(object) == 0x0000003B) //  "XMarker"
+			if (*GetBaseId(object) == 0x0000003B) //  "Marker"
 			{
+				// Place at any XMarker
 				float *locationalData = object.Data<float *>("DATA");
 				printf(" xmarker ! \n");
 				first_person_camera->pos = *cast_vec_3(locationalData);
@@ -115,7 +110,8 @@ namespace gloom
 				alreadyTeleported = true;
 				stop = true;
 			}
-		});
+		};
+		Objects(loadedCell.persistent).ForEach(0, stop, func);
 	}
 
 	Interior::~Interior()

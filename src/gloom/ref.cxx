@@ -27,8 +27,6 @@ namespace gloom
 		drawGroup = nullptr;
 		pointLight = nullptr;
 		spotLight = nullptr;
-
-		//selfObject.Set(record);
 		Go();
 	}
 
@@ -52,13 +50,10 @@ namespace gloom
 		auto locationalData = selfObject.Data<float *>("DATA");
 
 		if (editorId)
-		{
 			this->editorId = editorId;
-		}
+
 		if (XSCL)
-		{
 			scale = glm::scale(mat4(1.0), vec3(*XSCL));
-		}
 
 		forLocationalData(locationalData);
 		forBaseId(baseId);
@@ -97,7 +92,7 @@ namespace gloom
 
 		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
-			mesh = GrantMesh(baseObject);
+			mesh = util::GrantMesh(baseObject);
 		}
 		else if (baseObject.IsType("LIGH"))
 		{
