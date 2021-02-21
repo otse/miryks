@@ -1,7 +1,8 @@
 #include <skyrim_units>
 #include <libs>
-#include <Gloom/Dark2.h>
 #include <Gloom/Ref.h>
+
+#include <Gloom/Util.h>
 #include <Gloom/Object.h>
 #include <Gloom/Mesh.h>
 #include <Gloom/Files.h>
@@ -96,40 +97,13 @@ namespace gloom
 
 		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
-			auto modl = baseObject.Data<const char *>("MODL", 0);
-			if (modl)
-			{
-				mesh = Mesh::Cached((void *)modl);
-				if (!mesh)
-				{
-					Rc *rc = LoadRc("meshes\\", modl, 0x1);
-					if (rc)
-					{
-						Nif *nif = LoadNif(rc, true);
-						mesh = new Mesh;
-						mesh->Construct(nif);
-						Mesh::Store((void *)modl, mesh);
-					}
-					else
-						printf("no rc for refr-modl\n");
-				}
-			}
-
-			if (baseObject.IsType("WEAP"))
-			{
-				//WEAP = new Weap(baseRecord);
-			}
+			mesh = GrantMesh(baseObject);
 		}
-
-		// Todo, This
 		else if (baseObject.IsType("LIGH"))
 		{
 			struct Struct
 			{
-				unsigned int time;
-				unsigned int radius;
-				unsigned int color;
-				unsigned int flags;
+				unsigned int time, radius, color, flags;
 			};
 
 			float fade = 1;

@@ -1,12 +1,13 @@
 #ifndef NIFP_H
 #define NIFP_H
 
+// nif with pointers ! see graveyard for nif.c that uses memcpy 
+
 // part of gloom
 
 // for oldrim
 
 #define api
-
 
 typedef int ni_ref;
 

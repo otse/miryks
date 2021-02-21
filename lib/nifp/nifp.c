@@ -1,7 +1,4 @@
-// nif but with pointers
-
-// part of gloom/dark
-// for oldrim
+// see header for stuff
 
 #include "putc.h"
 

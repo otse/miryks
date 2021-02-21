@@ -2,7 +2,9 @@
 
 #include "nif.h"
 
-// successed by nifp.c
+// this is graveyard code
+
+// successed by nifp.c ! it uses pointers instead
 
 struct nmap_t nmap[1000];
 int nifs = 0;

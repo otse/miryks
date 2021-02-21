@@ -1,11 +1,8 @@
+// see header for stuff
+
 #include "putc.h"
 
 #include "bsa.h"
-
-// only for oldrim!
-
-// part of gloom/dark
-// 100% based on https://github.com/Ortham/libbsa
 
 #include <zlib.h>
 

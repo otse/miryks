@@ -1,6 +1,7 @@
 #include <skyrim_units>
 #include <libs>
 #include <Gloom/Interior.h>
+#include <Gloom/Util.h>
 
 #include <Gloom/Mesh.h>
 #include <Gloom/Object.h>
@@ -39,11 +40,11 @@ namespace gloom
 
 		bool stop = false;
 
-		Objects(top).ForEach(0, stop, [&](Objects &oa, unsigned int i) {
-			Objects(oa.GetGrup(i)).ForEach(0, stop, [&](Objects &oa, unsigned int j) {
-				Objects(oa.GetGrup(j)).ForEach(0, stop, [&](Objects &oa, unsigned int &k) {
-					Object object(oa.GetRecord(k));
-					Grup *grup = oa.GetGrup(k + 1);
+		Objects(top).ForEach(0, stop, [&](Objects &objects, unsigned int i) {
+			Objects(objects.GetGrup(i)).ForEach(0, stop, [&](Objects &objects, unsigned int j) {
+				Objects(objects.GetGrup(j)).ForEach(0, stop, [&](Objects &objects, unsigned int &k) {
+					Object object(objects.GetRecord(k));
+					Grup *grup = objects.GetGrup(k + 1);
 					const char *editorId = GetEditorId(object);
 					if (0 == strcmp(name, editorId))
 					{
@@ -73,8 +74,8 @@ namespace gloom
 
 		bool stop = false;
 
-		Objects(grup).ForEach(0, stop, [&](Objects &oa, unsigned int i) {
-			Record *record = oa.GetRecord(i);
+		Objects(grup).ForEach(0, stop, [&](Objects &objects, unsigned int i) {
+			Record *record = objects.GetRecord(i);
 			Object object(record);
 			if (object.IsType("REFR"))
 			{
@@ -102,8 +103,8 @@ namespace gloom
 
 		// Place at first XMarker that you find
 		
-		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &oa, unsigned int i) {
-			Object object(oa.GetRecord(i));
+		Objects(loadedCell.persistent).ForEach(0, stop, [&](Objects &objects, unsigned int i) {
+			Object object(objects.GetRecord(i));
 			if (*GetBaseId(object) == 0x0000003B) //  "XMarker"
 			{
 				float *locationalData = object.Data<float *>("DATA");

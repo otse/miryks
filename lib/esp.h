@@ -7,8 +7,6 @@
 
 // 100% based on https://github.com/Ortham/libespm
 
-// field subrecord same thing
-
 #define api
 
 struct form_id;
