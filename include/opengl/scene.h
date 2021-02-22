@@ -25,6 +25,7 @@ struct Scene
 public:
 	Container<DrawGroup> drawGroups;
 	Container<PointLight> pointLights;
+	Container<SpotLight> spotLights;
 	
 	//std::vector<DrawGroup *> drawGroups;
 	//std::vector<PointLight *> pointLights;

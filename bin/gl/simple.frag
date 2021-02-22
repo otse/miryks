@@ -101,22 +101,17 @@ float punctualLightIntensityToIrradianceFactor( const in float lightDistance, co
 
 	struct PointLight {
 		vec3 position;
-		//float pad3;
-
 		vec3 color;
-		//float pad7;
-		
 		float distance;
 		float decay;
 
 		mat3 package;
-		//float pad10;
-		//float pad11;
 	};
 
 	uniform PointLight pointLights[ NUM_POINT_LIGHTS ];
 	
 	// directLight is an out parameter as having it as a return value caused compiler errors on some devices
+
 	void getPointDirectLightIrradiance( const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight directLight ) {
 
 		vec3 lVector = pointLight.position - geometry.position;
@@ -132,7 +127,7 @@ float punctualLightIntensityToIrradianceFactor( const in float lightDistance, co
 
 #endif
 
-#define NUM_SPOT_LIGHTS 0
+#define NUM_SPOT_LIGHTS 2
 
 #if NUM_SPOT_LIGHTS > 0
 
@@ -152,6 +147,24 @@ float punctualLightIntensityToIrradianceFactor( const in float lightDistance, co
 	};
 
 	uniform SpotLight spotLights[ NUM_SPOT_LIGHTS ];
+
+	// directLight is an out parameter as having it as a return value caused compiler errors on some devices
+
+	void getSpotDirectLightIrradiance( const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight directLight ) {
+		vec3 lVector = spotLight.position - geometry.position;
+		directLight.direction = normalize( lVector );
+		float lightDistance = length( lVector );
+		float angleCos = dot( directLight.direction, spotLight.direction );
+		if ( angleCos > spotLight.coneCos ) {
+			float spotEffect = smoothstep( spotLight.coneCos, spotLight.penumbraCos, angleCos );
+			directLight.color = spotLight.color;
+			directLight.color *= spotEffect * punctualLightIntensityToIrradianceFactor( lightDistance, spotLight.distance, spotLight.decay );
+			directLight.visible = true;
+		} else {
+			directLight.color = vec3( 0.0 );
+			directLight.visible = false;
+		}
+	}
 
 #endif
 
@@ -385,27 +398,50 @@ void main()
 	IncidentLight directLight;
 	ReflectedLight reflectedLight;
 	
-#if ( NUM_POINT_LIGHTS > 0 )
+	#if ( NUM_POINT_LIGHTS > 0 )
 
-	PointLight a;
-	PointLight b;
+		PointLight a;
+		PointLight b;
 
-	for ( int i = 0; i < NUM_POINT_LIGHTS; i ++ ) {
-		a = pointLights[ i ];
+		for ( int i = 0; i < NUM_POINT_LIGHTS; i ++ ) {
+			a = pointLights[ i ];
 
-		PointLight b = PointLight(
-			a.package[0],
-			a.package[1] * 5,
-			a.package[2][0],
-			a.package[2][1],
-			mat3(0.0));
+			PointLight b = PointLight(
+				a.package[0],
+				a.package[1] * 5,
+				a.package[2][0],
+				a.package[2][1],
+				mat3(0.0));
 
-		getPointDirectLightIrradiance( b, geometry, directLight );
-		
-		RE_Direct( directLight, geometry, material, reflectedLight );
-	}
+			getPointDirectLightIrradiance( b, geometry, directLight );
+			
+			RE_Direct( directLight, geometry, material, reflectedLight );
+		}
 
-#endif
+	#endif
+
+	#if ( NUM_SPOT_LIGHTS > 0 )
+		SpotLight spotLight;
+		#if defined( USE_SHADOWMAP ) && NUM_SPOT_LIGHT_SHADOWS > 0
+			SpotLightShadow spotLightShadow;
+		#endif
+		//#pragma unroll_loop_start
+		for ( int i = 0; i < NUM_SPOT_LIGHTS; i ++ ) {
+			spotLight = spotLights[ i ];
+			spotLight.color *= 7.0;
+			//spotLight.direction = spotLight.direction;
+			spotLight.coneCos = cos(PI / 3.0);
+			spotLight.penumbraCos = cos(spotLight.coneCos * (1.0 - 0.0));
+			//spotLight.direction = vec3(0, 0, 1) * mat3(inverse(view));
+			getSpotDirectLightIrradiance( spotLight, geometry, directLight );
+			#if defined( USE_SHADOWMAP ) && ( UNROLLED_LOOP_INDEX < NUM_SPOT_LIGHT_SHADOWS )
+				spotLightShadow = spotLightShadows[ i ];
+				directLight.color *= all( bvec2( directLight.visible, receiveShadow ) ) ? getShadow( spotShadowMap[ i ], spotLightShadow.shadowMapSize, spotLightShadow.shadowBias, spotLightShadow.shadowRadius, vSpotShadowCoord[ i ] ) : 1.0;
+			#endif
+			RE_Direct( directLight, geometry, material, reflectedLight );
+		}
+		//#pragma unroll_loop_end
+	#endif
 
 	HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));

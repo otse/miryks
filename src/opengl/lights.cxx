@@ -22,7 +22,7 @@ SpotLight::SpotLight()
 {
 	distance = 0.f;
 	penumbra = 0.f;
-	angle = 1.5;
+	angle = pif / 3.f;
 	decay = 1.f;
 	target = vec3(0);
 }

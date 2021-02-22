@@ -34,8 +34,10 @@ namespace gloom
 	{
 		scene->drawGroups.Remove(drawGroup);
 		scene->pointLights.Remove(pointLight);
+		scene->spotLights.Remove(spotLight);
 		delete drawGroup;
 		delete pointLight;
+		delete spotLight;
 	}
 
 	void Ref::Go()
@@ -90,7 +92,8 @@ namespace gloom
 
 		cassert(baseObject.Valid(), "cant find refs Name-BaseId record");
 
-		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
+		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT",
+								  "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
 			mesh = util::GrantMesh(baseObject);
 		}
@@ -99,6 +102,9 @@ namespace gloom
 			struct Struct
 			{
 				unsigned int time, radius, color, flags;
+				float falloffExponent, FOV, nearClip, period, intensityAmplitude, movementAmplitude;
+				unsigned int value;
+				float weight;
 			};
 
 			float fade = 1;
@@ -130,10 +136,13 @@ namespace gloom
 				fade = 1 / fade;
 			}
 
-			if (data->flags & 0x04)
+			if (data->flags & 0x0400)
 			{
 				light = spotLight = new SpotLight;
-				// scene->pointLights.Add(spotLight);
+				//printf("data fov %f\n", data->FOV);
+				spotLight->angle = radians(data->FOV);
+				scene->spotLights.Add(spotLight);
+				printf(" spotLight ! %f \n", spotLight->angle);
 			}
 			else
 			{

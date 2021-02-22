@@ -9,12 +9,16 @@
 #include <OpenGL/Shader.h>
 #include <OpenGL/Lights.h>
 
-static PointLight *black;
+static PointLight *bpoint;
+static SpotLight *bspot;
 
 Scene::Scene()
 {
-	black = new PointLight;
-	black->color = vec3(0.f);
+	bpoint = new PointLight;
+	bpoint->color = vec3(0.f);
+
+	bspot = new SpotLight;
+	bspot->color = vec3(0.f);
 
 	ambient = vec3(20.f / 255.f);
 	//ambient = vec3(1, 1, 1);
@@ -62,7 +66,7 @@ void Scene::BindLights(Shader *shader)
 
 	for (unsigned int i = 0; i < 9; i++)
 	{
-		PointLight *l = black;
+		PointLight *l = bpoint;
 
 		if (i < pointLights.ts.size())
 			l = pointLights.ts[i];
@@ -82,6 +86,49 @@ void Scene::BindLights(Shader *shader)
 		package[2][2] = -1;
 
 		shader->SetMat3((index + ".package").c_str(), package);
+	}
+
+	for (unsigned int i = 0; i < 2; i++)
+	{
+		SpotLight *sl = bspot;
+
+		if (i < spotLights.ts.size())
+			sl = spotLights.ts[i];
+
+		std::string index = "spotLights[" + std::to_string(i) + "]";
+
+		vec3 position, direction, color;
+		position = vec3(sl->matrix[3]) * mat3(inverse(camera->view));
+		position += vec3(camera->view[3]);
+
+		mat4 ma = sl->matrix;
+		ma = rotate(ma, -pif/2, vec3(0, 1, 0));
+
+		vec3 dir = normalize(vec3(mat3(ma)[2]));
+		dir = normalize(dir);
+
+		direction = dir * mat3(inverse(camera->view));
+		//printf("sldir %s\n", glm::to_string(direction));
+
+		//direction = glm::normalize(glm::vec3(glm::inverse(mat3(sl->matrix * mat3(camera->view))[2]));
+		color = sl->color * sl->intensity;
+
+		float moo = glm::cos(sl->angle);
+
+		static bool pinted = false;
+
+		if (!pinted) {
+			pinted = true;
+			printf("moo %f\n", moo);
+		} 
+
+		shader->SetVec3((index + ".position").c_str(), position);
+		shader->SetVec3((index + ".direction").c_str(), direction);
+		shader->SetVec3((index + ".color").c_str(), color);
+		shader->SetFloat((index + ".distance").c_str(), sl->distance);
+		shader->SetFloat((index + ".coneCos").c_str(), glm::cos(sl->angle));
+		shader->SetFloat((index + ".penumbraCos").c_str(), glm::cos(sl->angle * (1.f - sl->penumbra)));
+		shader->SetFloat((index + ".decay").c_str(), sl->decay);
 	}
 }
 
