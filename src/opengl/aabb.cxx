@@ -10,9 +10,8 @@
 
 Aabb::Aabb()
 {
-	min = vec3(0);
-	max = vec3(0);
-	first = true;
+	min = max = vec3(0);
+	valid = false;
 }
 
 Aabb::~Aabb()
@@ -22,11 +21,10 @@ Aabb::~Aabb()
 
 void Aabb::extend(const vec3 &vec)
 {
-	if (first)
+	if (!valid)
 	{
-		min = vec;
-		max = vec;
-		first = false;
+		min = max = vec;
+		valid = true;
 	}
 	else
 	{

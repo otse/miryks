@@ -82,7 +82,7 @@ struct DirectionalLightShadow : LightShadow
 
 struct ShadowMapRenderer
 {
-	vec2 shadowMapSize;
+	vec2 mapSize;
 	vec2 viewportSize;
 	vec4 viewport;
 	int *depthMaterials;
@@ -93,27 +93,27 @@ struct ShadowMapRenderer
 	bool autoUpdate = true;
 	bool needsUpdate = true;
 
-	void Render(std::vector<Light *> &lights, Scene *scene, Camera *camera)
+	void Render(std::vector<Light *> &shadowLights, Scene *scene, Camera *camera)
 	{
 		glDisable(GL_BLEND);
 
 		// render depth map
-		for (int i = 0, il = lights.size(); i < il; i++)
+		for (int i = 0, il = shadowLights.size(); i < il; i++)
 		{
-			Light *light = lights[i];
+			Light *light = shadowLights[i];
 			LightShadow *shadow = light->shadow;
 
-			shadowMapSize = shadow->mapSize;
+			mapSize = shadow->mapSize;
 
-			vec2 shadowFrameExtents = shadow->frameExtents;
+			vec2 frameExtents = shadow->frameExtents;
 
-			shadowMapSize *= shadowFrameExtents;
+			mapSize *= frameExtents;
 
 			viewportSize = shadow->mapSize;
 
 			if (shadow->map == nullptr)
 			{
-				shadow->rt = new RenderTarget(shadowMapSize.x, shadowMapSize.y, GL_RGBA, GL_UNSIGNED_BYTE);
+				shadow->rt = new RenderTarget(mapSize.x, mapSize.y, GL_RGBA, GL_UNSIGNED_BYTE);
 				shadow->map = nullptr;
 				//shadow->map->name = light.name + '.shadowMap';
 

@@ -501,6 +501,67 @@ static char *print_skin_partition(char *s, struct skin_partition *skin_partition
 	return s;
 }
 
+static void print_ni_alpha_property(Nifp *nif, int n, char s[1000])
+{
+	const char *blendModes[] = {
+		"One",
+		"Zero",
+		"Src Color",
+		"Inv Src Color",
+		"Dst Color",
+		"Inv Dst Color",
+		"Src Alpha",
+		"Inv Src Alpha",
+		"Dst Alpha",
+		"Inv Dst Alpha",
+		"Src Alpha Saturate"
+	};
+	const char *testModes[] = {
+		"Always",
+		"Less",
+		"Equal",
+		"Less or Equal",
+		"Greater",
+		"Not Equal",
+		"Greater or Equal",
+		"Never"
+	};
+	char x[600];
+	struct ni_alpha_property_pointer *block_pointer = Blocks[n];
+	unsigned short flags = block_pointer->C->flags;
+	snprintf(
+		s, 1000,
+		"\
+name: %s [%i]\
+\nnum_extra_data_list: %u\
+\nextra_data_list\
+\ncontroller: %i\
+\nflags: %u\
+\nthreshold: %u\
+\n ---\
+\nblending enabled: %s\
+\nsource blend mode: %s\
+\ndestination blend mode: %s\
+\ntesting enabled: %s\
+\nalpha test function: %s\
+\nalpha test threshold: %u\
+",
+		nifp_get_string(nif, block_pointer->A->name),
+		block_pointer->A->name,
+		block_pointer->A->num_extra_data_list,
+		block_pointer->C->controller,
+		block_pointer->C->flags,
+		block_pointer->C->treshold,
+		flags & 1 ? "yes" : "no",
+		blendModes[flags >> 1 & 0x0f],
+		blendModes[flags >> 5 & 0x0f],
+		flags & ( 1 << 9 ) ? "yes" : "no",
+		testModes[flags >> 10 & 0x07],
+		block_pointer->C->treshold
+		//testModes[1]
+	);
+}
+
 api void nifp_print_block(Nifp *nif, int n, char s[1000])
 {
 	s[0] = '\0';
@@ -517,4 +578,5 @@ api void nifp_print_block(Nifp *nif, int n, char s[1000])
 	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) print_ni_skin_instance(nif, n, s);
 	else if ( ni_is_type(NI_SKIN_DATA) ) print_ni_skin_data(nif, n, s);
 	else if ( ni_is_type(NI_SKIN_PARTITION) ) print_ni_skin_partition(nif, n, s);
+	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) print_ni_alpha_property(nif, n, s);
 }

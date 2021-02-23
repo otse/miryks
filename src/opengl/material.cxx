@@ -196,8 +196,8 @@ void Material::Use()
 		glEnable(GL_BLEND);
 		glBlendFunc(depth_func.sfactor, depth_func.dfactor);
 	}
-	//if (testing)
-	//	glDepthFunc(GL_LEQUAL);
+	if (testing)
+		glDepthFunc(GL_LEQUAL);
 	if (transparent)
 	{
 		glDepthMask(GL_FALSE);
@@ -233,8 +233,8 @@ void Material::Unuse(Material *a, Material *b)
 	}
 	if (!a || a->blending && !b->blending)
 		glDisable(GL_BLEND);
-	//if (!a || a->testing && !b->testing)
-	//	glDepthFunc(GL_LEQUAL);
+	if (!a || a->testing && !b->testing)
+		glDepthFunc(GL_LEQUAL);
 	if (!a || a->transparent && !b->transparent)
 	{
 		glDepthMask(GL_TRUE);

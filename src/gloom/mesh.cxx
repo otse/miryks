@@ -267,12 +267,12 @@ namespace gloom
 			geometry->material->emissive = Gloom_Vec_3(block->C->emissive_color);
 			geometry->material->map = GetProduceTexture(block->source_texture);
 			//printf("source texture is %s\n", block->source_texture);
-			if (block->B->shader_flags_1 & 0x80000000)
-				geometry->material->testing = true;
 			if (block->B->shader_flags_2 & 0x00000020)
 				geometry->material->vertexColors = true;
-			if (block->B->shader_flags_2 & 0x00000001)
-				geometry->material->testing = true;
+			if (block->B->shader_flags_1 & 0x80000000) // z buffer test
+				0; // geometry->material->testing = true;
+			if (block->B->shader_flags_2 & 0x00000001) // z buffer write
+				0; // geometry->material->testing = true;
 		}
 	}
 
@@ -309,6 +309,20 @@ namespace gloom
 		Geometry *geometry = group->geometry;
 		if (geometry)
 		{
+			/*
+			Spell::tr( "One" ),
+			Spell::tr( "Zero" ),
+			Spell::tr( "Src Color" ),
+			Spell::tr( "Inv Src Color" ),
+			Spell::tr( "Dst Color" ),
+			Spell::tr( "Inv Dst Color" ),
+			Spell::tr( "Src Alpha" ),
+			Spell::tr( "Inv Src Alpha" ),
+			Spell::tr( "Dst Alpha" ),
+			Spell::tr( "Inv Dst Alpha" ),
+			Spell::tr( "Src Alpha Saturate" )
+			*/
+			if (block->C->flags & 1)
 			geometry->material->treshold = block->C->treshold / 255.f;
 		}
 	}

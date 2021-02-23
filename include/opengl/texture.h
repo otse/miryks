@@ -10,18 +10,13 @@
 struct Texture
 {
 	friend Texture *GetProduceTexture(const char *);
-
 	GLuint tid;
-
 	int size;
 	const unsigned char *buf = nullptr;
-
 	const std::string path;
-
-protected:
+//protected:
 	Texture(const std::string &);
 	~Texture();
-
 	void Load();
 };
 

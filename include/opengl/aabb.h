@@ -21,7 +21,7 @@ struct Aabb
 	Aabb();
 	~Aabb();
 	vec3 min, max;
-	bool first;
+	bool valid;
 
 	//void extend(const float);
 	void extend(const Aabb &);
