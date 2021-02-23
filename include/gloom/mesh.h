@@ -20,11 +20,12 @@ extern "C"
 
 namespace gloom
 {
+	void StoreMesh(void *, Mesh *);
+	Mesh *GetStoredMesh(void *);
+
 	class Mesh
 	{
 	public:
-		static void Store(void *, Mesh *);
-		static Mesh *Stored(void *);
 		Mesh();
 		~Mesh();
 		Nif *nif;

@@ -97,7 +97,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
 	{
-		useFbo = ! useFbo;
+		useFbo = !useFbo;
 	}
 	else if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
@@ -182,7 +182,6 @@ void setupImgui()
 	IM_ASSERT(font3 != NULL);
 
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
 
 	// Setup Platform/Renderer bindings
 	const char *glsl_version = "#version 130";

@@ -8,6 +8,20 @@
 
 namespace gloom
 {
+	static std::map<void *, Mesh *> store;
+
+	void StoreMesh(void *key, Mesh *mesh)
+	{
+		store.emplace(key, mesh);
+	}
+
+	Mesh *GetStoredMesh(void *key)
+	{
+		if (store.count(key))
+			return store[key];
+		return nullptr;
+	}
+
 	Mesh::Mesh()
 	{
 		baseGroup = new GroupBounded();
@@ -33,19 +47,6 @@ namespace gloom
 	static void ni_skin_data_callback					(Rd *, ni_skin_data_pointer *);
 	static void ni_skin_partition_callback				(Rd *, ni_skin_partition_pointer *);
 
-	static std::map<void *, Mesh *> store;
-
-	void Mesh::Store(void *key, Mesh *mesh)
-	{
-		store.emplace(key, mesh);
-	}
-
-	Mesh *Mesh::Stored(void *key)
-	{
-		if (store.count(key))
-			return store[key];
-		return nullptr;
-	}
 
 	void Mesh::Construct(Nif *bucket)
 	{
@@ -323,7 +324,7 @@ namespace gloom
 
 	void ni_skin_data_callback(Rd *rd, ni_skin_data_pointer *block)
 	{
-		// used below
+		//
 	}
 
 	void ni_skin_partition_callback(Rd *rd, ni_skin_partition_pointer *block)

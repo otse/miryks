@@ -54,7 +54,6 @@ namespace gloom
 		// cassert(race.Count("ANAM") == 2, "race count anam");
 
 		auto ANAM = race.Data<char *>("ANAM", 0);
-
 		auto MODL = race.Data<unsigned short *>("MODL", 2);
 		auto MODLCHAR = race.Data<char *>("MODL", 2);
 
@@ -213,7 +212,6 @@ namespace gloom
 
 	void Player::Step()
 	{
-
 		human->Step();
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
 		drawGroup->matrix = glm::translate(mat4(1.0), down + first_person_camera->pos);

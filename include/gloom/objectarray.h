@@ -10,7 +10,7 @@ namespace gloom
 {
 	using Objects = ObjectArray;
 
-	void gloom_object_array_example(Grup *);
+	void gloom_object_array_test(Grup *);
 
 	class ObjectArray
 	{

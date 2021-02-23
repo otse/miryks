@@ -45,10 +45,10 @@ void DrawGroup::Reset()
 	if (bounded)
 	{
 		obb = aabb = bounded->aabb;
+		aabb = Aabb::mult(aabb, matrix);
+		obb.geometrize();
+		aabb.geometrize();
 	}
-	aabb = Aabb::mult(aabb, matrix);
-	aabb.geometrize();
-	obb.geometrize();
 	//group->Flatten(group);
 }
 
@@ -56,8 +56,8 @@ void DrawGroup::Draw()
 {
 	group->Draws(matrix);
 	mat4 place = matrix * group->matrix;
-	if (renderSettings.AABBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
+	if (renderSettings.AABBS && aabb.geometry && aabb.volume() <= renderSettings.maximumBoundingVolume)
 		aabb.geometry->Draw(mat4(1.0));
-	if (renderSettings.OBBS && aabb.volume() <= renderSettings.maximumBoundingVolume)
+	if (renderSettings.OBBS && obb.geometry && aabb.volume() <= renderSettings.maximumBoundingVolume)
 		obb.geometry->Draw(place);
 }

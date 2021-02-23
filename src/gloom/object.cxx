@@ -27,7 +27,7 @@ namespace gloom
 	//	return (Field *)record->fields.subrecords[i];
 	//}
 
-	void gloom_objects_example(Record *record)
+	void gloom_objects_test(Record *record)
 	{
 		Object object(record);
 		if (object.IsType("REFR"))

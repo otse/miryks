@@ -16,7 +16,7 @@ namespace gloom
 
 	// Field *GetField(Record *, unsigned int);
 
-	void gloom_objects_example(Record *);
+	void gloom_objects_test(Record *);
 
 	class Object
 	{

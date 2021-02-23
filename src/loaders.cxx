@@ -19,7 +19,10 @@ namespace gloom
 		std::string str = prepend;
 		str += path;
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
-		Rc *rc = bsa_find_more(str.c_str(), flags);
+		const char *s = str.c_str();
+		Rc *rc = bsa_find_more(s, flags);
+		if(!rc)
+			printf("no rc at %s\n", s);
 		bsa_read(rc);
 		return rc;
 	}

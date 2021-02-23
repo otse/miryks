@@ -5,7 +5,7 @@
 
 namespace gloom
 {
-	void gloom_object_array_example(Grup *grup)
+	void gloom_object_array_test(Grup *grup)
 	{
 		ObjectArray objectArray(grup);
 		

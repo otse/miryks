@@ -54,9 +54,9 @@ int main()
 	get_archives()[0] = LoadArchive("Skyrim - Meshes.bsa");
 	get_archives()[1] = LoadArchive("Skyrim - Textures.bsa");
 	get_archives()[2] = LoadArchive("Skyrim - Animations.bsa");
-	//get_archives()[3] = LoadArchive("HighResTexturePack01.bsa");
-	//get_archives()[4] = LoadArchive("HighResTexturePack02.bsa");
-	//get_archives()[5] = LoadArchive("HighResTexturePack03.bsa");
+	get_archives()[3] = LoadArchive("HighResTexturePack01.bsa");
+	get_archives()[4] = LoadArchive("HighResTexturePack02.bsa");
+	get_archives()[5] = LoadArchive("HighResTexturePack03.bsa");
 	programGo();
 	first_person_camera = new FirstPersonCamera;
 	viewer_camera = new ViewerCamera;

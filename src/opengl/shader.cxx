@@ -132,7 +132,7 @@ void Shader::checkCompileErrors(GLuint shader, std::string type)
 		if (!success)
 		{
 			glGetShaderInfoLog(shader, 1024, NULL, infoLog);
-			printf("glGetShaderInfoLog for ", type, "\n", infoLog, "\n");
+			printf("glGetShaderInfoLog for %s\n %s\n", type.c_str(), infoLog);
 		}
 	}
 	else
@@ -141,7 +141,7 @@ void Shader::checkCompileErrors(GLuint shader, std::string type)
 		if (!success)
 		{
 			glGetProgramInfoLog(shader, 1024, NULL, infoLog);
-			printf("glGetProgramInfoLog for ", type, "\n", infoLog, "\n");
+			printf("glGetProgramInfoLog for %s\n %s\n", type.c_str(), infoLog);
 		}
 	}
 }

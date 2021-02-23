@@ -23,7 +23,7 @@ uniform sampler2D map;
 uniform sampler2D normalMap;
 uniform sampler2D glowMap;
 
-//#define PHYSICALLY_CORRECT_LIGHTS
+#define PHYSICALLY_CORRECT_LIGHTS
 
 #define USE_A_HEMISPHERE
 
@@ -408,7 +408,7 @@ void main()
 
 			PointLight b = PointLight(
 				a.package[0],
-				a.package[1] * 1.0,
+				a.package[1] * 5.0,
 				a.package[2][0],
 				a.package[2][1],
 				mat3(0.0));
@@ -420,7 +420,7 @@ void main()
 
 	#endif
 
-	#if ( NUM_SPOT_LIGHTS > 0 )
+	#if ( NUM_SPOT_LIGHTS > 3 )
 		SpotLight spotLight;
 		#if defined( USE_SHADOWMAP ) && NUM_SPOT_LIGHT_SHADOWS > 0
 			SpotLightShadow spotLightShadow;
@@ -428,11 +428,11 @@ void main()
 		//#pragma unroll_loop_start
 		for ( int i = 0; i < NUM_SPOT_LIGHTS; i ++ ) {
 			spotLight = spotLights[ i ];
-			spotLight.color *= 2.0;
-			spotLight.distance *= 20.0;
+			spotLight.color *= 1.0;
+			spotLight.distance *= 8.0;
 			//spotLight.direction = spotLight.direction;
-			spotLight.coneCos = cos(PI / 7.0);
-			spotLight.penumbraCos = cos(spotLight.coneCos * (1.0 - 1.0));
+			spotLight.coneCos = cos(PI / 4.2);
+			spotLight.penumbraCos = cos(spotLight.coneCos * (1.0 - 0.0));
 			//spotLight.direction = vec3(0, 0, 1) * mat3(inverse(view));
 			getSpotDirectLightIrradiance( spotLight, geometry, directLight );
 			#if defined( USE_SHADOWMAP ) && ( UNROLLED_LOOP_INDEX < NUM_SPOT_LIGHT_SHADOWS )
