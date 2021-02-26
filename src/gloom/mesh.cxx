@@ -30,7 +30,7 @@ namespace gloom
 	}
 
 	Mesh::~Mesh()
-	{		
+	{
 	}
 
 	static void other(Rd *, void *);
@@ -46,7 +46,6 @@ namespace gloom
 	static void ni_skin_instance_callback				(Rd *, ni_skin_instance_pointer *);
 	static void ni_skin_data_callback					(Rd *, ni_skin_data_pointer *);
 	static void ni_skin_partition_callback				(Rd *, ni_skin_partition_pointer *);
-
 
 	void Mesh::Construct(Nif *bucket)
 	{
@@ -229,29 +228,32 @@ namespace gloom
 		Geometry *geometry = mesh->lastGroup->geometry;
 		if (geometry)
 		{
-			geometry->material->color = vec3(1.0);
-			geometry->material->emissive = Gloom_Vec_3(block->B->emissive_color);
-			geometry->material->specular = Gloom_Vec_3(block->B->specular_color);
-			geometry->material->specular *= block->B->specular_strength;
-			geometry->material->opacity = block->B->alpha;
-			geometry->material->glossiness = block->B->glossiness;
+			Material *material = geometry->material;
+			material->color = vec3(1.0);
+			material->emissive = Gloom_Vec_3(block->B->emissive_color);
+			material->specular = Gloom_Vec_3(block->B->specular_color);
+			material->specular *= block->B->specular_strength;
+			material->opacity = block->B->alpha;
+			material->glossiness = block->B->glossiness;
 			if (block->B->shader_flags_1 & 0x00000002)
-				geometry->material->skinning = true;
+				material->skinning = true;
 			else
-				geometry->material->dust = true;
-			if (block->B->shader_flags_1 & 0x40000000)
-				geometry->material->decal = true;
+				material->dust = true;
+			if (block->B->shader_flags_1 & 0x04000000)
+				material->decal = true;
+			if (block->B->shader_flags_1 & 0x80000000) // dynamic
+				material->decal = true;
 			if (block->B->shader_flags_1 & 0x00001000)
 				//printf("Model_Space_Normals\n");
-				geometry->material->modelSpaceNormals = true;
+				material->modelSpaceNormals = true;
 			if (block->B->shader_flags_2 & 0x00000020)
-				geometry->material->vertexColors = true;
+				material->vertexColors = true;
 			if (block->B->shader_flags_2 & 0x00000010)
-				geometry->material->doubleSided = true;
+				material->doubleSided = true;
 			if (block->B->shader_flags_1 & 0x00000008)
-				geometry->material->defines += "#define VERTEX_ALPHA\n";
+				material->defines += "#define VERTEX_ALPHA\n";
 			if (block->B->shader_flags_2 & 0x20000000)
-				geometry->material->defines += "#define TREE_ANIM\n";
+				material->defines += "#define TREE_ANIM\n";
 		}
 	}
 
@@ -262,17 +264,18 @@ namespace gloom
 		Geometry *geometry = mesh->lastGroup->geometry;
 		if (geometry)
 		{
-			//geometry->material->src = &basic;
-			geometry->material->color = vec3(1.0);
-			geometry->material->emissive = Gloom_Vec_3(block->C->emissive_color);
-			geometry->material->map = GetProduceTexture(block->source_texture);
+			Material *material = geometry->material;
+			//material->src = &basic;
+			material->color = vec3(1.0);
+			material->emissive = Gloom_Vec_3(block->C->emissive_color);
+			material->map = GetProduceTexture(block->source_texture);
 			//printf("source texture is %s\n", block->source_texture);
 			if (block->B->shader_flags_2 & 0x00000020)
-				geometry->material->vertexColors = true;
+				material->vertexColors = true;
 			if (block->B->shader_flags_1 & 0x80000000) // z buffer test
-				0; // geometry->material->testing = true;
+				0;									   // material->testing = true;
 			if (block->B->shader_flags_2 & 0x00000001) // z buffer write
-				0; // geometry->material->testing = true;
+				0;									   // material->testing = true;
 		}
 	}
 
@@ -284,6 +287,7 @@ namespace gloom
 		Geometry *geometry = group->geometry;
 		if (geometry)
 		{
+			Material *material = geometry->material;
 			for (int i = 0; i < block->A->num_textures; i++)
 			{
 				std::string path = std::string(block->textures[i]);
@@ -292,11 +296,11 @@ namespace gloom
 				if (path.find("skyrimhd\\build\\pc\\data\\") != std::string::npos)
 					path = path.substr(23, std::string::npos);
 				if (i == 0)
-					geometry->material->map = GetProduceTexture(block->textures[i]);
+					material->map = GetProduceTexture(block->textures[i]);
 				if (i == 1)
-					geometry->material->normalMap = GetProduceTexture(block->textures[i]);
+					material->normalMap = GetProduceTexture(block->textures[i]);
 				if (i == 2)
-					geometry->material->glowMap = GetProduceTexture(block->textures[i]);
+					material->glowMap = GetProduceTexture(block->textures[i]);
 			}
 		}
 	}
@@ -307,23 +311,38 @@ namespace gloom
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
 		Geometry *geometry = group->geometry;
+		Material *material = geometry->material;
 		if (geometry)
 		{
-			/*
-			Spell::tr( "One" ),
-			Spell::tr( "Zero" ),
-			Spell::tr( "Src Color" ),
-			Spell::tr( "Inv Src Color" ),
-			Spell::tr( "Dst Color" ),
-			Spell::tr( "Inv Dst Color" ),
-			Spell::tr( "Src Alpha" ),
-			Spell::tr( "Inv Src Alpha" ),
-			Spell::tr( "Dst Alpha" ),
-			Spell::tr( "Inv Dst Alpha" ),
-			Spell::tr( "Src Alpha Saturate" )
-			*/
-			if (block->C->flags & 1)
-			geometry->material->treshold = block->C->treshold / 255.f;
+			const int blendModes[] = {
+				GL_ONE,
+				GL_ZERO,
+				GL_SRC_COLOR,
+				GL_ONE_MINUS_SRC_COLOR,
+				GL_DST_COLOR,
+				GL_ONE_MINUS_DST_COLOR,
+				GL_SRC_ALPHA,
+				GL_ONE_MINUS_SRC_ALPHA,
+				GL_DST_ALPHA,
+				GL_ONE_MINUS_DST_ALPHA,
+				GL_SRC_ALPHA_SATURATE};
+			const int testModes[] = {
+				GL_ALWAYS,
+				GL_LESS,
+				GL_EQUAL,
+				GL_LEQUAL,
+				GL_GREATER,
+				GL_NOTEQUAL,
+				GL_GEQUAL,
+				GL_NEVER};
+			unsigned short flags = block->C->flags;
+			material->blending = (bool)(flags & 1);
+			material->testing = (bool)(flags & (1 << 9));
+			int src = blendModes[flags >> 1 & 0x0f];
+			int dst = blendModes[flags >> 5 & 0x0f];
+			material->blendFunc = {src, dst};
+			material->treshold = block->C->treshold / 255.f;
+			material->testFunc = testModes[flags >> 10 & 0x07];
 		}
 	}
 

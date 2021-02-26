@@ -2,6 +2,7 @@
 
 #include <OpenGL/Camera.h>
 #include <OpenGL/Group.h>
+#include <OpenGL/DrawGroup.h>
 #include <OpenGL/Scene.h>
 
 #include <glm/gtc/matrix_transform.hpp>

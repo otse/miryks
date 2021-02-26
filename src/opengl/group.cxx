@@ -38,20 +38,20 @@ void Group::Update()
 		child->Update();
 }
 
-void Group::Draw(const mat4 &model)
+void Group::DrawSingle(const mat4 &model)
 {
 	mat4 place = model * matrixWorld;
 	if (geometry)
 		geometry->Draw(place);
 }
 
-void Group::Draws(const mat4 &model)
+void Group::DrawMultiple(const mat4 &model)
 {
 	if (!visible)
 		return;
-	Draw(model);
+	DrawSingle(model);
 	for (Group *child : groups)
-		child->Draws(model);
+		child->DrawMultiple(model);
 }
 
 void Group::Flatten(Group *root)

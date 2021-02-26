@@ -61,7 +61,7 @@ static void error_callback(int error, const char *description)
 	fprintf(stderr, "Error: %s\n", description);
 }
 
-static bool useFbo = false;
+static bool useFbo = true;
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -216,7 +216,7 @@ void gloom::programGo()
 #endif
 
 	glfwMakeContextCurrent(window);
-	glfwSwapInterval(1);
+	glfwSwapInterval(0); // vsync
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
@@ -306,13 +306,18 @@ void gloom::programLoop()
 
 		static bool doOnce = true;
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		glViewport(0, 0, gloom::width, gloom::height);
 
-		//if (useFbo)
-		renderRarget->Bind();
+		if (useFbo)
+		{
+			renderRarget->Bind();
+		}
+		else
+		{
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		}
 
 		glfwPollEvents();
 
@@ -337,9 +342,9 @@ void gloom::programLoop()
 
 		dungeon->Update();
 
-		collision_simulate();
+		//collision_simulate();
 
-		scene->Order();
+		//scene->Order();
 		scene->DrawItems();
 
 		Material::Unuse(nullptr, nullptr);
@@ -350,9 +355,11 @@ void gloom::programLoop()
 		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glViewport(0, 0, gloom::width, gloom::height);
 
-		quad.Draw(renderRarget);
+		if (useFbo)
+		{
+			quad.Draw(renderRarget);
+		}
 
 		doOnce = false;
 

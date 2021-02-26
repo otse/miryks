@@ -14,6 +14,8 @@
 #include <OpenGL/Texture.h>
 #include <OpenGL/Camera.h>
 #include <OpenGL/Lights.h>
+#include <OpenGL/Group.h>
+#include <OpenGL/DrawGroup.h>
 #include <OpenGL/Types.h>
 
 #include <imgui.h>
@@ -167,7 +169,7 @@ namespace gloom
 		{
 			if (baseObject.record->hed->formId != 0x32)
 			{
-				drawGroup = new DrawGroup(mesh->baseGroup, matrix);
+				drawGroup = new DrawGroupSortable(mesh->baseGroup, matrix);
 				scene->drawGroups.Add(drawGroup);
 			}
 		}

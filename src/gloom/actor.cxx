@@ -13,6 +13,7 @@
 #include <Gloom/Mesh.h>
 
 #include <OpenGL/Group.h>
+#include <OpenGL/DrawGroup.h>
 #include <OpenGL/Scene.h>
 #include <OpenGL/Camera.h>
 

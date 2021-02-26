@@ -113,7 +113,7 @@ void main()
 	// Gamma correction 
 	mapped = pow(mapped, vec3(1.0 / gamma));
 
-	//mapped = uchimura(hdrColor);
+	mapped = uchimura(hdrColor);
 	//mapped = hdrColor;
 
 	//vec4 tex = texture2D(texture, uv);

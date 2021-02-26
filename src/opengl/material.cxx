@@ -24,6 +24,8 @@ Material::Material()
 	transparent = doubleSided = blending = testing = decal = tangents = skinning = false;
 	dust = modelSpaceNormals = vertexColors = false;
 
+	testFunc = GL_LESS;
+
 	opacity = 1;
 	treshold = 0;
 	shininess = 5;
@@ -31,7 +33,7 @@ Material::Material()
 	rotation = 0;
 	bones = 0;
 
-	depth_func = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
+	blendFunc = {GL_ONE, GL_ONE_MINUS_SRC_ALPHA};
 
 	offset = vec2(0);
 	repeat = vec2(1);
@@ -133,6 +135,7 @@ void Material::setUvTransformDirectly(
 
 void Material::Use()
 {
+	
 	if (!prepared)
 	{
 		//cassert(prepared, "use material->Ready() when you are done setting fields for it");
@@ -142,7 +145,7 @@ void Material::Use()
 
 	if (this == active)
 		return;
-
+		
 	Unuse(active, this);
 
 	shader->Use();
@@ -168,6 +171,11 @@ void Material::Use()
 		}
 	}
 
+	//glDisable(GL_DEPTH_TEST)
+
+	//glDepthFunc(GL_ALWAYS​);
+	//glDepthMask(GL_FALSE);
+
 	if (map)
 	{
 		glActiveTexture(GL_TEXTURE0 + 0);
@@ -186,22 +194,24 @@ void Material::Use()
 		glBindTexture(GL_TEXTURE_2D, glowMap->tid);
 		shader->SetInt("glowMap", 2);
 	}
+	if (testing)
+		glDepthFunc(GL_LEQUAL);
 	if (decal)
 	{
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(-2.f, -2.f);
+		//glEnable(GL_POLYGON_OFFSET_FILL);
+		//glPolygonOffset(-50.f, 50.f);
+		glDepthFunc(GL_LEQUAL);
+		//glDisable(GL_DEPTH_TEST);
 	}
 	if (blending)
 	{
 		glEnable(GL_BLEND);
-		glBlendFunc(depth_func.sfactor, depth_func.dfactor);
+		glBlendFunc(blendFunc.sfactor, blendFunc.dfactor);
 	}
-	if (testing)
-		glDepthFunc(GL_LEQUAL);
 	if (transparent)
 	{
 		glDepthMask(GL_FALSE);
-		glDepthFunc(GL_LESS);
+		//glDepthFunc(GL_LESS);
 	}
 	if (doubleSided)
 		glDisable(GL_CULL_FACE);
@@ -226,19 +236,21 @@ void Material::Unuse(Material *a, Material *b)
 		glActiveTexture(GL_TEXTURE0 + 2);
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
+	if (!a || a->testing && !b->testing)
+		glDepthFunc(GL_LESS);
 	if (!a || a->decal && !b->decal)
 	{
-		glDisable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(0, 0);
+		//glDisable(GL_POLYGON_OFFSET_FILL);
+		//glPolygonOffset(0, 0);
+		glDepthFunc(GL_LESS);
+		//glEnable(GL_DEPTH_TEST);
 	}
 	if (!a || a->blending && !b->blending)
 		glDisable(GL_BLEND);
-	if (!a || a->testing && !b->testing)
-		glDepthFunc(GL_LEQUAL);
 	if (!a || a->transparent && !b->transparent)
 	{
 		glDepthMask(GL_TRUE);
-		glDepthFunc(GL_LEQUAL);
+		//glDepthFunc(GL_LESS);
 	}
 	if (!a || a->doubleSided && !b->doubleSided)
 		glEnable(GL_CULL_FACE);

@@ -90,7 +90,7 @@ float punctualLightIntensityToIrradianceFactor( const in float lightDistance, co
 	return 1.0;
 }
 
-#define NUM_POINT_LIGHTS 9
+#define NUM_POINT_LIGHTS 6
 
 #if NUM_POINT_LIGHTS > 0
 

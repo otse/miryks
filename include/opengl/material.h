@@ -19,6 +19,8 @@ struct Material
 	bool transparent, doubleSided, blending, testing, decal, tangents, skinning;
 	bool dust, modelSpaceNormals, vertexColors;
 
+	int testFunc;
+
 	float opacity, treshold, shininess, glossiness, rotation;
 	vec2 offset, repeat, center;
 	vec3 color, specular, emissive;
@@ -47,10 +49,10 @@ struct Material
 	void composeUvTransform();
 	void setUvTransformDirectly(float, float, float, float, float, float, float);
 
-	struct depth_func_t
+	struct BlendFunc
 	{
 		int sfactor, dfactor;
-	} depth_func;
+	} blendFunc;
 };
 
 #endif

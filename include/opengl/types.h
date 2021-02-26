@@ -33,7 +33,9 @@ struct SpotLightShadow;
 
 struct List;
 struct Group;
+struct GroupBounded;
 struct DrawGroup;
+struct DrawGroupSortable;
 
 struct Texture;
 struct Geometry;

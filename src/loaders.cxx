@@ -4,6 +4,7 @@
 #include <Gloom/Files.h>
 
 #include <OpenGL/Group.h>
+#include <OpenGL/DrawGroup.h>
 #include <OpenGL/Camera.h>
 #include <OpenGL/Scene.h>
 

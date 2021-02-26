@@ -4,10 +4,12 @@
 
 #include <OpenGL/Aabb.h>
 #include <OpenGL/Group.h>
-// #include <OpenGL/renderable.h>
+#include <OpenGL/DrawGroup.h>
 #include <OpenGL/Material.h>
 #include <OpenGL/Shader.h>
 #include <OpenGL/Lights.h>
+
+#include <algorithm>
 
 static PointLight *bpoint;
 static SpotLight *bspot;
@@ -32,10 +34,22 @@ void Scene::Clear()
 	//groups2.clear();
 }
 
+void Scene::Order()
+{
+}
+
 void Scene::DrawItems()
 {
 	//CalcLights();
 	SortLights();
+
+	auto EarlyZKills = [](const DrawGroup *a, const DrawGroup *b) -> bool {
+		if (a->GetZ() < b->GetZ())
+			return true;
+		return false;
+	};
+
+	//std::sort(drawGroups.ts.begin(), drawGroups.ts.end(), EarlyZKills);
 
 	for (DrawGroup *drawGroup : drawGroups.ts)
 		drawGroup->Draw();
@@ -47,24 +61,23 @@ void Scene::CalcLights()
 		//pl->Calc();
 }
 
-#include <algorithm>
 
 void Scene::SortLights()
 {
-	auto sort_distance = [](const Light *a, const Light *b) -> bool {
+	auto DistanceSort = [](const Light *a, const Light *b) -> bool {
 		if (a->CalcDist() < b->CalcDist())
 			return true;
 		return false;
 	};
 
-	sort(pointLights.ts.begin(), pointLights.ts.end(), sort_distance);
+	sort(pointLights.ts.begin(), pointLights.ts.end(), DistanceSort);
 }
 
 void Scene::BindLights(Shader *shader)
 {
 	shader->SetVec3("ambientLightColor", ambient);
 
-	for (unsigned int i = 0; i < 9; i++)
+	for (unsigned int i = 0; i < 6; i++)
 	{
 		PointLight *l = bpoint;
 
@@ -130,8 +143,4 @@ void Scene::BindLights(Shader *shader)
 		shader->SetFloat((index + ".penumbraCos").c_str(), glm::cos(sl->angle * (1.f - sl->penumbra)));
 		shader->SetFloat((index + ".decay").c_str(), sl->decay);
 	}
-}
-
-void Scene::Order()
-{
 }
