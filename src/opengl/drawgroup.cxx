@@ -6,7 +6,8 @@
 
 #include <algorithm>
 
-DrawGroup::DrawGroup(Group *group, mat4 matrix) : group(group), matrix(matrix)
+DrawGroup::DrawGroup(Group *group, mat4 matrix)
+	: group(group), matrix(matrix)
 {
 	Reset();
 }

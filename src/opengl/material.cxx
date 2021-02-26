@@ -198,8 +198,8 @@ void Material::Use()
 		glDepthFunc(GL_LEQUAL);
 	if (decal)
 	{
-		//glEnable(GL_POLYGON_OFFSET_FILL);
-		//glPolygonOffset(-50.f, 50.f);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(-1.f, -1.f);
 		glDepthFunc(GL_LEQUAL);
 		//glDisable(GL_DEPTH_TEST);
 	}
@@ -240,7 +240,7 @@ void Material::Unuse(Material *a, Material *b)
 		glDepthFunc(GL_LESS);
 	if (!a || a->decal && !b->decal)
 	{
-		//glDisable(GL_POLYGON_OFFSET_FILL);
+		glDisable(GL_POLYGON_OFFSET_FILL);
 		//glPolygonOffset(0, 0);
 		glDepthFunc(GL_LESS);
 		//glEnable(GL_DEPTH_TEST);

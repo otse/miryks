@@ -241,7 +241,7 @@ namespace gloom
 				material->dust = true;
 			if (block->B->shader_flags_1 & 0x04000000)
 				material->decal = true;
-			if (block->B->shader_flags_1 & 0x80000000) // dynamic
+			if (block->B->shader_flags_1 & 0x08000000) // dynamic
 				material->decal = true;
 			if (block->B->shader_flags_1 & 0x00001000)
 				//printf("Model_Space_Normals\n");

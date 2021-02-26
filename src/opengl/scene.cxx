@@ -49,7 +49,7 @@ void Scene::DrawItems()
 		return false;
 	};
 
-	//std::sort(drawGroups.ts.begin(), drawGroups.ts.end(), EarlyZKills);
+	std::sort(drawGroups.ts.begin(), drawGroups.ts.end(), EarlyZKills);
 
 	for (DrawGroup *drawGroup : drawGroups.ts)
 		drawGroup->Draw();
