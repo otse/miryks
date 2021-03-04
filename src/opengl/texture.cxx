@@ -22,14 +22,18 @@ inline std::string lowercase(const char *c)
 
 Texture *GetProduceTexture(const char *path)
 {
-	// printf("get texture %s\n", path);
+	// printf("getproducetexture %s\n", path);
 	std::string lower = lowercase(path);
 	if (textures.count(lower) == 0)
 		textures.emplace(lower, new Texture(lower));
 	return textures[lower];
 }
 
-int outed = 0;
+bool test = false;
+
+Texture::Texture()
+{
+}
 
 Texture::Texture(const std::string &path) : path(path)
 {
@@ -42,16 +46,11 @@ Texture::Texture(const std::string &path) : path(path)
 	bsa_read(rc);
 	buf = rc->buf;
 	size = rc->size;
-	// Write out test.dds
-	// Usually this was a bucket
-	// But recently its just dirt
-#if 1
-	if (!outed)
+	if (!test)
 	{
-		outed = 1;
 		cfout2("test.dds", rc->buf, rc->size);
+		test = true;
 	}
-#endif
 	Load();
 }
 Texture::~Texture() {}

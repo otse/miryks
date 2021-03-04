@@ -454,7 +454,7 @@ void main()
 	vec3 localAmbient = ambientLightColor; // vec3(20.0 / 255.0);
 	vec3 irradiance = localAmbient * PI;
 
-	#define DONT_USE_A_HEMISPHEREx
+	#define DONT_USE_A_HEMISPHERE
 	#ifndef DONT_USE_A_HEMISPHERE
 
 		float dot_nl = dot( geometry.normal, hemiLight.direction );

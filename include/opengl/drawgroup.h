@@ -17,6 +17,7 @@ struct DrawGroup
 	void DrawBounds();
 	virtual void Draw();
 	virtual void Reset();
+	void Rebound();
 	float GetZ() const;
 };
 

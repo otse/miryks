@@ -48,6 +48,7 @@ namespace gloom
 
 	Rc *LoadRc(const char *, const char *, unsigned long);
 	Nif *LoadNif(Rc *, bool);
+	Mesh *LoadMesh(Object &baseObject);
 	Plugin *LoadPlugin(const char *);
 	Archive *LoadArchive(const char *);
 

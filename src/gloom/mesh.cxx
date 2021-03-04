@@ -8,20 +8,6 @@
 
 namespace gloom
 {
-	static std::map<void *, Mesh *> store;
-
-	void StoreMesh(void *key, Mesh *mesh)
-	{
-		store.emplace(key, mesh);
-	}
-
-	Mesh *GetStoredMesh(void *key)
-	{
-		if (store.count(key))
-			return store[key];
-		return nullptr;
-	}
-
 	Mesh::Mesh()
 	{
 		baseGroup = new GroupBounded();

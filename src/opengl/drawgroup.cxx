@@ -14,6 +14,11 @@ DrawGroup::DrawGroup(Group *group, mat4 matrix)
 
 void DrawGroup::Reset()
 {
+	Rebound();
+}
+
+void DrawGroup::Rebound()
+{
 	GroupBounded *bounded = dynamic_cast<GroupBounded *>(group);
 	if (bounded)
 	{

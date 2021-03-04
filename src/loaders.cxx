@@ -1,5 +1,6 @@
 #include <libs>
 #include <Gloom/Dark2.h>
+#include <Gloom/Object.h>
 #include <Gloom/Mesh.h>
 #include <Gloom/Files.h>
 
@@ -7,7 +8,6 @@
 #include <OpenGL/DrawGroup.h>
 #include <OpenGL/Camera.h>
 #include <OpenGL/Scene.h>
-
 
 #include <algorithm>
 
@@ -22,7 +22,7 @@ namespace gloom
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
 		const char *s = str.c_str();
 		Rc *rc = bsa_find_more(s, flags);
-		if(!rc)
+		if (!rc)
 			printf("no rc at %s\n", s);
 		bsa_read(rc);
 		return rc;
@@ -43,6 +43,24 @@ namespace gloom
 		if (useCache)
 			nifp_save(rc, nif);
 		return nif;
+	}
+
+	Mesh *LoadMesh(Object &baseObject)
+	{
+		static std::map<const char *, Mesh *> meshes;
+		auto modl = baseObject.Data<const char *>("MODL", 0);
+		if (!modl)
+			return nullptr;
+		if (meshes.count(modl))
+			return meshes[modl];
+		Rc *rc = LoadRc("meshes\\", modl, 0x1);
+		if (!rc)
+			return nullptr;
+		Nif *nif = LoadNif(rc, true);
+		Mesh *mesh = new Mesh;
+		mesh->Construct(nif);
+		meshes.emplace(modl, mesh);
+		return mesh;
 	}
 
 	Plugin *LoadPlugin(const char *filename)
@@ -75,10 +93,6 @@ namespace gloom
 			return bsa_load(path.c_str());
 		else
 			return bsa_load(filename);
-		return nullptr;
-	}
-
-	Mesh *loadMesh() {
 		return nullptr;
 	}
 

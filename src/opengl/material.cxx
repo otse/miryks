@@ -135,10 +135,8 @@ void Material::setUvTransformDirectly(
 
 void Material::Use()
 {
-	
 	if (!prepared)
 	{
-		//cassert(prepared, "use material->Ready() when you are done setting fields for it");
 		Ready();
 		prepared = true;
 	}

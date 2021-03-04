@@ -97,7 +97,7 @@ namespace gloom
 		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT",
 								  "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
-			mesh = util::GrantMesh(baseObject);
+			mesh = LoadMesh(baseObject);
 		}
 		else if (baseObject.IsType("LIGH"))
 		{

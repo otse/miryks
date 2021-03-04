@@ -15,6 +15,7 @@ struct Texture
 	const unsigned char *buf = nullptr;
 	const std::string path;
 //protected:
+	Texture();
 	Texture(const std::string &);
 	~Texture();
 	void Load();

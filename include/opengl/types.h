@@ -40,6 +40,7 @@ struct DrawGroupSortable;
 struct Texture;
 struct Geometry;
 struct Material;
+struct MaterialPhong;
 struct Shader;
 struct Program;
 struct RenderTarget;

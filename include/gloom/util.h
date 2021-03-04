@@ -10,14 +10,7 @@ namespace gloom
 {
 	namespace util
 	{
-		template <typename F>
-		void GrupEach(F &lambda)
-		{
-			bool stop = false;
-			//Objects(grup).ForEach(0, stop, lambda);
-		}
 
-		Mesh *GrantMesh(Object &baseObject);
 	}
 
 } // namespace gloom
