@@ -5,50 +5,13 @@
 
 #include <OpenGL/Types.h>
 
-struct Grup;
-struct Record;
-struct Subrecord;
-struct Rc;
-struct Esp;
-struct Bsa;
-struct Nifp;
-struct NifpRd;
-
-// straightforwarddefs
-typedef Esp Plugin;
-typedef Bsa Archive;
-typedef Nifp Nif;
-typedef NifpRd Rd;
-typedef Subrecord Field;
+#include "defs"
 
 namespace gloom
 {
-};
-namespace Glm = gloom;
-
-namespace gloom
-{
-	class Obj;
-	class Ref;
-	class Object;
-	class ObjectArray;
-	class Interior;
-	class Mesh;
-	class SkinnedMesh;
-	class Actor;
-	class Human;
-	class Player;
-	class Skeleton;
-	class Bone;
-	class Keyframes;
-	class Animation;
-	class CSphere;
-	class CShape;
-	class Collider;
-
 	Rc *LoadRc(const char *, const char *, unsigned long);
 	Nif *LoadNif(Rc *, bool);
-	Mesh *LoadMesh(Object &baseObject);
+	Mesh *LoadMesh(const char *, bool);
 	Plugin *LoadPlugin(const char *);
 	Archive *LoadArchive(const char *);
 

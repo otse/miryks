@@ -1,5 +1,5 @@
 #include <libs>
-#include <Gloom/Dark2.h>
+#include <Gloom/Gloom.h>
 #include <Gloom/Obj.h>
 
 #include <algorithm>
@@ -40,10 +40,17 @@ namespace gloom
 	float delta = 1;
 } // namespace gloom
 
+void customLoad()
+{
+	if (!exists_test3("custom.txt"))
+		fwrite("custom.txt", "# put your plugins and archives here with line breaks\n");
+}
+
 int main()
 {
 	using namespace gloom;
 	printf("loading\n");
+	customLoad();
 	pathToOldrim = fread("path to oldrim.txt");
 	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
 	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe, check your path");

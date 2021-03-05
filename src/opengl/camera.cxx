@@ -1,4 +1,4 @@
-#include <Gloom/Dark2.h>
+#include <Gloom/Gloom.h>
 
 #include <OpenGL/Camera.h>
 #include <OpenGL/Group.h>

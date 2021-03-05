@@ -2,7 +2,7 @@
 
 // part of gloom
 
-#include <Gloom/Dark2.h>
+#include <Gloom/Gloom.h>
 
 #include <Gloom/Ref.h>
 

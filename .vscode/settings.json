@@ -95,6 +95,7 @@
         "skyrim_libs": "cpp",
         "units": "cpp",
         "stat.h": "c",
-        "esp.h": "c"
+        "esp.h": "c",
+        "defs": "cpp"
     }
 }

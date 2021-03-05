@@ -1,5 +1,5 @@
 #include <libs>
-#include <Gloom/Dark2.h>
+#include <Gloom/Gloom.h>
 #include <Gloom/Object.h>
 #include <Gloom/Mesh.h>
 #include <Gloom/Files.h>
@@ -30,7 +30,7 @@ namespace gloom
 
 	Nif *LoadNif(Rc *rc, bool useCache = true)
 	{
-		cassert(rc, "mh no rc");
+		cassert(rc, "bad rc at nif loader");
 		Nif *nif;
 		nif = nifp_saved(rc);
 		if (useCache && nif != NULL)
@@ -45,21 +45,19 @@ namespace gloom
 		return nif;
 	}
 
-	Mesh *LoadMesh(Object &baseObject)
+	Mesh *LoadMesh(const char *model, bool useCache = true)
 	{
 		static std::map<const char *, Mesh *> meshes;
-		auto modl = baseObject.Data<const char *>("MODL", 0);
-		if (!modl)
-			return nullptr;
-		if (meshes.count(modl))
-			return meshes[modl];
-		Rc *rc = LoadRc("meshes\\", modl, 0x1);
+		if (meshes.count(model) && useCache)
+			return meshes[model];
+		Rc *rc = LoadRc("meshes\\", model, 0x1);
 		if (!rc)
 			return nullptr;
 		Nif *nif = LoadNif(rc, true);
 		Mesh *mesh = new Mesh;
 		mesh->Construct(nif);
-		meshes.emplace(modl, mesh);
+		if (useCache)
+			meshes.emplace(model, mesh);
 		return mesh;
 	}
 
@@ -69,11 +67,12 @@ namespace gloom
 		std::string path = pathToOldrim + dataFolder + filename;
 		char *buf;
 		int ret;
+		// todo search ../ as well
 		if ((ret = fbuf(filename, &buf)) == -1)
 			ret = fbuf(path.c_str(), &buf);
 		if (ret == -1)
 		{
-			printf(" Couldn't resolve (Data/)%s \n", filename);
+			printf("couldn't find %s anywhere\n", filename);
 			exit(1);
 			return nullptr;
 		}

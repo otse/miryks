@@ -1,5 +1,5 @@
 #include <libs>
-#include <Gloom/Dark2.h>
+#include <Gloom/Gloom.h>
 #include <Gloom/Files.h>
 
 #include <OpenGL/RT.h>

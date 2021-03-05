@@ -97,7 +97,15 @@ namespace gloom
 		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT",
 								  "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
-			mesh = LoadMesh(baseObject);
+			auto modl = baseObject.Data<const char *>("MODL", 0);
+			if (!modl)
+			{
+				printf("um no modl here\n");
+			}
+			else
+			{
+				mesh = LoadMesh(modl, true);
+			}
 		}
 		else if (baseObject.IsType("LIGH"))
 		{

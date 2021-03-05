@@ -2,7 +2,7 @@
 
 // part of gloom
 
-#include <Gloom/Dark2.h>
+#include <Gloom/Gloom.h>
 
 #include <OpenGL/Aabb.h>
 #include <OpenGL/Types.h>
