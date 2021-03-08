@@ -22,17 +22,17 @@ namespace gloom
 		Skeleton();
 
 		std::map<ni_ref, Bone *> bones;
-		std::map<const std::string, Bone *> bones_named;
+		std::map<const std::string, Bone *> bonesNamed;
 
 		Nif *nif;
 		Bone *baseBone, *lastBone;
 		Animation *animation;
 
-		Bone *Nested(Rd *, int);
+		Bone *nested(Rd *, int);
 
-		void Load(const char *);
-		void Construct();
-		void Step();
+		void load(const char *);
+		void construct();
+		void step();
 	};
 
 	class Bone
@@ -61,10 +61,9 @@ namespace gloom
 	public:
 		Animation(Keyframes *keyframes) : keyframes(keyframes)
 		{
-			//csp
 		}
-		void Step();
-		void SimpleNonInterpolated();
+		void step();
+		void simpleNonInterpolated();
 		Skeleton *skeleton = nullptr;
 		float time = 0;
 		bool play = true;

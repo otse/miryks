@@ -22,7 +22,6 @@ namespace gloom
 		std::vector<Obj *> objs;
 
 		void Add(Obj *);
-
 		void Remove(Obj *);
 	};
 	class Obj

@@ -7,17 +7,17 @@
 
 namespace gloom
 {
-	const char *GetEditorIdOnly(Record *record)
+	const char *getEditorIdOnly(Record *record)
 	{
 		return (const char *)record->fields.subrecords[0]->data;
 	}
 
-	const char *GetEditorId(Object &object)
+	const char *getEditorId(Object &object)
 	{
 		return object.Data<const char *>("EDID", 0);
 	}
 
-	unsigned int *GetBaseId(Object &object)
+	unsigned int *getBaseId(Object &object)
 	{
 		return object.Data<unsigned int *>("NAME", 0);
 	}
@@ -27,29 +27,12 @@ namespace gloom
 	//	return (Field *)record->fields.subrecords[i];
 	//}
 
-	void gloom_objects_test(Record *record)
-	{
-		Object object(record);
-		if (object.IsType("REFR"))
-		{
-			auto formId = GetBaseId(object);
-			auto editorId = GetEditorId(object);
-			if (formId)
-			{
-				Object baseObject((Record *)formId);
-				bool plant_or_weapon = baseObject.IsTypeAny({"FLOR", "WEAP"});
-			}
-			if (object.Count("MEOW") > 2)
-				auto third = object.Data("MEOW", 2); // Get the third field
-		}
-	}
-
 	Object::Object(Record *record)
 	{
-		Set(record);
+		set(record);
 	}
 
-	void Object::Set(Record *record) {
+	void Object::set(Record *record) {
 		fields.clear();
 		this->record = record;
 		if (record == nullptr)
@@ -62,7 +45,7 @@ namespace gloom
 		}
 	}
 
-	Field *Object::EqualRange(const char *type, int skip) const
+	Field *Object::equalRange(const char *type, int skip) const
 	{
 		Field *sub = nullptr;
 		auto st = fields.equal_range(*(unsigned int *)type);

@@ -40,13 +40,13 @@ namespace gloom
 
 		std::map<std::string, Ref *> editorIds;
 
-		static Cell GetCell(const char *);
+		static Cell getCell(const char *);
 		
-		void Update();
-		void LoadCell();
-		void Unload();
-		void PlaceCamera();
+		void update();
+		void loadCell();
+		void unload();
+		void placeCamera();
 		
-		void ParseGrup(Cell &, Grup *);
+		void parseGrup(Cell &, Grup *);
 	};
 } // namespace gloom

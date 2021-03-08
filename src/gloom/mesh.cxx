@@ -8,17 +8,6 @@
 
 namespace gloom
 {
-	Mesh::Mesh()
-	{
-		baseGroup = new GroupBounded();
-		groups[-1] = baseGroup;
-		lastGroup = baseGroup;
-	}
-
-	Mesh::~Mesh()
-	{
-	}
-
 	static void other(Rd *, void *);
 	static void ni_node_callback						(Rd *, ni_node_pointer *);
 	static void ni_node_callback_2						(Rd *, ni_node_pointer *);
@@ -33,11 +22,19 @@ namespace gloom
 	static void ni_skin_data_callback					(Rd *, ni_skin_data_pointer *);
 	static void ni_skin_partition_callback				(Rd *, ni_skin_partition_pointer *);
 
-	void Mesh::Construct(Nif *bucket)
+	Mesh::Mesh()
 	{
-		nif = bucket;
+		baseGroup = new GroupBounded();
+		groups[-1] = baseGroup;
+		lastGroup = baseGroup;
+	}
+	Mesh::~Mesh()
+	{
+	}
+	void Mesh::construct()
+	{
 		Rd *rd = malloc_nifprd();
-		rd->nif = bucket;
+		rd->nif = nif;
 		rd->data = this;
 		rd->other = other;
 		rd->ni_node = ni_node_callback;
@@ -51,11 +48,10 @@ namespace gloom
 		free_nifprd(&rd);
 		baseGroup->Update();
 	}
-
-	void SkinnedMesh::Construct()
+	void SkinnedMesh::construct()
 	{
+		// second pass rd
 		cassert(skeleton, "smesh needs skeleton");
-		// "Second pass" Rd
 		Rd *rd = malloc_nifprd();
 		rd->nif = mesh->nif;
 		rd->data = this;
@@ -67,10 +63,9 @@ namespace gloom
 		rd->ni_skin_partition = ni_skin_partition_callback;
 		nifp_rd(rd);
 		free_nifprd(&rd);
-		Initial();
+		initial();
 	}
-
-	void SkinnedMesh::Initial()
+	void SkinnedMesh::initial()
 	{
 		for (ni_ref index : shapes)
 		{
@@ -90,8 +85,8 @@ namespace gloom
 				{
 					auto node = (ni_node_pointer *)nifp_get_block(mesh->nif, skin_instance->bones[part->bones[i]]);
 					char *name = nifp_get_string(mesh->nif, node->common->A->name);
-					auto has = skeleton->bones_named.find(name);
-					if (has == skeleton->bones_named.end())
+					auto has = skeleton->bonesNamed.find(name);
+					if (has == skeleton->bonesNamed.end())
 					{
 						material->boneMatrices.push_back(mat4(1.0));
 						continue;
@@ -102,15 +97,13 @@ namespace gloom
 			}
 		}
 	}
-
-	void SkinnedMesh::Forward()
+	void SkinnedMesh::forward()
 	{
 		if (skeleton)
-			skeleton->Step();
-		Initial();
+			skeleton->step();
+		initial();
 	}
-
-	Group *Mesh::Nested(Rd *rd)
+	Group *Mesh::nested(Rd *rd)
 	{
 		Group *group = new GroupBounded();
 		groups[rd->current] = group;
@@ -118,33 +111,29 @@ namespace gloom
 		lastGroup = group;
 		return group;
 	}
-
 	void other(Rd *rd, void *block_pointer)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
 		//printf("Rd unhandled other block type %s\n", nifp_get_block_type(rd->nif, rd->current));
 	}
-
 	void matrix_from_common(Group *group, ni_common_layout_pointer *common)
 	{
-		group->matrix = translate(group->matrix, Gloom_Vec_3(common->C->translation));
-		group->matrix *= inverse(mat4(Gloom_Mat_3(common->C->rotation)));
+		group->matrix = translate(group->matrix, gloomVec3(common->C->translation));
+		group->matrix *= inverse(mat4(gloomMat3(common->C->rotation)));
 		group->matrix = scale(group->matrix, vec3(common->C->scale));
 	}
-
 	void ni_node_callback(Rd *rd, ni_node_pointer *block)
 	{
 		// printf("ni node callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
-		Group *group = mesh->Nested(rd);
+		Group *group = mesh->nested(rd);
 		matrix_from_common(group, block->common);
 	}
-
 	void ni_tri_shape_callback(Rd *rd, ni_tri_shape_pointer *block)
 	{
 		// printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
-		Group *group = mesh->Nested(rd);
+		Group *group = mesh->nested(rd);
 		matrix_from_common(group, block->common);
 		if (strstr(nifp_get_string(rd->nif, block->common->A->name), "Marker") != NULL)
 			group->visible = false;
@@ -154,7 +143,6 @@ namespace gloom
 			group->geometry->material->src = &simple;
 		}
 	}
-
 	void ni_node_callback_2(Rd *rd, ni_node_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
@@ -165,13 +153,11 @@ namespace gloom
 		//if (group->geometry)
 		//	group->geometry->material->color = vec3(1);
 	}
-
 	void ni_tri_shape_callback_2(Rd *rd, ni_tri_shape_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		smesh->lastShape = smesh->mesh->groups[rd->current];
 	}
-
 	void ni_tri_shape_data_callback(Rd *rd, ni_tri_shape_data_pointer *block)
 	{
 		// printf("ni tri shape data callback\n");
@@ -191,22 +177,21 @@ namespace gloom
 		}
 		for (int i = 0; i < block->A->num_vertices; i++)
 		{
-			geometry->vertices[i].position = Gloom_Vec_3(block->vertices[i]);
+			geometry->vertices[i].position = gloomVec3(block->vertices[i]);
 			if (block->C->bs_vector_flags & 0x00000001)
 				geometry->vertices[i].uv = *cast_vec_2((float *)&block->uv_sets[i]);
-			geometry->vertices[i].normal = Gloom_Vec_3(block->normals[i]);
+			geometry->vertices[i].normal = gloomVec3(block->normals[i]);
 			if (block->C->bs_vector_flags & 0x00001000)
 			{
 				geometry->material->tangents = true;
-				geometry->vertices[i].tangent = Gloom_Vec_3(block->tangents[i]);
-				geometry->vertices[i].bitangent = Gloom_Vec_3(block->bitangents[i]);
+				geometry->vertices[i].tangent = gloomVec3(block->tangents[i]);
+				geometry->vertices[i].bitangent = gloomVec3(block->bitangents[i]);
 			}
 			if (block->G->has_vertex_colors)
-				geometry->vertices[i].color = Gloom_Vec_4(block->vertex_colors[i]);
+				geometry->vertices[i].color = gloomVec4(block->vertex_colors[i]);
 		}
 		geometry->SetupMesh();
 	}
-
 	void bs_lighting_shader_property_callback(Rd *rd, bs_lighting_shader_property_pointer *block)
 	{
 		// printf("bs lighting shader property callback\n");
@@ -216,8 +201,8 @@ namespace gloom
 		{
 			Material *material = geometry->material;
 			material->color = vec3(1.0);
-			material->emissive = Gloom_Vec_3(block->B->emissive_color);
-			material->specular = Gloom_Vec_3(block->B->specular_color);
+			material->emissive = gloomVec3(block->B->emissive_color);
+			material->specular = gloomVec3(block->B->specular_color);
 			material->specular *= block->B->specular_strength;
 			material->opacity = block->B->alpha;
 			material->glossiness = block->B->glossiness;
@@ -242,7 +227,6 @@ namespace gloom
 				material->defines += "#define TREE_ANIM\n";
 		}
 	}
-
 	void bs_effect_shader_property_callback(Rd *rd, bs_effect_shader_property_pointer *block)
 	{
 		//printf(" mesh bs effect shader cb ");
@@ -253,7 +237,7 @@ namespace gloom
 			Material *material = geometry->material;
 			//material->src = &basic;
 			material->color = vec3(1.0);
-			material->emissive = Gloom_Vec_3(block->C->emissive_color);
+			material->emissive = gloomVec3(block->C->emissive_color);
 			material->map = GetProduceTexture(block->source_texture);
 			//printf("source texture is %s\n", block->source_texture);
 			if (block->B->shader_flags_2 & 0x00000020)
@@ -264,7 +248,6 @@ namespace gloom
 				0;									   // material->testing = true;
 		}
 	}
-
 	void bs_shader_texture_set_callback(Rd *rd, bs_shader_texture_set_pointer *block)
 	{
 		// printf("bs shader texture set callback\n");
@@ -290,7 +273,6 @@ namespace gloom
 			}
 		}
 	}
-
 	void ni_alpha_property_callback(Rd *rd, ni_alpha_property_pointer *block)
 	{
 		// printf("ni alpha property");
@@ -331,7 +313,6 @@ namespace gloom
 			material->testFunc = testModes[flags >> 10 & 0x07];
 		}
 	}
-
 	void ni_skin_instance_callback(Rd *rd, ni_skin_instance_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
@@ -340,12 +321,10 @@ namespace gloom
 		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
 		smesh->shapes.push_back(rd->parent);
 	}
-
 	void ni_skin_data_callback(Rd *rd, ni_skin_data_pointer *block)
 	{
 		//
 	}
-
 	void ni_skin_partition_callback(Rd *rd, ni_skin_partition_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
@@ -375,26 +354,26 @@ namespace gloom
 				if (!*part->has_vertex_map)
 					break;
 				unsigned short j = part->vertex_map[i];
-				geometry->vertices[i].position = Gloom_Vec_3(data->vertices[j]);
+				geometry->vertices[i].position = gloomVec3(data->vertices[j]);
 				if (data->C->bs_vector_flags & 0x00000001)
 					geometry->vertices[i].uv = *cast_vec_2((float *)&data->uv_sets[j]);
 				if (data->C->has_normals)
-					geometry->vertices[i].normal = Gloom_Vec_3(data->normals[j]);
+					geometry->vertices[i].normal = gloomVec3(data->normals[j]);
 				if (data->C->bs_vector_flags & 0x00001000)
 				{
 					smesh->lastShape->geometry->material->tangents = true;
-					geometry->vertices[i].tangent = Gloom_Vec_3(data->tangents[j]);
-					geometry->vertices[i].bitangent = Gloom_Vec_3(data->bitangents[j]);
+					geometry->vertices[i].tangent = gloomVec3(data->tangents[j]);
+					geometry->vertices[i].bitangent = gloomVec3(data->bitangents[j]);
 				}
 				if (data->G->has_vertex_colors)
-					geometry->vertices[i].color = Gloom_Vec_4(data->vertex_colors[j]);
+					geometry->vertices[i].color = gloomVec4(data->vertex_colors[j]);
 				if (*part->has_bone_indices)
 				{
 					auto a = part->bone_indices[i];
 					geometry->vertices[i].skin_index = vec4(a.a, a.b, a.c, a.d);
 				}
 				if (*part->has_vertex_weights)
-					geometry->vertices[i].skin_weight = Gloom_Vec_4(part->vertex_weights[i]);
+					geometry->vertices[i].skin_weight = gloomVec4(part->vertex_weights[i]);
 			}
 			//if (smesh->lastShape->geometry->material->tangents)
 			//	printf("has tangents");

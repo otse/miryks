@@ -20,19 +20,16 @@ extern "C"
 
 namespace gloom
 {
-	void StoreMesh(void *, Mesh *);
-	Mesh *GetStoredMesh(void *);
-
 	class Mesh
 	{
 	public:
 		Mesh();
 		~Mesh();
-		Nif *nif;
+		Nif *nif = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
-		void Construct(Nif *);
-		Group *Nested(Rd *);
+		void construct();
+		Group *nested(Rd *);
 	};
 
 	class SkinnedMesh
@@ -49,8 +46,8 @@ namespace gloom
 			skeleton = nullptr;
 			lastShape = nullptr;
 		}
-		void Construct();
-		void Initial();
-		void Forward();
+		void construct();
+		void initial();
+		void forward();
 	};
 } // namespace gloom

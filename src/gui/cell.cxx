@@ -37,7 +37,7 @@ void cell_gui()
 
 			Object object(dungeon->loadedCell.record);
 
-			const char *editorId = GetEditorId(object);
+			const char *editorId = getEditorId(object);
 
 			if (0 != strcmp(items[current], editorId))
 			{
@@ -45,7 +45,7 @@ void cell_gui()
 				{
 					delete dungeon;
 					dungeon = new Interior(items[current]);
-					dungeon->LoadCell();
+					dungeon->loadCell();
 				}
 			}
 			//if (items[current] == dungeon->loadedCell)

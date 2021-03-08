@@ -25,32 +25,31 @@ namespace gloom
 		Group *group = new Group();
 	}
 
-	void Interior::LoadCell()
+	void Interior::loadCell()
 	{
-		loadedCell = GetCell(editorId);
-		ParseGrup(loadedCell, loadedCell.persistent);
-		ParseGrup(loadedCell, loadedCell.non_persistent);
+		loadedCell = getCell(editorId);
+		parseGrup(loadedCell, loadedCell.persistent);
+		parseGrup(loadedCell, loadedCell.non_persistent);
 	}
 
-	Cell Interior::GetCell(const char *name)
+	Cell Interior::getCell(const char *name)
 	{
 		Cell cell;
-		
 		ObjectArray A, B, C;
-
-		A(esp_top_grup(get_plugins()[1], "CELL")).Foreach([&](unsigned int i) {
-			B(A.GetGrup(i)).Foreach([&](unsigned int j) {
-				C(B.GetGrup(j)).Foreach([&](unsigned int &k) {
-					Object object(C.GetRecord(k));
-					Grup *grup = C.GetGrup(k + 1);
-					const char *editorId = GetEditorId(object);
+		Grup *top = esp_top_grup(get_plugins()[1], "CELL");
+		A(top).forEach([&](unsigned int i) {
+			B(A.getGrup(i)).forEach([&](unsigned int j) {
+				C(B.getGrup(j)).forEach([&](unsigned int &k) {
+					Object object(C.getRecord(k));
+					Grup *grup = C.getGrup(k + 1);
+					const char *editorId = getEditorId(object);
 					if (0 == strcmp(name, editorId))
 					{
 						ObjectArray D(grup);
 						cell.record = object.record;
-						printf("Foreach found your interior `%s`\n", editorId);
-						cell.persistent = D.Size() >= 1 ? D.GetGrup(0) : 0;
-						cell.non_persistent = D.Size() >= 2 ? D.GetGrup(1) : 0;
+						printf("forEach found your interior `%s`\n", editorId);
+						cell.persistent = D.size() >= 1 ? D.getGrup(0) : 0;
+						cell.non_persistent = D.size() >= 2 ? D.getGrup(1) : 0;
 						A.stop = B.stop = C.stop = true;
 					}
 					k += 1;
@@ -62,41 +61,41 @@ namespace gloom
 
 	static void PlaceCameraDud(Interior *);
 
-	void Interior::ParseGrup(Cell &cell, Grup *grup)
+	void Interior::parseGrup(Cell &cell, Grup *grup)
 	{
 		if (grup == nullptr)
 			return;
 		ObjectArray array;
-		array(grup).Foreach([&](unsigned int i) {
-			Record *record = array.GetRecord(i);
+		array(grup).forEach([&](unsigned int i) {
+			Record *record = array.getRecord(i);
 			Object object(record);
-			if (object.IsType("REFR"))
+			if (object.isType("REFR"))
 			{
 				Ref *ref = new Ref(record);
 				refs.push_back(ref);
-				const char *editorId = GetEditorId(object);
+				const char *editorId = getEditorId(object);
 				if (editorId)
 					editorIds.emplace(editorId, ref);
-				if (ref->baseObject.Valid() && ref->baseObject.IsTypeAny({"WEAP", "MISC"}))
+				if (ref->baseObject.valid() && ref->baseObject.isTypeAny({"WEAP", "MISC"}))
 				{
 					iterables.push_back(ref);
 				}
 			}
 		});
-		PlaceCamera();
+		placeCamera();
 	}
 
-	void Interior::PlaceCamera()
+	void Interior::placeCamera()
 	{
 		if (alreadyTeleported)
 			return;
 		ObjectArray array;
-		array(loadedCell.persistent).Foreach([&](unsigned int i) {
-			Object object(array.GetRecord(i));
-			if (*GetBaseId(object) == 0x0000003B) //  "Marker"
+		array(loadedCell.persistent).forEach([&](unsigned int i) {
+			Object object(array.getRecord(i));
+			if (*getBaseId(object) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
-				float *locationalData = object.Data<float *>("DATA");
+				float *locationalData = object.data<float *>("DATA");
 				printf(" xmarker ! \n");
 				firstPersonCamera->pos = *cast_vec_3(locationalData);
 				firstPersonCamera->pos.z += EYE_HEIGHT;
@@ -109,10 +108,10 @@ namespace gloom
 
 	Interior::~Interior()
 	{
-		Unload();
+		unload();
 	}
 
-	void Interior::Unload()
+	void Interior::unload()
 	{
 		for (auto it = refs.begin(); it != refs.end(); ++it)
 		{
@@ -123,10 +122,10 @@ namespace gloom
 
 	bool myfunction(Ref *l, Ref *r)
 	{
-		return l->GetDistance() < r->GetDistance();
+		return l->getDistance() < r->getDistance();
 	}
 
-	void Interior::Update()
+	void Interior::update()
 	{
 		std::vector<Ref *> closest = iterables;
 		std::sort(iterables.begin(), iterables.end(), myfunction);
@@ -135,7 +134,7 @@ namespace gloom
 		{
 			Ref *ref = *it;
 
-			if (ref->DisplayAsItem())
+			if (ref->displayAsItem())
 				return;
 		}
 	}

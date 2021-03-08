@@ -5,24 +5,6 @@
 
 namespace gloom
 {
-	void gloom_object_array_test(Grup *grup)
-	{
-		using Objects = ObjectArray;
-
-		ObjectArray objectArray(grup);
-		objectArray.filter = RECORD;
-		objectArray.Foreach([&](unsigned int &i) {
-			Object object(objectArray.GetRecord(i));
-		});
-
-		Objects array;
-		array(grup).Foreach([&](unsigned int &i) {
-			i += 4;
-			int type = array.Type(i);
-			array.stop = true;
-		});
-	}
-
 	ObjectArray::ObjectArray() {
 		(*this)(nullptr);
 	};

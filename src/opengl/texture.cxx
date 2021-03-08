@@ -51,11 +51,11 @@ Texture::Texture(const std::string &path) : path(path)
 		cfout2("test.dds", rc->buf, rc->size);
 		test = true;
 	}
-	Load();
+	load();
 }
 Texture::~Texture() {}
 
-void Texture::Load()
+void Texture::load()
 {
 	DDSFile *dds = ddsloader_load_buf(buf, size);
 

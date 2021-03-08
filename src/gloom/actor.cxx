@@ -23,9 +23,9 @@ namespace gloom
 	{
 		Record *race = nullptr;
 		ObjectArray array;
-		array(esp_top_grup(get_plugins()[0], "RACE")).Foreach([&](unsigned int &i) {
-			Record *record = array.GetRecord(i);
-			auto editorId = GetEditorIdOnly(record);
+		array(esp_top_grup(get_plugins()[0], "RACE")).forEach([&](unsigned int &i) {
+			Record *record = array.getRecord(i);
+			auto editorId = getEditorIdOnly(record);
 			if (strcmp(editorId, raceId) == 0)
 			{
 				race = record;
@@ -46,11 +46,11 @@ namespace gloom
 
 		// cassert(race.Count("ANAM") == 2, "race count anam");
 
-		auto ANAM = race.Data<char *>("ANAM", 0);
-		auto MODL = race.Data<unsigned short *>("MODL", 2);
-		auto MODLCHAR = race.Data<char *>("MODL", 2);
+		auto ANAM = race.data<char *>("ANAM", 0);
+		auto MODL = race.data<unsigned short *>("MODL", 2);
+		auto MODLCHAR = race.data<char *>("MODL", 2);
 
-		Field *modl = race.EqualRange("MODL", 2);
+		Field *modl = race.equalRange("MODL", 2);
 
 		//printf("modl size %u str %s offset %u", modl->hed->type, (char *)modl->data, modl->offset);
 
@@ -65,17 +65,18 @@ namespace gloom
 		nifp_save((void *)model, character);
 
 		skeleton = new Skeleton();
-		skeleton->Load(ANAM);
-		skeleton->Construct();
+		skeleton->load(ANAM);
+		skeleton->construct();
 		skeleton->baseBone->group->visible = false;
 
 		mesh = new Mesh();
-		mesh->Construct(character);
+		mesh->nif = character;
+		mesh->construct();
 
 		smesh = new SkinnedMesh();
 		smesh->mesh = mesh;
 		smesh->skeleton = skeleton;
-		smesh->Construct();
+		smesh->construct();
 
 		if (raceId == "DraugrRace")
 		{
@@ -111,10 +112,10 @@ namespace gloom
 		}
 	}
 
-	void Actor::Step()
+	void Actor::step()
 	{
 		if (smesh)
-			smesh->Forward();
+			smesh->forward();
 		//const float merry = 0.002;
 		//if (drawGroup)
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
@@ -174,18 +175,18 @@ namespace gloom
 		//sceneDefault->Add(mirror);
 	}
 
-	void Human::Step()
+	void Human::step()
 	{
 		if (hat)
-			hat->Step();
+			hat->step();
 		if (head)
-			head->Step();
+			head->step();
 		if (body)
-			body->Step();
+			body->step();
 		if (hands)
-			hands->Step();
+			hands->step();
 		if (feet)
-			feet->Step();
+			feet->step();
 		if (csphere)
 		{
 			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());
@@ -203,9 +204,9 @@ namespace gloom
 		//cameraCurrent->group->Add(human->group);
 	}
 
-	void Player::Step()
+	void Player::step()
 	{
-		human->Step();
+		human->step();
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
 		drawGroup->matrix = glm::translate(mat4(1.0), down + firstPersonCamera->pos);
 		drawGroup->matrix = rotate(drawGroup->matrix, -firstPersonCamera->fyaw, vec3(0, 0, 1));

@@ -9,11 +9,11 @@
 
 namespace gloom
 {
-	Rc *LoadRc(const char *, const char *, unsigned long);
-	Nif *LoadNif(Rc *, bool);
-	Mesh *LoadMesh(const char *, bool);
-	Plugin *LoadPlugin(const char *);
-	Archive *LoadArchive(const char *);
+	Rc *loadRc(const char *, const char *, unsigned long);
+	Nif *loadNif(Rc *, bool);
+	Mesh *loadMesh(const char *, bool);
+	Plugin *loadPlugin(const char *);
+	Archive *loadArchive(const char *);
 
 	extern unsigned int fps;
 
@@ -51,9 +51,9 @@ namespace gloom
 	inline mat3 *cast_mat_3(float *f) { return reinterpret_cast<mat3 *>(f); }
 	inline mat4 *cast_mat_4(float *f) { return reinterpret_cast<mat4 *>(f); }
 
-#define Gloom_Vec_3(X) *cast_vec_3((float *)&X)
-#define Gloom_Vec_4(X) *cast_vec_4((float *)&X)
-#define Gloom_Mat_3(X) *cast_mat_3((float *)&X)
+#define gloomVec3(X) *cast_vec_3((float *)&X)
+#define gloomVec4(X) *cast_vec_4((float *)&X)
+#define gloomMat3(X) *cast_mat_3((float *)&X)
 
 } // namespace gloom
 

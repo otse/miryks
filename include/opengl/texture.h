@@ -18,7 +18,7 @@ struct Texture
 	Texture();
 	Texture(const std::string &);
 	~Texture();
-	void Load();
+	void load();
 };
 
 #endif

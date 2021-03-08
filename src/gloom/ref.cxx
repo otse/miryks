@@ -29,7 +29,7 @@ namespace gloom
 		drawGroup = nullptr;
 		pointLight = nullptr;
 		spotLight = nullptr;
-		Go();
+		go();
 	}
 
 	Ref::~Ref()
@@ -42,16 +42,16 @@ namespace gloom
 		delete spotLight;
 	}
 
-	void Ref::Go()
+	void Ref::go()
 	{
 		matrix = mat4(1.0);
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = GetBaseId(selfObject);
-		auto editorId = GetEditorId(selfObject);
-		auto XSCL = selfObject.Data<float *>("XSCL");
-		auto locationalData = selfObject.Data<float *>("DATA");
+		auto baseId = getBaseId(selfObject);
+		auto editorId = getEditorId(selfObject);
+		auto XSCL = selfObject.data<float *>("XSCL");
+		auto locationalData = selfObject.data<float *>("DATA");
 
 		if (editorId)
 			this->editorId = editorId;
@@ -90,24 +90,24 @@ namespace gloom
 		if (id == 0x0005AD9E) // Gold ingots to Orichalum ingots
 			id = 0x0005AD99;
 
-		baseObject.Set(esp_get_form_id(id));
+		baseObject.set(esp_get_form_id(id));
 
-		cassert(baseObject.Valid(), "cant find refs Name-BaseId record");
+		cassert(baseObject.valid(), "cant find refs Name-BaseId record");
 
-		if (baseObject.IsTypeAny({"STAT", "DOOR", "ALCH", "CONT",
+		if (baseObject.isTypeAny({"STAT", "DOOR", "ALCH", "CONT",
 								  "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
-			auto modl = baseObject.Data<const char *>("MODL", 0);
+			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)
 			{
 				printf("um no modl here\n");
 			}
 			else
 			{
-				mesh = LoadMesh(modl, true);
+				mesh = loadMesh(modl, true);
 			}
 		}
-		else if (baseObject.IsType("LIGH"))
+		else if (baseObject.isType("LIGH"))
 		{
 			struct Struct
 			{
@@ -122,9 +122,9 @@ namespace gloom
 
 			Light *light = nullptr;
 
-			auto editorId = GetEditorId(baseObject);
-			auto DATA = baseObject.Data<int *>("DATA");
-			auto FNAM = baseObject.Data<float *>("FNAM");
+			auto editorId = getEditorId(baseObject);
+			auto DATA = baseObject.data<int *>("DATA");
+			auto FNAM = baseObject.data<float *>("FNAM");
 
 			Struct *data = (Struct *)DATA;
 
@@ -166,7 +166,7 @@ namespace gloom
 			{
 				light->color = color;
 				light->decay = fade;
-				light->distance = data->radius;
+				light->distance = (float)data->radius;
 				light->matrix = matrix;
 			}
 
@@ -183,7 +183,7 @@ namespace gloom
 		}
 	}
 
-	float Ref::GetDistance()
+	float Ref::getDistance()
 	{
 		float distance = glm::length(drawGroup->aabb.center() - vec3(firstPersonCamera->hands->matrixWorld[3]));
 
@@ -205,9 +205,9 @@ namespace gloom
 
 	// Todo, Omg !
 
-	bool Ref::DisplayAsItem()
+	bool Ref::displayAsItem()
 	{
-		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;
+		float dist = getDistance() * CM_TO_SKYRIM_UNITS;
 
 		// printf(" display as item %f\n", dist);
 
@@ -216,8 +216,8 @@ namespace gloom
 			return false;
 		}
 
-		auto FULL = baseObject.Data<char *>("FULL");
-		auto DESC = baseObject.Data<const char *>("DESC");
+		auto FULL = baseObject.data<char *>("FULL");
+		auto DESC = baseObject.data<const char *>("DESC");
 
 		char *itemName = "Something";
 		if (FULL)

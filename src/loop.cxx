@@ -104,18 +104,18 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		printf(" reload esp ! \n");
 		// Save current cell name
 		Object object(dungeon->loadedCell.record);
-		const char *cellName = GetEditorId(object);
+		const char *cellName = getEditorId(object);
 		char dest[512];
 		strcpy(dest, cellName);
 		Esp *plugin = get_plugins()[1];
 		const char *name = plugin->name;
 		Esp *has = has_plugin(name);
 		free_plugin(&has);
-		get_plugins()[1] = LoadPlugin(name);
+		get_plugins()[1] = loadPlugin(name);
 		delete dungeon;
 		dungeon = new Interior(dest);
 		dungeon->alreadyTeleported = true;
-		dungeon->LoadCell();
+		dungeon->loadCell();
 	}
 	else if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
 	{
@@ -333,18 +333,18 @@ void gloom::programLoop()
 
 		// someDraugr
 		if (someDraugr)
-			someDraugr->Step();
+			someDraugr->step();
 
 		if (meanSkelly)
-			meanSkelly->Step();
+			meanSkelly->step();
 
 		if (someHuman)
-			someHuman->Step();
+			someHuman->step();
 
 		if (player1)
-			player1->Step();
+			player1->step();
 
-		dungeon->Update();
+		dungeon->update();
 
 		//collision_simulate();
 

@@ -15,7 +15,7 @@ namespace gloom
 {
 	const char *dataFolder = "Data/";
 
-	Rc *LoadRc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
+	Rc *loadRc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
 	{
 		std::string str = prepend;
 		str += path;
@@ -28,7 +28,7 @@ namespace gloom
 		return rc;
 	}
 
-	Nif *LoadNif(Rc *rc, bool useCache = true)
+	Nif *loadNif(Rc *rc, bool useCache = true)
 	{
 		cassert(rc, "no rc nif loader");
 		Nif *nif;
@@ -45,23 +45,24 @@ namespace gloom
 		return nif;
 	}
 
-	Mesh *LoadMesh(const char *model, bool useCache = true)
+	Mesh *loadMesh(const char *model, bool useCache = true)
 	{
 		static std::map<const char *, Mesh *> meshes;
 		if (meshes.count(model) && useCache)
 			return meshes[model];
-		Rc *rc = LoadRc("meshes\\", model, 0x1);
+		Rc *rc = loadRc("meshes\\", model, 0x1);
 		if (!rc)
 			return nullptr;
-		Nif *nif = LoadNif(rc, true);
+		Nif *nif = loadNif(rc, true);
 		Mesh *mesh = new Mesh;
-		mesh->Construct(nif);
+		mesh->nif = nif;
+		mesh->construct();
 		if (useCache)
 			meshes.emplace(model, mesh);
 		return mesh;
 	}
 
-	Plugin *LoadPlugin(const char *filename)
+	Plugin *loadPlugin(const char *filename)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
@@ -84,7 +85,7 @@ namespace gloom
 		return esp;
 	}
 
-	Archive *LoadArchive(const char *filename)
+	Archive *loadArchive(const char *filename)
 	{
 		printf("Load Archive %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
@@ -105,10 +106,11 @@ namespace gloom
 			delete mesh;
 			delete drawGroup;
 		}
-		Nif *nif = LoadNif(rc, false); // Note no use of cache
+		Nif *nif = loadNif(rc, false); // Note no use of cache
 		nifp_save(rc, nif);
 		mesh = new Mesh;
-		mesh->Construct(nif);
+		mesh->nif = nif;
+		mesh->construct();
 		drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), firstPersonCamera->pos));
 		sceneDefault->drawGroups.Add(drawGroup);
 		HideCursor();

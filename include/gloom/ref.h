@@ -16,26 +16,19 @@ namespace gloom
 	public:
 		Ref(Record *);
 		~Ref();
-
 		const char *editorId = nullptr;
-
 		Object selfObject, baseObject;
-
 		mat4 translation, rotation, scale;
 		mat4 matrix;
-
 		Mesh *mesh;
 		DrawGroup *drawGroup;
 		PointLight *pointLight;
 		SpotLight *spotLight;
-
-		void Go();
-		
+		void go();
 		void forScale(float *);
 		void forLocationalData(float *);
 		void forBaseId(unsigned int *);
-
-		float GetDistance();
-		bool DisplayAsItem();
+		float getDistance();
+		bool displayAsItem();
 	};
 } // namespace gloom

@@ -30,7 +30,7 @@ namespace gloom
 
 		float merry = 0;
 
-		void Step();
+		void step();
 
 		void PutDown(const char *);
 	};
@@ -51,7 +51,7 @@ namespace gloom
 		
 		Human();
 
-		void Step();
+		void step();
 
 		void Place(const char *);
 	};
@@ -64,7 +64,7 @@ namespace gloom
 		
 		Player();
 
-		void Step();
+		void step();
 	};
 
 } // namespace gloom

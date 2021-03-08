@@ -20,16 +20,14 @@ namespace gloom
 		nif = nullptr;
 		animation = nullptr;
 	}
-
-	void Skeleton::Load(const char *ANAM)
+	void Skeleton::load(const char *ANAM)
 	{
 		// printf("skeleton load anam %s\n", ANAM);
-		Rc *rc = LoadRc("meshes\\", ANAM, 0x1);
-		nif = LoadNif(rc, true);
+		Rc *rc = loadRc("meshes\\", ANAM, 0x1);
+		nif = loadNif(rc, true);
 		// printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
-
-	void Skeleton::Construct()
+	void Skeleton::construct()
 	{
 		Rd *rd = malloc_nifprd();
 		rd->nif = nif;
@@ -40,83 +38,66 @@ namespace gloom
 		free_nifprd(&rd);
 		baseBone->group->Update();
 	}
-
-	Bone *Skeleton::Nested(Rd *rd, int name)
+	Bone *Skeleton::nested(Rd *rd, int name)
 	{
 		Bone *bone = new Bone();
 		bones[rd->current] = bone;
 		bones[rd->parent]->group->Add(bone->group);
-		bones_named[nifp_get_string(rd->nif, name)] = bone;
+		bonesNamed[nifp_get_string(rd->nif, name)] = bone;
 		lastBone = bone;
 		return bone;
 	}
-
 	void matrix_from_common(Bone *bone, ni_common_layout_pointer *common)
 	{
-		bone->group->matrix = translate(bone->group->matrix, Gloom_Vec_3(common->C->translation));
-		bone->group->matrix *= inverse(mat4(Gloom_Mat_3(common->C->rotation)));
+		bone->group->matrix = translate(bone->group->matrix, gloomVec3(common->C->translation));
+		bone->group->matrix *= inverse(mat4(gloomMat3(common->C->rotation)));
 		bone->group->matrix = scale(bone->group->matrix, vec3(common->C->scale));
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
 	}
-	
 	void ni_node_callback(Rd *rd, ni_node_pointer *block)
 	{
 		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
-		Bone *bone = skeleton->Nested(rd, block->common->A->name);
+		Bone *bone = skeleton->nested(rd, block->common->A->name);
 		matrix_from_common(bone, block->common);
 	}
-	
-	void Skeleton::Step()
+	void Skeleton::step()
 	{
 		if (animation)
-			animation->Step();
+			animation->step();
 	}
 
 	// keyframes
-
 	Keyframes::Keyframes(Nif *nif) : model(nif)
 	{
 		cassert(strcmp(model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
 
 		csp = (ni_controller_sequence_pointer *)model->blocks[0];
 	}
-
-	void Animation::Step()
+	void Animation::step()
 	{
 		float adv = gloom::delta;
-
 		if (play)
 			time += adv;
-
 		if (time >= keyframes->csp->C->stop_time)
 			time -= keyframes->csp->C->stop_time;
-
 		//printf("time %f\n", time);
-
-		SimpleNonInterpolated();
-
+		simpleNonInterpolated();
 		skeleton->baseBone->group->Update();
 		//printf("cbp %i", cbp->controller);
 	}
-
-	void Animation::SimpleNonInterpolated()
+	void Animation::simpleNonInterpolated()
 	{
 		Nif *model = keyframes->model;
-
 		struct controlled_block_pointer *cbp;
-
 		for (unsigned int i = 0; i < keyframes->csp->A->num_controlled_blocks; i++)
 		{
 			// Match node_name to a skeleton bone
-
 			cbp = &keyframes->csp->controlled_blocks[i];
-
 			char *name = nifp_get_string(model, cbp->node_name);
-
-			auto has = skeleton->bones_named.find(name);
-			if (has == skeleton->bones_named.end())
+			auto has = skeleton->bonesNamed.find(name);
+			if (has == skeleton->bonesNamed.end())
 			{
 				//printf("cant find bone %s\n", name);
 				// cant find shield, weapon, quiver
@@ -124,18 +105,13 @@ namespace gloom
 			}
 
 			Bone *bone = has->second;
-
 			ni_transform_interpolator_pointer *tip = (ni_transform_interpolator_pointer *)
 				nifp_get_block(model, cbp->interpolator);
-
 			ni_transform_data_pointer *tdp = (ni_transform_data_pointer *)
 				nifp_get_block(model, tip->B->data);
-
 			if (tip == NULL || tdp == NULL)
 				continue;
-
-			vec4 ro = Gloom_Vec_4(tip->transform->rotation);
-
+			vec4 ro = gloomVec4(tip->transform->rotation);
 			int num = tdp->A->num_rotation_keys;
 			if (num)
 			{
@@ -145,7 +121,7 @@ namespace gloom
 					//printf("qk %i time %f\n", i, key->time);
 					if (key->time <= time || num == 1)
 					{
-						ro = Gloom_Vec_4(key->value);
+						ro = gloomVec4(key->value);
 						break;
 					}
 				}
@@ -153,8 +129,7 @@ namespace gloom
 			// else if (num == 1)
 			// 	ro = *cast_vec_4((float *)(&tdp->quaternion_keys[0].value));
 
-			vec3 tr = Gloom_Vec_3(tip->transform->translation);
-
+			vec3 tr = gloomVec3(tip->transform->translation);
 			num = tdp->translations->num_keys;
 			if (num)
 			{
@@ -164,13 +139,13 @@ namespace gloom
 					if (key->time <= time || num == 1)
 					{
 						//printf("tr time %f\n", key->time);
-						tr = Gloom_Vec_3(key->value);
+						tr = gloomVec3(key->value);
 						break;
 					}
 				}
 			}
 			// else if (num == 1)
-			// 	tr = Gloom_Vec_3(tdp->translation_keys[0].value);
+			// 	tr = gloomVec3(tdp->translation_keys[0].value);
 
 			quat qu = quat(ro[0], ro[1], ro[2], ro[3]);
 
@@ -193,8 +168,8 @@ int num = tdp->A->num_rotation_keys;
 				//printf(" res ratio %f\n", res.ratio);
 				if (res.one && res.two)
 				{
-					vec4 q1 = Gloom_Vec_4(res.one->value);
-					vec4 q2 = Gloom_Vec_4(res.two->value);
+					vec4 q1 = gloomVec4(res.one->value);
+					vec4 q2 = gloomVec4(res.two->value);
 					// todo, what does this fix? yoyo fingrs?
 					//if ((q1.asVec4() * q2.asVec4()) < 0)
 					//	q1 = -q1;
@@ -206,12 +181,12 @@ int num = tdp->A->num_rotation_keys;
 			{
 				auto key = &tdp->quaternion_keys[0];
 				if (key->time <= time)
-					q = quat(Gloom_Vec_4(key->value));
+					q = quat(gloomVec4(key->value));
 			}
 
 			m = glm::mat4_cast(q);
 
-			vec3 v = Gloom_Vec_3(tip->transform->translation);
+			vec3 v = gloomVec3(tip->transform->translation);
 
 			num = tdp->translations->num_keys;
 			if (num > 0)
@@ -219,12 +194,12 @@ int num = tdp->A->num_rotation_keys;
 				auto res2 = interpolate<translation_key_pointer, vec3>(this, num, tdp->translation_keys);
 				if (res2.one && res2.two)
 				{
-					const vec3 v1 = Gloom_Vec_3(res2.one->value) * (1.0f - res2.ratio);
-					const vec3 v2 = Gloom_Vec_3(res2.two->value) * res2.ratio;
+					const vec3 v1 = gloomVec3(res2.one->value) * (1.0f - res2.ratio);
+					const vec3 v2 = gloomVec3(res2.two->value) * res2.ratio;
 					v = v1 + v2;
 				}
 				else if (res2.one)
-					v = Gloom_Vec_3(res2.one->value);
+					v = gloomVec3(res2.one->value);
 			}
 
 			//if (_tween && bone->_v.length())
