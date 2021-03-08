@@ -11,13 +11,13 @@ namespace gloom
 		
 		bool stop = false;
 		
-		objectArray.ForEach(RECORD, stop, [&](Objects &objects, unsigned int &i) {
+		objectArray.Foreach(RECORD, stop, [&](Objects &objects, unsigned int &i) {
 			Object object(objects.GetRecord(i));
 		});
 
 		using Objects = ObjectArray;
 
-		Objects(grup).ForEach(0, stop, [&](Objects &objects, unsigned int &i) {
+		Objects(grup).Foreach(0, stop, [&](Objects &objects, unsigned int &i) {
 			i += 4;
 			int type = objects.Type(i);
 			stop = true;

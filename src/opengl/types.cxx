@@ -10,8 +10,9 @@
 #include <OpenGL/Material.h>
 #include <OpenGL/Texture.h>
 
-Camera *camera;
-Scene *scene;
+Camera *cameraCurrent = nullptr;
+Scene *sceneCurrent = nullptr;
+Scene *sceneDefault = nullptr;
 
 RenderSettings renderSettings;
 
@@ -38,8 +39,10 @@ void detectOpenGLError(const std::string where)
 
 void openglScene()
 {
-	camera = new Camera;
-	scene = new Scene;
+	cameraCurrent = new Camera;
+	sceneDefault = new Scene;
+
+	sceneCurrent = sceneDefault;
 
 	SetShaderSources();
 }

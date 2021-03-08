@@ -217,7 +217,7 @@ void make_top_grups(Esp *esp)
 	}
 }
 
-api Grup *esp_get_top_grup(const Esp *esp, const char type[5])
+api Grup *esp_top_grup(const Esp *esp, const char type[5])
 {
 	for (unsigned int i = 0; i < esp->grups.size; i++)
 	if (*(unsigned int *)type == *(unsigned int *)esp->tops[i])

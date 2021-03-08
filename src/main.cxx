@@ -29,31 +29,36 @@ namespace gloom
 	Human *someHuman = nullptr;
 	Player *player1 = nullptr;
 
+	const char *CURRENT_WRLD;
+	const char *CURRENT_INTERIOR;
+
 	std::string pathToOldrim;
 
-	FirstPersonCamera *first_person_camera;
-	ViewerCamera *viewer_camera;
+	FirstPersonCamera *firstPersonCamera;
+	ViewerCamera *panCamera;
 	RenderTarget *renderRarget;
 
 	int width = 2560;
 	int height = 1800;
-	float delta = 1;
+	float delta = 0;
 } // namespace gloom
 
 void customLoad()
 {
 	if (!exists_test3("custom.txt"))
 		fwrite("custom.txt", "# put your plugins and archives here with line breaks\n");
+	if (!exists_test3("path to oldrim.txt"))
+		fwrite("path to oldrim.txt", "`C:/Program Files (x86)/Steam/steamapps/common/Skyrim/");
 }
 
 int main()
 {
 	using namespace gloom;
-	printf("loading\n");
+	CURRENT_WRLD = "Gloom";
+	CURRENT_INTERIOR = "";
 	customLoad();
 	pathToOldrim = fread("path to oldrim.txt");
-	cassert(exists("path to oldrim.txt"), "missing path to oldrim.txt");
-	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe, check your path");
+	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe");
 	get_plugins()[0] = LoadPlugin("Skyrim.esm");
 	if (get_plugins()[0])
 		printf("Phew, Loaded Skyrim.esm\n");
@@ -61,17 +66,17 @@ int main()
 	get_archives()[0] = LoadArchive("Skyrim - Meshes.bsa");
 	get_archives()[1] = LoadArchive("Skyrim - Textures.bsa");
 	get_archives()[2] = LoadArchive("Skyrim - Animations.bsa");
-	//get_archives()[3] = LoadArchive("HighResTexturePack01.bsa");
-	//get_archives()[4] = LoadArchive("HighResTexturePack02.bsa");
-	//get_archives()[5] = LoadArchive("HighResTexturePack03.bsa");
+	get_archives()[3] = LoadArchive("HighResTexturePack01.bsa");
+	get_archives()[4] = LoadArchive("HighResTexturePack02.bsa");
+	get_archives()[5] = LoadArchive("HighResTexturePack03.bsa");
 	programGo();
-	first_person_camera = new FirstPersonCamera;
-	viewer_camera = new ViewerCamera;
+	firstPersonCamera = new FirstPersonCamera;
+	panCamera = new ViewerCamera;
 	openglScene();
 	objs_init();
 	setup_esc_menu();
 	collision_init();
-	camera = first_person_camera;
+	cameraCurrent = firstPersonCamera;
 #if 0
 	// Secret bucket beginning
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);

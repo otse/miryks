@@ -45,14 +45,14 @@ namespace gloom
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		//glfwSetCursorPos(window, Camera::prev[0], Camera::prev[1]);
 		cursorShowing = false;
-		first_person_camera->disabled = false;
+		firstPersonCamera->disabled = false;
 	}
 
 	void ShowCursor()
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		cursorShowing = true;
-		first_person_camera->disabled = true;
+		firstPersonCamera->disabled = true;
 	}
 } // namespace gloom
 
@@ -75,10 +75,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		if (first_person_camera->disabled)
+		if (firstPersonCamera->disabled)
 		{
-			camera = first_person_camera;
-			camera->disabled = false;
+			cameraCurrent = firstPersonCamera;
+			cameraCurrent->disabled = false;
 			HideCursor();
 		}
 		else
@@ -93,7 +93,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 			HideCursor();
 		else
 			ShowCursor();
-		camera->disabled = cursorShowing;
+		cameraCurrent->disabled = cursorShowing;
 	}
 	else if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
 	{
@@ -107,9 +107,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		const char *cellName = GetEditorId(object);
 		char dest[512];
 		strcpy(dest, cellName);
-		Plugin *plugin = get_plugins()[1];
+		Esp *plugin = get_plugins()[1];
 		const char *name = plugin->name;
-		Plugin *has = has_plugin(name);
+		Esp *has = has_plugin(name);
 		free_plugin(&has);
 		get_plugins()[1] = LoadPlugin(name);
 		delete dungeon;
@@ -139,22 +139,22 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 
 static void doKeys()
 {
-	if (!dynamic_cast<FirstPersonCamera *>(camera))
+	if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
 		return;
-	first_person_camera->w = glfwGetKey(window, GLFW_KEY_W);
-	first_person_camera->a = glfwGetKey(window, GLFW_KEY_A);
-	first_person_camera->s = glfwGetKey(window, GLFW_KEY_S);
-	first_person_camera->d = glfwGetKey(window, GLFW_KEY_D);
-	first_person_camera->r = glfwGetKey(window, GLFW_KEY_R);
-	first_person_camera->f = glfwGetKey(window, GLFW_KEY_F);
-	first_person_camera->shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+	firstPersonCamera->w = glfwGetKey(window, GLFW_KEY_W);
+	firstPersonCamera->a = glfwGetKey(window, GLFW_KEY_A);
+	firstPersonCamera->s = glfwGetKey(window, GLFW_KEY_S);
+	firstPersonCamera->d = glfwGetKey(window, GLFW_KEY_D);
+	firstPersonCamera->r = glfwGetKey(window, GLFW_KEY_R);
+	firstPersonCamera->f = glfwGetKey(window, GLFW_KEY_F);
+	firstPersonCamera->shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
 }
 
 void cursor_pos_callback(GLFWwindow *window, double x, double y)
 {
 	static double x2 = x;
 	static double y2 = y;
-	camera->Mouse((float)(x - x2), (float)(y - y2));
+	cameraCurrent->Mouse((float)(x - x2), (float)(y - y2));
 	x2 = x;
 	y2 = y;
 }
@@ -283,16 +283,20 @@ void gloom::programLoop()
 	int frames;
 	double time, prevTime;
 	char title[150];
+	
+	double now = 0, prev = 0;
 
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	scene->drawGroups.Add(first_person_camera->drawGroup);
+	sceneDefault->drawGroups.Add(firstPersonCamera->drawGroup);
 
 	do
 	{
-		// from mrdoob stats
 		time = glfwGetTime();
+		now = time;
+		gloom::delta = now - prev;
+        prev = now;
 		if ((time - prevTime) > 1.0 || frames == 0)
 		{
 			fps = (double)frames / (time - prevTime);
@@ -325,7 +329,7 @@ void gloom::programLoop()
 
 		doKeys();
 
-		camera->Update(0.016f);
+		cameraCurrent->Update(delta);
 
 		// someDraugr
 		if (someDraugr)
@@ -344,8 +348,8 @@ void gloom::programLoop()
 
 		//collision_simulate();
 
-		//scene->Order();
-		scene->DrawItems();
+		//sceneDefault->Order();
+		sceneDefault->DrawItems();
 
 		Material::Unuse(nullptr, nullptr);
 

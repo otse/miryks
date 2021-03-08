@@ -83,82 +83,9 @@ namespace gloom
 		csp = (ni_controller_sequence_pointer *)model->blocks[0];
 	}
 
-	// Todo, This is a big dump from Messiah (before Dark (so long before Dark2))
-	// Pasted this here to see if it would compile. It won't since it's templated >_< And I can't use it because it's dumb. 
-	// animation
-
-	template <typename T, typename Y>
-	struct Lol
-	{
-		const T *one;
-		const T *two;
-		float ratio;
-	};
-
-	// If loop is true then also interpolate between
-	// Last and first
-
-	template <typename T, typename Y>
-	Lol<T, Y> interpolate(Animation *animation, int num, const T *keys)
-	{
-		Nif *nif = animation->keyframes->model;
-
-		auto csp = animation->keyframes->csp;
-
-		Lol<T, Y> s;
-		s.one = nullptr;
-		s.two = nullptr;
-		s.ratio = 1;
-
-		const auto loop = animation->keyframes->loop;
-
-		int i, j;
-		//num = keys.size();
-		if (num > 1)
-		{
-			i = num - (loop ? 1 : 2);
-
-			for (; i >= 0; i--)
-			{
-				//loop:
-				const T &key_a = keys[i];
-				j = i + 1;
-				const bool got_two = j <= num - 1;
-
-				if (key_a.time <= animation->time /*&& got_two && keys[j]._time >= a._t*/)
-				{
-					s.one = &key_a;
-					if (got_two)
-						s.two = &keys[j];
-
-					// todo, this needs work
-					else if (animation->keyframes->loop)
-					{
-						s.two = &keys[0];
-					}
-
-					break;
-				}
-			}
-		}
-
-		if (s.one && s.two)
-		{
-			float t_1 = s.one->time;
-			float t_2 = s.two->time;
-			// todo, does t_2 need negation here
-			if (loop && t_2 < t_1)
-				t_2 = t_2 - csp->C->stop_time;
-			float ratio = (animation->time - t_2) / (t_2 - t_1) + 1.0f;
-			s.ratio = ratio <= 0 ? 0 : ratio >= 1 ? 1 : ratio;
-		}
-
-		return s;
-	}
-
 	void Animation::Step()
 	{
-		float adv = 1.f / 60.f;
+		float adv = gloom::delta;
 
 		if (play)
 			time += adv;
@@ -257,7 +184,6 @@ namespace gloom
 		}
 	}
 
-} // namespace gloom
 
 /*
 int num = tdp->A->num_rotation_keys;
@@ -309,3 +235,78 @@ int num = tdp->A->num_rotation_keys;
 			//else
 			//	bone->_v_2 = v;
 			*/
+
+	// Todo, This is a big dump from Messiah (before Dark (so long before Dark2))
+	// Pasted this here to see if it would compile. It won't since it's templated >_< And I can't use it because it's dumb. 
+	// animation
+
+	template <typename T, typename Y>
+	struct Lol
+	{
+		const T *one;
+		const T *two;
+		float ratio;
+	};
+
+	// If loop is true then also interpolate between
+	// Last and first
+
+	template <typename T, typename Y>
+	Lol<T, Y> interpolate(Animation *animation, int num, const T *keys)
+	{
+		Nif *nif = animation->keyframes->model;
+
+		auto csp = animation->keyframes->csp;
+
+		Lol<T, Y> s;
+		s.one = nullptr;
+		s.two = nullptr;
+		s.ratio = 1;
+
+		const auto loop = animation->keyframes->loop;
+
+		int i, j;
+		//num = keys.size();
+		if (num > 1)
+		{
+			i = num - (loop ? 1 : 2);
+
+			for (; i >= 0; i--)
+			{
+				//loop:
+				const T &key_a = keys[i];
+				j = i + 1;
+				const bool got_two = j <= num - 1;
+
+				if (key_a.time <= animation->time /*&& got_two && keys[j]._time >= a._t*/)
+				{
+					s.one = &key_a;
+					if (got_two)
+						s.two = &keys[j];
+
+					// todo, this needs work
+					else if (animation->keyframes->loop)
+					{
+						s.two = &keys[0];
+					}
+
+					break;
+				}
+			}
+		}
+
+		if (s.one && s.two)
+		{
+			float t_1 = s.one->time;
+			float t_2 = s.two->time;
+			// todo, does t_2 need negation here
+			if (loop && t_2 < t_1)
+				t_2 = t_2 - csp->C->stop_time;
+			float ratio = (animation->time - t_2) / (t_2 - t_1) + 1.0f;
+			s.ratio = ratio <= 0 ? 0 : ratio >= 1 ? 1 : ratio;
+		}
+
+		return s;
+	}
+	
+} // namespace gloom

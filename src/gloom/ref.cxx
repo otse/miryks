@@ -34,9 +34,9 @@ namespace gloom
 
 	Ref::~Ref()
 	{
-		scene->drawGroups.Remove(drawGroup);
-		scene->pointLights.Remove(pointLight);
-		scene->spotLights.Remove(spotLight);
+		sceneDefault->drawGroups.Remove(drawGroup);
+		sceneDefault->pointLights.Remove(pointLight);
+		sceneDefault->spotLights.Remove(spotLight);
 		delete drawGroup;
 		delete pointLight;
 		delete spotLight;
@@ -151,13 +151,13 @@ namespace gloom
 				light = spotLight = new SpotLight;
 				//printf("data fov %f\n", data->FOV);
 				spotLight->angle = radians(data->FOV);
-				scene->spotLights.Add(spotLight);
+				sceneDefault->spotLights.Add(spotLight);
 				printf(" spotLight ! %f \n", spotLight->angle);
 			}
 			else
 			{
 				light = pointLight = new PointLight;
-				scene->pointLights.Add(pointLight);
+				sceneDefault->pointLights.Add(pointLight);
 				if (data->flags & 0x1)
 					0; // pointLight->shadow->enabled = true;
 			}
@@ -178,14 +178,14 @@ namespace gloom
 			if (baseObject.record->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroupSortable(mesh->baseGroup, matrix);
-				scene->drawGroups.Add(drawGroup);
+				sceneDefault->drawGroups.Add(drawGroup);
 			}
 		}
 	}
 
 	float Ref::GetDistance()
 	{
-		float distance = glm::length(drawGroup->aabb.center() - vec3(first_person_camera->hands->matrixWorld[3]));
+		float distance = glm::length(drawGroup->aabb.center() - vec3(firstPersonCamera->hands->matrixWorld[3]));
 
 		return distance;
 	}
@@ -229,7 +229,7 @@ namespace gloom
 
 		mat4 mate = glm::translate(mat4(1), drawGroup->aabb.center());
 
-		mat4 model = camera->projection * camera->view * mate;
+		mat4 model = cameraCurrent->projection * cameraCurrent->view * mate;
 		mat4 projection = glm::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 		vec4 viewport(0.0f, 0.0f, width, height);
 

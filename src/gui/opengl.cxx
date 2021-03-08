@@ -51,21 +51,21 @@ void opengl_gui()
 				}
 			}
 
-			ImVec4 color = ImVec4(scene->ambient.x, scene->ambient.y, scene->ambient.z, 1);
+			ImVec4 color = ImVec4(sceneDefault->ambient.x, sceneDefault->ambient.y, sceneDefault->ambient.z, 1);
 
 			ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_None;
 
 			ImGui::Text("Color widget:");
 			ImGui::ColorEdit3("MyColor##1", (float *)&color, misc_flags);
 
-			scene->ambient = vec3(color.x, color.y, color.z);
+			sceneDefault->ambient = vec3(color.x, color.y, color.z);
 
 			ImGui::Image((void *)(intptr_t)7, ImVec2(512, 512));
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("camera"))
+		if (ImGui::BeginTabItem("cameraCurrent"))
 		{
-			//ss << "pos: " << glm::to_string(camera->view);
+			//ss << "pos: " << glm::to_string(cameraCurrent->view);
 			ImGui::TextWrapped(ss.str().c_str());
 			cls;
 			ImGui::EndTabItem();

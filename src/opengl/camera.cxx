@@ -84,7 +84,7 @@ void FirstPersonCamera::Update(float time)
 	Camera::SetProjection();
 }
 
-void FirstPersonCamera::Move(float time)
+void FirstPersonCamera::Move(float delta)
 {
 	auto forward = [&](float n) {
 		pos.x += n * sin(fyaw);
@@ -96,7 +96,7 @@ void FirstPersonCamera::Move(float time)
 		pos.y += n * sin(-fyaw);
 	};
 
-	float speed = 500 * time;
+	float speed = 500.f * delta;
 
 	if (shift)
 		speed /= 10;

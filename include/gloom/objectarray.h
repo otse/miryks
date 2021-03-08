@@ -44,7 +44,7 @@ namespace gloom
 			return (Record *)GetSafe(i, RECORD);
 		}
 		template <class UnaryFunction>
-		void ForEach(int type, bool &stop, UnaryFunction f)
+		void Foreach(int type, bool &stop, UnaryFunction f)
 		{
 			for (unsigned int i = 0; i < Size(); i++)
 			{

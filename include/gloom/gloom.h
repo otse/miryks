@@ -33,8 +33,8 @@ namespace gloom
 	extern std::string pathToOldrim;
 
 	// Todo, these globals just
-	extern FirstPersonCamera *first_person_camera;
-	extern ViewerCamera *viewer_camera;
+	extern FirstPersonCamera *firstPersonCamera;
+	extern ViewerCamera *panCamera;
 	extern RenderTarget *renderRarget;
 
 	extern Interior *dungeon;

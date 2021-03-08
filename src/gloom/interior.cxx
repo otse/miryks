@@ -36,30 +36,30 @@ namespace gloom
 	{
 		Cell cell;
 
-		Grup *top = esp_get_top_grup(get_plugins()[1], "CELL");
+		Grup *top = esp_top_grup(get_plugins()[1], "CELL");
 
 		bool stop = false;
-
-		Objects(top).ForEach(0, stop, [&](Objects &objects, unsigned int i) {
-			Objects(objects.GetGrup(i)).ForEach(0, stop, [&](Objects &objects, unsigned int j) {
-				Objects(objects.GetGrup(j)).ForEach(0, stop, [&](Objects &objects, unsigned int &k) {
-					Object object(objects.GetRecord(k));
-					Grup *grup = objects.GetGrup(k + 1);
-					const char *editorId = GetEditorId(object);
-					if (0 == strcmp(name, editorId))
-					{
-						Objects C(grup);
-						cell.record = object.record;
-						printf("ForEach found your interior `%s`\n", editorId);
-						if (C.Size() >= 1)
-							cell.persistent = C.GetGrup(0);
-						if (C.Size() >= 2)
-							cell.non_persistent = C.GetGrup(1);
-						stop = true;
-					}
-					k += 1;
-				});
-			});
+		
+		Objects(top).			 Foreach(0, stop, [&](Objects &objs, unsigned int i) {
+		Objects(objs.GetGrup(i)).Foreach(0, stop, [&](Objects &objs, unsigned int j) {
+		Objects(objs.GetGrup(j)).Foreach(0, stop, [&](Objects &objs, unsigned int &k) {
+			Object object(objs.GetRecord(k));
+			Grup *grup = objs.GetGrup(k + 1);
+			const char *editorId = GetEditorId(object);
+			if (0 == strcmp(name, editorId))
+			{
+				Objects C(grup);
+				cell.record = object.record;
+				printf("Foreach found your interior `%s`\n", editorId);
+				if (C.Size() >= 1)
+					cell.persistent = C.GetGrup(0);
+				if (C.Size() >= 2)
+					cell.non_persistent = C.GetGrup(1);
+				stop = true;
+			}
+			k += 1;
+		});
+		});
 		});
 
 		return cell;
@@ -88,7 +88,7 @@ namespace gloom
 				}
 			}
 		};
-		Objects(grup).ForEach(0, stop, func);
+		Objects(grup).Foreach(0, stop, func);
 		PlaceCamera();
 	}
 
@@ -104,14 +104,14 @@ namespace gloom
 				// Place at any XMarker
 				float *locationalData = object.Data<float *>("DATA");
 				printf(" xmarker ! \n");
-				first_person_camera->pos = *cast_vec_3(locationalData);
-				first_person_camera->pos.z += EYE_HEIGHT;
-				first_person_camera->fyaw = cast_vec_3(locationalData + 3)->z;
+				firstPersonCamera->pos = *cast_vec_3(locationalData);
+				firstPersonCamera->pos.z += EYE_HEIGHT;
+				firstPersonCamera->fyaw = cast_vec_3(locationalData + 3)->z;
 				alreadyTeleported = true;
 				stop = true;
 			}
 		};
-		Objects(loadedCell.persistent).ForEach(0, stop, func);
+		Objects(loadedCell.persistent).Foreach(0, stop, func);
 	}
 
 	Interior::~Interior()

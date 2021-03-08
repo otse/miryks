@@ -1,3 +1,4 @@
+// c lib defs
 struct Grup;
 struct Record;
 struct Subrecord;
@@ -18,13 +19,13 @@ namespace gloom
 };
 namespace Glm = gloom;
 
+// gloom class defs
 namespace gloom
 {
 	class Obj;
 	class Ref;
 	class Object;
 	class ObjectArray;
-	class Interior;
 	class Mesh;
 	class SkinnedMesh;
 	class Actor;
@@ -37,4 +38,13 @@ namespace gloom
 	class CSphere;
 	class CShape;
 	class Collider;
+
+	class Wrld;
+	class Interior;
+
+	extern const char *CURRENT_WRLD;
+	extern const char *CURRENT_INTERIOR;
+	extern const char *PLY_;
 }
+
+// opengl defs in types.h

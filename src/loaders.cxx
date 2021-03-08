@@ -30,7 +30,7 @@ namespace gloom
 
 	Nif *LoadNif(Rc *rc, bool useCache = true)
 	{
-		cassert(rc, "bad rc at nif loader");
+		cassert(rc, "no rc nif loader");
 		Nif *nif;
 		nif = nifp_saved(rc);
 		if (useCache && nif != NULL)
@@ -68,15 +68,15 @@ namespace gloom
 		char *buf;
 		int ret;
 		// todo search ../ as well
-		if ((ret = fbuf(filename, &buf)) == -1)
-			ret = fbuf(path.c_str(), &buf);
+		if ((ret = fbuf(path.c_str(), &buf)) == -1)
+			ret = fbuf(filename, &buf);
 		if (ret == -1)
 		{
 			printf("couldn't find %s anywhere\n", filename);
 			exit(1);
 			return nullptr;
 		}
-		Plugin *esp = plugin_slate();
+		Esp *esp = plugin_slate();
 		esp->name = filename;
 		esp->buf = buf;
 		esp->filesize = ret;
@@ -101,7 +101,7 @@ namespace gloom
 		static DrawGroup *drawGroup = nullptr;
 		if (mesh)
 		{
-			scene->drawGroups.Remove(drawGroup);
+			sceneDefault->drawGroups.Remove(drawGroup);
 			delete mesh;
 			delete drawGroup;
 		}
@@ -109,14 +109,14 @@ namespace gloom
 		nifp_save(rc, nif);
 		mesh = new Mesh;
 		mesh->Construct(nif);
-		drawGroup = new DrawGroup(mesh->baseGroup, glm::translate(mat4(1.0), first_person_camera->pos));
-		scene->drawGroups.Add(drawGroup);
+		drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), firstPersonCamera->pos));
+		sceneDefault->drawGroups.Add(drawGroup);
 		HideCursor();
-		first_person_camera->disabled = true;
-		viewer_camera->disabled = false;
-		camera = viewer_camera;
-		viewer_camera->pos = drawGroup->aabb.center();
-		//viewer_camera->pos = first_person_camera->pos;
-		viewer_camera->radius = drawGroup->aabb.radius2() * 2;
+		firstPersonCamera->disabled = true;
+		panCamera->disabled = false;
+		cameraCurrent = panCamera;
+		panCamera->pos = drawGroup->aabb.center();
+		//panCamera->pos = firstPersonCamera->pos;
+		panCamera->radius = drawGroup->aabb.radius2() * 2;
 	}
 } // namespace gloom

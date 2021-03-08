@@ -21,7 +21,7 @@ namespace gloom
 {
 	Record *GetRace(const char *raceId)
 	{
-		Grup *top = esp_get_top_grup(get_plugins()[0], "RACE");
+		Grup *top = esp_top_grup(get_plugins()[0], "RACE");
 
 		cassert(top, "no race top grup");
 
@@ -29,7 +29,7 @@ namespace gloom
 
 		bool stop = false;
 
-		Objects(top).ForEach(0, stop, [&](Objects &objects, unsigned int &i) {
+		Objects(top).Foreach(0, stop, [&](Objects &objects, unsigned int &i) {
 			Record *record = objects.GetRecord(i);
 			auto editorId = GetEditorIdOnly(record);
 			if (strcmp(editorId, raceId) == 0)
@@ -111,7 +111,7 @@ namespace gloom
 			group->Add(mesh->baseGroup);
 			//printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
-			scene->drawGroups.Add(drawGroup);
+			sceneDefault->drawGroups.Add(drawGroup);
 		}
 		else
 		{
@@ -174,12 +174,12 @@ namespace gloom
 			return;
 		drawGroup->matrix = ref->second->matrix;
 		csphere = new CSphere(vec3(drawGroup->matrix[3]) /*+vec3(0, 0, 1)*/);
-		scene->drawGroups.Add(drawGroup);
+		sceneDefault->drawGroups.Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
 		mirror->matrix = drawGroup->matrix;
 		mirror->matrix = glm::translate(mirror->matrix, vec3(50, 0, 0));*/
-		//scene->Add(mirror);
+		//sceneDefault->Add(mirror);
 	}
 
 	void Human::Step()
@@ -207,19 +207,19 @@ namespace gloom
 		human = new Human();
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4());
-		scene->drawGroups.Add(drawGroup);
-		//camera->group->Add(human->group);
+		sceneDefault->drawGroups.Add(drawGroup);
+		//cameraCurrent->group->Add(human->group);
 	}
 
 	void Player::Step()
 	{
 		human->Step();
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
-		drawGroup->matrix = glm::translate(mat4(1.0), down + first_person_camera->pos);
-		drawGroup->matrix = rotate(drawGroup->matrix, -first_person_camera->fyaw, vec3(0, 0, 1));
+		drawGroup->matrix = glm::translate(mat4(1.0), down + firstPersonCamera->pos);
+		drawGroup->matrix = rotate(drawGroup->matrix, -firstPersonCamera->fyaw, vec3(0, 0, 1));
 		drawGroup->group->visible = false;
 
-		if (!dynamic_cast<FirstPersonCamera *>(camera))
+		if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
 			return;
 	}
 

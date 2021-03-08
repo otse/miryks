@@ -142,7 +142,7 @@ api EspCArray *esp_filter_objects(const Esp *, const char [5]);
 
 api Record *esp_get_form_id(unsigned int);
 
-api Grup *esp_get_top_grup(const Esp *, const char [5]);
+api Grup *esp_top_grup(const Esp *, const char [5]);
 
 api void free_plugin(Esp **);
 api void free_esp_array(EspCArray *);

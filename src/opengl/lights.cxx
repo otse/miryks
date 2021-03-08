@@ -34,14 +34,14 @@ DirectionalLight::DirectionalLight()
 
 float Light::CalcDist() const
 {
-	return glm::distance(vec3(matrix[3]), camera->pos);
+	return glm::distance(vec3(matrix[3]), cameraCurrent->pos);
 }
 
 void Light::Calc() // Unused
 {
 	vec3 position, color;
 
-	position = vec3(matrix[3]) * mat3(inverse(camera->view));
-	position += vec3(camera->view[3]);
+	position = vec3(matrix[3]) * mat3(inverse(cameraCurrent->view));
+	position += vec3(cameraCurrent->view[3]);
 	color = color * intensity;
 }
