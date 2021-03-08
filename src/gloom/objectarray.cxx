@@ -7,25 +7,36 @@ namespace gloom
 {
 	void gloom_object_array_test(Grup *grup)
 	{
-		ObjectArray objectArray(grup);
-		
-		bool stop = false;
-		
-		objectArray.Foreach(RECORD, stop, [&](Objects &objects, unsigned int &i) {
-			Object object(objects.GetRecord(i));
-		});
-
 		using Objects = ObjectArray;
 
-		Objects(grup).Foreach(0, stop, [&](Objects &objects, unsigned int &i) {
+		ObjectArray objectArray(grup);
+		objectArray.filter = RECORD;
+		objectArray.Foreach([&](unsigned int &i) {
+			Object object(objectArray.GetRecord(i));
+		});
+
+		Objects array;
+		array(grup).Foreach([&](unsigned int &i) {
 			i += 4;
-			int type = objects.Type(i);
-			stop = true;
+			int type = array.Type(i);
+			array.stop = true;
 		});
 	}
 
-	ObjectArray::ObjectArray(Grup *grup) : grup(grup)
+	ObjectArray::ObjectArray() {
+		(*this)(nullptr);
+	};
+
+	ObjectArray::ObjectArray(Grup *grup)
 	{
 		cassert(grup, "objectarray grup null");
+		(*this)(grup);
+	}
+
+	ObjectArray &ObjectArray::operator()(Grup *pass)
+	{
+		stop = false;
+		grup = pass;
+		return *this;
 	}
 } // namespace gloom

@@ -35,33 +35,28 @@ namespace gloom
 	Cell Interior::GetCell(const char *name)
 	{
 		Cell cell;
-
-		Grup *top = esp_top_grup(get_plugins()[1], "CELL");
-
-		bool stop = false;
 		
-		Objects(top).			 Foreach(0, stop, [&](Objects &objs, unsigned int i) {
-		Objects(objs.GetGrup(i)).Foreach(0, stop, [&](Objects &objs, unsigned int j) {
-		Objects(objs.GetGrup(j)).Foreach(0, stop, [&](Objects &objs, unsigned int &k) {
-			Object object(objs.GetRecord(k));
-			Grup *grup = objs.GetGrup(k + 1);
-			const char *editorId = GetEditorId(object);
-			if (0 == strcmp(name, editorId))
-			{
-				Objects C(grup);
-				cell.record = object.record;
-				printf("Foreach found your interior `%s`\n", editorId);
-				if (C.Size() >= 1)
-					cell.persistent = C.GetGrup(0);
-				if (C.Size() >= 2)
-					cell.non_persistent = C.GetGrup(1);
-				stop = true;
-			}
-			k += 1;
-		});
-		});
-		});
+		ObjectArray A, B, C;
 
+		A(esp_top_grup(get_plugins()[1], "CELL")).Foreach([&](unsigned int i) {
+			B(A.GetGrup(i)).Foreach([&](unsigned int j) {
+				C(B.GetGrup(j)).Foreach([&](unsigned int &k) {
+					Object object(C.GetRecord(k));
+					Grup *grup = C.GetGrup(k + 1);
+					const char *editorId = GetEditorId(object);
+					if (0 == strcmp(name, editorId))
+					{
+						ObjectArray D(grup);
+						cell.record = object.record;
+						printf("Foreach found your interior `%s`\n", editorId);
+						cell.persistent = D.Size() >= 1 ? D.GetGrup(0) : 0;
+						cell.non_persistent = D.Size() >= 2 ? D.GetGrup(1) : 0;
+						A.stop = B.stop = C.stop = true;
+					}
+					k += 1;
+				});
+			});
+		});
 		return cell;
 	}
 
@@ -71,9 +66,9 @@ namespace gloom
 	{
 		if (grup == nullptr)
 			return;
-		bool stop = false;
-		auto func = [&](Objects &objects, unsigned int i) {
-			Record *record = objects.GetRecord(i);
+		ObjectArray array;
+		array(grup).Foreach([&](unsigned int i) {
+			Record *record = array.GetRecord(i);
 			Object object(record);
 			if (object.IsType("REFR"))
 			{
@@ -87,8 +82,7 @@ namespace gloom
 					iterables.push_back(ref);
 				}
 			}
-		};
-		Objects(grup).Foreach(0, stop, func);
+		});
 		PlaceCamera();
 	}
 
@@ -96,9 +90,9 @@ namespace gloom
 	{
 		if (alreadyTeleported)
 			return;
-		bool stop = false;
-		auto func = [&](Objects &objects, unsigned int i) {
-			Object object(objects.GetRecord(i));
+		ObjectArray array;
+		array(loadedCell.persistent).Foreach([&](unsigned int i) {
+			Object object(array.GetRecord(i));
 			if (*GetBaseId(object) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
@@ -108,10 +102,9 @@ namespace gloom
 				firstPersonCamera->pos.z += EYE_HEIGHT;
 				firstPersonCamera->fyaw = cast_vec_3(locationalData + 3)->z;
 				alreadyTeleported = true;
-				stop = true;
+				array.stop = true;
 			}
-		};
-		Objects(loadedCell.persistent).Foreach(0, stop, func);
+		});
 	}
 
 	Interior::~Interior()

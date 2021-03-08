@@ -8,15 +8,19 @@
 
 namespace gloom
 {
-	using Objects = ObjectArray;
+	// using Objects = ObjectArray;
 
 	void gloom_object_array_test(Grup *);
 
 	class ObjectArray
 	{
 	public:
-		Grup *const grup;
+		int filter = 0;
+		bool stop;
+		Grup *grup;
+		ObjectArray();
 		ObjectArray(Grup *);
+		ObjectArray &operator()(Grup *);
 		inline int Type(unsigned int i) const
 		{
 			return (int)((TypeDud *)_Get(i))->x;
@@ -44,12 +48,12 @@ namespace gloom
 			return (Record *)GetSafe(i, RECORD);
 		}
 		template <class UnaryFunction>
-		void Foreach(int type, bool &stop, UnaryFunction f)
+		void Foreach(UnaryFunction f)
 		{
 			for (unsigned int i = 0; i < Size(); i++)
 			{
-				if (type == 0 || Type(i) == type)
-					f(*this, i);
+				if (filter == 0 || Type(i) == filter)
+					f(i);
 				if (stop)
 					break;
 			}

@@ -21,26 +21,18 @@ namespace gloom
 {
 	Record *GetRace(const char *raceId)
 	{
-		Grup *top = esp_top_grup(get_plugins()[0], "RACE");
-
-		cassert(top, "no race top grup");
-
 		Record *race = nullptr;
-
-		bool stop = false;
-
-		Objects(top).Foreach(0, stop, [&](Objects &objects, unsigned int &i) {
-			Record *record = objects.GetRecord(i);
+		ObjectArray array;
+		array(esp_top_grup(get_plugins()[0], "RACE")).Foreach([&](unsigned int &i) {
+			Record *record = array.GetRecord(i);
 			auto editorId = GetEditorIdOnly(record);
 			if (strcmp(editorId, raceId) == 0)
 			{
 				race = record;
-				stop = true;
+				array.stop = true;
 			}
 		});
-
-		cassert(stop, "No such raceId !");
-
+		cassert(array.stop, "No such raceId !");
 		return race;
 	}
 
