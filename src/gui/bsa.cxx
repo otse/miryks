@@ -6,18 +6,20 @@ using namespace gloom;
 
 #include <imgui.h>
 
-static char hedrstr[600] = { "not loaded" };
+static char hedrstr[600] = {"not loaded"};
 
 Archive *bsa = NULL;
 
 void bsa_gui()
 {
-	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;// | ImGuiWindowFlags_NoSavedSettings;
+	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::Begin("Bsa", nullptr, flags);
 
+	static bool reset = false;
+	
 #define MAX 230
 	static char buf[MAX] = "Skyrim - Meshes.bsa";
 	static char buf2[MAX] = {'\0'};
@@ -25,30 +27,20 @@ void bsa_gui()
 
 	if (strcmp(buf, buf2))
 	{
-		printf("bsa-gui manual loading new archive\n");
 		memcpy(buf2, buf, MAX);
-		std::string oldrim = pathToOldrim + "Data/" + buf;
-		std::string bin = buf;
-		std::string *path = nullptr;
-		if (exists_test3(oldrim))
-			path = &oldrim;
-		else if (exists_test3(bin))
-			path = &bin;
-		if (path)
+		Bsa *replace = loadArchive(buf2);
+		if (replace)
 		{
-			// if we had one loaded via gui, see if its part of game
-			if (bsa && !bsa->loadlisted)
-			{
-				printf("unloading non load ordered %s\n", bsa->path);
-				bsa_free(&bsa);
-				printf("bsa after bsa_free: %i\n", (int) bsa);
-			}
-			bsa = bsa_get(path->c_str());
-			if (bsa == NULL)
-				bsa = bsa_load(path->c_str());
-			if (bsa != NULL)
-				bsa_print_hedr(bsa, hedrstr);
+			bsa = replace;
+			reset = true;
 		}
+		//if (bsa && bsa->unimportant) // todo also check if its unused
+		//{
+		//	printf("unloading unimportant %s\n", bsa->path);
+		//	bsa_free(&bsa);
+		//}
+		if (bsa != NULL)
+			bsa_print_hedr(bsa, hedrstr);
 	}
 
 	ImGui::Separator();
@@ -73,6 +65,9 @@ void bsa_gui()
 		{
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
+
+			if (reset)
+				str2[0] = '\0';
 
 			static Rc *rc = nullptr;
 
@@ -105,6 +100,9 @@ void bsa_gui()
 			static char str[MAX] = "staffofmagnus";
 			static char str2[MAX] = {'\0'};
 
+			if (reset)
+				str2[0] = '\0';
+
 			ImGui::InputText("##Search", str, MAX);
 
 			static const char *items[BSA_MAX_SEARCHES];
@@ -112,6 +110,11 @@ void bsa_gui()
 
 			static Rc *rc = nullptr;
 			static Rc *rcs[BSA_MAX_SEARCHES];
+
+			if (reset) {
+				num = 0;
+				rc = nullptr;
+			}
 
 			if (strcmp(str, str2))
 			{
@@ -124,6 +127,8 @@ void bsa_gui()
 			}
 
 			static int item_current = 0;
+			if (reset)
+				item_current = 0;
 			ImGui::ListBox("##Results", &item_current, items, num, 10);
 
 			rc = rcs[item_current];
@@ -163,8 +168,8 @@ void bsa_gui()
 			//ImGui::Text("Files %i", bsa->hdr.files);
 
 			const ImGuiWindowFlags child_flags = 0;
-            const ImGuiID child_id = ImGui::GetID((void*)(intptr_t)0);
-            const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
+			const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
+			const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
 			//ImGui::BeginChildFrame(1, ImVec2(0, 800));
 			for (unsigned int i = 0; i < bsa->hdr.folders; i++)
 			{
@@ -212,11 +217,13 @@ void bsa_gui()
 			}
 			//ImGui::EndChildFrame();
 			ImGui::EndTabItem();
-            ImGui::EndChild();
+			ImGui::EndChild();
 		}
 
 		ImGui::EndTabBar();
 	}
+
+	reset = false;
 
 	ImGui::End();
 }

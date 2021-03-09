@@ -44,7 +44,7 @@ typedef struct Rc
 
 typedef struct Bsa
 {
-	char *path;
+	char *path, filename[260];
 	struct bsa_hedr hdr;
 	void *stream;
 	struct bsa_fld *fld;
@@ -53,7 +53,7 @@ typedef struct Bsa
 	int *r;
 	const char **ca;
 	const char **cb;
-	int loadlisted;
+	int unimportant;
 } Bsa;
 
 

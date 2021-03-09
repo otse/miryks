@@ -65,6 +65,8 @@ static bool useFbo = true;
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
+	bool guing = ImGui::IsAnyItemActive();
+
 	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
 	{
 		hideDebugGuis = !hideDebugGuis;
@@ -131,7 +133,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		printf("f10");
 		f10 = !f10;
 	}
-	else if (key == GLFW_KEY_H && action == GLFW_PRESS)
+	else if (key == GLFW_KEY_H && action == GLFW_PRESS && ! guing)
 	{
 		h_pop = !h_pop;
 	}

@@ -88,10 +88,13 @@ namespace gloom
 	Archive *loadArchive(const char *filename)
 	{
 		printf("Load Archive %s\n", filename);
+		Bsa *bsa = bsa_get(filename);
+		if (bsa)
+			return bsa; 
 		std::string path = pathToOldrim + dataFolder + filename;
 		if (exists(path.c_str()))
 			return bsa_load(path.c_str());
-		else
+		else if (exists(filename))
 			return bsa_load(filename);
 		return nullptr;
 	}

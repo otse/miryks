@@ -14,12 +14,12 @@ namespace gloom
 
 	const char *getEditorId(Object &object)
 	{
-		return object.Data<const char *>("EDID", 0);
+		return object.data<const char *>("EDID", 0);
 	}
 
 	unsigned int *getBaseId(Object &object)
 	{
-		return object.Data<unsigned int *>("NAME", 0);
+		return object.data<unsigned int *>("NAME", 0);
 	}
 
 	//Field *GetField(Record *record, unsigned int i)
@@ -32,9 +32,9 @@ namespace gloom
 		set(record);
 	}
 
-	void Object::set(Record *record) {
+	void Object::set(Record *pass) {
 		fields.clear();
-		this->record = record;
+		record = pass;
 		if (record == nullptr)
 			return;
 		cassert(((TypeDud *)record)->x == 2, "Gloom/Object Not Record ??");

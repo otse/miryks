@@ -27,6 +27,7 @@ api Bsa *bsa_load(const char *path)
 	Bsa *bsa = malloc(sizeof(Bsa));
 	memset(bsa, 0, sizeof(Bsa));
 	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
+	FileName(bsa->filename, path, '/');
 	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
 	cassert(
@@ -245,24 +246,26 @@ api void bsa_free(Bsa **b)
 
 // archive ext stuff below
 
-static Bsa *archives[10];
+static Bsa *archives[10] = { NULL };
 
 api Bsa **get_archives()
 {
 	return archives;
 }
 
-api Bsa *bsa_get(const char *path)
+api Bsa *bsa_get(const char *filename)
 {
 	for (int i = 10; i --> 0; )
 	{
 	Bsa *bsa = archives[i];
 	if (bsa==NULL)
 	continue;
-	if (0 == strcmp(path, bsa->path))
+	if (bsa->filename==NULL)
+	continue;
+	if (0 == strcmp(filename, bsa->filename))
 	return bsa;
-	return NULL;
 	}
+	return NULL;
 }
 
 api Rc *bsa_find_more(const char *p, unsigned long flags)

@@ -23,19 +23,24 @@ namespace gloom
 		{
 			return grup->mixed.size;
 		}
+		void fail(const char *m) const {
+			Fail(m);
+		}
 		void *get(unsigned int i) const
 		{
-			cassert(i < size(), "objects bounds");
+			if(i >= size())
+				fail("boo");
 			return grup->mixed.elements[i];
 		}
 		void *getSafe(unsigned int i, int type) const
 		{
-			cassert(type == getType(i), "objects type x");
+			if (type != getType(i))
+				fail("woe");
 			return get(i);
 		}
 		inline int getType(unsigned int i) const
 		{
-			return (int)((TypeDud *)get(i))->x;
+			return ((TypeDud *)get(i))->x;
 		}
 		Grup *getGrup(unsigned int i) const
 		{
@@ -56,9 +61,6 @@ namespace gloom
 					break;
 			}
 		}
-
-		// todo ressearch stl iter
-		// https://gist.github.com/jeetsukumaran/307264
 	};
 
 } // namespace gloom
