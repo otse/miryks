@@ -2,12 +2,9 @@
 #include <Gloom/Gloom.h>
 #include <Gloom/Files.h>
 
-#include <sstream>
 #include <imgui.h>
 
 using namespace gloom;
-
-static std::stringstream ss;
 
 void nifp_gui()
 {
