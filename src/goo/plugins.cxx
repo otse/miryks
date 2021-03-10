@@ -71,7 +71,7 @@ void im_record(Record *record)
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			im_subrecord(record->fields.subrecords[i]);
-		}
+		} 
 		ImGui::TreePop();
 	}
 }
@@ -91,36 +91,32 @@ void im_subrecord(Field *field)
 
 void esp_gui()
 {
+    ImGuiIO& io = ImGui::GetIO();
+
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
-	ImGui::SetNextWindowSize(ImVec2(450, 0));
+	ImGui::SetNextWindowSize(ImVec2(450, io.DisplaySize.y));
 	ImGui::SetNextWindowPos(ImVec2(450, 0));
+	
+	static EspCArray *filtered = NULL;
+
 	ImGui::Begin("Plugin", nullptr, flags);
 
-	static bool pluginUsedByGame = false;
-	static char buf[260] = "Skyrim.esm";
-	static char buf2[260] = {'\0'};
-	static char temporaryName[260] = {'\0'};
-	ImGui::InputText("##archive", buf, 260);
+#define MAX 230
+	static char buf[MAX] = "Skyrim.esm";
+	static char buf2[MAX] = { '\0' };
 
+	ImGui::InputText("##plugin", buf, IM_ARRAYSIZE(buf));
+	
 	if (strcmp(buf, buf2))
 	{
-		memcpy(buf2, buf, 260);
-		Plugin *plugin2 = has_plugin(buf);
-		if (plugin2)
+		memcpy(buf2, buf, MAX);
+		// Unload gui-mounted plugin
+		if (plugin && !has_plugin(plugin->name))
+			free_plugin(&plugin);
+		Plugin *replace = loadPlugin(buf, false);
+		if (replace)
 		{
-			pluginUsedByGame = true;
-			plugin = plugin2;
-		}
-		else
-		{
-			plugin2 = loadPlugin(buf2);
-			if (plugin2)
-			{
-				memcpy(temporaryName, buf, 260);
-				pluginUsedByGame = false;
-				plugin = plugin2;
-				plugin->name = temporaryName;
-			}
+			plugin = replace;
 		}
 	}
 
@@ -129,7 +125,6 @@ void esp_gui()
 	if (plugin)
 	{
 		ImGui::Text(plugin->name);
-		ImGui::TextWrapped(pluginUsedByGame ? "This plugin is active" : "Plugin loaded via imgui, but not active");
 	}
 
 	if (!plugin)
@@ -144,9 +139,10 @@ void esp_gui()
 	{
 		if (ImGui::BeginTabItem("plain"))
 		{
+			auto vec = ImVec2(0, ImGui::GetContentRegionAvail().y);
 			const ImGuiWindowFlags child_flags = 0;
 			const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
-			const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
+			const bool child_is_visible = ImGui::BeginChild(child_id, vec, true, child_flags);
 			//if (ImGui::TreeNode("Header"))
 			//{
 			im_record(plugin->header);
@@ -163,31 +159,35 @@ void esp_gui()
 		}
 		if (ImGui::BeginTabItem("filter"))
 		{
-			EspCArray *filtered = NULL;
-			static char filter[5] = "NPC_";
-			static char buf[5] = {'\0'};
-			ImGui::InputText("##espfilter", filter, 5);
-			if (strcmp(filter, buf))
+			static EspCArray *filtered = NULL;
+
+			static char buf[5] = "NPC_";
+			static char buf2[5] = { '\0' };
+
+			ImGui::InputText("##espfilter", buf, 5);
+			
+			if (strcmp(buf, buf2))
 			{
-				printf("esp try filter %.4s\n", filter);
-				memcpy(buf, filter, 4);
+				printf("esp try filter %.4s\n", buf2);
+				memcpy(buf2, buf, 5);
 				if (filtered)
 				{
 					free_esp_array(filtered);
 					filtered = NULL;
 				}
-				if (strlen(filter) == 4)
+				if (strlen(buf2) == 4)
 				{
-					filtered = esp_filter_objects(plugin, filter);
+					filtered = esp_filter_objects(plugin, buf2);
 				}
 			}
 			if (filtered)
 			{
 				ImGui::Text("Found %i records", filtered->size);
+				auto vec = ImVec2(0, ImGui::GetContentRegionAvail().y);
 				//ImGui::Text("%i", esp->statics.size);
 				const ImGuiWindowFlags child_flags = 0;
 				const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
-				const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
+				const bool child_is_visible = ImGui::BeginChild(child_id, vec, true, child_flags);
 				for (unsigned int i = 0; i < filtered->size; i++)
 					im_record((Record *)filtered->elements[i]);
 				ImGui::EndChild();
@@ -205,7 +205,7 @@ void esp_gui()
 			ImGui::EndChild();
 			ImGui::EndTabItem();
 		}*/
-		if (ImGui::BeginTabItem("formIds"))
+		/*if (ImGui::BeginTabItem("formIds"))
 		{
 #if 0
 			//ImGui::Text("%i", esp->formIds.size);
@@ -224,7 +224,7 @@ void esp_gui()
 			ImGui::EndChild();
 #endif
 			ImGui::EndTabItem();
-		}
+		}*/
 		ImGui::EndTabBar();
 	}
 

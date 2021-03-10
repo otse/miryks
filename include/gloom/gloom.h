@@ -10,9 +10,9 @@
 namespace gloom
 {
 	Rc *loadRc(const char *, const char *, unsigned long);
-	Nif *loadNif(Rc *, bool);
-	Mesh *loadMesh(const char *, bool);
-	Plugin *loadPlugin(const char *);
+	Nif *loadNif(Rc *, bool = true);
+	Mesh *loadMesh(const char *, bool = true);
+	Plugin *loadPlugin(const char *, bool = true);
 	Archive *loadArchive(const char *);
 
 	extern unsigned int fps;

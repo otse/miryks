@@ -15,7 +15,7 @@ void cell_gui()
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::SetNextWindowPos(ImVec2(1350, 0));
 
-	ImGui::Begin("Cell", nullptr, flags);
+	ImGui::Begin("cell", nullptr, flags);
 
 	ImGui::Separator();
 

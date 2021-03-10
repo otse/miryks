@@ -19,7 +19,7 @@
 #include <OpenGL/Types.h>
 
 #include <imgui.h>
-#include <gui/extra.h>
+#include <goo/extra.h>
 
 namespace gloom
 {

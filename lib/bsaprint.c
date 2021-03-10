@@ -8,7 +8,7 @@ api void bsa_print_rc(Bsa *b, char *s, int r)
 {
 	Rc *rc = b->rc[r];
 	int w = snprintf(s, 200, "\
-resource: %i\
+resource #: %i\
 \nfilename: %s\
 \nfolder: %s\
 \nbuf: %p\
@@ -26,7 +26,7 @@ api void bsa_print_fle_rcd(Bsa *b, char *s, int i, int j)
 {
 	struct bsa_file *rcd = &b->file[i][j];
 	int w = snprintf(s, 200, "\
-file: %i\
+file #: %i\
 \nhash: %llu\
 \nsize: %lu\
 \noffset: %lu\
@@ -42,7 +42,7 @@ api void bsa_print_fld_rcd(Bsa *b, char *s, int n)
 {
 	struct bsa_fld *rcd = &b->fld[n];
 	int w = snprintf(s, 200, "\
-folder: %i\
+folder #: %i\
 \nhash: %llu\
 \nnum files: %lu\
 \noffset: %lu\
@@ -58,36 +58,36 @@ api void bsa_print_hedr(Bsa *b, char *s)
 {
 #define hedr b->hdr
 	int w = snprintf(s, 600, "\
-id: %s\
-\nver: %i\
+id:           %s\
+\nver:        %i\
 \narchive flags:\
-\n0x1:   %i\
-\n0x2:   %i\
-\n0x4:   %i\
-\n0x8:   %i\
-\n0x10:  %i\
-\n0x20:  %i\
-\n0x40:  %i\
-\n0x80:  %i\
-\n0x100: %i\
-\n0x200: %i\
-\n0x400: %i\
+\n0x1:        %i\
+\n0x2:        %i\
+\n0x4:        %i\
+\n0x8:        %i\
+\n0x10:       %i\
+\n0x20:       %i\
+\n0x40:       %i\
+\n0x80:       %i\
+\n0x100:      %i\
+\n0x200:      %i\
+\n0x400:      %i\
 \nfile flags:\
-\nmeshes:   %i\
-\ntextures: %i\
-\nmenus:    %i\
-\nsounds:   %i\
-\nvoices:   %i\
-\nshaders:  %i\
-\ntrees:    %i\
-\nfonts:    %i\
-\nmisc:     %i\
-\nfolders: %lu\
-\nfiles: %lu\
-\nfoldersl: %lu\
-\nfilesl: %lu\
+\nmeshes:     %i\
+\ntextures:   %i\
+\nmenus:      %i\
+\nsounds:     %i\
+\nvoices:     %i\
+\nshaders:    %i\
+\ntrees:      %i\
+\nfonts:      %i\
+\nmisc:       %i\
+\nfolders:    %lu\
+\nfiles:      %lu\
+\nfoldersl:   %lu\
+\nfilesl:     %lu\
 \nfile_flags: %lu\
-\nsizeof: %zu\
+\nsizeof:     %zu\
 ",
 hedr.id,
 hedr.ver,

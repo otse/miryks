@@ -5,10 +5,6 @@
 #include <sstream>
 #include <imgui.h>
 
-#define cls                \
-	ss.str(std::string()); \
-	ss.clear();
-
 using namespace gloom;
 
 static std::stringstream ss;
@@ -31,9 +27,7 @@ void nifp_gui()
 
 		if (ImGui::TreeNode(nif->path))
 		{
-			ss << "# " << nif->key << "\nkey " << nifpmap->key;
-			ImGui::Text(ss.str().c_str());
-			cls;
+			ImGui::Text("key # %i", nifpmap[i].key);
 			ImGui::Separator();
 			if (ImGui::TreeNode("Header"))
 			{

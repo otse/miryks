@@ -278,6 +278,7 @@ api void esp_array_loop(EspCArray *array, void (*func)(Subrecord *field, void *d
 */
 
 // Util code I did for imgui, kinda useless once I learned about top grups
+
 api EspCArray *esp_filter_objects(const Esp *esp, const char type[5])
 {
 	EspCArray *filtered;

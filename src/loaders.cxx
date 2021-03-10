@@ -28,7 +28,7 @@ namespace gloom
 		return rc;
 	}
 
-	Nif *loadNif(Rc *rc, bool useCache = true)
+	Nif *loadNif(Rc *rc, bool useCache)
 	{
 		cassert(rc, "no rc nif loader");
 		Nif *nif;
@@ -45,7 +45,7 @@ namespace gloom
 		return nif;
 	}
 
-	Mesh *loadMesh(const char *model, bool useCache = true)
+	Mesh *loadMesh(const char *model, bool useCache)
 	{
 		static std::map<const char *, Mesh *> meshes;
 		if (meshes.count(model) && useCache)
@@ -62,22 +62,26 @@ namespace gloom
 		return mesh;
 	}
 
-	Plugin *loadPlugin(const char *filename)
+	Plugin *loadPlugin(const char *filename, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
 		char *buf;
 		int ret;
-		// todo search ../ as well
+		Esp *esp;
+		esp = has_plugin(filename);
+		if (esp)
+			return esp;
 		if ((ret = fbuf(path.c_str(), &buf)) == -1)
 			ret = fbuf(filename, &buf);
 		if (ret == -1)
 		{
 			printf("couldn't find %s anywhere\n", filename);
-			exit(1);
+			if (essential)
+				exit(1);
 			return nullptr;
 		}
-		Esp *esp = plugin_slate();
+		esp = plugin_slate();
 		esp->name = filename;
 		esp->buf = buf;
 		esp->filesize = ret;
@@ -90,7 +94,7 @@ namespace gloom
 		printf("Load Archive %s\n", filename);
 		Bsa *bsa = bsa_get(filename);
 		if (bsa)
-			return bsa; 
+			return bsa;
 		std::string path = pathToOldrim + dataFolder + filename;
 		if (exists(path.c_str()))
 			return bsa_load(path.c_str());
