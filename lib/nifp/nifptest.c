@@ -10,6 +10,7 @@ void test_callback(NifpRd *, int, int);
 
 void nifp_test()
 {
+	return;
 	// We use Rc from bsa.h
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	// or

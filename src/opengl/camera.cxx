@@ -12,6 +12,7 @@ double Camera::prev[2] = { 0, 0 };
 
 Camera::Camera()
 {
+	pitch = -pif / 2;
 	view = mat4(1);
 	pos = vec3(0);
 	fzoom = 50;
@@ -29,8 +30,6 @@ void Camera::SetProjection() {
 FirstPersonCamera::FirstPersonCamera() : Camera()
 {
 	eye = vec3(0);
-	w = a = s = d = r = f = false;
-	shift = false;
 
 	hands = new Group;
 	hands->matrix = glm::translate(mat4(1.0), vec3(0, 0, -100));
@@ -42,8 +41,8 @@ void FirstPersonCamera::Mouse(float x, float y)
 	if (disabled)
 		return;
 	const float sensitivity = .001f;
-	fyaw += x * sensitivity;
-	fpitch += y * sensitivity;
+	yaw += x * sensitivity;
+	pitch += y * sensitivity;
 	Camera::prev[0] = x;
 	Camera::prev[1] = y;
 }
@@ -57,16 +56,16 @@ void FirstPersonCamera::Update(float time)
 
 	Move(time);
 
-	while (fyaw > 2 * pif)
-		fyaw -= 2 * pif;
-	while (fyaw < 0)
-		fyaw += 2 * pif;
+	while (yaw > 2 * pif)
+		yaw -= 2 * pif;
+	while (yaw < 0)
+		yaw += 2 * pif;
 
-	fpitch = fmaxf(-pif, fminf(0, fpitch));
+	pitch = fmaxf(-pif, fminf(0, pitch));
 
 	view = mat4(1.0f);
-	view = glm::rotate(view, fpitch, vec3(1, 0, 0));
-	view = glm::rotate(view, fyaw, vec3(0, 0, 1));
+	view = glm::rotate(view, pitch, vec3(1, 0, 0));
+	view = glm::rotate(view, yaw, vec3(0, 0, 1));
 	view = glm::translate(view, -pos);
 	view = glm::translate(view, -eye);
 
@@ -86,14 +85,16 @@ void FirstPersonCamera::Update(float time)
 
 void FirstPersonCamera::Move(float delta)
 {
+	using namespace gloom::MyKeys;
+
 	auto forward = [&](float n) {
-		pos.x += n * sin(fyaw);
-		pos.y += n * cos(fyaw);
+		pos.x += n * sin(yaw);
+		pos.y += n * cos(yaw);
 	};
 
 	auto strafe = [&](float n) {
-		pos.x += n * cos(-fyaw);
-		pos.y += n * sin(-fyaw);
+		pos.x += n * cos(-yaw);
+		pos.y += n * sin(-yaw);
 	};
 
 	float speed = 500.f * delta;
@@ -131,7 +132,7 @@ void ViewerCamera::Mouse(float x, float y)
 		return;
 	const float sensitivity = .001f;
 	yaw += x * sensitivity;
-	pitch -= y * sensitivity;
+	pitch += y * sensitivity;
 }
 
 void ViewerCamera::Update(float time)

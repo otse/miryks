@@ -10,6 +10,7 @@
 struct Camera
 {
 public:
+	float yaw, pitch;
 	Camera();
 
 	Group *group;
@@ -34,9 +35,6 @@ struct FirstPersonCamera : public Camera
 	Group *hands;
 
 	vec3 eye;
-	float fyaw = 0, fpitch = -pif / 2;
-	bool w, a, s, d, r, f;
-	bool shift;
 
 	FirstPersonCamera();
 
@@ -49,7 +47,7 @@ struct FirstPersonCamera : public Camera
 struct ViewerCamera : public Camera
 {
 	vec3 center;
-	float radius, yaw, pitch, zoom;
+	float radius, zoom;
 
 	ViewerCamera();
 

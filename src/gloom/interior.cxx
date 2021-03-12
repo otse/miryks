@@ -99,7 +99,7 @@ namespace gloom
 				printf(" xmarker ! \n");
 				firstPersonCamera->pos = *cast_vec_3(locationalData);
 				firstPersonCamera->pos.z += EYE_HEIGHT;
-				firstPersonCamera->fyaw = cast_vec_3(locationalData + 3)->z;
+				firstPersonCamera->yaw = cast_vec_3(locationalData + 3)->z;
 				alreadyTeleported = true;
 				array.stop = true;
 			}

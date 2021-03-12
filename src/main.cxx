@@ -29,6 +29,12 @@ namespace gloom
 	Human *someHuman = nullptr;
 	Player *player1 = nullptr;
 
+	namespace MyKeys
+	{
+		bool w, a, s, d, r, f, v;
+		bool shift, space;
+	}
+
 	const char *CURRENT_WRLD;
 	const char *CURRENT_INTERIOR;
 
@@ -54,6 +60,11 @@ void customLoad()
 int main()
 {
 	using namespace gloom;
+	{
+	using namespace MyKeys;
+	w = a = s = d = r = f = v = false;
+	shift = space = false;
+	}
 	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
 	customLoad();

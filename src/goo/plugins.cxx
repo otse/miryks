@@ -71,7 +71,7 @@ void im_record(Record *record)
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			im_subrecord(record->fields.subrecords[i]);
-		} 
+		}
 		ImGui::TreePop();
 	}
 }
@@ -91,22 +91,24 @@ void im_subrecord(Field *field)
 
 void esp_gui()
 {
-    ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO &io = ImGui::GetIO();
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, io.DisplaySize.y));
 	ImGui::SetNextWindowPos(ImVec2(450, 0));
-	
-	static EspCArray *filtered = NULL;
 
 	ImGui::Begin("Plugin", nullptr, flags);
 
 #define MAX 230
 	static char buf[MAX] = "Skyrim.esm";
-	static char buf2[MAX] = { '\0' };
+	static char buf2[MAX] = {'\0'};
+
+	static EspCArray *filtered = NULL;
 
 	ImGui::InputText("##plugin", buf, IM_ARRAYSIZE(buf));
-	
+
+	bool reset = false;
+
 	if (strcmp(buf, buf2))
 	{
 		memcpy(buf2, buf, MAX);
@@ -117,15 +119,20 @@ void esp_gui()
 		if (replace)
 		{
 			plugin = replace;
+			if (filtered) {
+				free_esp_array(filtered);
+				filtered = NULL;
+			}
+			reset = true;
 		}
 	}
 
 	ImGui::Separator();
 
-	if (plugin)
-	{
-		ImGui::Text(plugin->name);
-	}
+	//if (plugin)
+	//{
+	//	ImGui::Text(plugin->name);
+	//}
 
 	if (!plugin)
 	{
@@ -159,13 +166,11 @@ void esp_gui()
 		}
 		if (ImGui::BeginTabItem("filter"))
 		{
-			static EspCArray *filtered = NULL;
-
 			static char buf[5] = "NPC_";
-			static char buf2[5] = { '\0' };
+			static char buf2[5] = {'\0'};
 
 			ImGui::InputText("##espfilter", buf, 5);
-			
+
 			if (strcmp(buf, buf2))
 			{
 				printf("esp try filter %.4s\n", buf2);

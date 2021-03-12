@@ -48,6 +48,11 @@ void bsa_gui()
 
 	ImGui::Separator();
 
+	//if (bsa)
+	//{
+	//	ImGui::Text(bsa->filename);
+	//}
+
 	if (!bsa)
 	{
 		ImGui::End();

@@ -59,12 +59,20 @@ namespace gloom
 	class Player
 	{
 	public:
+		vec3 pos;
+		float yaw;
+		Player();
 		Human *human;
 		DrawGroup *drawGroup = nullptr;
 		
-		Player();
+		ViewerCamera *thirdPersonCamera = nullptr;
+
+		bool thirdPerson = false;
+		void toggleView();
+		
 
 		void step();
+		void move();
 	};
 
 } // namespace gloom

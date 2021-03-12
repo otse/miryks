@@ -200,20 +200,86 @@ namespace gloom
 		human = new Human();
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4());
+		drawGroup->group->visible = false;
 		sceneDefault->drawGroups.Add(drawGroup);
 		//cameraCurrent->group->Add(human->group);
+		//fpc = new FirstPersonCamera;
+		pos = cameraCurrent->pos;
+
+		thirdPersonCamera = new ViewerCamera;
 	}
 
 	void Player::step()
 	{
-		human->step();
-		vec3 down = vec3(0, 0, SU_TO_CM(-150));
-		drawGroup->matrix = glm::translate(mat4(1.0), down + firstPersonCamera->pos);
-		drawGroup->matrix = rotate(drawGroup->matrix, -firstPersonCamera->fyaw, vec3(0, 0, 1));
-		drawGroup->group->visible = false;
+		move();
+		cameraCurrent->pos = pos;
 
-		if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
-			return;
+		human->step();
+
+		//if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
+		//	return;
+
+		vec3 down = vec3(0, 0, SU_TO_CM(-150));
+		drawGroup->matrix = glm::translate(mat4(1.0), down + pos);
+		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCurrent->yaw, vec3(0, 0, 1));
+		drawGroup->Reset();
+
 	}
+
+	void Player::toggleView()
+	{
+		thirdPerson = ! thirdPerson;
+
+		if (thirdPerson) {
+			cameraCurrent = thirdPersonCamera;
+			drawGroup->group->visible = true;
+			thirdPersonCamera->disabled = false;
+			thirdPersonCamera->pos = pos;
+			thirdPersonCamera->radius = 200;
+		}
+		else
+		{
+			cameraCurrent = firstPersonCamera;
+			drawGroup->group->visible = false;
+		}
+	}
+
+	void Player::move()
+	{
+		using namespace MyKeys;
+
+		yaw = cameraCurrent->yaw;
+
+		auto forward = [&](float n) {
+			pos.x += n * sin(yaw);
+			pos.y += n * cos(yaw);
+		};
+
+		auto strafe = [&](float n) {
+			pos.x += n * cos(-yaw);
+			pos.y += n * sin(-yaw);
+		};
+
+		float speed = 500.f * gloom::delta;
+
+		if (shift)
+			speed /= 10;
+
+		if (w && !s)
+			forward(speed);
+		if (s && !w)
+			forward(-speed / 2);
+
+		if (a && !d)
+			strafe(-speed);
+		if (d && !a)
+			strafe(speed);
+
+		if (r)
+			pos.z += speed / 2;
+		if (f)
+			pos.z -= speed / 2;
+	}
+
 
 } // namespace gloom

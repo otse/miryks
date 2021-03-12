@@ -37,6 +37,11 @@ namespace gloom
 	extern ViewerCamera *panCamera;
 	extern RenderTarget *renderRarget;
 
+	namespace MyKeys {
+		extern bool w, a, s, d, r, f, v;
+		extern bool shift, space;
+	};
+	
 	extern Interior *dungeon;
 	extern Actor *someDraugr;
 	extern Actor *meanSkelly;

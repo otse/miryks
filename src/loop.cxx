@@ -137,19 +137,26 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		h_pop = !h_pop;
 	}
+	else if (key == GLFW_KEY_V && action == GLFW_PRESS && ! guing)
+	{
+		if (player1)
+			player1->toggleView();
+	}
 }
 
 static void doKeys()
 {
+	using namespace MyKeys;
 	if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
 		return;
-	firstPersonCamera->w = glfwGetKey(window, GLFW_KEY_W);
-	firstPersonCamera->a = glfwGetKey(window, GLFW_KEY_A);
-	firstPersonCamera->s = glfwGetKey(window, GLFW_KEY_S);
-	firstPersonCamera->d = glfwGetKey(window, GLFW_KEY_D);
-	firstPersonCamera->r = glfwGetKey(window, GLFW_KEY_R);
-	firstPersonCamera->f = glfwGetKey(window, GLFW_KEY_F);
-	firstPersonCamera->shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+	w = glfwGetKey(window, GLFW_KEY_W);
+	a = glfwGetKey(window, GLFW_KEY_A);
+	s = glfwGetKey(window, GLFW_KEY_S);
+	d = glfwGetKey(window, GLFW_KEY_D);
+	r = glfwGetKey(window, GLFW_KEY_R);
+	f = glfwGetKey(window, GLFW_KEY_F);
+	v = glfwGetKey(window, GLFW_KEY_F);
+	shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
 }
 
 void cursor_pos_callback(GLFWwindow *window, double x, double y)
@@ -179,7 +186,7 @@ void setupImgui()
 
 	ImFont *font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
-	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 55.0f);
+	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 60.0f);
 	IM_ASSERT(font2 != NULL);
 	IM_ASSERT(font3 != NULL);
 
