@@ -59,7 +59,7 @@ namespace gloom
 	class Player
 	{
 	public:
-		vec3 pos;
+		vec3 pose;
 		float yaw;
 		Player();
 		Human *human;

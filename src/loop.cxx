@@ -338,6 +338,9 @@ void gloom::programLoop()
 
 		doKeys();
 
+		if (player1)
+			player1->step();
+			
 		cameraCurrent->Update(delta);
 
 		// someDraugr
@@ -350,8 +353,6 @@ void gloom::programLoop()
 		if (someHuman)
 			someHuman->step();
 
-		if (player1)
-			player1->step();
 
 		dungeon->update();
 

@@ -190,7 +190,7 @@ namespace gloom
 		if (csphere)
 		{
 			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());
-			drawGroup->matrix = translate(mat4(1.0), csphere->GetWorldTransform());
+			//drawGroup->matrix = translate(mat4(1.0), csphere->GetWorldTransform());
 			//drawGroup->Reset();
 		}
 	}
@@ -204,7 +204,7 @@ namespace gloom
 		sceneDefault->drawGroups.Add(drawGroup);
 		//cameraCurrent->group->Add(human->group);
 		//fpc = new FirstPersonCamera;
-		pos = cameraCurrent->pos;
+		pose = cameraCurrent->pos;
 
 		thirdPersonCamera = new ViewerCamera;
 	}
@@ -212,7 +212,8 @@ namespace gloom
 	void Player::step()
 	{
 		move();
-		cameraCurrent->pos = pos;
+
+		cameraCurrent->pos = pose;
 
 		human->step();
 
@@ -220,9 +221,10 @@ namespace gloom
 		//	return;
 
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
-		drawGroup->matrix = glm::translate(mat4(1.0), down + pos);
+		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
 		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCurrent->yaw, vec3(0, 0, 1));
 		drawGroup->Reset();
+		//human->drawGroup->matrix = drawGroup->matrix;
 
 	}
 
@@ -234,12 +236,13 @@ namespace gloom
 			cameraCurrent = thirdPersonCamera;
 			drawGroup->group->visible = true;
 			thirdPersonCamera->disabled = false;
-			thirdPersonCamera->pos = pos;
+			thirdPersonCamera->pos = pose;
 			thirdPersonCamera->radius = 200;
 		}
 		else
 		{
 			cameraCurrent = firstPersonCamera;
+			firstPersonCamera->pos = pose;
 			drawGroup->group->visible = false;
 		}
 	}
@@ -251,16 +254,16 @@ namespace gloom
 		yaw = cameraCurrent->yaw;
 
 		auto forward = [&](float n) {
-			pos.x += n * sin(yaw);
-			pos.y += n * cos(yaw);
+			pose.x += n * sin(yaw);
+			pose.y += n * cos(yaw);
 		};
 
 		auto strafe = [&](float n) {
-			pos.x += n * cos(-yaw);
-			pos.y += n * sin(-yaw);
+			pose.x += n * cos(-yaw);
+			pose.y += n * sin(-yaw);
 		};
 
-		float speed = 500.f * gloom::delta;
+		float speed = 100.f * gloom::delta;
 
 		if (shift)
 			speed /= 10;
@@ -276,9 +279,9 @@ namespace gloom
 			strafe(speed);
 
 		if (r)
-			pos.z += speed / 2;
+			pose.z += speed / 2;
 		if (f)
-			pos.z -= speed / 2;
+			pose.z -= speed / 2;
 	}
 
 
