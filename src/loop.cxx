@@ -45,14 +45,14 @@ namespace gloom
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		//glfwSetCursorPos(window, Camera::prev[0], Camera::prev[1]);
 		cursorShowing = false;
-		firstPersonCamera->disabled = false;
+		Camera::DISABLE_LOOK = Camera::DISABLE_MOVEMENT = cursorShowing;
 	}
 
 	void ShowCursor()
 	{
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 		cursorShowing = true;
-		firstPersonCamera->disabled = true;
+		Camera::DISABLE_LOOK = Camera::DISABLE_MOVEMENT = cursorShowing;
 	}
 } // namespace gloom
 
@@ -77,10 +77,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		if (firstPersonCamera->disabled)
+		if (cameraCurrent != firstPersonCamera)
 		{
 			cameraCurrent = firstPersonCamera;
-			cameraCurrent->disabled = false;
 			HideCursor();
 		}
 		else
@@ -95,7 +94,6 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 			HideCursor();
 		else
 			ShowCursor();
-		cameraCurrent->disabled = cursorShowing;
 	}
 	else if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
 	{

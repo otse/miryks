@@ -197,6 +197,8 @@ namespace gloom
 
 	Player::Player()
 	{
+		// We take over with custom movement
+		Camera::DISABLE_MOVEMENT = true;
 		human = new Human();
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4());
@@ -204,7 +206,7 @@ namespace gloom
 		sceneDefault->drawGroups.Add(drawGroup);
 		//cameraCurrent->group->Add(human->group);
 		//fpc = new FirstPersonCamera;
-		pose = cameraCurrent->pos;
+		pose = vec3(cameraCurrent->pos);
 
 		thirdPersonCamera = new ViewerCamera;
 	}
@@ -213,7 +215,7 @@ namespace gloom
 	{
 		move();
 
-		cameraCurrent->pos = pose;
+		cameraCurrent->pos = vec3(pose);
 
 		human->step();
 
@@ -235,7 +237,6 @@ namespace gloom
 		if (thirdPerson) {
 			cameraCurrent = thirdPersonCamera;
 			drawGroup->group->visible = true;
-			thirdPersonCamera->disabled = false;
 			thirdPersonCamera->pos = pose;
 			thirdPersonCamera->radius = 200;
 		}

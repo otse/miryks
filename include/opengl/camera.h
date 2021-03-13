@@ -10,6 +10,7 @@
 struct Camera
 {
 public:
+	static bool DISABLE_LOOK, DISABLE_MOVEMENT;
 	float yaw, pitch;
 	Camera();
 
@@ -20,7 +21,7 @@ public:
 	mat4 view, /*matrix,*/ projection;
 
 	float fzoom;
-	bool disabled;
+	bool freeze;
 
 	static double prev[2];
 

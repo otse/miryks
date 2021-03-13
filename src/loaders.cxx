@@ -121,8 +121,6 @@ namespace gloom
 		drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), firstPersonCamera->pos));
 		sceneDefault->drawGroups.Add(drawGroup);
 		HideCursor();
-		firstPersonCamera->disabled = true;
-		panCamera->disabled = false;
 		cameraCurrent = panCamera;
 		panCamera->pos = drawGroup->aabb.center();
 		//panCamera->pos = firstPersonCamera->pos;
