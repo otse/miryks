@@ -1,4 +1,5 @@
 #include <Gloom/Gloom.h>
+#include <Gloom/Actor.h>
 
 #include "opengl/group.h"
 #include "opengl/geometry.h"
@@ -68,6 +69,12 @@ void opengl_gui()
 			//ss << "pos: " << glm::to_string(cameraCurrent->view);
 			ImGui::TextWrapped(ss.str().c_str());
 			cls;
+			ImGui::EndTabItem();
+		}
+		if (ImGui::BeginTabItem("player"))
+		{
+			//ss << "pos: " << glm::to_string(cameraCurrent->view);
+			ImGui::TextWrapped("pose %s", glm::to_string(player1->pose));
 			ImGui::EndTabItem();
 		}
 

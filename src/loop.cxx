@@ -77,7 +77,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		if (cameraCurrent != firstPersonCamera)
+		if (cameraCurrent == panCamera)
 		{
 			cameraCurrent = firstPersonCamera;
 			HideCursor();
@@ -145,8 +145,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 static void doKeys()
 {
 	using namespace MyKeys;
-	if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
-		return;
+	//if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
+	//	return;
+	// caused major depression ^
+	// third person wouldnt work and i thought it was somehow vec assignment
 	w = glfwGetKey(window, GLFW_KEY_W);
 	a = glfwGetKey(window, GLFW_KEY_A);
 	s = glfwGetKey(window, GLFW_KEY_S);

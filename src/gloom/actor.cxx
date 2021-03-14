@@ -197,6 +197,7 @@ namespace gloom
 
 	Player::Player()
 	{
+		printf(" Player() \n");
 		// We take over with custom movement
 		Camera::DISABLE_MOVEMENT = true;
 		human = new Human();
@@ -214,19 +215,14 @@ namespace gloom
 	void Player::step()
 	{
 		move();
-
 		cameraCurrent->pos = vec3(pose);
-
 		human->step();
-
 		//if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
 		//	return;
-
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
 		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
 		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCurrent->yaw, vec3(0, 0, 1));
 		drawGroup->Reset();
-		//human->drawGroup->matrix = drawGroup->matrix;
 
 	}
 
@@ -238,12 +234,16 @@ namespace gloom
 			cameraCurrent = thirdPersonCamera;
 			drawGroup->group->visible = true;
 			thirdPersonCamera->pos = pose;
+			thirdPersonCamera->yaw = firstPersonCamera->yaw;
+			thirdPersonCamera->pitch = firstPersonCamera->pitch;
 			thirdPersonCamera->radius = 200;
 		}
 		else
 		{
 			cameraCurrent = firstPersonCamera;
 			firstPersonCamera->pos = pose;
+			firstPersonCamera->yaw = thirdPersonCamera->yaw;
+			firstPersonCamera->pitch = thirdPersonCamera->pitch;
 			drawGroup->group->visible = false;
 		}
 	}
@@ -264,7 +264,7 @@ namespace gloom
 			pose.y += n * sin(-yaw);
 		};
 
-		float speed = 100.f * gloom::delta;
+		float speed = 200.f * gloom::delta;
 
 		if (shift)
 			speed /= 10;
