@@ -17,8 +17,30 @@
 #include <OpenGL/Scene.h>
 #include <OpenGL/Camera.h>
 
+// good reads
+// https://www.afkmods.com/index.php?/topic/5494-skyrim-lesse-skin-partitions-nif-to-ck/
+
 namespace gloom
 {
+	Keyframes *draugrAttack = nullptr;
+
+	Keyframes *humanIdle = nullptr;
+	Keyframes *humanForward = nullptr;
+	Keyframes *humanLeft = nullptr;
+	Keyframes *humanRight = nullptr;
+	Keyframes *humanBack = nullptr;
+
+	Keyframes *GetKeyframes(const char *path)
+	{
+		Nif *nif = malloc_nifp();
+		nif->path = path;
+		fbuf(path, &(char *)nif->buf);
+		nifp_read(nif);
+		nifp_save(nif, nif);
+		Kf *kf = new Kf(nif);
+		return kf;
+	}
+
 	Record *GetRace(const char *raceId)
 	{
 		Record *race = nullptr;
@@ -36,55 +58,22 @@ namespace gloom
 		return race;
 	}
 
-	Actor::Actor(const char *raceId, const char *model)
+	BodyPart::BodyPart(const char *raceId, const char *model)
 	{
-		//printf("actor of race %s\n", raceId);
-
 		Object race = Object(GetRace(raceId));
-
 		ExportRaceHkxToKf(raceId);
-
-		// cassert(race.Count("ANAM") == 2, "race count anam");
-
-		auto ANAM = race.data<char *>("ANAM", 0);
-		auto MODL = race.data<unsigned short *>("MODL", 2);
-		auto MODLCHAR = race.data<char *>("MODL", 2);
-
-		Field *modl = race.equalRange("MODL", 2);
-
-		//printf("modl size %u str %s offset %u", modl->hed->type, (char *)modl->data, modl->offset);
-
-		cassert(ANAM, "no actor race anam sub");
-
-		Rc *rc = bsa_find(get_archives()[0], model);
-		bsa_read(rc);
-		Nif *character = malloc_nifp();
-		character->path = model;
-		character->buf = rc->buf;
-		nifp_read(character);
-		nifp_save((void *)model, character);
-
-		skeleton = new Skeleton();
-		skeleton->load(ANAM);
-		skeleton->construct();
-		skeleton->baseBone->group->visible = false;
-
-		mesh = new Mesh();
-		mesh->nif = character;
-		mesh->construct();
-
-		smesh = new SkinnedMesh();
-		smesh->mesh = mesh;
-		smesh->skeleton = skeleton;
-		smesh->construct();
-
+		auto anam = race.data<char *>("ANAM", 0);
+		Resource *rc = loadResource("meshes\\", model, 0x1);
+		Nif *character = loadNif(rc, false);
+		skeleton = new Skeleton(anam);
+		mesh = new Mesh(character);
+		smesh = new SkinnedMesh(mesh, skeleton);
 		if (raceId == "DraugrRace")
 		{
 			animation = new Animation(draugrAttack);
 			animation->skeleton = skeleton;
 			skeleton->animation = animation;
 		}
-
 		if (raceId == "ImperialRace")
 		{
 			animation = new Animation(humanIdle);
@@ -93,10 +82,9 @@ namespace gloom
 		}
 	}
 
-	void Actor::PutDown(const char *q)
+	void BodyPart::PutDown(const char *q)
 	{
 		auto ref = dungeon->editorIds.find(q);
-
 		if (ref != dungeon->editorIds.end())
 		{
 			Group *group = new Group();
@@ -112,7 +100,7 @@ namespace gloom
 		}
 	}
 
-	void Actor::step()
+	void BodyPart::step()
 	{
 		if (smesh)
 			smesh->forward();
@@ -123,25 +111,26 @@ namespace gloom
 
 	Human::Human()
 	{
+		//Object race = Object(GetRace("ImperialRace"));
+		//ExportRaceHkxToKf("ImperialRace");
+		//auto ANAM = race.data<char *>("ANAM", 0);
 		hat = head = body = hands = feet = nullptr;
-
 		const bool beggar = true;
 		const bool greybeard = false;
 		if (beggar)
 		{
-			hat = new Actor("ImperialRace", "meshes\\clothes\\beggarclothes\\hatm_0.nif");
-			head = new Actor("ImperialRace", "meshes\\actors\\character\\character assets\\malehead.nif");
-			body = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonerclothes_0.nif");
-			hands = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonercuffs_0.nif");
-			feet = new Actor("ImperialRace", "meshes\\clothes\\prisoner\\prisonershoes_0.nif");
+			hat = 	new BodyPart("ImperialRace", "clothes\\beggarclothes\\hatm_0.nif");
+			head = 	new BodyPart("ImperialRace", "actors\\character\\character assets\\malehead.nif");
+			body = 	new BodyPart("ImperialRace", "clothes\\prisoner\\prisonerclothes_0.nif");
+			hands = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonercuffs_0.nif");
+			feet = 	new BodyPart("ImperialRace", "clothes\\prisoner\\prisonershoes_0.nif");
 		}
 		if (greybeard)
 		{
-			//head = new Actor("ImperialRace", "meshes\\clothes\\graybeardrobe\\greybeardhat_0.nif");
-			//body = new Actor("ImperialRace", "meshes\\clothes\\graybeardrobe\\greyboardrobe_0.nif");
-			//feet = new Actor("ImperialRace", "meshes\\clothes\\graybeardrobe\\greybeardboots_0.nif");
+			//head = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardhat_0.nif");
+			//body = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greyboardrobe_0.nif");
+			//feet = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardboots_0.nif");
 		}
-
 		group = new Group;
 		//group->matrix = glm::translate(mat4(1), vec3(0, 0, 200));
 		if (hat)
@@ -154,9 +143,7 @@ namespace gloom
 			group->Add(hands->mesh->baseGroup);
 		if (feet)
 			group->Add(feet->mesh->baseGroup);
-
 		drawGroup = new DrawGroup(group, mat4());
-
 		csphere = nullptr;
 	};
 
@@ -216,6 +203,15 @@ namespace gloom
 	{
 		move();
 		cameraCurrent->pos = vec3(pose);
+		using namespace MyKeys;
+		if (w)
+		{
+
+		}
+		else
+		{
+			//human->
+		}
 		human->step();
 		//if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
 		//	return;
@@ -241,10 +237,10 @@ namespace gloom
 		else
 		{
 			cameraCurrent = firstPersonCamera;
+			drawGroup->group->visible = false;
 			firstPersonCamera->pos = pose;
 			firstPersonCamera->yaw = thirdPersonCamera->yaw;
 			firstPersonCamera->pitch = thirdPersonCamera->pitch;
-			drawGroup->group->visible = false;
 		}
 	}
 

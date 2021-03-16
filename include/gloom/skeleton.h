@@ -20,6 +20,7 @@ namespace gloom
 	{
 	public:
 		Skeleton();
+		Skeleton(const char *);
 
 		std::map<ni_ref, Bone *> bones;
 		std::map<const std::string, Bone *> bonesNamed;

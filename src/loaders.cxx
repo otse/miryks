@@ -15,20 +15,20 @@ namespace gloom
 {
 	const char *dataFolder = "Data/";
 
-	Rc *loadRc(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
+	Resource *loadResource(const char *prepend = "meshes\\", const char *path = "", unsigned long flags = 0x1)
 	{
 		std::string str = prepend;
 		str += path;
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
 		const char *s = str.c_str();
-		Rc *rc = bsa_find_more(s, flags);
+		Resource *rc = bsa_find_more(s, flags);
 		if (!rc)
 			printf("no rc at %s\n", s);
 		bsa_read(rc);
 		return rc;
 	}
 
-	Nif *loadNif(Rc *rc, bool useCache)
+	Nif *loadNif(Resource *rc, bool useCache)
 	{
 		cassert(rc, "no rc nif loader");
 		Nif *nif;
@@ -50,19 +50,17 @@ namespace gloom
 		static std::map<const char *, Mesh *> meshes;
 		if (meshes.count(model) && useCache)
 			return meshes[model];
-		Rc *rc = loadRc("meshes\\", model, 0x1);
+		Resource *rc = loadResource("meshes\\", model, 0x1);
 		if (!rc)
 			return nullptr;
 		Nif *nif = loadNif(rc, true);
-		Mesh *mesh = new Mesh;
-		mesh->nif = nif;
-		mesh->construct();
+		Mesh *mesh = new Mesh(nif);
 		if (useCache)
 			meshes.emplace(model, mesh);
 		return mesh;
 	}
 
-	Plugin *loadPlugin(const char *filename, bool essential)
+	Esp *loadPlugin(const char *filename, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = pathToOldrim + dataFolder + filename;
@@ -89,7 +87,7 @@ namespace gloom
 		return esp;
 	}
 
-	Archive *loadArchive(const char *filename)
+	Bsa *loadArchive(const char *filename)
 	{
 		printf("Load Archive %s\n", filename);
 		Bsa *bsa = bsa_get(filename);
@@ -103,7 +101,7 @@ namespace gloom
 		return nullptr;
 	}
 
-	void View(Rc *rc)
+	void View(Resource *rc)
 	{
 		static Mesh *mesh = nullptr;
 		static DrawGroup *drawGroup = nullptr;
@@ -115,9 +113,7 @@ namespace gloom
 		}
 		Nif *nif = loadNif(rc, false); // Note no use of cache
 		nifp_save(rc, nif);
-		mesh = new Mesh;
-		mesh->nif = nif;
-		mesh->construct();
+		mesh = new Mesh(nif);
 		drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), firstPersonCamera->pos));
 		sceneDefault->drawGroups.Add(drawGroup);
 		HideCursor();

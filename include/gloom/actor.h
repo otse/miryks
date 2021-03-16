@@ -10,28 +10,23 @@
 namespace gloom
 {
 	extern Keyframes *draugrAttack;
-	extern Keyframes *humanIdle;
+	extern Keyframes *humanIdle, *humanForward, *humanLeft, *humanRight, *humanBack;
 
 	Record *GetRace(const char *);
 	//void Export(const char *);
 	void ExportRaceHkxToKf(const char *);
+	Keyframes *GetKeyframes(const char *);
 
-	class Actor
+	class BodyPart
 	{
 	public:
-		Actor(const char *, const char *);
-
+		BodyPart(const char *, const char *);
 		Mesh *mesh = nullptr;
 		SkinnedMesh *smesh = nullptr;
 		Skeleton *skeleton = nullptr;
 		Animation *animation = nullptr;
-
 		DrawGroup *drawGroup = nullptr;
-
-		float merry = 0;
-
 		void step();
-
 		void PutDown(const char *);
 	};
 
@@ -42,35 +37,27 @@ namespace gloom
 
 	class Human
 	{
-		Actor *hat, *head, *body, *hands, *feet;
-
+		BodyPart *hat, *head, *body, *hands, *feet;
 	public:
 		CSphere *csphere;
 		Group *group;
 		DrawGroup *drawGroup = nullptr;
-		
 		Human();
-
 		void step();
-
 		void Place(const char *);
 	};
 
 	class Player
 	{
 	public:
+		bool thirdPerson = false;
 		vec3 pose;
 		float yaw;
-		Player();
 		Human *human;
 		DrawGroup *drawGroup = nullptr;
-		
 		ViewerCamera *thirdPersonCamera = nullptr;
-
-		bool thirdPerson = false;
+		Player();
 		void toggleView();
-		
-
 		void step();
 		void move();
 	};

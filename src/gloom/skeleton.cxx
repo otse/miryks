@@ -20,10 +20,16 @@ namespace gloom
 		nif = nullptr;
 		animation = nullptr;
 	}
-	void Skeleton::load(const char *ANAM)
+	Skeleton::Skeleton(const char *anam) : Skeleton()
 	{
-		// printf("skeleton load anam %s\n", ANAM);
-		Rc *rc = loadRc("meshes\\", ANAM, 0x1);
+		load(anam);
+		construct();
+		baseBone->group->visible = false;
+	}
+	void Skeleton::load(const char *anam)
+	{
+		// printf("skeleton load anam %s\n", anam);
+		Resource *rc = loadResource("meshes\\", anam, 0x1);
 		nif = loadNif(rc, true);
 		// printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}

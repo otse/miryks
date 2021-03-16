@@ -24,6 +24,7 @@ namespace gloom
 	{
 	public:
 		Mesh();
+		Mesh(Nif *);
 		~Mesh();
 		Nif *nif = nullptr;
 		std::map<int, Group *> groups;
@@ -45,6 +46,12 @@ namespace gloom
 			mesh = nullptr;
 			skeleton = nullptr;
 			lastShape = nullptr;
+		}
+		SkinnedMesh(Mesh *mesh, Skeleton *skeleton) : SkinnedMesh()
+		{
+			this->mesh = mesh;
+			this->skeleton = skeleton;
+			construct();
 		}
 		void construct();
 		void initial();

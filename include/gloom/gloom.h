@@ -9,18 +9,18 @@
 
 namespace gloom
 {
-	Rc *loadRc(const char *, const char *, unsigned long);
-	Nif *loadNif(Rc *, bool = true);
+	Resource *loadResource(const char *, const char *, unsigned long);
+	Nif *loadNif(Resource *, bool = true);
 	Mesh *loadMesh(const char *, bool = true);
-	Plugin *loadPlugin(const char *, bool = true);
-	Archive *loadArchive(const char *);
+	Esp *loadPlugin(const char *, bool = true);
+	Bsa *loadArchive(const char *);
 
 	extern unsigned int fps;
 
 	void programGo();
 	void programLoop();
 
-	void View(Rc *);
+	void View(Resource *);
 	void doImGui();
 	void renderImGui();
 
@@ -43,8 +43,8 @@ namespace gloom
 	};
 	
 	extern Interior *dungeon;
-	extern Actor *someDraugr;
-	extern Actor *meanSkelly;
+	extern BodyPart *someDraugr;
+	extern BodyPart *meanSkelly;
 	extern Human *someHuman;
 	extern Player *player1;
 

@@ -28,6 +28,11 @@ namespace gloom
 		groups[-1] = baseGroup;
 		lastGroup = baseGroup;
 	}
+	Mesh::Mesh(Nif *bucket) : Mesh()
+	{
+		nif = bucket;
+		construct();
+	}
 	Mesh::~Mesh()
 	{
 	}
@@ -50,7 +55,6 @@ namespace gloom
 	}
 	void SkinnedMesh::construct()
 	{
-		// second pass rd
 		cassert(skeleton, "smesh needs skeleton");
 		Rd *rd = malloc_nifprd();
 		rd->nif = mesh->nif;

@@ -59,7 +59,7 @@ void bsa_gui()
 		return;
 	}
 
-	auto func = [&](Rc *rc) {
+	auto func = [&](Resource *rc) {
 		ImGui::Separator();
 		char s[200];
 
@@ -110,7 +110,7 @@ void bsa_gui()
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
 
-			static Rc *rc = nullptr;
+			static Resource *rc = nullptr;
 
 			if (reset)
 			{
@@ -152,8 +152,8 @@ void bsa_gui()
 			static const char *items[BSA_MAX_SEARCHES];
 			static int num = 0;
 
-			static Rc *rc = nullptr;
-			static Rc *rcs[BSA_MAX_SEARCHES];
+			static Resource *rc = nullptr;
+			static Resource *rcs[BSA_MAX_SEARCHES];
 
 			if (reset)
 			{
@@ -216,7 +216,7 @@ void bsa_gui()
 							ImGui::Separator();
 
 							char s[200];
-							Rc *rc = bsa->rc[bsa->r[i] + j];
+							Resource *rc = bsa->rc[bsa->r[i] + j];
 							bsa_print_rc(bsa, s, rc->r);
 							ImGui::Text(s);
 							bsa_print_fle_rcd(bsa, s, i, j);

@@ -8,6 +8,7 @@ struct Bsa;
 struct Nifp;
 struct NifpRd;
 
+typedef Rc Resource;
 typedef Esp Plugin;
 typedef Bsa Archive;
 typedef Nifp Nif;
@@ -28,7 +29,7 @@ namespace gloom
 	class ObjectArray;
 	class Mesh;
 	class SkinnedMesh;
-	class Actor;
+	class BodyPart;
 	class Human;
 	class Player;
 	class Skeleton;
@@ -41,10 +42,13 @@ namespace gloom
 
 	class Wrld;
 	class Interior;
+	
+	typedef Keyframes Kf;
 
 	extern const char *CURRENT_WRLD;
 	extern const char *CURRENT_INTERIOR;
 	extern const char *PLY_;
 }
+
 
 // opengl defs in types.h

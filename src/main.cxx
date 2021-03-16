@@ -24,8 +24,8 @@ namespace gloom
 	unsigned int fps = 0;
 
 	Interior *dungeon = nullptr;
-	Actor *someDraugr = nullptr;
-	Actor *meanSkelly = nullptr;
+	BodyPart *someDraugr = nullptr;
+	BodyPart *meanSkelly = nullptr;
 	Human *someHuman = nullptr;
 	Player *player1 = nullptr;
 
@@ -90,16 +90,16 @@ int main()
 	cameraCurrent = firstPersonCamera;
 #if 0
 	// Secret bucket beginning
-	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	Resource *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	View(rc);
 #endif
 	//nif_test();
 	nifp_test();
 	dungeon = new Interior("GloomGen"); // <-- interior to load
 	dungeon->loadCell();
-	//someDraugr = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
+	//someDraugr = new BodyPart("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");
-	//meanSkelly = new Actor("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
+	//meanSkelly = new BodyPart("DraugrRace", "meshes\\actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
 	someHuman = new Human();
 	someHuman->Place("gloomgenman");
