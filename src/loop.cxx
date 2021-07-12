@@ -107,8 +107,8 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		const char *cellName = getEditorId(object);
 		char dest[512];
 		strcpy(dest, cellName);
-		Esp *plugin = get_plugins()[1];
-		const char *name = plugin->name;
+		Esp *esp = get_plugins()[1];
+		const char *name = esp->name;
 		Esp *has = has_plugin(name);
 		free_plugin(&has);
 		get_plugins()[1] = load_plugin(name, true);
