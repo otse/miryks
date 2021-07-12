@@ -96,6 +96,11 @@
         "units": "cpp",
         "stat.h": "c",
         "esp.h": "c",
-        "defs": "cpp"
+        "defs": "cpp",
+        "bit": "cpp",
+        "clocale": "cpp",
+        "functional": "cpp",
+        "unordered_map": "cpp",
+        "xhash": "cpp"
     }
 }

@@ -34,7 +34,8 @@ namespace gloom
 	{
 		Nif *nif = malloc_nifp();
 		nif->path = path;
-		fbuf(path, &(char *)nif->buf);
+		char *lvalue = (char *)nif->buf;
+		fbuf(path, &lvalue);
 		nifp_read(nif);
 		nifp_save(nif, nif);
 		Kf *kf = new Kf(nif);
@@ -45,15 +46,16 @@ namespace gloom
 	{
 		Record *race = nullptr;
 		ObjectArray array;
-		array(esp_top_grup(get_plugins()[0], "RACE")).forEach([&](unsigned int &i) {
-			Record *record = array.getRecord(i);
-			auto editorId = getEditorIdOnly(record);
-			if (strcmp(editorId, raceId) == 0)
-			{
-				race = record;
-				array.stop = true;
-			}
-		});
+		array(esp_top_grup(get_plugins()[0], "RACE")).forEach([&](unsigned int &i)
+															  {
+																  Record *record = array.getRecord(i);
+																  auto editorId = getEditorIdOnly(record);
+																  if (strcmp(editorId, raceId) == 0)
+																  {
+																	  race = record;
+																	  array.stop = true;
+																  }
+															  });
 		cassert(array.stop, "No such raceId !");
 		return race;
 	}
@@ -119,11 +121,11 @@ namespace gloom
 		const bool greybeard = false;
 		if (beggar)
 		{
-			hat = 	new BodyPart("ImperialRace", "clothes\\beggarclothes\\hatm_0.nif");
-			head = 	new BodyPart("ImperialRace", "actors\\character\\character assets\\malehead.nif");
-			body = 	new BodyPart("ImperialRace", "clothes\\prisoner\\prisonerclothes_0.nif");
+			hat = new BodyPart("ImperialRace", "clothes\\beggarclothes\\hatm_0.nif");
+			head = new BodyPart("ImperialRace", "actors\\character\\character assets\\malehead.nif");
+			body = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonerclothes_0.nif");
 			hands = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonercuffs_0.nif");
-			feet = 	new BodyPart("ImperialRace", "clothes\\prisoner\\prisonershoes_0.nif");
+			feet = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonershoes_0.nif");
 		}
 		if (greybeard)
 		{
@@ -182,18 +184,22 @@ namespace gloom
 		}
 	}
 
+#define NO_HUMAN_PLAYER 1
+
 	Player::Player()
 	{
 		printf(" Player() \n");
 		// We take over with custom movement
 		Camera::DISABLE_MOVEMENT = true;
+#if NO_HUMAN_PLAYER
 		human = new Human();
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4());
 		drawGroup->group->visible = false;
 		sceneDefault->drawGroups.Add(drawGroup);
-		//cameraCurrent->group->Add(human->group);
-		//fpc = new FirstPersonCamera;
+//cameraCurrent->group->Add(human->group);
+//fpc = new FirstPersonCamera;
+#endif
 		pose = vec3(cameraCurrent->pos);
 
 		thirdPersonCamera = new ViewerCamera;
@@ -206,12 +212,12 @@ namespace gloom
 		using namespace MyKeys;
 		if (w)
 		{
-
 		}
 		else
 		{
 			//human->
 		}
+#if NO_HUMAN_PLAYER
 		human->step();
 		//if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
 		//	return;
@@ -219,16 +225,19 @@ namespace gloom
 		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
 		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCurrent->yaw, vec3(0, 0, 1));
 		drawGroup->Reset();
-
+#endif
 	}
 
 	void Player::toggleView()
 	{
-		thirdPerson = ! thirdPerson;
+		thirdPerson = !thirdPerson;
 
-		if (thirdPerson) {
+		if (thirdPerson)
+		{
 			cameraCurrent = thirdPersonCamera;
+#if NO_HUMAN_PLAYER
 			drawGroup->group->visible = true;
+#endif
 			thirdPersonCamera->pos = pose;
 			thirdPersonCamera->yaw = firstPersonCamera->yaw;
 			thirdPersonCamera->pitch = firstPersonCamera->pitch;
@@ -237,7 +246,9 @@ namespace gloom
 		else
 		{
 			cameraCurrent = firstPersonCamera;
+#if NO_HUMAN_PLAYER
 			drawGroup->group->visible = false;
+#endif
 			firstPersonCamera->pos = pose;
 			firstPersonCamera->yaw = thirdPersonCamera->yaw;
 			firstPersonCamera->pitch = thirdPersonCamera->pitch;
@@ -250,12 +261,14 @@ namespace gloom
 
 		yaw = cameraCurrent->yaw;
 
-		auto forward = [&](float n) {
+		auto forward = [&](float n)
+		{
 			pose.x += n * sin(yaw);
 			pose.y += n * cos(yaw);
 		};
 
-		auto strafe = [&](float n) {
+		auto strafe = [&](float n)
+		{
 			pose.x += n * cos(-yaw);
 			pose.y += n * sin(-yaw);
 		};
@@ -280,6 +293,5 @@ namespace gloom
 		if (f)
 			pose.z -= speed / 2;
 	}
-
 
 } // namespace gloom

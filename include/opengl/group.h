@@ -17,7 +17,7 @@ struct Group
 	mat4 matrixWorld;
 	std::vector<Group *> groups, flat;
 	Group();
-	virtual Group::~Group();
+	virtual ~Group();
 	void Add(Group *);
 	void Remove(Group *);
 	void DrawMultiple(const mat4 &);

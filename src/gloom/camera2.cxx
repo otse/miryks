@@ -7,8 +7,8 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-function PovMachine() {
-    
+int PovMachine() {
+    return 0;
 }
 
 struct Camera2

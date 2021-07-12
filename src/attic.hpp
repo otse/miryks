@@ -3,9 +3,9 @@
 #include <vector>
 
 template <typename T>
-static bool VectorAdd(T t, std::vector<T> &v)
+bool VectorAdd(T t, std::vector<T> &v)
 {
-	std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
+	typename std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
 	if (has == v.end())
 	{
 		// We don't have this yet, add it
@@ -16,9 +16,9 @@ static bool VectorAdd(T t, std::vector<T> &v)
 }
 
 template <typename T>
-static bool VectorRemove(T t, std::vector<T> &v)
+bool VectorRemove(T t, std::vector<T> &v)
 {
-	std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
+	typename std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
 	if (has != v.end())
 	{
 		// We have this, erase it

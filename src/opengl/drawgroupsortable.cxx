@@ -27,8 +27,7 @@ void DrawGroupSortable::Draw()
     DrawBounds();
 }
 
-template <typename F>
-void DrawGroupSortable::Sort(F &f)
+void DrawGroupSortable::Sort(std::function<bool(const Group *, const Group *)> f)
 {
     group->Flatten(group);
     auto &flat = group->flat;

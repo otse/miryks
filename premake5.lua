@@ -52,16 +52,16 @@ project "gloom"
 		"lib",
 		"include",
 		"C:/New folder/",
-		"C:/New folder/glm",
-		"C:/New folder/glfw-3.3/include",
+		"C:/New folder/glm-0.9.9.8",
+		"C:/New folder/glfw-3.3.4/include",
 		"C:/New folder/zlib-1.2.11",
-		"C:/New folder/bullet3-3.08/src"
+		"C:/New folder/bullet3-3.17/src"
 	}
 	
 	libdirs {
-		"C:/New folder/glfw-3.3-32/src/%{cfg.longname}",
+		"C:/New folder/glfw-3.3.4-32/src/%{cfg.longname}",
 		"C:/New folder/zlib-1.2.11-32/%{cfg.longname}",
-		"C:/New folder/bullet3-3.08-32/lib/Release"
+		"C:/New folder/bullet3-3.17-32/lib/Release"
 	}
 
 	links {

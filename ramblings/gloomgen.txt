@@ -1,7 +1,11 @@
 1 / 26
 
 old hideout
-old hideout is a poor mans mine with cave elements. it has an indoor bay with dock elements. it connects to the canal via a poorly excavated corridor. it has some improvised siderooms with storage clutter and barrels. it has been abandoned.
+old hideout is a poor mans mine with cave elements.
+it has an indoor bay with dock elements.
+it connects to the canal via a poorly excavated corridor.
+it has some improvised siderooms with storage clutter and barrels.
+it has been abandoned.
 
 sewer
 undertown doesnt mesh

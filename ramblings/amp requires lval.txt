@@ -1,0 +1,3 @@
+fbuf function wants a pointer to a pointer
+
+when you pass a pointer by value

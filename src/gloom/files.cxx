@@ -9,7 +9,10 @@
 #include <vector>
 #include <map>
 
-// written for filling out a plugin struct
+// https://stackoverflow.com/q/4426474/is-passing-pointer-argument-pass-by-value-in-c
+
+// made to fill struct
+
 int fbuf(const char *path, char **dest, bool cap)
 {
 	// printf("fbuf path %s", path);
@@ -22,9 +25,11 @@ int fbuf(const char *path, char **dest, bool cap)
 		is.seekg(0, is.beg);
 		is.read((char *)*dest, end);
 		if (cap)
-		(*dest)[end] = '\0';
+			(*dest)[end] = '\0';
 		return end;
 	}
+	else
+		0;
 	return -1;
 }
 

@@ -73,7 +73,7 @@ namespace gloom
 				//printf("fetching random draugr kf\n");
 				Nif *nif = malloc_nifp();
 				nif->path = path;
-				fbuf(path, &(char *)nif->buf);
+				fbuf(path, (char **)&nif->buf);
 				nifp_read(nif);
 				nifp_save(nif, nif);
 				draugrAttack = new Keyframes(nif);
@@ -136,10 +136,10 @@ namespace gloom
 			else
 			{
 				const char *path = "temp/character/kf/1hm_idle.kf";
-				//printf("fetching human idle kf\n");
+				printf("fetching human idle kf\n");
 				Nif *nif = malloc_nifp();
 				nif->path = path;
-				fbuf(path, &(char *)nif->buf);
+				fbuf(path, (char **)&nif->buf);
 				nifp_read(nif);
 				nifp_save(nif, nif);
 				humanIdle = new Keyframes(nif);

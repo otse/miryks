@@ -7,6 +7,8 @@
 
 // https://learnopengl.com/Getting-started/Textures
 
+Texture *GetProduceTexture(const char *);
+
 struct Texture
 {
 	friend Texture *GetProduceTexture(const char *);

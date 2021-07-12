@@ -24,9 +24,9 @@ ShaderSource simple, basic, fxs, postquad;
 
 void SetShaderSources()
 {
-	simple[0] = "simple";
-	basic[0] = "basic";
-	fxs[0] = "fx";
+	simple[0] = (char *)"simple";
+	basic[0] = (char *)"basic";
+	fxs[0] = (char *)"fx";
 	fbuf("gl/simple.vert", &simple[1], true);
 	fbuf("gl/simple.frag", &simple[2], true);
 	fbuf("gl/basic.vert", &basic[1], true);

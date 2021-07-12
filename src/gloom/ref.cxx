@@ -219,7 +219,7 @@ namespace gloom
 		auto FULL = baseObject.data<char *>("FULL");
 		auto DESC = baseObject.data<const char *>("DESC");
 
-		char *itemName = "Something";
+		const char *itemName = "Something";
 		if (FULL)
 		{
 			itemName = FULL;

@@ -32,7 +32,7 @@ struct LightShadow
 	LightShadow();
 
 	// only called with spotlights and directionallights it seems
-	void LightShadow::updateMatrices(Light *light)
+	void updateMatrices(Light *light)
 	{
 		vec3 position;
 

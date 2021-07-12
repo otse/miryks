@@ -64,7 +64,7 @@ api void free_nifp(Nifp **p) {
 }
 
 api void nifp_read(Nifp *nif) {
-	cassert(Buf, "nifp buf is null");
+	cassert(Buf, "nifp buf is null ??");
 	nifp_read_header(nif);
 	nifp_read_blocks(nif);
 }

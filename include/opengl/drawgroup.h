@@ -3,6 +3,8 @@
 
 // part of gloom
 
+#include <functional>
+
 #include <OpenGL/Types.h>
 
 #include <OpenGL/Aabb.h>
@@ -27,8 +29,7 @@ struct DrawGroupSortable : DrawGroup
 	virtual ~DrawGroupSortable(){};
 	virtual void Draw();
 	virtual void Reset();
-	template<typename F>
-	void Sort(F &);
+	void Sort(std::function<bool(const Group *, const Group *)>);
 	void SortDefault();
 };
 
