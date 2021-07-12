@@ -115,7 +115,7 @@ void esp_gui()
 		// Unload gui-mounted plugin
 		if (plugin && !has_plugin(plugin->name))
 			free_plugin(&plugin);
-		Plugin *replace = loadPlugin(buf, false);
+		Plugin *replace = load_plugin(buf, false);
 		if (replace)
 		{
 			plugin = replace;

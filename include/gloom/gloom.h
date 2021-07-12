@@ -9,11 +9,11 @@
 
 namespace gloom
 {
-	Resource *loadResource(const char *, const char *, unsigned long);
-	Nif *loadNif(Resource *, bool = true);
-	Mesh *loadMesh(const char *, bool = true);
-	Esp *loadPlugin(const char *, bool = true);
-	Bsa *loadArchive(const char *);
+	Rc *load_rc(const char *, const char *, unsigned long);
+	Nif *load_nif(Rc *, bool);
+	Mesh *load_mesh(const char *, bool);
+	Esp *load_plugin(const char *, bool);
+	Bsa *load_archive(const char *);
 
 	extern unsigned int fps;
 

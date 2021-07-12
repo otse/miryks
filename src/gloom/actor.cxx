@@ -65,8 +65,8 @@ namespace gloom
 		Object race = Object(GetRace(raceId));
 		ExportRaceHkxToKf(raceId);
 		auto anam = race.data<char *>("ANAM", 0);
-		Resource *rc = loadResource("meshes\\", model, 0x1);
-		Nif *character = loadNif(rc, false);
+		Rc *rc = load_rc("meshes\\", model, 0x1);
+		Nif *character = load_nif(rc, false);
 		skeleton = new Skeleton(anam);
 		mesh = new Mesh(character);
 		smesh = new SkinnedMesh(mesh, skeleton);

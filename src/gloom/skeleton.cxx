@@ -29,8 +29,8 @@ namespace gloom
 	void Skeleton::load(const char *anam)
 	{
 		// printf("skeleton load anam %s\n", anam);
-		Resource *rc = loadResource("meshes\\", anam, 0x1);
-		nif = loadNif(rc, true);
+		Rc *rc = load_rc("meshes\\", anam, 0x1);
+		nif = load_nif(rc, true);
 		// printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
 	void Skeleton::construct()

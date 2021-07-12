@@ -31,7 +31,7 @@ void bsa_gui()
 	if (strcmp(buf, buf2))
 	{
 		memcpy(buf2, buf, MAX);
-		Archive *replace = loadArchive(buf2);
+		Archive *replace = load_archive(buf2);
 		if (replace)
 		{
 			bsa = replace;
@@ -216,7 +216,7 @@ void bsa_gui()
 							ImGui::Separator();
 
 							char s[200];
-							Resource *rc = bsa->rc[bsa->r[i] + j];
+							Rc *rc = bsa->rc[bsa->r[i] + j];
 							bsa_print_rc(bsa, s, rc->r);
 							ImGui::Text(s);
 							bsa_print_fle_rcd(bsa, s, i, j);

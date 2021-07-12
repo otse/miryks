@@ -24,7 +24,7 @@ namespace gloom
 			if (!exists("temp/draugr/hkx/skeleton.hkx"))
 			{
 				Bsa *animations = get_archives()[2];
-				Resource *skeleton = bsa_find(animations, "meshes\\actors\\draugr\\character assets\\skeleton.hkx");
+				Rc *skeleton = bsa_find(animations, "meshes\\actors\\draugr\\character assets\\skeleton.hkx");
 
 				//if (skeleton)
 				//	printf("hkxcmd for draugr skeleton.hkx!\n");
@@ -45,7 +45,7 @@ namespace gloom
 				int r = animations->r[i];
 				for (unsigned int j = 0; j < animations->fld[i].num; j++)
 				{
-					Resource *rc = animations->rc[r];
+					Rc *rc = animations->rc[r];
 					bsa_read(rc);
 					char path[255];
 					strcpy(path, "temp/draugr/hkx/");
@@ -90,7 +90,7 @@ namespace gloom
 			if (!exists("temp/character/hkx/skeleton.hkx"))
 			{
 				Bsa *animations = get_archives()[2];
-				Resource *skeleton = bsa_find(animations, "meshes\\actors\\character\\character assets\\skeleton.hkx");
+				Rc *skeleton = bsa_find(animations, "meshes\\actors\\character\\character assets\\skeleton.hkx");
 
 				//if (skeleton)
 				//	printf("found character.hkx for character / imperial race\n");
@@ -111,7 +111,7 @@ namespace gloom
 				int r = animations->r[i];
 				for (unsigned int j = 0; j < animations->fld[i].num; j++)
 				{
-					Resource *rc = animations->rc[r];
+					Rc *rc = animations->rc[r];
 					bsa_read(rc);
 					char path[255];
 					strcpy(path, "temp/character/hkx/");

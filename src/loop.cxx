@@ -111,7 +111,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		const char *name = plugin->name;
 		Esp *has = has_plugin(name);
 		free_plugin(&has);
-		get_plugins()[1] = loadPlugin(name);
+		get_plugins()[1] = load_plugin(name, true);
 		delete dungeon;
 		dungeon = new Interior(dest);
 		dungeon->alreadyTeleported = true;

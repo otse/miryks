@@ -70,16 +70,16 @@ int main()
 	customLoad();
 	pathToOldrim = fread("path to oldrim.txt");
 	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe");
-	get_plugins()[0] = loadPlugin("Skyrim.esm");
+	get_plugins()[0] = load_plugin("Skyrim.esm", true);
 	if (get_plugins()[0])
 		printf("Phew, Loaded Skyrim.esm\n");
-	get_plugins()[1] = loadPlugin("Gloom.esp");
-	get_archives()[0] = loadArchive("Skyrim - Meshes.bsa");
-	get_archives()[1] = loadArchive("Skyrim - Textures.bsa");
-	get_archives()[2] = loadArchive("Skyrim - Animations.bsa");
-	get_archives()[3] = loadArchive("HighResTexturePack01.bsa");
-	get_archives()[4] = loadArchive("HighResTexturePack02.bsa");
-	get_archives()[5] = loadArchive("HighResTexturePack03.bsa");
+	get_plugins()[1] = load_plugin("Gloom.esp", true);
+	get_archives()[0] = load_archive("Skyrim - Meshes.bsa");
+	get_archives()[1] = load_archive("Skyrim - Textures.bsa");
+	get_archives()[2] = load_archive("Skyrim - Animations.bsa");
+	get_archives()[3] = load_archive("HighResTexturePack01.bsa");
+	get_archives()[4] = load_archive("HighResTexturePack02.bsa");
+	get_archives()[5] = load_archive("HighResTexturePack03.bsa");
 	programGo();
 	firstPersonCamera = new FirstPersonCamera;
 	panCamera = new ViewerCamera;
@@ -90,7 +90,7 @@ int main()
 	cameraCurrent = firstPersonCamera;
 #if 0
 	// Secret bucket beginning
-	Resource *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	View(rc);
 #endif
 	//nif_test();
