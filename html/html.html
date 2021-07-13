@@ -10,48 +10,83 @@
 			background: #121212;
 			font-family: 'Merriweather Sans', sans-serif;
 			font-weight: 300;
-			background-image: url(https://nuare.com/wp-content/uploads/2015/05/Orb-of-Vaermina_2000x2000.jpg);
-			background-size: cover;
-			padding: 230px;
 			font-size: 1.8em;
-			color: white;
+			color: #c9c9c9;
+			margin: 0;
 		}
 
-		.sizing_panel {}
+		body2 {
+			display: block;
+			box-sizing: border-box;
+			background-image: url(https://nuare.com/wp-content/uploads/2015/05/Orb-of-Vaermina_2000x2000.jpg);
+			background-size: cover;
+			width: 1400px;
+			height: 100%;
+			display: block;
+			max-width: 1400px;
+			padding: 230px;
+		}
+
+		.logo {
+			/* color: #d31c1c; */
+		}
+
+		.sizing_panel {
+			padding: 5px;
+			/* background: rgba(127, 127, 127, 0.4); */
+		}
 
 		.generic_button {
 			display: inline-block;
+			font-size: 18.72px;
 			color: gold;
-			width: 180px;
+			/* text-shadow: 0 0 4px #727272; */
+			width: 220px;
 			/* margin: 5px; */
-			background: #000000;
-			border: 2px outset #ffffff69;
-			border-radius: 1px;
-			font-size: 0.65em;
+			background: #3e3e3e;
+			border: 3px outset #7cbaf182;
+			border-radius: 3px;
 			/* outline: 2px outset #616b7880; */
-			box-shadow: 0 0 12px #54ccfe6b;
+			/* box-shadow: 0 0 3px #bd7426; */
 		}
 
 		.generic_button>div {
 			display: block;
-			text-shadow: 0 0 4px #727272;
-			background: #3d4547;
-			border: 2px outset #95946f;
+			background: #262324;
+			border: 2px outset #958a00;
+			border-radius: 2px;
 			text-align: center;
-			padding: 2px;
+			padding: 3px;
+		}
+
+		.generic_area {
+			display: inline-block;
+			font-size: 18.72px;
+			background: #495c62c4;
+			background: #7f7f7f;
+			border: 1px outset #b6b6b680;
+			border-radius: 2px;
+			padding: 16px;
 		}
 	</style>
 </head>
 
 <body>
-	dark
-	<br />
-	<br />
-	<div class="sizing_panel">
-		<div class="generic_button">
-			<div>Begin</div>
+	<body2>
+		<div class="logo">Dark</div>
+		<br />
+		<br />
+		<div class="sizing_panel">
+			<div class="generic_area" style="width: 500px">
+				A cackle broke through the air, giving Charity a fright.
+			</div>
+			<br />
+			<br />
+			<div class="generic_button" style="width: 240px">
+				<div>Begin</div>
+			</div>
 		</div>
-	</div>
+	</body2>
 </body>
 
 </html>
