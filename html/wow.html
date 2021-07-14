@@ -29,7 +29,7 @@
 		}
 
 		.logo {
-			/* color: #d31c1c; */
+			color: #d31c1c;
 		}
 
 		.sizing_panel {
@@ -37,37 +37,37 @@
 			/* background: rgba(127, 127, 127, 0.4); */
 		}
 
-		.generic_button {
+		.wow_button {
 			display: inline-block;
 			width: 220px;
 			/* margin: 5px; */
-			background: #cacaca;
-			border: 2px outset #284392;
-			border-radius: 9px;
+			background: #7c7c7c;
+			border: 2px outset #6b6b6b4f;
+			border-radius: 8px;
 			/* outline: 2px outset #616b7880; */
-			box-shadow: 0 0 8px #272727;
+			/* box-shadow: 0 0 8px #272727; */
 			box-sizing: border-box;
 		}
 
-		.generic_button>div {
+		.wow_button>div {
 			display: block;
-			background: #011f3eeb;
-			border: 4px outset #2d2d2d2b;
-			border-radius: 6px;
+			background: #003459;
+			border: 3px outset #4c4c4c3b;
+			border-radius: 7px;
 			text-align: center;
 		}
 
-		.generic_button>div>span {
+		.wow_button>div>span {
 			display: block;
-			font-size: 18.72px;
+			font-size: 18px;
 			color: gold;
 			/* text-shadow: 0 0 4px #727272; */
 			border: 1px outset #84848470;
-			border-radius: 5px;
-			padding: 6px;
+			border-radius: 3px;
+			padding: 4px;
 		}
 
-		.generic_area {
+		.wow_area {
 			display: inline-block;
 			font-size: 18.72px;
 			/* background: #495c62c4; */
@@ -75,6 +75,35 @@
 			border: 1px outset #b6b6b680;
 			border-radius: 3px;
 			padding: 15px;
+		}
+
+		.wow_progress {
+			display: inline-block;
+			position: absolute;
+			width: 100%;
+			background: #8080802b;
+			border: 1px outset #b6b6b6;
+			border-radius: 4px;
+			/* height: 30px; */
+			font-size: 18.72px;
+			text-align: center;
+			box-sizing: border-box;
+		}
+
+		.wow_progress>div:nth-child(1) {
+			display: inline-block;
+			position: absolute;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			/* height: calc(100% - 3px); */
+			/* border: 1px solid gray; */
+			background: #0048b4;
+		}
+
+		.wow_progress>div:nth-child(2) {
+			position: relative;
+			padding: 3px;
 		}
 	</style>
 </head>
@@ -85,13 +114,19 @@
 		<br />
 		<br />
 		<div class="sizing_panel">
-			<div class="generic_area" style="width: 500px">
+			<div class="wow_area" style="width: 500px">
 				My entire council is nothing but a pack of spies.
 			</div>
 			<br />
 			<br />
-			<div class="generic_button" style="width: 240px">
+			<div class="wow_button" style="width: 240px">
 				<div><span>Start</span></div>
+			</div>
+			<br />
+			<br />
+			<div class="wow_progress" style="width: 500px">
+				<div style="width: 50%"></div>
+				<div>Loading </div>
 			</div>
 		</div>
 	</body2>

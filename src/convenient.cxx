@@ -28,35 +28,35 @@ namespace gloom
 		return rc;
 	}
 
-	Nif *load_nif(Rc *rc, bool cached)
+	Nif *load_nif(Rc *rc, bool store)
 	{
-		cassert(rc, "load_nif 0 rc");
+		cassert(rc, "load_nif null rc");
 		Nif *nif;
 		nif = nifp_saved(rc);
-		if (cached && nif)
+		if (store && nif)
 			return nif;
 		bsa_read(rc);
 		nif = malloc_nifp();
 		nif->path = rc->path;
 		nif->buf = rc->buf;
 		nifp_read(nif);
-		if (cached)
+		if (store)
 			nifp_save(rc, nif);
 		return nif;
 	}
 
-	Mesh *load_mesh(const char *model, bool cached)
+	Mesh *load_mesh(const char *model, bool store)
 	{
 		// make a simple mesh, like a rock
 		static std::map<const char *, Mesh *> meshes;
-		if (meshes.count(model) && cached)
+		if (meshes.count(model) && store)
 			return meshes[model];
 		Rc *rc = load_rc("meshes\\", model, 0x1);
 		if (!rc)
 			return nullptr;
 		Nif *nif = load_nif(rc, true);
 		Mesh *mesh = new Mesh(nif);
-		if (cached)
+		if (store)
 			meshes.emplace(model, mesh);
 		return mesh;
 	}
