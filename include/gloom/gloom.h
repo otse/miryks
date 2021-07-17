@@ -17,7 +17,7 @@ namespace gloom
 
 	extern unsigned int fps;
 
-	void programGo();
+	void setup_glfw();
 	void programLoop();
 
 	void View(Resource *);

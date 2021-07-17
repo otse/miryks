@@ -37,7 +37,7 @@ void esc_menu(bool *open)
 
 	ImGui::Begin("Boo", open, flags);
 
-	ImGui::Text("(F10)");
+	ImGui::Text("Esc Menu");
 	ImGui::Text("window %.0f x %.0f", io.DisplaySize.x, io.DisplaySize.y);
 	ImGui::Text("fps %u", gloom::fps);
 

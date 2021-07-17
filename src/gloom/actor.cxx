@@ -188,7 +188,7 @@ namespace gloom
 
 	Player::Player()
 	{
-		printf(" Player() \n");
+		//printf(" Player() \n");
 		// We take over with custom movement
 		Camera::DISABLE_MOVEMENT = true;
 #if NO_HUMAN_PLAYER

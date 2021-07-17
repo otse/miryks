@@ -74,18 +74,13 @@ namespace gloom
 		for (ni_ref index : shapes)
 		{
 			//Group *group = mesh->groups[index];
-			Nif *nif = mesh->nif;
-			NIFP_MACRO(shape, ni_tri_shape_pointer, nif, index);
-			NIFP_MACRO(skin_instance, ni_skin_instance_pointer, nif, shape->A->skin_instance);
-			NIFP_MACRO(skin_partition, ni_skin_partition_pointer, nif, skin_instance->A->skin_partition);
-
-			//auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
-			//auto skin_instance = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
-			//auto skin_partition = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
+			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
+			auto si = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
+			auto sp = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, si->A->skin_partition);
 			
-			for (unsigned int k = 0; k < *skin_partition->num_skin_partition_blocks; k++)
+			for (unsigned int k = 0; k < *sp->num_skin_partition_blocks; k++)
 			{
-				struct skin_partition *part = skin_partition->skin_partition_blocks[k];
+				struct skin_partition *part = sp->skin_partition_blocks[k];
 				Group *group = mesh->groups[index]->groups[k];
 				Material *material = group->geometry->material;
 				material->boneMatrices.clear();
@@ -93,7 +88,7 @@ namespace gloom
 				material->bindMatrix = group->matrixWorld;
 				for (int i = 0; i < part->A->num_bones; i++)
 				{
-					auto node = (ni_node_pointer *)nifp_get_block(mesh->nif, skin_instance->bones[part->bones[i]]);
+					auto node = (ni_node_pointer *)nifp_get_block(mesh->nif, si->bones[part->bones[i]]);
 					char *name = nifp_get_string(mesh->nif, node->common->A->name);
 					auto has = skeleton->bonesNamed.find(name);
 					if (has == skeleton->bonesNamed.end())

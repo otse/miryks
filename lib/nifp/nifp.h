@@ -73,7 +73,6 @@ api void nifp_print_hedr(Nifp *, char *);
 api void nifp_print_block(Nifp *, int, char [1000]);
 
 #define NIFP_GET_BLOCK(y, x, nif, i)  struct x *y = (struct x *)nifp_get_block(nif, i)
-#define NIFP_MACRO NIFP_GET_BLOCK
 
 struct nifppair
 {

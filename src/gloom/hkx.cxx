@@ -136,7 +136,7 @@ namespace gloom
 			else
 			{
 				const char *path = "temp/character/kf/1hm_idle.kf";
-				printf("fetching human idle kf\n");
+				// printf("fetching human idle kf\n");
 				Nif *nif = malloc_nifp();
 				nif->path = path;
 				fbuf(path, (char **)&nif->buf);

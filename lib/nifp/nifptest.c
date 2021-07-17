@@ -19,19 +19,19 @@ void nifp_test()
 	// struct Rc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	cassert(rc, "mh no bucket02a");
 	bsa_read(rc);
-	// Basic
+	// setup
 	Nifp *bucket = malloc_nifp();
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;
 	nifp_read(bucket);
 	nifp_save(rc, bucket);
-	// Visitor
+	// visitor
 	NifpRd *rd = malloc_nifprd();
 	rd->nif = bucket;
 	rd->data = 0xf; // like a Mesh instance
 	rd->other = test_callback;
 	nifp_rd(rd);
-	// Cleanup
+	// cleanup
 	free_nifprd(&rd);
 	free_nifp(&bucket);
 	//char str[600];

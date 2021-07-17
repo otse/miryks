@@ -47,7 +47,7 @@ namespace gloom
 					{
 						ObjectArray D(grup);
 						cell.record = object.record;
-						printf("forEach found your interior `%s`\n", editorId);
+						// printf("forEach found your interior `%s`\n", editorId);
 						cell.persistent = D.size() >= 1 ? D.getGrup(0) : 0;
 						cell.non_persistent = D.size() >= 2 ? D.getGrup(1) : 0;
 						A.stop = B.stop = C.stop = true;
@@ -96,7 +96,7 @@ namespace gloom
 			{
 				// Place at any XMarker
 				float *locationalData = object.data<float *>("DATA");
-				printf(" xmarker ! \n");
+				// printf(" xmarker ! \n");
 				firstPersonCamera->pos = *cast_vec_3(locationalData);
 				firstPersonCamera->pos.z += EYE_HEIGHT;
 				firstPersonCamera->yaw = cast_vec_3(locationalData + 3)->z;

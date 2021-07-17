@@ -45,7 +45,7 @@ namespace gloom
 	RenderTarget *renderRarget;
 
 	int width = 2560;
-	int height = 1800;
+	int height = 1440;
 	float delta = 0;
 } // namespace gloom
 
@@ -79,10 +79,10 @@ int main()
 	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
 	load_plugins_archives(); 
-	programGo();
+	setup_glfw();
 	firstPersonCamera = new FirstPersonCamera;
 	panCamera = new ViewerCamera;
-	openglScene();
+	opengl_init_scene();
 	objs_init();
 	setup_esc_menu();
 	collision_init();

@@ -131,11 +131,11 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		printf("f10");
 		f10 = !f10;
 	}
-	else if (key == GLFW_KEY_H && action == GLFW_PRESS && ! guing)
+	else if (key == GLFW_KEY_H && action == GLFW_PRESS && !guing)
 	{
 		h_pop = !h_pop;
 	}
-	else if (key == GLFW_KEY_V && action == GLFW_PRESS && ! guing)
+	else if (key == GLFW_KEY_V && action == GLFW_PRESS && !guing)
 	{
 		if (player1)
 			player1->toggleView();
@@ -170,6 +170,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
+	printf("framebuffer_size_callback %i %i\n", width, height);
 	glViewport(0, 0, width, height);
 	gloom::width = width;
 	gloom::height = height;
@@ -204,10 +205,22 @@ static void glfw_error_callback(int error, const char *description)
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-void gloom::programGo()
-{
-	glfwSetErrorCallback(glfw_error_callback);
+void put_it_fullscreen() {
+	printf("going fs !\n");
+	window = glfwCreateWindow(width, height, "gloom", glfwGetPrimaryMonitor(), NULL);
+	width = mode->width;
+	height = mode->height;
+	glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, mode->refreshRate);
+	glfwSwapInterval(0); // vsync
+}
 
+void gloom::setup_glfw()
+{
+	printf("setup window\n");
+	
+	glfwSetErrorCallback(glfw_error_callback);
+	
+	// todo blegh
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
 
@@ -215,17 +228,14 @@ void gloom::programGo()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-#if 1
-	auto monitor = glfwGetPrimaryMonitor();
-	const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-	width = mode->width;
-	height = mode->height;
-	window = glfwCreateWindow(width, height, "gloom", glfwGetPrimaryMonitor(), NULL);
-	glfwSetWindowMonitor(window, monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-#endif
-
-	glfwMakeContextCurrent(window);
-	glfwSwapInterval(0); // vsync
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+	glfwWindowHint(GLFW_SAMPLES, 8);
+	
+	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	window = glfwCreateWindow(width, height, "gloom", NULL, NULL);
+	glfwSetWindowPos(window, mode->width / 2 - width / 2, mode->height / 2 - height / 2);
 
 	glfwSetKeyCallback(window, key_callback);
 	glfwMakeContextCurrent(window);
@@ -249,9 +259,6 @@ void gloom::programGo()
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
-
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-	glfwWindowHint(GLFW_SAMPLES, 8);
 }
 
 void gloom::doImGui()
@@ -292,7 +299,7 @@ void gloom::programLoop()
 	int frames;
 	double time, prevTime;
 	char title[150];
-	
+
 	double now = 0, prev = 0;
 
 	frames = 0;
@@ -305,7 +312,7 @@ void gloom::programLoop()
 		time = glfwGetTime();
 		now = time;
 		gloom::delta = now - prev;
-        prev = now;
+		prev = now;
 		if ((time - prevTime) > 1.0 || frames == 0)
 		{
 			fps = (double)frames / (time - prevTime);
@@ -340,7 +347,7 @@ void gloom::programLoop()
 
 		if (player1)
 			player1->step();
-			
+
 		cameraCurrent->Update(delta);
 
 		// someDraugr
@@ -352,7 +359,6 @@ void gloom::programLoop()
 
 		if (someHuman)
 			someHuman->step();
-
 
 		dungeon->update();
 

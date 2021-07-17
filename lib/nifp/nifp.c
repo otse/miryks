@@ -439,7 +439,8 @@ void *read_ni_transform_data(nifpr)
 	}
 	else
 	{
-	printf("cant read this rotation type or quatkey type\n");
+	printf("0x1");
+	//printf("cant read this rotation type or quatkey type");
 	return NULL;
 	}
 	}
