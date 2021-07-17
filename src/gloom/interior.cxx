@@ -97,9 +97,9 @@ namespace gloom
 				// Place at any XMarker
 				float *locationalData = object.data<float *>("DATA");
 				// printf(" xmarker ! \n");
-				firstPersonCamera->pos = *cast_vec_3(locationalData);
-				firstPersonCamera->pos.z += EYE_HEIGHT;
-				firstPersonCamera->yaw = cast_vec_3(locationalData + 3)->z;
+				first_person_camera->pos = *cast_vec_3(locationalData);
+				first_person_camera->pos.z += EYE_HEIGHT;
+				first_person_camera->yaw = cast_vec_3(locationalData + 3)->z;
 				alreadyTeleported = true;
 				array.stop = true;
 			}

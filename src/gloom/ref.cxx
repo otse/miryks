@@ -185,7 +185,7 @@ namespace gloom
 
 	float Ref::getDistance()
 	{
-		float distance = glm::length(drawGroup->aabb.center() - vec3(firstPersonCamera->hands->matrixWorld[3]));
+		float distance = glm::length(drawGroup->aabb.center() - vec3(first_person_camera->hands->matrixWorld[3]));
 
 		return distance;
 	}

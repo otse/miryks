@@ -20,7 +20,7 @@ namespace gloom
 	void setup_glfw();
 	void programLoop();
 
-	void View(Resource *);
+	void simple_viewer(Resource *);
 	void doImGui();
 	void renderImGui();
 
@@ -33,7 +33,7 @@ namespace gloom
 	extern std::string editme;
 
 	// Todo, these globals just
-	extern FirstPersonCamera *firstPersonCamera;
+	extern FirstPersonCamera *first_person_camera;
 	extern ViewerCamera *panCamera;
 	extern RenderTarget *renderRarget;
 
@@ -68,6 +68,7 @@ void nifp_gui();
 void cell_gui();
 void hero_menu();
 void render_stats(bool *);
+void simple_start_screen();
 
 void setup_esc_menu();
 void esc_menu(bool *);

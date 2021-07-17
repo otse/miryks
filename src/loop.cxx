@@ -79,7 +79,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		if (camera_current == panCamera)
 		{
-			camera_current = firstPersonCamera;
+			camera_current = first_person_camera;
 			HideCursor();
 		}
 		else
@@ -205,7 +205,8 @@ static void glfw_error_callback(int error, const char *description)
 	fprintf(stderr, "Glfw Error %d: %s\n", error, description);
 }
 
-void put_it_fullscreen() {
+void put_it_fullscreen()
+{
 	printf("going fs !\n");
 	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	window = glfwCreateWindow(width, height, "gloom", glfwGetPrimaryMonitor(), NULL);
@@ -218,9 +219,9 @@ void put_it_fullscreen() {
 void gloom::setup_glfw()
 {
 	printf("setup window\n");
-	
+
 	glfwSetErrorCallback(glfw_error_callback);
-	
+
 	// todo blegh
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
@@ -231,10 +232,10 @@ void gloom::setup_glfw()
 
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, 8);
-	
+
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-	
+
 	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	window = glfwCreateWindow(width, height, "gloom", NULL, NULL);
 	glfwSetWindowPos(window, mode->width / 2 - width / 2, mode->height / 2 - height / 2);
@@ -307,7 +308,7 @@ void gloom::programLoop()
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	sceneDefault->drawGroups.Add(firstPersonCamera->drawGroup);
+	sceneDefault->drawGroups.Add(first_person_camera->drawGroup);
 
 	do
 	{
@@ -362,7 +363,8 @@ void gloom::programLoop()
 		if (someHuman)
 			someHuman->step();
 
-		dungeon->update();
+		if (dungeon)
+			dungeon->update();
 
 		//collision_simulate();
 

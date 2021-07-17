@@ -102,7 +102,7 @@ namespace gloom
 		return nullptr;
 	}
 
-	void View(Rc *rc)
+	void simple_viewer(Rc *rc)
 	{
 		static Mesh *mesh = nullptr;
 		static DrawGroup *drawGroup = nullptr;
@@ -112,15 +112,15 @@ namespace gloom
 			delete mesh;
 			delete drawGroup;
 		}
-		Nif *nif = load_nif(rc, false); // Note no use of cache
+		Nif *nif = load_nif(rc, false);
 		nifp_save(rc, nif);
 		mesh = new Mesh(nif);
-		drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), firstPersonCamera->pos));
+		drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
 		sceneDefault->drawGroups.Add(drawGroup);
 		HideCursor();
 		camera_current = panCamera;
 		panCamera->pos = drawGroup->aabb.center();
-		//panCamera->pos = firstPersonCamera->pos;
+		//panCamera->pos = first_person_camera->pos;
 		panCamera->radius = drawGroup->aabb.radius2() * 2;
 	}
 } // namespace gloom

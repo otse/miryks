@@ -239,19 +239,19 @@ namespace gloom
 			drawGroup->group->visible = true;
 #endif
 			thirdPersonCamera->pos = pose;
-			thirdPersonCamera->yaw = firstPersonCamera->yaw;
-			thirdPersonCamera->pitch = firstPersonCamera->pitch;
+			thirdPersonCamera->yaw = first_person_camera->yaw;
+			thirdPersonCamera->pitch = first_person_camera->pitch;
 			thirdPersonCamera->radius = 200;
 		}
 		else
 		{
-			camera_current = firstPersonCamera;
+			camera_current = first_person_camera;
 #if NO_HUMAN_PLAYER
 			drawGroup->group->visible = false;
 #endif
-			firstPersonCamera->pos = pose;
-			firstPersonCamera->yaw = thirdPersonCamera->yaw;
-			firstPersonCamera->pitch = thirdPersonCamera->pitch;
+			first_person_camera->pos = pose;
+			first_person_camera->yaw = thirdPersonCamera->yaw;
+			first_person_camera->pitch = thirdPersonCamera->pitch;
 		}
 	}
 

@@ -40,7 +40,7 @@ namespace gloom
 
 	std::string editme;
 
-	FirstPersonCamera *firstPersonCamera;
+	FirstPersonCamera *first_person_camera;
 	ViewerCamera *panCamera;
 	RenderTarget *renderRarget;
 
@@ -55,7 +55,8 @@ void customLoad()
 
 #include <list.hpp>
 
-void load_plugins_archives() {
+void load_plugins_archives()
+{
 	using namespace gloom;
 	editme = fread("editme.txt");
 	get_plugins()[0] = load_plugin(PLUGIN_ONE);
@@ -72,29 +73,30 @@ int main()
 {
 	using namespace gloom;
 	{
-	using namespace MyKeys;
-	w = a = s = d = r = f = v = false;
-	shift = space = false;
+		using namespace MyKeys;
+		w = a = s = d = r = f = v = false;
+		shift = space = false;
 	}
 	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
-	load_plugins_archives(); 
+	load_plugins_archives();
 	setup_glfw();
-	firstPersonCamera = new FirstPersonCamera;
+	first_person_camera = new FirstPersonCamera;
 	panCamera = new ViewerCamera;
 	opengl_init_scene();
 	objs_init();
 	setup_esc_menu();
 	collision_init();
-	camera_current = firstPersonCamera;
+	camera_current = first_person_camera;
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	load_nif(rc, true);
-#if 0
-	// Secret bucket beginning
-	View(rc);
-#endif
-	//nif_test();
 	nifp_test();
+#if 1
+	// Secret bucket beginning
+	simple_viewer(rc);
+#endif
+	simple_start_screen();
+#if 0
 	dungeon = new Interior("GloomGen"); // <-- interior to load
 	dungeon->loadCell();
 	someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
@@ -103,6 +105,7 @@ int main()
 	meanSkelly->PutDown("gloomgenskeleton");
 	someHuman = new Human();
 	someHuman->Place("gloomgenman");
+#endif
 
 	player1 = new Player();
 

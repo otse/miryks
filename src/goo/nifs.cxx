@@ -100,7 +100,7 @@ void nifp_gui()
 
 			if (ImGui::Button(VIEW_NIF))
 			{
-				View((Resource *)nifpmap[i].key);
+				simple_viewer((Resource *)nifpmap[i].key);
 			}
 
 			ImGui::TreePop();
