@@ -86,7 +86,7 @@ int main()
 	objs_init();
 	setup_esc_menu();
 	collision_init();
-	cameraCurrent = firstPersonCamera;
+	camera_current = firstPersonCamera;
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	load_nif(rc, true);
 #if 0

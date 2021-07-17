@@ -10,7 +10,7 @@
 #include <OpenGL/Material.h>
 #include <OpenGL/Texture.h>
 
-Camera *cameraCurrent = nullptr;
+Camera *camera_current = nullptr;
 Scene *sceneCurrent = nullptr;
 Scene *sceneDefault = nullptr;
 
@@ -39,7 +39,7 @@ void detectOpenGLError(const std::string where)
 
 void opengl_init_scene()
 {
-	cameraCurrent = new Camera;
+	camera_current = new Camera;
 	sceneDefault = new Scene;
 
 	sceneCurrent = sceneDefault;

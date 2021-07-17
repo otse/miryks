@@ -50,7 +50,7 @@ struct Camera;
 struct FirstPersonCamera;
 struct ViewerCamera;
 
-extern Camera *cameraCurrent;
+extern Camera *camera_current;
 extern Scene *sceneCurrent;
 extern Scene *sceneDefault;
 

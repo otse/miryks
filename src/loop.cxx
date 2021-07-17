@@ -77,9 +77,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		if (cameraCurrent == panCamera)
+		if (camera_current == panCamera)
 		{
-			cameraCurrent = firstPersonCamera;
+			camera_current = firstPersonCamera;
 			HideCursor();
 		}
 		else
@@ -145,7 +145,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 static void doKeys()
 {
 	using namespace MyKeys;
-	//if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
+	//if (!dynamic_cast<FirstPersonCamera *>(camera_current))
 	//	return;
 	// caused major depression ^
 	// third person wouldnt work and i thought it was somehow vec assignment
@@ -163,7 +163,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 {
 	static double x2 = x;
 	static double y2 = y;
-	cameraCurrent->Mouse((float)(x - x2), (float)(y - y2));
+	camera_current->Mouse((float)(x - x2), (float)(y - y2));
 	x2 = x;
 	y2 = y;
 }
@@ -207,6 +207,7 @@ static void glfw_error_callback(int error, const char *description)
 
 void put_it_fullscreen() {
 	printf("going fs !\n");
+	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	window = glfwCreateWindow(width, height, "gloom", glfwGetPrimaryMonitor(), NULL);
 	width = mode->width;
 	height = mode->height;
@@ -231,9 +232,10 @@ void gloom::setup_glfw()
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 	glfwWindowHint(GLFW_SAMPLES, 8);
 	
-	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	
+	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	window = glfwCreateWindow(width, height, "gloom", NULL, NULL);
 	glfwSetWindowPos(window, mode->width / 2 - width / 2, mode->height / 2 - height / 2);
 
@@ -348,7 +350,7 @@ void gloom::programLoop()
 		if (player1)
 			player1->step();
 
-		cameraCurrent->Update(delta);
+		camera_current->Update(delta);
 
 		// someDraugr
 		if (someDraugr)

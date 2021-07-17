@@ -47,5 +47,5 @@ void DrawGroup::DrawBounds()
 
 float DrawGroup::GetZ() const
 {
-	return -vec3((cameraCurrent->view * matrix)[3]).z;
+	return -vec3((camera_current->view * matrix)[3]).z;
 }

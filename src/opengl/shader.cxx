@@ -54,8 +54,8 @@ void Shader::Use()
 
 	sceneDefault->BindLights(this);
 
-	SetMat4("view", cameraCurrent->view);
-	SetMat4("projection", cameraCurrent->projection);
+	SetMat4("view", camera_current->view);
+	SetMat4("projection", camera_current->projection);
 
 	active = this;
 }

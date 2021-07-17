@@ -64,16 +64,16 @@ void opengl_gui()
 			ImGui::Image((void *)(intptr_t)7, ImVec2(512, 512));
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("cameraCurrent"))
+		if (ImGui::BeginTabItem("camera_current"))
 		{
-			//ss << "pos: " << glm::to_string(cameraCurrent->view);
+			//ss << "pos: " << glm::to_string(camera_current->view);
 			ImGui::TextWrapped(ss.str().c_str());
 			cls;
 			ImGui::EndTabItem();
 		}
 		if (ImGui::BeginTabItem("player"))
 		{
-			//ss << "pos: " << glm::to_string(cameraCurrent->view);
+			//ss << "pos: " << glm::to_string(camera_current->view);
 			ImGui::TextWrapped("pose %s", glm::to_string(player1->pose));
 			ImGui::EndTabItem();
 		}

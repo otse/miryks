@@ -87,8 +87,8 @@ void Scene::BindLights(Shader *shader)
 		std::string index = "pointLights[" + std::to_string(i) + "]";
 
 		vec3 position, color;
-		position = vec3(l->matrix[3]) * mat3(inverse(cameraCurrent->view));
-		position += vec3(cameraCurrent->view[3]);
+		position = vec3(l->matrix[3]) * mat3(inverse(camera_current->view));
+		position += vec3(camera_current->view[3]);
 		color = l->color * l->intensity;
 
 		mat3 package;
@@ -111,8 +111,8 @@ void Scene::BindLights(Shader *shader)
 		std::string index = "spotLights[" + std::to_string(i) + "]";
 
 		vec3 position, direction, color;
-		position = vec3(sl->matrix[3]) * mat3(inverse(cameraCurrent->view));
-		position += vec3(cameraCurrent->view[3]);
+		position = vec3(sl->matrix[3]) * mat3(inverse(camera_current->view));
+		position += vec3(camera_current->view[3]);
 
 		mat4 ma = sl->matrix;
 		ma = rotate(ma, -pif/2, vec3(0, 1, 0));
@@ -120,10 +120,10 @@ void Scene::BindLights(Shader *shader)
 		vec3 dir = normalize(vec3(mat3(ma)[2]));
 		dir = normalize(dir);
 
-		direction = dir * mat3(inverse(cameraCurrent->view));
+		direction = dir * mat3(inverse(camera_current->view));
 		//printf("sldir %s\n", glm::to_string(direction));
 
-		//direction = glm::normalize(glm::vec3(glm::inverse(mat3(sl->matrix * mat3(cameraCurrent->view))[2]));
+		//direction = glm::normalize(glm::vec3(glm::inverse(mat3(sl->matrix * mat3(camera_current->view))[2]));
 		color = sl->color * sl->intensity;
 
 		float moo = glm::cos(sl->angle);

@@ -197,10 +197,10 @@ namespace gloom
 		drawGroup = new DrawGroup(human->group, mat4());
 		drawGroup->group->visible = false;
 		sceneDefault->drawGroups.Add(drawGroup);
-//cameraCurrent->group->Add(human->group);
+//camera_current->group->Add(human->group);
 //fpc = new FirstPersonCamera;
 #endif
-		pose = vec3(cameraCurrent->pos);
+		pose = vec3(camera_current->pos);
 
 		thirdPersonCamera = new ViewerCamera;
 	}
@@ -208,7 +208,7 @@ namespace gloom
 	void Player::step()
 	{
 		move();
-		cameraCurrent->pos = vec3(pose);
+		camera_current->pos = vec3(pose);
 		using namespace MyKeys;
 		if (w)
 		{
@@ -219,11 +219,11 @@ namespace gloom
 		}
 #if NO_HUMAN_PLAYER
 		human->step();
-		//if (!dynamic_cast<FirstPersonCamera *>(cameraCurrent))
+		//if (!dynamic_cast<FirstPersonCamera *>(camera_current))
 		//	return;
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
 		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
-		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCurrent->yaw, vec3(0, 0, 1));
+		drawGroup->matrix = rotate(drawGroup->matrix, -camera_current->yaw, vec3(0, 0, 1));
 		drawGroup->Reset();
 #endif
 	}
@@ -234,7 +234,7 @@ namespace gloom
 
 		if (thirdPerson)
 		{
-			cameraCurrent = thirdPersonCamera;
+			camera_current = thirdPersonCamera;
 #if NO_HUMAN_PLAYER
 			drawGroup->group->visible = true;
 #endif
@@ -245,7 +245,7 @@ namespace gloom
 		}
 		else
 		{
-			cameraCurrent = firstPersonCamera;
+			camera_current = firstPersonCamera;
 #if NO_HUMAN_PLAYER
 			drawGroup->group->visible = false;
 #endif
@@ -259,7 +259,7 @@ namespace gloom
 	{
 		using namespace MyKeys;
 
-		yaw = cameraCurrent->yaw;
+		yaw = camera_current->yaw;
 
 		auto forward = [&](float n)
 		{
