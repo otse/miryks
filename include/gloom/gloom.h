@@ -12,7 +12,7 @@ namespace gloom
 	Rc *load_rc(const char *, const char *, unsigned long);
 	Nif *load_nif(Rc *, bool);
 	Mesh *load_mesh(const char *, bool);
-	Esp *load_plugin(const char *, bool);
+	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
 
 	extern unsigned int fps;
@@ -30,7 +30,7 @@ namespace gloom
 	extern int width, height;
 	extern float delta;
 
-	extern std::string pathToOldrim;
+	extern std::string editme;
 
 	// Todo, these globals just
 	extern FirstPersonCamera *firstPersonCamera;

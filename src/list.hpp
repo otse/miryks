@@ -1,0 +1,8 @@
+#define PLUGIN_ONE			"Skyrim.esm"
+#define PLUGIN_NAMESAKE		"Gloom.esp"
+#define ARCHIVE_ONE			"Skyrim - Meshes.bsa"
+#define ARCHIVE_TWO			"Skyrim - Textures.bsa"
+#define ARCHIVE_THREE		"Skyrim - Animations.bsa"
+#define ARCHIVE_FOUR		"HighResTexturePack01.bsa"
+#define ARCHIVE_FIVE		"HighResTexturePack02.bsa"
+#define ARCHIVE_SIX			"HighResTexturePack03.bsa"

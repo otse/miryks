@@ -64,7 +64,7 @@ namespace gloom
 	Esp *load_plugin(const char *filename, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
-		std::string path = pathToOldrim + dataFolder + filename;
+		std::string path = editme + dataFolder + filename;
 		char *buf;
 		int ret;
 		Esp *esp;
@@ -94,7 +94,7 @@ namespace gloom
 		Bsa *bsa = bsa_get(filename);
 		if (bsa)
 			return bsa;
-		std::string path = pathToOldrim + dataFolder + filename;
+		std::string path = editme + dataFolder + filename;
 		if (exists(path.c_str()))
 			return bsa_load(path.c_str());
 		else if (exists(filename))

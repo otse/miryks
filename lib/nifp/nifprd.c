@@ -7,7 +7,7 @@
 #define Blocks nif->blocks
 #define Skips  rd->skips
 
-// rundown / visitor
+// rundown visitor
 
 void visit      (NifpRd *, int, int);
 void visit_other(NifpRd *, int, int);

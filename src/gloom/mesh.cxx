@@ -74,9 +74,15 @@ namespace gloom
 		for (ni_ref index : shapes)
 		{
 			//Group *group = mesh->groups[index];
-			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
-			auto skin_instance = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
-			auto skin_partition = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
+			Nif *nif = mesh->nif;
+			NIFP_MACRO(shape, ni_tri_shape_pointer, nif, index);
+			NIFP_MACRO(skin_instance, ni_skin_instance_pointer, nif, shape->A->skin_instance);
+			NIFP_MACRO(skin_partition, ni_skin_partition_pointer, nif, skin_instance->A->skin_partition);
+
+			//auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
+			//auto skin_instance = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
+			//auto skin_partition = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, skin_instance->A->skin_partition);
+			
 			for (unsigned int k = 0; k < *skin_partition->num_skin_partition_blocks; k++)
 			{
 				struct skin_partition *part = skin_partition->skin_partition_blocks[k];

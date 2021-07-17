@@ -38,7 +38,7 @@ namespace gloom
 	const char *CURRENT_WRLD;
 	const char *CURRENT_INTERIOR;
 
-	std::string pathToOldrim;
+	std::string editme;
 
 	FirstPersonCamera *firstPersonCamera;
 	ViewerCamera *panCamera;
@@ -51,10 +51,21 @@ namespace gloom
 
 void customLoad()
 {
-	if (!exists_test3("custom.txt"))
-		fwrite("custom.txt", "# put your plugins and archives here with line breaks\n");
-	if (!exists_test3("path to oldrim.txt"))
-		fwrite("path to oldrim.txt", "`C:/Program Files (x86)/Steam/steamapps/common/Skyrim/");
+}
+
+#include <list.hpp>
+
+void load_plugins_archives() {
+	using namespace gloom;
+	editme = fread("editme.txt");
+	get_plugins()[0] = load_plugin(PLUGIN_ONE);
+	get_plugins()[1] = load_plugin(PLUGIN_NAMESAKE);
+	get_archives()[0] = load_archive(ARCHIVE_ONE);
+	get_archives()[1] = load_archive(ARCHIVE_TWO);
+	get_archives()[2] = load_archive(ARCHIVE_THREE);
+	get_archives()[3] = load_archive(ARCHIVE_FOUR);
+	get_archives()[4] = load_archive(ARCHIVE_FIVE);
+	get_archives()[5] = load_archive(ARCHIVE_SIX);
 }
 
 int main()
@@ -67,19 +78,7 @@ int main()
 	}
 	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
-	customLoad();
-	pathToOldrim = fread("path to oldrim.txt");
-	cassert(exists((pathToOldrim + "TESV.exe").c_str()), "cant find tesv.exe");
-	get_plugins()[0] = load_plugin("Skyrim.esm", true);
-	if (get_plugins()[0])
-		printf("Phew, Loaded Skyrim.esm\n");
-	get_plugins()[1] = load_plugin("Gloom.esp", true);
-	get_archives()[0] = load_archive("Skyrim - Meshes.bsa");
-	get_archives()[1] = load_archive("Skyrim - Textures.bsa");
-	get_archives()[2] = load_archive("Skyrim - Animations.bsa");
-	get_archives()[3] = load_archive("HighResTexturePack01.bsa");
-	get_archives()[4] = load_archive("HighResTexturePack02.bsa");
-	get_archives()[5] = load_archive("HighResTexturePack03.bsa");
+	load_plugins_archives(); 
 	programGo();
 	firstPersonCamera = new FirstPersonCamera;
 	panCamera = new ViewerCamera;
@@ -88,9 +87,10 @@ int main()
 	setup_esc_menu();
 	collision_init();
 	cameraCurrent = firstPersonCamera;
+	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	load_nif(rc, true);
 #if 0
 	// Secret bucket beginning
-	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	View(rc);
 #endif
 	//nif_test();
