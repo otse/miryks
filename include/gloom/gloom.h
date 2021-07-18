@@ -69,6 +69,7 @@ void cell_gui();
 void hero_menu();
 void render_stats(bool *);
 void simple_loader();
+void load_bucket();
 
 void setup_esc_menu();
 void esc_menu(bool *);

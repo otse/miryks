@@ -55,11 +55,18 @@ void customLoad()
 
 void setup_loader()
 {
-	
 }
 
 void simple_start_screen()
 {
+}
+
+void load_bucket()
+{
+	using namespace gloom;
+	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	load_nif(rc, true);
+	simple_viewer(rc);
 }
 
 #include <list.hpp>

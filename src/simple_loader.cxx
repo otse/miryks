@@ -17,25 +17,6 @@ static bool loading = true;
 
 static bool checked = false;
 
-bool check_for_editme()
-{
-	static bool checked = false;
-	static bool missing = false;
-	if (missing)
-	{
-		ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
-		ImGui::Text("Can't find editme.txt!");
-		ImGui::PopStyleColor(1);
-	}
-	if (!checked)
-	{
-		if (!exists("./editme.txt"))
-			missing = true;
-		checked = true;
-	}
-	return !missing;
-}
-
 void simple_loader()
 {
 	static const char *plugins[] = {PLUGIN_ONE, PLUGIN_NAMESAKE};
@@ -67,7 +48,7 @@ void simple_loader()
 
 	ImGui::NewLine();
 
-	static int plugin = 0;
+	static int plugin = -1;
 	static int archive = -1;
 
 #define X ""
@@ -77,18 +58,23 @@ void simple_loader()
 	double now = glfwGetTime();
 	double elapsed = now - passed;
 	static double delay = 1.0 / 1;
+
 	if (elapsed > delay)
 	{
-		if (plugin < 2)
+		if (plugin == -1)
+		{
+			plugin = 0;
+		}
+		else if (plugin < 2)
 		{
 			get_plugins()[plugin] = load_plugin(plugins[plugin]);
 			printf("loaded %s!\n", plugins[plugin]);
 			plugin++;
-			if (plugin >= 2)
-			{
-				archive = 0;
-				delay = 1.0 / 3;
-			}
+		}
+		else if (archive == -1)
+		{
+			archive = 0;
+			delay = 1.0 / 2;
 		}
 		else if (archive < 6)
 		{
@@ -98,33 +84,37 @@ void simple_loader()
 		passed = glfwGetTime();
 	}
 
-	if (check_for_editme())
+	static bool bucketed = false;
+	if (plugin >= 2 && archive >= 6 && !bucketed)
 	{
-		//ImGui::TextWrapped("Plugins");
-		//ImGui::Separator();
+		load_bucket();
+		bucketed = true;
+	}
 
-		for (int i = 0; i < 2; i++)
-		{
-			const char *here = plugin == i ? " <" : "";
-			if (i >= plugin)
-				ImGui::TextDisabled(X " %s %s", plugins[i], here);
-			else
-				ImGui::Text(V " %s", plugins[i]);
-		}
+	//ImGui::TextWrapped("Plugins");
+	//ImGui::Separator();
 
-		ImGui::NewLine();
-		//ImGui::TextWrapped("Archives");
-		//ImGui::Separator();
-		//ImGui::NewLine();
+	for (int i = 0; i < 2; i++)
+	{
+		const char *here = plugin == i ? " <" : "";
+		if (i >= plugin)
+			ImGui::TextDisabled(X " %s %s", plugins[i], here);
+		else
+			ImGui::Text(V " %s", plugins[i]);
+	}
 
-		for (int i = 0; i < 6; i++)
-		{
-			const char *here = archive == i ? "<" : "";
-			if (i >= archive)
-				ImGui::TextDisabled(X " %s %s", archives[i], here);
-			else
-				ImGui::Text(V " %s", archives[i]);
-		}
+	ImGui::NewLine();
+	//ImGui::TextWrapped("Archives");
+	//ImGui::Separator();
+	//ImGui::NewLine();
+
+	for (int i = 0; i < 6; i++)
+	{
+		const char *here = archive == i ? "<" : "";
+		if (i >= archive)
+			ImGui::TextDisabled(X " %s %s", archives[i], here);
+		else
+			ImGui::Text(V " %s", archives[i]);
 	}
 
 	ImGui::PopFont();
