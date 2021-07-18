@@ -4,7 +4,7 @@
 
 extern "C"
 {
-#include "putc.h"
+#include "common.h"
 #include "bsa.h"
 #include "dds.h"
 }

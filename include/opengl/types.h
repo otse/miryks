@@ -51,8 +51,8 @@ struct FirstPersonCamera;
 struct ViewerCamera;
 
 extern Camera *camera_current;
-extern Scene *sceneCurrent;
-extern Scene *sceneDefault;
+extern Scene *scene_current;
+extern Scene *scene_default;
 
 void detectGlfwError();
 void detectOpenGLError(const std::string = "?");

@@ -2,44 +2,36 @@
 #include <Gloom/Gloom.h>
 #include <Gloom/Files.h>
 
-#include <OpenGL/RT.h>
-
-#include "extra.h"
+#include "gooey.h"
 
 using namespace gloom;
 
+#include <sstream>
 #include <imgui.h>
 
-RenderTarget *rt;
-void setup_esc_menu()
-{
-
-	rt = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_UNSIGNED_BYTE);
-	
-}
-
-void esc_menu(bool *open)
+void render_stats(bool *open)
 {
 	if (!*open)
 		return;
 
-	ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoSavedSettings;
 
 	ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(0, 0, 0, 0));
-	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 220, 255, 255));
+	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 220, 0, 255));
 
-	ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x, 0), ImGuiCond_Always, ImVec2(0, 0));
+	ImGui::SetNextWindowPos(ImVec2(io.DisplaySize.x, 0), ImGuiCond_Always, ImVec2(1, 0));
 	ImGui::SetNextWindowSize(ImVec2(300, 0));
 
-	ImGui::Begin("Boo", open, flags);
+	ImGui::Begin("Stats", open, flags);
 
-	ImGui::Text("Esc Menu");
+	ImGui::Text("(F10)");
 	ImGui::Text("window %.0f x %.0f", io.DisplaySize.x, io.DisplaySize.y);
 	ImGui::Text("fps %u", gloom::fps);
+	ImGui::Text("delta %.5f", gloom::delta);
 
 	//ImGui::Separator();
 	ImGui::End();

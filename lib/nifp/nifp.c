@@ -1,20 +1,24 @@
 // see header for stuff
 
-#include "putc.h"
+#include "common.h"
 
 #include "nifp.h"
 #include "nitypes.h"
+
+// ignore
 
 int nifps = 0;
 struct nifppair nifpmap[5000];
 
 api void nifp_save(void *key, Nifp *nif) {
-	nif->key = nifps;
+	nif->num = nifps;
 	nifpmap[nifps].key = key;
 	nifpmap[nifps].value = nif;
 	nifps++;
 	cassert(nifps < 5000, "nifp overflow");
 }
+
+// ignore
 
 api Nifp *nifp_saved(void *key) {
 	for (int i = 0; i < nifps; i++)
@@ -51,8 +55,7 @@ api void *nifp_get_block(Nifp *nif, int i) {
 
 api Nifp *malloc_nifp() {
 	Nifp *nif = malloc(sizeof(Nifp));
-	Pos = 0;
-	Buf = 0;
+	memset(nif, 0, sizeof(Nifp));
 	nif->hdr = malloc(sizeof(struct nifp_hedr));
 	return nif;
 }

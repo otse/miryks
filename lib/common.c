@@ -1,4 +1,7 @@
-#include "putc.h"
+// this c code is "in a drawer"
+// see common.h
+
+#include "common.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +21,9 @@ int exists(const char *p)
 	return (stat(p, &buffer) == 0);
 }
 
-char *FileStem(char s[260], const char *p, char delim)
+// file stem and name are used by bsa.c
+
+char *file_stem(char s[260], const char *p, char delim)
 {
 	const char *c = strrchr(p, delim);
 	if (!c)
@@ -29,7 +34,7 @@ char *FileStem(char s[260], const char *p, char delim)
 	return s;
 }
 
-char *FileName(char s[260], const char *p, char delim)
+char *file_name(char s[260], const char *p, char delim)
 {
 	const char *c = strrchr(p, delim);
 	if (!c)

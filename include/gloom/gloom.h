@@ -34,22 +34,22 @@ namespace gloom
 
 	// Todo, these globals just
 	extern FirstPersonCamera *first_person_camera;
-	extern ViewerCamera *panCamera;
-	extern RenderTarget *renderRarget;
+	extern ViewerCamera *pan_camera;
+	extern RenderTarget *render_target;
 
-	namespace MyKeys {
+	namespace MyKeys
+	{
 		extern bool w, a, s, d, r, f, v;
 		extern bool shift, space;
 	};
-	
+
 	extern Interior *dungeon;
 	extern BodyPart *someDraugr;
 	extern BodyPart *meanSkelly;
 	extern Human *someHuman;
 	extern Player *player1;
 
-	// Nifp float structs to glm:
-
+	// nifp float structs to glm
 	inline vec2 *cast_vec_2(float *f) { return reinterpret_cast<vec2 *>(f); }
 	inline vec3 *cast_vec_3(float *f) { return reinterpret_cast<vec3 *>(f); }
 	inline vec4 *cast_vec_4(float *f) { return reinterpret_cast<vec4 *>(f); }
@@ -60,7 +60,7 @@ namespace gloom
 #define gloomVec4(X) *cast_vec_4((float *)&X)
 #define gloomMat3(X) *cast_mat_3((float *)&X)
 
-} // namespace gloom
+}
 
 void esp_gui();
 void bsa_gui();
@@ -68,7 +68,7 @@ void nifp_gui();
 void cell_gui();
 void hero_menu();
 void render_stats(bool *);
-void simple_start_screen();
+void simple_loader();
 
 void setup_esc_menu();
 void esc_menu(bool *);

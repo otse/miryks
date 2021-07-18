@@ -11,8 +11,8 @@
 #include <OpenGL/Texture.h>
 
 Camera *camera_current = nullptr;
-Scene *sceneCurrent = nullptr;
-Scene *sceneDefault = nullptr;
+Scene *scene_current = nullptr;
+Scene *scene_default = nullptr;
 
 RenderSettings renderSettings;
 
@@ -40,9 +40,9 @@ void detectOpenGLError(const std::string where)
 void opengl_init_scene()
 {
 	camera_current = new Camera;
-	sceneDefault = new Scene;
+	scene_default = new Scene;
 
-	sceneCurrent = sceneDefault;
+	scene_current = scene_default;
 
 	SetShaderSources();
 }

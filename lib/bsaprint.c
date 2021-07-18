@@ -1,4 +1,4 @@
-#include "putc.h"
+#include "common.h"
 
 #include "bsa.h"
 

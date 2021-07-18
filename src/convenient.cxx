@@ -108,7 +108,7 @@ namespace gloom
 		static DrawGroup *drawGroup = nullptr;
 		if (mesh)
 		{
-			sceneDefault->drawGroups.Remove(drawGroup);
+			scene_default->drawGroups.Remove(drawGroup);
 			delete mesh;
 			delete drawGroup;
 		}
@@ -116,11 +116,11 @@ namespace gloom
 		nifp_save(rc, nif);
 		mesh = new Mesh(nif);
 		drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
-		sceneDefault->drawGroups.Add(drawGroup);
+		scene_default->drawGroups.Add(drawGroup);
 		HideCursor();
-		camera_current = panCamera;
-		panCamera->pos = drawGroup->aabb.center();
-		//panCamera->pos = first_person_camera->pos;
-		panCamera->radius = drawGroup->aabb.radius2() * 2;
+		camera_current = pan_camera;
+		pan_camera->pos = drawGroup->aabb.center();
+		//pan_camera->pos = first_person_camera->pos;
+		pan_camera->radius = drawGroup->aabb.radius2() * 2;
 	}
 } // namespace gloom

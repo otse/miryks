@@ -41,15 +41,24 @@ namespace gloom
 	std::string editme;
 
 	FirstPersonCamera *first_person_camera;
-	ViewerCamera *panCamera;
-	RenderTarget *renderRarget;
+	ViewerCamera *pan_camera;
+	RenderTarget *render_target;
 
 	int width = 2560;
 	int height = 1440;
 	float delta = 0;
-} // namespace gloom
+}
 
 void customLoad()
+{
+}
+
+void setup_loader()
+{
+	
+}
+
+void simple_start_screen()
 {
 }
 
@@ -59,6 +68,7 @@ void load_plugins_archives()
 {
 	using namespace gloom;
 	editme = fread("editme.txt");
+	return;
 	get_plugins()[0] = load_plugin(PLUGIN_ONE);
 	get_plugins()[1] = load_plugin(PLUGIN_NAMESAKE);
 	get_archives()[0] = load_archive(ARCHIVE_ONE);
@@ -79,19 +89,20 @@ int main()
 	}
 	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
-	load_plugins_archives();
 	setup_glfw();
+	setup_loader();
+	load_plugins_archives();
 	first_person_camera = new FirstPersonCamera;
-	panCamera = new ViewerCamera;
+	pan_camera = new ViewerCamera;
 	opengl_init_scene();
 	objs_init();
 	setup_esc_menu();
 	collision_init();
 	camera_current = first_person_camera;
-	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	load_nif(rc, true);
-	nifp_test();
-#if 1
+	//Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	//load_nif(rc, true);
+	//nifp_test();
+#if 0
 	// Secret bucket beginning
 	simple_viewer(rc);
 #endif
@@ -107,7 +118,7 @@ int main()
 	someHuman->Place("gloomgenman");
 #endif
 
-	player1 = new Player();
+	//player1 = new Player();
 
 	programLoop();
 	return 1;

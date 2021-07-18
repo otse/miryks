@@ -94,7 +94,7 @@ namespace gloom
 			group->Add(mesh->baseGroup);
 			//printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
-			sceneDefault->drawGroups.Add(drawGroup);
+			scene_default->drawGroups.Add(drawGroup);
 		}
 		else
 		{
@@ -156,12 +156,12 @@ namespace gloom
 			return;
 		drawGroup->matrix = ref->second->matrix;
 		csphere = new CSphere(vec3(drawGroup->matrix[3]) /*+vec3(0, 0, 1)*/);
-		sceneDefault->drawGroups.Add(drawGroup);
+		scene_default->drawGroups.Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
 		mirror->matrix = drawGroup->matrix;
 		mirror->matrix = glm::translate(mirror->matrix, vec3(50, 0, 0));*/
-		//sceneDefault->Add(mirror);
+		//scene_default->Add(mirror);
 	}
 
 	void Human::step()
@@ -196,7 +196,7 @@ namespace gloom
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4());
 		drawGroup->group->visible = false;
-		sceneDefault->drawGroups.Add(drawGroup);
+		scene_default->drawGroups.Add(drawGroup);
 //camera_current->group->Add(human->group);
 //fpc = new FirstPersonCamera;
 #endif

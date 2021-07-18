@@ -1,11 +1,12 @@
 #ifndef NIFP_H
 #define NIFP_H
 
-// nif with pointers ! see graveyard for nif.c that uses memcpy 
+/// nif with pointers. see graveyard for old version that uses memcpy 
 
 // part of gloom
 
-// for oldrim
+// only for le
+// can easily be altered for se
 
 #define api
 
@@ -19,7 +20,7 @@ struct NifpRd;
 
 typedef struct Nifp
 {
-	int key;
+	int num;
 	const char *path;
 	const unsigned char *buf;
 	unsigned pos;

@@ -3,7 +3,7 @@
 
 extern "C"
 {
-#include "putc.h"
+#include "common.h"
 #include "esp.h"
 }
 

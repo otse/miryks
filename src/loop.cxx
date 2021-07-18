@@ -23,7 +23,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
-#include <goo/extra.h>
+#include <gooey/gooey.h>
 
 using namespace gloom;
 using namespace glm;
@@ -77,7 +77,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		if (camera_current == panCamera)
+		if (camera_current == pan_camera)
 		{
 			camera_current = first_person_camera;
 			HideCursor();
@@ -295,7 +295,7 @@ void gloom::renderImGui()
 
 void gloom::programLoop()
 {
-	renderRarget = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_FLOAT);
+	render_target = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
 	double fps;
@@ -308,7 +308,7 @@ void gloom::programLoop()
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	sceneDefault->drawGroups.Add(first_person_camera->drawGroup);
+	scene_default->drawGroups.Add(first_person_camera->drawGroup);
 
 	do
 	{
@@ -334,7 +334,7 @@ void gloom::programLoop()
 
 		if (useFbo)
 		{
-			renderRarget->Bind();
+			render_target->Bind();
 		}
 		else
 		{
@@ -345,6 +345,8 @@ void gloom::programLoop()
 		glfwPollEvents();
 
 		doImGui();
+
+		simple_loader();
 
 		doKeys();
 
@@ -368,8 +370,8 @@ void gloom::programLoop()
 
 		//collision_simulate();
 
-		//sceneDefault->Order();
-		sceneDefault->DrawItems();
+		//scene_default->Order();
+		scene_default->DrawItems();
 
 		Material::Unuse(nullptr, nullptr);
 
@@ -382,7 +384,7 @@ void gloom::programLoop()
 
 		if (useFbo)
 		{
-			quad.Draw(renderRarget);
+			quad.Draw(render_target);
 		}
 
 		doOnce = false;

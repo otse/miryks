@@ -1,6 +1,6 @@
 // see header for stuff
 
-#include "putc.h"
+#include "common.h"
 
 #include "bsa.h"
 
@@ -27,7 +27,7 @@ api Bsa *bsa_load(const char *path)
 	Bsa *bsa = malloc(sizeof(Bsa));
 	memset(bsa, 0, sizeof(Bsa));
 	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
-	FileName(bsa->filename, path, '/');
+	file_name(bsa->filename, path, '/');
 	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
 	cassert(
@@ -124,8 +124,8 @@ void resources(Bsa *bsa)
 api Rc *bsa_find(Bsa *bsa, const char *p)
 {
 	char stem[260], name[260];
-	FileStem(stem, p, '\\');
-	FileName(name, p, '\\');
+	file_stem(stem, p, '\\');
+	file_name(name, p, '\\');
 	if (stem==NULL||name==NULL)
 	return NULL;
 	int cmp;

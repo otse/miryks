@@ -19,7 +19,7 @@
 #include <OpenGL/Types.h>
 
 #include <imgui.h>
-#include <goo/extra.h>
+#include <gooey/gooey.h>
 
 namespace gloom
 {
@@ -34,9 +34,9 @@ namespace gloom
 
 	Ref::~Ref()
 	{
-		sceneDefault->drawGroups.Remove(drawGroup);
-		sceneDefault->pointLights.Remove(pointLight);
-		sceneDefault->spotLights.Remove(spotLight);
+		scene_default->drawGroups.Remove(drawGroup);
+		scene_default->pointLights.Remove(pointLight);
+		scene_default->spotLights.Remove(spotLight);
 		delete drawGroup;
 		delete pointLight;
 		delete spotLight;
@@ -151,13 +151,13 @@ namespace gloom
 				light = spotLight = new SpotLight;
 				//printf("data fov %f\n", data->FOV);
 				spotLight->angle = radians(data->FOV);
-				sceneDefault->spotLights.Add(spotLight);
+				scene_default->spotLights.Add(spotLight);
 				printf(" spotLight ! %f \n", spotLight->angle);
 			}
 			else
 			{
 				light = pointLight = new PointLight;
-				sceneDefault->pointLights.Add(pointLight);
+				scene_default->pointLights.Add(pointLight);
 				if (data->flags & 0x1)
 					0; // pointLight->shadow->enabled = true;
 			}
@@ -178,7 +178,7 @@ namespace gloom
 			if (baseObject.record->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroupSortable(mesh->baseGroup, matrix);
-				sceneDefault->drawGroups.Add(drawGroup);
+				scene_default->drawGroups.Add(drawGroup);
 			}
 		}
 	}

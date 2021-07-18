@@ -1,6 +1,6 @@
 extern "C"
 {
-#include <putc.h>
+#include <common.h>
 #include <nifp/nifp.h>
 #include <nifp/nitypes.h>
 #include <bsa.h>

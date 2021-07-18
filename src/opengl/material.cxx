@@ -2,7 +2,7 @@
 
 extern "C"
 {
-#include "putc.h"
+#include "common.h"
 }
 
 #include <OpenGL/Texture.h>

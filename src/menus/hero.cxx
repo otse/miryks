@@ -4,7 +4,7 @@
 
 #include <Gloom/Files.h>
 
-#include "../goo/extra.h"
+#include "../gooey/gooey.h"
 
 using namespace gloom;
 

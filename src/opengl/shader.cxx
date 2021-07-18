@@ -2,7 +2,7 @@
 
 extern "C"
 {
-#include "putc.h"
+#include "common.h"
 }
 
 Shader *Shader::active = nullptr;
@@ -52,7 +52,7 @@ void Shader::Use()
 
 	glUseProgram(id);
 
-	sceneDefault->BindLights(this);
+	scene_default->BindLights(this);
 
 	SetMat4("view", camera_current->view);
 	SetMat4("projection", camera_current->projection);

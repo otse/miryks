@@ -3,7 +3,8 @@
 
 // part of gloom
 
-// for oldrim
+// only for le
+// can easily be altered for se
 
 // 100% based on https://github.com/Ortham/libespm
 

@@ -52,14 +52,14 @@ void opengl_gui()
 				}
 			}
 
-			ImVec4 color = ImVec4(sceneDefault->ambient.x, sceneDefault->ambient.y, sceneDefault->ambient.z, 1);
+			ImVec4 color = ImVec4(scene_default->ambient.x, scene_default->ambient.y, scene_default->ambient.z, 1);
 
 			ImGuiColorEditFlags misc_flags = ImGuiColorEditFlags_None;
 
 			ImGui::Text("Color widget:");
 			ImGui::ColorEdit3("MyColor##1", (float *)&color, misc_flags);
 
-			sceneDefault->ambient = vec3(color.x, color.y, color.z);
+			scene_default->ambient = vec3(color.x, color.y, color.z);
 
 			ImGui::Image((void *)(intptr_t)7, ImVec2(512, 512));
 			ImGui::EndTabItem();

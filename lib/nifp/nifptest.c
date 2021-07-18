@@ -1,4 +1,4 @@
-#include "putc.h"
+#include "common.h"
 
 #include "nifp.h"
 
@@ -11,7 +11,6 @@ static void test_bucket_against_known_values(Nifp *);
 
 void nifp_test()
 {
-	return;
 	// We use Rc from bsa.h
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	// or
