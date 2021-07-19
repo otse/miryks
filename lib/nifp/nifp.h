@@ -80,8 +80,8 @@ struct nifppair
 	void *key;
 	Nifp *value;
 };
-extern int nifps;
-extern struct nifppair nifpmap[5000];
+extern int nifs;
+extern struct nifppair nifmap[5000];
 
 #pragma pack(push, 1)
 

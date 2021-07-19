@@ -3,6 +3,8 @@
 #include <Gloom/Gloom.h>
 #include <Gloom/Files.h>
 
+#include <Gloom/Image.h>
+
 #include <gooey/gooey.h>
 
 #define GLFW_INCLUDE_NONE
@@ -18,6 +20,14 @@ static bool checked = false;
 
 void simple_loader()
 {
+	static bool first = true;
+	if (first)
+	{
+		static Image *image = new Image();
+		image->from_resourcefile();
+		first = false;
+	}
+
 	static const char *plugins[] = {PLUGIN_ONE, PLUGIN_NAMESAKE};
 	static const char *archives[] = {ARCHIVE_ONE, ARCHIVE_TWO, ARCHIVE_THREE, ARCHIVE_FOUR, ARCHIVE_FIVE, ARCHIVE_SIX};
 

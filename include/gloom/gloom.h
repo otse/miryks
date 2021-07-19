@@ -75,6 +75,7 @@ void render_stats(bool *);
 void setup_libpng();
 void simple_loader();
 void load_bucket();
+void get_img();
 
 void setup_esc_menu();
 void esc_menu(bool *);

@@ -7,23 +7,23 @@
 
 // ignore
 
-int nifps = 0;
-struct nifppair nifpmap[5000];
+int nifs = 0;
+struct nifppair nifmap[5000];
 
 api void nifp_save(void *key, Nifp *nif) {
-	nif->num = nifps;
-	nifpmap[nifps].key = key;
-	nifpmap[nifps].value = nif;
-	nifps++;
-	cassert(nifps < 5000, "nifp overflow");
+	nif->num = nifs;
+	nifmap[nifs].key = key;
+	nifmap[nifs].value = nif;
+	nifs++;
+	cassert(nifs < 5000, "nifp overflow");
 }
 
 // ignore
 
 api Nifp *nifp_saved(void *key) {
-	for (int i = 0; i < nifps; i++)
-	if (nifpmap[i].key == key)
-	return nifpmap[i].value;
+	for (int i = 0; i < nifs; i++)
+	if (nifmap[i].key == key)
+	return nifmap[i].value;
 	return NULL;
 }
 
