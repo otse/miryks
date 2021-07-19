@@ -18,6 +18,6 @@ namespace gloom
 		png_byte color_type;
 		png_byte bit_depth;
 		unsigned int texture;
-		unsigned char *pixels;
+		unsigned char *pixels = nullptr;
 	};
 }

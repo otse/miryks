@@ -76,15 +76,11 @@ namespace gloom
 
 		png_read_image(png_ptr, row_pointers);
 
-		return;
-		
-		printf("copy height %i\n", height);
-		printf("row bytes %u\n", row_bytes);
+		*dst = (unsigned char *)malloc(row_bytes * height);
+
 		for (int i = 0; i < height; i++)
-		{
-			printf("row pointers %i %i\n", row_pointers, &row_pointers[i]);
 			memcpy(*dst + (row_bytes * (height - 1 - i)), row_pointers[i], row_bytes);
-		}
+
 		printf("copied pixels\n");
 	}
 
@@ -93,16 +89,15 @@ namespace gloom
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		if (data)
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+		if (pixels)
 		{
-			auto mode = color_type == PNG_COLOR_TYPE_RGBA ? 4 : 3;
-			auto mode2 = color_type == PNG_COLOR_TYPE_RGB ? GL_RGBA : GL_RGB;
-			glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, mode2, GL_UNSIGNED_BYTE, pixels);
+			auto mode = color_type == PNG_COLOR_TYPE_RGBA ? GL_RGBA : GL_RGB;
+			glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, mode, GL_UNSIGNED_BYTE, pixels);
 		}
 	}
 }
