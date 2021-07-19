@@ -1,8 +1,8 @@
 # Gloom
  
-Ok lets edit this.
+By Ojeng Tsunomi aka Tse Ojeng
 
-Thanks for reading.
+Cmd stuff
 
 premake5 vs2019
 &

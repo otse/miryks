@@ -1,4 +1,6 @@
 #include <libs>
+#include <resourcefile.h>
+
 #include <Gloom/Gloom.h>
 #include <Gloom/Obj.h>
 
@@ -69,8 +71,6 @@ void load_bucket()
 	simple_viewer(rc);
 }
 
-#include <list.hpp>
-
 void load_plugins_archives()
 {
 	using namespace gloom;
@@ -96,6 +96,7 @@ int main()
 	}
 	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
+	resourcefile_handle("resourcefile");
 	setup_glfw();
 	setup_loader();
 	load_plugins_archives();

@@ -2,8 +2,8 @@
 // stuff for elder scrolls plugin, bethesda archive and netimmerse file format
 //
 
-#ifndef LIB_PUTC_H
-#define LIB_PUTC_H
+#ifndef LIB_COMMON_H
+#define LIB_COMMON_H
 
 #include <stdio.h>
 

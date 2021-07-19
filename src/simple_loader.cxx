@@ -1,5 +1,4 @@
 #include <libs>
-#include <list.hpp>
 
 #include <Gloom/Gloom.h>
 #include <Gloom/Files.h>
@@ -21,6 +20,9 @@ void simple_loader()
 {
 	static const char *plugins[] = {PLUGIN_ONE, PLUGIN_NAMESAKE};
 	static const char *archives[] = {ARCHIVE_ONE, ARCHIVE_TWO, ARCHIVE_THREE, ARCHIVE_FOUR, ARCHIVE_FIVE, ARCHIVE_SIX};
+
+	const int PLUGINS = sizeof(plugins) / sizeof(plugins[0]);
+	const int ARCHIVES = sizeof(archives) / sizeof(archives[0]);
 
 	if (!loading)
 		return;
@@ -44,15 +46,13 @@ void simple_loader()
 	// ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
 	// ImGui::TextWrapped("Gloom ");
 	// ImGui::PopStyleColor(1);
-	ImGui::TextWrapped("\n(bucket02a.nif should become visible.)\n\n");
+	//ImGui::TextWrapped("\n(bucket02a.nif should become visible.)\n\n");
+	ImGui::TextWrapped("Loading...");
 
 	ImGui::NewLine();
 
 	static int plugin = -1;
 	static int archive = -1;
-
-#define X ""
-#define V ""
 
 	static double passed = glfwGetTime();
 	double now = glfwGetTime();
@@ -64,9 +64,11 @@ void simple_loader()
 		if (plugin == -1)
 		{
 			plugin = 0;
+			delay = 0;
 		}
-		else if (plugin < 2)
+		else if (plugin < PLUGINS)
 		{
+			delay = 1.0 / 2;
 			get_plugins()[plugin] = load_plugin(plugins[plugin]);
 			printf("loaded %s!\n", plugins[plugin]);
 			plugin++;
@@ -74,9 +76,9 @@ void simple_loader()
 		else if (archive == -1)
 		{
 			archive = 0;
-			delay = 1.0 / 2;
+			delay = 1.0 / 4;
 		}
-		else if (archive < 6)
+		else if (archive < ARCHIVES)
 		{
 			get_archives()[archive] = load_archive(archives[archive]);
 			archive++;
@@ -85,7 +87,7 @@ void simple_loader()
 	}
 
 	static bool bucketed = false;
-	if (plugin >= 2 && archive >= 6 && !bucketed)
+	if (plugin >= PLUGINS && archive >= ARCHIVES && !bucketed)
 	{
 		load_bucket();
 		bucketed = true;
@@ -94,13 +96,12 @@ void simple_loader()
 	//ImGui::TextWrapped("Plugins");
 	//ImGui::Separator();
 
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < PLUGINS; i++)
 	{
-		const char *here = plugin == i ? " <" : "";
 		if (i >= plugin)
-			ImGui::TextDisabled(X " %s %s", plugins[i], here);
+			ImGui::TextDisabled("%s", plugins[i]);
 		else
-			ImGui::Text(V " %s", plugins[i]);
+			ImGui::Text("%s", plugins[i]);
 	}
 
 	ImGui::NewLine();
@@ -108,13 +109,12 @@ void simple_loader()
 	//ImGui::Separator();
 	//ImGui::NewLine();
 
-	for (int i = 0; i < 6; i++)
+	for (int i = 0; i < ARCHIVES; i++)
 	{
-		const char *here = archive == i ? "<" : "";
 		if (i >= archive)
-			ImGui::TextDisabled(X " %s %s", archives[i], here);
+			ImGui::TextDisabled("%s", archives[i]);
 		else
-			ImGui::Text(V " %s", archives[i]);
+			ImGui::Text("%s", archives[i]);
 	}
 
 	ImGui::PopFont();

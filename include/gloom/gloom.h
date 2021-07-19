@@ -6,6 +6,9 @@
 #include <OpenGL/Types.h>
 
 #include "defs"
+#include "list"
+
+#define INAL_BAD_SORRY "Inal bad, sorry"
 
 namespace gloom
 {
@@ -68,6 +71,7 @@ void nifp_gui();
 void cell_gui();
 void hero_menu();
 void render_stats(bool *);
+
 void simple_loader();
 void load_bucket();
 

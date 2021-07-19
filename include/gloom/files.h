@@ -1,5 +1,5 @@
-#ifndef FILES_H
-#define FILES_H
+#ifndef GLOOM_FILES_H
+#define GLOOM_FILES_H
 
 // part of gloom
 
