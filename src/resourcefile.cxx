@@ -10,6 +10,8 @@
 
 std::map<std::string, Resourcefile *> resourcefiles;
 
+// depends on microtar
+
 // offshoring a file means searching in a folder then the tar
 
 static void example() 

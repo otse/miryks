@@ -9,6 +9,8 @@ extern "C"
 #include <microtar.h>
 }
 
+// depends on microtar
+
 // a resourcefile is a tar file
 
 std::string resourcefile_offshore(

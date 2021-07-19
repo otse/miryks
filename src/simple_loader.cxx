@@ -47,7 +47,7 @@ void simple_loader()
 	// ImGui::TextWrapped("Gloom ");
 	// ImGui::PopStyleColor(1);
 	//ImGui::TextWrapped("\n(bucket02a.nif should become visible.)\n\n");
-	ImGui::TextWrapped("Loading...");
+	ImGui::TextWrapped("Let's init.");
 
 	ImGui::NewLine();
 

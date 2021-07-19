@@ -55,17 +55,20 @@ project "gloom"
 		"C:/New folder/glm-0.9.9.8",
 		"C:/New folder/glfw-3.3.4/include",
 		"C:/New folder/zlib-1.2.11",
-		"C:/New folder/bullet3-3.17/src"
+		"C:/New folder/bullet3-3.17/src",
+		"C:/New folder/libpng-1.6.35"
 	}
 	
 	libdirs {
 		"C:/New folder/glfw-3.3.4-32/src/%{cfg.longname}",
 		"C:/New folder/zlib-1.2.11-32/%{cfg.longname}",
-		"C:/New folder/bullet3-3.17-32/lib/Release"
+		"C:/New folder/bullet3-3.17-32/lib/Release",
+		"C:/New folder/libpng-1.6.35-32/Release"
 	}
 
 	links {
 		"glfw3",
+		"libpng16_static",
         "BulletDynamics","BulletCollision", "LinearMath", "Bullet3Common"
 	--	"zlibstatic"
 	}
