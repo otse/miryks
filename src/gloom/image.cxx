@@ -39,14 +39,70 @@ namespace gloom
 		memcpy(header, data, 8);
 		if (png_sig_cmp(header, 0, 8))
 			printf("[read_png_file] File is not recognized as a PNG file");
-		printf("woo yagrum!");
+		printf("woo yagrum!\n");
 		png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 		png_infop info_ptr = png_create_info_struct(png_ptr);
 		setjmp(png_jmpbuf(png_ptr));
 		png_set_read_fn(png_ptr, this, callback);
-		//png_init_io(png_ptr, yagrum.data());
+		// If we have already read some of the signature
 		png_set_sig_bytes(png_ptr, 8);
 		png_read_info(png_ptr, info_ptr);
 		int number_of_passes = png_set_interlace_handling(png_ptr);
+		width = png_get_image_width(png_ptr, info_ptr);
+		height = png_get_image_height(png_ptr, info_ptr);
+		color_type = png_get_color_type(png_ptr, info_ptr);
+		bit_depth = png_get_bit_depth(png_ptr, info_ptr);
+		printf("image is %i %i\n", width, height);
+		copy_pixels(png_ptr, info_ptr, &pixels);
+		if (color_type == PNG_COLOR_TYPE_RGB)
+			printf("color_type == PNG_COLOR_TYPE_RGB\n");
+		if (color_type == PNG_COLOR_TYPE_RGBA)
+			printf("color_type == PNG_COLOR_TYPE_RGBA\n");
+		create_texture();
+	}
+
+	void Image::copy_pixels(png_structp png_ptr, png_infop info_ptr, GLubyte **dst)
+	{
+		unsigned int row_bytes = png_get_rowbytes(png_ptr, info_ptr);
+
+		png_bytepp row_pointers = NULL;
+		png_bytep image_data = NULL;
+
+		image_data = (unsigned char *)malloc(row_bytes * height);
+		row_pointers = (png_bytepp)malloc(height * sizeof(png_bytep));
+
+		for (int i = 0; i < height; ++i)
+			row_pointers[i] = image_data + i * row_bytes;
+
+		png_read_image(png_ptr, row_pointers);
+
+		return;
+		
+		printf("copy height %i\n", height);
+		printf("row bytes %u\n", row_bytes);
+		for (int i = 0; i < height; i++)
+		{
+			printf("row pointers %i %i\n", row_pointers, &row_pointers[i]);
+			memcpy(*dst + (row_bytes * (height - 1 - i)), row_pointers[i], row_bytes);
+		}
+		printf("copied pixels\n");
+	}
+
+	void Image::create_texture()
+	{
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		if (data)
+		{
+			auto mode = color_type == PNG_COLOR_TYPE_RGBA ? 4 : 3;
+			auto mode2 = color_type == PNG_COLOR_TYPE_RGB ? GL_RGBA : GL_RGB;
+			glTexImage2D(GL_TEXTURE_2D, 0, mode, width, height, 0, mode2, GL_UNSIGNED_BYTE, pixels);
+		}
 	}
 }

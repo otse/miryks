@@ -20,11 +20,11 @@ static bool checked = false;
 
 void simple_loader()
 {
+	static Image *yagrum = new Image();
 	static bool first = true;
 	if (first)
 	{
-		static Image *image = new Image();
-		image->from_resourcefile();
+		yagrum->from_resourcefile();
 		first = false;
 	}
 
@@ -58,6 +58,9 @@ void simple_loader()
 	// ImGui::PopStyleColor(1);
 	//ImGui::TextWrapped("\n(bucket02a.nif should become visible.)\n\n");
 	ImGui::TextWrapped("Let's init.");
+
+	ImGui::SameLine();
+	ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(127, 128));
 
 	ImGui::NewLine();
 
