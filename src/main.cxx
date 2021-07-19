@@ -1,6 +1,8 @@
 #include <libs>
 #include <resourcefile.h>
 
+#include <png.h>
+
 #include <Gloom/Gloom.h>
 #include <Gloom/Obj.h>
 
@@ -10,7 +12,6 @@
 #include <OpenGL/Camera.h>
 #include <OpenGL/Scene.h>
 #include <OpenGL/Group.h>
-#include <OpenGL/bound.h>
 #include <OpenGL/Geometry.h>
 #include <OpenGL/Material.h>
 
@@ -63,11 +64,16 @@ void simple_start_screen()
 {
 }
 
+void setup_libpng()
+{
+	// no init ?
+}
+
 void load_bucket()
 {
 	using namespace gloom;
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	load_nif(rc, true);
+	import_nif(rc, true);
 	simple_viewer(rc);
 }
 
@@ -97,6 +103,7 @@ int main()
 	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
 	resourcefile_handle("resourcefile");
+	setup_libpng();
 	setup_glfw();
 	setup_loader();
 	load_plugins_archives();
@@ -108,7 +115,7 @@ int main()
 	collision_init();
 	camera_current = first_person_camera;
 	//Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	//load_nif(rc, true);
+	//import_nif(rc, true);
 	//nifp_test();
 #if 0
 	// Secret bucket beginning
@@ -130,4 +137,28 @@ int main()
 
 	programLoop();
 	return 1;
+}
+
+#include <OpenGL/DrawGroup.h>
+
+void gloom::simple_viewer(Rc *rc)
+{
+	static Mesh *mesh = nullptr;
+	static DrawGroup *drawGroup = nullptr;
+	if (mesh)
+	{
+		scene_default->drawGroups.Remove(drawGroup);
+		delete mesh;
+		delete drawGroup;
+	}
+	Nif *nif = import_nif(rc, false);
+	nifp_save(rc, nif);
+	mesh = new Mesh(nif);
+	drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
+	scene_default->drawGroups.Add(drawGroup);
+	HideCursor();
+	camera_current = pan_camera;
+	pan_camera->pos = drawGroup->aabb.center();
+	//pan_camera->pos = first_person_camera->pos;
+	pan_camera->radius = drawGroup->aabb.radius2() * 2;
 }

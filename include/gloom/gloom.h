@@ -13,8 +13,8 @@
 namespace gloom
 {
 	Rc *load_rc(const char *, const char *, unsigned long);
-	Nif *load_nif(Rc *, bool);
-	Mesh *load_mesh(const char *, bool);
+	Nif *import_nif(Rc *, bool);
+	Mesh *create_mesh(const char *, bool);
 	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
 
@@ -72,6 +72,7 @@ void cell_gui();
 void hero_menu();
 void render_stats(bool *);
 
+void setup_libpng();
 void simple_loader();
 void load_bucket();
 

@@ -76,9 +76,8 @@ bool resourcefile_find(const std::string &a, std::string path)
 	return has != rsf.filenames.end();
 }
 
-const mtar_header_t &resourcefile_get_header(std::string a, std::string path)
+const mtar_header_t &get_header(Resourcefile &rsf, std::string path)
 {
-	Resourcefile &rsf = resourcefile_handle(a);
 	const mtar_header_t &h = rsf.headers_by_name[path.c_str()];
 	return h;
 }
@@ -97,7 +96,7 @@ std::string resourcefile_read(std::string a, std::string path)
 	mtar_header_t h;
 	if (!resourcefile_find(a, path))
 		return "No";
-	mtar_find(&rsf.mtar, path.c_str(), &h);
+	get_header(rsf, path);
 	std::string str(h.size, ' ');
 	mtar_read_data(&rsf.mtar, str.data(), h.size);
 	if (path.find(".gz") != std::string::npos)

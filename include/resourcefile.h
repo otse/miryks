@@ -36,7 +36,7 @@ typedef struct
 extern std::map<std::string, Resourcefile *> resourcefiles;
 
 Resourcefile &resourcefile_handle(std::string);
-const mtar_header_t &resourcefile_get_header(const std::string &, std::string);
+
 bool resourcefile_find(const std::string &, std::string);
 
 std::string resourcefile_read(std::string, std::string);

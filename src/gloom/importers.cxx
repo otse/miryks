@@ -11,6 +11,8 @@
 
 #include <algorithm>
 
+// these importers use the c lib
+
 namespace gloom
 {
 	const char *dataFolder = "Data/";
@@ -28,9 +30,9 @@ namespace gloom
 		return rc;
 	}
 
-	Nif *load_nif(Rc *rc, bool store)
+	Nif *import_nif(Rc *rc, bool store)
 	{
-		cassert(rc, "load_nif null rc");
+		cassert(rc, "import_nif null rc");
 		Nif *nif;
 		nif = nifp_saved(rc);
 		if (store && nif)
@@ -45,7 +47,7 @@ namespace gloom
 		return nif;
 	}
 
-	Mesh *load_mesh(const char *model, bool store)
+	Mesh *create_mesh(const char *model, bool store)
 	{
 		// make a simple mesh, like a rock
 		static std::map<const char *, Mesh *> meshes;
@@ -54,7 +56,7 @@ namespace gloom
 		Rc *rc = load_rc("meshes\\", model, 0x1);
 		if (!rc)
 			return nullptr;
-		Nif *nif = load_nif(rc, true);
+		Nif *nif = import_nif(rc, true);
 		Mesh *mesh = new Mesh(nif);
 		if (store)
 			meshes.emplace(model, mesh);
@@ -100,27 +102,5 @@ namespace gloom
 		else if (exists(filename))
 			return bsa_load(filename);
 		return nullptr;
-	}
-
-	void simple_viewer(Rc *rc)
-	{
-		static Mesh *mesh = nullptr;
-		static DrawGroup *drawGroup = nullptr;
-		if (mesh)
-		{
-			scene_default->drawGroups.Remove(drawGroup);
-			delete mesh;
-			delete drawGroup;
-		}
-		Nif *nif = load_nif(rc, false);
-		nifp_save(rc, nif);
-		mesh = new Mesh(nif);
-		drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
-		scene_default->drawGroups.Add(drawGroup);
-		HideCursor();
-		camera_current = pan_camera;
-		pan_camera->pos = drawGroup->aabb.center();
-		//pan_camera->pos = first_person_camera->pos;
-		pan_camera->radius = drawGroup->aabb.radius2() * 2;
 	}
 } // namespace gloom

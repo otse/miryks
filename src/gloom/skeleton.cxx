@@ -30,7 +30,7 @@ namespace gloom
 	{
 		// printf("skeleton load anam %s\n", anam);
 		Rc *rc = load_rc("meshes\\", anam, 0x1);
-		nif = load_nif(rc, true);
+		nif = import_nif(rc, true);
 		// printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
 	void Skeleton::construct()

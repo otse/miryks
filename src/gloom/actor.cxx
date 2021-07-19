@@ -66,7 +66,7 @@ namespace gloom
 		ExportRaceHkxToKf(raceId);
 		auto anam = race.data<char *>("ANAM", 0);
 		Rc *rc = load_rc("meshes\\", model, 0x1);
-		Nif *character = load_nif(rc, false);
+		Nif *character = import_nif(rc, false);
 		skeleton = new Skeleton(anam);
 		mesh = new Mesh(character);
 		smesh = new SkinnedMesh(mesh, skeleton);

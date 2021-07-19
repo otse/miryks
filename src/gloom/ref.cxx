@@ -104,7 +104,7 @@ namespace gloom
 			}
 			else
 			{
-				mesh = load_mesh(modl, true);
+				mesh = create_mesh(modl, true);
 			}
 		}
 		else if (baseObject.isType("LIGH"))
