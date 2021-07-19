@@ -79,7 +79,7 @@ namespace gloom
 		*dst = (unsigned char *)malloc(row_bytes * height);
 
 		for (int i = 0; i < height; i++)
-			memcpy(*dst + (row_bytes * (height - 1 - i)), row_pointers[i], row_bytes);
+			memcpy(*dst + (row_bytes * i), row_pointers[i], row_bytes);
 
 		printf("copied pixels\n");
 	}
