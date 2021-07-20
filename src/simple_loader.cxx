@@ -28,7 +28,15 @@ void simple_loader()
 	static bool faded = false;
 
 	if (faded)
+	{
+		static bool loaded = false;
+		if (!loaded)
+		{ 
+			load_gloomgen();
+			loaded = true;
+		}
 		return;
+	}
 
 	static Image *yagrum = new Image();
 
@@ -95,10 +103,10 @@ void simple_loader()
 		ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(50, 50));
 	}
 
-	ImGui::NewLine();
-
 	static int plugin = -1;
 	static int archive = -1;
+
+	ImGui::NewLine();
 
 	static double old = glfwGetTime();
 	double now = glfwGetTime();
@@ -140,14 +148,6 @@ void simple_loader()
 		}
 
 		old = glfwGetTime();
-	}
-
-	static bool bucketed = false;
-	if (plugin >= PLUGINS && archive >= ARCHIVES && !bucketed)
-	{
-		load_bucket();
-		load_gloomgen();
-		bucketed = true;
 	}
 
 	//ImGui::TextWrapped("Plugins");
