@@ -63,7 +63,7 @@ static void error_callback(int error, const char *description)
 	fprintf(stderr, "Error: %s\n", description);
 }
 
-static bool useFbo = true;
+static bool useFbo = false;
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -215,8 +215,8 @@ void put_it_fullscreen()
 	height = mode->height;
 	glfwSetWindowPos(window, 0, 0);
 	glfwSetWindowSize(window, width, height);
-	delete render_target;
-	render_target = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_FLOAT);
+	//delete render_target;
+	//render_target = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_FLOAT);
 	glViewport(0, 0, width, height);
 	//glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, mode->refreshRate);
 	//glfwSwapInterval(0); // vsync

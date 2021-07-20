@@ -87,6 +87,7 @@ void load_gloomgen()
 	using namespace gloom;
 	dungeon = new Interior("GloomGen");
 	dungeon->loadCell();
+	//player1 = new Player();
 }
 
 void load_plugins_archives()

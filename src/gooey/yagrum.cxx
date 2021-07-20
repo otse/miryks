@@ -48,6 +48,11 @@ namespace yagrum
 		vector.push_back(talk);
 	}
 
+	void set_no_image(bool n)
+	{
+		(&vector.back())->no_image = n;
+	}
+
 	void set_rotate_speed(float n)
 	{
 		(&vector.back())->rotate_speed = n;
@@ -119,15 +124,18 @@ namespace yagrum
 
 		ImGui::TextWrapped(current->quote.c_str());
 		ImGui::SameLine();
-		if (current->rotate)
+		if (current->no_image == false)
 		{
-			ImRotateStart();
-			ImGui::Image((void *)(intptr_t)image->texture, ImVec2(50, 50));
-			ImRotateEnd(0.0005f * current->rotate_speed * ::GetTickCount(), ImRotationCenter());
-		}
-		else
-		{
-			ImGui::Image((void *)(intptr_t)image->texture, ImVec2(50, 50));
+			if (current->rotate)
+			{
+				ImRotateStart();
+				ImGui::Image((void *)(intptr_t)image->texture, ImVec2(50, 50));
+				ImRotateEnd(0.0005f * current->rotate_speed * ::GetTickCount(), ImRotationCenter());
+			}
+			else
+			{
+				ImGui::Image((void *)(intptr_t)image->texture, ImVec2(50, 50));
+			}
 		}
 		ImGui::PopFont();
 
