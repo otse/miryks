@@ -22,8 +22,18 @@ static bool checked = false;
 
 void simple_loader()
 {
+	static bool all_done = false;
+	static bool happy_yagrum = false;
+	static bool fading = false;
+	static bool faded = false;
+
+	if (faded)
+		return;
+
 	static Image *yagrum = new Image();
+
 	static bool first = true;
+
 	if (first)
 	{
 		yagrum->from_resourcefile();
@@ -58,23 +68,41 @@ void simple_loader()
 	// ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
 	// ImGui::TextWrapped("Gloom ");
 	// ImGui::PopStyleColor(1);
-	//ImGui::TextWrapped("\n(bucket02a.nif should become visible.)\n\n");
-	ImGui::TextWrapped("Let's init.");
 
-	ImGui::SameLine();
+	if (all_done)
+	{
+		fading = true;
+		static float fade = 1.0f;
+		fade -= 1.0f / 60.0f;
+		fade = max(0.f, fade);
+		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, fade);
+		if (fade <= 0.f)
+			faded = true;
+	}
 
-	ImRotateStart();
-	ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(50, 50));
-	ImRotateEnd(0.0005f*::GetTickCount(), ImRotationCenter());
+	if (!happy_yagrum)
+	{
+		ImGui::TextWrapped("Let's init.");
+		ImGui::SameLine();
+		ImRotateStart();
+		ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(50, 50));
+		ImRotateEnd(0.0005f * ::GetTickCount(), ImRotationCenter());
+	}
+	else
+	{
+		ImGui::TextWrapped("Ok.");
+		ImGui::SameLine();
+		ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(50, 50));
+	}
 
 	ImGui::NewLine();
 
 	static int plugin = -1;
 	static int archive = -1;
 
-	static double passed = glfwGetTime();
+	static double old = glfwGetTime();
 	double now = glfwGetTime();
-	double elapsed = now - passed;
+	double elapsed = now - old;
 	static double delay = 1.0 / 1;
 
 	if (elapsed > delay)
@@ -101,7 +129,17 @@ void simple_loader()
 			get_archives()[archive] = load_archive(archives[archive]);
 			archive++;
 		}
-		passed = glfwGetTime();
+		else if (!happy_yagrum)
+		{
+			delay = 2.0;
+			happy_yagrum = true;
+		}
+		else
+		{
+			all_done = true;
+		}
+
+		old = glfwGetTime();
 	}
 
 	static bool bucketed = false;
@@ -115,28 +153,34 @@ void simple_loader()
 	//ImGui::TextWrapped("Plugins");
 	//ImGui::Separator();
 
-	for (int i = 0; i < PLUGINS; i++)
+	if (!happy_yagrum)
 	{
-		if (i >= plugin)
-			ImGui::TextDisabled("%s", plugins[i]);
-		else
-			ImGui::Text("%s", plugins[i]);
-	}
+		for (int i = 0; i < PLUGINS; i++)
+		{
+			if (i >= plugin)
+				ImGui::TextDisabled("%s", plugins[i]);
+			else
+				ImGui::Text("%s", plugins[i]);
+		}
 
-	ImGui::NewLine();
-	//ImGui::TextWrapped("Archives");
-	//ImGui::Separator();
-	//ImGui::NewLine();
+		ImGui::NewLine();
+		//ImGui::TextWrapped("Archives");
+		//ImGui::Separator();
+		//ImGui::NewLine();
 
-	for (int i = 0; i < ARCHIVES; i++)
-	{
-		if (i >= archive)
-			ImGui::TextDisabled("%s", archives[i]);
-		else
-			ImGui::Text("%s", archives[i]);
+		for (int i = 0; i < ARCHIVES; i++)
+		{
+			if (i >= archive)
+				ImGui::TextDisabled("%s", archives[i]);
+			else
+				ImGui::Text("%s", archives[i]);
+		}
 	}
 
 	ImGui::PopFont();
+
+	if (fading)
+		ImGui::PopStyleVar();
 
 	ImGui::PopStyleColor(4);
 
