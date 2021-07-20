@@ -62,13 +62,13 @@ char *bsa_read_bzstring(Bsa *bsa)
 	char *name = malloc(sizeof(char) * c);
 	read(bsa, name, c);
 	return name;
-}
+} 
 
 void read_file_records(Bsa *bsa)
 {
 	bsa->file = malloc(sizeof(struct bsa_file *) * Hedr.folders);
 	bsa->ca = malloc(sizeof(char *) * Hedr.folders);
-	for (unsigned int i = 0; i < Hedr.folders; i++)
+	for (unsigned int i = 0; i < Hedr.folders; i++)	
 	{
 	const int num = bsa->fld[i].num;
 	bsa->file[i] = malloc(sizeof(struct bsa_file) * num);

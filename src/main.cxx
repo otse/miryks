@@ -71,10 +71,18 @@ void setup_libpng()
 
 void load_bucket()
 {
+	return;
 	using namespace gloom;
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	import_nif(rc, true);
 	simple_viewer(rc);
+}
+
+void load_gloomgen()
+{
+	using namespace gloom;
+	dungeon = new Interior("GloomGen");
+	dungeon->loadCell();
 }
 
 void load_plugins_archives()
@@ -153,6 +161,7 @@ void gloom::simple_viewer(Rc *rc)
 	}
 	Nif *nif = import_nif(rc, false);
 	nifp_save(rc, nif);
+	// create_mesh()
 	mesh = new Mesh(nif);
 	drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
 	scene_default->drawGroups.Add(drawGroup);

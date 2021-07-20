@@ -18,6 +18,8 @@ static bool loading = true;
 
 static bool checked = false;
 
+#include <windows.h>
+
 void simple_loader()
 {
 	static Image *yagrum = new Image();
@@ -60,7 +62,10 @@ void simple_loader()
 	ImGui::TextWrapped("Let's init.");
 
 	ImGui::SameLine();
-	ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(127, 128));
+
+	ImRotateStart();
+	ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(50, 50));
+	ImRotateEnd(0.0005f*::GetTickCount(), ImRotationCenter());
 
 	ImGui::NewLine();
 
@@ -103,6 +108,7 @@ void simple_loader()
 	if (plugin >= PLUGINS && archive >= ARCHIVES && !bucketed)
 	{
 		load_bucket();
+		load_gloomgen();
 		bucketed = true;
 	}
 

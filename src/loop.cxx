@@ -277,11 +277,11 @@ void gloom::doImGui()
 
 	if (!hideDebugGuis)
 	{
-		bsa_gui();
+		/*bsa_gui();
 		nifp_gui();
 		esp_gui();
 		cell_gui();
-		opengl_gui();
+		opengl_gui();*/
 
 		ImGui::ShowDemoWindow();
 	}
