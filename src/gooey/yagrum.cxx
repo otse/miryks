@@ -48,6 +48,11 @@ namespace yagrum
 		vector.push_back(talk);
 	}
 
+	void set_rotate_speed(float n)
+	{
+		(&vector.back())->rotate_speed = n;
+	}
+
 	void pop()
 	{
 		vector.pop_front();
@@ -118,7 +123,7 @@ namespace yagrum
 		{
 			ImRotateStart();
 			ImGui::Image((void *)(intptr_t)image->texture, ImVec2(50, 50));
-			ImRotateEnd(0.0005f * ::GetTickCount(), ImRotationCenter());
+			ImRotateEnd(0.0005f * current->rotate_speed * ::GetTickCount(), ImRotationCenter());
 		}
 		else
 		{

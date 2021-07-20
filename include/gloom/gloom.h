@@ -78,6 +78,8 @@ void load_bucket();
 void load_gloomgen();
 void get_img();
 
+void put_it_fullscreen();
+
 void setup_esc_menu();
 void esc_menu(bool *);
 

@@ -211,11 +211,15 @@ void put_it_fullscreen()
 {
 	printf("going fs !\n");
 	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	window = glfwCreateWindow(width, height, "gloom", glfwGetPrimaryMonitor(), NULL);
 	width = mode->width;
 	height = mode->height;
-	glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, mode->refreshRate);
-	glfwSwapInterval(0); // vsync
+	glfwSetWindowPos(window, 0, 0);
+	glfwSetWindowSize(window, width, height);
+	delete render_target;
+	render_target = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_FLOAT);
+	glViewport(0, 0, width, height);
+	//glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, mode->refreshRate);
+	//glfwSwapInterval(0); // vsync
 }
 
 void gloom::setup_glfw()

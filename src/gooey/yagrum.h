@@ -15,6 +15,7 @@ namespace yagrum
 		float start_time = 0;
 		bool faded = false;
 		bool rotate = false;
+		float rotate_speed = 1.f;
 	};
 
 	extern entry *current;
@@ -23,6 +24,7 @@ namespace yagrum
 	void load();
 	void queue(const char *q, float duration, bool rotate = false);
 	void pop();
+	void set_rotate_speed(float speed);
 	void force_fade();
 	void checker();
 	void drawer();

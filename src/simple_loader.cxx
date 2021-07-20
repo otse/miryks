@@ -21,7 +21,7 @@ static bool checked = false;
 
 void simple_loader()
 {
-	static bool dungeon_tween = false;
+	static bool bigger_screen = false;
 	static bool loading_dungeon = false;
 	static bool successful = false;
 
@@ -29,7 +29,7 @@ void simple_loader()
 
 	if (first)
 	{
-		yagrum::queue("Let's have it", 10, true);
+		yagrum::queue("Let's have it", 15.0, true);
 		first = false;
 	}
 
@@ -100,15 +100,19 @@ void simple_loader()
 		}
 		else if (!successful)
 		{
-			delay = 1.0;
+			delay = 2.0;
 			successful = true;
 			yagrum::force_fade();
-			yagrum::queue("Loading", 2.5, true);
+			yagrum::queue("", 4.0, true);
+			yagrum::set_rotate_speed(3.0);
+			//yagrum::queue("Going fullscreen windowed...", 5.0f);
 		}
-		else if (!dungeon_tween)
+		else if (!bigger_screen)
 		{
 			delay = 1.0;
-			dungeon_tween = true;
+			//yagrum::force_fade();
+			put_it_fullscreen();
+			bigger_screen = true;
 		}
 		else if (!loading_dungeon)
 		{
