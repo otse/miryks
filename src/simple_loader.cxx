@@ -5,7 +5,8 @@
 
 #include <Gloom/Image.h>
 
-#include <gooey/gooey.h>
+#include <Gooey/Gooey.h>
+#include <Gooey/Yagrum.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -18,33 +19,17 @@ static bool loading = true;
 
 static bool checked = false;
 
-#include <windows.h>
-
 void simple_loader()
 {
-	static bool all_done = false;
-	static bool happy_yagrum = false;
-	static bool fading = false;
-	static bool faded = false;
-
-	if (faded)
-	{
-		static bool loaded = false;
-		if (!loaded)
-		{ 
-			load_gloomgen();
-			loaded = true;
-		}
-		return;
-	}
-
-	static Image *yagrum = new Image();
+	static bool dungeon_tween = false;
+	static bool loading_dungeon = false;
+	static bool successful = false;
 
 	static bool first = true;
 
 	if (first)
 	{
-		yagrum->from_resourcefile();
+		yagrum::queue("Let's have it", 10, true);
 		first = false;
 	}
 
@@ -77,31 +62,7 @@ void simple_loader()
 	// ImGui::TextWrapped("Gloom ");
 	// ImGui::PopStyleColor(1);
 
-	if (all_done)
-	{
-		fading = true;
-		static float fade = 1.0f;
-		fade -= 1.0f / 60.0f;
-		fade = max(0.f, fade);
-		ImGui::PushStyleVar(ImGuiStyleVar_Alpha, fade);
-		if (fade <= 0.f)
-			faded = true;
-	}
-
-	if (!happy_yagrum)
-	{
-		ImGui::TextWrapped("Let's init.");
-		ImGui::SameLine();
-		ImRotateStart();
-		ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(50, 50));
-		ImRotateEnd(0.0005f * ::GetTickCount(), ImRotationCenter());
-	}
-	else
-	{
-		ImGui::TextWrapped("Ok.");
-		ImGui::SameLine();
-		ImGui::Image((void *)(intptr_t)yagrum->texture, ImVec2(50, 50));
-	}
+	ImGui::NewLine();
 
 	static int plugin = -1;
 	static int archive = -1;
@@ -137,23 +98,30 @@ void simple_loader()
 			get_archives()[archive] = load_archive(archives[archive]);
 			archive++;
 		}
-		else if (!happy_yagrum)
+		else if (!successful)
 		{
-			delay = 2.0;
-			happy_yagrum = true;
+			delay = 1.0;
+			successful = true;
+			yagrum::force_fade();
+			yagrum::queue("Loading", 2.5, true);
 		}
-		else
+		else if (!dungeon_tween)
 		{
-			all_done = true;
+			delay = 1.0;
+			dungeon_tween = true;
+		}
+		else if (!loading_dungeon)
+		{
+			delay = 0;
+			loading_dungeon = true;
+			load_gloomgen();
+			loading = false;
 		}
 
 		old = glfwGetTime();
 	}
 
-	//ImGui::TextWrapped("Plugins");
-	//ImGui::Separator();
-
-	if (!happy_yagrum)
+	if (!successful)
 	{
 		for (int i = 0; i < PLUGINS; i++)
 		{
@@ -164,9 +132,6 @@ void simple_loader()
 		}
 
 		ImGui::NewLine();
-		//ImGui::TextWrapped("Archives");
-		//ImGui::Separator();
-		//ImGui::NewLine();
 
 		for (int i = 0; i < ARCHIVES; i++)
 		{
@@ -178,9 +143,6 @@ void simple_loader()
 	}
 
 	ImGui::PopFont();
-
-	if (fading)
-		ImGui::PopStyleVar();
 
 	ImGui::PopStyleColor(4);
 

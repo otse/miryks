@@ -42,6 +42,8 @@ namespace gloom
 
 	class Wrld;
 	class Interior;
+
+	class Image;
 	
 	typedef Keyframes Kf;
 

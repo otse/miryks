@@ -8,6 +8,8 @@
 #include <Gloom/Actor.h>
 #include <Gloom/Collision.h>
 
+#include <Gooey/Yagrum.h>
+
 #include <OpenGL/Camera.h>
 #include <OpenGL/Scene.h>
 #include <OpenGL/Material.h>
@@ -32,7 +34,7 @@ GLFWwindow *window;
 
 bool hideDebugGuis = true;
 bool cursorShowing = false;
-bool f10 = true;
+bool f10 = false;
 bool h_pop = false;
 
 namespace gloom
@@ -345,6 +347,8 @@ void gloom::programLoop()
 		glfwPollEvents();
 
 		doImGui();
+
+		yagrum_checker();
 
 		simple_loader();
 

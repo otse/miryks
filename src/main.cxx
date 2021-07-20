@@ -6,6 +6,8 @@
 #include <Gloom/Gloom.h>
 #include <Gloom/Obj.h>
 
+#include <Gooey/Yagrum.h>
+
 #include <algorithm>
 
 #include <OpenGL/Types.h>
@@ -31,6 +33,8 @@ namespace gloom
 	BodyPart *meanSkelly = nullptr;
 	Human *someHuman = nullptr;
 	Player *player1 = nullptr;
+	
+	Image *yagrum_image = nullptr;
 
 	namespace MyKeys
 	{
@@ -114,6 +118,7 @@ int main()
 	setup_libpng();
 	setup_glfw();
 	setup_loader();
+	load_yagrum();
 	load_plugins_archives();
 	first_person_camera = new FirstPersonCamera;
 	pan_camera = new ViewerCamera;
