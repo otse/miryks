@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Gloom/Files.h>
+#include <dark/Files.h>
 
 #include <resourcefile.h>
 
@@ -59,7 +59,7 @@ Resourcefile &resourcefile_handle(std::string a)
 	{
 		Resourcefile &rsf = *(new Resourcefile{a});
 		resourcefiles.emplace(a, &rsf);
-		printf("resourcefile open %s", a.c_str());
+		printf("resourcefile: %s\n", a.c_str());
 		a += RSF_EXT;
 		int err = mtar_open(&rsf.mtar, a.c_str(), "r");
 		if (err)

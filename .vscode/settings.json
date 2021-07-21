@@ -96,7 +96,7 @@
         "units": "cpp",
         "stat.h": "c",
         "esp.h": "c",
-        "defs": "cpp",
+        "fwd": "cpp",
         "bit": "cpp",
         "clocale": "cpp",
         "functional": "cpp",

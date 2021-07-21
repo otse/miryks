@@ -1,6 +1,6 @@
-#include <Gloom/Gloom.h>
+#include <dark/dark.h>
 
-#include <OpenGL/Texture.h>
+#include <opengl/Texture.h>
 
 extern "C"
 {

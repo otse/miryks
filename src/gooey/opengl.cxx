@@ -1,5 +1,5 @@
-#include <Gloom/Gloom.h>
-#include <Gloom/Actor.h>
+#include <dark/dark.h>
+#include <dark/Actor.h>
 
 #include "opengl/group.h"
 #include "opengl/geometry.h"
@@ -10,7 +10,7 @@
 #include <sstream>
 #include <imgui.h>
 
-using namespace gloom;
+using namespace dark;
 
 static std::stringstream ss;
 

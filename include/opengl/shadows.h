@@ -3,11 +3,11 @@
 
 // part of gloom
 
-#include <OpenGL/Types.h>
+#include <opengl/Types.h>
 
-#include <OpenGL/Camera.h>
-#include <OpenGL/Lights.h>
-#include <OpenGL/RT.h>
+#include <opengl/Camera.h>
+#include <opengl/Lights.h>
+#include <opengl/rendertarget.h>
 
 // https://github.com/mrdoob/three.js/blob/master/src/lights/LightShadow.js
 

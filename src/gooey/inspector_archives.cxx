@@ -1,8 +1,8 @@
 #include <libs>
-#include <Gloom/Gloom.h>
-#include <Gloom/Files.h>
+#include <dark/dark.h>
+#include <dark/Files.h>
 
-using namespace gloom;
+using namespace dark;
 
 #include <imgui.h>
 

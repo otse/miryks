@@ -1,8 +1,8 @@
-#include <OpenGL/Group.h>
-#include <OpenGL/DrawGroup.h>
-#include <OpenGL/Geometry.h>
-#include <OpenGL/Material.h>
-#include <OpenGL/Camera.h>
+#include <opengl/Group.h>
+#include <opengl/DrawGroup.h>
+#include <opengl/Geometry.h>
+#include <opengl/Material.h>
+#include <opengl/Camera.h>
 
 #include <algorithm>
 

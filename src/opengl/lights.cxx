@@ -1,4 +1,4 @@
-#include <OpenGL/Lights.h>
+#include <opengl/Lights.h>
 
 // https://community.khronos.org/t/uniform-buffer-objects-dynamic-sized-arrays-and-lights/70415
 

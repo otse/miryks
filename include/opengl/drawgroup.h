@@ -5,9 +5,9 @@
 
 #include <functional>
 
-#include <OpenGL/Types.h>
+#include <opengl/Types.h>
 
-#include <OpenGL/Aabb.h>
+#include <opengl/Aabb.h>
 
 struct DrawGroup
 {

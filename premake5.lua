@@ -43,11 +43,13 @@ project "gloom"
 	}
 
 	excludes {
-		"lib/graveyard/*"
+		"lib/graveyard/*",
+		"src/graveyard/*"
 	}
 
 	includedirs {
 		"dep",
+		"dep/imgui-1.83",
 		"src",
 		"lib",
 		"include",

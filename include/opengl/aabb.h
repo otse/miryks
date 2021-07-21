@@ -3,7 +3,7 @@
 
 // part of gloom
 
-#include <OpenGL/Types.h>
+#include <opengl/Types.h>
 
 struct Aabb
 {

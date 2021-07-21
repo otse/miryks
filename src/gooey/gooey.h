@@ -4,7 +4,7 @@
 #include <vector>
 #include <imgui.h>
 
-namespace gloom
+namespace dark
 {
     extern ImFont *font2;
     extern ImFont *font3;

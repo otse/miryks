@@ -1,2 +1,2 @@
-#include <OpenGL/Shadows.h>
+#include <opengl/Shadows.h>
 

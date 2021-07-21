@@ -1,20 +1,20 @@
-#include <Gloom/Gloom.h>
+#include <dark/dark.h>
 
 #include <libs>
 
-#include <Gloom/Mesh.h>
-#include <Gloom/Object.h>
-#include <Gloom/Interior.h>
-#include <Gloom/Actor.h>
-#include <Gloom/Collision.h>
+#include <dark/mesh.h>
+#include <dark/Object.h>
+#include <dark/Interior.h>
+#include <dark/Actor.h>
+#include <dark/Collision.h>
 
 #include <Gooey/Yagrum.h>
 
-#include <OpenGL/Camera.h>
-#include <OpenGL/Scene.h>
-#include <OpenGL/Material.h>
-#include <OpenGL/Shader.h>
-#include <OpenGL/RT.h>
+#include <opengl/Camera.h>
+#include <opengl/Scene.h>
+#include <opengl/Material.h>
+#include <opengl/Shader.h>
+#include <opengl/rendertarget.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -23,11 +23,12 @@
 #include <glm/glm.hpp>
 
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+#include <backends/imgui_impl_glfw.h>
+#include <backends/imgui_impl_opengl3.h>
+
 #include <gooey/gooey.h>
 
-using namespace gloom;
+using namespace dark;
 using namespace glm;
 
 GLFWwindow *window;
@@ -37,7 +38,7 @@ bool cursorShowing = false;
 bool f10 = false;
 bool h_pop = false;
 
-namespace gloom
+namespace dark
 {
 	ImFont *font2;
 	ImFont *font3;
@@ -56,7 +57,7 @@ namespace gloom
 		cursorShowing = true;
 		Camera::DISABLE_LOOK = Camera::DISABLE_MOVEMENT = cursorShowing;
 	}
-} // namespace gloom
+} // namespace dark
 
 static void error_callback(int error, const char *description)
 {
@@ -174,8 +175,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	printf("framebuffer_size_callback %i %i\n", width, height);
 	glViewport(0, 0, width, height);
-	gloom::width = width;
-	gloom::height = height;
+	dark::width = width;
+	dark::height = height;
 }
 
 void setupImgui()
@@ -216,13 +217,13 @@ void put_it_fullscreen()
 	glfwSetWindowPos(window, 0, 0);
 	glfwSetWindowSize(window, width, height);
 	//delete render_target;
-	//render_target = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_FLOAT);
+	//render_target = new RenderTarget(dark::width, dark::height, GL_RGB, GL_FLOAT);
 	glViewport(0, 0, width, height);
 	//glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, mode->refreshRate);
 	//glfwSwapInterval(0); // vsync
 }
 
-void gloom::setup_glfw()
+void dark::setup_glfw()
 {
 	printf("setup window\n");
 
@@ -270,7 +271,7 @@ void gloom::setup_glfw()
 	glFrontFace(GL_CCW);
 }
 
-void gloom::doImGui()
+void dark::doImGui()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -293,15 +294,15 @@ void gloom::doImGui()
 	}
 }
 
-void gloom::renderImGui()
+void dark::renderImGui()
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void gloom::programLoop()
+void dark::programLoop()
 {
-	render_target = new RenderTarget(gloom::width, gloom::height, GL_RGB, GL_FLOAT);
+	render_target = new RenderTarget(dark::width, dark::height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
 	double fps;
@@ -320,7 +321,7 @@ void gloom::programLoop()
 	{
 		time = glfwGetTime();
 		now = time;
-		gloom::delta = now - prev;
+		dark::delta = now - prev;
 		prev = now;
 		if ((time - prevTime) > 1.0 || frames == 0)
 		{
@@ -329,14 +330,14 @@ void gloom::programLoop()
 			glfwSetWindowTitle(window, title);
 			prevTime = time;
 			frames = 0;
-			gloom::fps = (int)fps;
+			dark::fps = (int)fps;
 		}
 		frames++;
 
 		static bool doOnce = true;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, gloom::width, gloom::height);
+		glViewport(0, 0, dark::width, dark::height);
 
 		if (useFbo)
 		{
@@ -354,7 +355,7 @@ void gloom::programLoop()
 
 		yagrum_checker();
 
-		simple_loader();
+		//simple_loader();
 
 		doKeys();
 

@@ -1,5 +1,5 @@
-#include <Gloom/Gloom.h>
-#include <Gloom/Files.h>
+#include <dark/dark.h>
+#include <dark/Files.h>
 
 extern "C"
 {
@@ -7,7 +7,7 @@ extern "C"
 #include "esp.h"
 }
 
-using namespace gloom;
+using namespace dark;
 
 #include <sstream>
 #include <imgui.h>

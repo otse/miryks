@@ -1,7 +1,7 @@
 #include "gooey.h"
 #include "yagrum.h"
 
-#include <gloom/image.h>
+#include <dark/image.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -86,7 +86,7 @@ namespace yagrum
 
 	void drawer()
 	{
-		using namespace gloom;
+		using namespace dark;
 
 		if (!current)
 			return;

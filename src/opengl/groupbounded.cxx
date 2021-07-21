@@ -1,5 +1,5 @@
-#include <OpenGL/Group.h>
-#include <OpenGL/Geometry.h>
+#include <opengl/Group.h>
+#include <opengl/Geometry.h>
 
 GroupBounded::GroupBounded() : Group()
 {

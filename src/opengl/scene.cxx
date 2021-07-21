@@ -1,13 +1,13 @@
 #include <Attic.hpp>
 
-#include <OpenGL/Scene.h>
+#include <opengl/Scene.h>
 
-#include <OpenGL/Aabb.h>
-#include <OpenGL/Group.h>
-#include <OpenGL/DrawGroup.h>
-#include <OpenGL/Material.h>
-#include <OpenGL/Shader.h>
-#include <OpenGL/Lights.h>
+#include <opengl/Aabb.h>
+#include <opengl/Group.h>
+#include <opengl/DrawGroup.h>
+#include <opengl/Material.h>
+#include <opengl/Shader.h>
+#include <opengl/Lights.h>
 
 #include <algorithm>
 

@@ -1,4 +1,4 @@
-#include <OpenGL/Shader.h>
+#include <opengl/Shader.h>
 
 extern "C"
 {
@@ -9,12 +9,12 @@ Shader *Shader::active = nullptr;
 
 //shader_t *shader_current;
 
-#include <OpenGL/Types.h>
+#include <opengl/Types.h>
 
-#include <OpenGL/Camera.h>
-#include <OpenGL/Scene.h>
+#include <opengl/Camera.h>
+#include <opengl/Scene.h>
 
-#include <Gloom/Files.h>
+#include <dark/Files.h>
 
 #include <glad/glad.h>
 

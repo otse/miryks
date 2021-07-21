@@ -1,0 +1,42 @@
+#pragma once
+
+// part of gloom
+
+#include <dark/dark.h>
+
+#include <opengl/Aabb.h>
+#include <opengl/Types.h>
+
+namespace dark
+{
+	class Objs;
+	class Obj;
+
+	extern Objs *globalObjs;
+
+	void objs_init();
+
+	class Objs
+	{
+	public:
+		std::vector<Obj *> objs;
+
+		void Add(Obj *);
+		void Remove(Obj *);
+	};
+	class Obj
+	{
+	public:
+		Ref *const ref = nullptr;
+		Obj();
+		Obj(Ref *);
+
+		~Obj();
+
+		mat4 matrix;
+
+		Mesh *mesh = nullptr;
+		
+		DrawGroup *drawGroup = nullptr;
+	};
+} // namespace dark

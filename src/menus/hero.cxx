@@ -1,12 +1,12 @@
 #include <libs>
 
-#include <Gloom/Gloom.h>
+#include <dark/dark.h>
 
-#include <Gloom/Files.h>
+#include <dark/Files.h>
 
 #include "../gooey/gooey.h"
 
-using namespace gloom;
+using namespace dark;
 
 #include <sstream>
 #include <imgui.h>

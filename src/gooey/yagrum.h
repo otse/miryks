@@ -1,8 +1,8 @@
 #include <string>
 #include <deque>
-#include <gloom/defs>
+#include <dark/fwd>
 
-using namespace gloom;
+using namespace dark;
 
 namespace yagrum
 {

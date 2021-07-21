@@ -3,9 +3,9 @@
 
 // part of gloom
 
-#include <OpenGL/Types.h>
+#include <opengl/Types.h>
 
-#include <OpenGL/Aabb.h>
+#include <opengl/Aabb.h>
 
 // A basic 3d object with a transformation
 

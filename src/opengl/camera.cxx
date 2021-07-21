@@ -1,9 +1,9 @@
-#include <Gloom/Gloom.h>
+#include <dark/dark.h>
 
-#include <OpenGL/Camera.h>
-#include <OpenGL/Group.h>
-#include <OpenGL/DrawGroup.h>
-#include <OpenGL/Scene.h>
+#include <opengl/Camera.h>
+#include <opengl/Group.h>
+#include <opengl/DrawGroup.h>
+#include <opengl/Scene.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -25,7 +25,7 @@ Camera::Camera()
 }
 
 void Camera::SetProjection() {
-	float aspect = (float)gloom::width / (float)gloom::height;
+	float aspect = (float)dark::width / (float)dark::height;
 
 	projection = glm::perspective(radians(fzoom), aspect, 5.0f, 10000.0f);
 }
@@ -85,7 +85,7 @@ void FirstPersonCamera::Move(float delta)
 	if (freeze || DISABLE_MOVEMENT)
 		return;
 		
-	using namespace gloom::MyKeys;
+	using namespace dark::MyKeys;
 
 	auto forward = [&](float n) {
 		pos.x += n * sin(yaw);

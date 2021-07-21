@@ -1,11 +1,11 @@
 #if 0
 
-#include <OpenGL/renderable.h>
+#include <opengl/renderable.h>
 
-#include <OpenGL/Group.h>
-#include <OpenGL/Geometry.h>
-#include <OpenGL/Material.h>
-#include <OpenGL/Shader.h>
+#include <opengl/Group.h>
+#include <opengl/Geometry.h>
+#include <opengl/Material.h>
+#include <opengl/Shader.h>
 
 // we use drawgroups now
 Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)
