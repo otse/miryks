@@ -5,7 +5,7 @@
 
 #include <functional>
 
-#include <opengl/Types.h>
+#include <opengl/types.h>
 
 #include <opengl/Aabb.h>
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <dark/dark.h>
-#include <dark/Wrld.h>
+#include <dark/wrld.h>
 
 namespace dark
 {

@@ -5,7 +5,7 @@
 
 #include <Attic.hpp>
 
-#include <opengl/Types.h>
+#include <opengl/types.h>
 
 template <typename T>
 struct Container

@@ -1,14 +1,14 @@
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
-#include <opengl/Types.h>
+#include <opengl/types.h>
 
-#include <opengl/Camera.h>
-#include <opengl/Scene.h>
-#include <opengl/Shader.h>
+#include <opengl/camera.h>
+#include <opengl/scene.h>
+#include <opengl/shader.h>
 
-#include <opengl/Material.h>
-#include <opengl/Texture.h>
+#include <opengl/material.h>
+#include <opengl/texture.h>
 
 Camera *camera_current = nullptr;
 Scene *scene_current = nullptr;

@@ -5,7 +5,7 @@
 #include <dark/dark.h>
 #include <dark/files.h>
 
-#include <dark/interior.h>
+#include <dark/skyrim/interior.h>
 
 using namespace dark;
 
@@ -88,7 +88,7 @@ int main()
 	return 1;
 }
 
-#include <dark/mesh.h>
+#include <dark/skyrim/mesh.h>
 
 #include <opengl/scene.h>
 #include <opengl/group.h>

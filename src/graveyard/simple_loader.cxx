@@ -1,7 +1,7 @@
 #include <libs>
 
 #include <dark/dark.h>
-#include <dark/Files.h>
+#include <dark/files.h>
 
 #include <dark/Image.h>
 

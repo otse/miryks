@@ -2,18 +2,19 @@
 
 #include <libs>
 
-#include <dark/mesh.h>
-#include <dark/Object.h>
-#include <dark/Interior.h>
-#include <dark/Actor.h>
-#include <dark/Collision.h>
+#include <dark/skyrim/mesh.h>
+#include <dark/skyrim/object.h>
+#include <dark/skyrim/interior.h>
+
+#include <dark/actor.h>
+#include <dark/collision.h>
 
 #include <Gooey/Yagrum.h>
 
-#include <opengl/Camera.h>
-#include <opengl/Scene.h>
-#include <opengl/Material.h>
-#include <opengl/Shader.h>
+#include <opengl/camera.h>
+#include <opengl/scene.h>
+#include <opengl/material.h>
+#include <opengl/shader.h>
 #include <opengl/rendertarget.h>
 
 #define GLFW_INCLUDE_NONE

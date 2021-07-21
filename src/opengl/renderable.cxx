@@ -2,10 +2,10 @@
 
 #include <opengl/renderable.h>
 
-#include <opengl/Group.h>
-#include <opengl/Geometry.h>
-#include <opengl/Material.h>
-#include <opengl/Shader.h>
+#include <opengl/group.h>
+#include <opengl/geometry.h>
+#include <opengl/material.h>
+#include <opengl/shader.h>
 
 // we use drawgroups now
 Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)

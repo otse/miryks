@@ -1,10 +1,10 @@
 #include <libs>
 
-#include <dark/mesh.h>
+#include <dark/skyrim/mesh.h>
 
-#include <opengl/Shader.h>
-#include <opengl/Texture.h>
-#include <opengl/Types.h>
+#include <opengl/shader.h>
+#include <opengl/texture.h>
+#include <opengl/types.h>
 
 namespace dark
 {

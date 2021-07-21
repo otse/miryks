@@ -1,13 +1,14 @@
 #include <libs>
 #include <dark/dark.h>
-#include <dark/Object.h>
-#include <dark/mesh.h>
-#include <dark/Files.h>
+#include <dark/files.h>
 
-#include <opengl/Group.h>
-#include <opengl/DrawGroup.h>
-#include <opengl/Camera.h>
-#include <opengl/Scene.h>
+#include <dark/skyrim/object.h>
+#include <dark/skyrim/mesh.h>
+
+#include <opengl/group.h>
+#include <opengl/drawgroup.h>
+#include <opengl/camera.h>
+#include <opengl/scene.h>
 
 #include <algorithm>
 

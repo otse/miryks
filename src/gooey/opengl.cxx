@@ -1,5 +1,5 @@
 #include <dark/dark.h>
-#include <dark/Actor.h>
+#include <dark/actor.h>
 
 #include "opengl/group.h"
 #include "opengl/geometry.h"

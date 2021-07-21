@@ -4,25 +4,27 @@
 #include <png.h>
 
 #include <dark/dark.h>
-#include <dark/Obj.h>
+#include <dark/obj.h>
 
-#include <Gooey/Yagrum.h>
+#include <gooey/yagrum.h>
 
 #include <algorithm>
 
-#include <opengl/Types.h>
-#include <opengl/Camera.h>
-#include <opengl/Scene.h>
-#include <opengl/Group.h>
-#include <opengl/Geometry.h>
-#include <opengl/Material.h>
+#include <opengl/types.h>
+#include <opengl/camera.h>
+#include <opengl/scene.h>
+#include <opengl/group.h>
+#include <opengl/geometry.h>
+#include <opengl/material.h>
 
-#include <dark/Files.h>
+#include <dark/files.h>
 
-#include <dark/Interior.h>
-#include <dark/Collision.h>
-#include <dark/mesh.h>
-#include <dark/Actor.h>
+#include <dark/skyrim/interior.h>
+#include <dark/skyrim/mesh.h>
+
+#include <dark/collision.h>
+
+#include <dark/actor.h>
 
 namespace dark
 {

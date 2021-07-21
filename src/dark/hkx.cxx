@@ -1,14 +1,15 @@
 #include <libs>
 
-#include <dark/Files.h>
-#include <dark/Actor.h>
-#include <dark/Skeleton.h>
-#include <dark/Interior.h>
-#include <dark/mesh.h>
+#include <dark/files.h>
+#include <dark/actor.h>
 
-#include <opengl/Group.h>
-#include <opengl/Scene.h>
-#include <opengl/Camera.h>
+#include <dark/skyrim/mesh.h>
+#include <dark/skyrim/skeleton.h>
+#include <dark/skyrim/interior.h>
+
+#include <opengl/group.h>
+#include <opengl/scene.h>
+#include <opengl/camera.h>
 
 namespace dark
 {

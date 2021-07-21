@@ -1,5 +1,5 @@
 #include <dark/dark.h>
-#include <dark/Files.h>
+#include <dark/files.h>
 
 extern "C"
 {

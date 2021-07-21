@@ -1,8 +1,8 @@
-#include <opengl/Geometry.h>
+#include <opengl/geometry.h>
 
-#include <opengl/Shader.h>
-#include <opengl/Camera.h>
-#include <opengl/Material.h>
+#include <opengl/shader.h>
+#include <opengl/camera.h>
+#include <opengl/material.h>
 
 int Geometry::Num = 0;
 

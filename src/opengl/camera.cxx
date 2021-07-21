@@ -1,9 +1,9 @@
 #include <dark/dark.h>
 
-#include <opengl/Camera.h>
-#include <opengl/Group.h>
-#include <opengl/DrawGroup.h>
-#include <opengl/Scene.h>
+#include <opengl/camera.h>
+#include <opengl/group.h>
+#include <opengl/drawgroup.h>
+#include <opengl/scene.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>

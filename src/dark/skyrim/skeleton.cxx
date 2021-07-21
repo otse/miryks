@@ -1,10 +1,10 @@
 #include <algorithm>
 
 #include <libs>
-#include <dark/Skeleton.h>
+#include <dark/skyrim/skeleton.h>
 
-#include <opengl/Group.h>
-#include <opengl/Types.h>
+#include <opengl/group.h>
+#include <opengl/types.h>
 
 #include <glm/gtc/quaternion.hpp>
 

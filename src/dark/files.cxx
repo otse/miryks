@@ -1,4 +1,4 @@
-#include <dark/Files.h>
+#include <dark/files.h>
 
 #include <fstream>
 #include <iostream>

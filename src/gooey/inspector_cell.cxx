@@ -1,8 +1,10 @@
 #include <libs>
+
 #include <dark/dark.h>
-#include <dark/Files.h>
-#include <dark/Object.h>
-#include <dark/Interior.h>
+#include <dark/files.h>
+
+#include <dark/skyrim/object.h>
+#include <dark/skyrim/interior.h>
 
 using namespace dark;
 

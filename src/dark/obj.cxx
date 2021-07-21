@@ -1,6 +1,6 @@
 #include <dark/Obj.h>
 
-#include <Attic.hpp>
+#include <attic.hpp>
 
 namespace dark
 {

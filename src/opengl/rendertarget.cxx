@@ -2,12 +2,12 @@
 
 #include <opengl/rendertarget.h>
 
-#include <opengl/Shader.h>
+#include <opengl/shader.h>
 
-#include <opengl/Group.h>
-#include <opengl/Geometry.h>
-#include <opengl/Material.h>
-#include <opengl/Shader.h>
+#include <opengl/group.h>
+#include <opengl/geometry.h>
+#include <opengl/material.h>
+#include <opengl/shader.h>
 
 #define BEST_PRECISIONX
 

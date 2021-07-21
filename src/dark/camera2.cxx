@@ -3,7 +3,7 @@
 
 // part of gloom
 
-#include <opengl/Types.h>
+#include <opengl/types.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 

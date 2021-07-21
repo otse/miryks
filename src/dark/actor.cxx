@@ -2,20 +2,22 @@
 #include <libs>
 
 #include <dark/dark.h>
-#include <dark/Actor.h>
-#include <dark/Collision.h>
-#include <dark/Object.h>
-#include <dark/ObjectArray.h>
 
-#include <dark/Files.h>
-#include <dark/Skeleton.h>
-#include <dark/Interior.h>
-#include <dark/mesh.h>
+#include <dark/actor.h>
+#include <dark/collision.h>
 
-#include <opengl/Group.h>
-#include <opengl/DrawGroup.h>
-#include <opengl/Scene.h>
-#include <opengl/Camera.h>
+#include <dark/skyrim/object.h>
+#include <dark/skyrim/objectarray.h>
+
+#include <dark/files.h>
+#include <dark/skyrim/skeleton.h>
+#include <dark/skyrim/interior.h>
+#include <dark/skyrim/mesh.h>
+
+#include <opengl/group.h>
+#include <opengl/drawgroup.h>
+#include <opengl/scene.h>
+#include <opengl/camera.h>
 
 // good reads
 // https://www.afkmods.com/index.php?/topic/5494-skyrim-lesse-skin-partitions-nif-to-ck/

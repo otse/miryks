@@ -1,11 +1,13 @@
-#include <dark/Image.h>
 
-#include <opengl/Types.h>
 
 #include <string>
 
 #include <png.h>
 #include <resourcefile.h>
+
+#include <dark/image.h>
+
+#include <opengl/types.h>
 
 // adapted from github.com/ileben/GameEngine/blob/master/src/engine/image/png_read.cpp
 

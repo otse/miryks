@@ -3,12 +3,12 @@
 
 // stolen for gloom
 
-#include <opengl/Types.h>
+#include <opengl/types.h>
 
-#include <opengl/Camera.h>
-#include <opengl/Scene.h>
+#include <opengl/camera.h>
+#include <opengl/scene.h>
 
-#include <dark/Files.h>
+#include <dark/files.h>
 
 #include <glad/glad.h>
 

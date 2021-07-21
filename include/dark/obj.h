@@ -5,7 +5,7 @@
 #include <dark/dark.h>
 
 #include <opengl/Aabb.h>
-#include <opengl/Types.h>
+#include <opengl/types.h>
 
 namespace dark
 {

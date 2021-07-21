@@ -3,9 +3,10 @@
 // part of gloom
 
 #include <dark/dark.h>
-#include <dark/Object.h>
 
-#include <opengl/Types.h>
+#include <dark/skyrim/object.h>
+
+#include <opengl/types.h>
 
 #include <opengl/Aabb.h>
 

@@ -4,7 +4,7 @@
 
 #include <dark/dark.h>
 
-#include <dark/Skeleton.h>
+#include <dark/skyrim/skeleton.h>
 
 extern "C"
 {
@@ -12,11 +12,11 @@ extern "C"
 #include <nifp/nifp.h>
 }
 
-#include <opengl/Types.h>
-#include <opengl/Scene.h>
-#include <opengl/Group.h>
-#include <opengl/Geometry.h>
-#include <opengl/Material.h>
+#include <opengl/types.h>
+#include <opengl/scene.h>
+#include <opengl/group.h>
+#include <opengl/geometry.h>
+#include <opengl/material.h>
 
 namespace dark
 {

@@ -3,10 +3,10 @@
 
 // part of gloom
 
-#include <opengl/Types.h>
+#include <opengl/types.h>
 
-#include <opengl/Camera.h>
-#include <opengl/Group.h>
+#include <opengl/camera.h>
+#include <opengl/group.h>
 
 struct Light
 {

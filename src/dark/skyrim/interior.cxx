@@ -1,21 +1,21 @@
 #include <skyrim_units>
 #include <libs>
-#include <dark/Interior.h>
-#include <dark/Util.h>
 
-#include <dark/mesh.h>
-#include <dark/Object.h>
-#include <dark/ObjectArray.h>
+#include <dark/skyrim/interior.h>
+#include <dark/skyrim/mesh.h>
+
+#include <dark/skyrim/object.h>
+#include <dark/skyrim/objectarray.h>
 
 #include <algorithm>
 #include <cctype>
 #include <string>
 
 // #include <opengl/renderable.h>
-#include <opengl/Texture.h>
-#include <opengl/Camera.h>
-#include <opengl/Lights.h>
-#include <opengl/Types.h>
+#include <opengl/texture.h>
+#include <opengl/camera.h>
+#include <opengl/lights.h>
+#include <opengl/types.h>
 
 namespace dark
 {

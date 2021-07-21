@@ -1,7 +1,7 @@
 #include <libs>
 
-#include <dark/Object.h>
-#include <dark/ObjectArray.h>
+#include <dark/skyrim/object.h>
+#include <dark/skyrim/objectarray.h>
 
 namespace dark
 {

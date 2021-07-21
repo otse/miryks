@@ -6,8 +6,8 @@
 #include <libs>
 #include <dark/dark.h>
 
-#include <opengl/Types.h>
-#include <opengl/Group.h>
+#include <opengl/types.h>
+#include <opengl/group.h>
 
 namespace dark
 {

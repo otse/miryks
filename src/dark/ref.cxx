@@ -1,22 +1,22 @@
 #include <skyrim_units>
 #include <libs>
-#include <dark/Ref.h>
 
-#include <dark/Util.h>
-#include <dark/Object.h>
-#include <dark/mesh.h>
-#include <dark/Files.h>
+#include <dark/ref.h>
+
+#include <dark/skyrim/object.h>
+#include <dark/skyrim/mesh.h>
+#include <dark/files.h>
 
 #include <algorithm>
 #include <cctype>
 #include <string>
 
-#include <opengl/Texture.h>
-#include <opengl/Camera.h>
-#include <opengl/Lights.h>
-#include <opengl/Group.h>
-#include <opengl/DrawGroup.h>
-#include <opengl/Types.h>
+#include <opengl/texture.h>
+#include <opengl/camera.h>
+#include <opengl/lights.h>
+#include <opengl/group.h>
+#include <opengl/drawgroup.h>
+#include <opengl/types.h>
 
 #include <imgui.h>
 #include <gooey/gooey.h>
