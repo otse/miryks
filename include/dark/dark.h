@@ -3,7 +3,7 @@
 
 // part of gloom
 
-#include <opengl/types.h>
+#include <renderer/types.h>
 
 #include "fwd"
 #include "list"

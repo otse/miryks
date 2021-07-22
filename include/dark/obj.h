@@ -4,8 +4,8 @@
 
 #include <dark/dark.h>
 
-#include <opengl/Aabb.h>
-#include <opengl/types.h>
+#include <renderer/Aabb.h>
+#include <renderer/types.h>
 
 namespace dark
 {

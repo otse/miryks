@@ -4,18 +4,18 @@
 
 #include <dark/dark.h>
 
-#include <dark/skyrim/object.h>
+#include <skyrim/record.h>
 
-#include <opengl/types.h>
+#include <renderer/types.h>
 
-#include <opengl/Aabb.h>
+#include <renderer/Aabb.h>
 
 namespace dark
 {
 	class Ref
 	{
 	public:
-		Ref(Record *);
+		Ref(::Record *);
 		~Ref();
 		const char *editorId = nullptr;
 		Object selfObject, baseObject;
