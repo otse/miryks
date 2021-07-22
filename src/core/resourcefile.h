@@ -30,7 +30,7 @@ typedef struct
 	std::string name;
 	mtar_t mtar;
 	std::vector<std::string> filenames;
-	std::map<const std::string, const mtar_header_t> headers_by_name;
+	std::map<const std::string, const mtar_header_t> hnam;
 } Resourcefile;
 
 extern std::map<std::string, Resourcefile *> resourcefiles;

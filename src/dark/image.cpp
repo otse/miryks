@@ -1,9 +1,7 @@
-
-
 #include <string>
 
 #include <png.h>
-#include <resourcefile.h>
+#include <core/resourcefile.h>
 
 #include <dark/image.h>
 

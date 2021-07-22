@@ -1,10 +1,9 @@
 #pragma once
 
-#include <core/files.h>
-
-#include <resourcefile.h>
-
 #include <zlib.h>
+
+#include "files.h"
+#include "resourcefile.h"
 
 #define RSF_EXT "" // .rsf ?
 
@@ -14,7 +13,7 @@ std::map<std::string, Resourcefile *> resourcefiles;
 
 // offshoring a file means searching in a folder then the tar
 
-static void example() 
+static void example()
 {
 	resourcefile_offshore("foo", "bar.ext");
 	resourcefile_offshore("foo", "bar", ".ext", ".ext.gz");
@@ -28,14 +27,15 @@ std::string resourcefile_offshore(const std::string &a, const std::string &b)
 std::string resourcefile_offshore(
 	const std::string &a,
 	const std::string &b,
-	const std::string &c,
-	const std::string &d)
+	const std::string &ext,
+	const std::string &ext2)
 {
-	if (exists_test3(a + "/" + b + c))
-		return fread(a + "/" + b + c);
-	if (resourcefile_find(a, "./" + b + d))
-		return resourcefile_read(a, "./" + b + d);
-	return "No";
+	// careful, sometimes you need a ./ for the tar
+	if (exists_test3(a + "/" + b + ext))
+		return fread(a + "/" + b + ext);
+	if (resourcefile_find(a, b + ext2))
+		return resourcefile_read(a, b + ext2);
+	return "";
 }
 
 void _resourcefile_makeindex(Resourcefile &rsf)
@@ -45,7 +45,8 @@ void _resourcefile_makeindex(Resourcefile &rsf)
 	while ((mtar_read_header(&rsf.mtar, &h)) != MTAR_ENULLRECORD)
 	{
 		rsf.filenames.push_back(h.name);
-		rsf.headers_by_name.emplace(h.name, h);
+		printf("rsf make index %s of size %u\n", h.name, h.size);
+		rsf.hnam.emplace(h.name, h);
 		mtar_next(&rsf.mtar);
 	}
 }
@@ -59,7 +60,7 @@ Resourcefile &resourcefile_handle(std::string a)
 	{
 		Resourcefile &rsf = *(new Resourcefile{a});
 		resourcefiles.emplace(a, &rsf);
-		printf("resourcefile: %s\n", a.c_str());
+		// printf("resourcefile: %s\n", a.c_str());
 		a += RSF_EXT;
 		int err = mtar_open(&rsf.mtar, a.c_str(), "r");
 		if (err)
@@ -76,13 +77,16 @@ bool resourcefile_find(const std::string &a, std::string path)
 	return has != rsf.filenames.end();
 }
 
-const mtar_header_t &get_header(Resourcefile &rsf, std::string path)
+const mtar_header_t get_header(Resourcefile &rsf, std::string path)
 {
-	const mtar_header_t &h = rsf.headers_by_name[path.c_str()];
+	auto it = rsf.hnam.find(path);
+	if (it == rsf.hnam.end())
+		printf("rsf bad hnam\n");
+	const mtar_header_t h = rsf.hnam[path];
 	return h;
 }
 
-static inline std::string tinflate(const std::string & deflate)
+static inline std::string tinflate(const std::string &deflate)
 {
 	unsigned int len = *((unsigned int *)&deflate[deflate.size() - 4]);
 	std::string inflate(len, ' ');
@@ -95,10 +99,12 @@ std::string resourcefile_read(std::string a, std::string path)
 	Resourcefile &rsf = resourcefile_handle(a);
 	mtar_header_t h;
 	if (!resourcefile_find(a, path))
-		return "No";
-	get_header(rsf, path);
+		return "";
+	mtar_find(&rsf.mtar, path.c_str(), &h);
 	std::string str(h.size, ' ');
-	mtar_read_data(&rsf.mtar, str.data(), h.size);
+	int err = mtar_read_data(&rsf.mtar, str.data(), h.size);
+	if (err)
+		printf(mtar_strerror(err));
 	if (path.find(".gz") != std::string::npos)
 		str = tinflate(str);
 	return str;

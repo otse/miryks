@@ -1,6 +1,6 @@
 #include <lib>
 #include <png.h>
-#include <resourcefile.h>
+#include <core/resourcefile.h>
 
 #include <dark/dark.h>
 #include <core/files.h>

@@ -29,8 +29,6 @@ Texture *GetProduceTexture(const char *path)
 	return textures[lower];
 }
 
-bool test = false;
-
 Texture::Texture()
 {
 }
@@ -39,18 +37,18 @@ Texture::Texture(const std::string &path) : path(path)
 {
 	//printf("new texture %s\n", path.c_str());
 	Rc *rc = bsa_find_more(path.c_str(), 0x2);
-	if (rc == NULL) {
+	if (rc == NULL)
+	{
 		printf("cant find texture: %s\n", path.c_str());
 		return;
 	}
 	bsa_read(rc);
 	buf = rc->buf;
 	size = rc->size;
-	if (!test)
-	{
+#if 0
 		cfout2("test.dds", rc->buf, rc->size);
 		test = true;
-	}
+#endif
 	load();
 }
 Texture::~Texture() {}

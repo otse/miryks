@@ -1,4 +1,5 @@
 #include <renderer/shader.h>
+#include <core/resourcefile.h>
 
 extern "C"
 {
@@ -27,6 +28,7 @@ void SetShaderSources()
 	simple[0] = (char *)"simple";
 	basic[0] = (char *)"basic";
 	fxs[0] = (char *)"fx";
+#if 0
 	fbuf("gl/simple.vert", &simple[1], true);
 	fbuf("gl/simple.frag", &simple[2], true);
 	fbuf("gl/basic.vert", &basic[1], true);
@@ -36,6 +38,22 @@ void SetShaderSources()
 	fbuf("gl/post.vert", &postquad[1], true);
 	fbuf("gl/post.frag", &postquad[2], true);
 	printf("set shader sources\n");
+#else
+	static std::vector<std::string> sources;
+	sources.push_back(resourcefile_offshore("resourcefile", "gl/simple.vert"));
+	sources.push_back(resourcefile_offshore("resourcefile", "gl/simple.frag"));
+	sources.push_back(resourcefile_offshore("resourcefile", "gl/basic.vert"));
+	sources.push_back(resourcefile_offshore("resourcefile", "gl/basic.frag"));
+	sources.push_back(resourcefile_offshore("resourcefile", "gl/post.vert"));
+	sources.push_back(resourcefile_offshore("resourcefile", "gl/post.frag"));
+	simple[1] = (char *)sources[0].c_str();
+	printf("simple[1] = %s\n", simple[1]);
+	simple[2] = (char *)sources[1].c_str();
+	basic[1] = (char *)sources[2].c_str();
+	basic[2] = (char *)sources[3].c_str();
+	postquad[1] = (char *)sources[4].c_str();
+	postquad[2] = (char *)sources[5].c_str();
+#endif
 }
 
 std::map<std::string, Shader *> Shader::shaders;
