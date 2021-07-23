@@ -9,15 +9,13 @@
 
 namespace skyrim
 {
-	#define dud(i, type) type == get<Dud *>(i, type)->x
+#define dud(i, type) type == get<Dud *>(i, type)->x
+#define X ObjectArray
 
-	#define X ObjectArray
-	
 	class ObjectArray
 	{
 	public:
 		Grup *grup;
-		bool stop;
 		X();
 		X(Grup *);
 		X &operator()(Grup *); // useful!
@@ -29,12 +27,11 @@ namespace skyrim
 		Object getobject(unsigned int) const;
 		ObjectArray getobjectarray(unsigned int) const;
 
-		void foreach(std::function<void(unsigned int &i)> f)
+		void foreach (std::function<bool(unsigned int &i)> f)
 		{
 			for (unsigned int i = 0; i < amount(); i++)
 			{
-				f(i);
-				if (stop)
+				if(f(i))
 					break;
 			}
 		}
@@ -42,10 +39,10 @@ namespace skyrim
 		template <typename T = void *>
 		T get(unsigned int i, int type = -1) const
 		{
-			assert(i < amount() && i == -1 || dud(i, type));
+			assert(i < amount() && (i == -1 || dud(i, type)));
 			return (T)grup->mixed.elements[i];
 		}
 	};
-	#undef X
+#undef X
 
 }

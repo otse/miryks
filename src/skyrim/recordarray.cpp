@@ -20,7 +20,6 @@ namespace skyrim
 
 	X &X::operator()(Grup *grup)
 	{
-		stop = false;
 		this->grup = grup;
 		return *this;
 	}

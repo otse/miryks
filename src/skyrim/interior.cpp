@@ -35,6 +35,7 @@ namespace skyrim
 	{
 		Cell cell;
 		ObjectArray A, B, C;
+		bool stop = false;
 		A(esp_top_grup(get_plugins()[1], "CELL")).foreach([&](unsigned int i) {
 			B(A.getgrup(i)).foreach([&](unsigned int j) {
 				C(B.getgrup(j)).foreach([&](unsigned int &k) {
@@ -47,11 +48,15 @@ namespace skyrim
 						// printf("foreach found your interior `%s`\n", editorId);
 						cell.persistent = D.amount() >= 1 ? D.getgrup(0) : 0;
 						cell.non_persistent = D.amount() >= 2 ? D.getgrup(1) : 0;
-						A.stop = B.stop = C.stop = true;
+						stop = true;
+						return true;
 					}
 					k += 1;
+					return false;
 				});
+				return stop;
 			});
+			return stop;
 		});
 		return cell;
 	}
@@ -65,18 +70,19 @@ namespace skyrim
 		ObjectArray array;
 		array(grup).foreach([&](unsigned int i) {
 			Object object = array.getobject(i);
-			if (object.isType("REFR"))
+			if (object.oftype("REFR"))
 			{
 				Ref *ref = new Ref(object.record);
 				refs.push_back(ref);
 				const char *editorId = getEditorId(object);
 				if (editorId)
 					editorIds.emplace(editorId, ref);
-				if (ref->baseObject.valid() && ref->baseObject.isTypeAny({"WEAP", "MISC"}))
+				if (ref->baseObject.valid() && ref->baseObject.oftypeany({"WEAP", "MISC"}))
 				{
 					iterables.push_back(ref);
 				}
 			}
+			return false;
 		});
 		placeCamera();
 	}
@@ -97,8 +103,9 @@ namespace skyrim
 				first_person_camera->pos.z += EYE_HEIGHT;
 				first_person_camera->yaw = cast_vec_3(locationalData + 3)->z;
 				alreadyTeleported = true;
-				array.stop = true;
+				return true;
 			}
+			return false;
 		});
 	}
 

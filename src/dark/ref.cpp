@@ -94,7 +94,7 @@ namespace dark
 
 		assertm(baseObject.valid(), "cant find refs Name-BaseId record");
 
-		if (baseObject.isTypeAny({"STAT", "DOOR", "ALCH", "CONT",
+		if (baseObject.oftypeany({"STAT", "DOOR", "ALCH", "CONT",
 								  "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
 			auto modl = baseObject.data<const char *>("MODL", 0);
@@ -107,7 +107,7 @@ namespace dark
 				mesh = create_mesh(modl, true);
 			}
 		}
-		else if (baseObject.isType("LIGH"))
+		else if (baseObject.oftype("LIGH"))
 		{
 			struct Struct
 			{

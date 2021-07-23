@@ -28,14 +28,14 @@ namespace skyrim
 		{
 			return fields.count(*(unsigned int *)type);
 		}
-		bool isType(const char *type) const
+		bool oftype(const char *type) const
 		{
 			return *(unsigned int *)type == record->hed->type;
 		}
-		bool isTypeAny(std::vector<const char *> types) const
+		bool oftypeany(std::vector<const char *> types) const
 		{
 			for (const char *type : types)
-				if (isType(type))
+				if (oftype(type))
 					return true;
 			return false;
 		}

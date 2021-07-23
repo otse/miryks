@@ -55,10 +55,11 @@ namespace dark
 			if (strcmp(editorId, raceId) == 0)
 			{
 				race = object.record;
-				array.stop = true;
+				return true;
 			}
+			return false;
 		});
-		assertm(array.stop, "No such raceId !");
+		assert(race);
 		return race;
 	}
 
