@@ -48,16 +48,16 @@ namespace dark
 	{
 		Record *race = nullptr;
 		ObjectArray array;
-		array(esp_top_grup(get_plugins()[0], "RACE")).foreach([&](unsigned int &i)
-															  {
-																  Record *record = array.getrecord(i);
-																  auto editorId = getEditorIdOnly(record);
-																  if (strcmp(editorId, raceId) == 0)
-																  {
-																	  race = record;
-																	  array.stop = true;
-																  }
-															  });
+		Grup *top = esp_top_grup(get_plugins()[0], "RACE");
+		array(top).foreach([&](unsigned int &i) {
+			Object object = array.getobject(i);
+			auto editorId = getEditorIdOnly(object.record);
+			if (strcmp(editorId, raceId) == 0)
+			{
+				race = object.record;
+				array.stop = true;
+			}
+		});
 		assertm(array.stop, "No such raceId !");
 		return race;
 	}

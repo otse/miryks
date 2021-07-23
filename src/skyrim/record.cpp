@@ -14,12 +14,12 @@ namespace dark
 
 	const char *getEditorId(Object &object)
 	{
-		return object.data<const char *>("EDID", 0);
+		return object.data<const char *>("EDID");
 	}
 
 	unsigned int *getBaseId(Object &object)
 	{
-		return object.data<unsigned int *>("NAME", 0);
+		return object.data<unsigned int *>("NAME");
 	}
 
 	//Field *GetField(Record *record, unsigned int i)
@@ -37,7 +37,7 @@ namespace dark
 		record = pass;
 		if (record == nullptr)
 			return;
-		assertm(((Dud *)record)->x == 2, "Gloom/Object Not Record ??");
+		assert(((Dud *)record)->x == RECORD);
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			Field *field = record->fields.subrecords[i];
@@ -55,7 +55,7 @@ namespace dark
 			if (skip-- <= 0)
 				break;
 		}
-		assertm(skip <= 0, "field skip unsuccessful\n");
+		assert(skip <= 0);
 		return sub;
 	}
 

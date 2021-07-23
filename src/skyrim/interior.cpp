@@ -39,12 +39,11 @@ namespace dark
 		A(top).foreach([&](unsigned int i) {
 			B(A.getgrup(i)).foreach([&](unsigned int j) {
 				C(B.getgrup(j)).foreach([&](unsigned int &k) {
-					Object object(C.getrecord(k));
-					Grup *grup = C.getgrup(k + 1);
+					Object object = C.getobject(k);
+					ObjectArray D = C.getobjectarray(k + 1);
 					const char *editorId = getEditorId(object);
 					if (0 == strcmp(name, editorId))
 					{
-						ObjectArray D(grup);
 						cell.record = object.record;
 						// printf("foreach found your interior `%s`\n", editorId);
 						cell.persistent = D.size() >= 1 ? D.getgrup(0) : 0;
@@ -66,11 +65,10 @@ namespace dark
 			return;
 		ObjectArray array;
 		array(grup).foreach([&](unsigned int i) {
-			Record *record = array.getrecord(i);
-			Object object(record);
+			Object object = array.getobject(i);
 			if (object.isType("REFR"))
 			{
-				Ref *ref = new Ref(record);
+				Ref *ref = new Ref(object.record);
 				refs.push_back(ref);
 				const char *editorId = getEditorId(object);
 				if (editorId)
@@ -90,7 +88,7 @@ namespace dark
 			return;
 		ObjectArray array;
 		array(loadedCell.persistent).foreach([&](unsigned int i) {
-			Object object(array.getrecord(i));
+			Object object = array.getobject(i);
 			if (*getBaseId(object) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker

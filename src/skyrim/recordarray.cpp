@@ -5,7 +5,7 @@
 
 namespace dark
 {
-#define X ObjectArray
+	#define X ObjectArray
 
 	X::X()
 	{
@@ -39,5 +39,15 @@ namespace dark
 	{
 		return get<Record *>(i, RECORD);
 	}
-#undef X
+
+	Object X::getobject(unsigned int i) const
+	{
+		return Object(getrecord(i));
+	}
+
+	ObjectArray X::getobjectarray(unsigned int i) const
+	{
+		return ObjectArray(getgrup(i));
+	}
+	#undef X
 }

@@ -9,16 +9,15 @@
 
 namespace dark
 {
+	#define dud(i, type) type == get<Dud *>(i, type)->x
 
-#define X ObjectArray
-#define dud(i, type) type == get<Dud *>(i, type)->x
-
-	class X
+	#define X ObjectArray
+	
+	class ObjectArray
 	{
 	public:
-		int filter = 0;
-		bool stop;
 		Grup *grup;
+		bool stop;
 		X();
 		X(Grup *);
 		X &operator()(Grup *);
@@ -27,25 +26,26 @@ namespace dark
 
 		Grup *getgrup(unsigned int) const;
 		Record *getrecord(unsigned int) const;
+		Object getobject(unsigned int) const;
+		ObjectArray getobjectarray(unsigned int) const;
 
 		void foreach(std::function<void(unsigned int &i)> f)
 		{
 			for (unsigned int i = 0; i < size(); i++)
 			{
-				if (filter == 0 || dud(i, filter))
-					f(i);
+				f(i);
 				if (stop)
 					break;
 			}
 		}
 
-	protected:
 		template <typename T = void *>
 		T get(unsigned int i, int type = -1) const
 		{
-			assert((i < size() && i == -1) || dud(i, type));
+			assert(i < size() && i == -1 || dud(i, type));
 			return (T)grup->mixed.elements[i];
 		}
 	};
-#undef X
+	#undef X
+
 }
