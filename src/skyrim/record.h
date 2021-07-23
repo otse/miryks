@@ -4,10 +4,11 @@
 
 #include <lib.h>
 #include <dark/dark.h>
+#include <skyrim/skyrim.h>
 
 namespace skyrim
 {
-	const char *getEditorIdOnly(::Record *);
+	const char *getEditorIdOnly(Record *);
 	const char *getEditorId(Object &);
 	unsigned int *getBaseId(Object &);
 
@@ -16,11 +17,11 @@ namespace skyrim
 	class Object
 	{
 	public:
-		::Record *record = nullptr;
+		Record *record = nullptr;
 		Object(){};
-		Object(::Record *);
+		Object(Record *);
 		~Object(){};
-		void set(::Record *);
+		void set(Record *);
 		bool valid() { return record != nullptr; };
 		std::multimap<unsigned int, Field *> fields;
 		Field *equalRange(const char *, int) const;

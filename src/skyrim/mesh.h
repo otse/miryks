@@ -2,6 +2,7 @@
 
 #include <lib.h>
 #include <dark/dark.h>
+#include <skyrim/skyrim.h>
 
 #include <renderer/types.h>
 #include <renderer/scene.h>

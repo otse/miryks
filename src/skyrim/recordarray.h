@@ -2,6 +2,7 @@
 
 #include <lib.h>
 #include <dark/dark.h>
+#include <skyrim/skyrim.h>
 
 #include <functional>
 
@@ -30,10 +31,8 @@ namespace skyrim
 		void foreach (std::function<bool(unsigned int &i)> f)
 		{
 			for (unsigned int i = 0; i < amount(); i++)
-			{
 				if(f(i))
 					break;
-			}
 		}
 
 		template <typename T = void *>

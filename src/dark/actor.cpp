@@ -6,6 +6,7 @@
 #include <dark/collision.h>
 #include <dark/ref.h>
 
+#include <skyrim/skyrim.h>
 #include <skyrim/record.h>
 #include <skyrim/recordarray.h>
 
@@ -21,6 +22,8 @@
 
 // good reads
 // https://www.afkmods.com/index.php?/topic/5494-skyrim-lesse-skin-partitions-nif-to-ck/
+
+using namespace skyrim;
 
 namespace dark
 {
@@ -48,7 +51,7 @@ namespace dark
 	{
 		Record *race = nullptr;
 		ObjectArray array;
-		Grup *top = esp_top_grup(get_plugins()[0], "RACE");
+		Grup *top = esp_top_grup(get_plugins()[0], __RACE__);
 		array(top).foreach([&](unsigned int &i) {
 			Object object = array.getobject(i);
 			auto editorId = getEditorIdOnly(object.record);
@@ -67,7 +70,7 @@ namespace dark
 	{
 		Object race = Object(GetRace(raceId));
 		ExportRaceHkxToKf(raceId);
-		auto anam = race.data<char *>("ANAM", 0);
+		auto anam = race.data<char *>(_ANAM_, 0);
 		Rc *rc = load_rc("meshes\\", model, 0x1);
 		Nif *character = import_nif(rc, false);
 		skeleton = new Skeleton(anam);

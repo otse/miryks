@@ -1,6 +1,7 @@
 #include <skyrim_units>
 #include <lib.h>
 
+#include "skyrim.h"
 #include "interior.h"
 #include "mesh.h"
 #include "record.h"
@@ -36,7 +37,7 @@ namespace skyrim
 		Cell cell;
 		ObjectArray A, B, C;
 		bool stop = false;
-		A(esp_top_grup(get_plugins()[1], "CELL")).foreach([&](unsigned int i) {
+		A(esp_top_grup(get_plugins()[1], __CELL__)).foreach([&](unsigned int i) {
 			B(A.getgrup(i)).foreach([&](unsigned int j) {
 				C(B.getgrup(j)).foreach([&](unsigned int &k) {
 					Object object = C.getobject(k);
@@ -70,14 +71,14 @@ namespace skyrim
 		ObjectArray array;
 		array(grup).foreach([&](unsigned int i) {
 			Object object = array.getobject(i);
-			if (object.oftype("REFR"))
+			if (object.oftype(__REFR__))
 			{
 				Ref *ref = new Ref(object.record);
 				refs.push_back(ref);
 				const char *editorId = getEditorId(object);
 				if (editorId)
 					editorIds.emplace(editorId, ref);
-				if (ref->baseObject.valid() && ref->baseObject.oftypeany({"WEAP", "MISC"}))
+				if (ref->baseObject.valid() && ref->baseObject.oftypeany({__WEAP__, __MISC__}))
 				{
 					iterables.push_back(ref);
 				}
@@ -97,7 +98,7 @@ namespace skyrim
 			if (*getBaseId(object) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
-				float *locationalData = object.data<float *>("DATA");
+				float *locationalData = object.data<float *>(_DATA_);
 				// printf(" xmarker ! \n");
 				first_person_camera->pos = *cast_vec_3(locationalData);
 				first_person_camera->pos.z += EYE_HEIGHT;

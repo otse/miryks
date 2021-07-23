@@ -2,6 +2,7 @@
 
 #include <dark/dark.h>
 #include <dark/ref.h>
+#include <skyrim/skyrim.h>
 
 using namespace dark;
 

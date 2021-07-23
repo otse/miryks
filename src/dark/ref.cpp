@@ -50,8 +50,8 @@ namespace dark
 
 		auto baseId = getBaseId(selfObject);
 		auto editorId = getEditorId(selfObject);
-		auto XSCL = selfObject.data<float *>("XSCL");
-		auto locationalData = selfObject.data<float *>("DATA");
+		auto XSCL = selfObject.data<float *>(_XSCL_);
+		auto locationalData = selfObject.data<float *>(_DATA_);
 
 		if (editorId)
 			this->editorId = editorId;
@@ -94,10 +94,10 @@ namespace dark
 
 		assertm(baseObject.valid(), "cant find refs Name-BaseId record");
 
-		if (baseObject.oftypeany({"STAT", "DOOR", "ALCH", "CONT",
-								  "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
+		if (baseObject.oftypeany({__STAT__, __DOOR__, __ALCH__, __CONT__,
+								  __ARMO__, __WEAP__, __FLOR__, __TREE__, __MISC__}))
 		{
-			auto modl = baseObject.data<const char *>("MODL", 0);
+			auto modl = baseObject.data<const char *>(_MODL_, 0);
 			if (!modl)
 			{
 				printf("um no modl here\n");
@@ -107,7 +107,7 @@ namespace dark
 				mesh = create_mesh(modl, true);
 			}
 		}
-		else if (baseObject.oftype("LIGH"))
+		else if (baseObject.oftype(__LIGH__))
 		{
 			struct Struct
 			{
@@ -123,8 +123,8 @@ namespace dark
 			Light *light = nullptr;
 
 			auto editorId = getEditorId(baseObject);
-			auto DATA = baseObject.data<int *>("DATA");
-			auto FNAM = baseObject.data<float *>("FNAM");
+			auto DATA = baseObject.data<int *>(_DATA_);
+			auto FNAM = baseObject.data<float *>(_FNAM_);
 
 			Struct *data = (Struct *)DATA;
 
@@ -216,8 +216,8 @@ namespace dark
 			return false;
 		}
 
-		auto FULL = baseObject.data<char *>("FULL");
-		auto DESC = baseObject.data<const char *>("DESC");
+		auto FULL = baseObject.data<char *>(_FULL_);
+		auto DESC = baseObject.data<const char *>(_DESC_);
 
 		const char *itemName = "Something";
 		if (FULL)

@@ -32,9 +32,9 @@ namespace skyrim
 		set(record);
 	}
 
-	void Object::set(Record *pass) {
+	void Object::set(Record *record) {
 		fields.clear();
-		record = pass;
+		this->record = record;
 		if (record == nullptr)
 			return;
 		assert(((Dud *)record)->x == RECORD);
