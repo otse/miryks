@@ -6,7 +6,9 @@
 #include <renderer/texture.h>
 #include <renderer/types.h>
 
-namespace dark
+using namespace dark;
+
+namespace skyrim
 {
 	static void other(Rd *, void *);
 	static void ni_node_callback						(Rd *, ni_node_pointer *);

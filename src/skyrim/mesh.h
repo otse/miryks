@@ -11,7 +11,7 @@
 
 #include "skeleton.h"
 
-namespace dark
+namespace skyrim
 {
 	class Mesh
 	{

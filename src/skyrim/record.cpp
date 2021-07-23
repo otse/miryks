@@ -5,7 +5,7 @@
 #include "record.h"
 #include "recordarray.h"
 
-namespace dark
+namespace skyrim
 {
 	const char *getEditorIdOnly(Record *record)
 	{

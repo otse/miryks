@@ -30,6 +30,7 @@
 #include <gooey/gooey.h>
 
 using namespace dark;
+using namespace skyrim;
 using namespace glm;
 
 GLFWwindow *window;

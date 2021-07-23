@@ -1,7 +1,4 @@
-#ifndef DARK_DARK_H
-#define DARK_DARK_H
-
-// part of gloom
+#pragma once
 
 #include <renderer/types.h>
 
@@ -9,6 +6,8 @@
 #include "list"
 
 #define INAL_BAD_SORRY "Inal bad, sorry"
+
+using namespace skyrim;
 
 namespace dark
 {
@@ -86,5 +85,3 @@ void make_timer();
 
 #define READ_BSA_RESOURCE "Load"
 #define VIEW_NIF "View"
-
-#endif

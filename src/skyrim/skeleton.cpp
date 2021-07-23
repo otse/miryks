@@ -9,7 +9,9 @@
 
 #include <glm/gtc/quaternion.hpp>
 
-namespace dark
+using namespace dark;
+
+namespace skyrim
 {
 	static void ni_node_callback(Rd *, ni_node_pointer *);
 

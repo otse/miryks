@@ -3,7 +3,7 @@
 #include "record.h"
 #include "recordarray.h"
 
-namespace dark
+namespace skyrim
 {
 	#define X ObjectArray
 
@@ -25,7 +25,7 @@ namespace dark
 		return *this;
 	}
 
-	unsigned int X::size() const
+	unsigned int X::amount() const
 	{
 		return grup->mixed.size;
 	}

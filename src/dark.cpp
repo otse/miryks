@@ -7,6 +7,7 @@
 #include <skyrim/interior.h>
 
 using namespace dark;
+using namespace skyrim;
 
 void load_bucket()
 {

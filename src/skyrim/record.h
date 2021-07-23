@@ -5,7 +5,7 @@
 #include <lib.h>
 #include <dark/dark.h>
 
-namespace dark
+namespace skyrim
 {
 	const char *getEditorIdOnly(::Record *);
 	const char *getEditorId(Object &);

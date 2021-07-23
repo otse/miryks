@@ -3,16 +3,10 @@
 #include <dark/dark.h>
 #include <dark/ref.h>
 
-#include <renderer/types.h>
-#include <renderer/scene.h>
-#include <renderer/group.h>
-#include <renderer/geometry.h>
-#include <renderer/material.h>
+using namespace dark;
 
-namespace dark
+namespace skyrim
 {
-	class Ref;
-
 	struct Cell
 	{
 		bool good = false;

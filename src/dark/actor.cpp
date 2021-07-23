@@ -2,9 +2,9 @@
 #include <lib.h>
 
 #include <dark/dark.h>
-
 #include <dark/actor.h>
 #include <dark/collision.h>
+#include <dark/ref.h>
 
 #include <skyrim/record.h>
 #include <skyrim/recordarray.h>

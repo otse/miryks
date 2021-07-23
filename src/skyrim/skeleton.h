@@ -6,7 +6,7 @@
 #include <renderer/types.h>
 #include <renderer/group.h>
 
-namespace dark
+namespace skyrim
 {
 	class Bone;
 	class Skeleton;

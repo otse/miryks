@@ -1,14 +1,12 @@
 #pragma once
 
-// part of gloom
-
 #include <dark/dark.h>
-
 #include <skyrim/record.h>
 
 #include <renderer/types.h>
+#include <renderer/aabb.h>
 
-#include <renderer/Aabb.h>
+using namespace skyrim;
 
 namespace dark
 {

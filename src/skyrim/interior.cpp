@@ -11,12 +11,12 @@
 #include <string>
 
 // #include <renderer/renderable.h>
+#include <renderer/types.h>
 #include <renderer/texture.h>
 #include <renderer/camera.h>
 #include <renderer/lights.h>
-#include <renderer/types.h>
 
-namespace dark
+namespace skyrim
 {
 	Interior::Interior(const char *edid)
 	{
@@ -35,8 +35,7 @@ namespace dark
 	{
 		Cell cell;
 		ObjectArray A, B, C;
-		Grup *top = esp_top_grup(get_plugins()[1], "CELL");
-		A(top).foreach([&](unsigned int i) {
+		A(esp_top_grup(get_plugins()[1], "CELL")).foreach([&](unsigned int i) {
 			B(A.getgrup(i)).foreach([&](unsigned int j) {
 				C(B.getgrup(j)).foreach([&](unsigned int &k) {
 					Object object = C.getobject(k);
@@ -46,8 +45,8 @@ namespace dark
 					{
 						cell.record = object.record;
 						// printf("foreach found your interior `%s`\n", editorId);
-						cell.persistent = D.size() >= 1 ? D.getgrup(0) : 0;
-						cell.non_persistent = D.size() >= 2 ? D.getgrup(1) : 0;
+						cell.persistent = D.amount() >= 1 ? D.getgrup(0) : 0;
+						cell.non_persistent = D.amount() >= 2 ? D.getgrup(1) : 0;
 						A.stop = B.stop = C.stop = true;
 					}
 					k += 1;
