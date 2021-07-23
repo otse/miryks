@@ -1,7 +1,7 @@
 #ifndef NIFP_H
 #define NIFP_H
 
-/// nif with pointers. see graveyard for old version that uses memcpy 
+/// nif with pointers
 
 // part of gloom
 

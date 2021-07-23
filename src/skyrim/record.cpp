@@ -1,9 +1,9 @@
 #include <cstdarg>
 
-#include <lib>
+#include <lib.h>
 
-#include "skyrim/record.h"
-#include "skyrim/recordarray.h"
+#include "record.h"
+#include "recordarray.h"
 
 namespace dark
 {
@@ -37,7 +37,7 @@ namespace dark
 		record = pass;
 		if (record == nullptr)
 			return;
-		cassert(((TypeDud *)record)->x == 2, "Gloom/Object Not Record ??");
+		assertm(((Dud *)record)->x == 2, "Gloom/Object Not Record ??");
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			Field *field = record->fields.subrecords[i];
@@ -55,7 +55,7 @@ namespace dark
 			if (skip-- <= 0)
 				break;
 		}
-		cassert(skip <= 0, "field skip unsuccessful\n");
+		assertm(skip <= 0, "field skip unsuccessful\n");
 		return sub;
 	}
 

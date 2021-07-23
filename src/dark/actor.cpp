@@ -1,5 +1,5 @@
 #include <skyrim_units>
-#include <lib>
+#include <lib.h>
 
 #include <dark/dark.h>
 
@@ -48,9 +48,9 @@ namespace dark
 	{
 		Record *race = nullptr;
 		ObjectArray array;
-		array(esp_top_grup(get_plugins()[0], "RACE")).forEach([&](unsigned int &i)
+		array(esp_top_grup(get_plugins()[0], "RACE")).foreach([&](unsigned int &i)
 															  {
-																  Record *record = array.getRecord(i);
+																  Record *record = array.getrecord(i);
 																  auto editorId = getEditorIdOnly(record);
 																  if (strcmp(editorId, raceId) == 0)
 																  {
@@ -58,7 +58,7 @@ namespace dark
 																	  array.stop = true;
 																  }
 															  });
-		cassert(array.stop, "No such raceId !");
+		assertm(array.stop, "No such raceId !");
 		return race;
 	}
 

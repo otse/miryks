@@ -38,7 +38,7 @@ api void free_nifprd(NifpRd **p) {
 api void nifp_rd(NifpRd *rd) {
 	// printf("nif rd\n");
 	Nifp *nif = rd->nif;
-	cassert(rd->nif, "nifprd nif not set");
+	assertm(rd->nif, "nifprd nif not set");
 	rd->skips = malloc(sizeof(char) * Hedr->num_blocks);
 	memset(rd->skips, 0, sizeof(char) * Hedr->num_blocks);
 	//rd->nif = nif;

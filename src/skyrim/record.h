@@ -1,11 +1,8 @@
-#ifndef GLOOM_OBJECT_H
-#define GLOOM_OBJECT_H
-
-// part of gloom
+#pragma once
 
 #include <cstdarg>
 
-#include <lib>
+#include <lib.h>
 #include <dark/dark.h>
 
 namespace dark
@@ -50,6 +47,4 @@ namespace dark
 		}
 	};
 
-} // namespace dark
-
-#endif
+}

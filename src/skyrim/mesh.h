@@ -1,22 +1,15 @@
 #pragma once
 
-// part of gloom
-
+#include <lib.h>
 #include <dark/dark.h>
-
-#include <skyrim/skeleton.h>
-
-extern "C"
-{
-#include <bsa.h>
-#include <nifp/nifp.h>
-}
 
 #include <renderer/types.h>
 #include <renderer/scene.h>
 #include <renderer/group.h>
 #include <renderer/geometry.h>
 #include <renderer/material.h>
+
+#include "skeleton.h"
 
 namespace dark
 {
@@ -57,4 +50,4 @@ namespace dark
 		void initial();
 		void forward();
 	};
-} // namespace dark
+}

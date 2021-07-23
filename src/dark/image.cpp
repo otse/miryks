@@ -1,7 +1,7 @@
 #include <string>
 
 #include <png.h>
-#include <core/resourcefile.h>
+#include <core/basefile.h>
 
 #include <dark/image.h>
 
@@ -26,7 +26,7 @@ namespace dark
 
 	void Image::from_resourcefile()
 	{
-		std::string yagrum = resourcefile_offshore("img", "yagrum.png");
+		std::string yagrum = basefile_offshore("img", "yagrum.png");
 		cursor = 0;
 		data = (const unsigned char *)yagrum.data();
 		cursor = data;

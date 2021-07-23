@@ -1,9 +1,6 @@
 #pragma once
 
-// part of gloom
-
 #include <dark/dark.h>
-
 #include <dark/ref.h>
 
 #include <renderer/types.h>
@@ -49,4 +46,4 @@ namespace dark
 		
 		void parseGrup(Cell &, Grup *);
 	};
-} // namespace dark
+}

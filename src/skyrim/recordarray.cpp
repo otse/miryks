@@ -1,24 +1,43 @@
-#include <lib>
+#include <lib.h>
 
-#include "skyrim/record.h"
-#include "skyrim/recordarray.h"
+#include "record.h"
+#include "recordarray.h"
 
 namespace dark
 {
-	ObjectArray::ObjectArray() {
-		(*this)(nullptr);
+#define X ObjectArray
+
+	X::X()
+	{
+		(*this)(nullptr); // calls operator!
 	};
 
-	ObjectArray::ObjectArray(Grup *grup)
+	X::X(Grup *grup)
 	{
-		cassert(grup, "objectarray grup null");
+		assert(grup);
 		(*this)(grup);
 	}
 
-	ObjectArray &ObjectArray::operator()(Grup *pass)
+	X &X::operator()(Grup *grup)
 	{
 		stop = false;
-		grup = pass;
+		this->grup = grup;
 		return *this;
 	}
-} // namespace dark
+
+	unsigned int X::size() const
+	{
+		return grup->mixed.size;
+	}
+
+	Grup *X::getgrup(unsigned int i) const
+	{
+		return get<Grup *>(i, GRUP);
+	}
+
+	Record *X::getrecord(unsigned int i) const
+	{
+		return get<Record *>(i, RECORD);
+	}
+#undef X
+}

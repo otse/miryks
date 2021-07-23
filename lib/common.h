@@ -11,9 +11,18 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define cassert(e, m) if (!(e)) Fail(m);
+#define assert(e)                         \
+    if (!(e))                             \
+    {                                     \
+        printf("assert file %s line %u", __FILE__, __LINE__); \
+    }
+#define assertm(e, m) \
+    if (!(e))         \
+    {                 \
+        pause(m);      \
+    }
 
-/*inline*/ int Fail(const char *);
+int pause(const char *);
 
 //cfout("error.txt", m);
 

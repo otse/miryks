@@ -1,8 +1,8 @@
 extern "C"
 {
 #include <common.h>
-#include <nifp/nifp.h>
-#include <nifp/nitypes.h>
 #include <bsa.h>
 #include <esp.h>
+#include <nifp.h>
+#include <nitypes.h>
 }

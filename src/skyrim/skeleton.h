@@ -1,9 +1,6 @@
-#ifndef GLOOM_SKELETON_H
-#define GLOOM_SKELETON_H
+#pragma once
 
-// part of gloom
-
-#include <lib>
+#include <lib.h>
 #include <dark/dark.h>
 
 #include <renderer/types.h>
@@ -71,6 +68,4 @@ namespace dark
 		Keyframes *keyframes;
 	};
 
-} // namespace dark
-
-#endif
+}

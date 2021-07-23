@@ -1,6 +1,6 @@
-#include <lib>
+#include <lib.h>
 
-#include "skyrim/mesh.h"
+#include "mesh.h"
 
 #include <renderer/shader.h>
 #include <renderer/texture.h>
@@ -55,7 +55,7 @@ namespace dark
 	}
 	void SkinnedMesh::construct()
 	{
-		cassert(skeleton, "smesh needs skeleton");
+		assertm(skeleton, "smesh needs skeleton");
 		Rd *rd = malloc_nifprd();
 		rd->nif = mesh->nif;
 		rd->data = this;
@@ -322,7 +322,7 @@ namespace dark
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		Nif *nif = smesh->mesh->nif;
-		cassert(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
+		assertm(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
 		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
 		smesh->shapes.push_back(rd->parent);
 	}

@@ -1,8 +1,6 @@
 #include "common.h"
-
 #include "nifp.h"
-
-#include <bsa.h>
+#include "bsa.h"
 
 void test_callback(NifpRd *, int, int);
 static void test_bucket_against_known_values(Nifp *);
@@ -16,7 +14,7 @@ void nifp_test()
 	// or
 	// struct bsa *meshes = get_archives()[0];
 	// struct Rc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
-	cassert(rc, "mh no bucket02a");
+	assertm(rc, "mh no bucket02a");
 	bsa_read(rc);
 	// setup
 	Nifp *bucket = malloc_nifp();

@@ -1,4 +1,4 @@
-#include <lib>
+#include <lib.h>
 
 #include <core/files.h>
 #include <dark/actor.h>
@@ -56,7 +56,7 @@ namespace dark
 					//printf("ok %s\n", animations->cb[r]);
 					r++;
 				}
-				cassert(good, "cant find bsa fld for hkxtokf race anims");
+				assertm(good, "cant find bsa fld for hkxtokf race anims");
 
 				bsa_read(skeleton);
 
@@ -122,7 +122,7 @@ namespace dark
 					//printf("ok %s\n", animations->cb[r]);
 					r++;
 				}
-				cassert(good, "cant find bsa fld for hkxtokf race anims");
+				assertm(good, "cant find bsa fld for hkxtokf race anims");
 
 				bsa_read(skeleton);
 

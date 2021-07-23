@@ -48,9 +48,9 @@ Esp *plugin_slate()
 
 api int plugin_load(Esp *esp)
 {
-	cassert(esp->buf,      "need buf");
-	cassert(esp->filesize, "need filesize");
-	cassert(esp->name,     "need name");
+	assertm(esp->buf,      "need buf");
+	assertm(esp->filesize, "need filesize");
+	assertm(esp->name,     "need name");
 	esp->header = read_record(esp);
 	array(&esp->grups, 200);
 	array(&esp->records, hedr_num_records(esp));
@@ -302,7 +302,7 @@ void uncompress_record(Esp *esp, Record *rec)
 	src += 4;
 	rec->buf = malloc(realSize * sizeof(char));
 	int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);
-	cassert(ret == Z_OK, "esp zlib");
+	assertm(ret == Z_OK, "esp zlib");
 	rec->actualSize = realSize;
 	Count.uncompress++;
 }

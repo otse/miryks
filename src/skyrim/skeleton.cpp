@@ -1,8 +1,8 @@
 #include <algorithm>
 
-#include <lib>
+#include <lib.h>
 
-#include "skyrim/skeleton.h"
+#include "skeleton.h"
 
 #include <renderer/group.h>
 #include <renderer/types.h>
@@ -78,7 +78,7 @@ namespace dark
 	// keyframes
 	Keyframes::Keyframes(Nif *nif) : model(nif)
 	{
-		cassert(strcmp(model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
+		assertm(strcmp(model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
 
 		csp = (ni_controller_sequence_pointer *)model->blocks[0];
 	}

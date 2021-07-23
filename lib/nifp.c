@@ -15,7 +15,7 @@ api void nifp_save(void *key, Nifp *nif) {
 	nifmap[nifs].key = key;
 	nifmap[nifs].value = nif;
 	nifs++;
-	cassert(nifs < 5000, "nifp overflow");
+	assertm(nifs < 5000, "nifp overflow");
 }
 
 // ignore
@@ -67,7 +67,7 @@ api void free_nifp(Nifp **p) {
 }
 
 api void nifp_read(Nifp *nif) {
-	cassert(Buf, "nifp buf is null ??");
+	assertm(Buf, "nifp buf is null ??");
 	nifp_read_header(nif);
 	nifp_read_blocks(nif);
 }

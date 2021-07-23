@@ -1,68 +1,51 @@
-#ifndef GLOOM_OBJECT_ARRAY_H
-#define GLOOM_OBJECT_ARRAY_H
+#pragma once
 
-// part of gloom
-
-#include <lib>
+#include <lib.h>
 #include <dark/dark.h>
+
+#include <functional>
+
+// using Objects = ObjectArray;
 
 namespace dark
 {
-	// using Objects = ObjectArray;
 
-	class ObjectArray
+#define X ObjectArray
+#define dud(i, type) type == get<Dud *>(i, type)->x
+
+	class X
 	{
 	public:
 		int filter = 0;
 		bool stop;
 		Grup *grup;
-		ObjectArray();
-		ObjectArray(Grup *);
-		ObjectArray &operator()(Grup *);
-		unsigned int size() const
-		{
-			return grup->mixed.size;
-		}
-		void fail(const char *m) const {
-			Fail(m);
-		}
-		void *get(unsigned int i) const
-		{
-			if(i >= size())
-				fail("boo");
-			return grup->mixed.elements[i];
-		}
-		void *getSafe(unsigned int i, int type) const
-		{
-			if (type != getType(i))
-				fail("woe");
-			return get(i);
-		}
-		inline int getType(unsigned int i) const
-		{
-			return ((TypeDud *)get(i))->x;
-		}
-		Grup *getGrup(unsigned int i) const
-		{
-			return (Grup *)getSafe(i, GRUP);
-		}
-		::Record *getRecord(unsigned int i) const
-		{
-			return (::Record *)getSafe(i, RECORD);
-		}
-		template <class UnaryFunction>
-		void forEach(UnaryFunction f)
+		X();
+		X(Grup *);
+		X &operator()(Grup *);
+
+		unsigned int size() const;
+
+		Grup *getgrup(unsigned int) const;
+		Record *getrecord(unsigned int) const;
+
+		void foreach(std::function<void(unsigned int &i)> f)
 		{
 			for (unsigned int i = 0; i < size(); i++)
 			{
-				if (filter == 0 || getType(i) == filter)
+				if (filter == 0 || dud(i, filter))
 					f(i);
 				if (stop)
 					break;
 			}
 		}
+
+	protected:
+		template <typename T = void *>
+		T get(unsigned int i, int type = -1) const
+		{
+			assert((i < size() && i == -1) || dud(i, type));
+			return (T)grup->mixed.elements[i];
+		}
 	};
-
-} // namespace dark
-
-#endif
+#undef X
+}

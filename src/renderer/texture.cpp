@@ -1,13 +1,13 @@
-#include <dark/dark.h>
-
-#include <renderer/texture.h>
+#include <lib.h>
 
 extern "C"
 {
-#include "common.h"
-#include "bsa.h"
-#include "dds.h"
+#include <dds.h>
 }
+
+#include <dark/dark.h>
+
+#include <renderer/texture.h>
 
 #include <algorithm>
 

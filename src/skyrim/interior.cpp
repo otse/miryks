@@ -1,10 +1,10 @@
 #include <skyrim_units>
-#include <lib>
+#include <lib.h>
 
-#include "skyrim/interior.h"
-#include "skyrim/mesh.h"
-#include "skyrim/record.h"
-#include "skyrim/recordarray.h"
+#include "interior.h"
+#include "mesh.h"
+#include "record.h"
+#include "recordarray.h"
 
 #include <algorithm>
 #include <cctype>
@@ -36,19 +36,19 @@ namespace dark
 		Cell cell;
 		ObjectArray A, B, C;
 		Grup *top = esp_top_grup(get_plugins()[1], "CELL");
-		A(top).forEach([&](unsigned int i) {
-			B(A.getGrup(i)).forEach([&](unsigned int j) {
-				C(B.getGrup(j)).forEach([&](unsigned int &k) {
-					Object object(C.getRecord(k));
-					Grup *grup = C.getGrup(k + 1);
+		A(top).foreach([&](unsigned int i) {
+			B(A.getgrup(i)).foreach([&](unsigned int j) {
+				C(B.getgrup(j)).foreach([&](unsigned int &k) {
+					Object object(C.getrecord(k));
+					Grup *grup = C.getgrup(k + 1);
 					const char *editorId = getEditorId(object);
 					if (0 == strcmp(name, editorId))
 					{
 						ObjectArray D(grup);
 						cell.record = object.record;
-						// printf("forEach found your interior `%s`\n", editorId);
-						cell.persistent = D.size() >= 1 ? D.getGrup(0) : 0;
-						cell.non_persistent = D.size() >= 2 ? D.getGrup(1) : 0;
+						// printf("foreach found your interior `%s`\n", editorId);
+						cell.persistent = D.size() >= 1 ? D.getgrup(0) : 0;
+						cell.non_persistent = D.size() >= 2 ? D.getgrup(1) : 0;
 						A.stop = B.stop = C.stop = true;
 					}
 					k += 1;
@@ -65,8 +65,8 @@ namespace dark
 		if (grup == nullptr)
 			return;
 		ObjectArray array;
-		array(grup).forEach([&](unsigned int i) {
-			Record *record = array.getRecord(i);
+		array(grup).foreach([&](unsigned int i) {
+			Record *record = array.getrecord(i);
 			Object object(record);
 			if (object.isType("REFR"))
 			{
@@ -89,8 +89,8 @@ namespace dark
 		if (alreadyTeleported)
 			return;
 		ObjectArray array;
-		array(loadedCell.persistent).forEach([&](unsigned int i) {
-			Object object(array.getRecord(i));
+		array(loadedCell.persistent).foreach([&](unsigned int i) {
+			Object object(array.getrecord(i));
 			if (*getBaseId(object) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker

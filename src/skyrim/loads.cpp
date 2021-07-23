@@ -1,11 +1,11 @@
-#include <lib>
+#include <lib.h>
 
 #include <dark/dark.h>
 
 #include <core/files.h>
 
-#include "skyrim/record.h"
-#include "skyrim/mesh.h"
+#include "record.h"
+#include "mesh.h"
 
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
@@ -36,7 +36,7 @@ namespace dark
 
 	Nif *import_nif(Rc *rc, bool store)
 	{
-		cassert(rc, "import_nif null rc");
+		assertm(rc, "import_nif null rc");
 		Nif *nif;
 		nif = nifp_saved(rc);
 		if (store && nif)

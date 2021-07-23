@@ -1,5 +1,5 @@
 #include <skyrim_units>
-#include <lib>
+#include <lib.h>
 
 #include <dark/ref.h>
 
@@ -92,7 +92,7 @@ namespace dark
 
 		baseObject.set(esp_get_form_id(id));
 
-		cassert(baseObject.valid(), "cant find refs Name-BaseId record");
+		assertm(baseObject.valid(), "cant find refs Name-BaseId record");
 
 		if (baseObject.isTypeAny({"STAT", "DOOR", "ALCH", "CONT",
 								  "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
@@ -198,7 +198,7 @@ namespace dark
 		src += 4;
 		rec->buf = malloc(realSize * sizeof(char));
 		int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);
-		cassert(ret == Z_OK, "esp zlib");
+		assertm(ret == Z_OK, "esp zlib");
 		rec->actualSize = realSize;
 		Count.uncompress++;
 	}*/

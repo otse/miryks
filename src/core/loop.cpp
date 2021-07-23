@@ -1,6 +1,6 @@
 #include <dark/dark.h>
 
-#include <lib>
+#include <lib.h>
 
 #include <skyrim/mesh.h>
 #include <skyrim/record.h>

@@ -1,10 +1,9 @@
-#include <lib>
 #include <png.h>
-#include <core/resourcefile.h>
 
-#include <dark/dark.h>
 #include <core/files.h>
-
+#include <core/basefile.h>
+#include <lib.h>
+#include <dark/dark.h>
 #include <skyrim/interior.h>
 
 using namespace dark;
@@ -51,7 +50,7 @@ int main()
 	}
 	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
-	resourcefile_handle("resourcefile");
+	basefile_handle("basefile");
 	setup_glfw();
 	// load_yagrum();
 	load_plugins_archives();

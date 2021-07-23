@@ -1,4 +1,4 @@
-#include <lib>
+#include <lib.h>
 #include <dark/dark.h>
 #include <core/files.h>
 

@@ -4,19 +4,16 @@
 #include <map>
 #include <vector>
 
-extern "C"
-{
 #include <microtar.h>
-}
 
 // depends on microtar
 
-// a resourcefile is a tar file
+// a basefile is a tar file
 
-std::string resourcefile_offshore(
+std::string basefile_offshore(
 	const std::string &,
 	const std::string &);
-std::string resourcefile_offshore(
+std::string basefile_offshore(
 	const std::string &,
 	const std::string &,
 	const std::string &,
@@ -29,15 +26,15 @@ typedef struct
 {
 	std::string name;
 	mtar_t mtar;
-	std::vector<std::string> filenames;
+	std::vector<std::string> fnam;
 	std::map<const std::string, const mtar_header_t> hnam;
-} Resourcefile;
+} Basefile;
 
-extern std::map<std::string, Resourcefile *> resourcefiles;
+extern std::map<std::string, Basefile *> resourcefiles;
 
-Resourcefile &resourcefile_handle(std::string);
+Basefile &basefile_handle(std::string);
 
-bool resourcefile_find(const std::string &, std::string);
+bool basefile_find(const std::string &, std::string);
 
-std::string resourcefile_read(std::string, std::string);
-std::string resourcefile_readgz(std::string, std::string);
+std::string basefile_read(std::string, std::string);
+std::string basefile_readgz(std::string, std::string);

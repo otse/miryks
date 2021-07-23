@@ -3,11 +3,11 @@
 #include <zlib.h>
 
 #include "files.h"
-#include "resourcefile.h"
+#include "basefile.h"
 
 #define RSF_EXT "" // .rsf ?
 
-std::map<std::string, Resourcefile *> resourcefiles;
+std::map<std::string, Basefile *> resourcefiles;
 
 // depends on microtar
 
@@ -15,69 +15,68 @@ std::map<std::string, Resourcefile *> resourcefiles;
 
 static void example()
 {
-	resourcefile_offshore("foo", "bar.ext");
-	resourcefile_offshore("foo", "bar", ".ext", ".ext.gz");
+	basefile_offshore("foo", "bar.ext");
+	basefile_offshore("foo", "bar", ".ext", ".ext.gz");
 }
 
-std::string resourcefile_offshore(const std::string &a, const std::string &b)
+std::string basefile_offshore(const std::string &a, const std::string &b)
 {
-	return resourcefile_offshore(a, b, "", "");
+	return basefile_offshore(a, b, "", "");
 }
 
-std::string resourcefile_offshore(
+std::string basefile_offshore(
 	const std::string &a,
 	const std::string &b,
 	const std::string &ext,
 	const std::string &ext2)
 {
-	// careful, sometimes you need a ./ for the tar
 	if (exists_test3(a + "/" + b + ext))
 		return fread(a + "/" + b + ext);
-	if (resourcefile_find(a, b + ext2))
-		return resourcefile_read(a, b + ext2);
+	if (basefile_find(a, b + ext2))
+		return basefile_read(a, b + ext2);
 	return "";
 }
 
-void _resourcefile_makeindex(Resourcefile &rsf)
+void _basefile_makeindex(Basefile &rsf)
 {
-	rsf.filenames.clear();
+	rsf.fnam.clear();
 	mtar_header_t h;
 	while ((mtar_read_header(&rsf.mtar, &h)) != MTAR_ENULLRECORD)
 	{
-		rsf.filenames.push_back(h.name);
+		rsf.fnam.push_back(h.name);
 		printf("rsf make index %s of size %u\n", h.name, h.size);
 		rsf.hnam.emplace(h.name, h);
 		mtar_next(&rsf.mtar);
 	}
 }
 
-Resourcefile &resourcefile_handle(std::string a)
+Basefile &basefile_handle(std::string a)
 {
 	auto has = resourcefiles.find(a);
 	if (resourcefiles.end() != has)
 		return *has->second;
 	else
 	{
-		Resourcefile &rsf = *(new Resourcefile{a});
+		Basefile &rsf = *(new Basefile{a});
 		resourcefiles.emplace(a, &rsf);
-		// printf("resourcefile: %s\n", a.c_str());
+		// printf("basefile: %s\n", a.c_str());
 		a += RSF_EXT;
 		int err = mtar_open(&rsf.mtar, a.c_str(), "r");
 		if (err)
 			printf(mtar_strerror(err));
-		_resourcefile_makeindex(rsf);
+		_basefile_makeindex(rsf);
 		return rsf;
 	}
 }
 
-bool resourcefile_find(const std::string &a, std::string path)
+bool basefile_find(const std::string &a, std::string path)
 {
-	Resourcefile &rsf = resourcefile_handle(a);
-	auto has = std::find(rsf.filenames.begin(), rsf.filenames.end(), path);
-	return has != rsf.filenames.end();
+	Basefile &rsf = basefile_handle(a);
+	auto has = std::find(rsf.fnam.begin(), rsf.fnam.end(), path);
+	return has != rsf.fnam.end();
 }
 
-const mtar_header_t get_header(Resourcefile &rsf, std::string path)
+const mtar_header_t get_header(Basefile &rsf, std::string path)
 {
 	auto it = rsf.hnam.find(path);
 	if (it == rsf.hnam.end())
@@ -94,11 +93,11 @@ static inline std::string tinflate(const std::string &deflate)
 	return inflate;
 }
 
-std::string resourcefile_read(std::string a, std::string path)
+std::string basefile_read(std::string a, std::string path)
 {
-	Resourcefile &rsf = resourcefile_handle(a);
+	Basefile &rsf = basefile_handle(a);
 	mtar_header_t h;
-	if (!resourcefile_find(a, path))
+	if (!basefile_find(a, path))
 		return "";
 	mtar_find(&rsf.mtar, path.c_str(), &h);
 	std::string str(h.size, ' ');

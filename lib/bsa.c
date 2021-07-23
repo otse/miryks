@@ -30,16 +30,16 @@ api Bsa *bsa_load(const char *path)
 	file_name(bsa->filename, path, '/');
 	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
-	cassert(
+	assertm(
 		bsa->stream, path);
 	read(bsa, &Hedr, sizeof(struct bsa_hedr));
-	cassert(
+	assertm(
 		strcmp(
 			"BSA\x00", (char *)&Hedr.id) == 0,
 		BSA "not a bsa");
-	cassert(
+	assertm(
 		Hedr.ver != VER_SE, BSA "cant use special edition");
-	cassert(
+	assertm(
 		Hedr.ver == VER, BSA "not 104");
 	read_folder_records(bsa);
 	read_file_records(bsa);
@@ -177,7 +177,7 @@ char *bsa_uncompress(Rc *rc)
 	src += sizeof(uint32_t);
 	char *dest = malloc(size * sizeof(char));
 	int ret = uncompress(dest, (uLongf*)&size, src, rc->size);
-	cassert(ret == Z_OK, BSA "zlib");
+	assertm(ret == Z_OK, BSA "zlib");
 	rc->size = size;
 	return dest;
 }

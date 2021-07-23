@@ -1,19 +1,17 @@
-// this c code is "in a drawer"
-// see common.h
-
-#include "common.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#include <sys/stat.h>
+#include "common.h"
 
-/*inline*/ int Fail(const char *m)
+int pause(const char *m)
 {
 	printf("Program Exiting: %s\n", m);
 	system("PAUSE");
 	exit(1);
 }
+
+#include <sys/stat.h>
 
 int exists(const char *p)
 {

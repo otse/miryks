@@ -1,5 +1,5 @@
 #include <renderer/shader.h>
-#include <core/resourcefile.h>
+#include <core/basefile.h>
 
 extern "C"
 {
@@ -40,14 +40,13 @@ void SetShaderSources()
 	printf("set shader sources\n");
 #else
 	static std::vector<std::string> sources;
-	sources.push_back(resourcefile_offshore("resourcefile", "gl/simple.vert"));
-	sources.push_back(resourcefile_offshore("resourcefile", "gl/simple.frag"));
-	sources.push_back(resourcefile_offshore("resourcefile", "gl/basic.vert"));
-	sources.push_back(resourcefile_offshore("resourcefile", "gl/basic.frag"));
-	sources.push_back(resourcefile_offshore("resourcefile", "gl/post.vert"));
-	sources.push_back(resourcefile_offshore("resourcefile", "gl/post.frag"));
+	sources.push_back(basefile_offshore("basefile", "gl/simple.vert"));
+	sources.push_back(basefile_offshore("basefile", "gl/simple.frag"));
+	sources.push_back(basefile_offshore("basefile", "gl/basic.vert"));
+	sources.push_back(basefile_offshore("basefile", "gl/basic.frag"));
+	sources.push_back(basefile_offshore("basefile", "gl/post.vert"));
+	sources.push_back(basefile_offshore("basefile", "gl/post.frag"));
 	simple[1] = (char *)sources[0].c_str();
-	printf("simple[1] = %s\n", simple[1]);
 	simple[2] = (char *)sources[1].c_str();
 	basic[1] = (char *)sources[2].c_str();
 	basic[2] = (char *)sources[3].c_str();

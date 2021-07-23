@@ -1,5 +1,5 @@
-#include <lib>
-#include <core/resourcefile.h>
+#include <lib.h>
+#include <core/basefile.h>
 
 #include <png.h>
 
