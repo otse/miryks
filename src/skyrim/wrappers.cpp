@@ -8,16 +8,6 @@ namespace skyrim
 		return (const char *)record->fields.subrecords[0]->data;
 	}
 
-	const char *getEditorId(const RecordWrapper &ob)
-	{
-		return ob.data<const char *>(_EDID_);
-	}
-
-	unsigned int *getBaseId(const RecordWrapper &ob)
-	{
-		return ob.data<unsigned int *>(_NAME_);
-	}
-
 	void RecordWrapper::set(Record *p)
 	{
 		record = p;

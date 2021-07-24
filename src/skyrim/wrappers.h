@@ -20,6 +20,8 @@ namespace skyrim
 	{
 	public:
 		Record *record;
+
+		// todo, get rid of map just use for loop
 		std::multimap<unsigned int, Subrecord *> subs;
 
 		RecordWrapper()
@@ -89,7 +91,7 @@ namespace skyrim
 
 		GrupWrapper()
 		{
-			(*this)(nullptr); // calls operator !
+			(*this)(nullptr);
 		}
 
 		GrupWrapper(Grup *grup)
@@ -137,12 +139,12 @@ namespace skyrim
 			return get<Record *>(i, RECORD);
 		}
 
-		RecordWrapper getrecordwrapper(unsigned int i) const
+		RecordWrapper getrecordwrap(unsigned int i) const
 		{
 			return RecordWrapper(getrecord(i));
 		}
 
-		GrupWrapper getgrupwrapper(unsigned int i) const
+		GrupWrapper getgrupwrap(unsigned int i) const
 		{
 			return GrupWrapper(getgrup(i));
 		}
@@ -150,7 +152,8 @@ namespace skyrim
 		template <typename T = void *>
 		T get(unsigned int i, int type = -1) const
 		{
-			assertc(i < amount() && (i != -1 && this->type(i, type)));
+			assertc(i < amount());
+			assertc(i != -1 && this->type(i, type));
 			return (T)grup->mixed.elements[i];
 		}
 	};

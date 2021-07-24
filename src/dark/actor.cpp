@@ -52,8 +52,8 @@ namespace dark
 		GrupWrapper array;
 		Grup *top = esp_top_grup(get_plugins()[0], __RACE__);
 		array(top).foreach(TOP, [&](unsigned int &i) {
-			RecordWrapper object = array.getrecordwrapper(i);
-			auto editorId = getEditorIdOnly(object.record);
+			RecordWrapper object = array.getrecordwrap(i);
+			auto editorId = object.editorid();
 			if (strcmp(editorId, raceId) == 0)
 			{
 				race = object.record;

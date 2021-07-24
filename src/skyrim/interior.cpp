@@ -38,8 +38,8 @@ namespace skyrim
 		top(esp_top_grup(get_plugins()[1], __CELL__)).foreach(TOP, [&](unsigned int i) {
 			block(top.getgrup(i)).foreach(INTERIOR_CELL_BLOCK, [&](unsigned int j) {
 				subblock(block.getgrup(j)).foreach(INTERIOR_CELL_SUB_BLOCK, [&](unsigned int &k) {
-					RecordWrapper object = subblock.getrecordwrapper(k);
-					GrupWrapper D = subblock.getgrupwrapper(k + 1);
+					RecordWrapper object = subblock.getrecordwrap(k);
+					GrupWrapper D = subblock.getgrupwrap(k + 1);
 					const char *editorId = object.editorid();
 					if (0 == strcmp(name, editorId))
 					{
@@ -67,7 +67,7 @@ namespace skyrim
 			return;
 		GrupWrapper array;
 		array(grup).foreach(group_type, [&](unsigned int i) {
-			RecordWrapper object = array.getrecordwrapper(i);
+			RecordWrapper object = array.getrecordwrap(i);
 			if (object.oftype(__REFR__))
 			{
 				Ref *ref = new Ref(object.record);
@@ -91,7 +91,7 @@ namespace skyrim
 			return;
 		GrupWrapper array;
 		array(loaded_cell.persistent).foreach(CELL_PERSISTENT_CHILDREN, [&](unsigned int i) {
-			RecordWrapper object = array.getrecordwrapper(i);
+			RecordWrapper object = array.getrecordwrap(i);
 			if (*object.baseid() == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
