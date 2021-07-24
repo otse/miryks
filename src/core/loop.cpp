@@ -108,7 +108,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		printf(" reload esp ! \n");
 		// Save current cell name
-		Object object(dungeon->loadedCell.record);
+		Object object(dungeon->loaded_cell.record);
 		const char *cellName = getEditorId(object);
 		char dest[512];
 		strcpy(dest, cellName);
@@ -120,7 +120,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		delete dungeon;
 		dungeon = new Interior(dest);
 		dungeon->alreadyTeleported = true;
-		dungeon->loadCell();
+		dungeon->loadcell();
 	}
 	else if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
 	{

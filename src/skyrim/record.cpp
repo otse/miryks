@@ -7,48 +7,55 @@
 
 namespace skyrim
 {
-	const char *getEditorIdOnly(Record *record)
+	const char *getEditorIdOnly(const Record *record)
 	{
 		return (const char *)record->fields.subrecords[0]->data;
 	}
 
-	const char *getEditorId(Object &object)
+	const char *getEditorId(const Object &ob)
 	{
-		return object.data<const char *>("EDID");
+		return ob.data<const char *>(_EDID_);
 	}
 
-	unsigned int *getBaseId(Object &object)
+	unsigned int *getbaseid(const Object &ob)
 	{
-		return object.data<unsigned int *>("NAME");
+		return ob.data<unsigned int *>(_NAME_);
 	}
 
-	//Field *GetField(Record *record, unsigned int i)
-	//{
-	//	return (Field *)record->fields.subrecords[i];
-	//}
+#define X Object
 
-	Object::Object(Record *record)
+	X::X()
 	{
-		set(record);
+		record = nullptr;
 	}
 
-	void Object::set(Record *record) {
-		fields.clear();
-		this->record = record;
+	X::X(Record *re)
+	{
+		set(re);
+	}
+
+	X::~X()
+	{
+	}
+
+	void X::set(Record *re)
+	{
+		record = re;
+		subs.clear();
 		if (record == nullptr)
 			return;
 		assert(((Dud *)record)->x == RECORD);
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			Field *field = record->fields.subrecords[i];
-			fields.emplace(field->hed->type, field);
+			subs.emplace(field->hed->type, field);
 		}
 	}
 
-	Field *Object::equalRange(const char *type, int skip) const
+	Subrecord *X::finder(const char *type, int skip) const
 	{
-		Field *sub = nullptr;
-		auto st = fields.equal_range(*(unsigned int *)type);
+		Subrecord *sub = nullptr;
+		auto st = subs.equal_range(*(unsigned int *)type);
 		for (auto it = st.first; it != st.second; ++it)
 		{
 			sub = it->second;
@@ -61,9 +68,9 @@ namespace skyrim
 
 	/*::subrecord *Object::GetFrom(unsigned int type, int *n) const
 	{
-		for (int i = *n; i < record->fields.size; i++)
+		for (int i = *n; i < record->subs.size; i++)
 		{
-			::subrecord *field = record->fields.subrecords[i];
+			::subrecord *field = record->subs.subrecords[i];
 			if (type == field->hed->type)
 			{
 				*n = i;
@@ -72,5 +79,7 @@ namespace skyrim
 		}
 		return nullptr;
 	}*/
+
+#undef X
 
 } // namespace dark

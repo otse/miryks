@@ -71,12 +71,16 @@ struct form_id
 
 struct grup_header
 {
-	unsigned int type, size;
+	unsigned int type, size, label;
+	int group_type;
+	unsigned short time_stamp, version_control_info;
+	unsigned int unknown;
 };
 
 struct record_header
 {
 	unsigned int type, size, flags, formId;
+	unsigned short time_stamp, version_control_info, form_version, unknown;
 };
 
 struct field_header

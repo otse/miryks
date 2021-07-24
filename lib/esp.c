@@ -80,7 +80,7 @@ Record *read_record(Esp *esp)
 	rec->offset = Pos;
 	rec->hed = Buf + Pos;
 	Pos += sizeof(struct record_header);
-	Pos += 8;
+	Pos += 0;
 	rec->actualSize = rec->hed->size;
 	rec->data = Buf + Pos;
 	array(&rec->fields, 6);
@@ -163,7 +163,7 @@ Grup *read_grup(Esp *esp)
 	grup->id = Count.grups++;
 	grup->hed = Buf + Pos;
 	Pos += sizeof(struct grup_header);
-	Pos += 16;
+	Pos += 0;
 	grup->data = Buf + Pos;
 	array(&grup->mixed, 12);
 	// printf("G %.4s %u > ", (char *)&grup->hed->type, grup->hed->size);

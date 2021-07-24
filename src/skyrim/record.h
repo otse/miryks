@@ -8,26 +8,27 @@
 
 namespace skyrim
 {
-	const char *getEditorIdOnly(Record *);
-	const char *getEditorId(Object &);
-	unsigned int *getBaseId(Object &);
-
-	// Field *GetField(Record *, unsigned int);
+	const char *getEditorIdOnly(const Record *);
+	const char *getEditorId(const Object &);
+	unsigned int *getbaseid(const Object &);
 
 	class Object
 	{
 	public:
-		Record *record = nullptr;
-		Object(){};
+		Record *record;
+		std::multimap<unsigned int, Subrecord *> subs;
+		Object();
 		Object(Record *);
-		~Object(){};
+		~Object();
 		void set(Record *);
-		bool valid() { return record != nullptr; };
-		std::multimap<unsigned int, Field *> fields;
-		Field *equalRange(const char *, int) const;
+		Subrecord *finder(const char *, int) const;
+		bool valid()
+		{
+			return record != nullptr;
+		};
 		unsigned int count(const char *type) const
 		{
-			return fields.count(*(unsigned int *)type);
+			return subs.count(*(unsigned int *)type);
 		}
 		bool oftype(const char *type) const
 		{
@@ -43,7 +44,7 @@ namespace skyrim
 		template <typename T = void *>
 		T data(const char *type, int skip = 0) const
 		{
-			Field *field = equalRange(type, skip);
+			Subrecord *field = finder(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
 	};

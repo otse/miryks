@@ -2,8 +2,6 @@
 
 namespace skyrim
 {
-    static const char *REFR = "REFR";
-
 }
 
 #define __STAT__ "STAT"
@@ -22,6 +20,7 @@ namespace skyrim
 #define __RACE__ "RACE"
 
 #define _EDID_ "EDID"
+#define _NAME_ "NAME"
 #define _MODL_ "MODL"
 #define _DATA_ "DATA"
 #define _FULL_ "FULL"

@@ -48,7 +48,7 @@ namespace dark
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = getBaseId(selfObject);
+		auto baseId = getbaseid(selfObject);
 		auto editorId = getEditorId(selfObject);
 		auto XSCL = selfObject.data<float *>(_XSCL_);
 		auto locationalData = selfObject.data<float *>(_DATA_);

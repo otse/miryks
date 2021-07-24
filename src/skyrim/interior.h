@@ -8,7 +8,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	struct Cell
+	struct CELL
 	{
 		bool good = false;
 		Record *record = nullptr;
@@ -23,22 +23,17 @@ namespace skyrim
 		~Interior();
 
 		const char *editorId;
-
 		bool alreadyTeleported = false;
 
-		Cell loadedCell;
-
+		CELL loaded_cell;
 		std::vector<Ref *> refs, iterables;
-
 		std::map<std::string, Ref *> editorIds;
 
-		static Cell getCell(const char *);
-		
+		static CELL getcell(const char *);
 		void update();
-		void loadCell();
+		void parsegrup(CELL &, Grup *);
+		void loadcell();
 		void unload();
-		void placeCamera();
-		
-		void parseGrup(Cell &, Grup *);
+		void placecamera();
 	};
 }

@@ -11,7 +11,6 @@
 #include <cctype>
 #include <string>
 
-// #include <renderer/renderable.h>
 #include <renderer/types.h>
 #include <renderer/texture.h>
 #include <renderer/camera.h>
@@ -25,23 +24,32 @@ namespace skyrim
 		Group *group = new Group();
 	}
 
-	void Interior::loadCell()
+	void Interior::loadcell()
 	{
-		loadedCell = getCell(editorId);
-		parseGrup(loadedCell, loadedCell.persistent);
-		parseGrup(loadedCell, loadedCell.non_persistent);
+		loaded_cell = getcell(editorId);
+		parsegrup(loaded_cell, loaded_cell.persistent);
+		parsegrup(loaded_cell, loaded_cell.non_persistent);
 	}
 
-	Cell Interior::getCell(const char *name)
+	CELL Interior::getcell(const char *name)
 	{
-		Cell cell;
-		ObjectArray A, B, C;
+		#define TOP 0
+		#define INTERIOR_CELL_BLOCK 2
+		#define INTERIOR_CELL_SUB_BLOCK 3
+		CELL cell;
+		Objects top, block, subblock;
 		bool stop = false;
-		A(esp_top_grup(get_plugins()[1], __CELL__)).foreach([&](unsigned int i) {
-			B(A.getgrup(i)).foreach([&](unsigned int j) {
-				C(B.getgrup(j)).foreach([&](unsigned int &k) {
-					Object object = C.getobject(k);
-					ObjectArray D = C.getobjectarray(k + 1);
+		top(esp_top_grup(get_plugins()[1], __CELL__)).foreach([&](unsigned int i) {
+			assert(top.hed().group_type == TOP);
+
+			block(top.getgrup(i)).foreach([&](unsigned int j) {
+				assert(block.hed().group_type == INTERIOR_CELL_BLOCK);
+
+				subblock(block.getgrup(j)).foreach([&](unsigned int &k) {
+					assert(subblock.hed().group_type == INTERIOR_CELL_SUB_BLOCK);
+
+					Object object = subblock.getobject(k);
+					ObjectArray D = subblock.getobjectarray(k + 1);
 					const char *editorId = getEditorId(object);
 					if (0 == strcmp(name, editorId))
 					{
@@ -64,11 +72,11 @@ namespace skyrim
 
 	static void PlaceCameraDud(Interior *);
 
-	void Interior::parseGrup(Cell &cell, Grup *grup)
+	void Interior::parsegrup(CELL &cell, Grup *grup)
 	{
 		if (grup == nullptr)
 			return;
-		ObjectArray array;
+		Objects array;
 		array(grup).foreach([&](unsigned int i) {
 			Object object = array.getobject(i);
 			if (object.oftype(__REFR__))
@@ -85,17 +93,17 @@ namespace skyrim
 			}
 			return false;
 		});
-		placeCamera();
+		placecamera();
 	}
 
-	void Interior::placeCamera()
+	void Interior::placecamera()
 	{
 		if (alreadyTeleported)
 			return;
-		ObjectArray array;
-		array(loadedCell.persistent).foreach([&](unsigned int i) {
+		Objects array;
+		array(loaded_cell.persistent).foreach([&](unsigned int i) {
 			Object object = array.getobject(i);
-			if (*getBaseId(object) == 0x0000003B) //  "Marker"
+			if (*getbaseid(object) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
 				float *locationalData = object.data<float *>(_DATA_);

@@ -6,39 +6,50 @@
 
 #include <functional>
 
-// using Objects = ObjectArray;
-
 namespace skyrim
 {
-#define dud(i, type) type == get<Dud *>(i, type)->x
-#define X ObjectArray
+	using Objects = ObjectArray;
 
+#define X ObjectArray
 	class ObjectArray
 	{
 	public:
 		Grup *grup;
 		X();
 		X(Grup *);
-		X &operator()(Grup *); // useful!
+		X &operator()(Grup *);
+
+		const grup_header &hed() const;
 
 		unsigned int amount() const;
+		bool type(unsigned int, int) const;
 
-		Grup *getgrup(unsigned int) const;
-		Record *getrecord(unsigned int) const;
-		Object getobject(unsigned int) const;
-		ObjectArray getobjectarray(unsigned int) const;
+		void foreach (std::function<bool(unsigned int &)>);
 
-		void foreach (std::function<bool(unsigned int &i)> f)
+		Grup *getgrup(unsigned int i) const
 		{
-			for (unsigned int i = 0; i < amount(); i++)
-				if(f(i))
-					break;
+			return get<Grup *>(i, GRUP);
+		}
+
+		Record *getrecord(unsigned int i) const
+		{
+			return get<Record *>(i, RECORD);
+		}
+
+		Object getobject(unsigned int i) const
+		{
+			return Object(getrecord(i));
+		}
+
+		ObjectArray getobjectarray(unsigned int i) const
+		{
+			return ObjectArray(getgrup(i));
 		}
 
 		template <typename T = void *>
 		T get(unsigned int i, int type = -1) const
 		{
-			assert(i < amount() && (i == -1 || dud(i, type)));
+			assert(i < amount() && (i == -1 || type(i, type)));
 			return (T)grup->mixed.elements[i];
 		}
 	};

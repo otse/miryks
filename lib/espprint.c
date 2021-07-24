@@ -13,17 +13,29 @@ fi->objectIndex
 );
 }
 
+#define LOW(x) ((x) & 0xff)
+#define HIGH(x) ((x) >> 8)
+
 api void esp_print_grup(Esp *esp, char *s, Grup *grup)
 {
 int w = snprintf(s, 200, "\
 id: %u\
 \ntype: %.4s\
 \nsize: %u\
+\nlabel: %.4s\
+\ngroup_type: %i\
+\ntime_stamp: %hu\
+\nversion_control_info: %02x %02x\
 \nelements: %u\
 ",
 grup->id,
 (char *)&grup->hed->type,
 grup->hed->size,
+(char *)&grup->hed->label,
+grup->hed->group_type,
+grup->hed->time_stamp,
+LOW(grup->hed->version_control_info),
+HIGH(grup->hed->version_control_info),
 grup->mixed.size
 );
 }
@@ -38,7 +50,11 @@ id: %u\
 \nflags: %u\
 \nformId: %u\
 \nformId: %08X\
-\ncompressed: %i\
+\nflags\
+\n compressed: %i\
+\ntime_stamp: %hu\
+\nversion_control_info: %02x %02x\
+\nform_version: %hu\
 \nfields: %i\
 ",
 record->id,
@@ -49,6 +65,10 @@ record->hed->flags,
 record->hed->formId,
 record->hed->formId,
 (record->hed->flags & 0x00040000) != 0,
+record->hed->time_stamp,
+LOW(record->hed->version_control_info),
+HIGH(record->hed->version_control_info),
+record->hed->form_version,
 record->fields.size
 );
 }

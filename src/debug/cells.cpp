@@ -37,7 +37,7 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			Object object(dungeon->loadedCell.record);
+			Object object(dungeon->loaded_cell.record);
 
 			const char *editorId = getEditorId(object);
 
@@ -47,7 +47,7 @@ void cell_gui()
 				{
 					delete dungeon;
 					dungeon = new Interior(items[current]);
-					dungeon->loadCell();
+					dungeon->loadcell();
 				}
 			}
 			//if (items[current] == dungeon->loadedCell)

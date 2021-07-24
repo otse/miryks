@@ -20,7 +20,7 @@ void load_bucket()
 void load_gloomgen()
 {
 	dungeon = new Interior("GloomGen");
-	dungeon->loadCell();
+	dungeon->loadcell();
 	//player1 = new Player();
 }
 
