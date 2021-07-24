@@ -15,21 +15,6 @@ typedef Nifp Nif;
 typedef NifpRd Rd;
 typedef Subrecord Field;
 
-namespace skyrim
-{
-	class Object;
-	class ObjectArray;
-	class Mesh;
-	class SkinnedMesh;
-	class Skeleton;
-	class Bone;
-	class Keyframes;
-	class Animation;
-	class Interior;
-
-	typedef Keyframes Kf;
-}
-
 namespace dark
 {
 	class Obj;

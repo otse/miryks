@@ -4,8 +4,8 @@
 
 #include <core/files.h>
 
-#include "record.h"
-#include "mesh.h"
+#include <skyrim/wrappers.h>
+#include <skyrim/mesh.h>
 
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>

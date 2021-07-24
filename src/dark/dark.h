@@ -7,6 +7,11 @@
 
 #define INAL_BAD_SORRY "Inal bad, sorry"
 
+namespace skyrim
+{
+	class Mesh;
+	class Interior;
+}
 using namespace skyrim;
 
 namespace dark

@@ -4,8 +4,7 @@
 #include "skyrim.h"
 #include "interior.h"
 #include "mesh.h"
-#include "record.h"
-#include "recordarray.h"
+#include "wrappers.h"
 
 #include <algorithm>
 #include <cctype>
@@ -34,13 +33,13 @@ namespace skyrim
 	CELL Interior::getcell(const char *name)
 	{
 		CELL cell;
-		Objects top, block, subblock;
+		GrupWrapper top, block, subblock;
 		bool stop = false;
 		top(esp_top_grup(get_plugins()[1], __CELL__)).foreach(TOP, [&](unsigned int i) {
 			block(top.getgrup(i)).foreach(INTERIOR_CELL_BLOCK, [&](unsigned int j) {
 				subblock(block.getgrup(j)).foreach(INTERIOR_CELL_SUB_BLOCK, [&](unsigned int &k) {
-					Object object = subblock.getobject(k);
-					ObjectArray D = subblock.getobjectarray(k + 1);
+					RecordWrapper object = subblock.getrecordwrapper(k);
+					GrupWrapper D = subblock.getgrupwrapper(k + 1);
 					const char *editorId = getEditorId(object);
 					if (0 == strcmp(name, editorId))
 					{
@@ -49,10 +48,9 @@ namespace skyrim
 						cell.persistent = D.amount() >= 1 ? D.getgrup(0) : 0;
 						cell.temporary = D.amount() >= 2 ? D.getgrup(1) : 0;
 						stop = true;
-						return true;
 					}
 					k += 1;
-					return false;
+					return stop;
 				});
 				return stop;
 			});
@@ -67,9 +65,9 @@ namespace skyrim
 	{
 		if (grup == nullptr)
 			return;
-		Objects array;
+		GrupWrapper array;
 		array(grup).foreach(group_type, [&](unsigned int i) {
-			Object object = array.getobject(i);
+			RecordWrapper object = array.getrecordwrapper(i);
 			if (object.oftype(__REFR__))
 			{
 				Ref *ref = new Ref(object.record);
@@ -91,10 +89,10 @@ namespace skyrim
 	{
 		if (alreadyTeleported)
 			return;
-		Objects array;
+		GrupWrapper array;
 		array(loaded_cell.persistent).foreach(CELL_PERSISTENT_CHILDREN, [&](unsigned int i) {
-			Object object = array.getobject(i);
-			if (*getbaseid(object) == 0x0000003B) //  "Marker"
+			RecordWrapper object = array.getrecordwrapper(i);
+			if (*getBaseId(object) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
 				float *locationalData = object.data<float *>(_DATA_);

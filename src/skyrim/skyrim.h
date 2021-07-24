@@ -1,7 +1,20 @@
 #pragma once
 
+
 namespace skyrim
 {
+	class RecordWrapper;
+	class GrupWrapper;
+	
+	class Mesh;
+	class SkinnedMesh;
+	class Skeleton;
+	class Bone;
+	class Keyframes;
+	class Animation;
+	class Interior;
+
+	typedef Keyframes Kf;
 }
 
 #define __STAT__ "STAT"

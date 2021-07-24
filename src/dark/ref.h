@@ -1,7 +1,7 @@
 #pragma once
 
 #include <dark/dark.h>
-#include <skyrim/record.h>
+#include <skyrim/wrappers.h>
 
 #include <renderer/types.h>
 #include <renderer/aabb.h>
@@ -16,7 +16,7 @@ namespace dark
 		Ref(::Record *);
 		~Ref();
 		const char *editorId = nullptr;
-		Object selfObject, baseObject;
+		RecordWrapper selfObject, baseObject;
 		mat4 translation, rotation, scale;
 		mat4 matrix;
 		Mesh *mesh;

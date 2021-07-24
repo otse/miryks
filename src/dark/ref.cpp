@@ -3,7 +3,7 @@
 
 #include <dark/ref.h>
 
-#include <skyrim/record.h>
+#include <skyrim/wrappers.h>
 #include <skyrim/mesh.h>
 #include <core/files.h>
 
@@ -48,7 +48,7 @@ namespace dark
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = getbaseid(selfObject);
+		auto baseId = getBaseId(selfObject);
 		auto editorId = getEditorId(selfObject);
 		auto XSCL = selfObject.data<float *>(_XSCL_);
 		auto locationalData = selfObject.data<float *>(_DATA_);

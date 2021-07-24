@@ -5,7 +5,7 @@
 
 #include <dark/dark.h>
 
-#include <skyrim/record.h>
+#include <skyrim/wrappers.h>
 
 namespace dark
 {

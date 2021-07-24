@@ -7,8 +7,7 @@
 #include <dark/ref.h>
 
 #include <skyrim/skyrim.h>
-#include <skyrim/record.h>
-#include <skyrim/recordarray.h>
+#include <skyrim/wrappers.h>
 
 #include <core/files.h>
 #include <skyrim/skeleton.h>
@@ -50,10 +49,10 @@ namespace dark
 	Record *GetRace(const char *raceId)
 	{
 		Record *race = nullptr;
-		ObjectArray array;
+		GrupWrapper array;
 		Grup *top = esp_top_grup(get_plugins()[0], __RACE__);
 		array(top).foreach(TOP, [&](unsigned int &i) {
-			Object object = array.getobject(i);
+			RecordWrapper object = array.getrecordwrapper(i);
 			auto editorId = getEditorIdOnly(object.record);
 			if (strcmp(editorId, raceId) == 0)
 			{
@@ -68,7 +67,7 @@ namespace dark
 
 	BodyPart::BodyPart(const char *raceId, const char *model)
 	{
-		Object race = Object(GetRace(raceId));
+		RecordWrapper race = RecordWrapper(GetRace(raceId));
 		ExportRaceHkxToKf(raceId);
 		auto anam = race.data<char *>(_ANAM_, 0);
 		Rc *rc = load_rc("meshes\\", model, 0x1);
