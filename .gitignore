@@ -59,3 +59,5 @@ bin/Gloom.esp
 bin/temp/draugr/kf/1hmattacka.kf
 *.kf
 bin/test.dds
+.vs/
+build/

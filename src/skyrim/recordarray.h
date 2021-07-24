@@ -24,7 +24,7 @@ namespace skyrim
 		unsigned int amount() const;
 		bool type(unsigned int, int) const;
 
-		void foreach (std::function<bool(unsigned int &)>);
+		void foreach (int, std::function<bool(unsigned int &)>);
 
 		Grup *getgrup(unsigned int i) const
 		{
@@ -49,10 +49,24 @@ namespace skyrim
 		template <typename T = void *>
 		T get(unsigned int i, int type = -1) const
 		{
-			assert(i < amount() && (i == -1 || type(i, type)));
+			assertc(i < amount() && (i != -1 && this->type(i, type)));
 			return (T)grup->mixed.elements[i];
 		}
 	};
 #undef X
+
+	enum GROUP_TYPES
+	{
+		TOP = 0,
+		WORLD_CHILDREN,
+		INTERIOR_CELL_BLOCK,
+		INTERIOR_CELL_SUB_BLOCK,
+		EXTERIOR_CELL_BLOCK,
+		EXTERIOR_CELL_SUB_BLOCK,
+		CELL_CHILDREN,
+		TOPIC_CHILDREN,
+		CELL_PERSISTENT_CHILDREN,
+		CELL_TEMPORARY_CHILDREN
+	};
 
 }

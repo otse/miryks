@@ -13,7 +13,7 @@ namespace skyrim
 		bool good = false;
 		Record *record = nullptr;
 		Grup *persistent = nullptr;
-		Grup *non_persistent = nullptr;
+		Grup *temporary = nullptr;
 	};
 
 	class Interior
@@ -31,7 +31,7 @@ namespace skyrim
 
 		static CELL getcell(const char *);
 		void update();
-		void parsegrup(CELL &, Grup *);
+		void parsegrup(int, CELL &, Grup *);
 		void loadcell();
 		void unload();
 		void placecamera();

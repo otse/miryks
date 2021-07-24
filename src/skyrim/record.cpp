@@ -44,7 +44,7 @@ namespace skyrim
 		subs.clear();
 		if (record == nullptr)
 			return;
-		assert(((Dud *)record)->x == RECORD);
+		assertc(((Dud *)record)->x == RECORD);
 		for (unsigned int i = 0; i < record->fields.size; i++)
 		{
 			Field *field = record->fields.subrecords[i];
@@ -62,7 +62,7 @@ namespace skyrim
 			if (skip-- <= 0)
 				break;
 		}
-		assert(skip <= 0);
+		assertc(skip <= 0);
 		return sub;
 	}
 

@@ -14,7 +14,7 @@ namespace skyrim
 
 	X::X(Grup *grup)
 	{
-		assert(grup);
+		assertc(grup);
 		(*this)(grup);
 	}
 
@@ -28,10 +28,10 @@ namespace skyrim
 	{
 		return *grup->hed;
 	}
-	
+
 	bool X::type(unsigned int i, int type) const
 	{
-		return type == get<Dud *>(i, type)->x;
+		return type == ((Dud *)grup->mixed.elements[i])->x;
 	}
 
 	unsigned int X::amount() const
@@ -39,8 +39,9 @@ namespace skyrim
 		return grup->mixed.size;
 	}
 
-	void X::foreach (std::function<bool(unsigned int &i)> f)
+	void X::foreach (int group_type, std::function<bool(unsigned int &i)> f)
 	{
+		assertc(hed().group_type == group_type);
 		for (unsigned int i = 0; i < amount(); i++)
 			if (f(i))
 				break;

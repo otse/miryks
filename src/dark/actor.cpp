@@ -52,7 +52,7 @@ namespace dark
 		Record *race = nullptr;
 		ObjectArray array;
 		Grup *top = esp_top_grup(get_plugins()[0], __RACE__);
-		array(top).foreach([&](unsigned int &i) {
+		array(top).foreach(TOP, [&](unsigned int &i) {
 			Object object = array.getobject(i);
 			auto editorId = getEditorIdOnly(object.record);
 			if (strcmp(editorId, raceId) == 0)
@@ -62,7 +62,7 @@ namespace dark
 			}
 			return false;
 		});
-		assert(race);
+		assertc(race);
 		return race;
 	}
 

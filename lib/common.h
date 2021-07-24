@@ -11,15 +11,17 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define assert(e)                         \
-    if (!(e))                             \
-    {                                     \
+#define assertc(e)                                            \
+    if (!(e))                                                 \
+    {                                                         \
         printf("assert file %s line %u", __FILE__, __LINE__); \
+        pause("");                                            \
     }
+
 #define assertm(e, m) \
     if (!(e))         \
     {                 \
-        pause(m);      \
+        pause(m);     \
     }
 
 int pause(const char *);
