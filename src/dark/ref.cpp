@@ -48,8 +48,8 @@ namespace dark
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = getBaseId(selfObject);
-		auto editorId = getEditorId(selfObject);
+		auto baseId = selfObject.baseid();
+		auto editorId = selfObject.editorid();
 		auto XSCL = selfObject.data<float *>(_XSCL_);
 		auto locationalData = selfObject.data<float *>(_DATA_);
 
@@ -122,7 +122,7 @@ namespace dark
 
 			Light *light = nullptr;
 
-			auto editorId = getEditorId(baseObject);
+			auto editorId = baseObject.editorid();
 			auto DATA = baseObject.data<int *>(_DATA_);
 			auto FNAM = baseObject.data<float *>(_FNAM_);
 

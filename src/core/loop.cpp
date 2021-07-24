@@ -109,9 +109,8 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		printf(" reload esp ! \n");
 		// Save current cell name
 		RecordWrapper object = RecordWrapper(dungeon->loaded_cell.record);
-		const char *cellName = getEditorId(object);
 		char dest[512];
-		strcpy(dest, cellName);
+		strcpy(dest, object.editorid());
 		Esp *esp = get_plugins()[1];
 		const char *name = esp->name;
 		Esp *has = has_plugin(name);

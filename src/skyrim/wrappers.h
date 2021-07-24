@@ -15,8 +15,6 @@ namespace skyrim
 	class GrupWrapper;
 
 	const char *getEditorIdOnly(const Record *);
-	const char *getEditorId(const RecordWrapper &);
-	unsigned int *getBaseId(const RecordWrapper &);
 
 	class RecordWrapper
 	{
@@ -38,6 +36,16 @@ namespace skyrim
 		{
 			0;
 		};
+
+		const char *editorid()
+		{
+			return data<const char *>(_EDID_);
+		}
+
+		unsigned int *baseid()
+		{
+			return data<unsigned int *>(_NAME_);
+		}
 
 		void set(Record *p);
 

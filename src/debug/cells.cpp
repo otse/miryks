@@ -39,7 +39,7 @@ void cell_gui()
 
 			RecordWrapper object = RecordWrapper(dungeon->loaded_cell.record);
 
-			const char *editorId = getEditorId(object);
+			const char *editorId = object.editorid();
 
 			if (0 != strcmp(items[current], editorId))
 			{
