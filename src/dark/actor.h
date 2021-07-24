@@ -5,14 +5,14 @@
 
 #include <dark/dark.h>
 
-#include <skyrim/wrappers.h>
+#include <skyrim/grup.h>
 
 namespace dark
 {
 	extern Keyframes *draugrAttack;
 	extern Keyframes *humanIdle, *humanForward, *humanLeft, *humanRight, *humanBack;
 
-	Record *GetRace(const char *);
+	record_t *GetRace(const char *);
 	//void Export(const char *);
 	void ExportRaceHkxToKf(const char *);
 	Keyframes *GetKeyframes(const char *);

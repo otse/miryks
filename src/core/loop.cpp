@@ -3,7 +3,7 @@
 #include <lib.h>
 
 #include <skyrim/mesh.h>
-#include <skyrim/wrappers.h>
+#include <skyrim/grup.h>
 #include <skyrim/interior.h>
 
 #include <dark/actor.h>
@@ -108,7 +108,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		printf(" reload esp ! \n");
 		// Save current cell name
-		RecordWrapper object = RecordWrapper(dungeon->loaded_cell.record);
+		Record object = Record(dungeon->loaded_cell.record);
 		char dest[512];
 		strcpy(dest, object.editorid());
 		Esp *esp = get_plugins()[1];

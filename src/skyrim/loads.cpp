@@ -4,7 +4,7 @@
 
 #include <core/files.h>
 
-#include <skyrim/wrappers.h>
+#include <skyrim/grup.h>
 #include <skyrim/mesh.h>
 
 #include <renderer/group.h>

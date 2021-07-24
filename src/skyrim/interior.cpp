@@ -4,7 +4,7 @@
 #include "skyrim.h"
 #include "interior.h"
 #include "mesh.h"
-#include "wrappers.h"
+#include "grup.h"
 
 #include <algorithm>
 #include <cctype>
@@ -33,13 +33,13 @@ namespace skyrim
 	CELL Interior::getcell(const char *name)
 	{
 		CELL cell;
-		GrupWrapper top, block, subblock;
+		Grup top, block, subblock;
 		bool stop = false;
 		top(esp_top_grup(get_plugins()[1], __CELL__)).foreach(TOP, [&](unsigned int i) {
 			block(top.getgrup(i)).foreach(INTERIOR_CELL_BLOCK, [&](unsigned int j) {
 				subblock(block.getgrup(j)).foreach(INTERIOR_CELL_SUB_BLOCK, [&](unsigned int &k) {
-					RecordWrapper object = subblock.getrecordwrap(k);
-					GrupWrapper D = subblock.getgrupwrap(k + 1);
+					Record object(subblock.getrecord(k));
+					Grup D = subblock.getgrup(k + 1);
 					const char *editorId = object.editorid();
 					if (0 == strcmp(name, editorId))
 					{
@@ -61,13 +61,13 @@ namespace skyrim
 
 	static void PlaceCameraDud(Interior *);
 
-	void Interior::parsegrup(int group_type, CELL &cell, Grup *grup)
+	void Interior::parsegrup(int group_type, CELL &cell, grupp grup)
 	{
 		if (grup == nullptr)
 			return;
-		GrupWrapper array;
+		Grup array;
 		array(grup).foreach(group_type, [&](unsigned int i) {
-			RecordWrapper object = array.getrecordwrap(i);
+			Record object(array.getrecord(i));
 			if (object.oftype(__REFR__))
 			{
 				Ref *ref = new Ref(object.record);
@@ -89,9 +89,9 @@ namespace skyrim
 	{
 		if (alreadyTeleported)
 			return;
-		GrupWrapper array;
+		Grup array;
 		array(loaded_cell.persistent).foreach(CELL_PERSISTENT_CHILDREN, [&](unsigned int i) {
-			RecordWrapper object = array.getrecordwrap(i);
+			Record object(array.getrecord(i));
 			if (*object.baseid() == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker

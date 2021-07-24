@@ -16,7 +16,7 @@ fi->objectIndex
 #define LOW(x) ((x) & 0xff)
 #define HIGH(x) ((x) >> 8)
 
-api void esp_print_grup(Esp *esp, char *s, Grup *grup)
+api void esp_print_grup(Esp *esp, char *s, grup_t *grup)
 {
 int w = snprintf(s, 200, "\
 id: %u\
@@ -40,7 +40,7 @@ grup->mixed.size
 );
 }
 
-api void esp_print_record(Esp *esp, char *s, Record *record)
+api void esp_print_record(Esp *esp, char *s, record_t *record)
 {
 int w = snprintf(s, 200, "\
 id: %u\
@@ -73,7 +73,7 @@ record->fields.size
 );
 }
 
-char *specifics(Esp *esp, char *s, Subrecord *field)
+char *specifics(Esp *esp, char *s, subrecord_t *field)
 {
 if (field->hed->type == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
@@ -89,7 +89,7 @@ snprintf(s, 300, "\
 	return s;
 }
 
-api void esp_print_field(Esp *esp, char *s, Subrecord *field)
+api void esp_print_field(Esp *esp, char *s, subrecord_t *field)
 {
 char x[300] = "Not Handled\0";
 int w = snprintf(s, 400, "\

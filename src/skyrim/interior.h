@@ -11,9 +11,9 @@ namespace skyrim
 	struct CELL
 	{
 		bool good = false;
-		Record *record = nullptr;
-		Grup *persistent = nullptr;
-		Grup *temporary = nullptr;
+		recordp record = nullptr;
+		grupp persistent = nullptr;
+		grupp temporary = nullptr;
 	};
 
 	class Interior
@@ -31,7 +31,7 @@ namespace skyrim
 
 		static CELL getcell(const char *);
 		void update();
-		void parsegrup(int, CELL &, Grup *);
+		void parsegrup(int, CELL &, grupp);
 		void loadcell();
 		void unload();
 		void placecamera();

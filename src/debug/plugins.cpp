@@ -16,11 +16,11 @@ static std::stringstream ss;
 
 static Plugin *plugin = NULL;
 
-void im_grup(Grup *, int);
-void im_record(Record *);
+void im_grup(grup_t *, int);
+void im_record(record_t *);
 void im_subrecord(Field *);
 
-void im_grup(Grup *grup, int top_grup = -1)
+void im_grup(grup_t *grup, int top_grup = -1)
 {
 	char t[100];
 	snprintf(t, 100, "GRUP %i %s", grup->id, top_grup != -1 ? plugin->tops[top_grup] : "");
@@ -43,7 +43,7 @@ void im_grup(Grup *grup, int top_grup = -1)
 	}
 }
 
-void im_record(Record *record)
+void im_record(record_t *record)
 {
 	char *edid = nullptr;
 	Field *first = record->fields.subrecords[0];
@@ -158,7 +158,7 @@ void esp_gui()
 			//if (ImGui::TreeNode("Grups"))
 			//{
 			for (unsigned int i = 0; i < plugin->grups.size; i++)
-				im_grup((Grup *)plugin->grups.elements[i], i);
+				im_grup((grup_t *)plugin->grups.elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();
@@ -194,7 +194,7 @@ void esp_gui()
 				const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
 				const bool child_is_visible = ImGui::BeginChild(child_id, vec, true, child_flags);
 				for (unsigned int i = 0; i < filtered->size; i++)
-					im_record((Record *)filtered->elements[i]);
+					im_record((record_t *)filtered->elements[i]);
 				ImGui::EndChild();
 			}
 			ImGui::EndTabItem();
@@ -206,7 +206,7 @@ void esp_gui()
 			const ImGuiID child_id = ImGui::GetID((void*)(intptr_t)0);
 			const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
 			for (int i = 0; i < esp->statics.size; i++)
-				im_record((Record *)esp->statics.elements[i]);
+				im_record((record_t *)esp->statics.elements[i]);
 			ImGui::EndChild();
 			ImGui::EndTabItem();
 		}*/

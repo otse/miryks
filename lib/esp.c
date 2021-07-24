@@ -7,9 +7,9 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
-// Subrecord *read_subrecord ?
-Record *read_record(Esp *);
-Grup *read_grup(Esp *);
+// subrecord_t *read_subrecord ?
+record_t *read_record(Esp *);
+grup_t *read_grup(Esp *);
 
 #define Buf esp->buf
 #define Pos esp->pos
@@ -56,7 +56,7 @@ api int plugin_load(Esp *esp)
 	array(&esp->records, hedr_num_records(esp));
 	while(Pos < esp->filesize)
 	{
-	Grup *grup = read_grup(esp);
+	grup_t *grup = read_grup(esp);
 	insert(&esp->grups, grup);
 	}
 	make_top_grups(esp);
@@ -64,14 +64,14 @@ api int plugin_load(Esp *esp)
 	return 1;
 }
 
-void uncompress_record(Esp *, Record *);
-inline void read_record_fields(Esp *, Record *);
+void uncompress_record(Esp *, record_t *);
+inline void read_record_fields(Esp *, record_t *);
 
-Record *read_record(Esp *esp)
+record_t *read_record(Esp *esp)
 {
 	// Todo, clean big unclear assignments lik these thruout the program
-	Record *rec;
-	rec = malloc(sizeof(Record));
+	record_t *rec;
+	rec = malloc(sizeof(record_t));
 	rec->fi = NULL;
 	// head
 	rec->x = RECORD;
@@ -104,9 +104,9 @@ Record *read_record(Esp *esp)
 	return rec;
 }
 
-inline Subrecord *read_field(Esp *, Record *, unsigned int);
+inline subrecord_t *read_field(Esp *, record_t *, unsigned int);
 
-inline void read_record_fields(Esp *esp, Record *rec)
+inline void read_record_fields(Esp *esp, record_t *rec)
 {
 	long *pos = &Pos;
 	if (rec->hed->flags & 0x00040000)
@@ -115,7 +115,7 @@ inline void read_record_fields(Esp *esp, Record *rec)
 	unsigned int large = 0;
 	while(*pos - start < rec->actualSize)
 	{
-	Subrecord *sub;
+	subrecord_t *sub;
 	sub = read_field(esp, rec, large);
 	large = 0;
 	if (sub->hed->type == *(unsigned int *)"XXXX")
@@ -125,7 +125,7 @@ inline void read_record_fields(Esp *esp, Record *rec)
 	}
 }
 
-inline Subrecord *read_field(Esp *esp, Record *rec, unsigned int override)
+inline subrecord_t *read_field(Esp *esp, record_t *rec, unsigned int override)
 {
 	long *pos = &Pos;
 	char *buf = Buf;
@@ -134,8 +134,8 @@ inline Subrecord *read_field(Esp *esp, Record *rec, unsigned int override)
 	pos = &rec->pos;
 	buf = rec->buf;
 	}
-	Subrecord *sub;
-	sub = malloc(sizeof(Subrecord));
+	subrecord_t *sub;
+	sub = malloc(sizeof(subrecord_t));
 	// hed
 	sub->x = SUBRECORD;
 	sub->index = rec->indices++;
@@ -151,12 +151,12 @@ inline Subrecord *read_field(Esp *esp, Record *rec, unsigned int override)
 	return sub;
 }
 
-inline void read_grup_records(Esp *, Grup *);
+inline void read_grup_records(Esp *, grup_t *);
 
 
-Grup *read_grup(Esp *esp)
+grup_t *read_grup(Esp *esp)
 {
-	Grup *grup = malloc(sizeof(Grup));
+	grup_t *grup = malloc(sizeof(grup_t));
 	//grup->lowest = grup->highest = 0;
 	// hed
 	grup->x = GRUP;
@@ -178,7 +178,7 @@ const unsigned int peek_type(Esp *esp)
 	return espwrd (Buf + Pos);
 }
 
-inline void read_grup_records(Esp *esp, Grup *grup)
+inline void read_grup_records(Esp *esp, grup_t *grup)
 {
 	long size = grup->hed->size - sizeof(struct grup_header) - 16;
 	long start = Pos;
@@ -198,7 +198,7 @@ void make_top_grups(Esp *esp)
 	for (unsigned int i = 0; i < esp->grups.size; i++)
 	{
 	esp->tops[i] = "None";
-	const Grup *grup = esp->grups.elements[i];
+	const grup_t *grup = esp->grups.elements[i];
 	dive:
 	if (grup->mixed.size == 0)
 	continue;
@@ -207,7 +207,7 @@ void make_top_grups(Esp *esp)
 	grup = grup->mixed.elements[0];
 	goto dive;
 	}
-	Record *first = grup->mixed.elements[0];
+	record_t *first = grup->mixed.elements[0];
 	for (int j = 0; j < max; j++)
 	if (first->hed->type == *(unsigned int *)esp_types[j])
 	{
@@ -217,7 +217,7 @@ void make_top_grups(Esp *esp)
 	}
 }
 
-api Grup *esp_top_grup(const Esp *esp, const char type[5])
+api grup_t *esp_top_grup(const Esp *esp, const char type[5])
 {
 	for (unsigned int i = 0; i < esp->grups.size; i++)
 	if (*(unsigned int *)type == *(unsigned int *)esp->tops[i])
@@ -225,7 +225,7 @@ api Grup *esp_top_grup(const Esp *esp, const char type[5])
 	return NULL;
 }
 
-inline void build_form_id(Esp *esp, Record *record, struct form_id *fi)
+inline void build_form_id(Esp *esp, record_t *record, struct form_id *fi)
 {
 	fi->esp = esp;
 	record->fi = fi;
@@ -250,7 +250,7 @@ void make_form_ids(Esp *esp)
 	build_form_id(esp, array->elements[i], &esp->formIds[i]);
 }
 
-api Record *esp_get_form_id(unsigned int formId)
+api record_t *esp_get_form_id(unsigned int formId)
 {
 	for (int i = 5; i --> 0; )
 	{
@@ -259,7 +259,7 @@ api Record *esp_get_form_id(unsigned int formId)
 	continue;
 	for (unsigned int j = 0; j < esp->records.size; j++)
 	{
-	Record *rec = esp->records.elements[j];
+	record_t *rec = esp->records.elements[j];
 	if (rec->fi->formId == formId)
 	return rec;
 	}
@@ -268,7 +268,7 @@ api Record *esp_get_form_id(unsigned int formId)
 }
 
 /*
-api void esp_array_loop(EspCArray *array, void (*func)(Subrecord *field, void *data), void *data)
+api void esp_array_loop(EspCArray *array, void (*func)(subrecord_t *field, void *data), void *data)
 {
 	for (int i = 0; i < array->size; i++)
 	{
@@ -286,14 +286,14 @@ api EspCArray *esp_filter_objects(const Esp *esp, const char type[5])
 	array(filtered, 100);
 	for (unsigned int i = 0; i < esp->records.size; i++)
 	{
-	Record *record = esp->records.elements[i];
+	record_t *record = esp->records.elements[i];
 	if (record->hed->type == *(unsigned int *)type)
 	insert(filtered, record);
 	}
 	return filtered;
 }
 
-void uncompress_record(Esp *esp, Record *rec)
+void uncompress_record(Esp *esp, record_t *rec)
 {
 	// Workhorse code that is similar to how Bsa does it
 	char *src = rec->data;
@@ -331,7 +331,7 @@ api void free_plugin(Esp **p)
 	plugins[i] = NULL;
 	for (unsigned int i = 0; i < esp->records.size; i++)
 	{
-	Record *record = esp->records.elements[i];
+	record_t *record = esp->records.elements[i];
 	if (record->hed->flags & 0x00040000)
 	free(record->buf);
 	free_esp_array(&record->fields);

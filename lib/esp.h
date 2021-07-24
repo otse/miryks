@@ -12,9 +12,11 @@
 
 struct form_id;
 
-struct Grup;
-struct Record;
-struct Subrecord;
+struct grup_t;
+struct record_t;
+struct subrecord_t;
+
+//typedef png_struct * png_structp;
 
 #define Fields object->fields
 
@@ -28,9 +30,9 @@ typedef struct EspCArray
 {
 	union{
 	void **elements;
-	struct Grup **grups;
-	struct Record **records;
-	struct Subrecord **subrecords;
+	struct grup_t **grups;
+	struct record_t **records;
+	struct subrecord_t **subrecords;
 	};
 	unsigned int size;
 	unsigned int capacity;
@@ -44,7 +46,7 @@ typedef struct Esp
 	const char *buf;
 	long filesize;
 	int active;
-	struct Record *header;
+	struct record_t *header;
 	EspCArray grups, records;
 	struct form_id *formIds;
 	const char **tops;
@@ -65,7 +67,7 @@ struct form_id
 	Esp *esp;
 	unsigned int formId, modIndex, objectIndex;
 	char hex[9];
-	struct Record *record;
+	struct record_t *record;
 	void *plugin;
 };
 
@@ -93,16 +95,16 @@ typedef struct Dud {
 	char x;
 } Dud;
 
-typedef struct Grup
+typedef struct grup_t
 {
 	char x;
 	unsigned int id;
 	const struct grup_header *hed;
 	unsigned char *data;
 	EspCArray mixed;
-} Grup;
+} grup_t;
 
-typedef struct Record
+typedef struct record_t
 {
 	char x;
 	unsigned int indices;
@@ -116,9 +118,9 @@ typedef struct Record
 	// compression related
 	long pos;
 	char *buf;
-} Record;
+} record_t;
 
-typedef struct Subrecord
+typedef struct subrecord_t
 {
 	char x;
 	unsigned int index;
@@ -127,7 +129,11 @@ typedef struct Subrecord
 	const struct field_header *hed;
 	unsigned int actualSize;
 	unsigned char *data;
-} Subrecord;
+} subrecord_t;
+
+typedef grup_t * grupp;
+typedef record_t * recordp;
+typedef subrecord_t * subrecordp;
 
 #pragma pack(pop)
 
@@ -135,9 +141,9 @@ api Esp *plugin_slate();
 api int plugin_load(Esp *);
 
 api void esp_print_form_id(Esp *, char *, struct form_id *);
-api void esp_print_grup(Esp *, char *, Grup *);
-api void esp_print_record(Esp *, char *, Record *);
-api void esp_print_field(Esp *, char *, Subrecord *);
+api void esp_print_grup(Esp *, char *, grup_t *);
+api void esp_print_record(Esp *, char *, record_t *);
+api void esp_print_field(Esp *, char *, subrecord_t *);
 
 api Esp **get_plugins();
 
@@ -145,9 +151,9 @@ api Esp *has_plugin(const char *);
 
 api EspCArray *esp_filter_objects(const Esp *, const char [5]);
 
-api Record *esp_get_form_id(unsigned int);
+api record_t *esp_get_form_id(unsigned int);
 
-api Grup *esp_top_grup(const Esp *, const char [5]);
+api grup_t *esp_top_grup(const Esp *, const char [5]);
 
 api void free_plugin(Esp **);
 api void free_esp_array(EspCArray *);

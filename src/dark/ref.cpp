@@ -3,7 +3,7 @@
 
 #include <dark/ref.h>
 
-#include <skyrim/wrappers.h>
+#include <skyrim/grup.h>
 #include <skyrim/mesh.h>
 #include <core/files.h>
 
@@ -23,7 +23,7 @@
 
 namespace dark
 {
-	Ref::Ref(::Record *record) : selfObject(record)
+	Ref::Ref(::record_t *record) : selfObject(record)
 	{
 		mesh = nullptr;
 		drawGroup = nullptr;

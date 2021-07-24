@@ -107,6 +107,16 @@
         "format": "cpp",
         "forward_list": "cpp",
         "optional": "cpp",
-        "nitypes.h": "c"
+        "nitypes.h": "c",
+        "common.h": "c",
+        "stdlib.h": "c",
+        "complex": "cpp",
+        "condition_variable": "cpp",
+        "deque": "cpp",
+        "mutex": "cpp",
+        "queue": "cpp",
+        "set": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     }
 }

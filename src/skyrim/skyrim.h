@@ -3,8 +3,8 @@
 
 namespace skyrim
 {
-	class RecordWrapper;
-	class GrupWrapper;
+	class Record;
+	class Grup;
 	
 	class Mesh;
 	class SkinnedMesh;

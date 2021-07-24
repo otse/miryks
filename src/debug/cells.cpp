@@ -3,7 +3,7 @@
 #include <dark/dark.h>
 #include <core/files.h>
 
-#include <skyrim/wrappers.h>
+#include <skyrim/grup.h>
 #include <skyrim/interior.h>
 
 using namespace dark;
@@ -37,7 +37,7 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			RecordWrapper object = RecordWrapper(dungeon->loaded_cell.record);
+			Record object = Record(dungeon->loaded_cell.record);
 
 			const char *editorId = object.editorid();
 
