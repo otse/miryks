@@ -51,7 +51,7 @@ namespace skyrim
 			return type == ((Dud *)grup->mixed.elements[i])->x;
 		}
 
-		void foreach (int group_type, std::function<bool(unsigned int &i)> f)
+		void foreach(int group_type, std::function<bool(unsigned int &i)> f)
 		{
 			assertc(hed().group_type == group_type);
 			for (unsigned int i = 0; i < amount(); i++)

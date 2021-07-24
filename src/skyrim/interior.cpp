@@ -36,8 +36,8 @@ namespace skyrim
 		Grup top, block, subblock;
 		bool stop = false;
 		top(esp_top_grup(get_plugins()[1], __CELL__)).foreach(TOP, [&](unsigned int i) {
-			block(top.getgrup(i)).foreach(INTERIOR_CELL_BLOCK, [&](unsigned int j) {
-				subblock(block.getgrup(j)).foreach(INTERIOR_CELL_SUB_BLOCK, [&](unsigned int &k) {
+			block(top.getgrup(i)).foreach(2, [&](unsigned int j) {
+				subblock(block.getgrup(j)).foreach(3, [&](unsigned int &k) {
 					Record object(subblock.getrecord(k));
 					Grup D = subblock.getgrup(k + 1);
 					const char *editorId = object.editorid();

@@ -6,9 +6,6 @@
 //#include <dark/dark.h>
 #include <skyrim/skyrim.h>
 
-#include <map>
-#include <functional>
-
 namespace skyrim
 {
 	const char *getEditorIdOnly(const recordp);
@@ -16,23 +13,15 @@ namespace skyrim
 	class Record
 	{
 	public:
-		recordp record;
-
-		// todo, get rid of map just use for loop
-
-		std::multimap<unsigned int, subrecordp> subs;
-
-		Record()
-		{
-			record = nullptr;
-		}
+		recordp record = nullptr;
 
 		Record(recordp p)
 		{
-			set(p);
+			record = p;
+			assertc(((Dud *)p)->x == RECORD);
 		}
 
-		~Record() {};
+		~Record(){};
 
 		const char *editorid()
 		{
@@ -44,44 +33,31 @@ namespace skyrim
 			return data<unsigned int *>(_NAME_);
 		}
 
-		// todo rewrite
-		void set(record_t *p)
+		subrecordp find(const char *type, int skip = s)
 		{
-			record = p;
-			subs.clear();
-			if (record == nullptr)
-				return;
-			assertc(((Dud *)record)->x == RECORD);
-			for (unsigned int i = 0; i < record->fields.size; i++)
+			for (unsigned int i = 0; i < amount(); i++)
 			{
-				subrecord_t *field = record->fields.subrecords[i];
-				subs.emplace(field->hed->type, field);
+				const subrecordp sub = get(i);
+				if (*(unsigned int *)type == sub->hed->type)
+					if (skip-- < 1)
+						return sub;
 			}
+			return nullptr;
 		}
 
-		// todo rewrite
-		subrecord_t *finder(const char *type, int skip) const
-		{
-			subrecord_t *sub = nullptr;
-			auto ret = subs.equal_range(*(unsigned int *)type);
-			for (auto it = ret.first; it != ret.second; ++it)
-			{
-				sub = it->second;
-				if (skip-- <= 0)
-					break;
-			}
-			assertc(skip <= 0);
-			return sub;
-		}
-
-		bool valid() const
+		bool valid()` const
 		{
 			return record != nullptr;
 		}
 
-		unsigned int count(const char *type) const
+		const subrecordp get(unsigned int i) const
 		{
-			return subs.count(*(unsigned int *)type);
+			return record->fields.subrecords[i];
+		}
+
+		unsigned int amount() const
+		{
+			return record->fields.size();
 		}
 
 		bool oftype(const char *type) const
@@ -100,7 +76,7 @@ namespace skyrim
 		template <typename T = void *>
 		T data(const char *type, int skip = 0) const
 		{
-			subrecordp field = finder(type, skip);
+			subrecordp field = find(type, skip);
 			return field ? (T)field->data : nullptr;
 		}
 	};
