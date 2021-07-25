@@ -26,8 +26,8 @@ namespace skyrim
 	void Interior::loadcell()
 	{
 		loaded_cell = getcell(editorId);
-		parsegrup(CELL_PERSISTENT_CHILDREN, loaded_cell, loaded_cell.persistent);
-		parsegrup(CELL_TEMPORARY_CHILDREN, loaded_cell, loaded_cell.temporary);
+		parsegrup(CellPersistentChildren, loaded_cell, loaded_cell.persistent);
+		parsegrup(CellTemporaryChildren, loaded_cell, loaded_cell.temporary);
 	}
 
 	CELL Interior::getcell(const char *name)
@@ -35,9 +35,9 @@ namespace skyrim
 		CELL cell;
 		Grup top, block, subblock;
 		bool stop = false;
-		top(esp_top_grup(get_plugins()[1], __CELL__)).foreach(TOP, [&](unsigned int i) {
-			block(top.getgrup(i)).foreach(2, [&](unsigned int j) {
-				subblock(block.getgrup(j)).foreach(3, [&](unsigned int &k) {
+		top(esp_top_grup(get_plugins()[1], CELL)).foreach(Top, [&](unsigned int i) {
+			block(top.getgrup(i)).foreach(InteriorCellBlock, [&](unsigned int j) {
+				subblock(block.getgrup(j)).foreach(InteriorCellSubBlock, [&](unsigned int &k) {
 					Record object(subblock.getrecord(k));
 					Grup D = subblock.getgrup(k + 1);
 					const char *editorId = object.editorId();
@@ -68,14 +68,14 @@ namespace skyrim
 		Grup array;
 		array(grup).foreach(group_type, [&](unsigned int i) {
 			Record object(array.getrecord(i));
-			if (object.oftype(__REFR__))
+			if (object.oftype(REFR))
 			{
 				Ref *ref = new Ref(object.record);
 				refs.push_back(ref);
 				const char *editorId = object.editorId();
 				if (editorId)
 					editorIds.emplace(editorId, ref);
-				if (ref->baseObject.valid() && ref->baseObject.oftypeany({__WEAP__, __MISC__}))
+				if (ref->baseObject.valid() && ref->baseObject.oftypeany({WEAP, MISC}))
 				{
 					iterables.push_back(ref);
 				}
@@ -90,7 +90,7 @@ namespace skyrim
 		if (alreadyTeleported)
 			return;
 		Grup array;
-		array(loaded_cell.persistent).foreach(CELL_PERSISTENT_CHILDREN, [&](unsigned int i) {
+		array(loaded_cell.persistent).foreach(CellPersistentChildren, [&](unsigned int i) {
 			Record object(array.getrecord(i));
 			if (*object.base() == 0x0000003B) //  "Marker"
 			{

@@ -16,38 +16,38 @@ namespace skyrim
 	class Grup
 	{
 	public:
-		grupp grup;
+		const grupp grp;
 
 		Grup()
 		{
 			(*this)(nullptr);
 		}
 
-		Grup(grupp grup)
+		Grup(grupp grp)
 		{
-			assertc(grup);
-			(*this)(grup);
+			assertc(grp);
+			(*this)(grp);
 		}
 
-		Grup &operator()(grupp grup)
+		Grup &operator()(grupp grp)
 		{
-			this->grup = grup;
+			this->grp = grp;
 			return *this;
 		}
 
 		const grup_header &hed() const
 		{
-			return *grup->hed;
+			return *grp->hed;
 		}
 
 		unsigned int amount() const
 		{
-			return grup->mixed.size;
+			return grp->mixed.size;
 		}
 
-		bool type(unsigned int i, int type) const
+		bool typex(unsigned int i, int type) const
 		{
-			return type == ((Dud *)grup->mixed.elements[i])->x;
+			return type == ((Dud *)grp->mixed.elements[i])->x;
 		}
 
 		void foreach(int group_type, std::function<bool(unsigned int &i)> f)
@@ -59,11 +59,11 @@ namespace skyrim
 		}
 		
 		template <typename T = void *>
-		T get(unsigned int i, int type = -1) const
+		T get(unsigned int i, int x = -1) const
 		{
 			assertc(i < amount());
-			assertc(i != -1 && this->type(i, type));
-			return (T)grup->mixed.elements[i];
+			assertc(i != -1 && typex(i, x));
+			return (T)grp->mixed.elements[i];
 		}
 
 		grupp getgrup(unsigned int i) const
@@ -78,18 +78,17 @@ namespace skyrim
 	};
 #undef X
 
-	// Todo, CamelCase these types ??
-	enum GROUP_TYPES
+	enum GrupTypes
 	{
-		TOP = 0,
-		WORLD_CHILDREN,
-		INTERIOR_CELL_BLOCK,
-		INTERIOR_CELL_SUB_BLOCK,
-		EXTERIOR_CELL_BLOCK,
-		EXTERIOR_CELL_SUB_BLOCK,
-		CELL_CHILDREN,
-		TOPIC_CHILDREN,
-		CELL_PERSISTENT_CHILDREN,
-		CELL_TEMPORARY_CHILDREN
+		Top = 0,
+		WorldChildren,
+		InteriorCellBlock,
+		InteriorCellSubBlock,
+		ExteriorCellBlock,
+		ExteriorCellSubBlock,
+		CellChildren,
+		TopicChildren,
+		CellPersistentChildren,
+		CellTemporaryChildren
 	};
 }

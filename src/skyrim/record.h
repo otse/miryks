@@ -5,6 +5,13 @@
 #include <lib.h>
 #include <skyrim/skyrim.h>
 
+#define REFR "REFR"
+#define WEAP "WEAP"
+#define MISC "MISC"
+#define CELL "CELL"
+#define EDID "EDID"
+#define NAME "NAME"
+
 namespace skyrim
 {
 	typedef unsigned int *formId;
@@ -16,53 +23,53 @@ namespace skyrim
 	class Record
 	{
 	public:
-		recordp record;
+		const recordp rp;
 
 		Record()
 		{
-			record = nullptr;
+			rp = nullptr;
 		}
 
-		Record(recordp p)
+		Record(recordp a)
 		{
-			record = p;
+			rp = a;
 		}
 
-		subrecordp find(signature sig, int skip = 0)
+		subrecordp find(signature sgn, int skip = 0)
 		{
 			for (unsigned int i = 0; i < amount(); i++)
 			{
-				const subrecordp sub = get(i);
-				if (*(unsigned int *)sig == sub->hed->type)
+				const subrecordp srp = get(i);
+				if (*(unsigned int *)sgn == srp->hed->type)
 					if (skip-- < 1)
-						return sub;
+						return srp;
 			}
 			return nullptr;
 		}
 
-		//const record_header &hed() const
-		//{
-		//	return *record->hed;
-		//}
+		const record_header &hed() const
+		{
+			return *record->hed;
+		}
 
 		bool valid() const
 		{
-			return !!record;
+			return rp != nullptr;
 		}
 
 		const subrecordp get(unsigned int i) const
 		{
-			return record->fields.subrecords[i];
+			return rp->fields.subrecords[i];
 		}
 
 		unsigned int amount() const
 		{
-			return record->fields.size;
+			return rp->fields.size;
 		}
 
-		bool oftype(signature sig) const
+		bool oftype(signature sgn) const
 		{
-			return *(unsigned int *)sig == record->hed->type;
+			return *(unsigned int *)sgn == rp->hed->type;
 		}
 
 		bool oftypeany(std::vector<signature> sigs) const
@@ -76,8 +83,8 @@ namespace skyrim
 		template <typename T = void *>
 		T data(signature type, int skip = 0) const
 		{
-			subrecordp field = find(type, skip);
-			return field ? (T)field->data : nullptr;
+			subrecordp srp = find(type, skip);
+			return srp ? (T)srp->data : nullptr;
 		}
 
 		editorId editorId() const
