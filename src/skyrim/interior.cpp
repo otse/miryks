@@ -40,7 +40,7 @@ namespace skyrim
 				subblock(block.getgrup(j)).foreach(3, [&](unsigned int &k) {
 					Record object(subblock.getrecord(k));
 					Grup D = subblock.getgrup(k + 1);
-					const char *editorId = object.editorid();
+					const char *editorId = object.editorId();
 					if (0 == strcmp(name, editorId))
 					{
 						cell.record = object.record;
@@ -72,7 +72,7 @@ namespace skyrim
 			{
 				Ref *ref = new Ref(object.record);
 				refs.push_back(ref);
-				const char *editorId = object.editorid();
+				const char *editorId = object.editorId();
 				if (editorId)
 					editorIds.emplace(editorId, ref);
 				if (ref->baseObject.valid() && ref->baseObject.oftypeany({__WEAP__, __MISC__}))
@@ -92,7 +92,7 @@ namespace skyrim
 		Grup array;
 		array(loaded_cell.persistent).foreach(CELL_PERSISTENT_CHILDREN, [&](unsigned int i) {
 			Record object(array.getrecord(i));
-			if (*object.baseid() == 0x0000003B) //  "Marker"
+			if (*object.base() == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
 				float *locationalData = object.data<float *>(_DATA_);

@@ -110,7 +110,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		// Save current cell name
 		Record object = Record(dungeon->loaded_cell.record);
 		char dest[512];
-		strcpy(dest, object.editorid());
+		strcpy(dest, object.editorId());
 		Esp *esp = get_plugins()[1];
 		const char *name = esp->name;
 		Esp *has = has_plugin(name);

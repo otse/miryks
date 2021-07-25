@@ -3,51 +3,51 @@
 #include <cstdarg>
 
 #include <lib.h>
-//#include <dark/dark.h>
 #include <skyrim/skyrim.h>
 
 namespace skyrim
 {
+	typedef unsigned int *formId;
+	typedef const char *editorId;
+	typedef const char signature[5];
+
 	const char *getEditorIdOnly(const recordp);
 
 	class Record
 	{
 	public:
-		recordp record = nullptr;
+		recordp record;
+
+		Record()
+		{
+			record = nullptr;
+		}
 
 		Record(recordp p)
 		{
 			record = p;
-			assertc(((Dud *)p)->x == RECORD);
 		}
 
-		~Record(){};
-
-		const char *editorid()
-		{
-			return data<const char *>(_EDID_);
-		}
-
-		unsigned int *baseid()
-		{
-			return data<unsigned int *>(_NAME_);
-		}
-
-		subrecordp find(const char *type, int skip = s)
+		subrecordp find(signature sig, int skip = 0)
 		{
 			for (unsigned int i = 0; i < amount(); i++)
 			{
 				const subrecordp sub = get(i);
-				if (*(unsigned int *)type == sub->hed->type)
+				if (*(unsigned int *)sig == sub->hed->type)
 					if (skip-- < 1)
 						return sub;
 			}
 			return nullptr;
 		}
 
-		bool valid()` const
+		//const record_header &hed() const
+		//{
+		//	return *record->hed;
+		//}
+
+		bool valid() const
 		{
-			return record != nullptr;
+			return !!record;
 		}
 
 		const subrecordp get(unsigned int i) const
@@ -57,27 +57,37 @@ namespace skyrim
 
 		unsigned int amount() const
 		{
-			return record->fields.size();
+			return record->fields.size;
 		}
 
-		bool oftype(const char *type) const
+		bool oftype(signature sig) const
 		{
-			return *(unsigned int *)type == record->hed->type;
+			return *(unsigned int *)sig == record->hed->type;
 		}
 
-		bool oftypeany(std::vector<const char *> types) const
+		bool oftypeany(std::vector<signature> sigs) const
 		{
-			for (const char *type : types)
-				if (oftype(type))
+			for (signature sig : sigs)
+				if (oftype(sig))
 					return true;
 			return false;
 		}
 
 		template <typename T = void *>
-		T data(const char *type, int skip = 0) const
+		T data(signature type, int skip = 0) const
 		{
 			subrecordp field = find(type, skip);
 			return field ? (T)field->data : nullptr;
+		}
+
+		editorId editorId() const
+		{
+			return data<const char *>(EDID);
+		}
+
+		formId base() const
+		{
+			return data<unsigned int *>(NAME);
 		}
 	};
 }

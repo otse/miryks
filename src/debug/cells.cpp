@@ -39,7 +39,7 @@ void cell_gui()
 
 			Record object = Record(dungeon->loaded_cell.record);
 
-			const char *editorId = object.editorid();
+			const char *editorId = object.editorId();
 
 			if (0 != strcmp(items[current], editorId))
 			{

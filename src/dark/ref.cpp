@@ -23,7 +23,7 @@
 
 namespace dark
 {
-	Ref::Ref(::record_t *record) : selfObject(record)
+	Ref::Ref(recordp record) : Record(record)
 	{
 		mesh = nullptr;
 		drawGroup = nullptr;
@@ -48,13 +48,10 @@ namespace dark
 
 		translation = rotation = scale = mat4(1.0);
 
-		auto baseId = selfObject.baseid();
-		auto editorId = selfObject.editorid();
-		auto XSCL = selfObject.data<float *>(_XSCL_);
-		auto locationalData = selfObject.data<float *>(_DATA_);
+		formId baseId = base();
 
-		if (editorId)
-			this->editorId = editorId;
+		auto XSCL = data<float *>(_XSCL_);
+		auto locationalData = data<float *>(_DATA_);
 
 		if (XSCL)
 			scale = glm::scale(mat4(1.0), vec3(*XSCL));
@@ -80,7 +77,7 @@ namespace dark
 		matrix = translation * rotation * scale;
 	}
 
-	void Ref::forBaseId(unsigned int *baseId)
+	void Ref::forBaseId(formId baseId)
 	{
 		if (!baseId)
 			return;
@@ -90,7 +87,7 @@ namespace dark
 		if (id == 0x0005AD9E) // Gold ingots to Orichalum ingots
 			id = 0x0005AD99;
 
-		baseObject.set(esp_get_form_id(id));
+		baseObject = esp_get_form_id(id);
 
 		assertm(baseObject.valid(), "cant find refs Name-BaseId record");
 
@@ -122,7 +119,7 @@ namespace dark
 
 			Light *light = nullptr;
 
-			auto editorId = baseObject.editorid();
+			auto editorId = baseObject.editorId();
 			auto DATA = baseObject.data<int *>(_DATA_);
 			auto FNAM = baseObject.data<float *>(_FNAM_);
 

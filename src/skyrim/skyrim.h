@@ -41,3 +41,6 @@ namespace skyrim
 #define _ANAM_ "ANAM"
 #define _FNAM_ "FNAM"
 #define _XSCL_ "XSCL"
+
+#define EDID "EDID"
+#define NAME "NAME"

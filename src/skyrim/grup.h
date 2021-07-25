@@ -3,8 +3,7 @@
 #include <cstdarg>
 
 #include <lib.h>
-//#include <dark/dark.h>
-#include <skyrim/skyrim.h>
+
 #include <skyrim/record.h>
 
 #include <map>
@@ -58,6 +57,14 @@ namespace skyrim
 				if (f(i))
 					break;
 		}
+		
+		template <typename T = void *>
+		T get(unsigned int i, int type = -1) const
+		{
+			assertc(i < amount());
+			assertc(i != -1 && this->type(i, type));
+			return (T)grup->mixed.elements[i];
+		}
 
 		grupp getgrup(unsigned int i) const
 		{
@@ -67,14 +74,6 @@ namespace skyrim
 		recordp getrecord(unsigned int i) const
 		{
 			return get<recordp>(i, RECORD);
-		}
-
-		template <typename T = void *>
-		T get(unsigned int i, int type = -1) const
-		{
-			assertc(i < amount());
-			assertc(i != -1 && this->type(i, type));
-			return (T)grup->mixed.elements[i];
 		}
 	};
 #undef X

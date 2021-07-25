@@ -10,13 +10,13 @@ using namespace skyrim;
 
 namespace dark
 {
-	class Ref
+	class Ref : public Record
 	{
 	public:
-		Ref(::record_t *);
+		Ref(recordp);
 		~Ref();
-		const char *editorId = nullptr;
-		Record selfObject, baseObject;
+		editorId editorId = nullptr;
+		Record baseObject;
 		mat4 translation, rotation, scale;
 		mat4 matrix;
 		Mesh *mesh;
@@ -26,7 +26,7 @@ namespace dark
 		void go();
 		void forScale(float *);
 		void forLocationalData(float *);
-		void forBaseId(unsigned int *);
+		void forBaseId(formId);
 		float getDistance();
 		bool displayAsItem();
 	};
