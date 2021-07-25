@@ -35,7 +35,7 @@ namespace skyrim
 		CELL cell;
 		Grup top, block, subblock;
 		bool stop = false;
-		top(esp_top_grup(get_plugins()[1], CELL)).foreach(Top, [&](unsigned int i) {
+		top(esp_top_grup(get_plugins()[1], __CELL__)).foreach(Top, [&](unsigned int i) {
 			block(top.getgrup(i)).foreach(InteriorCellBlock, [&](unsigned int j) {
 				subblock(block.getgrup(j)).foreach(InteriorCellSubBlock, [&](unsigned int &k) {
 					Record object(subblock.getrecord(k));
@@ -43,7 +43,7 @@ namespace skyrim
 					const char *editorId = object.editorId();
 					if (0 == strcmp(name, editorId))
 					{
-						cell.record = object.record;
+						cell.record = object.rcd;
 						// printf("foreach found your interior `%s`\n", editorId);
 						cell.persistent = D.amount() >= 1 ? D.getgrup(0) : 0;
 						cell.temporary = D.amount() >= 2 ? D.getgrup(1) : 0;
@@ -61,7 +61,7 @@ namespace skyrim
 
 	static void PlaceCameraDud(Interior *);
 
-	void Interior::parsegrup(int group_type, CELL &cell, grupp grup)
+	void Interior::parsegrup(int group_type, CELL &cell, cgrupp grup)
 	{
 		if (grup == nullptr)
 			return;
@@ -70,7 +70,7 @@ namespace skyrim
 			Record object(array.getrecord(i));
 			if (object.oftype(REFR))
 			{
-				Ref *ref = new Ref(object.record);
+				Ref *ref = new Ref(object.rcd);
 				refs.push_back(ref);
 				const char *editorId = object.editorId();
 				if (editorId)

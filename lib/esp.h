@@ -135,6 +135,11 @@ typedef grup_t * grupp;
 typedef record_t * recordp;
 typedef subrecord_t * subrecordp;
 
+typedef const grup_t * cgrupp;
+typedef const record_t * crecordp;
+typedef const subrecord_t * csubrecordp;
+
+
 #pragma pack(pop)
 
 api Esp *plugin_slate();

@@ -23,7 +23,7 @@
 
 namespace dark
 {
-	Ref::Ref(recordp record) : Record(record)
+	Ref::Ref(crecordp rcd) : Record(rcd)
 	{
 		mesh = nullptr;
 		drawGroup = nullptr;
@@ -172,7 +172,7 @@ namespace dark
 
 		if (mesh)
 		{
-			if (baseObject.record->hed->formId != 0x32)
+			if (baseObject.rcd->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroupSortable(mesh->baseGroup, matrix);
 				scene_default->drawGroups.Add(drawGroup);

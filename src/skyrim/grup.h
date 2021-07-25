@@ -16,20 +16,20 @@ namespace skyrim
 	class Grup
 	{
 	public:
-		const grupp grp;
+		cgrupp grp;
 
 		Grup()
 		{
 			(*this)(nullptr);
 		}
 
-		Grup(grupp grp)
+		Grup(cgrupp grp)
 		{
 			assertc(grp);
 			(*this)(grp);
 		}
 
-		Grup &operator()(grupp grp)
+		Grup &operator()(cgrupp grp)
 		{
 			this->grp = grp;
 			return *this;
@@ -66,12 +66,12 @@ namespace skyrim
 			return (T)grp->mixed.elements[i];
 		}
 
-		grupp getgrup(unsigned int i) const
+		cgrupp getgrup(unsigned int i) const
 		{
 			return get<grupp>(i, GRUP);
 		}
 
-		recordp getrecord(unsigned int i) const
+		crecordp getrecord(unsigned int i) const
 		{
 			return get<recordp>(i, RECORD);
 		}

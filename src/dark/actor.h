@@ -1,7 +1,4 @@
-#ifndef GLOOM_ACTOR_H
-#define GLOOM_ACTOR_H
-
-// part of gloom
+#pragma once
 
 #include <dark/dark.h>
 
@@ -12,7 +9,7 @@ namespace dark
 	extern Keyframes *draugrAttack;
 	extern Keyframes *humanIdle, *humanForward, *humanLeft, *humanRight, *humanBack;
 
-	record_t *GetRace(const char *);
+	crecordp GetRace(const char *);
 	//void Export(const char *);
 	void ExportRaceHkxToKf(const char *);
 	Keyframes *GetKeyframes(const char *);
@@ -62,6 +59,4 @@ namespace dark
 		void move();
 	};
 
-} // namespace dark
-
-#endif
+}

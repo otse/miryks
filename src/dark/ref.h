@@ -1,7 +1,8 @@
 #pragma once
 
 #include <dark/dark.h>
-#include <skyrim/grup.h>
+#include <skyrim/skyrim.h>
+#include <skyrim/record.h>
 
 #include <renderer/types.h>
 #include <renderer/aabb.h>
@@ -13,9 +14,8 @@ namespace dark
 	class Ref : public Record
 	{
 	public:
-		Ref(recordp);
+		Ref(crecordp);
 		~Ref();
-		editorId editorId = nullptr;
 		Record baseObject;
 		mat4 translation, rotation, scale;
 		mat4 matrix;

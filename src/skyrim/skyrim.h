@@ -3,6 +3,10 @@
 
 namespace skyrim
 {
+	typedef unsigned int *formId;
+	typedef const char *editorId;
+	typedef const char signature[5];
+	
 	class Record;
 	class Grup;
 	

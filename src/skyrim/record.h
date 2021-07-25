@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdarg>
+#include <vector>
 
 #include <lib.h>
 #include <skyrim/skyrim.h>
@@ -8,48 +9,43 @@
 #define REFR "REFR"
 #define WEAP "WEAP"
 #define MISC "MISC"
-#define CELL "CELL"
 #define EDID "EDID"
 #define NAME "NAME"
 
 namespace skyrim
 {
-	typedef unsigned int *formId;
-	typedef const char *editorId;
-	typedef const char signature[5];
-
 	const char *getEditorIdOnly(const recordp);
 
 	class Record
 	{
 	public:
-		const recordp rcd;
+		crecordp rcd;
 
 		Record()
 		{
 			rcd = nullptr;
 		}
 
-		Record(recordp a)
+		Record(crecordp a)
 		{
 			rcd = a;
 		}
 
-		subrecordp find(signature sgn, int skip = 0)
+		csubrecordp find(signature sgn, int skip = 0) const
 		{
 			for (unsigned int i = 0; i < amount(); i++)
 			{
-				const subrecordp srcd = get(i);
-				if (*(unsigned int *)sgn == sbrcd->hed->type)
+				csubrecordp sub = get(i);
+				if (*(unsigned int *)sgn == sub->hed->type)
 					if (skip-- < 1)
-						return sbrcd;
+						return sub;
 			}
 			return nullptr;
 		}
 
 		const record_header &hed() const
 		{
-			return *record->hed;
+			return *(rcd->hed);
 		}
 
 		bool valid() const
@@ -57,7 +53,7 @@ namespace skyrim
 			return rcd != nullptr;
 		}
 
-		const subrecordp get(unsigned int i) const
+		csubrecordp get(unsigned int i) const
 		{
 			return rcd->fields.subrecords[i];
 		}
@@ -72,9 +68,9 @@ namespace skyrim
 			return *(unsigned int *)sgn == rcd->hed->type;
 		}
 
-		bool oftypeany(std::vector<signature> sigs) const
+		bool oftypeany(std::vector<const char *> sigs) const
 		{
-			for (signature sig : sigs)
+			for (const char *sig : sigs)
 				if (oftype(sig))
 					return true;
 			return false;
@@ -83,8 +79,8 @@ namespace skyrim
 		template <typename T = void *>
 		T data(signature type, int skip = 0) const
 		{
-			subrecordp sbrcd = find(type, skip);
-			return sbrcd ? (T)sbrcd->data : nullptr;
+			csubrecordp sub = find(type, skip);
+			return sub ? (T)sub->data : nullptr;
 		}
 
 		editorId editorId() const
