@@ -23,26 +23,26 @@ namespace skyrim
 	class Record
 	{
 	public:
-		const recordp rp;
+		const recordp rcd;
 
 		Record()
 		{
-			rp = nullptr;
+			rcd = nullptr;
 		}
 
 		Record(recordp a)
 		{
-			rp = a;
+			rcd = a;
 		}
 
 		subrecordp find(signature sgn, int skip = 0)
 		{
 			for (unsigned int i = 0; i < amount(); i++)
 			{
-				const subrecordp srp = get(i);
-				if (*(unsigned int *)sgn == srp->hed->type)
+				const subrecordp srcd = get(i);
+				if (*(unsigned int *)sgn == sbrcd->hed->type)
 					if (skip-- < 1)
-						return srp;
+						return sbrcd;
 			}
 			return nullptr;
 		}
@@ -54,22 +54,22 @@ namespace skyrim
 
 		bool valid() const
 		{
-			return rp != nullptr;
+			return rcd != nullptr;
 		}
 
 		const subrecordp get(unsigned int i) const
 		{
-			return rp->fields.subrecords[i];
+			return rcd->fields.subrecords[i];
 		}
 
 		unsigned int amount() const
 		{
-			return rp->fields.size;
+			return rcd->fields.size;
 		}
 
 		bool oftype(signature sgn) const
 		{
-			return *(unsigned int *)sgn == rp->hed->type;
+			return *(unsigned int *)sgn == rcd->hed->type;
 		}
 
 		bool oftypeany(std::vector<signature> sigs) const
@@ -83,8 +83,8 @@ namespace skyrim
 		template <typename T = void *>
 		T data(signature type, int skip = 0) const
 		{
-			subrecordp srp = find(type, skip);
-			return srp ? (T)srp->data : nullptr;
+			subrecordp sbrcd = find(type, skip);
+			return sbrcd ? (T)sbrcd->data : nullptr;
 		}
 
 		editorId editorId() const
