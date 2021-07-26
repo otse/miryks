@@ -29,7 +29,7 @@ id: %u\
 \nelements: %u\
 ",
 grup->id,
-(char *)&grup->hed->type,
+(char *)&grup->hed->sgn,
 grup->hed->size,
 (char *)&grup->hed->label,
 grup->hed->group_type,
@@ -58,7 +58,7 @@ id: %u\
 \nfields: %i\
 ",
 record->id,
-(char *)&record->hed->type,
+(char *)&record->hed->sgn,
 record->hed->size,
 record->offset,
 record->hed->flags,
@@ -75,11 +75,11 @@ record->fields.size
 
 char *specifics(espp esp, char *s, subrecord_t *field)
 {
-if (field->hed->type == *(unsigned int *)"EDID")
+if (field->hed->sgn == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
-if (field->hed->type == *(unsigned int *)"FULL")
+if (field->hed->sgn == *(unsigned int *)"FULL")
 snprintf(s, 300, "%s", field->data);
-if (field->hed->type == *(unsigned int *)"HEDR")
+if (field->hed->sgn == *(unsigned int *)"HEDR")
 snprintf(s, 300, "\
 \n  version: %.2f\
 \n  numRecords: %u\
@@ -101,7 +101,7 @@ id: %u\
 \nvalue: %s\
 ",
 field->id,
-(char *)&field->hed->type,
+(char *)&field->hed->sgn,
 field->actualSize,
 field->offset,
 &field->data,

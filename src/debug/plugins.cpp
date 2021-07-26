@@ -23,7 +23,7 @@ void im_subrecord(Field *);
 void im_grup(grupp grup, int top_grup = -1)
 {
 	char t[100];
-	snprintf(t, 100, "GRUP %i %s", grup->id, top_grup != -1 ? plugin->tops[top_grup] : "");
+	snprintf(t, 100, "GRUP %i %s", grup->id, grup->hed->label);
 	if (ImGui::TreeNode(t))
 	{
 		char s[100];
@@ -47,12 +47,12 @@ void im_record(record_t *record)
 {
 	char *edid = nullptr;
 	Field *first = record->fields.subrecords[0];
-	if (first->hed->type == espwrd "EDID")
+	if (first->hed->sgn == espwrd "EDID")
 	{
 		edid = (char *)first->data;
 	}
 	char t[130];
-	snprintf(t, 130, "%.4s %i - %s", (char *)&record->hed->type, record->id, edid);
+	snprintf(t, 130, "%.4s %i - %s", (char *)&record->hed->sgn, record->id, edid);
 	if (ImGui::TreeNode(t))
 	{
 		char s[200];
@@ -79,7 +79,7 @@ void im_record(record_t *record)
 void im_subrecord(Field *field)
 {
 	char t[100];
-	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->type, field->id);
+	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->sgn, field->id);
 	if (ImGui::TreeNode(t))
 	{
 		char s[400];

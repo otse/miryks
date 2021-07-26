@@ -3,13 +3,14 @@ struct grup_t;
 struct record_t;
 struct subrecord_t;
 struct Rc;
-struct Esp;
+struct esp_t;
 struct Bsa;
 struct Nifp;
 struct NifpRd;
 
 typedef Rc Resource;
-typedef Esp Plugin;
+typedef esp_t Plugin;
+typedef esp_t Esp;
 typedef Bsa Archive;
 typedef Nifp Nif;
 typedef NifpRd Rd;

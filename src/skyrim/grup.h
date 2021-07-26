@@ -68,12 +68,12 @@ namespace skyrim
 
 		cgrupp getgrup(unsigned int i) const
 		{
-			return get<grupp>(i, GRUP);
+			return get<cgrupp>(i, GRUP);
 		}
 
 		crecordp getrecord(unsigned int i) const
 		{
-			return get<recordp>(i, RECORD);
+			return get<crecordp>(i, RECORD);
 		}
 	};
 #undef X

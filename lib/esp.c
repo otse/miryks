@@ -26,7 +26,6 @@ inline void array(EspCArray *, unsigned int);
 inline void grow(EspCArray *);
 inline void insert(EspCArray *, void *);
 
-void make_top_grups(espp );
 void make_form_ids(espp );
 
 unsigned int hedr_num_records(espp esp)
@@ -38,8 +37,8 @@ unsigned int hedr_num_records(espp esp)
 
 espp plugin_slate()
 {
-	espp plugin = malloc(sizeof(Esp));
-	memset(plugin, 0, sizeof(Esp));
+	espp plugin = malloc(sizeof(esp_t));
+	memset(plugin, 0, sizeof(esp_t));
 	return plugin;
 }
 
@@ -56,7 +55,6 @@ api int plugin_load(espp esp)
 	grupp grup = read_grup(esp);
 	insert(&esp->grups, grup);
 	}
-	make_top_grups(esp);
 	make_form_ids(esp);
 	return 1;
 }
@@ -82,7 +80,7 @@ recordp read_record(espp esp)
 	rec->data = Buf + Pos;
 	array(&rec->fields, 6);
 	insert(&esp->records, rec);
-	// printf("R %.4s %u > ", (char *)&rec->hed->type, rec->hed->dataSize);
+	// printf("R %.4s %u > ", (char *)&rec->hed->sgn, rec->hed->dataSize);
 	// fields
 	if (esp_skip_fields)
 	Pos += rec->hed->size;
@@ -115,7 +113,7 @@ inline void read_record_fields(espp esp, recordp rec)
 	subrecordp sub;
 	sub = read_field(esp, rec, large);
 	large = 0;
-	if (sub->hed->type == *(unsigned int *)"XXXX")
+	if (sub->hed->sgn == *(unsigned int *)"XXXX")
 	large = *(unsigned int *)sub->data;
 	else
 	insert(&rec->fields, sub);
@@ -144,7 +142,7 @@ inline subrecordp read_field(espp esp, recordp rec, unsigned int override)
 	// data
 	sub->data = buf + *pos;
 	*pos += sub->actualSize;
-	// printf("S %.4s %u > ", (char *)&sub->hed->type, sub->hed->size);
+	// printf("S %.4s %u > ", (char *)&sub->hed->sgn, sub->hed->size);
 	return sub;
 }
 
@@ -163,7 +161,7 @@ grupp read_grup(espp esp)
 	Pos += 0;
 	grup->data = Buf + Pos;
 	array(&grup->mixed, 12);
-	// printf("G %.4s %u > ", (char *)&grup->hed->type, grup->hed->size);
+	// printf("G %.4s %u > ", (char *)&grup->hed->sgn, grup->hed->size);
 	// records
 	read_grup_records(esp, grup);
 	// printf("\nend grup\n");
@@ -195,7 +193,7 @@ api grupp esp_top_grup(const espp esp, const char type[5])
 	for (unsigned int i = 0; i < esp->grups.size; i++)
 	{
 	grupp grp = esp->grups.elements[i];
-	if (*(unsigned int *)type == grp->label)
+	if (*(unsigned int *)type == grp->hed->label)
 	return esp->grups.elements[i];
 	return NULL;
 	}
@@ -262,8 +260,8 @@ api EspCArray *esp_filter_objects(const espp esp, const char type[5])
 	array(filtered, 100);
 	for (unsigned int i = 0; i < esp->records.size; i++)
 	{
-	recordp record = esp->records.elements[i];
-	if (record->hed->type == *(unsigned int *)type)
+	record_t *record = esp->records.elements[i];
+	if (record->hed->sgn == *(unsigned int *)type)
 	insert(filtered, record);
 	}
 	return filtered;

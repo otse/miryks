@@ -36,7 +36,7 @@ namespace skyrim
 			for (unsigned int i = 0; i < amount(); i++)
 			{
 				csubrecordp sub = get(i);
-				if (*(unsigned int *)sgn == sub->hed->type)
+				if (*(unsigned int *)sgn == sub->hed->sgn)
 					if (skip-- < 1)
 						return sub;
 			}
@@ -65,7 +65,7 @@ namespace skyrim
 
 		bool oftype(signature sgn) const
 		{
-			return *(unsigned int *)sgn == rcd->hed->type;
+			return *(unsigned int *)sgn == rcd->hed->sgn;
 		}
 
 		bool oftypeany(std::vector<const char *> sigs) const
