@@ -1,5 +1,5 @@
-#ifndef NIFP_H
-#define NIFP_H
+#ifndef LIB_NIFP_H
+#define LIB_NIFP_H
 
 /// nif with pointers
 

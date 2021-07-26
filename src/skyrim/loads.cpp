@@ -67,13 +67,13 @@ namespace dark
 		return mesh;
 	}
 
-	Esp *load_plugin(const char *filename, bool essential)
+	espp load_plugin(const char *filename, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = editme + dataFolder + filename;
 		char *buf;
 		int ret;
-		Esp *esp;
+		espp esp;
 		esp = has_plugin(filename);
 		if (esp)
 			return esp;

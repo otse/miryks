@@ -1,5 +1,5 @@
-#ifndef BSA_H
-#define BSA_H
+#ifndef LIB_BSA_H
+#define LIB_BSA_H
 
 // part of gloom
 

@@ -111,9 +111,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		Record object = Record(dungeon->loaded_cell.record);
 		char dest[512];
 		strcpy(dest, object.editorId());
-		Esp *esp = get_plugins()[1];
+		espp esp = get_plugins()[1];
 		const char *name = esp->name;
-		Esp *has = has_plugin(name);
+		espp has = has_plugin(name);
 		free_plugin(&has);
 		get_plugins()[1] = load_plugin(name, true);
 		delete dungeon;

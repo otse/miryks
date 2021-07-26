@@ -16,11 +16,11 @@ static std::stringstream ss;
 
 static Plugin *plugin = NULL;
 
-void im_grup(grup_t *, int);
+void im_grup(grupp , int);
 void im_record(record_t *);
 void im_subrecord(Field *);
 
-void im_grup(grup_t *grup, int top_grup = -1)
+void im_grup(grupp grup, int top_grup = -1)
 {
 	char t[100];
 	snprintf(t, 100, "GRUP %i %s", grup->id, top_grup != -1 ? plugin->tops[top_grup] : "");
@@ -158,7 +158,7 @@ void esp_gui()
 			//if (ImGui::TreeNode("Grups"))
 			//{
 			for (unsigned int i = 0; i < plugin->grups.size; i++)
-				im_grup((grup_t *)plugin->grups.elements[i], i);
+				im_grup((grupp )plugin->grups.elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();
