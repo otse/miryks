@@ -86,8 +86,7 @@ int main() {
 	//((element *)object->array->elements[0])->name;
 
 	printf("the first element in our object's array is `%s`\n", ((element **)object->array->elements)[1]->name);
-	printf("the first element in our object's array is `%s`\n", (*(elementpp *)object->array)[1]->name);
-	//printf("the first element in our object's array is `%s`\n", ((element **)object->array)[1]->name);
+	printf("the first element in our object's array is `%s`\n", (*(element ***)object->array)[1]->name);
 
 	// here is a test with an "array of int pointers"
 
