@@ -7,7 +7,7 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
-// subrecord_t *read_subrecord ?
+// subrecord *read_subrecord ?
 recordp read_record(espp );
 grupp read_grup(espp );
 
@@ -52,8 +52,8 @@ api int plugin_load(espp esp)
 	array(&esp->records, hedr_num_records(esp));
 	while(Pos < esp->filesize)
 	{
-	grupp grup = read_grup(esp);
-	insert(&esp->grups, grup);
+	grupp grp = read_grup(esp);
+	insert(&esp->grups, grp);
 	}
 	make_form_ids(esp);
 	return 1;
@@ -66,7 +66,7 @@ recordp read_record(espp esp)
 {
 	// Todo, clean big unclear assignments lik these thruout the program
 	recordp rec;
-	rec = malloc(sizeof(record_t));
+	rec = malloc(sizeof(record));
 	rec->fi = NULL;
 	// head
 	rec->x = RECORD;
@@ -130,7 +130,7 @@ inline subrecordp read_field(espp esp, recordp rec, unsigned int override)
 	buf = rec->buf;
 	}
 	subrecordp sub;
-	sub = malloc(sizeof(subrecord_t));
+	sub = malloc(sizeof(subrecord));
 	// hed
 	sub->x = SUBRECORD;
 	sub->index = rec->indices++;
@@ -151,38 +151,38 @@ inline void read_grup_records(espp, grupp);
 
 grupp read_grup(espp esp)
 {
-	grupp grup = malloc(sizeof(grup_t));
+	grupp grp = malloc(sizeof(grup));
 	//grup->lowest = grup->highest = 0;
 	// hed
-	grup->x = GRUP;
-	grup->id = Count.grups++;
-	grup->hed = Buf + Pos;
+	grp->x = GRUP;
+	grp->id = Count.grups++;
+	grp->hed = Buf + Pos;
 	Pos += sizeof(struct grup_header);
 	Pos += 0;
-	grup->data = Buf + Pos;
-	array(&grup->mixed, 12);
+	grp->data = Buf + Pos;
+	array(&grp->mixed, 12);
 	// printf("G %.4s %u > ", (char *)&grup->hed->sgn, grup->hed->size);
 	// records
-	read_grup_records(esp, grup);
+	read_grup_records(esp, grp);
 	// printf("\nend grup\n");
-	return grup;
+	return grp;
 }
 
 const unsigned int peek_type(espp esp)
 {
-	return espwrd (Buf + Pos);
+	return *(unsigned int *) (Buf + Pos);
 }
 
-inline void read_grup_records(espp esp, grupp grup)
+inline void read_grup_records(espp esp, grupp grp)
 {
-	long size = grup->hed->size - sizeof(struct grup_header) - 16;
+	long size = grp->hed->size - sizeof(struct grup_header) - 16;
 	long start = Pos;
 	while (Pos - start < size)
 	{
-	if (peek_type(esp) == espwrd "GRUP")
-	insert(&grup->mixed, read_grup(esp));
+	if (peek_type(esp) == *(unsigned int *) "GRUP")
+	insert(&grp->mixed, read_grup(esp));
 	else
-	insert(&grup->mixed, read_record(esp));
+	insert(&grp->mixed, read_record(esp));
 	}
 }
 
@@ -242,7 +242,7 @@ api recordp esp_get_form_id(unsigned int formId)
 }
 
 /*
-api void esp_array_loop(EspCArray *array, void (*func)(subrecord_t *field, void *data), void *data)
+api void esp_array_loop(EspCArray *array, void (*func)(subrecord *field, void *data), void *data)
 {
 	for (int i = 0; i < array->size; i++)
 	{
@@ -260,7 +260,7 @@ api EspCArray *esp_filter_objects(const espp esp, const char type[5])
 	array(filtered, 100);
 	for (unsigned int i = 0; i < esp->records.size; i++)
 	{
-	record_t *record = esp->records.elements[i];
+	record *record = esp->records.elements[i];
 	if (record->hed->sgn == *(unsigned int *)type)
 	insert(filtered, record);
 	}

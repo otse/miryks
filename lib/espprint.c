@@ -40,7 +40,7 @@ grup->mixed.size
 );
 }
 
-api void esp_print_record(espp esp, char *s, record_t *record)
+api void esp_print_record(espp esp, char *s, record *record)
 {
 int w = snprintf(s, 200, "\
 id: %u\
@@ -73,7 +73,7 @@ record->fields.size
 );
 }
 
-char *specifics(espp esp, char *s, subrecord_t *field)
+char *specifics(espp esp, char *s, subrecord *field)
 {
 if (field->hed->sgn == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
@@ -89,7 +89,7 @@ snprintf(s, 300, "\
 	return s;
 }
 
-api void esp_print_field(espp esp, char *s, subrecord_t *field)
+api void esp_print_field(espp esp, char *s, subrecord *field)
 {
 char x[300] = "Not Handled\0";
 int w = snprintf(s, 400, "\

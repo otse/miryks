@@ -1,7 +1,7 @@
 // c lib defs
-struct grup_t;
-struct record_t;
-struct subrecord_t;
+struct grup;
+struct record;
+struct subrecord;
 struct Rc;
 struct esp;
 struct Bsa;
@@ -14,7 +14,7 @@ typedef esp Esp;
 typedef Bsa Archive;
 typedef Nifp Nif;
 typedef NifpRd Rd;
-typedef subrecord_t Field;
+typedef subrecord Field;
 
 namespace dark
 {

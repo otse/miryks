@@ -12,13 +12,17 @@
 
 struct form_id;
 
-struct grup_t;
-struct record_t;
-struct subrecord_t;
+struct esp;
+struct grup;
+struct record;
+struct subrecord;
+
+typedef struct esp esp;
+typedef struct grup grup;
+typedef struct record record;
+typedef struct subrecord subrecord;
 
 #define Fields object->fields
-
-#define espwrd *(unsigned int *)
 
 extern int esp_skip_fields;
 
@@ -26,21 +30,15 @@ typedef struct EspCArray
 {
 	union{
 	void **elements;
-	struct grup_t **grups;
-	struct record_t **records;
-	struct subrecord_t **subrecords;
+	struct grup **grups;
+	struct record **records;
+	struct subrecord **subrecords;
 	};
 	unsigned int size;
 	unsigned int capacity;
 } EspCArray;
 
-// access element grup->mixed->elements[5] could be grup or record
-// the union is for saving casts when you're sure
-// it just doesnt make sense tho,
-// can we hack the array operator as a generic offset
-// that still look better than array.elements?
-
-typedef struct esp
+struct esp
 {
 	const char *name;
 	void *file;
@@ -48,14 +46,14 @@ typedef struct esp
 	const char *buf;
 	long filesize;
 	int active;
-	struct record_t *header;
+	record *header;
 	EspCArray grups, records;
 	struct form_id *formIds;
 	struct
 	{
 	unsigned int grups, records, fields, uncompress;
 	} count;
-} esp;
+};
 
 #define GRUP 1
 #define RECORD 2
@@ -68,7 +66,7 @@ struct form_id
 	struct esp *esp;
 	unsigned int formId, modIndex, objectIndex;
 	char hex[9];
-	struct record_t *record;
+	struct record *record;
 	void *plugin;
 };
 
@@ -96,16 +94,16 @@ typedef struct Dud {
 	char x;
 } Dud;
 
-typedef struct grup_t
+struct grup
 {
 	char x;
 	unsigned int id;
 	const struct grup_header *hed;
 	unsigned char *data;
 	EspCArray mixed;
-} grup_t;
+};
 
-typedef struct record_t
+struct record
 {
 	char x;
 	unsigned int indices;
@@ -119,9 +117,9 @@ typedef struct record_t
 	// compression related
 	long pos;
 	char *buf;
-} record_t;
+};
 
-typedef struct subrecord_t
+struct subrecord
 {
 	char x;
 	unsigned int index;
@@ -130,20 +128,23 @@ typedef struct subrecord_t
 	const struct field_header *hed;
 	unsigned int actualSize;
 	unsigned char *data;
-} subrecord_t;
+};
 
 typedef esp * espp;
 typedef esp ** esppp;
 
-typedef grup_t * grupp;
-typedef record_t * recordp;
-typedef subrecord_t * subrecordp;
+typedef grup * grupp;
+typedef grup ** gruppp;
+
+typedef record * recordp;
+
+typedef subrecord * subrecordp;
 
 typedef const esp * cespp;
 
-typedef const grup_t * cgrupp;
-typedef const record_t * crecordp;
-typedef const subrecord_t * csubrecordp;
+typedef const grup * cgrupp;
+typedef const record * crecordp;
+typedef const subrecord * csubrecordp;
 
 
 #pragma pack(pop)

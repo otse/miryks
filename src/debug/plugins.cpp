@@ -17,13 +17,13 @@ static std::stringstream ss;
 static Plugin *plugin = NULL;
 
 void im_grup(grupp , int);
-void im_record(record_t *);
+void im_record(record *);
 void im_subrecord(Field *);
 
 void im_grup(grupp grup, int top_grup = -1)
 {
 	char t[100];
-	snprintf(t, 100, "GRUP %i %s", grup->id, grup->hed->label);
+	snprintf(t, 100, "GRUP %i %.4s", grup->id, grup->hed->label);
 	if (ImGui::TreeNode(t))
 	{
 		char s[100];
@@ -43,11 +43,11 @@ void im_grup(grupp grup, int top_grup = -1)
 	}
 }
 
-void im_record(record_t *record)
+void im_record(record *record)
 {
 	char *edid = nullptr;
 	Field *first = record->fields.subrecords[0];
-	if (first->hed->sgn == espwrd "EDID")
+	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
 		edid = (char *)first->data;
 	}
@@ -194,7 +194,7 @@ void esp_gui()
 				const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
 				const bool child_is_visible = ImGui::BeginChild(child_id, vec, true, child_flags);
 				for (unsigned int i = 0; i < filtered->size; i++)
-					im_record((record_t *)filtered->elements[i]);
+					im_record((record *)filtered->elements[i]);
 				ImGui::EndChild();
 			}
 			ImGui::EndTabItem();
@@ -206,7 +206,7 @@ void esp_gui()
 			const ImGuiID child_id = ImGui::GetID((void*)(intptr_t)0);
 			const bool child_is_visible = ImGui::BeginChild(child_id, ImVec2(0, 600), true, child_flags);
 			for (int i = 0; i < esp->statics.size; i++)
-				im_record((record_t *)esp->statics.elements[i]);
+				im_record((record *)esp->statics.elements[i]);
 			ImGui::EndChild();
 			ImGui::EndTabItem();
 		}*/
