@@ -33,6 +33,7 @@ typedef struct element element;
 typedef object * objectp;
 typedef element * elementp;
 typedef element ** elementpp;
+typedef element *** elementppp;
 
 object * nobject();
 array * narray(int);
@@ -73,26 +74,30 @@ int main() {
 	object->array = narray(10);
 
 	element * me = nelement();
-	me->id = 0;
+	me->id = 123;
 	me->name = "boo";
 
-	add(object->array, me, 0);
+	add(object->array, me, 1);
 
 	// cool access without the use of an obscuring macro
-	((element **)&object->array)[0]->name;
+	//((element **)&object->array)[0]->name;
 
 	// normal access and requires a cast anyway
-	((element *)object->array->elements[0])->name;
+	//((element *)object->array->elements[0])->name;
 
-	//printf("the first element in our object's array is `%s`", ((element **)&(*object->array))[0]->name);
+	printf("the first element in our object's array is `%s`\n", ((element **)object->array->elements)[1]->name);
+	printf("the first element in our object's array is `%s`\n", (*(elementpp *)object->array)[1]->name);
+	//printf("the first element in our object's array is `%s`\n", ((element **)object->array)[1]->name);
 
 	// here is a test with an "array of int pointers"
 
-	int **intp_array = calloc(10, sizeof(int *));
-	intp_array[2] = malloc(sizeof(int));
-	*intp_array[2] = 321;
+	int **pointers = calloc(10, sizeof(int *));
+	pointers[2] = malloc(sizeof(int));
+	*(int *)pointers[2] = 321;
 
-	printf("memory of intp_array        is %i\n", intp_array);
-	printf("memory of intp_array[2]     is %i\n", intp_array[2]);
-	printf("value  of intp_array[2]     is %i\n", *intp_array[2]);
+	printf("      memory of pointers       is %i\n", pointers);
+	printf("      memory of pointers[2]    is %i\n", pointers[2]);
+	printf("      value  of pointers[2]    is %i\n", *(int*)pointers[2]);
+	printf("      *      of pointers       is %i\n", *pointers);
+	printf("      **     of pointers       is %i\n", *pointers[2]);
 }
