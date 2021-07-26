@@ -12,9 +12,9 @@
 
 #define Count esp->count
 
-int esp_skip_fields = 0;
+int esp_skip_subrecords = 0; // fast option
 
-static espp plugins[5] = { NULL }; // local
+static espp plugins[5] = { NULL };
 
 #define COUNT_OF(x) sizeof(x) / sizeof(0[x])
 
@@ -29,9 +29,9 @@ grupp read_grup(espp);
 
 unsigned int hedr_num_records(espp esp)
 {
-	if (esp_skip_fields)
+	if (esp_skip_subrecords)
 	return 200;
-	return *(unsigned int *)((*(subrecord ***)esp->header->fields)[0]->data + 4);
+	return *(unsigned int *)((*(subrecord ***)esp->header->subrecords)[0]->data + 4);
 }
 
 espp plugin_slate()
@@ -77,11 +77,11 @@ recordp read_record(espp esp)
 	Pos += 0;
 	rec->actualSize = rec->hed->size;
 	rec->data = Buf + Pos;
-	narray(&rec->fields, 6);
+	narray(&rec->subrecords, 6);
 	insert(esp->records, rec);
 	// printf("R %.4s %u > ", (char *)&rec->hed->sgn, rec->hed->dataSize);
 	// fields
-	if (esp_skip_fields)
+	if (esp_skip_subrecords)
 	Pos += rec->hed->size;
 	else
 	{
@@ -115,7 +115,7 @@ inline void read_record_fields(espp esp, recordp rec)
 	if (sub->hed->sgn == *(unsigned int *)"XXXX")
 	large = *(unsigned int *)sub->data;
 	else
-	insert(rec->fields, sub);
+	insert(rec->subrecords, sub);
 	}
 }
 
@@ -305,7 +305,7 @@ api void free_plugin(esppp p)
 	recordp record = esp->records->elements[i];
 	if (record->hed->flags & 0x00040000)
 	free(record->buf);
-	free_esp_array(&record->fields);
+	free_esp_array(&record->subrecords);
 	}
 	free_esp_array(&esp->grups);
 	free_esp_array(&esp->records);

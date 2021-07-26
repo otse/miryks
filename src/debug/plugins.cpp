@@ -46,7 +46,7 @@ void im_grup(grupp grp, int top_grup = -1)
 void im_record(record *rec)
 {
 	char *edid = nullptr;
-	Field *first = (subrecord *)rec->fields->elements[0];
+	Field *first = (subrecord *)rec->subrecords->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
 		edid = (char *)first->data;
@@ -68,9 +68,9 @@ void im_record(record *rec)
 			}
 			ImGui::TreePop();
 		}
-		for (unsigned int i = 0; i < rec->fields->size; i++)
+		for (unsigned int i = 0; i < rec->subrecords->size; i++)
 		{
-			im_subrecord((subrecord *)rec->fields->elements[i]);
+			im_subrecord((subrecord *)rec->subrecords->elements[i]);
 		}
 		ImGui::TreePop();
 	}

@@ -12,6 +12,8 @@
 #define EDID "EDID"
 #define NAME "NAME"
 
+// this wraps a "lib struct"
+
 namespace skyrim
 {
 	const char *getEditorIdOnly(const recordp);
@@ -19,23 +21,23 @@ namespace skyrim
 	class Record
 	{
 	public:
-		crecordp rcd;
+		const record *rcd;
 
 		Record()
 		{
 			rcd = nullptr;
 		}
 
-		Record(crecordp a)
+		Record(const record *p)
 		{
-			rcd = a;
+			rcd = p;
 		}
 
-		csubrecordp find(signature sgn, int skip = 0) const
+		const subrecord *find(signature sgn, int skip = 0) const
 		{
 			for (unsigned int i = 0; i < amount(); i++)
 			{
-				csubrecordp sub = get(i);
+				const subrecord *sub = get(i);
 				if (*(unsigned int *)sgn == sub->hed->sgn)
 					if (skip-- < 1)
 						return sub;
@@ -53,14 +55,14 @@ namespace skyrim
 			return rcd != nullptr;
 		}
 
-		csubrecordp get(unsigned int i) const
+		const subrecord *get(unsigned int i) const
 		{
-			return (subrecord *)rcd->fields->elements[i];
+			return (*(subrecord ***)rcd->subrecords)[i];
 		}
 
 		unsigned int amount() const
 		{
-			return rcd->fields->size;
+			return rcd->subrecords->size;
 		}
 
 		bool oftype(signature sgn) const

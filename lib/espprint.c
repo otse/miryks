@@ -69,7 +69,7 @@ record->hed->time_stamp,
 LOW(record->hed->version_control_info),
 HIGH(record->hed->version_control_info),
 record->hed->form_version,
-record->fields->size
+record->subrecords->size
 );
 }
 

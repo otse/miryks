@@ -22,9 +22,7 @@ typedef struct grup grup;
 typedef struct record record;
 typedef struct subrecord subrecord;
 
-#define Fields object->fields
-
-extern int esp_skip_fields;
+extern int esp_skip_subrecords;
 
 typedef struct revised_array
 {
@@ -84,9 +82,9 @@ struct field_header
 	unsigned short size;
 };
 
-typedef struct Dud {
+typedef struct esp_dud {
 	char x;
-} Dud;
+} esp_dud;
 
 struct grup
 {
@@ -105,7 +103,7 @@ struct record
 	long offset;
 	const struct record_header *hed;
 	struct form_id *fi;
-	revised_array * fields;
+	revised_array *subrecords;
 	unsigned char *data;
 	unsigned int actualSize;
 	// compression related

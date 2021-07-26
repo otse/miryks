@@ -9,6 +9,8 @@
 #include <map>
 #include <functional>
 
+// this wraps a "lib struct"
+
 namespace skyrim
 {
 	class Record;
@@ -16,20 +18,20 @@ namespace skyrim
 	class Grup
 	{
 	public:
-		cgrupp grp;
+		const grup *grp;
 
 		Grup()
 		{
 			(*this)(nullptr);
 		}
 
-		Grup(cgrupp grp)
+		Grup(const grup *grp)
 		{
 			assertc(grp);
 			(*this)(grp);
 		}
 
-		Grup &operator()(cgrupp grp)
+		Grup &operator()(const grup *grp)
 		{
 			this->grp = grp;
 			return *this;
@@ -47,7 +49,7 @@ namespace skyrim
 
 		bool typex(unsigned int i, int type) const
 		{
-			return type == ((Dud *)grp->mixed->elements[i])->x;
+			return type == (*(esp_dud ***)grp->mixed)[i]->x;
 		}
 
 		void foreach(int group_type, std::function<bool(unsigned int &i)> f)
@@ -63,17 +65,17 @@ namespace skyrim
 		{
 			assertc(i < amount());
 			assertc(i != -1 && typex(i, x));
-			return (T)grp->mixed->elements[i];
+			return (*(T **)grp->mixed)[i];
 		}
 
-		cgrupp getgrup(unsigned int i) const
+		const grup *getgrup(unsigned int i) const
 		{
-			return get<cgrupp>(i, GRUP);
+			return get<const grup *>(i, GRUP);
 		}
 
-		crecordp getrecord(unsigned int i) const
+		const record *getrecord(unsigned int i) const
 		{
-			return get<crecordp>(i, RECORD);
+			return get<const record *>(i, RECORD);
 		}
 	};
 #undef X
