@@ -37,8 +37,8 @@ unsigned int hedr_num_records(espp esp)
 
 espp plugin_slate()
 {
-	espp plugin = malloc(sizeof(esp_t));
-	memset(plugin, 0, sizeof(esp_t));
+	espp plugin = malloc(sizeof(esp));
+	memset(plugin, 0, sizeof(esp));
 	return plugin;
 }
 
@@ -195,8 +195,8 @@ api grupp esp_top_grup(const espp esp, const char type[5])
 	grupp grp = esp->grups.elements[i];
 	if (*(unsigned int *)type == grp->hed->label)
 	return esp->grups.elements[i];
-	return NULL;
 	}
+	return NULL;
 }
 
 inline void build_form_id(espp esp, recordp record, struct form_id *fi)

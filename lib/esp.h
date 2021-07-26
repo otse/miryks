@@ -6,7 +6,7 @@
 // only for le
 // can easily be altered for se
 
-// 100% based on https://github.com/Ortham/libespm
+// C adaptation of Ortham/libespm
 
 #define api
 
@@ -15,8 +15,6 @@ struct form_id;
 struct grup_t;
 struct record_t;
 struct subrecord_t;
-
-//typedef png_struct * png_structp;
 
 #define Fields object->fields
 
@@ -42,7 +40,7 @@ typedef struct EspCArray
 // can we hack the array operator as a generic offset
 // that still look better than array.elements?
 
-typedef struct esp_t
+typedef struct esp
 {
 	const char *name;
 	void *file;
@@ -57,7 +55,7 @@ typedef struct esp_t
 	{
 	unsigned int grups, records, fields, uncompress;
 	} count;
-} esp_t;
+} esp;
 
 #define GRUP 1
 #define RECORD 2
@@ -67,7 +65,7 @@ typedef struct esp_t
 
 struct form_id
 {
-	struct esp_t *esp;
+	struct esp *esp;
 	unsigned int formId, modIndex, objectIndex;
 	char hex[9];
 	struct record_t *record;
@@ -134,14 +132,14 @@ typedef struct subrecord_t
 	unsigned char *data;
 } subrecord_t;
 
-typedef esp_t * espp;
-typedef esp_t ** esppp;
+typedef esp * espp;
+typedef esp ** esppp;
 
 typedef grup_t * grupp;
 typedef record_t * recordp;
 typedef subrecord_t * subrecordp;
 
-typedef const esp_t * cespp;
+typedef const esp * cespp;
 
 typedef const grup_t * cgrupp;
 typedef const record_t * crecordp;
