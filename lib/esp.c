@@ -18,13 +18,17 @@ grupp read_grup(espp );
 
 int esp_skip_fields = 0;
 
-static espp plugins[5] = { NULL, NULL, NULL, NULL, NULL };
+static espp plugins[5] = { NULL }; // local
 
 #define COUNT_OF(x) sizeof(x) / sizeof(0[x])
 
 inline void array(EspCArray *, unsigned int);
 inline void grow(EspCArray *);
 inline void insert(EspCArray *, void *);
+
+inline void arary2(revised_array *, unsigned int);
+inline void grow2(revised_array *);
+inline void insert2(revised_array *, void *);
 
 void make_form_ids(espp );
 
@@ -337,6 +341,25 @@ inline void grow(EspCArray *a) {
 }
 
 inline void insert(EspCArray *a, void *element) {
+	grow(a);
+	a->elements[a->size++] = element;
+}
+
+
+inline void array2(revised_array * a, unsigned int initial) {
+	a->capacity = initial;
+	a->size = 0;
+	a->elements = malloc(a->capacity * sizeof(void *));
+}
+
+inline void grow2(revised_array * a) {
+	if (a->size != a->capacity)
+	return;
+	a->capacity *= 2;
+	a->elements = realloc(a->elements, a->capacity * sizeof(void *));
+}
+
+inline void insert2(EspCArray *a, void *element) {
 	grow(a);
 	a->elements[a->size++] = element;
 }

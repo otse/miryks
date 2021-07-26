@@ -38,6 +38,12 @@ typedef struct EspCArray
 	unsigned int capacity;
 } EspCArray;
 
+typedef struct revised_array
+{
+	void **elements;
+	int size, capacity;
+} revised_array;
+
 struct esp
 {
 	const char *name;
@@ -48,6 +54,7 @@ struct esp
 	int active;
 	record *header;
 	EspCArray grups, records;
+	revised_array grupps, recordps;
 	struct form_id *formIds;
 	struct
 	{
