@@ -26,18 +26,6 @@ typedef struct subrecord subrecord;
 
 extern int esp_skip_fields;
 
-typedef struct EspCArray
-{
-	union{
-	void **elements;
-	struct grup **grups;
-	struct record **records;
-	struct subrecord **subrecords;
-	};
-	unsigned int size;
-	unsigned int capacity;
-} EspCArray;
-
 typedef struct revised_array
 {
 	void **elements;
@@ -53,8 +41,7 @@ struct esp
 	long filesize;
 	int active;
 	record *header;
-	EspCArray grups, records;
-	revised_array grupps, recordps;
+	revised_array * grups, * records;
 	struct form_id *formIds;
 	struct
 	{
@@ -107,7 +94,7 @@ struct grup
 	unsigned int id;
 	const struct grup_header *hed;
 	unsigned char *data;
-	EspCArray mixed;
+	revised_array * mixed;
 };
 
 struct record
@@ -118,7 +105,7 @@ struct record
 	long offset;
 	const struct record_header *hed;
 	struct form_id *fi;
-	EspCArray fields;
+	revised_array * fields;
 	unsigned char *data;
 	unsigned int actualSize;
 	// compression related
@@ -168,13 +155,13 @@ api esppp get_plugins();
 
 api espp has_plugin(const char *);
 
-api EspCArray *esp_filter_objects(const espp, const char [5]);
+api revised_array *esp_filter_objects(const espp, const char [5]);
 
 api recordp esp_get_form_id(unsigned int);
 
 api grupp esp_top_grup(const espp, const char [5]);
 
 api void free_plugin(esppp);
-api void free_esp_array(EspCArray *);
+api void free_esp_array(revised_array ** );
 
 #endif

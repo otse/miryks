@@ -20,57 +20,57 @@ void im_grup(grupp , int);
 void im_record(record *);
 void im_subrecord(Field *);
 
-void im_grup(grupp grup, int top_grup = -1)
+void im_grup(grupp grp, int top_grup = -1)
 {
 	char t[100];
-	snprintf(t, 100, "GRUP %i %.4s", grup->id, grup->hed->label);
+	snprintf(t, 100, "GRUP %i %.4s", grp->id, grp->hed->label);
 	if (ImGui::TreeNode(t))
 	{
 		char s[100];
-		esp_print_grup(plugin, s, grup);
+		esp_print_grup(plugin, s, grp);
 		ImGui::Text(s);
-		for (unsigned int i = 0; i < grup->mixed.size; i++)
+		for (unsigned int i = 0; i < grp->mixed->size; i++)
 		{
-			void *element = grup->mixed.elements[i];
+			void *element = grp->mixed->elements[i];
 			if (*(char *)element == GRUP)
-				im_grup(grup->mixed.grups[i]);
+				im_grup((grup *)grp->mixed->elements[i]);
 			if (*(char *)element == RECORD)
-				im_record(grup->mixed.records[i]);
+				im_record((record *)grp->mixed->elements[i]);
 		}
-		if (grup->mixed.size)
+		if (grp->mixed->size)
 			ImGui::Separator();
 		ImGui::TreePop();
 	}
 }
 
-void im_record(record *record)
+void im_record(record *rec)
 {
 	char *edid = nullptr;
-	Field *first = record->fields.subrecords[0];
+	Field *first = (subrecord *)rec->fields->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
 		edid = (char *)first->data;
 	}
 	char t[130];
-	snprintf(t, 130, "%.4s %i - %s", (char *)&record->hed->sgn, record->id, edid);
+	snprintf(t, 130, "%.4s %i - %s", (char *)&rec->hed->sgn, rec->id, edid);
 	if (ImGui::TreeNode(t))
 	{
 		char s[200];
-		esp_print_record(plugin, s, record);
+		esp_print_record(plugin, s, rec);
 		ImGui::Text(s);
 		if (ImGui::TreeNode("formId"))
 		{
-			if (record->fi)
+			if (rec->fi)
 			{
 				char s[200];
-				esp_print_form_id(plugin, s, record->fi);
+				esp_print_form_id(plugin, s, rec->fi);
 				ImGui::Text(s);
 			}
 			ImGui::TreePop();
 		}
-		for (unsigned int i = 0; i < record->fields.size; i++)
+		for (unsigned int i = 0; i < rec->fields->size; i++)
 		{
-			im_subrecord(record->fields.subrecords[i]);
+			im_subrecord((subrecord *)rec->fields->elements[i]);
 		}
 		ImGui::TreePop();
 	}
@@ -103,7 +103,7 @@ void esp_gui()
 	static char buf[MAX] = "Skyrim.esm";
 	static char buf2[MAX] = {'\0'};
 
-	static EspCArray *filtered = NULL;
+	static revised_array * filtered = NULL;
 
 	ImGui::InputText("##plugin", buf, IM_ARRAYSIZE(buf));
 
@@ -120,7 +120,7 @@ void esp_gui()
 		{
 			plugin = replace;
 			if (filtered) {
-				free_esp_array(filtered);
+				free_esp_array(&filtered);
 				filtered = NULL;
 			}
 			reset = true;
@@ -157,8 +157,8 @@ void esp_gui()
 			//}
 			//if (ImGui::TreeNode("Grups"))
 			//{
-			for (unsigned int i = 0; i < plugin->grups.size; i++)
-				im_grup((grupp )plugin->grups.elements[i], i);
+			for (unsigned int i = 0; i < plugin->grups->size; i++)
+				im_grup((grupp )plugin->grups->elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();
@@ -177,7 +177,7 @@ void esp_gui()
 				memcpy(buf2, buf, 5);
 				if (filtered)
 				{
-					free_esp_array(filtered);
+					free_esp_array(&filtered);
 					filtered = NULL;
 				}
 				if (strlen(buf2) == 4)

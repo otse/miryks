@@ -42,12 +42,12 @@ namespace skyrim
 
 		unsigned int amount() const
 		{
-			return grp->mixed.size;
+			return grp->mixed->size;
 		}
 
 		bool typex(unsigned int i, int type) const
 		{
-			return type == ((Dud *)grp->mixed.elements[i])->x;
+			return type == ((Dud *)grp->mixed->elements[i])->x;
 		}
 
 		void foreach(int group_type, std::function<bool(unsigned int &i)> f)
@@ -63,7 +63,7 @@ namespace skyrim
 		{
 			assertc(i < amount());
 			assertc(i != -1 && typex(i, x));
-			return (T)grp->mixed.elements[i];
+			return (T)grp->mixed->elements[i];
 		}
 
 		cgrupp getgrup(unsigned int i) const

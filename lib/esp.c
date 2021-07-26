@@ -7,10 +7,6 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
-// subrecord *read_subrecord ?
-recordp read_record(espp );
-grupp read_grup(espp );
-
 #define Buf esp->buf
 #define Pos esp->pos
 
@@ -22,21 +18,20 @@ static espp plugins[5] = { NULL }; // local
 
 #define COUNT_OF(x) sizeof(x) / sizeof(0[x])
 
-inline void array(EspCArray *, unsigned int);
-inline void grow(EspCArray *);
-inline void insert(EspCArray *, void *);
-
-inline void arary2(revised_array *, unsigned int);
-inline void grow2(revised_array *);
-inline void insert2(revised_array *, void *);
+inline void narray(revised_array **, unsigned int);
+inline void grow(revised_array *);
+inline void insert(revised_array *, void *);
 
 void make_form_ids(espp );
+
+recordp read_record(espp);
+grupp read_grup(espp);
 
 unsigned int hedr_num_records(espp esp)
 {
 	if (esp_skip_fields)
 	return 200;
-	return *(unsigned int *)(esp->header->fields.subrecords[0]->data + 4);
+	return *(unsigned int *)((*(subrecord ***)esp->header->fields)[0]->data + 4);
 }
 
 espp plugin_slate()
@@ -52,12 +47,12 @@ api int plugin_load(espp esp)
 	assertm(esp->filesize, "need filesize");
 	assertm(esp->name,     "need name");
 	esp->header = read_record(esp);
-	array(&esp->grups, 200);
-	array(&esp->records, hedr_num_records(esp));
+	narray(&esp->grups, 200);
+	narray(&esp->records, hedr_num_records(esp));
 	while(Pos < esp->filesize)
 	{
 	grupp grp = read_grup(esp);
-	insert(&esp->grups, grp);
+	insert(esp->grups, grp);
 	}
 	make_form_ids(esp);
 	return 1;
@@ -82,8 +77,8 @@ recordp read_record(espp esp)
 	Pos += 0;
 	rec->actualSize = rec->hed->size;
 	rec->data = Buf + Pos;
-	array(&rec->fields, 6);
-	insert(&esp->records, rec);
+	narray(&rec->fields, 6);
+	insert(esp->records, rec);
 	// printf("R %.4s %u > ", (char *)&rec->hed->sgn, rec->hed->dataSize);
 	// fields
 	if (esp_skip_fields)
@@ -120,7 +115,7 @@ inline void read_record_fields(espp esp, recordp rec)
 	if (sub->hed->sgn == *(unsigned int *)"XXXX")
 	large = *(unsigned int *)sub->data;
 	else
-	insert(&rec->fields, sub);
+	insert(rec->fields, sub);
 	}
 }
 
@@ -164,7 +159,7 @@ grupp read_grup(espp esp)
 	Pos += sizeof(struct grup_header);
 	Pos += 0;
 	grp->data = Buf + Pos;
-	array(&grp->mixed, 12);
+	narray(&grp->mixed, 12);
 	// printf("G %.4s %u > ", (char *)&grup->hed->sgn, grup->hed->size);
 	// records
 	read_grup_records(esp, grp);
@@ -184,9 +179,9 @@ inline void read_grup_records(espp esp, grupp grp)
 	while (Pos - start < size)
 	{
 	if (peek_type(esp) == *(unsigned int *) "GRUP")
-	insert(&grp->mixed, read_grup(esp));
+	insert(grp->mixed, read_grup(esp));
 	else
-	insert(&grp->mixed, read_record(esp));
+	insert(grp->mixed, read_record(esp));
 	}
 }
 
@@ -194,11 +189,11 @@ inline void read_grup_records(espp esp, grupp grp)
 
 api grupp esp_top_grup(const espp esp, const char type[5])
 {
-	for (unsigned int i = 0; i < esp->grups.size; i++)
+	for (unsigned int i = 0; i < esp->grups->size; i++)
 	{
-	grupp grp = esp->grups.elements[i];
+	grupp grp = esp->grups->elements[i];
 	if (*(unsigned int *)type == grp->hed->label)
-	return esp->grups.elements[i];
+	return esp->grups->elements[i];
 	}
 	return NULL;
 }
@@ -222,10 +217,9 @@ inline void build_form_id(espp esp, recordp record, struct form_id *fi)
 void make_form_ids(espp esp)
 {
 	// Unused
-	EspCArray *array = &esp->records;
-	esp->formIds = malloc(sizeof(struct form_id) * array->size);
-	for (unsigned int i = 0; i < array->size; i++)
-	build_form_id(esp, array->elements[i], &esp->formIds[i]);
+	esp->formIds = calloc(esp->records->size, sizeof(struct form_id));
+	for (unsigned int i = 0; i < esp->records->size; i++)
+	build_form_id(esp, esp->records->elements[i], &esp->formIds[i]);
 }
 
 api recordp esp_get_form_id(unsigned int formId)
@@ -235,9 +229,9 @@ api recordp esp_get_form_id(unsigned int formId)
 	espp esp = plugins[i];
 	if (esp == NULL)
 	continue;
-	for (unsigned int j = 0; j < esp->records.size; j++)
+	for (unsigned int j = 0; j < esp->records->size; j++)
 	{
-	recordp rec = esp->records.elements[j];
+	recordp rec = esp->records->elements[j];
 	if (rec->fi->formId == formId)
 	return rec;
 	}
@@ -257,14 +251,13 @@ api void esp_array_loop(EspCArray *array, void (*func)(subrecord *field, void *d
 
 // Util code I did for imgui, kinda useless once I learned about top grups
 
-api EspCArray *esp_filter_objects(const espp esp, const char type[5])
+api revised_array * esp_filter_objects(const espp esp, const char type[5])
 {
-	EspCArray *filtered;
-	filtered = malloc(sizeof(EspCArray));
-	array(filtered, 100);
-	for (unsigned int i = 0; i < esp->records.size; i++)
+	revised_array * filtered;
+	narray(&filtered, 100);
+	for (unsigned int i = 0; i < esp->records->size; i++)
 	{
-	record *record = esp->records.elements[i];
+	record *record = esp->records->elements[i];
 	if (record->hed->sgn == *(unsigned int *)type)
 	insert(filtered, record);
 	}
@@ -307,9 +300,9 @@ api void free_plugin(esppp p)
 	for (int i = 5; i --> 0; )
 	if (esp == plugins[i])
 	plugins[i] = NULL;
-	for (unsigned int i = 0; i < esp->records.size; i++)
+	for (unsigned int i = 0; i < esp->records->size; i++)
 	{
-	recordp record = esp->records.elements[i];
+	recordp record = esp->records->elements[i];
 	if (record->hed->flags & 0x00040000)
 	free(record->buf);
 	free_esp_array(&record->fields);
@@ -322,44 +315,29 @@ api void free_plugin(esppp p)
 
 // Horrible growable c array stolen from GitHub
 
-api void free_esp_array(EspCArray *array)
+api void free_esp_array(revised_array ** array)
 {
-	free(array->elements);
+	free((*array)->elements);
 }
 
-inline void array(EspCArray *a, unsigned int initial) {
+inline void narray(revised_array ** p, unsigned int initial) {
+	*p = malloc(sizeof(revised_array));
+	revised_array * a = (*p);
 	a->capacity = initial;
 	a->size = 0;
-	a->elements = malloc(a->capacity * sizeof(void *));
+	a->elements = calloc(a->capacity, sizeof(void *));
 }
 
-inline void grow(EspCArray *a) {
+inline void grow(revised_array * a) {
 	if (a->size != a->capacity)
 	return;
 	a->capacity *= 2;
 	a->elements = realloc(a->elements, a->capacity * sizeof(void *));
 }
 
-inline void insert(EspCArray *a, void *element) {
-	grow(a);
-	a->elements[a->size++] = element;
-}
-
-
-inline void array2(revised_array * a, unsigned int initial) {
-	a->capacity = initial;
-	a->size = 0;
-	a->elements = malloc(a->capacity * sizeof(void *));
-}
-
-inline void grow2(revised_array * a) {
-	if (a->size != a->capacity)
+inline void insert(revised_array * a, void * element) {
+	if (a == NULL)
 	return;
-	a->capacity *= 2;
-	a->elements = realloc(a->elements, a->capacity * sizeof(void *));
-}
-
-inline void insert2(EspCArray *a, void *element) {
 	grow(a);
 	a->elements[a->size++] = element;
 }

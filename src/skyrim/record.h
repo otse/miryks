@@ -55,12 +55,12 @@ namespace skyrim
 
 		csubrecordp get(unsigned int i) const
 		{
-			return rcd->fields.subrecords[i];
+			return (subrecord *)rcd->fields->elements[i];
 		}
 
 		unsigned int amount() const
 		{
-			return rcd->fields.size;
+			return rcd->fields->size;
 		}
 
 		bool oftype(signature sgn) const

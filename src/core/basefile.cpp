@@ -44,7 +44,7 @@ void _basefile_makeindex(Basefile &rsf)
 	while ((mtar_read_header(&rsf.mtar, &h)) != MTAR_ENULLRECORD)
 	{
 		rsf.fnam.push_back(h.name);
-		printf("rsf make index %s of size %u\n", h.name, h.size);
+		// printf("rsf make index %s of size %u\n", h.name, h.size);
 		rsf.hnam.emplace(h.name, h);
 		mtar_next(&rsf.mtar);
 	}

@@ -36,7 +36,7 @@ grup->hed->group_type,
 grup->hed->time_stamp,
 LOW(grup->hed->version_control_info),
 HIGH(grup->hed->version_control_info),
-grup->mixed.size
+grup->mixed->size
 );
 }
 
@@ -69,7 +69,7 @@ record->hed->time_stamp,
 LOW(record->hed->version_control_info),
 HIGH(record->hed->version_control_info),
 record->hed->form_version,
-record->fields.size
+record->fields->size
 );
 }
 
