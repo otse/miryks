@@ -33,21 +33,22 @@ namespace skyrim
 	CELL Interior::getcell(const char *name)
 	{
 		CELL cell;
-		Grup A, B, C;
-		grup grp = esp_top_grup(get_plugins()[1], "CELL");
+		Grup A, B, C, D;
+		grup top = esp_top_grup(get_plugins()[1], "CELL");
 		bool stop = false;
-		A(grp).foreach(0, [&](unsigned int i) {
+		A(top).foreach(0, [&](unsigned int i) {
 		B(A.getgrup(i)).foreach(2, [&](unsigned int j) {
 		C(B.getgrup(j)).foreach(3, [&](unsigned int &k) {
-			Record object(C.getrecord(k));
-			Grup D = C.getgrup(k + 1);
-			const char *editorId = object.editorId();
-			if (0 == strcmp(name, editorId))
+			record *rcd = C.get<record *>(k);
+			grup *grp = C.get<grup *>(k + 1);
+			Record obj = rcd;
+			Grup arr = grp;
+			if (obj.hasEditorId(name))
 			{
-				cell.record = object.rcd;
+				cell.record = obj.rcd;
 				// printf("foreach found your interior `%s`\n", editorId);
-				cell.persistent = D.amount() >= 1 ? D.getgrup(0) : 0;
-				cell.temporary = D.amount() >= 2 ? D.getgrup(1) : 0;
+				cell.persistent = arr.amount() >= 1 ? arr.getgrup(0) : 0;
+				cell.temporary = arr.amount() >= 2 ? arr.getgrup(1) : 0;
 				stop = true;
 			}
 			k += 1;
@@ -62,18 +63,19 @@ namespace skyrim
 
 	static void PlaceCameraDud(Interior *);
 
-	void Interior::parsegrup(int group_type, CELL &cell, cgrupp grup)
+	void Interior::parsegrup(int group_type, CELL &cell, const grup * grp)
 	{
-		if (grup == nullptr)
+		if (grp == nullptr)
 			return;
-		Grup array;
-		array(grup).foreach(group_type, [&](unsigned int i) {
-			Record object(array.getrecord(i));
-			if (object.oftype(REFR))
+		Grup arr;
+		arr(grp).foreach(group_type, [&](unsigned int i) {
+			record *rcd = array.get<record *>(i);
+			Object obj = rcd;
+			if (obj.oftype(REFR))
 			{
-				Ref *ref = new Ref(object.rcd);
+				Ref *ref = new Ref(obj.rcd);
 				refs.push_back(ref);
-				const char *editorId = object.editorId();
+				const char *editorId = obj.editorId();
 				if (editorId)
 					editorIds.emplace(editorId, ref);
 				if (ref->baseObject.valid() && ref->baseObject.oftypeany({WEAP, MISC}))

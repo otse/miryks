@@ -89,5 +89,12 @@ namespace skyrim
 		{
 			return data<unsigned int *>("NAME");
 		}
+
+		// << useless >>
+
+		bool hasEditorId(const char *name) // maybe overload with editorId
+		{
+			return 0 == strcmp(name, editorId());
+		}
 	};
 }
