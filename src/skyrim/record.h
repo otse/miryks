@@ -61,23 +61,23 @@ namespace skyrim
 			return nullptr;
 		}
 
-		bool oftype(signature sgn) const
+		bool sig(signature sgn) const
 		{
 			return *(unsigned int *)sgn == rcd->hed->sgn;
 		}
 
-		bool oftypeany(std::vector<const char *> sigs) const
+		bool sigany(const std::vector<const char *> &sgns) const
 		{
-			for (const char *sig : sigs)
-				if (oftype(sig))
+			for (const char *sgn : sgns)
+				if (sig(sgn))
 					return true;
 			return false;
 		}
 
 		template <typename T = void *>
-		T data(signature type, int skip = 0) const
+		T data(signature sig, int skip = 0) const
 		{
-			const subrecord *sub = find(type, skip);
+			const subrecord *sub = find(sig, skip);
 			return sub ? (T)sub->data : nullptr;
 		}
 

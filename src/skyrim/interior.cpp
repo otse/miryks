@@ -26,8 +26,8 @@ namespace skyrim
 	void Interior::loadcell()
 	{
 		loaded_cell = getcell(editorId);
-		parsegrup(CellPersistentChildren, loaded_cell, loaded_cell.persistent);
-		parsegrup(CellTemporaryChildren, loaded_cell, loaded_cell.temporary);
+		parsegrup(8, loaded_cell, loaded_cell.persistent);
+		parsegrup(9, loaded_cell, loaded_cell.temporary);
 	}
 
 	CELL Interior::getcell(const char *name)
@@ -70,14 +70,14 @@ namespace skyrim
 		arr(grp).foreach(group_type, [&](unsigned int i) {
 			record *rcd = arr.get<record *>(i);
 			Record Rcd = rcd;
-			if (Rcd.oftype(REFR))
+			if (Rcd.sig(REFR))
 			{
 				Ref *ref = new Ref(Rcd.rcd);
 				refs.push_back(ref);
 				const char *editorId = Rcd.editorId();
 				if (editorId)
 					editorIds.emplace(editorId, ref);
-				if (ref->baseObject.valid() && ref->baseObject.oftypeany({WEAP, MISC}))
+				if (ref->baseObject.valid() && ref->baseObject.sigany({WEAP, MISC}))
 				{
 					iterables.push_back(ref);
 				}
@@ -92,7 +92,7 @@ namespace skyrim
 		if (alreadyTeleported)
 			return;
 		Grup array;
-		array(loaded_cell.persistent).foreach(CellPersistentChildren, [&](unsigned int i) {
+		array(loaded_cell.persistent).foreach(8, [&](unsigned int i) {
 			record *rcd = array.get<record *>(i);
 			Record Rcd = rcd;
 			if (*(Rcd.base()) == 0x0000003B) //  "Marker"

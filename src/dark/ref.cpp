@@ -50,8 +50,8 @@ namespace dark
 
 		formId baseId = base();
 
-		auto XSCL = data<float *>(_XSCL_);
-		auto locationalData = data<float *>(_DATA_);
+		auto XSCL = data<float *>("XSCL");
+		auto locationalData = data<float *>("DATA");
 
 		if (XSCL)
 			scale = glm::scale(mat4(1.0), vec3(*XSCL));
@@ -91,10 +91,9 @@ namespace dark
 
 		assertm(baseObject.valid(), "cant find refs Name-BaseId record");
 
-		if (baseObject.oftypeany({__STAT__, __DOOR__, __ALCH__, __CONT__,
-								  __ARMO__, __WEAP__, __FLOR__, __TREE__, __MISC__}))
+		if (baseObject.sigany({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
 		{
-			auto modl = baseObject.data<const char *>(_MODL_, 0);
+			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)
 			{
 				printf("um no modl here\n");
@@ -104,7 +103,7 @@ namespace dark
 				mesh = create_mesh(modl, true);
 			}
 		}
-		else if (baseObject.oftype(__LIGH__))
+		else if (baseObject.sig(__LIGH__))
 		{
 			struct Struct
 			{
