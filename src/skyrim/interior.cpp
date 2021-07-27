@@ -40,18 +40,17 @@ namespace skyrim
 		B(A.getgrup(i)).foreach(2, [&](unsigned int j) {
 		C(B.getgrup(j)).foreach(3, [&](unsigned int &k) {
 			record *rcd = C.get<record *>(k);
-			grup *grp = C.get<grup *>(k + 1);
-			Record obj = rcd;
-			Grup arr = grp;
-			if (obj.hasEditorId(name))
+			grup *grp = C.get<grup *>(++k);
+			Record Rcd = rcd;
+			Grup Grp = grp;
+			if (Rcd.hasEditorId(name))
 			{
-				cell.record = obj.rcd;
+				cell.record = rcd;
 				// printf("foreach found your interior `%s`\n", editorId);
-				cell.persistent = arr.amount() >= 1 ? arr.getgrup(0) : 0;
-				cell.temporary = arr.amount() >= 2 ? arr.getgrup(1) : 0;
+				cell.persistent = Grp.size() >= 1 ? Grp.getgrup(0) : 0;
+				cell.temporary = Grp.size() >= 2 ? Grp.getgrup(1) : 0;
 				stop = true;
 			}
-			k += 1;
 			return stop;
 			});
 			return stop;
@@ -70,10 +69,10 @@ namespace skyrim
 		Grup arr;
 		arr(grp).foreach(group_type, [&](unsigned int i) {
 			record *rcd = array.get<record *>(i);
-			Object obj = rcd;
+			Record Rcd = rcd;
 			if (obj.oftype(REFR))
 			{
-				Ref *ref = new Ref(obj.rcd);
+				Ref *ref = new Ref(Rcd.rcd);
 				refs.push_back(ref);
 				const char *editorId = obj.editorId();
 				if (editorId)
@@ -94,11 +93,12 @@ namespace skyrim
 			return;
 		Grup array;
 		array(loaded_cell.persistent).foreach(CellPersistentChildren, [&](unsigned int i) {
-			Record object(array.getrecord(i));
+			record *rcd = array.get<record *>(i);
+			Record Rcd = rcd;
 			if (*object.base() == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
-				float *locationalData = object.data<float *>(_DATA_);
+				float *locationalData = Rcd.data<float *>(_DATA_);
 				// printf(" xmarker ! \n");
 				first_person_camera->pos = *cast_vec_3(locationalData);
 				first_person_camera->pos.z += EYE_HEIGHT;

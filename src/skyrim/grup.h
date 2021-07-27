@@ -47,6 +47,11 @@ namespace skyrim
 			return *grp->hed;
 		}
 
+		const unsigned int size() const
+		{
+			return grp->mixed->size;
+		}
+
 		bool xtype(unsigned int i, int type) const
 		{
 			return type == (*(esp_dud ***)grp->mixed)[i]->x;
@@ -63,8 +68,8 @@ namespace skyrim
 		template <typename T = void *>
 		T get(unsigned int i, int x = -1) const
 		{
-			assertc(i < grp->mixed->size);
-			assertc(i != -1 && xtype(i, x));
+			assertm(i < grp->mixed->size, "grup i !< size");
+			assertm(i != -1 && xtype(i, x), "grup x type");
 			return (*(T **)grp->mixed)[i];
 		}
 
@@ -77,6 +82,18 @@ namespace skyrim
 		{
 			return get<const record *>(i, RECORD);
 		}
+
+		/*
+		Grup getGrup(unsigned int i) const
+		{
+			return Grup(getgrup(i));
+		}
+
+		Record getRecord(unsigned int i) const
+		{
+			return getrecord(i);
+		}
+		*/
 	};
 #undef X
 
