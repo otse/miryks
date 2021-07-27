@@ -20,6 +20,11 @@ namespace skyrim
 	public:
 		const grup *grp;
 
+		bool valid() const
+		{
+			return !(grp == nullptr);
+		}
+
 		Grup()
 		{
 			(*this)(nullptr);
@@ -42,12 +47,7 @@ namespace skyrim
 			return *grp->hed;
 		}
 
-		unsigned int amount() const
-		{
-			return grp->mixed->size;
-		}
-
-		bool typex(unsigned int i, int type) const
+		bool xtype(unsigned int i, int type) const
 		{
 			return type == (*(esp_dud ***)grp->mixed)[i]->x;
 		}
@@ -55,7 +55,7 @@ namespace skyrim
 		void foreach(int group_type, std::function<bool(unsigned int &i)> f)
 		{
 			assertc(hed().group_type == group_type);
-			for (unsigned int i = 0; i < amount(); i++)
+			for (unsigned int i = 0; i < grp->mixed->size; i++)
 				if (f(i))
 					break;
 		}
@@ -63,8 +63,8 @@ namespace skyrim
 		template <typename T = void *>
 		T get(unsigned int i, int x = -1) const
 		{
-			assertc(i < amount());
-			assertc(i != -1 && typex(i, x));
+			assertc(i < grp->mixed->size);
+			assertc(i != -1 && xtype(i, x));
 			return (*(T **)grp->mixed)[i];
 		}
 

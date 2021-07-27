@@ -33,26 +33,27 @@ namespace skyrim
 	CELL Interior::getcell(const char *name)
 	{
 		CELL cell;
-		Grup top, block, subblock;
+		Grup A, B, C;
+		grup grp = esp_top_grup(get_plugins()[1], "CELL");
 		bool stop = false;
-		top(esp_top_grup(get_plugins()[1], __CELL__)).foreach(Top, [&](unsigned int i) {
-			block(top.getgrup(i)).foreach(InteriorCellBlock, [&](unsigned int j) {
-				subblock(block.getgrup(j)).foreach(InteriorCellSubBlock, [&](unsigned int &k) {
-					Record object(subblock.getrecord(k));
-					Grup D = subblock.getgrup(k + 1);
-					const char *editorId = object.editorId();
-					if (0 == strcmp(name, editorId))
-					{
-						cell.record = object.rcd;
-						// printf("foreach found your interior `%s`\n", editorId);
-						cell.persistent = D.amount() >= 1 ? D.getgrup(0) : 0;
-						cell.temporary = D.amount() >= 2 ? D.getgrup(1) : 0;
-						stop = true;
-					}
-					k += 1;
-					return stop;
-				});
-				return stop;
+		A(grp).foreach(0, [&](unsigned int i) {
+		B(A.getgrup(i)).foreach(2, [&](unsigned int j) {
+		C(B.getgrup(j)).foreach(3, [&](unsigned int &k) {
+			Record object(C.getrecord(k));
+			Grup D = C.getgrup(k + 1);
+			const char *editorId = object.editorId();
+			if (0 == strcmp(name, editorId))
+			{
+				cell.record = object.rcd;
+				// printf("foreach found your interior `%s`\n", editorId);
+				cell.persistent = D.amount() >= 1 ? D.getgrup(0) : 0;
+				cell.temporary = D.amount() >= 2 ? D.getgrup(1) : 0;
+				stop = true;
+			}
+			k += 1;
+			return stop;
+			});
+			return stop;
 			});
 			return stop;
 		});

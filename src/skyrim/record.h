@@ -23,6 +23,11 @@ namespace skyrim
 	public:
 		const record *rcd;
 
+		bool valid() const
+		{
+			return !(rcd == nullptr);
+		}
+
 		Record()
 		{
 			rcd = nullptr;
@@ -33,26 +38,9 @@ namespace skyrim
 			rcd = p;
 		}
 
-		const subrecord *find(signature sgn, int skip = 0) const
-		{
-			for (unsigned int i = 0; i < amount(); i++)
-			{
-				const subrecord *sub = get(i);
-				if (*(unsigned int *)sgn == sub->hed->sgn)
-					if (skip-- < 1)
-						return sub;
-			}
-			return nullptr;
-		}
-
 		const record_header &hed() const
 		{
 			return *(rcd->hed);
-		}
-
-		bool valid() const
-		{
-			return rcd != nullptr;
 		}
 
 		const subrecord *get(unsigned int i) const
@@ -60,9 +48,16 @@ namespace skyrim
 			return (*(subrecord ***)rcd->subrecords)[i];
 		}
 
-		unsigned int amount() const
+		const subrecord *find(signature sgn, int skip = 0) const
 		{
-			return rcd->subrecords->size;
+			for (unsigned int i = 0; i < rcd->subrecords->size(); i++)
+			{
+				const subrecord *sub = get(i);
+				if (*(unsigned int *)sgn == sub->hed->sgn)
+					if (skip-- < 1)
+						return sub;
+			}
+			return nullptr;
 		}
 
 		bool oftype(signature sgn) const
@@ -81,18 +76,18 @@ namespace skyrim
 		template <typename T = void *>
 		T data(signature type, int skip = 0) const
 		{
-			csubrecordp sub = find(type, skip);
+			const subrecord *sub = find(type, skip);
 			return sub ? (T)sub->data : nullptr;
 		}
 
 		editorId editorId() const
 		{
-			return data<const char *>(EDID);
+			return data<const char *>("EDID");
 		}
 
 		formId base() const
 		{
-			return data<unsigned int *>(NAME);
+			return data<unsigned int *>("NAME");
 		}
 	};
 }
