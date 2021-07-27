@@ -27,7 +27,7 @@ extern int esp_skip_subrecords;
 typedef struct revised_array
 {
 	void **elements;
-	int size, capacity;
+	unsigned int size, capacity;
 } revised_array;
 
 struct esp
@@ -46,10 +46,6 @@ struct esp
 	unsigned int grups, records, fields, uncompress;
 	} count;
 };
-
-#define GRUP 1
-#define RECORD 2
-#define SUBRECORD 3
 
 #pragma pack(push, 1)
 

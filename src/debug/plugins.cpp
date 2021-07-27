@@ -32,9 +32,9 @@ void im_grup(grupp grp, int top_grup = -1)
 		for (unsigned int i = 0; i < grp->mixed->size; i++)
 		{
 			void *element = grp->mixed->elements[i];
-			if (*(char *)element == GRUP)
+			if (*(char *)element == 'g')
 				im_grup((grup *)grp->mixed->elements[i]);
-			if (*(char *)element == RECORD)
+			if (*(char *)element == 'r')
 				im_record((record *)grp->mixed->elements[i]);
 		}
 		if (grp->mixed->size)

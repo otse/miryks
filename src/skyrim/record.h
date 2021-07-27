@@ -25,7 +25,7 @@ namespace skyrim
 
 		bool valid() const
 		{
-			return !(rcd == nullptr);
+			return rcd != nullptr;
 		}
 
 		Record()
@@ -36,7 +36,7 @@ namespace skyrim
 		Record(const record *p)
 		{
 			rcd = p;
-			assert(rcd->r == 114);
+			assertc(rcd->r == 114);
 		}
 
 		const record_header &hed() const
@@ -51,7 +51,7 @@ namespace skyrim
 
 		const subrecord *find(signature sgn, int skip = 0) const
 		{
-			for (unsigned int i = 0; i < rcd->subrecords->size(); i++)
+			for (unsigned int i = 0; i < rcd->subrecords->size; i++)
 			{
 				const subrecord *sub = get(i);
 				if (*(unsigned int *)sgn == sub->hed->sgn)

@@ -22,7 +22,7 @@ namespace skyrim
 
 		bool valid() const
 		{
-			return !(grp == nullptr);
+			return grp != nullptr;
 		}
 
 		Grup()
@@ -38,7 +38,7 @@ namespace skyrim
 		Grup &operator()(const grup *p)
 		{
 			grp = p;
-			assert(grp->g == 103);
+			assertc(grp->g == 103);
 			return *this;
 		}
 
@@ -52,9 +52,9 @@ namespace skyrim
 			return grp->mixed->size;
 		}
 
-		bool xtype(unsigned int i, char type) const
+		bool xtype(unsigned int i, char x) const
 		{
-			return type == (*(esp_dud ***)grp->mixed)[i]->x;
+			return x == (*(esp_dud ***)grp->mixed)[i]->x;
 		}
 
 		void foreach(int group_type, std::function<bool(unsigned int &i)> f)
@@ -68,19 +68,19 @@ namespace skyrim
 		template <typename T = void *>
 		T get(unsigned int i, char x = '\0') const
 		{
-			assertm(i < grp->mixed->size, "grup i !< size");
-			assertm(i != -1 && xtype(i, x), "grup x type");
+			assertc(i < grp->mixed->size);
+			assertc(x == '\0' || xtype(i, x));
 			return (*(T **)grp->mixed)[i];
 		}
 
 		const grup *getgrup(unsigned int i) const
 		{
-			return get<const grup *>(i, GRUP);
+			return get<const grup *>(i, 'g');
 		}
 
 		const record *getrecord(unsigned int i) const
 		{
-			return get<const record *>(i, RECORD);
+			return get<const record *>(i, 'r');
 		}
 
 		/*

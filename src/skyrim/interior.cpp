@@ -34,7 +34,7 @@ namespace skyrim
 	{
 		CELL cell;
 		Grup A, B, C, D;
-		grup top = esp_top_grup(get_plugins()[1], "CELL");
+		grupp top = esp_top_grup(get_plugins()[1], "CELL");
 		bool stop = false;
 		A(top).foreach(0, [&](unsigned int i) {
 		B(A.getgrup(i)).foreach(2, [&](unsigned int j) {
@@ -68,13 +68,13 @@ namespace skyrim
 			return;
 		Grup arr;
 		arr(grp).foreach(group_type, [&](unsigned int i) {
-			record *rcd = array.get<record *>(i);
+			record *rcd = arr.get<record *>(i);
 			Record Rcd = rcd;
-			if (obj.oftype(REFR))
+			if (Rcd.oftype(REFR))
 			{
 				Ref *ref = new Ref(Rcd.rcd);
 				refs.push_back(ref);
-				const char *editorId = obj.editorId();
+				const char *editorId = Rcd.editorId();
 				if (editorId)
 					editorIds.emplace(editorId, ref);
 				if (ref->baseObject.valid() && ref->baseObject.oftypeany({WEAP, MISC}))
@@ -95,7 +95,7 @@ namespace skyrim
 		array(loaded_cell.persistent).foreach(CellPersistentChildren, [&](unsigned int i) {
 			record *rcd = array.get<record *>(i);
 			Record Rcd = rcd;
-			if (*object.base() == 0x0000003B) //  "Marker"
+			if (*(Rcd.base()) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
 				float *locationalData = Rcd.data<float *>(_DATA_);

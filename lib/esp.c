@@ -65,10 +65,16 @@ recordp read_record(espp esp)
 {
 	// Todo, clean big unclear assignments lik these thruout the program
 	recordp rec;
-	rec = calloc(1, sizeof(record));
+	rec = malloc(sizeof(record));
+	rec->fi = NULL;
 	// head
-	*rec = (record){ 'r', 0, Count.records++, Pos, Buf + Pos };
+	rec->r = 'r';
+	rec->indices = 0;
+	rec->id = Count.records++;
+	rec->offset = Pos;
+	rec->hed = Buf + Pos;
 	Pos += sizeof(struct record_header);
+	Pos += 0;
 	rec->actualSize = rec->hed->size;
 	rec->data = Buf + Pos;
 	narray(&rec->subrecords, 6);
@@ -123,9 +129,13 @@ inline subrecordp read_field(espp esp, recordp rec, unsigned int override)
 	buf = rec->buf;
 	}
 	subrecordp sub;
-	sub = calloc(1, sizeof(subrecord));
+	sub = malloc(sizeof(subrecord));
 	// hed
-	*sub = (subrecord){ 3, rec->indices++, Count.fields++, Pos, buf + *pos };
+	sub->x = 's';
+	sub->index = rec->indices++;
+	sub->id = Count.fields++;
+	sub->offset = Pos;
+	sub->hed = buf + *pos;
 	*pos += sizeof(struct field_header);
 	sub->actualSize = override == 0 ? sub->hed->size : override;
 	// data
