@@ -88,7 +88,7 @@ typedef struct esp_dud {
 
 struct grup
 {
-	char x;
+	char g;
 	unsigned int id;
 	const struct grup_header *hed;
 	unsigned char *data;
@@ -97,7 +97,7 @@ struct grup
 
 struct record
 {
-	char x;
+	char r;
 	unsigned int indices;
 	unsigned int id;
 	long offset;

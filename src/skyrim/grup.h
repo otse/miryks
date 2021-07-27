@@ -27,18 +27,18 @@ namespace skyrim
 
 		Grup()
 		{
-			(*this)(nullptr);
+			grp = nullptr;
 		}
 
 		Grup(const grup *grp)
 		{
-			assertc(grp);
 			(*this)(grp);
 		}
 
-		Grup &operator()(const grup *grp)
+		Grup &operator()(const grup *p)
 		{
-			this->grp = grp;
+			grp = p;
+			assert(grp->g == 103);
 			return *this;
 		}
 
@@ -52,7 +52,7 @@ namespace skyrim
 			return grp->mixed->size;
 		}
 
-		bool xtype(unsigned int i, int type) const
+		bool xtype(unsigned int i, char type) const
 		{
 			return type == (*(esp_dud ***)grp->mixed)[i]->x;
 		}
@@ -66,7 +66,7 @@ namespace skyrim
 		}
 		
 		template <typename T = void *>
-		T get(unsigned int i, int x = -1) const
+		T get(unsigned int i, char x = '\0') const
 		{
 			assertm(i < grp->mixed->size, "grup i !< size");
 			assertm(i != -1 && xtype(i, x), "grup x type");

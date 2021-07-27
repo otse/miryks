@@ -65,16 +65,10 @@ recordp read_record(espp esp)
 {
 	// Todo, clean big unclear assignments lik these thruout the program
 	recordp rec;
-	rec = malloc(sizeof(record));
-	rec->fi = NULL;
+	rec = calloc(1, sizeof(record));
 	// head
-	rec->x = RECORD;
-	rec->indices = 0;
-	rec->id = Count.records++;
-	rec->offset = Pos;
-	rec->hed = Buf + Pos;
+	*rec = (record){ 'r', 0, Count.records++, Pos, Buf + Pos };
 	Pos += sizeof(struct record_header);
-	Pos += 0;
 	rec->actualSize = rec->hed->size;
 	rec->data = Buf + Pos;
 	narray(&rec->subrecords, 6);
@@ -129,13 +123,9 @@ inline subrecordp read_field(espp esp, recordp rec, unsigned int override)
 	buf = rec->buf;
 	}
 	subrecordp sub;
-	sub = malloc(sizeof(subrecord));
+	sub = calloc(1, sizeof(subrecord));
 	// hed
-	sub->x = SUBRECORD;
-	sub->index = rec->indices++;
-	sub->id = Count.fields++;
-	sub->offset = Pos;
-	sub->hed = buf + *pos;
+	*sub = (subrecord){ 3, rec->indices++, Count.fields++, Pos, buf + *pos };
 	*pos += sizeof(struct field_header);
 	sub->actualSize = override == 0 ? sub->hed->size : override;
 	// data
@@ -153,7 +143,7 @@ grupp read_grup(espp esp)
 	grupp grp = malloc(sizeof(grup));
 	//grup->lowest = grup->highest = 0;
 	// hed
-	grp->x = GRUP;
+	grp->g = 'g';
 	grp->id = Count.grups++;
 	grp->hed = Buf + Pos;
 	Pos += sizeof(struct grup_header);

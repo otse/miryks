@@ -36,6 +36,7 @@ namespace skyrim
 		Record(const record *p)
 		{
 			rcd = p;
+			assert(rcd->r == 114);
 		}
 
 		const record_header &hed() const
