@@ -28,7 +28,7 @@ void SetShaderSources()
 	simple[0] = (char *)"simple";
 	basic[0] = (char *)"basic";
 	fxs[0] = (char *)"fx";
-#if 0
+#if 1
 	fbuf("gl/simple.vert", &simple[1], true);
 	fbuf("gl/simple.frag", &simple[2], true);
 	fbuf("gl/basic.vert", &basic[1], true);

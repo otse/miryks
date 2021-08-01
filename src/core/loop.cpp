@@ -39,6 +39,7 @@ bool hideDebugGuis = true;
 bool cursorShowing = false;
 bool f10 = false;
 bool h_pop = false;
+bool i_pop = false;
 
 namespace dark
 {
@@ -138,6 +139,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	else if (key == GLFW_KEY_H && action == GLFW_PRESS && !guing)
 	{
 		h_pop = !h_pop;
+	}
+	else if (key == GLFW_KEY_I && action == GLFW_PRESS && !guing)
+	{
+		i_pop = !i_pop;
 	}
 	else if (key == GLFW_KEY_V && action == GLFW_PRESS && !guing)
 	{
@@ -282,6 +287,9 @@ void dark::doImGui()
 
 	if (h_pop)
 		hero_menu();
+
+	if (i_pop)
+		inventory_menu();
 
 	if (!hideDebugGuis)
 	{

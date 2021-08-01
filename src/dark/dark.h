@@ -74,6 +74,7 @@ void bsa_gui();
 void nifp_gui();
 void cell_gui();
 void hero_menu();
+void inventory_menu();
 void render_stats(bool *);
 
 void simple_loader();

@@ -24,7 +24,7 @@ void im_subrecord(Field *);
 
 void im_grup(grupp grp, int top_grup = -1)
 {
-	Grup Grp = grp; // we actually dont need high level access now
+	Grup Grp = grp; // we have no need for this here
 	char t[100];
 	snprintf(t, 100, "GRUP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))

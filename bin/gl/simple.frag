@@ -258,6 +258,10 @@ void main()
 
 	#endif
 
+	//#ifndef VERTEX_ALPHA
+	//vColor.a = 1.0;
+	//#endif
+
 	#ifndef DONT_USE_VERTEX_COLOR
 		
 		//#ifdef VERTEX_ALPHA
@@ -276,6 +280,7 @@ void main()
 	//#endif
 	
 	if (diffuseColor.a <= alphaTest)
+		//diffuseColor.r = 1.0;
 		discard;
 
 	vec3 normal = normalize( vNormal );

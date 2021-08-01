@@ -15,6 +15,7 @@
 #include <renderer/camera.h>
 #include <renderer/lights.h>
 
+
 namespace skyrim
 {
 	Interior::Interior(const char *edid)
@@ -89,7 +90,6 @@ namespace skyrim
 
 	void parsegrup_no_wrapper(cgrupp grp)
 	{
-		// compare with interior::parsegrup
 		for (int i = 0; i < grp->mixed->size; i++)
 		{
 			crecordp rcd = (crecordp)grp->mixed->elements[i];
