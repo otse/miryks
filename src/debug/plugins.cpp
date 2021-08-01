@@ -1,6 +1,8 @@
 #include <dark/dark.h>
 #include <core/files.h>
 
+#include <skyrim/grup.h>
+
 extern "C"
 {
 #include "common.h"
@@ -22,8 +24,9 @@ void im_subrecord(Field *);
 
 void im_grup(grupp grp, int top_grup = -1)
 {
+	Grup Grp = grp; // we actually dont need high level access now
 	char t[100];
-	snprintf(t, 100, "GRUP %i %.4s", grp->id, grp->hed->label);
+	snprintf(t, 100, "GRUP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))
 	{
 		char s[100];

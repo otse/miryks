@@ -42,6 +42,8 @@ void load_plugins_archives()
 #include <renderer/camera.h>
 #include <renderer/rendertarget.h>
 
+#include <gooey/yagrum.h>
+
 int main()
 {
 	{
@@ -53,7 +55,7 @@ int main()
 	CURRENT_INTERIOR = "";
 	basefile_handle("basefile");
 	setup_glfw();
-	// load_yagrum();
+	load_yagrum();
 	load_plugins_archives();
 	first_person_camera = new FirstPersonCamera;
 	pan_camera = new ViewerCamera;
@@ -69,8 +71,8 @@ int main()
 	simple_viewer(rc);
 #endif
 	put_it_fullscreen();
-	// yagrum::queue("", 2.0, true);
-	// yagrum::set_rotate_speed(3.0);
+	yagrum_queue("", 2.0, true);
+	yagrum_set_rotate_speed(3.0);
 	// simple_start_screen();
 #if 1
 	load_gloomgen();

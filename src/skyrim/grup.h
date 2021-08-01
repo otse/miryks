@@ -9,15 +9,11 @@
 #include <map>
 #include <functional>
 
-#define inl inline
-
 namespace skyrim
 {
-	class Record;
+	// wrap for lib struct see /lib
 
 #define X Grup
-
-	// wrap for lib struct see /lib
 
 	class Grup
 	{
@@ -38,31 +34,31 @@ namespace skyrim
 			assertc(grp->g == 'g');
 			return *this;
 		}
-		inl bool valid() const
+		inline bool valid() const
 		{
 			return !!grp;
 		}
-		inl const grup_header &hed() const
+		inline const grup_header &hed() const
 		{
 			return *grp->hed;
 		}
-		inl const revised_array &ary() const
+		inline const revised_array &mixed() const
 		{
 			return *grp->mixed;
 		}
 		void foreach (int group_type, std::function<bool(unsigned int &i)> f)
 		{
 			assertc(hed().group_type == group_type);
-			for (unsigned int i = 0; i < ary().size; i++)
+			for (unsigned int i = 0; i < mixed().size; i++)
 				if (f(i))
 					break;
 		}
 		template <typename T = void *>
 		T get(unsigned int i, char x = '\0') const
 		{
-			assertc(i < ary().size);
-			assertc(x == '\0' || xtype(i, x));
-			return (*(T **)&ary())[i];
+			assertc(i < mixed().size);
+			assertc(x == '\0' || x == xtype(i));
+			return (*(T **)&mixed())[i];
 		}
 		cgrupp getgrup(unsigned int i) const
 		{
@@ -74,9 +70,9 @@ namespace skyrim
 		}
 		// << bluh >>
 
-		bool xtype(unsigned int i, char x) const
+		char xtype(unsigned int i) const
 		{
-			return x == (*(esp_dud ***)&ary())[i]->x;
+			return (*(esp_dud ***)&mixed())[i]->x;
 		}
 	};
 #undef X

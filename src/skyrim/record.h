@@ -12,15 +12,16 @@
 #define EDID "EDID"
 #define NAME "NAME"
 
-#define inl inline
+// wrap for lib struct see /lib
+
+// instead of a for loop, you use foreach
+// the raw getter is
 
 namespace skyrim
 {
 	const char *getEditorIdOnly(const recordp);
 
 #define X Record
-
-	// wrap for lib struct see /lib
 
 	class Record
 	{
@@ -36,38 +37,38 @@ namespace skyrim
 			rcd = p;
 			assertc(rcd->r == 'r');
 		}
-		inl bool valid() const
+		inline bool valid() const
 		{
 			return rcd != nullptr;
 		}
-		inl const record_header &hed() const
+		inline const record_header &hed() const
 		{
 			return *rcd->hed;
 		}
-		inl const revised_array &subs() const
+		inline const revised_array &subrecords() const
 		{
 			return *rcd->subrecords;
 		}
-		inl const subrecord *get(unsigned int i) const
+		inline csubrecordp get(unsigned int i) const
 		{
-			return (*(subrecord ***)&subs())[i];
+			return (subrecord *)rcd->subrecords->elements[i];
 		}
-		const subrecord *find(signature sgn, int skip = 0) const
+		csubrecordp find(signature sgn, int skip = 0) const
 		{
-			for (unsigned int i = 0; i < subs().size; i++)
+			for (unsigned int i = 0; i < subrecords().size; i++)
 			{
-				const subrecord *sub = get(i);
+				csubrecordp sub = get(i);
 				if (*(unsigned int *)sgn == sub->hed->sgn)
 					if (skip-- < 1)
 						return sub;
 			}
 			return nullptr;
 		}
-		inl bool sig(signature sgn) const
+		inline bool sig(signature sgn) const
 		{
 			return *(unsigned int *)sgn == rcd->hed->sgn;
 		}
-		inl bool sigany(const std::vector<const char *> &sgns) const
+		inline bool sigany(const std::vector<const char *> &sgns) const
 		{
 			for (const char *sgn : sgns)
 				if (sig(sgn))
@@ -77,7 +78,7 @@ namespace skyrim
 		template <typename T = void *>
 		T data(signature sig, int skip = 0) const
 		{
-			const subrecord *sub = find(sig, skip);
+			csubrecordp sub = find(sig, skip);
 			return sub ? (T)sub->data : nullptr;
 		}
 		editorId editorId() const

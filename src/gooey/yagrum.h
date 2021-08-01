@@ -21,23 +21,14 @@ namespace yagrum
 
 	extern entry *current;
 	extern std::deque<entry> vector;
-
-	void load();
-	void queue(const char *q, float duration, bool rotate = false);
-	void pop();
-	void set_rotate_speed(float = 1.0);
-	void set_no_image(bool = true);
-	void force_fade();
-	void checker();
-	void drawer();
 }
 
-static inline void yagrum_checker()
-{
-	yagrum::checker();
-}
+void load_yagrum();
 
-static inline void load_yagrum()
-{
-	yagrum::load();
-}
+void yagrum_queue(const char *q, float duration, bool rotate = false);
+void yagrum_pop();
+void yagrum_set_rotate_speed(float = 1.0);
+void yagrum_set_no_image(bool = true);
+void yagrum_force_fade();
+void yagrum_checker();
+void yagrum_drawer();

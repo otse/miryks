@@ -47,8 +47,8 @@ namespace skyrim
 			{
 				cell.record = rcd;
 				// printf("foreach found your interior `%s`\n", editorId);
-				cell.persistent = Grp.ary().size >= 1 ? Grp.getgrup(0) : 0;
-				cell.temporary = Grp.ary().size >= 2 ? Grp.getgrup(1) : 0;
+				cell.persistent = Grp.mixed().size >= 1 ? Grp.getgrup(0) : 0;
+				cell.temporary = Grp.mixed().size >= 2 ? Grp.getgrup(1) : 0;
 				stop = true;
 			}
 			return stop;
@@ -62,13 +62,13 @@ namespace skyrim
 
 	static void PlaceCameraDud(Interior *);
 
-	void Interior::parsegrup(int group_type, CELL &cell, const grup * grp)
+	void Interior::parsegrup(int group_type, CELL &cell, cgrupp grp)
 	{
 		if (grp == nullptr)
 			return;
-		Grup arr;
-		arr(grp).foreach(group_type, [&](unsigned int i) {
-			record *rcd = arr.get<record *>(i);
+		Grup Grp;
+		Grp(grp).foreach(group_type, [&](unsigned int i) {
+			record *rcd = Grp.get<record *>(i);
 			Record Rcd = rcd;
 			if (Rcd.sig(REFR))
 			{
@@ -87,13 +87,27 @@ namespace skyrim
 		placecamera();
 	}
 
+	void parsegrup_no_wrapper(cgrupp grp)
+	{
+		// compare with interior::parsegrup
+		for (int i = 0; i < grp->mixed->size; i++)
+		{
+			crecordp rcd = (crecordp)grp->mixed->elements[i];
+			if (rcd->hed->sgn == *(unsigned int *)"REFR")
+			{
+				// make Ref
+			}
+		}
+	}
+
+
 	void Interior::placecamera()
 	{
 		if (alreadyTeleported)
 			return;
-		Grup array;
-		array(loaded_cell.persistent).foreach(8, [&](unsigned int i) {
-			record *rcd = array.get<record *>(i);
+		Grup Grp;
+		Grp(loaded_cell.persistent).foreach(8, [&](unsigned int i) {
+			record *rcd = Grp.get<record *>(i);
 			Record Rcd = rcd;
 			if (*(Rcd.base()) == 0x0000003B) //  "Marker"
 			{
