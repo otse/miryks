@@ -51,7 +51,7 @@ namespace skyrim
 		}
 		inline csubrecordp get(unsigned int i) const
 		{
-			return (subrecord *)rcd->subrecords->elements[i];
+			return (csubrecordp)subrecords().elements[i];
 		}
 		csubrecordp find(signature sgn, int skip = 0) const
 		{
@@ -66,7 +66,7 @@ namespace skyrim
 		}
 		inline bool sig(signature sgn) const
 		{
-			return *(unsigned int *)sgn == rcd->hed->sgn;
+			return *(unsigned int *)sgn == hed().sgn;
 		}
 		inline bool sigany(const std::vector<const char *> &sgns) const
 		{
@@ -79,7 +79,10 @@ namespace skyrim
 		T data(signature sig, int skip = 0) const
 		{
 			csubrecordp sub = find(sig, skip);
-			return sub ? (T)sub->data : nullptr;
+			if (sub)
+				return (T)sub->data;
+			else
+				return nullptr;
 		}
 		editorId editorId() const
 		{
@@ -91,9 +94,12 @@ namespace skyrim
 		}
 
 		// << useless >>
-		bool hasEditorId(const char *name) // maybe overload with editorId
+		bool hasEditorId(const char *name)
 		{
 			return 0 == strcmp(name, editorId());
 		}
 	};
+
+#undef X
+
 }

@@ -47,7 +47,7 @@ namespace skyrim
 			if (Rcd.hasEditorId(name))
 			{
 				cell.record = rcd;
-				// printf("foreach found your interior `%s`\n", editorId);
+				printf("foreach found your interior `%s`\n", name);
 				cell.persistent = Grp.mixed().size >= 1 ? Grp.getgrup(0) : 0;
 				cell.temporary = Grp.mixed().size >= 2 ? Grp.getgrup(1) : 0;
 				stop = true;

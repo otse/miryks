@@ -1,6 +1,7 @@
 #include <lib.h>
 
 #include <dark/dark.h>
+#include <dark/itemrenderer.h>
 
 #include <core/files.h>
 
@@ -11,8 +12,10 @@ using namespace dark;
 #include <sstream>
 #include <imgui.h>
 
+
 void inventory_menu()
 {
+	return;
 	ImGuiIO& io = ImGui::GetIO();
 
 	io.DisplaySize.x;

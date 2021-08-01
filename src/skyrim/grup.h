@@ -58,7 +58,7 @@ namespace skyrim
 		{
 			assertc(i < mixed().size);
 			assertc(x == '\0' || x == xtype(i));
-			return (*(T **)&mixed())[i];
+			return (T) mixed().elements[i];
 		}
 		cgrupp getgrup(unsigned int i) const
 		{
@@ -72,9 +72,10 @@ namespace skyrim
 
 		char xtype(unsigned int i) const
 		{
-			return (*(esp_dud ***)&mixed())[i]->x;
+			return *(char *)mixed().elements[i];
 		}
 	};
+	
 #undef X
 
 	enum GrupTypes
