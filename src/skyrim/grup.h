@@ -9,91 +9,75 @@
 #include <map>
 #include <functional>
 
-// this wraps a "lib struct"
+#define inl inline
 
 namespace skyrim
 {
 	class Record;
 
+#define X Grup
+
+	// wrap for lib struct see /lib
+
 	class Grup
 	{
 	public:
-		const grup *grp;
+		cgrupp grp;
 
-		bool valid() const
-		{
-			return grp != nullptr;
-		}
-
-		Grup()
+		X()
 		{
 			grp = nullptr;
 		}
-
-		Grup(const grup *grp)
+		X(cgrupp grp)
 		{
 			(*this)(grp);
 		}
-
-		Grup &operator()(const grup *p)
+		X &operator()(cgrupp p)
 		{
 			grp = p;
-			assertc(grp->g == 103);
+			assertc(grp->g == 'g');
 			return *this;
 		}
-
-		const grup_header &hed() const
+		inl bool valid() const
+		{
+			return !!grp;
+		}
+		inl const grup_header &hed() const
 		{
 			return *grp->hed;
 		}
-
-		const unsigned int size() const
+		inl const revised_array &ary() const
 		{
-			return grp->mixed->size;
+			return *grp->mixed;
 		}
-
-		bool xtype(unsigned int i, char x) const
-		{
-			return x == (*(esp_dud ***)grp->mixed)[i]->x;
-		}
-
-		void foreach(int group_type, std::function<bool(unsigned int &i)> f)
+		void foreach (int group_type, std::function<bool(unsigned int &i)> f)
 		{
 			assertc(hed().group_type == group_type);
-			for (unsigned int i = 0; i < grp->mixed->size; i++)
+			for (unsigned int i = 0; i < ary().size; i++)
 				if (f(i))
 					break;
 		}
-		
 		template <typename T = void *>
 		T get(unsigned int i, char x = '\0') const
 		{
-			assertc(i < grp->mixed->size);
+			assertc(i < ary().size);
 			assertc(x == '\0' || xtype(i, x));
-			return (*(T **)grp->mixed)[i];
+			return (*(T **)&ary())[i];
 		}
-
-		const grup *getgrup(unsigned int i) const
+		cgrupp getgrup(unsigned int i) const
 		{
-			return get<const grup *>(i, 'g');
+			return get<cgrupp>(i, 'g');
 		}
-
-		const record *getrecord(unsigned int i) const
+		crecordp getrecord(unsigned int i) const
 		{
-			return get<const record *>(i, 'r');
+			return get<crecordp>(i, 'r');
 		}
+		// << bluh >>
 
-		/*
-		Grup getGrup(unsigned int i) const
+		bool xtype(unsigned int i, char x) const
 		{
-			return Grup(getgrup(i));
+			return x == (*(esp_dud ***)&ary())[i]->x;
 		}
-
-		Record getRecord(unsigned int i) const
-		{
-			return getrecord(i);
-		}
-		*/
 	};
 #undef X
 

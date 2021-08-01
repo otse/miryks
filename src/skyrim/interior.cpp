@@ -47,8 +47,8 @@ namespace skyrim
 			{
 				cell.record = rcd;
 				// printf("foreach found your interior `%s`\n", editorId);
-				cell.persistent = Grp.size() >= 1 ? Grp.getgrup(0) : 0;
-				cell.temporary = Grp.size() >= 2 ? Grp.getgrup(1) : 0;
+				cell.persistent = Grp.ary().size >= 1 ? Grp.getgrup(0) : 0;
+				cell.temporary = Grp.ary().size >= 2 ? Grp.getgrup(1) : 0;
 				stop = true;
 			}
 			return stop;

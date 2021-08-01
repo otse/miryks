@@ -12,46 +12,49 @@
 #define EDID "EDID"
 #define NAME "NAME"
 
-// this wraps a "lib struct"
+#define inl inline
 
 namespace skyrim
 {
 	const char *getEditorIdOnly(const recordp);
 
+#define X Record
+
+	// wrap for lib struct see /lib
+
 	class Record
 	{
 	public:
-		const record *rcd;
+		crecordp rcd;
 
-		bool valid() const
-		{
-			return rcd != nullptr;
-		}
-
-		Record()
+		X()
 		{
 			rcd = nullptr;
 		}
-
-		Record(const record *p)
+		X(crecordp p)
 		{
 			rcd = p;
-			assertc(rcd->r == 114);
+			assertc(rcd->r == 'r');
 		}
-
-		const record_header &hed() const
+		inl bool valid() const
 		{
-			return *(rcd->hed);
+			return rcd != nullptr;
 		}
-
-		const subrecord *get(unsigned int i) const
+		inl const record_header &hed() const
 		{
-			return (*(subrecord ***)rcd->subrecords)[i];
+			return *rcd->hed;
 		}
-
+		inl const revised_array &subs() const
+		{
+			return *rcd->subrecords;
+		}
+		inl const subrecord *get(unsigned int i) const
+		{
+			return (*(subrecord ***)&subs())[i];
+		}
 		const subrecord *find(signature sgn, int skip = 0) const
 		{
-			for (unsigned int i = 0; i < rcd->subrecords->size; i++)
+			for (unsigned int i = 0; i < subs().size; i++)
 			{
 				const subrecord *sub = get(i);
 				if (*(unsigned int *)sgn == sub->hed->sgn)
@@ -60,39 +63,33 @@ namespace skyrim
 			}
 			return nullptr;
 		}
-
-		bool sig(signature sgn) const
+		inl bool sig(signature sgn) const
 		{
 			return *(unsigned int *)sgn == rcd->hed->sgn;
 		}
-
-		bool sigany(const std::vector<const char *> &sgns) const
+		inl bool sigany(const std::vector<const char *> &sgns) const
 		{
 			for (const char *sgn : sgns)
 				if (sig(sgn))
 					return true;
 			return false;
 		}
-
 		template <typename T = void *>
 		T data(signature sig, int skip = 0) const
 		{
 			const subrecord *sub = find(sig, skip);
 			return sub ? (T)sub->data : nullptr;
 		}
-
 		editorId editorId() const
 		{
 			return data<const char *>("EDID");
 		}
-
 		formId base() const
 		{
 			return data<unsigned int *>("NAME");
 		}
 
 		// << useless >>
-
 		bool hasEditorId(const char *name) // maybe overload with editorId
 		{
 			return 0 == strcmp(name, editorId());
