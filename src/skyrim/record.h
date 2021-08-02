@@ -14,8 +14,7 @@
 
 // wrap for lib struct see /lib
 
-// instead of a for loop, you use foreach
-// the raw getter is
+// several useful things in here
 
 namespace skyrim
 {
@@ -39,7 +38,7 @@ namespace skyrim
 		}
 		inline bool valid() const
 		{
-			return rcd != nullptr;
+			return !!rcd;
 		}
 		inline const record_header &hed() const
 		{

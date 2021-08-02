@@ -40,16 +40,14 @@ namespace skyrim
 		A(top).foreach(0, [&](unsigned int i) {
 		B(A.getgrup(i)).foreach(2, [&](unsigned int j) {
 		C(B.getgrup(j)).foreach(3, [&](unsigned int &k) {
-			record *rcd = C.get<record *>(k);
-			grup *grp = C.get<grup *>(++k);
-			Record Rcd = rcd;
-			Grup Grp = grp;
-			if (Rcd.hasEditorId(name))
+			Record wrcd = C.getrecord(k);
+			Grup wgrp = C.getgrup(++k);
+			if (wrcd.hasEditorId(name))
 			{
-				cell.record = rcd;
+				cell.record = wrcd.rcd;
 				printf("foreach found your interior `%s`\n", name);
-				cell.persistent = Grp.mixed().size >= 1 ? Grp.getgrup(0) : 0;
-				cell.temporary = Grp.mixed().size >= 2 ? Grp.getgrup(1) : 0;
+				cell.persistent = wgrp.mixed().size >= 1 ? wgrp.getgrup(0) : 0;
+				cell.temporary = wgrp.mixed().size >= 2 ? wgrp.getgrup(1) : 0;
 				stop = true;
 			}
 			return stop;
@@ -67,15 +65,14 @@ namespace skyrim
 	{
 		if (grp == nullptr)
 			return;
-		Grup Grp;
-		Grp(grp).foreach(group_type, [&](unsigned int i) {
-			record *rcd = Grp.get<record *>(i);
-			Record Rcd = rcd;
-			if (Rcd.sig(REFR))
+		Grup wgrp;
+		wgrp(grp).foreach(group_type, [&](unsigned int i) {
+			Record wrcd = wgrp.getrecord(i)
+			if (wrcd.sig(REFR))
 			{
-				Ref *ref = new Ref(Rcd.rcd);
+				Ref *ref = new Ref(wrcd.rcd);
 				refs.push_back(ref);
-				const char *editorId = Rcd.editorId();
+				const char *editorId = wrcd.editorId();
 				if (editorId)
 					editorIds.emplace(editorId, ref);
 				if (ref->baseObject.valid() && ref->baseObject.sigany({WEAP, MISC}))
@@ -99,20 +96,18 @@ namespace skyrim
 			}
 		}
 	}
-
-
+	
 	void Interior::placecamera()
 	{
 		if (alreadyTeleported)
 			return;
-		Grup Grp;
-		Grp(loaded_cell.persistent).foreach(8, [&](unsigned int i) {
-			record *rcd = Grp.get<record *>(i);
-			Record Rcd = rcd;
-			if (*(Rcd.base()) == 0x0000003B) //  "Marker"
+		Grup wgrp;
+		wgrp(loaded_cell.persistent).foreach(8, [&](unsigned int i) {
+			Record wrcd = wgrp.getrecord(i);
+			if (*(wrcd.base()) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
-				float *locationalData = Rcd.data<float *>(_DATA_);
+				float *locationalData = wrcd.data<float *>(_DATA_);
 				// printf(" xmarker ! \n");
 				first_person_camera->pos = *cast_vec_3(locationalData);
 				first_person_camera->pos.z += EYE_HEIGHT;

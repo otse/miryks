@@ -72,7 +72,7 @@ struct record_header
 	unsigned short time_stamp, version_control_info, form_version, unknown;
 };
 
-struct field_header
+struct subrecord_header
 {
 	unsigned int sgn;
 	unsigned short size;
@@ -109,11 +109,11 @@ struct record
 
 struct subrecord
 {
-	char x;
+	char s;
 	unsigned int index;
 	unsigned int id;
 	long offset;
-	const struct field_header *hed;
+	const struct subrecord_header *hed;
 	unsigned int actualSize;
 	unsigned char *data;
 };

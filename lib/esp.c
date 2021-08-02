@@ -131,12 +131,12 @@ inline subrecordp read_field(espp esp, recordp rec, unsigned int override)
 	subrecordp sub;
 	sub = malloc(sizeof(subrecord));
 	// hed
-	sub->x = 's';
+	sub->s = 's';
 	sub->index = rec->indices++;
 	sub->id = Count.fields++;
 	sub->offset = Pos;
 	sub->hed = buf + *pos;
-	*pos += sizeof(struct field_header);
+	*pos += sizeof(struct subrecord_header);
 	sub->actualSize = override == 0 ? sub->hed->size : override;
 	// data
 	sub->data = buf + *pos;
