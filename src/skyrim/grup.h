@@ -11,6 +11,8 @@
 
 namespace skyrim
 {
+	typedef std::function<bool(unsigned int &i)> grupfunc;
+
 	// wrap for lib struct see /lib
 
 #define X Grup
@@ -46,8 +48,9 @@ namespace skyrim
 		{
 			return *grp->mixed;
 		}
-		void foreach (int group_type, std::function<bool(unsigned int &i)> f)
+		void foreach (int group_type, grupfunc f)
 		{
+			assertc(valid());
 			assertc(hed().group_type == group_type);
 			for (unsigned int i = 0; i < mixed().size; i++)
 				if (f(i))
@@ -58,7 +61,7 @@ namespace skyrim
 		{
 			assertc(i < mixed().size);
 			assertc(x == '\0' || x == xtype(i));
-			return (T) mixed().elements[i];
+			return (T)mixed().elements[i];
 		}
 		cgrupp getgrup(unsigned int i) const
 		{
@@ -75,7 +78,7 @@ namespace skyrim
 			return *(char *)mixed().elements[i];
 		}
 	};
-	
+
 #undef X
 
 	enum GrupTypes

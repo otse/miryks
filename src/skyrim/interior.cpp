@@ -35,7 +35,7 @@ namespace skyrim
 	{
 		CELL cell;
 		Grup A, B, C, D;
-		grupp top = esp_top_grup(get_plugins()[1], "CELL");
+		grupp top = esp_top_grup(get_plugins()[3], "CELL");
 		bool stop = false;
 		A(top).foreach(0, [&](unsigned int i) {
 		B(A.getgrup(i)).foreach(2, [&](unsigned int j) {
@@ -67,7 +67,7 @@ namespace skyrim
 			return;
 		Grup wgrp;
 		wgrp(grp).foreach(group_type, [&](unsigned int i) {
-			Record wrcd = wgrp.getrecord(i)
+			Record wrcd = wgrp.getrecord(i);
 			if (wrcd.sig(REFR))
 			{
 				Ref *ref = new Ref(wrcd.rcd);

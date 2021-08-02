@@ -31,13 +31,17 @@ void load_plugins_archives()
 {
 	editme = fread("editme.txt");
 	get_plugins()[0] = load_plugin(PLUGIN_ONE);
-	get_plugins()[1] = load_plugin(PLUGIN_NAMESAKE);
+	get_plugins()[1] = load_plugin(PLUGIN_TWO);
+	get_plugins()[2] = load_plugin(PLUGIN_THREE);
+	get_plugins()[3] = load_plugin(PLUGIN_NAMESAKE);
 	get_archives()[0] = load_archive(ARCHIVE_ONE);
 	get_archives()[1] = load_archive(ARCHIVE_TWO);
 	get_archives()[2] = load_archive(ARCHIVE_THREE);
 	get_archives()[3] = load_archive(ARCHIVE_FOUR);
 	get_archives()[4] = load_archive(ARCHIVE_FIVE);
-	get_archives()[5] = load_archive(ARCHIVE_SIX);
+	get_archives()[6] = load_archive(ARCHIVE_SIX);
+	get_archives()[7] = load_archive(ARCHIVE_SEVEN);
+	get_archives()[8] = load_archive(ARCHIVE_EIGHT);
 }
 
 #include <dark/collision.h>

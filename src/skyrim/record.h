@@ -52,17 +52,6 @@ namespace skyrim
 		{
 			return (csubrecordp)subrecords().elements[i];
 		}
-		csubrecordp find(signature sgn, int skip = 0) const
-		{
-			for (unsigned int i = 0; i < subrecords().size; i++)
-			{
-				csubrecordp sub = get(i);
-				if (*(unsigned int *)sgn == sub->hed->sgn)
-					if (skip-- < 1)
-						return sub;
-			}
-			return nullptr;
-		}
 		inline bool sig(signature sgn) const
 		{
 			return *(unsigned int *)sgn == hed().sgn;
@@ -73,6 +62,17 @@ namespace skyrim
 				if (sig(sgn))
 					return true;
 			return false;
+		}
+		csubrecordp find(signature sgn, int skip = 0) const
+		{
+			for (unsigned int i = 0; i < subrecords().size; i++)
+			{
+				csubrecordp sub = get(i);
+				if (*(unsigned int *)sgn == sub->hed->sgn)
+					if (skip-- < 1)
+						return sub;
+			}
+			return nullptr;
 		}
 		template <typename T = void *>
 		T data(signature sig, int skip = 0) const
