@@ -1,4 +1,4 @@
-#include <core/helpers.hpp>
+#include <templates.hpp>
 
 #include <renderer/group.h>
 #include <renderer/geometry.h>
@@ -19,13 +19,13 @@ Group::~Group()
 void Group::Add(Group *group)
 {
 	group->parent = this;
-	VectorAdd<Group *>(group, groups);
+	vector_safe_add<Group *>(group, groups);
 }
 
 void Group::Remove(Group *group)
 {
 	group->parent = nullptr;
-	VectorRemove<Group *>(group, groups);
+	vector_safe_remove<Group *>(group, groups);
 }
 
 void Group::Update()

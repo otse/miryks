@@ -1,8 +1,12 @@
 #include <string>
 #include <deque>
-#include <dark/fwd>
 
 using namespace dark;
+
+namespace dark
+{
+	class Image;
+}
 
 namespace yagrum
 {

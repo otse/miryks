@@ -1,7 +1,7 @@
 #include <lib.h>
 
 #include <dark/dark.h>
-#include <dark/itemrenderer.h>
+#include <dark/container.h>
 
 #include <core/files.h>
 

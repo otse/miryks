@@ -2,10 +2,48 @@
 
 #include <renderer/types.h>
 
-#include "fwd"
 #include "list"
 
 #define INAL_BAD_SORRY "Inal bad, sorry"
+
+// c lib defs
+struct grup;
+struct record;
+struct subrecord;
+struct Rc;
+struct esp;
+struct Bsa;
+struct Nifp;
+struct NifpRd;
+
+typedef Rc Resource;
+typedef esp Plugin;
+typedef esp Esp;
+typedef Bsa Archive;
+typedef Nifp Nif;
+typedef NifpRd Rd;
+typedef subrecord Field;
+
+namespace dark
+{
+	class Obj;
+	class Ref;
+	class Actor;
+	class BodyPart;
+	class Human;
+	class Player;
+	
+	class CSphere;
+	class CShape;
+	class Collider;
+
+	class Wrld;
+	class Image;
+	
+	extern const char *CURRENT_WRLD;
+	extern const char *CURRENT_INTERIOR;
+	extern const char *PLY_;
+}
 
 namespace skyrim
 {

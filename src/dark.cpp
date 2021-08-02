@@ -2,8 +2,11 @@
 
 #include <core/files.h>
 #include <core/basefile.h>
+
 #include <lib.h>
+
 #include <dark/dark.h>
+
 #include <skyrim/interior.h>
 
 using namespace dark;
@@ -51,7 +54,6 @@ int main()
 		w = a = s = d = r = f = v = false;
 		shift = space = false;
 	}
-	CURRENT_WRLD = "Gloom";
 	CURRENT_INTERIOR = "";
 	basefile_handle("basefile");
 	setup_glfw();

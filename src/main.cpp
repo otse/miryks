@@ -4,7 +4,6 @@
 #include <png.h>
 
 #include <dark/dark.h>
-#include <dark/obj.h>
 
 #include <gooey/yagrum.h>
 
@@ -44,7 +43,6 @@ namespace dark
 		bool shift, space;
 	}
 
-	const char *CURRENT_WRLD;
 	const char *CURRENT_INTERIOR;
 
 	std::string editme;

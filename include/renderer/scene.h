@@ -3,7 +3,7 @@
 
 // part of gloom
 
-#include <core/helpers.hpp>
+#include <templates.hpp>
 
 #include <renderer/types.h>
 
@@ -13,11 +13,11 @@ struct Container
 	std::vector<T *> ts;
 	void Add(T *t)
 	{
-		VectorAdd<T *>(t, ts);
+		vector_safe_add<T *>(t, ts);
 	};
 	void Remove(T *t)
 	{
-		VectorRemove<T *>(t, ts);
+		vector_safe_remove<T *>(t, ts);
 	};
 };
 struct Scene
