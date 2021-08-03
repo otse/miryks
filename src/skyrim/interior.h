@@ -21,7 +21,7 @@ namespace skyrim
 
 	struct Cell
 	{
-		Record rcd;
+		Record wrcd;
 		Grup persistent, temporary;
 	};
 

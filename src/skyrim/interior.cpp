@@ -33,21 +33,40 @@ namespace skyrim
 
 	CELL Interior::getcell(const char *name)
 	{
-		CELL cell;
-		Grup A, B, C, D;
+		Cell cell;
 		grupp top = esp_top_grup(get_plugins()[3], "CELL");
-		bool stop = false;
+		Grup a, b, c;
+		a = top;
+		for (int i = 0; i < a.size(); i++)
+		{
+		b = a.get(i);
+		for (int j = 0; j < b.size(); j++)
+		{
+		c = b.get(j);
+		for (int k = 0; k < c.size(); k++)
+		{
+			Record wrcd = c.get(k);
+			Grup wgrp = c.get(++k);
+			if (wrcd.hasEditorId(name))
+			{
+				cell.wrcd = wrcd.rcd;
+				goto endloop;
+			}
+		}
+		}
+		}
+		endloop:
 		A(top).foreach(0, [&](unsigned int i) {
 		B(A.getgrup(i)).foreach(2, [&](unsigned int j) {
 		C(B.getgrup(j)).foreach(3, [&](unsigned int &k) {
-			Record wrcd = C.getrecord(k);
-			Grup wgrp = C.getgrup(++k);
+			Record wrcd = C.get(k);
+			Grup wgrp = C.get(++k);
 			if (wrcd.hasEditorId(name))
 			{
 				cell.record = wrcd.rcd;
 				printf("foreach found your interior `%s`\n", name);
-				cell.persistent = wgrp.mixed().size >= 1 ? wgrp.getgrup(0) : 0;
-				cell.temporary = wgrp.mixed().size >= 2 ? wgrp.getgrup(1) : 0;
+				cell.persistent = wgrp.mixed().size >= 1 ? wgrp.get(0) : 0;
+				cell.temporary = wgrp.mixed().size >= 2 ? wgrp.get(1) : 0;
 				stop = true;
 			}
 			return stop;
@@ -67,7 +86,7 @@ namespace skyrim
 			return;
 		Grup wgrp;
 		wgrp(grp).foreach(group_type, [&](unsigned int i) {
-			Record wrcd = wgrp.getrecord(i);
+			Record wrcd = wgrp.get(i);
 			if (wrcd.sig(REFR))
 			{
 				Ref *ref = new Ref(wrcd.rcd);
@@ -103,7 +122,7 @@ namespace skyrim
 			return;
 		Grup wgrp;
 		wgrp(loaded_cell.persistent).foreach(8, [&](unsigned int i) {
-			Record wrcd = wgrp.getrecord(i);
+			Record wrcd = wgrp.get(i);
 			if (*(wrcd.base()) == 0x0000003B) //  "Marker"
 			{
 				// Place at any XMarker
