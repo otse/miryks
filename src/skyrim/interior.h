@@ -72,23 +72,26 @@ namespace skyrim
 		});
 	}
 
-	static void grup_dive_til(Grup wgrp, int group_type, editorId name, std::function<void(Grup, editorId)> f)
+	const char *needle = 0;
+
+	std::function< void(Grup) > *find_func = 0;
+
+	static int grup_dive_til(Grup wgrp, int group_type, int ret = 0)
 	{
 		printf("woo");
+		if (wgrp.hed().group_type == group_type)
+			ret = *find_func(wgrp);
+		if (ret)
+			return;
 		for (unsigned int i = 0; i < wgrp.mixed().size; i++)
-		{
-			if (wgrp.hed().group_type == group_type)
-				f(wgrp, name);
-			else
-				grup_dive_til(wgrp.get<grup *>(i), group_type, name, f);
-		}
+			ret = grup_dive_til(wgrp.get<grup *>(i), group_type, ret);
 	}
 
-	static void find_cell(Grup block, editorId name)
+	static void find_cell(Grup haystack)
 	{
-		block.foreach(3, [&](unsigned int &i) {
-			Record wrcd = block.getrecord(i);
-			if (wrcd.hasEditorId(name)) {
+		haystack.foreach(3, [&](unsigned int &i) {
+			Record wrcd = haystack.getrecord(i);
+			if (wrcd.hasEditorId(needle)) {
 			printf("find_cell found !");
 				Cell cell = capture_cell(wrcd);
 				return true;
@@ -96,13 +99,14 @@ namespace skyrim
 			return false;
 		});
 	}
-
-
+	
 	static Cell find_cell_loop(const char *name)
 	{
 		Cell cell;
 		grupp top = esp_top_grup(get_plugins()[3], "CELL");
-		grup_dive_til(top, 3, name, find_cell);
+		needle = name;
+		find_func = find_cell;
+		grup_dive_til(top, 3);
 		Grup a, b, c;
 		a = top;
 		assertc(a.hed().group_type == 0);
@@ -120,7 +124,7 @@ namespace skyrim
 					Grup wgrp = c.get<grup *>(++k);
 					if (wrcd.hasEditorId(name))
 					{
-						cell = capture_cell(wrcd);
+						cell = capture_cell(wrcd, wgrp);
 						goto endloop;
 					}
 				}
