@@ -37,7 +37,7 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			Record object = Record(dungeon->loaded_cell.record);
+			Record object = Record(dungeon->loaded_cell.wrcd);
 
 			const char *editorId = object.editorId();
 
