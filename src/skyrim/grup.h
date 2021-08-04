@@ -9,9 +9,13 @@
 #include <map>
 #include <functional>
 
+#define OUT_OF_BOUNDS_GET_RETURNS_NULLPTR 1
+
 namespace skyrim
 {
 	typedef std::function<bool(unsigned int &i)> grupfunc;
+
+	typedef bool(*grupfuncp)(unsigned int &i);
 
 	// wrap for lib struct see /lib
 
@@ -26,9 +30,11 @@ namespace skyrim
 		{
 			grp = nullptr;
 		}
-		X(cgrupp grp)
+		X(cgrupp p)
 		{
-			(*this)(grp);
+			grp = p;
+			if (grp)
+				(*this)(grp);
 		}
 		X &operator()(cgrupp p)
 		{
@@ -48,28 +54,39 @@ namespace skyrim
 		{
 			return *grp->mixed;
 		}
-		void foreach (int group_type, grupfunc f)
+		int foreach (int group_type, grupfunc f)
 		{
 			assertc(valid());
 			assertc(hed().group_type == group_type);
 			for (unsigned int i = 0; i < mixed().size; i++)
 				if (f(i))
-					break;
+					return 1;
+			return 0;
 		}
 		template <typename T = void *>
-		T get(unsigned int i, char x = '\0') const
+		T get(unsigned int i/*, char x = '\0'*/) const
 		{
+#if OUT_OF_BOUNDS_GET_RETURNS_NULLPTR
+			if (i >= mixed().size)
+				return nullptr;
+#else
 			assertc(i < mixed().size);
-			assertc(x == '\0' || x == xtype(i));
+#endif
+			//assertc(x == '\0' || x == xtype(i));
 			return (T)mixed().elements[i];
 		}
+
+		// type safety comment-outs
+
+		/*
 		cgrupp getgrup(unsigned int i) const
 		{
-			return get<cgrupp>(i, 'g');
+			// just use get<grup * or record *>
+			return get<grup *>(i, 'g');
 		}
 		crecordp getrecord(unsigned int i) const
 		{
-			return get<crecordp>(i, 'r');
+			return get<record *>(i, 'r');
 		}
 		// << bluh >>
 
@@ -77,6 +94,7 @@ namespace skyrim
 		{
 			return *(char *)mixed().elements[i];
 		}
+		*/
 	};
 
 #undef X

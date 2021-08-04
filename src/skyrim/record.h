@@ -34,7 +34,8 @@ namespace skyrim
 		X(crecordp p)
 		{
 			rcd = p;
-			assertc(rcd->r == 'r');
+			if (p)
+				assertc(rcd->r == 'r');
 		}
 		inline bool valid() const
 		{

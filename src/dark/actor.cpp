@@ -52,7 +52,7 @@ namespace dark
 		Grup array;
 		grupp top = esp_top_grup(get_plugins()[0], __RACE__);
 		array(top).foreach(0, [&](unsigned int &i) {
-			Record object = array.getrecord(i);
+			Record object = array.get<record *>(i);
 			auto editorId = object.editorId();
 			if (strcmp(editorId, raceId) == 0)
 			{

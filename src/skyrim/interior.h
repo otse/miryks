@@ -37,31 +37,30 @@ namespace skyrim
 		void placecamera();
 	};
 
-	static Cell capture_cell(Record wrcd)
+	static Cell capture_cell(Record wrcd, Grup wgrp)
 	{
+		printf("cap cell");
 		Cell cell;
 		cell.wrcd = wrcd;
-		Grup wgrp = (grupp)&wrcd+1;
-		if (wgrp.mixed().size >= 1)
-			cell.persistent = wgrp.getgrup(0);
-		if (wgrp.mixed().size >= 2)
-			cell.temporary = wgrp.getgrup(1);
+		cell.persistent = wgrp.get<grup *>(0);
+		cell.temporary = wgrp.get<grup *>(1);
 		return cell;
 	}
 
+	// modern function that uses lambdas, with built-in group_type safety
 	static Cell find_cell_foreach(const char *name)
 	{
 		Cell cell;
-		Grup A, B, C, D;
+		Grup a, b, c;
 		cgrupp top = esp_top_grup(get_plugins()[3], "CELL");
 		bool stop = false;
-		A(top).foreach(0, [&](unsigned int i) {
-		B(A.getgrup(i)).foreach(2, [&](unsigned int j) {
-		C(B.getgrup(j)).foreach(3, [&](unsigned int &k) {
-			Record wrcd = C.getrecord(k);
-			Grup wgrp = C.getgrup(++k);
+		a(top).foreach(0, [&](unsigned int i) {
+		b(a.get<grup *>(i)).foreach(2, [&](unsigned int j) {
+		c(b.get<grup *>(j)).foreach(3, [&](unsigned int &k) {
+			Record wrcd = c.get<record *>(k);
+			Grup wgrp = c.get<grup *>(++k);
 			if (wrcd.hasEditorId(name)) {
-				cell = capture_cell(wrcd.rcd);
+				cell = capture_cell(wrcd, wgrp);
 				stop = true;
 			}
 			return stop;
@@ -70,49 +69,25 @@ namespace skyrim
 			});
 			return stop;
 		});
+		return cell;
 	}
 
-	static void grup_dive_til(Grup wgrp, int group_type, editorId name, std::function<void(Grup, editorId)> f)
-	{
-		printf("woo");
-		for (unsigned int i = 0; i < wgrp.mixed().size; i++)
-		{
-			if (wgrp.hed().group_type == group_type)
-				f(wgrp, name);
-			else
-				grup_dive_til(wgrp.get<grup *>(i), group_type, name, f);
-		}
-	}
-
-	static void find_cell(Grup block, editorId name)
-	{
-		block.foreach(3, [&](unsigned int &i) {
-			Record wrcd = block.getrecord(i);
-			if (wrcd.hasEditorId(name)) {
-			printf("find_cell found !");
-				Cell cell = capture_cell(wrcd);
-				return true;
-			}
-			return false;
-		});
-	}
-
-
+	// the very same function but using for-loops
+	// leave this here
 	static Cell find_cell_loop(const char *name)
 	{
 		Cell cell;
 		grupp top = esp_top_grup(get_plugins()[3], "CELL");
-		grup_dive_til(top, 3, name, find_cell);
 		Grup a, b, c;
 		a = top;
 		assertc(a.hed().group_type == 0);
 		for (unsigned int i = 0; i < a.mixed().size; i++)
 		{
-			b = a.getgrup(i);
+			b = a.get<grup *>(i);
 			assertc(b.hed().group_type == 2);
 			for (unsigned int j = 0; j < b.mixed().size; j++)
 			{
-				c = b.getgrup(j);
+				c = b.get<grup *>(j);
 				assertc(c.hed().group_type == 3);
 				for (unsigned int k = 0; k < c.mixed().size; k++)
 				{
@@ -120,7 +95,7 @@ namespace skyrim
 					Grup wgrp = c.get<grup *>(++k);
 					if (wrcd.hasEditorId(name))
 					{
-						cell = capture_cell(wrcd);
+						cell = capture_cell(wrcd, wgrp);
 						goto endloop;
 					}
 				}
@@ -129,4 +104,17 @@ namespace skyrim
 		endloop:
 		return cell;
 	}
+
+	/*static void grup_dive_til(Grup wgrp, int group_type, editorId name)
+	{
+		printf("grup_dive_til");
+		for (unsigned int i = 0; i < wgrp.mixed().size; i++)
+		{
+			if (wgrp.hed().group_type == group_type)
+				return;
+			else
+				grup_dive_til(wgrp.get<grup *>(i), group_type, name);
+		}
+	}*/
+
 }
