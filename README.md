@@ -2,7 +2,7 @@
 
 called dark in the src
 
-has a special-edition branch for comparison testing
+has a special-edition branch for comparison
 
 premake5 vs2019
 &
