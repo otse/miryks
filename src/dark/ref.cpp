@@ -91,7 +91,7 @@ namespace dark
 
 		assertm(baseObject.valid(), "cant find refs Name-BaseId record");
 
-		if (baseObject.sigany({"STAT", "DOOR", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "MISC"}))
+		if (baseObject.sigany({"STAT", "DOOR", "FURN", "BOOK", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "SLGM", "SCRL", "INGR", "MISC"}))
 		{
 			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)

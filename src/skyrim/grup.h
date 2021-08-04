@@ -9,6 +9,7 @@
 #include <map>
 #include <functional>
 
+// this lets you write cleaner code by pretending the access exists
 #define OUT_OF_BOUNDS_GET_RETURNS_NULLPTR 1
 
 namespace skyrim
@@ -16,8 +17,6 @@ namespace skyrim
 	typedef std::function<bool(unsigned int &i)> grupfunc;
 
 	typedef bool(*grupfuncp)(unsigned int &i);
-
-	// wrap for lib struct see /lib
 
 #define X Grup
 
@@ -64,7 +63,7 @@ namespace skyrim
 			return 0;
 		}
 		template <typename T = void *>
-		T get(unsigned int i/*, char x = '\0'*/) const
+		inline T get(unsigned int i/*, char x = '\0'*/) const
 		{
 #if OUT_OF_BOUNDS_GET_RETURNS_NULLPTR
 			if (i >= mixed().size)

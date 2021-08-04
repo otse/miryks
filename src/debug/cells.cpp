@@ -26,11 +26,13 @@ void cell_gui()
 	{
 		if (ImGui::BeginTabItem("cell view"))
 		{
-			static const char *items[2] = {
+			static const char *items[3] = {
 				"GloomGen",
-				"GloomAfterGen"};
+				"GloomAfterGen",
+				"DarkTelvanni"
+			};
 
-			static int num = 2;
+			static int num = 3;
 			static int current = 0;
 
 			ImGui::ListBox("##CellView", &current, items, num, 4);

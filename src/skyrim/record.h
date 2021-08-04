@@ -84,17 +84,17 @@ namespace skyrim
 			else
 				return nullptr;
 		}
-		editorId editorId() const
+		inline editorId editorId() const
 		{
 			return data<const char *>("EDID");
 		}
-		formId base() const
+		inline formId base() const
 		{
 			return data<unsigned int *>("NAME");
 		}
 
 		// << useless >>
-		bool hasEditorId(const char *name)
+		inline bool hasEditorId(const char *name)
 		{
 			return 0 == strcmp(name, editorId());
 		}
