@@ -1,12 +1,8 @@
 # Gloom
 
-gloom is technically dark2, but its called dark in the src
+called dark in the src
 
-these are not different projects, just reboots under different repos
- 
-By Ojeng Tsunomi aka Tse Ojeng
-
-Cmd stuff
+has a special-edition branch for comparison testing
 
 premake5 vs2019
 &
