@@ -109,7 +109,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		printf(" reload esp ! \n");
 		// Save current cell name
-		Record object = Record(dungeon->loaded_cell.wrcd);
+		Record object = Record(dungeon->myCell.wrcd);
 		char dest[512];
 		strcpy(dest, object.editorId());
 		espp esp = get_plugins()[3];
