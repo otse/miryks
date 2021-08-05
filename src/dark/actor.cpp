@@ -97,9 +97,9 @@ namespace dark
 			Group *group = new Group();
 			group->Add(skeleton->baseBone->group);
 			group->Add(mesh->baseGroup);
-			//printf("make smesh->skeleton drawGroup!\n");
-			drawGroup = new DrawGroup(group, ref->second->matrix);
-			scene_default->drawGroups.Add(drawGroup);
+			//printf("make smesh->skeleton draw_group!\n");
+			draw_group = new DrawGroup(group, ref->second->matrix);
+			sceneDef->draw_groups.Add(draw_group);
 		}
 		else
 		{
@@ -112,8 +112,8 @@ namespace dark
 		if (smesh)
 			smesh->forward();
 		//const float merry = 0.002;
-		//if (drawGroup)
-		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
+		//if (draw_group)
+		//draw_group->matrix = glm::rotate(draw_group->matrix, merry, vec3(0, 0, 1));
 	}
 
 	Human::Human()
@@ -150,7 +150,7 @@ namespace dark
 			group->Add(hands->mesh->baseGroup);
 		if (feet)
 			group->Add(feet->mesh->baseGroup);
-		drawGroup = new DrawGroup(group, mat4());
+		draw_group = new DrawGroup(group, mat4());
 		csphere = nullptr;
 	};
 
@@ -159,14 +159,14 @@ namespace dark
 		auto ref = dungeon->editorIds.find(q);
 		if (ref == dungeon->editorIds.end())
 			return;
-		drawGroup->matrix = ref->second->matrix;
-		csphere = new CSphere(vec3(drawGroup->matrix[3]) /*+vec3(0, 0, 1)*/);
-		scene_default->drawGroups.Add(drawGroup);
+		draw_group->matrix = ref->second->matrix;
+		csphere = new CSphere(vec3(draw_group->matrix[3]) /*+vec3(0, 0, 1)*/);
+		sceneDef->draw_groups.Add(draw_group);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
-		mirror->matrix = drawGroup->matrix;
+		mirror->matrix = draw_group->matrix;
 		mirror->matrix = glm::translate(mirror->matrix, vec3(50, 0, 0));*/
-		//scene_default->Add(mirror);
+		//sceneDef->Add(mirror);
 	}
 
 	void Human::step()
@@ -183,9 +183,9 @@ namespace dark
 			feet->step();
 		if (csphere)
 		{
-			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());
-			//drawGroup->matrix = translate(mat4(1.0), csphere->GetWorldTransform());
-			//drawGroup->Reset();
+			//draw_group->matrix = translate(draw_group->matrix, csphere->GetWorldTransform());
+			//draw_group->matrix = translate(mat4(1.0), csphere->GetWorldTransform());
+			//draw_group->Reset();
 		}
 	}
 
@@ -199,13 +199,13 @@ namespace dark
 #if NO_HUMAN_PLAYER
 		human = new Human();
 		//human->Place("gloomgenman");
-		drawGroup = new DrawGroup(human->group, mat4());
-		drawGroup->group->visible = false;
-		scene_default->drawGroups.Add(drawGroup);
-//camera_current->group->Add(human->group);
+		draw_group = new DrawGroup(human->group, mat4());
+		draw_group->group->visible = false;
+		sceneDef->draw_groups.Add(draw_group);
+//cameraCur->group->Add(human->group);
 //fpc = new FirstPersonCamera;
 #endif
-		pose = vec3(camera_current->pos);
+		pose = vec3(cameraCur->pos);
 
 		thirdPersonCamera = new ViewerCamera;
 	}
@@ -213,7 +213,7 @@ namespace dark
 	void Player::step()
 	{
 		move();
-		camera_current->pos = vec3(pose);
+		cameraCur->pos = vec3(pose);
 		using namespace MyKeys;
 		if (w)
 		{
@@ -224,12 +224,12 @@ namespace dark
 		}
 #if NO_HUMAN_PLAYER
 		human->step();
-		//if (!dynamic_cast<FirstPersonCamera *>(camera_current))
+		//if (!dynamic_cast<FirstPersonCamera *>(cameraCur))
 		//	return;
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
-		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
-		drawGroup->matrix = rotate(drawGroup->matrix, -camera_current->yaw, vec3(0, 0, 1));
-		drawGroup->Reset();
+		draw_group->matrix = glm::translate(mat4(1.0), down + pose);
+		draw_group->matrix = rotate(draw_group->matrix, -cameraCur->yaw, vec3(0, 0, 1));
+		draw_group->Reset();
 #endif
 	}
 
@@ -239,9 +239,9 @@ namespace dark
 
 		if (thirdPerson)
 		{
-			camera_current = thirdPersonCamera;
+			cameraCur = thirdPersonCamera;
 #if NO_HUMAN_PLAYER
-			drawGroup->group->visible = true;
+			draw_group->group->visible = true;
 #endif
 			thirdPersonCamera->pos = pose;
 			thirdPersonCamera->yaw = first_person_camera->yaw;
@@ -250,9 +250,9 @@ namespace dark
 		}
 		else
 		{
-			camera_current = first_person_camera;
+			cameraCur = first_person_camera;
 #if NO_HUMAN_PLAYER
-			drawGroup->group->visible = false;
+			draw_group->group->visible = false;
 #endif
 			first_person_camera->pos = pose;
 			first_person_camera->yaw = thirdPersonCamera->yaw;
@@ -264,7 +264,7 @@ namespace dark
 	{
 		using namespace MyKeys;
 
-		yaw = camera_current->yaw;
+		yaw = cameraCur->yaw;
 
 		auto forward = [&](float n)
 		{

@@ -26,10 +26,9 @@ namespace skyrim
 
 	void Interior::loadcell()
 	{
-		// get_right_cell(editorId); doesnt work
-		loaded_cell = find_cell_loop(editorId);
-		parsegrup(8, loaded_cell, loaded_cell.persistent);
-		parsegrup(9, loaded_cell, loaded_cell.temporary);
+		myCell = find_cell_loop(editorId);
+		parsegrup(8, myCell, myCell.persistent);
+		parsegrup(9, myCell, myCell.temporary);
 	}
 
 	static void PlaceCameraDud(Interior *);
@@ -73,7 +72,7 @@ namespace skyrim
 	{
 		if (alreadyTeleported)
 			return;
-		Grup wgrp = loaded_cell.persistent;
+		Grup wgrp = myCell.persistent;
 		wgrp.foreach(8, [&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
 			if (*(wrcd.base()) == 0x0000003B) //  "Marker"

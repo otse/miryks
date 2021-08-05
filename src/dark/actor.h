@@ -22,7 +22,7 @@ namespace dark
 		SkinnedMesh *smesh = nullptr;
 		Skeleton *skeleton = nullptr;
 		Animation *animation = nullptr;
-		DrawGroup *drawGroup = nullptr;
+		DrawGroup *draw_group = nullptr;
 		void step();
 		void PutDown(const char *);
 	};
@@ -38,7 +38,7 @@ namespace dark
 	public:
 		CSphere *csphere;
 		Group *group;
-		DrawGroup *drawGroup = nullptr;
+		DrawGroup *draw_group = nullptr;
 		Human();
 		void step();
 		void Place(const char *);
@@ -51,7 +51,7 @@ namespace dark
 		vec3 pose;
 		float yaw;
 		Human *human;
-		DrawGroup *drawGroup = nullptr;
+		DrawGroup *draw_group = nullptr;
 		ViewerCamera *thirdPersonCamera = nullptr;
 		Player();
 		void toggleView();

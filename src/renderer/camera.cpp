@@ -21,7 +21,7 @@ Camera::Camera()
 	fzoom = 50;
 	freeze = false;
 	group = new Group;
-	drawGroup = new DrawGroup(group);
+	draw_group = new DrawGroup(group);
 }
 
 void Camera::SetProjection() {
@@ -73,7 +73,7 @@ void FirstPersonCamera::Update(float time)
 	
 	group->Update(); // Important
 	
-	drawGroup->Reset();
+	draw_group->Reset();
 
 	// printf("hands matrix world %s\n", glm::to_string(vec3(hands->matrixWorld[3])));
 

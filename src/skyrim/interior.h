@@ -26,7 +26,7 @@ namespace skyrim
 		const char *editorId;
 		bool alreadyTeleported = false;
 
-		Cell loaded_cell;
+		Cell myCell;
 		std::vector<Ref *> refs, iterables;
 		std::map<std::string, Ref *> editorIds;
 
@@ -73,7 +73,6 @@ namespace skyrim
 	}
 
 	// the very same function but using for-loops
-	// leave this here
 	static Cell find_cell_loop(const char *name)
 	{
 		Cell cell;

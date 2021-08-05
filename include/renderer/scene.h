@@ -23,11 +23,11 @@ struct Container
 struct Scene
 {
 public:
-	Container<DrawGroup> drawGroups;
+	Container<DrawGroup> draw_groups;
 	Container<PointLight> pointLights;
 	Container<SpotLight> spotLights;
 	
-	//std::vector<DrawGroup *> drawGroups;
+	//std::vector<DrawGroup *> draw_groups;
 	//std::vector<PointLight *> pointLights;
 
 	vec3 ambient;

@@ -20,7 +20,7 @@ namespace dark
 		mat4 translation, rotation, scale;
 		mat4 matrix;
 		Mesh *mesh;
-		DrawGroup *drawGroup;
+		DrawGroup *draw_group;
 		PointLight *pointLight;
 		SpotLight *spotLight;
 		void go();

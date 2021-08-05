@@ -49,10 +49,10 @@ void Scene::DrawItems()
 		return false;
 	};
 
-	std::sort(drawGroups.ts.begin(), drawGroups.ts.end(), EarlyZKills);
+	std::sort(draw_groups.ts.begin(), draw_groups.ts.end(), EarlyZKills);
 
-	for (DrawGroup *drawGroup : drawGroups.ts)
-		drawGroup->Draw();
+	for (DrawGroup *draw_group : draw_groups.ts)
+		draw_group->Draw();
 }
 
 void Scene::CalcLights()
@@ -87,8 +87,8 @@ void Scene::BindLights(Shader *shader)
 		std::string index = "pointLights[" + std::to_string(i) + "]";
 
 		vec3 position, color;
-		position = vec3(l->matrix[3]) * mat3(inverse(camera_current->view));
-		position += vec3(camera_current->view[3]);
+		position = vec3(l->matrix[3]) * mat3(inverse(cameraCur->view));
+		position += vec3(cameraCur->view[3]);
 		color = l->color * l->intensity;
 
 		mat3 package;
@@ -111,8 +111,8 @@ void Scene::BindLights(Shader *shader)
 		std::string index = "spotLights[" + std::to_string(i) + "]";
 
 		vec3 position, direction, color;
-		position = vec3(sl->matrix[3]) * mat3(inverse(camera_current->view));
-		position += vec3(camera_current->view[3]);
+		position = vec3(sl->matrix[3]) * mat3(inverse(cameraCur->view));
+		position += vec3(cameraCur->view[3]);
 
 		mat4 ma = sl->matrix;
 		ma = rotate(ma, -pif/2, vec3(0, 1, 0));
@@ -120,10 +120,10 @@ void Scene::BindLights(Shader *shader)
 		vec3 dir = normalize(vec3(mat3(ma)[2]));
 		dir = normalize(dir);
 
-		direction = dir * mat3(inverse(camera_current->view));
+		direction = dir * mat3(inverse(cameraCur->view));
 		//printf("sldir %s\n", glm::to_string(direction));
 
-		//direction = glm::normalize(glm::vec3(glm::inverse(mat3(sl->matrix * mat3(camera_current->view))[2]));
+		//direction = glm::normalize(glm::vec3(glm::inverse(mat3(sl->matrix * mat3(cameraCur->view))[2]));
 		color = sl->color * sl->intensity;
 
 		float moo = glm::cos(sl->angle);

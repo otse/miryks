@@ -68,7 +68,7 @@ int main()
 	opengl_init_scene();
 	render_target_default = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 	collision_init();
-	camera_current = first_person_camera;
+	cameraCur = first_person_camera;
 	//Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	//import_nif(rc, true);
 	//nifp_test();
@@ -105,22 +105,22 @@ int main()
 void dark::simple_viewer(Rc *rc)
 {
 	static Mesh *mesh = nullptr;
-	static DrawGroup *drawGroup = nullptr;
+	static DrawGroup *draw_droup = nullptr;
 	if (mesh)
 	{
-		scene_default->drawGroups.Remove(drawGroup);
+		sceneDef->draw_groups.Remove(draw_droup);
 		delete mesh;
-		delete drawGroup;
+		delete draw_droup;
 	}
 	Nif *nif = import_nif(rc, false);
 	nifp_save(rc, nif);
 	// create_mesh()
 	mesh = new Mesh(nif);
-	drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
-	scene_default->drawGroups.Add(drawGroup);
+	draw_droup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
+	sceneDef->draw_groups.Add(draw_droup);
 	HideCursor();
-	camera_current = pan_camera;
-	pan_camera->pos = drawGroup->aabb.center();
+	cameraCur = pan_camera;
+	pan_camera->pos = draw_droup->aabb.center();
 	//pan_camera->pos = first_person_camera->pos;
-	pan_camera->radius = drawGroup->aabb.radius2() * 2;
+	pan_camera->radius = draw_droup->aabb.radius2() * 2;
 }

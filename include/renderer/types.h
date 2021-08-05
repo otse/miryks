@@ -50,9 +50,8 @@ struct Camera;
 struct FirstPersonCamera;
 struct ViewerCamera;
 
-extern Camera *camera_current;
-extern Scene *scene_current;
-extern Scene *scene_default;
+extern Camera *cameraCur;
+extern Scene *sceneDef;
 extern RenderTarget *render_target_default;
 
 void detectGlfwError();

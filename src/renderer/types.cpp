@@ -10,9 +10,10 @@
 #include <renderer/material.h>
 #include <renderer/texture.h>
 
-Camera *camera_current = nullptr;
-Scene *scene_current = nullptr;
-Scene *scene_default = nullptr;
+// used by everything - current camera could be an overrided camera, like pan or first person
+Camera *cameraCur = nullptr;
+Scene *sceneDef = nullptr;
+
 RenderTarget *render_target_default = nullptr;
 
 RenderSettings renderSettings;
@@ -40,10 +41,8 @@ void detectOpenGLError(const std::string where)
 
 void opengl_init_scene()
 {
-	camera_current = new Camera;
-	scene_default = new Scene;
-
-	scene_current = scene_default;
+	cameraCur = new Camera;
+	sceneDef = new Scene;
 
 	SetShaderSources();
 }
