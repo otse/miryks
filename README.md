@@ -2,7 +2,8 @@
 
 called dark in the src
 
-has a special-edition branch for comparison
+has a viewer branch that is more basic than main
+also has a special-edition branch (experimental)
 
 premake5 vs2019
 &
