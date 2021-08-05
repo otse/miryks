@@ -244,19 +244,19 @@ namespace dark
 			draw_group->group->visible = true;
 #endif
 			thirdPersonCamera->pos = pose;
-			thirdPersonCamera->yaw = first_person_camera->yaw;
-			thirdPersonCamera->pitch = first_person_camera->pitch;
+			thirdPersonCamera->yaw = fpCam->yaw;
+			thirdPersonCamera->pitch = fpCam->pitch;
 			thirdPersonCamera->radius = 200;
 		}
 		else
 		{
-			cameraCur = first_person_camera;
+			cameraCur = fpCam;
 #if NO_HUMAN_PLAYER
 			draw_group->group->visible = false;
 #endif
-			first_person_camera->pos = pose;
-			first_person_camera->yaw = thirdPersonCamera->yaw;
-			first_person_camera->pitch = thirdPersonCamera->pitch;
+			fpCam->pos = pose;
+			fpCam->yaw = thirdPersonCamera->yaw;
+			fpCam->pitch = thirdPersonCamera->pitch;
 		}
 	}
 

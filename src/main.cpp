@@ -47,8 +47,6 @@ namespace dark
 
 	std::string editme;
 
-	FirstPersonCamera *first_person_camera;
-	ViewerCamera *pan_camera;
 	RenderTarget *render_target;
 
 	int width = 2560;

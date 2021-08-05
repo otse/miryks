@@ -13,6 +13,8 @@
 // used by everything - current camera could be an overrided camera, like pan or first person
 Camera *cameraCur = nullptr;
 Scene *sceneDef = nullptr;
+FirstPersonCamera *fpCam = nullptr;
+ViewerCamera *pan_camera = nullptr;
 
 RenderTarget *render_target_default = nullptr;
 
@@ -43,6 +45,11 @@ void opengl_init_scene()
 {
 	cameraCur = new Camera;
 	sceneDef = new Scene;
+
+	fpCam = new FirstPersonCamera;
+	pan_camera = new ViewerCamera;
+
+	cameraCur = fpCam; // we lose old camera to memory leak ?
 
 	SetShaderSources();
 }

@@ -85,7 +85,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		if (cameraCur == pan_camera)
 		{
-			cameraCur = first_person_camera;
+			cameraCur = fpCam;
 			HideCursor();
 		}
 		else
@@ -324,7 +324,7 @@ void dark::programLoop()
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	sceneDef->draw_groups.Add(first_person_camera->draw_group);
+	sceneDef->draw_groups.Add(fpCam->draw_group);
 
 	do
 	{

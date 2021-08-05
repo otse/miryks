@@ -181,7 +181,7 @@ namespace dark
 
 	float Ref::getDistance()
 	{
-		float distance = glm::length(draw_group->aabb.center() - vec3(first_person_camera->hands->matrixWorld[3]));
+		float distance = glm::length(draw_group->aabb.center() - vec3(fpCam->hands->matrixWorld[3]));
 
 		return distance;
 	}

@@ -63,12 +63,9 @@ int main()
 	setup_glfw();
 	load_yagrum();
 	load_plugins_archives();
-	first_person_camera = new FirstPersonCamera;
-	pan_camera = new ViewerCamera;
 	opengl_init_scene();
 	render_target_default = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 	collision_init();
-	cameraCur = first_person_camera;
 	//Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	//import_nif(rc, true);
 	//nifp_test();
@@ -116,11 +113,11 @@ void dark::simple_viewer(Rc *rc)
 	nifp_save(rc, nif);
 	// create_mesh()
 	mesh = new Mesh(nif);
-	draw_droup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
+	draw_droup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), fpCam->pos));
 	sceneDef->draw_groups.Add(draw_droup);
 	HideCursor();
 	cameraCur = pan_camera;
 	pan_camera->pos = draw_droup->aabb.center();
-	//pan_camera->pos = first_person_camera->pos;
+	//pan_camera->pos = fpCam->pos;
 	pan_camera->radius = draw_droup->aabb.radius2() * 2;
 }

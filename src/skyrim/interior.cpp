@@ -80,9 +80,9 @@ namespace skyrim
 				// Place at any XMarker
 				float *locationalData = wrcd.data<float *>(_DATA_);
 				// printf(" xmarker ! \n");
-				first_person_camera->pos = *cast_vec_3(locationalData);
-				first_person_camera->pos.z += EYE_HEIGHT;
-				first_person_camera->yaw = cast_vec_3(locationalData + 3)->z;
+				fpCam->pos = *cast_vec_3(locationalData);
+				fpCam->pos.z += EYE_HEIGHT;
+				fpCam->yaw = cast_vec_3(locationalData + 3)->z;
 				alreadyTeleported = true;
 				return true;
 			}

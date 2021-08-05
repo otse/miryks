@@ -54,6 +54,9 @@ extern Camera *cameraCur;
 extern Scene *sceneDef;
 extern RenderTarget *render_target_default;
 
+extern FirstPersonCamera *fpCam;
+extern ViewerCamera *pan_camera;
+
 void detectGlfwError();
 void detectOpenGLError(const std::string = "?");
 

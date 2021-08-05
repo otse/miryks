@@ -78,8 +78,7 @@ namespace dark
 	extern std::string editme;
 
 	// Todo, these globals just
-	extern FirstPersonCamera *first_person_camera;
-	extern ViewerCamera *pan_camera;
+	
 	extern RenderTarget *render_target;
 
 	namespace MyKeys
