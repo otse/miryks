@@ -39,7 +39,6 @@ namespace skyrim
 
 	static Cell capture_cell(Record wrcd, Grup wgrp)
 	{
-		printf("cap cell");
 		Cell cell;
 		cell.wrcd = wrcd;
 		cell.persistent = wgrp.get<grup *>(0);
@@ -52,7 +51,7 @@ namespace skyrim
 	{
 		Cell cell;
 		Grup a, b, c;
-		cgrupp top = esp_top_grup(get_plugins()[3], "CELL");
+		cgrupp top = esp_top_grup(get_plugins()[4], "CELL");
 		bool stop = false;
 		a(top).foreach(0, [&](unsigned int i) {
 		b(a.get<grup *>(i)).foreach(2, [&](unsigned int j) {
@@ -77,7 +76,7 @@ namespace skyrim
 	static Cell find_cell_loop(const char *name)
 	{
 		Cell cell;
-		grupp top = esp_top_grup(get_plugins()[3], "CELL");
+		grupp top = esp_top_grup(get_plugins()[4], "CELL");
 		Grup a, b, c;
 		a = top;
 		assertc(a.hed().group_type == 0);

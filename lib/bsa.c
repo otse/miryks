@@ -4,11 +4,11 @@
 
 #include "bsa.h"
 
+#if BSA_VER==105
+#include <lz4frame_static.h>
+#else
 #include <zlib.h>
-
-#define BSA "bsa - "
-#define VER 104
-#define VER_SE 105
+#endif
 
 #define Hedr bsa->hdr
 
@@ -36,16 +36,30 @@ api Bsa *bsa_load(const char *path)
 	assertm(
 		strcmp(
 			"BSA\x00", (char *)&Hedr.id) == 0,
-		BSA "not a bsa");
+		"bsa - " "not a bsa");
 	assertm(
-		Hedr.ver != VER_SE, BSA "cant use special edition");
-	assertm(
-		Hedr.ver == VER, BSA "not 104");
+		Hedr.ver == BSA_VER, "bsa - " "wrong version");
+#if 0
+	printf("\
+	header_flags\n\
+	\n0x1   %i\n0x2   %i\\n0x4   %i\\n0x8   %i\\n0x10  %i\\n0x20  %i\\n0x40  %i\\n0x80  %i\\n0x100 %i\\n0x200 %i\\n\
+	",
+	Hedr.archive_flags & 0x1,
+	Hedr.archive_flags & 0x2,
+	Hedr.archive_flags & 0x4,
+	Hedr.archive_flags & 0x8,
+	Hedr.archive_flags & 0x10,
+	Hedr.archive_flags & 0x20,
+	Hedr.archive_flags & 0x40,
+	Hedr.archive_flags & 0x80,
+	Hedr.archive_flags & 0x100,
+	Hedr.archive_flags & 0x200
+	);
+#endif
 	read_folder_records(bsa);
 	read_file_records(bsa);
 	read_filenames(bsa);
 	resources(bsa);
-	//printf("loaded bsa %s\n", path);
 	return bsa;
 }
 
@@ -169,8 +183,11 @@ api void bsa_search(Bsa *bsa, Rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num
 	*num=n;
 }
 
+#if BSA_VER==104
+
 char *bsa_uncompress(Rc *rc)
 {
+	// zlib
 	char *src = rc->buf;
 	uint32_t size = *(uint32_t *)&src[0];
 	rc->size -= sizeof(uint32_t);
@@ -182,11 +199,33 @@ char *bsa_uncompress(Rc *rc)
 	return dest;
 }
 
+#elif BSA_VER==105
+
+char *bsa_uncompress(Rc *rc)
+{
+	//printf("uncompress!\n");
+	char *src = rc->buf;
+	uint32_t size = *(uint32_t *)&src[0];
+	rc->size -= sizeof(uint32_t);
+	src += sizeof(uint32_t);
+	char *dest = malloc(size * sizeof(char));
+	LZ4F_decompressionContext_t context = NULL;
+	LZ4F_createDecompressionContext(&context, LZ4F_VERSION);
+	LZ4F_decompressOptions_t options;
+	LZ4F_errorCode_t errorCode = LZ4F_decompress(
+		context, dest, &size, src, &rc->size, &options);
+	rc->size = size;
+	return dest;
+}
+
+#endif
+
 #define EMBED_FILE_NAMES 0x100
+
+#define COMPRESSED_ARCHIVE 0x4
 
 #define INVERT_COMPRESSED 0x40000000
 
-// todo embed files names fuffed this up real good
 api int bsa_read(Rc *rc) {
 	if (rc == NULL)
 	return 0;
@@ -198,6 +237,7 @@ api int bsa_read(Rc *rc) {
 	int size = f->size;
 	if (Hedr.archive_flags & EMBED_FILE_NAMES)
 	{
+	// bstring
 	unsigned char x;
 	seek(bsa, offset);
 	read(bsa, &x, 1);
@@ -205,7 +245,7 @@ api int bsa_read(Rc *rc) {
 	size -= x + 1;
 	}
 	rc->size = size;
-	rc->buf = malloc(size * sizeof(char));
+	rc->buf = malloc(rc->size);
 	seek(bsa, offset);
 	read(bsa, rc->buf, rc->size);
 	if ((Hedr.archive_flags & 0x4) != (f->size & INVERT_COMPRESSED))
@@ -246,7 +286,7 @@ api void bsa_free(Bsa **b)
 
 // archive ext stuff below
 
-static Bsa *archives[10] = { NULL };
+static Bsa *archives[20] = { NULL };
 
 api Bsa **get_archives()
 {
@@ -255,7 +295,7 @@ api Bsa **get_archives()
 
 api Bsa *bsa_get(const char *filename)
 {
-	for (int i = 10; i --> 0; )
+	for (int i = 20; i --> 0; )
 	{
 	Bsa *bsa = archives[i];
 	if (bsa==NULL)
@@ -271,7 +311,7 @@ api Bsa *bsa_get(const char *filename)
 api Rc *bsa_find_more(const char *p, unsigned long flags)
 {
 	Rc *rc = NULL;
-	for (int i = 10; i --> 0; )
+	for (int i = 20; i --> 0; )
 	{
 	Bsa *bsa = archives[i];
 	if (bsa==NULL)
@@ -280,7 +320,7 @@ api Rc *bsa_find_more(const char *p, unsigned long flags)
 	if (Hedr.file_flags == 0 || test)
 	rc = bsa_find(bsa, p);
 	if (rc!=NULL)
-	break;
+	break;  
 	}
 	return rc;
 }

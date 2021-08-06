@@ -22,7 +22,7 @@ void load_bucket()
 
 void load_gloomgen()
 {
-	dungeon = new Interior("GloomGen");
+	dungeon = new Interior("DarkSeSewer");
 	dungeon->loadcell();
 	//player1 = new Player();
 }
@@ -30,26 +30,35 @@ void load_gloomgen()
 void load_plugins_archives()
 {
 	editme = fread("editme.txt");
-	get_plugins()[0] = load_plugin(PLUGIN_ONE);
-	get_plugins()[1] = load_plugin(PLUGIN_TWO);
-	get_plugins()[2] = load_plugin(PLUGIN_THREE);
-	get_plugins()[3] = load_plugin(PLUGIN_NAMESAKE);
-	get_archives()[0] = load_archive(ARCHIVE_ONE);
-	get_archives()[1] = load_archive(ARCHIVE_TWO);
-	get_archives()[2] = load_archive(ARCHIVE_THREE);
-	get_archives()[3] = load_archive(ARCHIVE_FOUR);
-	get_archives()[4] = load_archive(ARCHIVE_FIVE);
-	get_archives()[6] = load_archive(ARCHIVE_SIX);
-	get_archives()[7] = load_archive(ARCHIVE_SEVEN);
-	get_archives()[8] = load_archive(ARCHIVE_EIGHT);
+	get_plugins()[0] = load_plugin(PLUGIN_0);
+	get_plugins()[1] = load_plugin(PLUGIN_1);
+	get_plugins()[2] = load_plugin(PLUGIN_2);
+	get_plugins()[3] = load_plugin(PLUGIN_3);
+	get_plugins()[4] = load_plugin(PLUGIN_4);
+	get_archives()[0] = load_archive(ARCHIVE_0);
+	//get_archives()[1] = load_archive(ARCHIVE_1);
+	//get_archives()[2] = load_archive(ARCHIVE_2);
+	get_archives()[3] = load_archive(ARCHIVE_3);
+	get_archives()[4] = load_archive(ARCHIVE_4);
+	get_archives()[5] = load_archive(ARCHIVE_5);
+	//get_archives()[6] = load_archive(ARCHIVE_6);
+	//get_archives()[7] = load_archive(ARCHIVE_7);
+	get_archives()[8] = load_archive(ARCHIVE_8);
+	get_archives()[9] = load_archive(ARCHIVE_9);
+	get_archives()[10] = load_archive(ARCHIVE_10);
+	get_archives()[11] = load_archive(ARCHIVE_11);
+	get_archives()[12] = load_archive(ARCHIVE_12);
+	get_archives()[13] = load_archive(ARCHIVE_13);
+	get_archives()[14] = load_archive(ARCHIVE_14);
+	get_archives()[15] = load_archive(ARCHIVE_15);
+	get_archives()[16] = load_archive(ARCHIVE_16);
+	get_archives()[17] = load_archive(ARCHIVE_17);
 }
 
 #include <dark/collision.h>
 
 #include <renderer/camera.h>
 #include <renderer/rendertarget.h>
-
-#include <gooey/yagrum.h>
 
 int main()
 {
@@ -58,10 +67,8 @@ int main()
 		w = a = s = d = r = f = v = false;
 		shift = space = false;
 	}
-	CURRENT_INTERIOR = "";
 	basefile_handle("basefile");
 	setup_glfw();
-	load_yagrum();
 	load_plugins_archives();
 	first_person_camera = new FirstPersonCamera;
 	pan_camera = new ViewerCamera;
@@ -76,9 +83,9 @@ int main()
 	// Secret bucket beginning
 	simple_viewer(rc);
 #endif
-	put_it_fullscreen();
-	yagrum_queue("", 2.0, true);
-	yagrum_set_rotate_speed(3.0);
+	//put_it_fullscreen();
+	//yagrum_queue("", 2.0, true);
+	//yagrum_set_rotate_speed(3.0);
 	// simple_start_screen();
 #if 1
 	load_gloomgen();

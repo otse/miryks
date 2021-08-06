@@ -26,14 +26,14 @@ namespace dark
 
 	void Image::from_resourcefile()
 	{
-		std::string yagrum = basefile_offshore("img", "yagrum.png");
+		std::string thepng = basefile_offshore("img", "thepng.png");
 		cursor = 0;
-		data = (const unsigned char *)yagrum.data();
+		data = (const unsigned char *)thepng.data();
 		cursor = data;
 #if 1
 		cursor += 8;
 #endif
-		size = yagrum.length();
+		size = thepng.length();
 		unsigned char header[8];
 		memcpy(header, data, 8);
 		if (png_sig_cmp(header, 0, 8))

@@ -23,7 +23,7 @@ void bsa_gui()
 	static bool reset = false;
 
 #define MAX 230
-	static char buf[MAX] = "Skyrim - Meshes.bsa";
+	static char buf[MAX] = "Skyrim - Meshes0.bsa";
 	static char buf2[MAX] = {'\0'};
 
 	ImGui::InputText("##archive", buf, IM_ARRAYSIZE(buf));
@@ -48,10 +48,10 @@ void bsa_gui()
 
 	ImGui::Separator();
 
-	//if (bsa)
-	//{
-	//	ImGui::Text(bsa->filename);
-	//}
+	if (bsa)
+	{
+		ImGui::Text(bsa->filename);
+	}
 
 	if (!bsa)
 	{

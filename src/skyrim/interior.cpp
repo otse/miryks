@@ -71,16 +71,16 @@ namespace skyrim
 	
 	void Interior::placecamera()
 	{
+		// Place the camera at the first XMarker you find
 		if (alreadyTeleported)
 			return;
 		Grup wgrp = loaded_cell.persistent;
 		wgrp.foreach(8, [&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
-			if (*(wrcd.base()) == 0x0000003B) //  "Marker"
+			if (*(wrcd.base()) == 0x0000003B)
 			{
-				// Place at any XMarker
-				float *locationalData = wrcd.data<float *>(_DATA_);
-				// printf(" xmarker ! \n");
+				float *locationalData = wrcd.data<float *>("DATA");
+				printf("found random xmarker for camera\n");
 				first_person_camera->pos = *cast_vec_3(locationalData);
 				first_person_camera->pos.z += EYE_HEIGHT;
 				first_person_camera->yaw = cast_vec_3(locationalData + 3)->z;

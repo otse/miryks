@@ -5,8 +5,6 @@
 
 #include <dark/dark.h>
 
-#include <gooey/yagrum.h>
-
 #include <algorithm>
 
 #include <renderer/types.h>
@@ -43,15 +41,14 @@ namespace dark
 		bool shift, space;
 	}
 
-	const char *CURRENT_INTERIOR;
-
 	std::string editme;
 
 	FirstPersonCamera *first_person_camera;
 	ViewerCamera *pan_camera;
 	RenderTarget *render_target;
 
-	int width = 2560;
-	int height = 1440;
+	// todo extern this
+	int width = 1920;
+	int height = 1080;
 	float delta = 0;
 }

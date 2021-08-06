@@ -9,8 +9,6 @@
 #include <dark/actor.h>
 #include <dark/collision.h>
 
-#include <Gooey/Yagrum.h>
-
 #include <renderer/camera.h>
 #include <renderer/scene.h>
 #include <renderer/material.h>
@@ -288,9 +286,6 @@ void dark::doImGui()
 	if (h_pop)
 		hero_menu();
 
-	if (i_pop)
-		inventory_menu();
-
 	if (!hideDebugGuis)
 	{
 		bsa_gui();
@@ -361,8 +356,6 @@ void dark::programLoop()
 		glfwPollEvents();
 
 		doImGui();
-
-		yagrum_checker();
 
 		//simple_loader();
 

@@ -1,12 +1,7 @@
 #ifndef LIB_BSA_H
 #define LIB_BSA_H
 
-// part of gloom
-
-// only for le
-// can easily be altered for se
-
-// 100% based on https://github.com/Ortham/libbsa
+#define BSA_VER 105
 
 #define api
 
@@ -24,7 +19,11 @@ struct bsa_hedr
 struct bsa_fld
 {
 	unsigned long long hash;
+#if BSA_VER==105
+	unsigned long num, padding1, offset, padding2;
+#else
 	unsigned long num, offset;
+#endif
 };
 
 struct bsa_file
@@ -57,7 +56,6 @@ typedef struct Bsa
 	int unimportant;
 } Bsa;
 
-
 api Bsa *bsa_load(const char *);
 api void bsa_free(Bsa **);
 
@@ -76,15 +74,15 @@ api Bsa **get_archives();
 
 api Bsa *bsa_get(const char *);
 
-#define BSA_MESHES   0x1
+#define BSA_MESHES 0x1
 #define BSA_TEXTURES 0x2
-#define BSA_MENUS    0x4
-#define BSA_SOUNDS   0x8
-#define BSA_VOICES   0x10
-#define BSA_SHADERS  0x20
-#define BSA_TREES    0x40
-#define BSA_FONTS    0x80
-#define BSA_MISC     0x100
+#define BSA_MENUS 0x4
+#define BSA_SOUNDS 0x8
+#define BSA_VOICES 0x10
+#define BSA_SHADERS 0x20
+#define BSA_TREES 0x40
+#define BSA_FONTS 0x80
+#define BSA_MISC 0x100
 
 void bsa_test();
 

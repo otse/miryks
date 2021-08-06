@@ -26,7 +26,6 @@ typedef subrecord Field;
 
 namespace dark
 {
-	class Obj;
 	class Ref;
 	class Actor;
 	class BodyPart;
@@ -37,12 +36,7 @@ namespace dark
 	class CShape;
 	class Collider;
 
-	class Wrld;
 	class Image;
-	
-	extern const char *CURRENT_WRLD;
-	extern const char *CURRENT_INTERIOR;
-	extern const char *PLY_;
 }
 
 namespace skyrim
@@ -112,7 +106,6 @@ void bsa_gui();
 void nifp_gui();
 void cell_gui();
 void hero_menu();
-void inventory_menu();
 void render_stats(bool *);
 
 void simple_loader();

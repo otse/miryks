@@ -24,7 +24,7 @@ namespace dark
 
 			if (!exists("temp/draugr/hkx/skeleton.hkx"))
 			{
-				Bsa *animations = get_archives()[2];
+				Bsa *animations = get_archives()[4];
 				Rc *skeleton = bsa_find(animations, "meshes\\actors\\draugr\\character assets\\skeleton.hkx");
 
 				//if (skeleton)
@@ -90,7 +90,7 @@ namespace dark
 
 			if (!exists("temp/character/hkx/skeleton.hkx"))
 			{
-				Bsa *animations = get_archives()[2];
+				Bsa *animations = get_archives()[4];
 				Rc *skeleton = bsa_find(animations, "meshes\\actors\\character\\character assets\\skeleton.hkx");
 
 				//if (skeleton)

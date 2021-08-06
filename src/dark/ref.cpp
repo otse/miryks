@@ -89,6 +89,9 @@ namespace dark
 
 		baseObject = esp_get_form_id(id);
 
+		if (!baseObject.valid())
+			return;
+
 		assertm(baseObject.valid(), "cant find refs Name-BaseId record");
 
 		if (baseObject.sigany({"STAT", "DOOR", "FURN", "BOOK", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "SLGM", "SCRL", "INGR", "MISC"}))

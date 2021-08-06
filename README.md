@@ -1,10 +1,8 @@
 # Gloom
 
-gloom is technically dark2, but its called dark in the src
+experimental branch
 
-these are not different projects, just reboots under different repos
- 
-By Ojeng Tsunomi aka Tse Ojeng
+dark-se.exe can run special edition
 
 Cmd stuff
 
