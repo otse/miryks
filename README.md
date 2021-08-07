@@ -4,6 +4,8 @@ special-edition is the new default branch, legendary edition not good enough
 
 ironically were still stuck in 32 bit for now
 
+feel free to use bits of my code or entire files, /lib is quite nice and /src/skyrim too
+
 in cmd:  
 premake5 vs2019
 
