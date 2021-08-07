@@ -1,12 +1,11 @@
 #ifndef LIB_NIFP_H
 #define LIB_NIFP_H
 
-/// nif with pointers
+/// nif with pure pointers
 
-// part of gloom
+// dont compile for 64
 
-// only for le
-// can easily be altered for se
+#define ITS_THE_SPECIAL_EDITION 1
 
 #define api
 
@@ -156,20 +155,61 @@ struct ni_tri_shape_pointer
 	struct ni_common_layout_pointer *common;
 	struct
 	{
-		ni_ref data;
-		ni_ref skin_instance;
+		ni_ref data, skin_instance;
 	} * A;
 	struct
 	{
-		ni_ref shader_property;
-		ni_ref alpha_property;
+		ni_ref shader_property, alpha_property;
 	} * B;
+};
+
+#if ITS_THE_SPECIAL_EDITION
+
+struct bs_vertex_data_sse
+{
+	struct { float x, y, z; } vertex;
+	float bitangent_x;
+	struct { unsigned int x, y; } uv;
+	struct { unsigned char x, y, z; } normal;
+	unsigned char bitangent_y;
+	struct { unsigned char x, y, z; } tangent;
+	unsigned char bitangent_z;
+	struct { unsigned char r, g, b, a; } vertex_colors;
 };
 
 struct bs_tri_shape_pointer
 {
-	int end;
+	struct ni_common_layout_pointer *common;
+	struct
+	{
+		struct vec_3p center;
+		float radius;
+	} * bounding_sphere;
+	struct
+	{
+		ni_ref skin;
+	} * B;
+	struct
+	{
+		ni_ref a, b;
+	} * bs_properties;
+	struct
+	{
+		unsigned char vertex_size, float_size;
+		unsigned char vf3, vf4, vf5;
+		unsigned short vf;
+		unsigned char vf8;
+		unsigned short num_triangles, num_vertices;
+		unsigned int data_size;
+	} *C;
+	struct bs_vertex_data_sse *vertex_data;
+	struct { unsigned short a, b, c; } *triangles;
+	struct {
+		unsigned int *particle_data_size;
+	} * D;
 };
+
+#endif
 
 struct ni_skin_instance_pointer
 {

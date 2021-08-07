@@ -76,8 +76,8 @@ int main()
 	render_target_default = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 	collision_init();
 	camera_current = first_person_camera;
-	//Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	//import_nif(rc, true);
+	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	import_nif(rc, true);
 	//nifp_test();
 #if 0
 	// Secret bucket beginning
@@ -88,7 +88,7 @@ int main()
 	//yagrum_set_rotate_speed(3.0);
 	// simple_start_screen();
 #if 1
-	load_gloomgen();
+	//load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
