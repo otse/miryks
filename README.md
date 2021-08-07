@@ -6,6 +6,8 @@ ironically were still stuck in 32 bit for now
 
 feel free to use bits of my code or entire files, /lib is quite nice and /src/skyrim too
 
+all code done by me
+
 in cmd:  
 premake5 vs2019
 
