@@ -156,7 +156,7 @@ static void *read_ni_controller_sequence(nifpr);
 static void *read_ni_transform_interpolator(nifpr);
 static void *read_ni_transform_data(nifpr);
 #if ITS_THE_SPECIAL_EDITION
-       void *read_bs_tri_shape(nifpr);
+static void *read_bs_tri_shape(nifpr);
 #endif
 
 api void nifp_read_blocks(Nifp *nif)
@@ -211,6 +211,12 @@ static void sink_val(Nifp *nif, char *block_pointer, int src, int size) {
 	Pos += size;
 }
 
+static void sink_arr(Nifp *nif, char *block_pointer, int src, int size) {
+	char **dest = block_pointer + src;
+	*dest = Depos;
+	Pos += size;
+}
+
 // sizeof(((layout *)0)->part)
 
 #define member_size(type, member) sizeof (((type *)0)->member)
@@ -226,7 +232,7 @@ struct no_type { int i; };
 #define Sink(nif, block_pointer, layout, part, size) sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), size)
 
 #define Sank(nif, block, part)       sink_val(nif, (char *)block, offsetof(TYPE, part), sizeof  *struct_member(TYPE, part))
-#define Sail(nif, block, part, num)  sink_val(nif, (char *)block, offsetof(TYPE, part), sizeof **struct_member(TYPE, part) * *block->num)
+#define Sail(nif, block, part, num)  sink_val(nif, (char *)block, offsetof(TYPE, part), sizeof  *struct_member(TYPE, part) * (*block->num))
 
 #define CHEESE_CALLOC TYPE *block = calloc(1, sizeof(TYPE))
 
@@ -267,8 +273,45 @@ void *read_ni_node(nifpr)
 	return block;
 }
 
+void *read_bs_tri_shape(Nifp *nif, int n)
+{
+	printf("read bs tri shape for %s!\n", nif->path);
+	#define TYPE struct bs_tri_shape_pointer
+	CHEESE_CALLOC;
+	block->common = read_ni_common_layout(nif, n);
+	Sank(nif, block, bounding_sphere_center);
+	Sank(nif, block, bounding_sphere_radius);
+	Sank(nif, block, skin);
+	Sank(nif, block, shader_property);
+	Sank(nif, block, alpha_property);
+	printf("skin shader alpha %i %i %i\n", *block->skin, *block->shader_property, *block->alpha_property);
+	Sank(nif, block, vertex_desc);
+	Sank(nif, block, num_triangles);
+	Sank(nif, block, num_vertices);
+	printf("num triangles vertices %hu %hu\n", *block->num_triangles, *block->num_vertices);
+	Sank(nif, block, data_size);
+	printf("data size %u\n", *block->data_size);
+	Sail(nif, block, vertex_data, num_vertices);
+	Sail(nif, block, triangles, num_triangles);
+	Sank(nif, block, particle_data_size);
+
+	printf("&block->vertex_data[0] = %i\n", &block->vertex_data[0]);
+	printf("&block->vertex_data[1] = %i\n", &block->vertex_data[1]);
+	sizeof(struct bs_vertex_data_sse);
+	struct bs_vertex_data_sse *zero = &block->vertex_data[0];
+	printf("bs_vertex_data_sse[0] vertex x is %f\n", zero->vertex.x);
+	printf("bs_vertex_data_sse[0] bitangent x is %f\n", zero->bitangent_x);
+	printf("bs_vertex_data_sse[0] normal is %u\n", zero->normal.x);
+	printf("bs_vertex_data_sse[0] bitangent y is %u\n", zero->bitangent_y);
+	printf("bs_vertex_data_sse[0] bitangent z is %u\n", zero->bitangent_z);
+	printf("bs_vertex_data_sse[0] vertex_colors is %u %u %u %u\n", zero->vertex_colors.r, zero->vertex_colors.g, zero->vertex_colors.b, zero->vertex_colors.a);
+
+	printf("particle data size %u\n", *block->particle_data_size);
+}
+
 void *read_ni_tri_shape(nifpr)
 {
+	assertm(0, "sse shouldnt use ni tri shape");
 	// printf("read ni tri shape pointer\n");
 	struct ni_tri_shape_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_tri_shape_pointer));

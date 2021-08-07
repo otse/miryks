@@ -133,11 +133,12 @@ struct ni_node_pointer
 {
 	struct ni_common_layout_pointer *common;
 	unsigned int *num_children;
-	ni_ref **children;
+	ni_ref *children;
 	unsigned int *num_effects;
-	ni_ref **effects;
+	ni_ref *effects;
 };
 
+// sse doesnt use this anymore
 struct ni_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
@@ -157,7 +158,7 @@ struct bs_vertex_data_sse
 {
 	struct { float x, y, z; } vertex;
 	float bitangent_x;
-	struct { unsigned int x, y; } uv;
+	struct { unsigned short a; } uv;
 	struct { unsigned char x, y, z; } normal;
 	unsigned char bitangent_y;
 	struct { unsigned char x, y, z; } tangent;
@@ -165,36 +166,29 @@ struct bs_vertex_data_sse
 	struct { unsigned char r, g, b, a; } vertex_colors;
 };
 
+/*
+#define generate_bs_vertex_data_sse( flavor, \
+	vertex, uvs, normals, tangents, colors, skinned) \
+struct bs_vertex_data_sse_ ## flavor \
+{ \
+	int b; \
+};
+
+generate_bs_vertex_data_sse(cool, 1, 1, 1, 1, 1, 1);
+*/
+
 struct bs_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
-	struct
-	{
-		struct vec_3p center;
-		float radius;
-	} * bounding_sphere;
-	struct
-	{
-		ni_ref skin;
-	} * B;
-	struct
-	{
-		ni_ref a, b;
-	} * bs_properties;
-	struct
-	{
-		unsigned char vertex_size, float_size;
-		unsigned char vf3, vf4, vf5;
-		unsigned short vf;
-		unsigned char vf8;
-		unsigned short num_triangles, num_vertices;
-		unsigned int data_size;
-	} *C;
+	struct vec_3p *bounding_sphere_center;
+	float *bounding_sphere_radius;
+	ni_ref *skin, *shader_property, *alpha_property;
+	unsigned long long *vertex_desc;
+	unsigned short *num_triangles, *num_vertices;
+	unsigned int *data_size;
 	struct bs_vertex_data_sse *vertex_data;
 	struct { unsigned short a, b, c; } *triangles;
-	struct {
-		unsigned int *particle_data_size;
-	} * D;
+	unsigned int *particle_data_size;
 };
 
 #endif
