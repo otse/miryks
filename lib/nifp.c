@@ -213,6 +213,9 @@ static void sink_val(Nifp *nif, char *block_pointer, int src, int size) {
 
 // sizeof(((layout *)0)->part)
 #define Sink(nif, block_pointer, layout, part, size) sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), size)
+
+#define Sail(nif, block_pointer, layout, part, type) sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), sizeof(type))
+
 //#define SinkArr(nif, block_pointer, layout, part, size) sink_arr(nif, block_pointer, offsetof(layout, part), size)
 
 #define Arr(count, type) count * sizeof(type)
@@ -230,9 +233,13 @@ void *read_ni_common_layout(nifpr)
 	return block_pointer;
 }
 
+void *read_ni_node_BETTER(nifpr);
+
 void *read_ni_node(nifpr)
 {
 	//printf("read ni node pointer\n");
+	int before = Pos;
+
 	struct ni_node_pointer *block_pointer;
 	block_pointer = calloc(1, sizeof(struct ni_node_pointer));
 	block_pointer->common = read_ni_common_layout(nif, n);
@@ -242,7 +249,26 @@ void *read_ni_node(nifpr)
 	Sink(nif, block_pointer, ni_node_pointer, C, 4);
 	Sink(nif, block_pointer, ni_node_pointer, effects,
 		Arr(block_pointer->C->num_effects, ni_ref));
+
+	Pos = before;
+	read_ni_node_BETTER(nif, n);
 	return block_pointer;
+}
+
+void *read_ni_node_BETTER(nifpr)
+{
+	printf("read ni node pointer but better\n");
+	#define type ni_node_pointer_BETTER
+	struct type *block;
+	block = calloc(1, sizeof(struct type));
+	block->common = read_ni_common_layout(nif, n);
+	Sail(nif, block, type, num_children, unsigned int);
+	Sink(nif, block, type, children, Arr(*block->num_children, ni_ref));
+	Sail(nif, block, type, num_effects, unsigned int);
+	Sink(nif, block, type, effects, Arr(*block->num_effects, ni_ref));
+	printf("better ni node children[0] is %i\n", block->children[0]);
+	return block;
+	#undef type
 }
 
 void *read_ni_tri_shape(nifpr)
