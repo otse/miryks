@@ -1,8 +1,8 @@
 -- premake5.lua
-workspace "gloom-se"
+workspace "gloom-sse"
 	configurations { "Debug", "Release" }
 
-project "dark-se"
+project "dark-sse"
 	kind "ConsoleApp"
 	language "C++"
 	architecture "x86"
@@ -50,7 +50,7 @@ project "dark-se"
 		"C:/New folder/",
 		"C:/New folder/zlib-1.2.11",
 		"C:/New folder/lz4-1.9.3/lib",
-		"C:/New folder/lpng1637",
+		"C:/New folder/libpng-1.6.35",
 		"C:/New folder/glm-0.9.9.8",
 		"C:/New folder/glfw-3.3.4/include",
 		"C:/New folder/bullet3-3.17/src"
@@ -61,7 +61,7 @@ project "dark-se"
 		"C:/New folder/zlib-1.2.11-32/%{cfg.longname}",
 		"C:/New folder/lz4-1.9.3-32/Release",
 		"C:/New folder/bullet3-3.17-32/lib/Release",
-		"C:/New folder/lpng1637-32/Release"
+		"C:/New folder/libpng-1.6.35-32/Release"
 	}
 
 	links {

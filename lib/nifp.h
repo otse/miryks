@@ -150,6 +150,15 @@ struct ni_node_pointer
 	ni_ref *effects;
 };
 
+struct ni_node_pointer_NEW
+{
+	struct ni_common_layout_pointer *common;
+	unsigned int num_children;
+	ni_ref *children;
+	unsigned int num_effects;
+	ni_ref *effects;
+};
+
 struct ni_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;

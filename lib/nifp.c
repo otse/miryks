@@ -74,6 +74,7 @@ api void nifp_read(Nifp *nif) {
 }
 
 static void read_short_string(Nifp *nif, char **string) {
+	// has \0
 	char len = FromBuf(char);
 	*string = malloc(sizeof(char) * len);
 	strncpy(*string, Depos, len);
@@ -81,10 +82,11 @@ static void read_short_string(Nifp *nif, char **string) {
 }
 
 static void read_sized_string(Nifp *nif, char **string) {
+	// doesnt have \0
 	unsigned int len = FromBuf(unsigned int);
 	*string = malloc(sizeof(char) * len + 1);
 	strncpy(*string, Depos, len);
-	(*string)[len] = '\0'; // ?
+	(*string)[len] = '\0';
 	Pos += len;
 }
 
@@ -232,8 +234,7 @@ void *read_ni_node(nifpr)
 {
 	//printf("read ni node pointer\n");
 	struct ni_node_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct ni_node_pointer));
-	memset(block_pointer, 0, sizeof(struct ni_node_pointer));
+	block_pointer = calloc(1, sizeof(struct ni_node_pointer));
 	block_pointer->common = read_ni_common_layout(nif, n);
 	Sink(nif, block_pointer, ni_node_pointer, A, 4);
 	Sink(nif, block_pointer, ni_node_pointer, children,
