@@ -212,63 +212,59 @@ static void sink_val(Nifp *nif, char *block_pointer, int src, int size) {
 }
 
 // sizeof(((layout *)0)->part)
+
+#define member_size(type, member) sizeof (((type *)0)->member)
+
+#define struct_member(type, member) (((type *)0)->member)
+
+// these macros are explained at bottom
+
+struct no_type { int i; };
+
+#define TYPE struct no_type
+
 #define Sink(nif, block_pointer, layout, part, size) sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), size)
 
-#define Sail(nif, block_pointer, layout, part, type) sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), sizeof(type))
+#define Sank(nif, block, part)       sink_val(nif, (char *)block, offsetof(TYPE, part), sizeof  *struct_member(TYPE, part))
+#define Sail(nif, block, part, num)  sink_val(nif, (char *)block, offsetof(TYPE, part), sizeof **struct_member(TYPE, part) * *block->num)
 
-//#define SinkArr(nif, block_pointer, layout, part, size) sink_arr(nif, block_pointer, offsetof(layout, part), size)
+#define CHEESE_CALLOC TYPE *block = calloc(1, sizeof(TYPE))
+
+static void sizeof_dereferenced_pointer_test()
+{
+	// this code is ok!
+	char *x;
+	sizeof *x;
+}
 
 #define Arr(count, type) count * sizeof(type)
 
 void *read_ni_common_layout(nifpr)
 {
-	// printf("read nifp commons %i\n", n);
-	struct ni_common_layout_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct ni_common_layout_pointer));
-	memset(block_pointer, 0, sizeof(struct ni_common_layout_pointer));
-	Sink(nif, block_pointer, ni_common_layout_pointer, A, 8);
-	Sink(nif, block_pointer, ni_common_layout_pointer, extra_data_list,
-		Arr(block_pointer->A->num_extra_data_list, ni_ref));
-	Sink(nif, block_pointer, ni_common_layout_pointer, C, 4+4+12+36+4+4);
-	return block_pointer;
+	#define TYPE struct ni_common_layout_pointer
+	CHEESE_CALLOC;
+	Sank(nif, block, name);
+	Sank(nif, block, num_extra_data_list);
+	Sail(nif, block, extra_data_list, num_extra_data_list);
+	Sank(nif, block, controller);
+	Sank(nif, block, flags);
+	Sank(nif, block, translation);
+	Sank(nif, block, rotation);
+	Sank(nif, block, scale);
+	Sank(nif, block, collision_object);
+	return block;
 }
-
-void *read_ni_node_BETTER(nifpr);
 
 void *read_ni_node(nifpr)
 {
-	//printf("read ni node pointer\n");
-	int before = Pos;
-
-	struct ni_node_pointer *block_pointer;
-	block_pointer = calloc(1, sizeof(struct ni_node_pointer));
-	block_pointer->common = read_ni_common_layout(nif, n);
-	Sink(nif, block_pointer, ni_node_pointer, A, 4);
-	Sink(nif, block_pointer, ni_node_pointer, children,
-		Arr(block_pointer->A->num_children, ni_ref));
-	Sink(nif, block_pointer, ni_node_pointer, C, 4);
-	Sink(nif, block_pointer, ni_node_pointer, effects,
-		Arr(block_pointer->C->num_effects, ni_ref));
-
-	Pos = before;
-	read_ni_node_BETTER(nif, n);
-	return block_pointer;
-}
-
-void *read_ni_node_BETTER(nifpr)
-{
-	printf("read ni node pointer but better\n");
-	#define type ni_node_pointer_BETTER
-	struct type *block;
-	block = calloc(1, sizeof(struct type));
+	#define TYPE struct ni_node_pointer
+	CHEESE_CALLOC;
 	block->common = read_ni_common_layout(nif, n);
-	Sail(nif, block, type, num_children, unsigned int);
-	Sink(nif, block, type, children, Arr(*block->num_children, ni_ref));
-	Sail(nif, block, type, num_effects, unsigned int);
-	Sink(nif, block, type, effects, Arr(*block->num_effects, ni_ref));
-	printf("better ni node children[0] is %i\n", block->children[0]);
+	Sank(nif, block, num_children);
+	Sail(nif, block, children, num_children);
+	Sank(nif, block, num_effects);
+	Sail(nif, block, effects, num_effects);
 	return block;
-	#undef type
 }
 
 void *read_ni_tri_shape(nifpr)
@@ -509,3 +505,10 @@ void *read_ni_transform_data(nifpr)
 		Arr(block_pointer->scales->num_keys, 4));
 	return block_pointer;
 }
+
+// i discovered you can get the sizeof a dereferenced pointer
+// so i ended up sizeoffing struct_member(type, member) (((type *)0)->member)
+// so now you can do
+// sizeof *struct_member(type, member)
+// sizeof **struct_member(type, member)
+// the double asterisk version is of course for arrays

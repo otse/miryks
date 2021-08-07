@@ -118,41 +118,18 @@ struct nifp_hedr
 
 struct ni_common_layout_pointer
 {
-	struct
-	{
-		int name;
-		unsigned int num_extra_data_list;
-	} * A;
-	ni_ref *extra_data_list;
-	struct
-	{
-		ni_ref controller;
-		unsigned int flags;
-		struct vec_3p translation;
-		struct mat_3p rotation;
-		float scale;
-		ni_ref collision_object;
-	} * C;
+	int *name;
+	unsigned int *num_extra_data_list;
+	ni_ref **extra_data_list;
+	ni_ref *controller;
+	unsigned int *flags;
+	struct vec_3p *translation;
+	struct mat_3p *rotation;
+	float *scale;
+	ni_ref *collision_object;
 };
 
 struct ni_node_pointer
-{
-	struct ni_common_layout_pointer *common;
-	struct
-	{
-		unsigned int num_children;
-	} * A;
-	ni_ref *children;
-	struct
-	{
-		unsigned int num_effects;
-	} * C;
-	ni_ref *effects;
-};
-
-// better block pointers layout that makes much more sense!
-
-struct ni_node_pointer_BETTER
 {
 	struct ni_common_layout_pointer *common;
 	unsigned int *num_children;

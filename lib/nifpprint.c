@@ -117,15 +117,15 @@ name: %s [%i]\
 \nscale: %f\
 \ncollision_object: %i\
 ",
-		nifp_get_string(nif, block_pointer->A->name),
-		block_pointer->A->name,
-		block_pointer->A->num_extra_data_list,
-		block_pointer->C->controller,
-		block_pointer->C->flags,
-		print_vec_3p(x, block_pointer->C->translation),
-		print_mat_3p(y, block_pointer->C->rotation),
-		block_pointer->C->scale,
-		block_pointer->C->collision_object);
+		nifp_get_string(nif, *block_pointer->name),
+		*block_pointer->name,
+		*block_pointer->num_extra_data_list,
+		*block_pointer->controller,
+		*block_pointer->flags,
+		print_vec_3p(x, *block_pointer->translation),
+		print_mat_3p(y, *block_pointer->rotation),
+		*block_pointer->scale,
+		*block_pointer->collision_object);
 	return s;
 }
 
@@ -143,8 +143,8 @@ static void print_ni_node_pointer(Nifp *nif, int n, char s[1000])
 \nnum_effects: %u\
 ",
 		print_ni_common_layout_pointer(nif, x, block_pointer->common),
-		block_pointer->A->num_children,
-		block_pointer->C->num_effects);
+		*block_pointer->num_children,
+		*block_pointer->num_effects);
 }
 
 static void print_ni_tri_shape_pointer(Nifp *nif, int n, char s[1000])

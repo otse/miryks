@@ -39,9 +39,10 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			Record object = Record(dungeon->loaded_cell.wrcd);
+			const char *editorId = "";
 
-			const char *editorId = object.editorId();
+			if (dungeon)
+				editorId = dungeon->loaded_cell.wrcd.editorId();
 
 			if (0 != strcmp(items[current], editorId))
 			{
