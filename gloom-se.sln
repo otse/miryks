@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 16
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dark-se", "build\dark-se.vcxproj", "{6C220E00-D801-8D9B-E119-18724D78F3FC}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6C220E00-D801-8D9B-E119-18724D78F3FC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6C220E00-D801-8D9B-E119-18724D78F3FC}.Debug|Win32.Build.0 = Debug|Win32
+		{6C220E00-D801-8D9B-E119-18724D78F3FC}.Release|Win32.ActiveCfg = Release|Win32
+		{6C220E00-D801-8D9B-E119-18724D78F3FC}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
