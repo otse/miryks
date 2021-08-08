@@ -224,15 +224,17 @@ static void sink_arr(Nifp *nif, char *block_pointer, int src, int size) {
 
 #define TYPE struct no_type
 
-// sink is old, sank is new, sail for arrays
-// these macros are explained at bottom
+// explanation at bottom
 
+// sink is old
 #define Sink(nif, block_pointer, layout, part, size) \
 	sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), size)
+
+// new struct sinks
 #define Sank(nif, block, type, part) \
-	sink_val(nif, (char *)block, offsetof(type, part), sizeof  *struct_member(type, part))
+	sink_val(nif, (char *)block, offsetof(type, part), sizeof *block->part)
 #define Sail(nif, block, type, part, group, num) \
-	sink_val(nif, (char *)block, offsetof(type, part), sizeof  *struct_member(type, part) * block->group->num)
+	sink_val(nif, (char *)block, offsetof(type, part), sizeof *block->part * block->group->num)
 
 #define CHEESE_CALLOC(type) type *block = calloc(1, sizeof(type))
 
@@ -529,9 +531,17 @@ void *read_ni_transform_data(nifpr)
 	return block_pointer;
 }
 
-// i discovered you can get the sizeof a dereferenced pointer
-// so i ended up sizeoffing struct_member(type, member) (((type *)0)->member)
-// so now you can do
-// sizeof *struct_member(type, member)
-// sizeof **struct_member(type, member)
-// the double asterisk version is of course for arrays
+static c_macro_explanation()
+{
+	// The trick is to use a
+	// sizeof operator on dereferenced pointer
+	struct netimmerseblock
+	{
+		struct {
+			int d, e, f;
+		} *layout;
+	};
+	struct netimmerseblock *b;
+	sizeof *b->layout;
+	sizeof b->layout;
+}
