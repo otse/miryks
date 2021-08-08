@@ -118,27 +118,36 @@ struct nifp_hedr
 
 struct ni_common_layout_pointer
 {
-	int *name;
-	unsigned int *num_extra_data_list;
-	ni_ref **extra_data_list;
-	ni_ref *controller;
-	unsigned int *flags;
-	struct vec_3p *translation;
-	struct mat_3p *rotation;
-	float *scale;
-	ni_ref *collision_object;
+	struct {
+		int name;
+		unsigned int num_extra_data_list;
+	} *F;
+	ni_ref *extra_data_list;
+	struct {
+		ni_ref controller;
+		unsigned int flags;
+		struct vec_3p translation;
+		struct mat_3p rotation;
+		float scale;
+		ni_ref collision_object;
+	} *A;
 };
 
 struct ni_node_pointer
 {
 	struct ni_common_layout_pointer *common;
-	unsigned int *num_children;
+	struct {
+		unsigned int num_children;
+	} *A;
 	ni_ref *children;
-	unsigned int *num_effects;
+	struct
+	{
+		unsigned int num_effects;
+	} *B;
 	ni_ref *effects;
 };
 
-// sse doesnt use this anymore
+// sse doesnt really use this
 struct ni_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
@@ -180,12 +189,21 @@ generate_bs_vertex_data_sse(cool, 1, 1, 1, 1, 1, 1);
 struct bs_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
-	struct vec_3p *bounding_sphere_center;
-	float *bounding_sphere_radius;
-	ni_ref *skin, *shader_property, *alpha_property;
-	unsigned long long *vertex_desc;
-	unsigned short *num_triangles, *num_vertices;
-	unsigned int *data_size;
+	struct {
+		struct vec_3p center;
+		float radius;
+	} *bounding_sphere;
+	struct {
+		ni_ref skin;
+		ni_ref shader_property;
+		ni_ref alpha_property;
+	} *refs;
+	struct {
+	unsigned long long vertex_desc;
+	unsigned short num_triangles;
+	unsigned short num_vertices;
+	unsigned int data_size;
+	} *infos;
 	struct bs_vertex_data_sse *vertex_data;
 	struct { unsigned short a, b, c; } *triangles;
 	unsigned int *particle_data_size;
@@ -285,6 +303,7 @@ struct skin_partition
 	unsigned short *unknown_short;
 };
 
+// generally sse uses its own bstrishape stuff
 struct ni_tri_shape_data_pointer
 {
 	struct
@@ -294,14 +313,14 @@ struct ni_tri_shape_data_pointer
 		unsigned char keep_flags;
 		unsigned char compress_flags;
 		unsigned char has_vertices;
-	} * A;
+	} *A;
 	struct vec_3p *vertices;
 	struct
 	{
 		unsigned short bs_vector_flags;
 		unsigned int material_crc;
 		unsigned char has_normals;
-	} * C;
+	} *C;
 	struct vec_3p *normals;
 	struct vec_3p *tangents;
 	struct vec_3p *bitangents;
@@ -310,7 +329,7 @@ struct ni_tri_shape_data_pointer
 		struct vec_3p center;
 		float radius;
 		unsigned char has_vertex_colors;
-	} * G;
+	} *G;
 	struct vec_4p *vertex_colors;
 	struct vec_2p *uv_sets;
 	struct
@@ -320,12 +339,12 @@ struct ni_tri_shape_data_pointer
 		unsigned short num_triangles;
 		unsigned int num_triangle_points;
 		unsigned char has_triangles;
-	} * J;
+	} *J;
 	struct ushort_3p *triangles;
 	struct
 	{
 		unsigned short num_match_groups;
-	} * L;
+	} *L;
 	ni_ref *match_groups;
 };
 static int test1 = sizeof(struct ni_tri_shape_data_pointer);
@@ -337,7 +356,7 @@ struct bs_lighting_shader_property_pointer
 		unsigned int skyrim_shader_type;
 		int name;
 		unsigned int num_extra_data_list;
-	} * A;
+	} *A;
 	ni_ref *extra_data_list;
 	struct
 	{
@@ -357,7 +376,7 @@ struct bs_lighting_shader_property_pointer
 		float specular_strength;
 		float lighting_effect_1;
 		float lighting_effect_2;
-	} * B;
+	} *B;
 };
 
 struct bs_effect_shader_property_pointer {
@@ -365,7 +384,7 @@ struct bs_effect_shader_property_pointer {
 	{
 		int name;
 		unsigned int num_extra_data_list;
-	} * A;
+	} *A;
 	ni_ref *extra_data_list;
 	struct
 	{
@@ -374,7 +393,7 @@ struct bs_effect_shader_property_pointer {
 		unsigned int shader_flags_2;
 		struct vec_2p uv_offset;
 		struct vec_2p uv_scale;
-	} * B;
+	} *B;
 	char *source_texture; // sized string
 	struct
 	{
@@ -389,7 +408,7 @@ struct bs_effect_shader_property_pointer {
 		struct vec_4p emissive_color;
 		float emissive_multiple;
 		float soft_falloff_depth;
-	} * C;
+	} *C;
 	char *greyscale_texture; // sized string
 };
 
@@ -398,7 +417,7 @@ struct bs_shader_texture_set_pointer
 	struct
 	{
 		int num_textures;
-	} * A;
+	} *A;
 	char **textures; // sized strings
 };
 

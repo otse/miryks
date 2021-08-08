@@ -91,7 +91,7 @@ namespace skyrim
 				for (int i = 0; i < part->A->num_bones; i++)
 				{
 					auto node = (ni_node_pointer *)nifp_get_block(mesh->nif, si->bones[part->bones[i]]);
-					char *name = nifp_get_string(mesh->nif, *node->common->name);
+					char *name = nifp_get_string(mesh->nif, node->common->F->name);
 					auto has = skeleton->bonesNamed.find(name);
 					if (has == skeleton->bonesNamed.end())
 					{
@@ -125,9 +125,9 @@ namespace skyrim
 	}
 	void matrix_from_common(Group *group, ni_common_layout_pointer *common)
 	{
-		group->matrix = translate(group->matrix, gloomVec3(*common->translation));
-		group->matrix *= inverse(mat4(gloomMat3(*common->rotation)));
-		group->matrix = scale(group->matrix, vec3(*common->scale));
+		group->matrix = translate(group->matrix, gloomVec3(common->A->translation));
+		group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
+		group->matrix = scale(group->matrix, vec3(common->A->scale));
 	}
 	void ni_node_callback(Rd *rd, ni_node_pointer *block)
 	{
@@ -142,7 +142,7 @@ namespace skyrim
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->nested(rd);
 		matrix_from_common(group, block->common);
-		if (strstr(nifp_get_string(rd->nif, *block->common->name), "Marker") != NULL)
+		if (strstr(nifp_get_string(rd->nif, block->common->F->name), "Marker") != NULL)
 			group->visible = false;
 		//if (block->A->skin_instance == -1)
 		{

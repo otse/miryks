@@ -58,9 +58,9 @@ namespace skyrim
 	}
 	void matrix_from_common(Bone *bone, ni_common_layout_pointer *common)
 	{
-		bone->group->matrix = translate(bone->group->matrix, gloomVec3(*common->translation));
-		bone->group->matrix *= inverse(mat4(gloomMat3(*common->rotation)));
-		bone->group->matrix = scale(bone->group->matrix, vec3(*common->scale));
+		bone->group->matrix = translate(bone->group->matrix, gloomVec3(common->A->translation));
+		bone->group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
+		bone->group->matrix = scale(bone->group->matrix, vec3(common->A->scale));
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
 	}
@@ -68,7 +68,7 @@ namespace skyrim
 	{
 		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
-		Bone *bone = skeleton->nested(rd, *block->common->name);
+		Bone *bone = skeleton->nested(rd, block->common->F->name);
 		matrix_from_common(bone, block->common);
 	}
 	void Skeleton::step()

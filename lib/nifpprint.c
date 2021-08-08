@@ -117,15 +117,15 @@ name: %s [%i]\
 \nscale: %f\
 \ncollision_object: %i\
 ",
-		nifp_get_string(nif, *block_pointer->name),
-		*block_pointer->name,
-		*block_pointer->num_extra_data_list,
-		*block_pointer->controller,
-		*block_pointer->flags,
-		print_vec_3p(x, *block_pointer->translation),
-		print_mat_3p(y, *block_pointer->rotation),
-		*block_pointer->scale,
-		*block_pointer->collision_object);
+		nifp_get_string(nif, block_pointer->F->name),
+		block_pointer->F->name,
+		block_pointer->F->num_extra_data_list,
+		block_pointer->A->controller,
+		block_pointer->A->flags,
+		print_vec_3p(x, block_pointer->A->translation),
+		print_mat_3p(y, block_pointer->A->rotation),
+		block_pointer->A->scale,
+		block_pointer->A->collision_object);
 	return s;
 }
 
@@ -143,8 +143,8 @@ static void print_ni_node_pointer(Nifp *nif, int n, char s[1000])
 \nnum_effects: %u\
 ",
 		print_ni_common_layout_pointer(nif, x, block_pointer->common),
-		*block_pointer->num_children,
-		*block_pointer->num_effects);
+		block_pointer->A->num_children,
+		block_pointer->B->num_effects);
 }
 
 static void print_ni_tri_shape_pointer(Nifp *nif, int n, char s[1000])
@@ -333,6 +333,64 @@ num_textures: %i\
 		block_pointer->textures[6],
 		block_pointer->textures[7],
 		block_pointer->textures[8]);
+}
+
+static void print_bs_effect_shader_property_pointer(Nifp *nif, int n, char s[1000])
+{
+	char a[200], b[200], c[200], d[200];
+	struct bs_effect_shader_property_pointer *block = Blocks[n];
+	snprintf(
+		s, 1000,
+		"\
+effect shader property\
+\nname: %i [%s]\
+\nnum_extra_data_list: %i\
+\ncontroller: %i\
+\nshader_flags_1: %u\
+\nshader_flags_2: %u\
+\nuv_offset: %f %f\
+\nuv_scale: %f %f\
+\nsource_texture: %s\
+\ntexture_clamp_mode: %u\
+\nlighting_influence: %u\
+\nenv_map_min_lod: %u\
+\nunknown_byte: %u\
+\nfallof_start_angle: %f\
+\nfallof_stop_angle: %f\
+\nfallof_start_opacity: %f\
+\nfallof_stop_opacity: %f\
+\nemissive_color: [%f, %f, %f, %f]\
+\nemissive_multiple: %f\
+\nsoft_faloff_depth: %f\
+\ngreyscale_texture: %s\
+",
+block->A->name,
+nifp_get_string(nif, block->A->name),
+block->A->num_extra_data_list,
+block->B->controller,
+block->B->shader_flags_1,
+block->B->shader_flags_2,
+block->B->uv_offset.x,
+block->B->uv_offset.y,
+block->B->uv_scale.x,
+block->B->uv_scale.y,
+block->source_texture,
+block->C->texture_clamp_mode,
+block->C->lighting_influence,
+block->C->env_map_min_lod,
+block->C->unknown_byte,
+block->C->falloff_start_angle,
+block->C->falloff_stop_angle,
+block->C->falloff_start_opacity,
+block->C->falloff_stop_opacity,
+block->C->emissive_color.x,
+block->C->emissive_color.y,
+block->C->emissive_color.z,
+block->C->emissive_color.w,
+block->C->emissive_multiple,
+block->C->soft_falloff_depth,
+block->greyscale_texture
+);
 }
 
 static void print_ni_controller_sequence_pointer(Nifp *nif, int n, char s[1000])
@@ -571,6 +629,7 @@ api void nifp_print_block(Nifp *nif, int n, char s[1000])
 	else if ( ni_is_type(NI_TRI_SHAPE) ) print_ni_tri_shape_pointer(nif, n, s);
 	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) print_ni_tri_shape_data_pointer(nif, n, s);
 	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) print_bs_lighting_shader_property_pointer(nif, n, s);
+	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) ) print_bs_effect_shader_property_pointer(nif, n, s);
 	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) print_bs_shader_texture_set_pointer(nif, n, s);
 	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) print_ni_controller_sequence_pointer(nif, n, s);
 	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) print_ni_transform_interpolator(nif, n, s);

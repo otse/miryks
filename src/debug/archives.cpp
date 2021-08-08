@@ -60,6 +60,8 @@ void bsa_gui()
 	}
 
 	auto func = [&](Resource *rc) {
+		if (!rc)
+			return;
 		ImGui::Separator();
 		char s[200];
 
@@ -141,8 +143,8 @@ void bsa_gui()
 		}
 		if (ImGui::BeginTabItem("search"))
 		{
-			static char str[MAX] = "staffofmagnus";
-			static char str2[MAX] = {'\0'};
+			static char str[MAX] = "bucket";
+			static char str2[MAX] = { '\0' };
 
 			if (reset)
 				str2[0] = '\0';

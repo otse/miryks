@@ -64,7 +64,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	struct ni_node_pointer *block_pointer = Blocks[current];
 	if (rd->ni_node)
 		rd->ni_node(rd, Blocks[current]);
-	for (int i = 0; i < *block_pointer->num_children; i++)
+	for (int i = 0; i < block_pointer->A->num_children; i++)
 	{
 	int b = block_pointer->children[i];
 	visit(rd, current, b);

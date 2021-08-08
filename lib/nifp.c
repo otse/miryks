@@ -217,24 +217,24 @@ static void sink_arr(Nifp *nif, char *block_pointer, int src, int size) {
 	Pos += size;
 }
 
-// sizeof(((layout *)0)->part)
 
-#define member_size(type, member) sizeof (((type *)0)->member)
+// #define member_size(type, member) sizeof (((type *)0)->member)
 
 #define struct_member(type, member) (((type *)0)->member)
 
-// these macros are explained at bottom
-
-struct no_type { int i; };
-
 #define TYPE struct no_type
 
-#define Sink(nif, block_pointer, layout, part, size) sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), size)
+// sink is old, sank is new, sail for arrays
+// these macros are explained at bottom
 
-#define Sank(nif, block, part)       sink_val(nif, (char *)block, offsetof(TYPE, part), sizeof  *struct_member(TYPE, part))
-#define Sail(nif, block, part, num)  sink_val(nif, (char *)block, offsetof(TYPE, part), sizeof  *struct_member(TYPE, part) * (*block->num))
+#define Sink(nif, block_pointer, layout, part, size) \
+	sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), size)
+#define Sank(nif, block, type, part) \
+	sink_val(nif, (char *)block, offsetof(type, part), sizeof  *struct_member(type, part))
+#define Sail(nif, block, type, part, group, num) \
+	sink_val(nif, (char *)block, offsetof(type, part), sizeof  *struct_member(type, part) * block->group->num)
 
-#define CHEESE_CALLOC TYPE *block = calloc(1, sizeof(TYPE))
+#define CHEESE_CALLOC(type) type *block = calloc(1, sizeof(type))
 
 static void sizeof_dereferenced_pointer_test()
 {
@@ -247,53 +247,41 @@ static void sizeof_dereferenced_pointer_test()
 
 void *read_ni_common_layout(nifpr)
 {
-	#define TYPE struct ni_common_layout_pointer
-	CHEESE_CALLOC;
-	Sank(nif, block, name);
-	Sank(nif, block, num_extra_data_list);
-	Sail(nif, block, extra_data_list, num_extra_data_list);
-	Sank(nif, block, controller);
-	Sank(nif, block, flags);
-	Sank(nif, block, translation);
-	Sank(nif, block, rotation);
-	Sank(nif, block, scale);
-	Sank(nif, block, collision_object);
+	#define type struct ni_common_layout_pointer
+	CHEESE_CALLOC(type);
+	Sank(nif, block, type, F);
+	Sail(nif, block, type, extra_data_list, F, num_extra_data_list);
+	Sank(nif, block, type, A);
 	return block;
 }
 
 void *read_ni_node(nifpr)
 {
-	#define TYPE struct ni_node_pointer
-	CHEESE_CALLOC;
+	#define type struct ni_node_pointer
+	CHEESE_CALLOC(type);
 	block->common = read_ni_common_layout(nif, n);
-	Sank(nif, block, num_children);
-	Sail(nif, block, children, num_children);
-	Sank(nif, block, num_effects);
-	Sail(nif, block, effects, num_effects);
+	Sank(nif, block, type, A);
+	Sail(nif, block, type, children, A, num_children);
+	Sank(nif, block, type, B);
+	Sail(nif, block, type, effects, B, num_effects);
 	return block;
 }
 
 void *read_bs_tri_shape(Nifp *nif, int n)
 {
 	printf("read bs tri shape for %s!\n", nif->path);
-	#define TYPE struct bs_tri_shape_pointer
-	CHEESE_CALLOC;
+	#define type struct bs_tri_shape_pointer
+	CHEESE_CALLOC(type);
 	block->common = read_ni_common_layout(nif, n);
-	Sank(nif, block, bounding_sphere_center);
-	Sank(nif, block, bounding_sphere_radius);
-	Sank(nif, block, skin);
-	Sank(nif, block, shader_property);
-	Sank(nif, block, alpha_property);
-	printf("skin shader alpha %i %i %i\n", *block->skin, *block->shader_property, *block->alpha_property);
-	Sank(nif, block, vertex_desc);
-	Sank(nif, block, num_triangles);
-	Sank(nif, block, num_vertices);
-	printf("num triangles vertices %hu %hu\n", *block->num_triangles, *block->num_vertices);
-	Sank(nif, block, data_size);
-	printf("data size %u\n", *block->data_size);
-	Sail(nif, block, vertex_data, num_vertices);
-	Sail(nif, block, triangles, num_triangles);
-	Sank(nif, block, particle_data_size);
+	Sank(nif, block, type, bounding_sphere);
+	Sank(nif, block, type, refs);
+	printf("skin shader alpha %i %i %i\n", block->refs->skin, block->refs->shader_property, block->refs->alpha_property);
+	Sank(nif, block, type, infos);
+	printf("num triangles vertices %hu %hu\n", block->infos->num_triangles, block->infos->num_vertices);
+	printf("data size %u\n", block->infos->data_size);
+	Sail(nif, block, type, vertex_data, infos, num_vertices);
+	Sail(nif, block, type, triangles, infos, num_triangles);
+	Sank(nif, block, type, particle_data_size);
 
 	printf("&block->vertex_data[0] = %i\n", &block->vertex_data[0]);
 	printf("&block->vertex_data[1] = %i\n", &block->vertex_data[1]);
@@ -311,51 +299,56 @@ void *read_bs_tri_shape(Nifp *nif, int n)
 
 void *read_ni_tri_shape(nifpr)
 {
-	assertm(0, "sse shouldnt use ni tri shape");
-	// printf("read ni tri shape pointer\n");
-	struct ni_tri_shape_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct ni_tri_shape_pointer));
-	memset(block_pointer, 0, sizeof(struct ni_tri_shape_pointer));
-	block_pointer->common = read_ni_common_layout(nif, n);
-	Sink(nif, block_pointer, ni_tri_shape_pointer, A, 8);
+	printf("read ni tri shape pointer\n");
+	// assertm(0, "sse shouldnt use ni tri shape");
+	#define type struct ni_tri_shape_pointer
+	CHEESE_CALLOC(type);
+	block->common = read_ni_common_layout(nif, n);
+	Sank(nif, block, type, A);
 	Pos += 9;
-	Sink(nif, block_pointer, ni_tri_shape_pointer, B, 8);
-	return block_pointer;
+	Sank(nif, block, type, B);
+	return block;
 }
 
 void *read_ni_tri_shape_data(nifpr)
 {
-	// printf("read ni tri shape data\n");
-	struct ni_tri_shape_data_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct ni_tri_shape_data_pointer));
-	memset(block_pointer, 0, sizeof(struct ni_tri_shape_data_pointer));
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, A, 4+2+1+1+1);
-	const int size = Arr(block_pointer->A->num_vertices, struct vec_3p);
-	if (block_pointer->A->has_vertices)
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, vertices, size);
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, C, 7);
-	if (block_pointer->C->has_normals)
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, normals, size);
-	if (block_pointer->C->bs_vector_flags & 0x00001000)
+	#define type struct ni_tri_shape_data_pointer
+	CHEESE_CALLOC(type);
+	
+	Sank(nif, block, type, A);
+
+	if (block->A->has_vertices)
+		Sail(nif, block, type, vertices, A, num_vertices);
+
+	Sank(nif, block, type, C);
+
+	if (block->C->has_normals)
+		Sail(nif, block, type, normals, A, num_vertices);
+
+	if (block->C->bs_vector_flags & 0x00001000)
 	{
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, tangents, size);
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, bitangents, size);
+		Sail(nif, block, type, tangents, A, num_vertices);
+		Sail(nif, block, type, bitangents, A, num_vertices);
 	}
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, G, 12+4+1);
-	if (block_pointer->G->has_vertex_colors)
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, vertex_colors,
-		Arr(block_pointer->A->num_vertices, struct vec_4p));
-	if (block_pointer->C->bs_vector_flags & 0x00000001)
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, uv_sets,
-		Arr(block_pointer->A->num_vertices, struct vec_2p));
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, J, 13);
-	if (block_pointer->J->has_triangles)
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, triangles,
-		Arr(block_pointer->J->num_triangles, struct ushort_3p));
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, L, 2);
-	Sink(nif, block_pointer, ni_tri_shape_data_pointer, match_groups,
-		Arr(block_pointer->L->num_match_groups, ni_ref));
-	return block_pointer;
+
+	Sank(nif, block, type, G);
+
+	if (block->G->has_vertex_colors)
+		Sail(nif, block, type, vertex_colors, A, num_vertices);
+
+	if (block->C->bs_vector_flags & 0x00000001)
+		Sail(nif, block, type, uv_sets, A, num_vertices);
+
+	Sank(nif, block, type, J);
+
+	if (block->J->has_triangles)
+		Sail(nif, block, type, triangles, J, num_triangles);
+
+	Sank(nif, block, type, L);
+
+	Sail(nif, block, type, match_groups, L, num_match_groups);
+
+	return block;
 }
 
 void *read_ni_skin_instance(nifpr)
@@ -438,57 +431,44 @@ void *read_ni_skin_partition(nifpr)
 
 void *read_bs_lighting_shader_property(nifpr)
 {
-	//printf("read bs lighting shader property\n");
-	struct bs_lighting_shader_property_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct bs_lighting_shader_property_pointer));
-	memset(block_pointer, 0, sizeof(struct bs_lighting_shader_property_pointer));
-	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, A, 12);
-	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, extra_data_list,
-		Arr(block_pointer->A->num_extra_data_list, ni_ref));
-	Sink(nif, block_pointer, bs_lighting_shader_property_pointer, B, 88);
-	return block_pointer;
+	#define type struct bs_lighting_shader_property_pointer
+	CHEESE_CALLOC(type);
+	Sank(nif, block, type, A);
+	Sail(nif, block, type, extra_data_list, A, num_extra_data_list);
+	Sank(nif, block, type, B);
+	return block;
 }
 
 void *read_bs_effect_shader_property(nifpr)
 {
-	//printf(" read_bs_effect_shader_property\n ");
-	struct bs_effect_shader_property_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct bs_effect_shader_property_pointer));
-	memset(block_pointer, 0, sizeof(struct bs_effect_shader_property_pointer));
-	Sink(nif, block_pointer, bs_effect_shader_property_pointer, A, 8);
-	Sink(nif, block_pointer, bs_effect_shader_property_pointer, extra_data_list,
-		Arr(block_pointer->A->num_extra_data_list, ni_ref));
-	Sink(nif, block_pointer, bs_effect_shader_property_pointer, B, 12+8+8);
-	read_sized_string(nif, &block_pointer->source_texture);
-	Sink(nif, block_pointer, bs_effect_shader_property_pointer, C, 4+16+16+8);
-	read_sized_string(nif, &block_pointer->greyscale_texture);
-	return block_pointer;
+	#define type struct bs_effect_shader_property_pointer
+	CHEESE_CALLOC(type);
+	Sank(nif, block, type, A);
+	Sail(nif, block, type, extra_data_list, A, num_extra_data_list);
+	Sank(nif, block, type, B);
+	read_sized_string(nif, &block->source_texture);
+	Sank(nif, block, type, C);
+	read_sized_string(nif, &block->greyscale_texture);
+	return block;
 }
 
 void *read_bs_shader_texture_set(nifpr)
 {
-	//printf("read bs shader texture set\n");
-	struct bs_shader_texture_set_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct bs_shader_texture_set_pointer));
-	memset(block_pointer, 0, sizeof(struct bs_shader_texture_set_pointer));
-	Sink(nif, block_pointer, bs_shader_texture_set_pointer, A, 4);
-	read_sized_strings(nif, &block_pointer->textures, block_pointer->A->num_textures);
-	return block_pointer;
+	#define type struct bs_shader_texture_set_pointer
+	CHEESE_CALLOC(type);
+	Sank(nif, block, type, A);
+	read_sized_strings(nif, &block->textures, block->A->num_textures);
+	return block;
 }
 
 void *read_ni_alpha_property(nifpr)
 {
-	// printf("nifp exp\n");
-	struct ni_alpha_property_pointer *block_pointer;
-	block_pointer = malloc(sizeof(struct ni_alpha_property_pointer));
-	memset(block_pointer, 0, sizeof(struct ni_alpha_property_pointer));
-	Sink(nif, block_pointer, ni_alpha_property_pointer, A, 8);
-	Sink(nif, block_pointer, ni_alpha_property_pointer, extra_data_list,
-		Arr(block_pointer->A->num_extra_data_list, ni_ref));
-	Sink(nif, block_pointer, ni_alpha_property_pointer, C, 7);
-	sizeof(struct ni_alpha_property_pointer);
-	sizeof(((struct ni_alpha_property_pointer *)0)->C);
-	return block_pointer;
+	#define type struct ni_alpha_property_pointer
+	CHEESE_CALLOC(type);
+	Sank(nif, block, type, A);
+	Sail(nif, block, type, extra_data_list, A, num_extra_data_list);
+	Sank(nif, block, type, C);
+	return block;
 }
 
 void *read_ni_controller_sequence(nifpr)
