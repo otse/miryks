@@ -1,5 +1,7 @@
 #include "common.h"
 
+// nif with pointers rundown
+
 #include "nifp.h"
 #include "nitypes.h"
 
@@ -7,24 +9,13 @@
 #define Blocks nif->blocks
 #define Skips  rd->skips
 
-// rundown visitor
-
 void visit      (NifpRd *, int, int);
 void visit_other(NifpRd *, int, int);
 void visit_block(NifpRd *, void *);
 
-api NifpRd *malloc_nifprd() {
-	NifpRd *rd = malloc(sizeof(NifpRd));
-	memset(rd, 0, sizeof(NifpRd));
+api NifpRd *calloc_nifprd() {
+	NifpRd *rd = calloc(1, sizeof(NifpRd));
 	rd->other = visit_other;
-	/*rd->ni_node = rd->ni_tri_shape
-				= rd->ni_tri_shape_data
-				= rd->bs_lighting_shader_property
-				= rd->bs_shader_texture_set
-				= rd->ni_alpha_property
-				= rd->ni_controller_sequence
-				= rd->ni_skin_instance
-				= visit_block;*/
 	return rd;
 }
 
@@ -46,13 +37,12 @@ api void nifp_rd(NifpRd *rd) {
 	visit(rd, -1, n);
 }
 
+#define needs_parent if (-1 == parent) return;
+
 static void visit(NifpRd *rd, int parent, int current)
 {
-#define needs_parent if (-1 == parent) return;
 	Nifp *nif = rd->nif;
-	if (-1 == current)
-	return;
-	if (rd->skips[current])
+	if (-1 == current || rd->skips[current])
 	return;
 	rd->parent = parent; rd->current = current;
 	// skip

@@ -36,7 +36,7 @@ namespace dark
 
 	Keyframes *GetKeyframes(const char *path)
 	{
-		Nif *nif = malloc_nifp();
+		Nif *nif = calloc_nifp();
 		nif->path = path;
 		char *lvalue = (char *)nif->buf;
 		fbuf(path, &lvalue);

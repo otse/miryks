@@ -42,7 +42,7 @@ namespace dark
 		if (store && nif)
 			return nif;
 		bsa_read(rc);
-		nif = malloc_nifp();
+		nif = calloc_nifp();
 		nif->path = rc->path;
 		nif->buf = rc->buf;
 		nifp_read(nif);

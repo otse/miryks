@@ -4,8 +4,6 @@
 #include "nifp.h"
 #include "nitypes.h"
 
-// #define ITS_THE_SPECIAL_EDITION 1
-
 // ignore
 
 int nifs = 0;
@@ -54,7 +52,7 @@ api void *nifp_get_block(Nifp *nif, int i) {
 	return Blocks[i];
 }
 
-api Nifp *malloc_nifp() {
+api Nifp *calloc_nifp() {
 	Nifp *nif = malloc(sizeof(Nifp));
 	memset(nif, 0, sizeof(Nifp));
 	nif->hdr = malloc(sizeof(struct nifp_hedr));
@@ -76,8 +74,7 @@ api void nifp_read(Nifp *nif) {
 static void read_short_string(Nifp *nif, char **string) {
 	// has \0
 	char len = FromBuf(char);
-	*string = malloc(sizeof(char) * len);
-	strncpy(*string, Depos, len);
+	*string = Depos;
 	Pos += len;
 }
 
@@ -94,13 +91,13 @@ static void read_sized_string(Nifp *nif, char **string) {
 
 static void hedr_read_header_string(Nifp *nif) {
 	// Gamebryo File Format, Version 20.2.0.7\n
-	int n = strchr(Buf, '\n') - Buf + 1;
-	char *string = malloc(sizeof(char) * n);
-	strncpy(string, Buf, n);
-	string[n - 1] = '\0';
+	int newline = (char *)memchr(Buf, 0x0A, 50) - Buf;
+	assertm(newline, "nifp hedr");
+	char *string = malloc(sizeof(char) * newline + 1);
+	strncpy(string, Buf, newline);
 	Hedr->header_string = string;
 	Hedr->version = string + 30;
-	Pos += n;
+	Pos += newline + 1;
 }
 
 static void read_mem(Nifp *nif, void *dest, int size) {
@@ -141,7 +138,7 @@ api void nifp_read_header(Nifp *nif) {
 
 static void read_block(Nifp *, int);
 
-       void *read_ni_common_layout(nifpr);
+static void *read_ni_common_layout(nifpr);
 static void *read_ni_node(nifpr);
 static void *read_ni_skin_instance(nifpr);
 static void *read_ni_skin_data(nifpr);
@@ -205,85 +202,60 @@ void read_block(Nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-static void sink_val(Nifp *nif, char *block_pointer, int src, int size) {
-	char **dest = block_pointer + src;
+static void sink_val(Nifp *nif, char **dest, int size) {
 	*dest = Depos;
 	Pos += size;
 }
 
-static void sink_arr(Nifp *nif, char *block_pointer, int src, int size) {
-	char **dest = block_pointer + src;
-	*dest = Depos;
-	Pos += size;
-}
-
-
-// #define member_size(type, member) sizeof (((type *)0)->member)
-
-#define struct_member(type, member) (((type *)0)->member)
-
-#define TYPE struct no_type
-
-// explanation at bottom
-
-// sink is old
-#define Sink(nif, block_pointer, layout, part, size) \
+#define SinkOld(nif, block_pointer, layout, part, size) \
 	sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), size)
 
-// new struct sinks
-#define Sank(nif, block, type, part) \
-	sink_val(nif, (char *)block, offsetof(type, part), sizeof *block->part)
-#define Sail(nif, block, type, part, group, num) \
-	sink_val(nif, (char *)block, offsetof(type, part), sizeof *block->part * block->group->num)
+// (the magic here is sizeof *unary-expression)
+
+#define Sink(nif, block, part) \
+	sink_val(nif, &block->part, sizeof *block->part)
+
+#define Sail(nif, block, part, group, num) \
+	sink_val(nif, &block->part, sizeof *block->part * block->group->num)
 
 #define CHEESE_CALLOC(type) type *block = calloc(1, sizeof(type))
-
-static void sizeof_dereferenced_pointer_test()
-{
-	// this code is ok!
-	char *x;
-	sizeof *x;
-}
 
 #define Arr(count, type) count * sizeof(type)
 
 void *read_ni_common_layout(nifpr)
 {
-	#define type struct ni_common_layout_pointer
-	CHEESE_CALLOC(type);
-	Sank(nif, block, type, F);
-	Sail(nif, block, type, extra_data_list, F, num_extra_data_list);
-	Sank(nif, block, type, A);
+	CHEESE_CALLOC(struct ni_common_layout_pointer);
+	Sink(nif, block, F);
+	Sail(nif, block, extra_data_list, F, num_extra_data_list);
+	Sink(nif, block, A);
 	return block;
 }
 
 void *read_ni_node(nifpr)
 {
-	#define type struct ni_node_pointer
-	CHEESE_CALLOC(type);
+	CHEESE_CALLOC(struct ni_node_pointer);
 	block->common = read_ni_common_layout(nif, n);
-	Sank(nif, block, type, A);
-	Sail(nif, block, type, children, A, num_children);
-	Sank(nif, block, type, B);
-	Sail(nif, block, type, effects, B, num_effects);
+	Sink(nif, block, A);
+	Sail(nif, block, children, A, num_children);
+	Sink(nif, block, B);
+	Sail(nif, block, effects, B, num_effects);
 	return block;
 }
 
 void *read_bs_tri_shape(Nifp *nif, int n)
 {
 	printf("read bs tri shape for %s!\n", nif->path);
-	#define type struct bs_tri_shape_pointer
-	CHEESE_CALLOC(type);
+	CHEESE_CALLOC(struct bs_tri_shape_pointer);
 	block->common = read_ni_common_layout(nif, n);
-	Sank(nif, block, type, bounding_sphere);
-	Sank(nif, block, type, refs);
+	Sink(nif, block, bounding_sphere);
+	Sink(nif, block, refs);
 	printf("skin shader alpha %i %i %i\n", block->refs->skin, block->refs->shader_property, block->refs->alpha_property);
-	Sank(nif, block, type, infos);
+	Sink(nif, block, infos);
 	printf("num triangles vertices %hu %hu\n", block->infos->num_triangles, block->infos->num_vertices);
 	printf("data size %u\n", block->infos->data_size);
-	Sail(nif, block, type, vertex_data, infos, num_vertices);
-	Sail(nif, block, type, triangles, infos, num_triangles);
-	Sank(nif, block, type, particle_data_size);
+	Sail(nif, block, vertex_data, infos, num_vertices);
+	Sail(nif, block, triangles, infos, num_triangles);
+	Sink(nif, block, particle_data_size);
 
 	printf("&block->vertex_data[0] = %i\n", &block->vertex_data[0]);
 	printf("&block->vertex_data[1] = %i\n", &block->vertex_data[1]);
@@ -303,52 +275,50 @@ void *read_ni_tri_shape(nifpr)
 {
 	printf("read ni tri shape pointer\n");
 	// assertm(0, "sse shouldnt use ni tri shape");
-	#define type struct ni_tri_shape_pointer
-	CHEESE_CALLOC(type);
+	CHEESE_CALLOC(struct ni_tri_shape_pointer);
 	block->common = read_ni_common_layout(nif, n);
-	Sank(nif, block, type, A);
+	Sink(nif, block, A);
 	Pos += 9;
-	Sank(nif, block, type, B);
+	Sink(nif, block, B);
 	return block;
 }
 
 void *read_ni_tri_shape_data(nifpr)
 {
-	#define type struct ni_tri_shape_data_pointer
-	CHEESE_CALLOC(type);
+	CHEESE_CALLOC(struct ni_tri_shape_data_pointer);
 	
-	Sank(nif, block, type, A);
+	Sink(nif, block, A);
 
 	if (block->A->has_vertices)
-		Sail(nif, block, type, vertices, A, num_vertices);
+		Sail(nif, block, vertices, A, num_vertices);
 
-	Sank(nif, block, type, C);
+	Sink(nif, block, C);
 
 	if (block->C->has_normals)
-		Sail(nif, block, type, normals, A, num_vertices);
+		Sail(nif, block, normals, A, num_vertices);
 
 	if (block->C->bs_vector_flags & 0x00001000)
 	{
-		Sail(nif, block, type, tangents, A, num_vertices);
-		Sail(nif, block, type, bitangents, A, num_vertices);
+		Sail(nif, block, tangents, A, num_vertices);
+		Sail(nif, block, bitangents, A, num_vertices);
 	}
 
-	Sank(nif, block, type, G);
+	Sink(nif, block, G);
 
 	if (block->G->has_vertex_colors)
-		Sail(nif, block, type, vertex_colors, A, num_vertices);
+		Sail(nif, block, vertex_colors, A, num_vertices);
 
 	if (block->C->bs_vector_flags & 0x00000001)
-		Sail(nif, block, type, uv_sets, A, num_vertices);
+		Sail(nif, block, uv_sets, A, num_vertices);
 
-	Sank(nif, block, type, J);
+	Sink(nif, block, J);
 
 	if (block->J->has_triangles)
-		Sail(nif, block, type, triangles, J, num_triangles);
+		Sail(nif, block, triangles, J, num_triangles);
 
-	Sank(nif, block, type, L);
+	Sink(nif, block, L);
 
-	Sail(nif, block, type, match_groups, L, num_match_groups);
+	Sail(nif, block, match_groups, L, num_match_groups);
 
 	return block;
 }
@@ -358,14 +328,14 @@ void *read_ni_skin_instance(nifpr)
 	struct ni_skin_instance_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_skin_instance_pointer));
 	memset(block_pointer, 0, sizeof(struct ni_skin_instance_pointer));
-	Sink(nif, block_pointer, ni_skin_instance_pointer, A, 16);
-	Sink(nif, block_pointer, ni_skin_instance_pointer, bones,
+	SinkOld(nif, block_pointer, ni_skin_instance_pointer, A, 16);
+	SinkOld(nif, block_pointer, ni_skin_instance_pointer, bones,
 		Arr(block_pointer->A->num_bones, ni_ref));
 	char *block_type = nifp_get_block_type(nif, n);
 	if (ni_is_type(BS_DISMEMBER_SKIN_INSTANCE))
 	{
-	Sink(nif, block_pointer, ni_skin_instance_pointer, B, 4);
-	Sink(nif, block_pointer, ni_skin_instance_pointer, partitions,
+	SinkOld(nif, block_pointer, ni_skin_instance_pointer, B, 4);
+	SinkOld(nif, block_pointer, ni_skin_instance_pointer, partitions,
 		Arr(block_pointer->B->num_partitions, struct body_part_list));
 	}
 	return block_pointer;
@@ -378,16 +348,16 @@ void *read_ni_skin_data(nifpr)
 	struct Type *block_pointer;
 	block_pointer = malloc(sizeof(struct Type));
 	memset(block_pointer, 0, sizeof(struct Type));
-	Sink(nif, block_pointer, Type, skin_transform, 36+12+4);
-	Sink(nif, block_pointer, Type, B, 5);
+	SinkOld(nif, block_pointer, Type, skin_transform, 36+12+4);
+	SinkOld(nif, block_pointer, Type, B, 5);
 	block_pointer->bone_list = malloc(sizeof(struct bone_data *) * block_pointer->B->num_bones);
 	for (unsigned int i = 0; i < block_pointer->B->num_bones; i++)
 	{
 	block_pointer->bone_list[i] = malloc(sizeof(struct bone_data));
 	struct bone_data *bone_data = block_pointer->bone_list[i];
-	Sink(nif, bone_data, bone_data, skin_transform, 36+12+4);
-	Sink(nif, bone_data, bone_data, B, 12+4+2);
-	Sink(nif, bone_data, bone_data, vertex_weights,
+	SinkOld(nif, bone_data, bone_data, skin_transform, 36+12+4);
+	SinkOld(nif, bone_data, bone_data, B, 12+4+2);
+	SinkOld(nif, bone_data, bone_data, vertex_weights,
 		Arr(bone_data->B->num_vertices, struct bone_vert_data));
 	}
 	return block_pointer;
@@ -399,77 +369,73 @@ void *read_ni_skin_partition(nifpr)
 	struct ni_skin_partition_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_skin_partition_pointer));
 	memset(block_pointer, 0, sizeof(struct ni_skin_partition_pointer));
-	Sink(nif, block_pointer, ni_skin_partition_pointer, num_skin_partition_blocks, 4);
+	SinkOld(nif, block_pointer, ni_skin_partition_pointer, num_skin_partition_blocks, 4);
 	block_pointer->skin_partition_blocks = malloc(sizeof(struct skin_partition *) * *block_pointer->num_skin_partition_blocks);
 	for (unsigned int i = 0; i < *block_pointer->num_skin_partition_blocks; i++)
 	{
 	block_pointer->skin_partition_blocks[i] = malloc(sizeof(struct skin_partition));
 	struct skin_partition *skin_partition = block_pointer->skin_partition_blocks[i];
-	Sink(nif, skin_partition, skin_partition, A, 10);
-	Sink(nif, skin_partition, skin_partition, bones,
+	SinkOld(nif, skin_partition, skin_partition, A, 10);
+	SinkOld(nif, skin_partition, skin_partition, bones,
 		Arr(skin_partition->A->num_bones, unsigned short));
-	Sink(nif, skin_partition, skin_partition, has_vertex_map, 1);
+	SinkOld(nif, skin_partition, skin_partition, has_vertex_map, 1);
 	if (*skin_partition->has_vertex_map)
-	Sink(nif, skin_partition, skin_partition, vertex_map,
+	SinkOld(nif, skin_partition, skin_partition, vertex_map,
 		Arr(skin_partition->A->num_vertices, unsigned short));
-	Sink(nif, skin_partition, skin_partition, has_vertex_weights, 1);
+	SinkOld(nif, skin_partition, skin_partition, has_vertex_weights, 1);
 	if (*skin_partition->has_vertex_weights)
-	Sink(nif, skin_partition, skin_partition, vertex_weights,
+	SinkOld(nif, skin_partition, skin_partition, vertex_weights,
 		Arr(skin_partition->A->num_vertices, struct vec_4p));
-	Sink(nif, skin_partition, skin_partition, strip_lengths,
+	SinkOld(nif, skin_partition, skin_partition, strip_lengths,
 		Arr(skin_partition->A->num_strips, unsigned short));
-	Sink(nif, skin_partition, skin_partition, has_faces, 1);
+	SinkOld(nif, skin_partition, skin_partition, has_faces, 1);
 	if (*skin_partition->has_faces)
-	Sink(nif, skin_partition, skin_partition, triangles,
+	SinkOld(nif, skin_partition, skin_partition, triangles,
 		Arr(skin_partition->A->num_triangles, struct ushort_3p));
-	Sink(nif, skin_partition, skin_partition, has_bone_indices, 1);
+	SinkOld(nif, skin_partition, skin_partition, has_bone_indices, 1);
 	if (*skin_partition->has_bone_indices)
-	Sink(nif, skin_partition, skin_partition, bone_indices,
+	SinkOld(nif, skin_partition, skin_partition, bone_indices,
 		Arr(skin_partition->A->num_vertices, struct byte_4p));
-	Sink(nif, skin_partition, skin_partition, unknown_short, 2);
+	SinkOld(nif, skin_partition, skin_partition, unknown_short, 2);
 	}
 	return block_pointer;
 };
 
 void *read_bs_lighting_shader_property(nifpr)
 {
-	#define type struct bs_lighting_shader_property_pointer
-	CHEESE_CALLOC(type);
-	Sank(nif, block, type, A);
-	Sail(nif, block, type, extra_data_list, A, num_extra_data_list);
-	Sank(nif, block, type, B);
+	CHEESE_CALLOC(struct bs_lighting_shader_property_pointer);
+	Sink(nif, block, A);
+	Sail(nif, block, extra_data_list, A, num_extra_data_list);
+	Sink(nif, block, B);
 	return block;
 }
 
 void *read_bs_effect_shader_property(nifpr)
 {
-	#define type struct bs_effect_shader_property_pointer
-	CHEESE_CALLOC(type);
-	Sank(nif, block, type, A);
-	Sail(nif, block, type, extra_data_list, A, num_extra_data_list);
-	Sank(nif, block, type, B);
+	CHEESE_CALLOC(struct bs_effect_shader_property_pointer);
+	Sink(nif, block, A);
+	Sail(nif, block, extra_data_list, A, num_extra_data_list);
+	Sink(nif, block, B);
 	read_sized_string(nif, &block->source_texture);
-	Sank(nif, block, type, C);
+	Sink(nif, block, C);
 	read_sized_string(nif, &block->greyscale_texture);
 	return block;
 }
 
 void *read_bs_shader_texture_set(nifpr)
 {
-	#define type struct bs_shader_texture_set_pointer
-	CHEESE_CALLOC(type);
-	Sank(nif, block, type, A);
+	CHEESE_CALLOC(struct bs_shader_texture_set_pointer);
+	Sink(nif, block, A);
 	read_sized_strings(nif, &block->textures, block->A->num_textures);
 	return block;
 }
 
 void *read_ni_alpha_property(nifpr)
 {
-	#define type struct ni_alpha_property_pointer
-	CHEESE_CALLOC(type);
-	Sank(nif, block, type, A);
-	Sail(nif, block, type, extra_data_list, A, num_extra_data_list);
-	Sank(nif, block, type, C);
+	CHEESE_CALLOC(struct ni_alpha_property_pointer);
+	Sink(nif, block, A);
+	Sail(nif, block, extra_data_list, A, num_extra_data_list);
+	Sink(nif, block, C);
 	return block;
 }
 
@@ -479,10 +445,10 @@ void *read_ni_controller_sequence(nifpr)
 	struct ni_controller_sequence_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_controller_sequence_pointer));
 	memset(block_pointer, 0, sizeof(struct ni_controller_sequence_pointer));
-	Sink(nif, block_pointer, ni_controller_sequence_pointer, A, 12);
-	Sink(nif, block_pointer, ni_controller_sequence_pointer, controlled_blocks,
+	SinkOld(nif, block_pointer, ni_controller_sequence_pointer, A, 12);
+	SinkOld(nif, block_pointer, ni_controller_sequence_pointer, controlled_blocks,
 		Arr(block_pointer->A->num_controlled_blocks, struct controlled_block_pointer));
-	Sink(nif, block_pointer, ni_controller_sequence_pointer, C, sizeof(((struct ni_controller_sequence_pointer *)0)->C));
+	SinkOld(nif, block_pointer, ni_controller_sequence_pointer, C, sizeof(((struct ni_controller_sequence_pointer *)0)->C));
 	//printf("ni ct se num_controlled_blocks %u\n", block_pointer->A->num_controlled_blocks);
 	sizeof(struct ni_controller_sequence_pointer);
 	sizeof(((struct ni_controller_sequence_pointer *)0)->A);
@@ -495,8 +461,8 @@ void *read_ni_transform_interpolator(nifpr)
 	struct ni_transform_interpolator_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_transform_interpolator_pointer));
 	memset(block_pointer, 0, sizeof(struct ni_transform_interpolator_pointer));
-	Sink(nif, block_pointer, ni_transform_interpolator_pointer, transform, 32);
-	Sink(nif, block_pointer, ni_transform_interpolator_pointer, B, 4);
+	SinkOld(nif, block_pointer, ni_transform_interpolator_pointer, transform, 32);
+	SinkOld(nif, block_pointer, ni_transform_interpolator_pointer, B, 4);
 	return block_pointer;
 }
 
@@ -506,13 +472,13 @@ void *read_ni_transform_data(nifpr)
 	struct ni_transform_data_pointer *block_pointer;
 	block_pointer = malloc(sizeof(struct ni_transform_data_pointer));
 	memset(block_pointer, 0, sizeof(struct ni_transform_data_pointer));
-	Sink(nif, block_pointer, ni_transform_data_pointer, A, 4);
+	SinkOld(nif, block_pointer, ni_transform_data_pointer, A, 4);
 	if (block_pointer->A->num_rotation_keys > 0)
 	{
-	Sink(nif, block_pointer, ni_transform_data_pointer, B, 4);
+	SinkOld(nif, block_pointer, ni_transform_data_pointer, B, 4);
 	if (block_pointer->B->rotation_type == 2) // quadratic key
 	{
-	Sink(nif, block_pointer, ni_transform_data_pointer, quaternion_keys,
+	SinkOld(nif, block_pointer, ni_transform_data_pointer, quaternion_keys,
 		Arr(block_pointer->A->num_rotation_keys, struct quaternion_key_pointer));
 	}
 	else
@@ -522,26 +488,11 @@ void *read_ni_transform_data(nifpr)
 	return NULL;
 	}
 	}
-	Sink(nif, block_pointer, ni_transform_data_pointer, translations, 8);
-	Sink(nif, block_pointer, ni_transform_data_pointer, translation_keys,
+	SinkOld(nif, block_pointer, ni_transform_data_pointer, translations, 8);
+	SinkOld(nif, block_pointer, ni_transform_data_pointer, translation_keys,
 		Arr(block_pointer->translations->num_keys, struct translation_key_pointer));
-	Sink(nif, block_pointer, ni_transform_data_pointer, scales, 4);
-	Sink(nif, block_pointer, ni_transform_data_pointer, scale_keys,
+	SinkOld(nif, block_pointer, ni_transform_data_pointer, scales, 4);
+	SinkOld(nif, block_pointer, ni_transform_data_pointer, scale_keys,
 		Arr(block_pointer->scales->num_keys, 4));
 	return block_pointer;
-}
-
-static c_macro_explanation()
-{
-	// The trick is to use a
-	// sizeof operator on dereferenced pointer
-	struct netimmerseblock
-	{
-		struct {
-			int d, e, f;
-		} *layout;
-	};
-	struct netimmerseblock *b;
-	sizeof *b->layout;
-	sizeof b->layout;
 }

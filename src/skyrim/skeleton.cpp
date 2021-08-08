@@ -38,7 +38,7 @@ namespace skyrim
 	}
 	void Skeleton::construct()
 	{
-		Rd *rd = malloc_nifprd();
+		Rd *rd = calloc_nifprd();
 		rd->nif = nif;
 		rd->data = this;
 		//rd->other = other;

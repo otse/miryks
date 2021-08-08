@@ -40,7 +40,7 @@ namespace skyrim
 	}
 	void Mesh::construct()
 	{
-		Rd *rd = malloc_nifprd();
+		Rd *rd = calloc_nifprd();
 		rd->nif = nif;
 		rd->data = this;
 		rd->other = other;
@@ -58,7 +58,7 @@ namespace skyrim
 	void SkinnedMesh::construct()
 	{
 		assertm(skeleton, "smesh needs skeleton");
-		Rd *rd = malloc_nifprd();
+		Rd *rd = calloc_nifprd();
 		rd->nif = mesh->nif;
 		rd->data = this;
 		rd->other = other;

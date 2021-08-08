@@ -17,13 +17,13 @@ void nifp_test()
 	assertm(rc, "mh no bucket02a");
 	bsa_read(rc);
 	// setup
-	Nifp *bucket = malloc_nifp();
+	Nifp *bucket = calloc_nifp();
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;
 	nifp_read(bucket);
 	nifp_save(rc, bucket);
 	// visitor
-	NifpRd *rd = malloc_nifprd();
+	NifpRd *rd = calloc_nifprd();
 	rd->nif = bucket;
 	rd->data = 0xf; // like a Mesh instance
 	rd->other = test_callback;

@@ -72,7 +72,7 @@ namespace dark
 			{
 				const char *path = "temp/draugr/kf/1hmattackf.kf";
 				//printf("fetching random draugr kf\n");
-				Nif *nif = malloc_nifp();
+				Nif *nif = calloc_nifp();
 				nif->path = path;
 				fbuf(path, (char **)&nif->buf);
 				nifp_read(nif);
@@ -138,7 +138,7 @@ namespace dark
 			{
 				const char *path = "temp/character/kf/1hm_idle.kf";
 				// printf("fetching human idle kf\n");
-				Nif *nif = malloc_nifp();
+				Nif *nif = calloc_nifp();
 				nif->path = path;
 				fbuf(path, (char **)&nif->buf);
 				nifp_read(nif);
