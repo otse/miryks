@@ -1,14 +1,13 @@
 #ifndef LIB_NIFP_H
 #define LIB_NIFP_H
 
-/// nif with pointers
-
-// written for 32 in mind
-// this may freak out in x64
-
-#define ITS_THE_SPECIAL_EDITION 1
+/// nif with pointers for special edition
 
 #define api
+
+#define special_edition
+
+#define legendary_edition
 
 typedef int ni_ref;
 
@@ -125,7 +124,7 @@ struct ni_common_layout_pointer
 	struct {
 		int name;
 		unsigned int num_extra_data_list;
-	} * F;
+	} * F; // fuckup
 	ni_ref *extra_data_list;
 	struct {
 		ni_ref controller;
@@ -151,8 +150,7 @@ struct ni_node_pointer
 	ni_ref *effects;
 };
 
-// sse doesnt really use this
-struct ni_tri_shape_pointer
+legendary_edition struct ni_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
 	struct
@@ -165,9 +163,7 @@ struct ni_tri_shape_pointer
 	} * B;
 };
 
-#if ITS_THE_SPECIAL_EDITION
-
-struct bs_vertex_data_sse
+special_edition struct bs_vertex_data_sse
 {
 	struct { float x, y, z; } vertex;
 	float bitangent_x;
@@ -190,7 +186,7 @@ struct bs_vertex_data_sse_ ## flavor \
 generate_bs_vertex_data_sse(cool, 1, 1, 1, 1, 1, 1);
 */
 
-struct bs_tri_shape_pointer
+ struct bs_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
 	struct {
@@ -213,9 +209,7 @@ struct bs_tri_shape_pointer
 	unsigned int *particle_data_size;
 };
 
-#endif
-
-struct ni_skin_instance_pointer
+legendary_edition struct ni_skin_instance_pointer
 {
 	struct
 	{
@@ -233,13 +227,13 @@ struct ni_skin_instance_pointer
 	struct body_part_list *partitions;
 };
 
-struct body_part_list
+legendary_edition struct body_part_list
 {
 	unsigned short part_flag;
 	unsigned short body_part;
 };
 
-struct ni_skin_data_pointer
+legendary_edition struct ni_skin_data_pointer
 {
 	struct
 	{
@@ -255,7 +249,7 @@ struct ni_skin_data_pointer
 	struct bone_data **bone_list;
 };
 
-struct bone_data
+legendary_edition struct bone_data
 {
 	struct
 	{
@@ -272,19 +266,19 @@ struct bone_data
 	struct bone_vert_data *vertex_weights;
 };
 
-struct bone_vert_data
+legendary_edition struct bone_vert_data
 {
 	unsigned short index;
 	float weight;
 };
 
-struct ni_skin_partition_pointer
+legendary_edition struct ni_skin_partition_pointer
 {
 	unsigned int *num_skin_partition_blocks;
 	struct skin_partition **skin_partition_blocks;
 };
 
-struct skin_partition
+legendary_edition struct skin_partition
 {
 	struct
 	{
@@ -307,8 +301,7 @@ struct skin_partition
 	unsigned short *unknown_short;
 };
 
-// generally sse uses its own bstrishape stuff
-struct ni_tri_shape_data_pointer
+legendary_edition struct ni_tri_shape_data_pointer
 {
 	struct
 	{
@@ -351,7 +344,6 @@ struct ni_tri_shape_data_pointer
 	} * L;
 	ni_ref *match_groups;
 };
-static int test1 = sizeof(struct ni_tri_shape_data_pointer);
 
 struct bs_lighting_shader_property_pointer
 {

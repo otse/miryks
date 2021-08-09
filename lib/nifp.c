@@ -142,6 +142,7 @@ api void nifp_read_header(Nifp *nif) {
 // todo get RID of these function declarations somehow
 static void read_block(Nifp *, int);
 
+legendary_edition
 static void *read_ni_common_layout(nifpr);
 static void *read_ni_node(nifpr);
 static void *read_ni_skin_instance(nifpr);
@@ -156,9 +157,8 @@ static void *read_ni_alpha_property(nifpr);
 static void *read_ni_controller_sequence(nifpr);
 static void *read_ni_transform_interpolator(nifpr);
 static void *read_ni_transform_data(nifpr);
-#if ITS_THE_SPECIAL_EDITION
+special_edition
 static void *read_bs_tri_shape(nifpr);
-#endif
 
 api void nifp_read_blocks(Nifp *nif)
 {
@@ -184,9 +184,8 @@ void read_block(Nifp *nif, int n)
 	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) block = read_ni_skin_instance(nif, n);
 	else if ( ni_is_type(NI_SKIN_DATA) ) block = read_ni_skin_data(nif, n);
 	else if ( ni_is_type(NI_SKIN_PARTITION) ) block = read_ni_skin_partition(nif, n);
-#if ITS_THE_SPECIAL_EDITION
+	special_edition
 	else if ( ni_is_type(BS_TRI_SHAPE) ) block = read_bs_tri_shape(nif, n);
-#endif
 	else if ( ni_is_type(BS_DYNAMIC_TRI_SHAPE) ) 0;
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) block = read_ni_tri_shape(nif, n);
 	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) block = read_ni_alpha_property(nif, n);
@@ -266,7 +265,7 @@ SAIL ( nif, block, effects, B, num_effects )
 
 END_READ()
 
-NI_READ ( bs_tri_shape )
+NI_READ ( bs_tri_shape ) special_edition
 
 block->common = read_ni_common_layout(nif, n);
 
@@ -348,7 +347,7 @@ SINK ( nif, block, B )
 
 END_READ()
 
-NI_READ( ni_transform_data )
+NI_READ( ni_transform_data ) legendary_edition
 
 SINK ( nif, block, A )
 
@@ -372,7 +371,7 @@ END_READ()
 
 // legendary edition stuff below
 
-NI_READ( ni_tri_shape )
+NI_READ( ni_tri_shape ) legendary_edition
 
 printf("read ni tri shape pointer!\n");
 block->common = read_ni_common_layout(nif, n);
@@ -382,7 +381,7 @@ SINK ( nif, block, B )
 
 END_READ()
 
-NI_READ( ni_tri_shape_data )
+NI_READ( ni_tri_shape_data ) legendary_edition
 
 printf(" ni tri shape data in sse ?!\n");
 
@@ -421,7 +420,7 @@ SAIL ( nif, block, match_groups, L, num_match_groups )
 
 END_READ()
 
-NI_READ( ni_skin_instance )
+NI_READ( ni_skin_instance ) legendary_edition
 
 SINK ( nif, block, A )
 SAIL ( nif, block, bones, A, num_bones )
@@ -435,7 +434,7 @@ if (ni_is_type(BS_DISMEMBER_SKIN_INSTANCE))
 
 END_READ()
 
-NI_READ( ni_skin_data )
+NI_READ( ni_skin_data ) legendary_edition
 
 //printf("read ni skin data\n");
 SINK ( nif, block, skin_transform )
@@ -452,7 +451,7 @@ for (unsigned int i = 0; i < block->B->num_bones; i++)
 }
 END_READ()
 
-NI_READ( ni_skin_partition )
+NI_READ( ni_skin_partition ) legendary_edition
 
 SINK ( nif, block, num_skin_partition_blocks )
 
