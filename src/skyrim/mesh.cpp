@@ -23,6 +23,7 @@ namespace skyrim
 	static void ni_skin_instance_callback				(Rd *, ni_skin_instance_pointer *);
 	static void ni_skin_data_callback					(Rd *, ni_skin_data_pointer *);
 	static void ni_skin_partition_callback				(Rd *, ni_skin_partition_pointer *);
+	static void bs_tri_shape_callback					(Rd *, bs_tri_shape_pointer *); special_edition
 
 	Mesh::Mesh()
 	{
@@ -44,13 +45,14 @@ namespace skyrim
 		rd->nif = nif;
 		rd->data = this;
 		rd->other = other;
-		rd->ni_node = ni_node_callback;
-		rd->ni_tri_shape = ni_tri_shape_callback;
-		rd->ni_tri_shape_data = ni_tri_shape_data_callback;
-		rd->bs_lighting_shader_property = bs_lighting_shader_property_callback;
-		rd->bs_effect_shader_property = bs_effect_shader_property_callback;
-		rd->bs_shader_texture_set = bs_shader_texture_set_callback;
-		rd->ni_alpha_property = ni_alpha_property_callback;
+		rd->ni_node_callback = ni_node_callback;
+		rd->ni_tri_shape_callback = ni_tri_shape_callback;
+		rd->ni_tri_shape_data_callback = ni_tri_shape_data_callback;
+		rd->bs_lighting_shader_property_callback = bs_lighting_shader_property_callback;
+		rd->bs_effect_shader_property_callback = bs_effect_shader_property_callback;
+		rd->bs_shader_texture_set_callback = bs_shader_texture_set_callback;
+		rd->ni_alpha_property_callback = ni_alpha_property_callback;
+		rd->bs_tri_shape_callback = bs_tri_shape_callback; special_edition
 		nifp_rd(rd);
 		free_nifprd(&rd);
 		baseGroup->Update();
@@ -62,11 +64,11 @@ namespace skyrim
 		rd->nif = mesh->nif;
 		rd->data = this;
 		rd->other = other;
-		rd->ni_node = ni_node_callback_2;
-		rd->ni_tri_shape = ni_tri_shape_callback_2;
-		rd->ni_skin_instance = ni_skin_instance_callback;
-		rd->ni_skin_data = ni_skin_data_callback;
-		rd->ni_skin_partition = ni_skin_partition_callback;
+		rd->ni_node_callback = ni_node_callback_2;
+		rd->ni_tri_shape_callback = ni_tri_shape_callback_2;
+		rd->ni_skin_instance_callback = ni_skin_instance_callback;
+		rd->ni_skin_data_callback = ni_skin_data_callback;
+		rd->ni_skin_partition_callback = ni_skin_partition_callback;
 		nifp_rd(rd);
 		free_nifprd(&rd);
 		initial();
@@ -136,6 +138,7 @@ namespace skyrim
 		Group *group = mesh->nested(rd);
 		matrix_from_common(group, block->common);
 	}
+	legendary_edition
 	void ni_tri_shape_callback(Rd *rd, ni_tri_shape_pointer *block)
 	{
 		// printf("ni tri shape callback %s\n", block->common.name_string);
@@ -160,11 +163,13 @@ namespace skyrim
 		//if (group->geometry)
 		//	group->geometry->material->color = vec3(1);
 	}
+	legendary_edition
 	void ni_tri_shape_callback_2(Rd *rd, ni_tri_shape_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		smesh->lastShape = smesh->mesh->groups[rd->current];
 	}
+	legendary_edition
 	void ni_tri_shape_data_callback(Rd *rd, ni_tri_shape_data_pointer *block)
 	{
 		// printf("ni tri shape data callback\n");
@@ -198,6 +203,11 @@ namespace skyrim
 				geometry->vertices[i].color = gloomVec4(block->vertex_colors[i]);
 		}
 		geometry->SetupMesh();
+	}
+	special_edition
+	void bs_tri_shape_callback(Rd *rd, bs_tri_shape_pointer *block)
+	{
+		printf("mesh.cpp bs tri shape callback !!! ");
 	}
 	void bs_lighting_shader_property_callback(Rd *rd, bs_lighting_shader_property_pointer *block)
 	{
@@ -320,6 +330,7 @@ namespace skyrim
 			material->testFunc = testModes[flags >> 10 & 0x07];
 		}
 	}
+	legendary_edition
 	void ni_skin_instance_callback(Rd *rd, ni_skin_instance_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
@@ -328,10 +339,12 @@ namespace skyrim
 		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
 		smesh->shapes.push_back(rd->parent);
 	}
+	legendary_edition
 	void ni_skin_data_callback(Rd *rd, ni_skin_data_pointer *block)
 	{
 		//
 	}
+	legendary_edition
 	void ni_skin_partition_callback(Rd *rd, ni_skin_partition_pointer *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;

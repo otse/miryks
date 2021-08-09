@@ -42,7 +42,7 @@ namespace skyrim
 		rd->nif = nif;
 		rd->data = this;
 		//rd->other = other;
-		rd->ni_node = ni_node_callback;
+		rd->ni_node_callback = ni_node_callback;
 		nifp_rd(rd);
 		free_nifprd(&rd);
 		baseBone->group->Update();

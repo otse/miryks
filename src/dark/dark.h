@@ -50,7 +50,7 @@ namespace dark
 {
 	Rc *load_rc(const char *, const char *, unsigned long);
 	Nif *import_nif(Rc *, bool);
-	Mesh *create_mesh(const char *, bool);
+	Mesh *create_simple_mesh_from_modl(const char *, bool);
 	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
 

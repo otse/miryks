@@ -103,7 +103,7 @@ namespace dark
 			}
 			else
 			{
-				mesh = create_mesh(modl, true);
+				mesh = create_simple_mesh_from_modl(modl, true);
 			}
 		}
 		else if (baseObject.sig(__LIGH__))

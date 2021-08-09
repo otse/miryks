@@ -28,7 +28,7 @@ namespace dark
 					   { return std::tolower(c); });
 		const char *s = str.c_str();
 		Rc *rc = bsa_find_more(s, flags);
-		if (!rc)
+		if (rc==NULL)
 			printf("no rc at %s\n", s);
 		bsa_read(rc);
 		return rc;
@@ -51,19 +51,18 @@ namespace dark
 		return nif;
 	}
 
-	Mesh *create_mesh(const char *model, bool store)
+	Mesh *create_simple_mesh_from_modl(const char *model, bool store)
 	{
-		// make a simple mesh, like a rock
-		static std::map<const char *, Mesh *> meshes;
-		if (meshes.count(model) && store)
-			return meshes[model];
+		static std::map<const char *, Mesh *> simple_meshes;
+		if (simple_meshes.count(model) && store)
+			return simple_meshes[model];
 		Rc *rc = load_rc("meshes\\", model, 0x1);
-		if (!rc)
+		if (rc==NULL)
 			return nullptr;
 		Nif *nif = import_nif(rc, true);
 		Mesh *mesh = new Mesh(nif);
 		if (store)
-			meshes.emplace(model, mesh);
+			simple_meshes.emplace(model, mesh);
 		return mesh;
 	}
 

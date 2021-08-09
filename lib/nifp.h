@@ -26,7 +26,7 @@ typedef struct Nifp
 	void **blocks;
 } Nifp;
 
-#define Callback(x) void (*x) (struct NifpRd *, struct x ## _pointer *);
+#define Callback(x) void (*x ## _callback) (struct NifpRd *, struct x ## _pointer *);
 
 typedef struct NifpRd
 {
@@ -47,6 +47,8 @@ typedef struct NifpRd
 	Callback(ni_skin_instance)
 	Callback(ni_skin_data)
 	Callback(ni_skin_partition)
+	special_edition
+	Callback(bs_tri_shape)
 } NifpRd;
 
 #undef Callback
@@ -163,7 +165,23 @@ legendary_edition struct ni_tri_shape_pointer
 	} * B;
 };
 
-special_edition struct bs_vertex_data_sse
+#define offset_bs_vertex_desc(flags) \
+	(unsigned short)((flags & 0xFFFFFF0000000000) >> 44)
+
+inline void api nifp_sse_dissect_vertex_desc(
+	unsigned long long bs_vertex_desc,
+	int *vertex, int *uvs, int *normals, int *tangents, int *colors, int *skinned)
+{
+	unsigned short flags = offset_bs_vertex_desc(bs_vertex_desc);
+	*vertex = flags & 1 << 0x0;
+	*uvs = flags & 1 << 0x1;
+	*normals = flags & 1 << 0x3;
+	*tangents = flags & 1 << 0x4;
+	*colors = flags & 1 << 0x5;
+	*skinned = flags & 1 << 0x6;
+}
+
+special_edition struct bs_vertex_data_sse_all
 {
 	struct { float x, y, z; } vertex;
 	float bitangent_x;
@@ -175,18 +193,12 @@ special_edition struct bs_vertex_data_sse
 	struct { unsigned char r, g, b, a; } vertex_colors;
 };
 
-/*
-#define generate_bs_vertex_data_sse( flavor, \
-	vertex, uvs, normals, tangents, colors, skinned) \
-struct bs_vertex_data_sse_ ## flavor \
-{ \
-	int b; \
+special_edition struct bs_vertex_data_sse_some
+{
+	int x;
 };
 
-generate_bs_vertex_data_sse(cool, 1, 1, 1, 1, 1, 1);
-*/
-
- struct bs_tri_shape_pointer
+struct bs_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
 	struct {
@@ -204,7 +216,8 @@ generate_bs_vertex_data_sse(cool, 1, 1, 1, 1, 1, 1);
 	unsigned short num_vertices;
 	unsigned int data_size;
 	} *infos;
-	struct bs_vertex_data_sse *vertex_data;
+	struct bs_vertex_data_sse_all  *vertex_data_all;
+	struct bs_vertex_data_sse_some *vertex_data_some;
 	struct { unsigned short a, b, c; } *triangles;
 	unsigned int *particle_data_size;
 };

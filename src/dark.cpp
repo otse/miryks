@@ -79,7 +79,7 @@ int main()
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	import_nif(rc, true);
 	//nifp_test();
-#if 0
+#if 1
 	// Secret bucket beginning
 	simple_viewer(rc);
 #endif
@@ -119,9 +119,7 @@ void dark::simple_viewer(Rc *rc)
 		delete mesh;
 		delete drawGroup;
 	}
-	Nif *nif = import_nif(rc, false);
-	nifp_save(rc, nif);
-	// create_mesh()
+	Nif *nif = import_nif(rc, true);
 	mesh = new Mesh(nif);
 	drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
 	scene_default->drawGroups.Add(drawGroup);

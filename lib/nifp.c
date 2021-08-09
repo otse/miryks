@@ -205,23 +205,7 @@ void read_block(Nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-// < deprecated!!
-
-#define Arr(count, type) count * sizeof(type)
-
-static void sink_old(Nifp *nif, char *block, int src, int size) {
-	printf("uh oh old sink\n");
-	char **dest = block + src;
-	*dest = Depos;
-	Pos += size;
-}
-
-#define SinkOld(nif, block, layout, part, size) \
-	sink_old(nif, (char *)block, offsetof(struct layout, part), size)
-
-// deprecated!! >
-
-// build a language for reading netimmerse data
+// build a small language to read blockz
 
 static inline void sink_new(Nifp *nif, void **dest, int size) {
 	*dest = Depos;
@@ -236,12 +220,12 @@ static inline void sink_new(Nifp *nif, void **dest, int size) {
 
 #define SKIP(n) Pos += n;
 
-#define CHEESE_CALLOC( type ) type *block = calloc(1, sizeof(type))
+#define CALLOC( type ) type *block = calloc(1, sizeof(type));
 
 #define NI_READ(x) \
 void *read_ ## x ( Nifp *nif, int n ) \
 { \
-	CHEESE_CALLOC(struct x ## _pointer);
+	CALLOC(struct x ## _pointer)
 
 #define END_READ() \
 	return block; \
@@ -257,7 +241,7 @@ END_READ()
 
 NI_READ( ni_node )
 
-block->common = read_ni_common_layout(nif, n);
+block->common = read_ni_common_layout( nif, n );
 SINK ( nif, block, A )
 SAIL ( nif, block, children, A, num_children )
 SINK ( nif, block, B )
@@ -267,33 +251,47 @@ END_READ()
 
 NI_READ ( bs_tri_shape ) special_edition
 
-block->common = read_ni_common_layout(nif, n);
+block->common = read_ni_common_layout( nif, n );
 
 SINK (nif, block, bounding_sphere)
 SINK (nif, block, refs)
 
-printf("skin shader alpha %i %i %i\n", block->refs->skin, block->refs->shader_property, block->refs->alpha_property);
+//printf("skin shader alpha %i %i %i\n", block->refs->skin, block->refs->shader_property, block->refs->alpha_property);
 
 SINK (nif, block, infos)
 
-printf("num triangles vertices %hu %hu\n", block->infos->num_triangles, block->infos->num_vertices);
-printf("data size %u\n", block->infos->data_size);
+//printf("num triangles vertices %hu %hu\n", block->infos->num_triangles, block->infos->num_vertices);
+//printf("data size %u\n", block->infos->data_size);
+//printf("data size %u\n", block->infos->data_size);
 
-SAIL ( nif, block, vertex_data, infos, num_vertices)
-SAIL ( nif, block, triangles, infos, num_triangles)
-SINK (nif, block, particle_data_size)
+int vertex, uvs, normals, tangents, colors, skinned;
+nifp_sse_dissect_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
 
-printf("&block->vertex_data[0] = %i\n", &block->vertex_data[0]);
-printf("&block->vertex_data[1] = %i\n", &block->vertex_data[1]);
-sizeof(struct bs_vertex_data_sse);
-struct bs_vertex_data_sse *zero = &block->vertex_data[0];
-printf("bs_vertex_data_sse[0] vertex x is %f\n", zero->vertex.x);
-printf("bs_vertex_data_sse[0] bitangent x is %f\n", zero->bitangent_x);
-printf("bs_vertex_data_sse[0] normal is %u\n", zero->normal.x);
-printf("bs_vertex_data_sse[0] bitangent y is %u\n", zero->bitangent_y);
-printf("bs_vertex_data_sse[0] bitangent z is %u\n", zero->bitangent_z);
-printf("bs_vertex_data_sse[0] vertex_colors is %u %u %u %u\n", zero->vertex_colors.r, zero->vertex_colors.g, zero->vertex_colors.b, zero->vertex_colors.a);
-printf("particle data size %u\n", *block->particle_data_size);
+if ( vertex && uvs && normals && tangents && colors )
+{
+	//printf("vertex_desc seems static - all\n");;
+	SAIL ( nif, block, vertex_data_all, infos, num_vertices)
+}
+
+SAIL ( nif, block, triangles, infos, num_triangles )
+SINK ( nif, block, particle_data_size )
+
+/*
+if (block->vertex_data_all)
+{
+	printf("&block->vertex_data[0] = %i\n", &block->vertex_data_all[0]);
+	printf("&block->vertex_data[1] = %i\n", &block->vertex_data_all[1]);
+	sizeof(struct bs_vertex_data_sse_all);
+	struct bs_vertex_data_sse_all *zero = &block->vertex_data_all[0];
+	printf("bs_vertex_data_sse[0] vertex x is %f\n", zero->vertex.x);
+	printf("bs_vertex_data_sse[0] bitangent x is %f\n", zero->bitangent_x);
+	printf("bs_vertex_data_sse[0] normal is %u\n", zero->normal.x);
+	printf("bs_vertex_data_sse[0] bitangent y is %u\n", zero->bitangent_y);
+	printf("bs_vertex_data_sse[0] bitangent z is %u\n", zero->bitangent_z);
+	printf("bs_vertex_data_sse[0] vertex_colors is %u %u %u %u\n", zero->vertex_colors.r, zero->vertex_colors.g, zero->vertex_colors.b, zero->vertex_colors.a);
+	printf("particle data size %u\n", *block->particle_data_size);
+}
+*/
 
 END_READ()
 
@@ -310,16 +308,16 @@ NI_READ( bs_effect_shader_property )
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, B )
-read_sized_string(nif, &block->source_texture);
+read_sized_string( nif, &block->source_texture );
 SINK ( nif, block, C )
-read_sized_string(nif, &block->greyscale_texture);
+read_sized_string( nif, &block->greyscale_texture );
 
 END_READ()
 
 NI_READ( bs_shader_texture_set )
 
 SINK ( nif, block, A )
-read_sized_strings(nif, &block->textures, block->A->num_textures);
+read_sized_strings( nif, &block->textures, block->A->num_textures );
 
 END_READ()
 
@@ -351,7 +349,7 @@ NI_READ( ni_transform_data ) legendary_edition
 
 SINK ( nif, block, A )
 
-if (block->A->num_rotation_keys > 0)
+if ( block->A->num_rotation_keys > 0 )
 {
 	SINK ( nif, block, B )
 	if (block->B->rotation_type == 2) // quadratic key
@@ -374,7 +372,7 @@ END_READ()
 NI_READ( ni_tri_shape ) legendary_edition
 
 printf("read ni tri shape pointer!\n");
-block->common = read_ni_common_layout(nif, n);
+block->common = read_ni_common_layout( nif, n );
 SINK ( nif, block, A )
 SKIP( 9 )
 SINK ( nif, block, B )
@@ -387,15 +385,15 @@ printf(" ni tri shape data in sse ?!\n");
 
 SINK ( nif, block, A )
 
-if (block->A->has_vertices)
+if ( block->A->has_vertices )
 	SAIL ( nif, block, vertices, A, num_vertices )
 
 SINK ( nif, block, C )
 
-if (block->C->has_normals)
+if ( block->C->has_normals )
 	SAIL ( nif, block, normals, A, num_vertices )
 
-if (block->C->bs_vector_flags & 0x00001000)
+if ( block->C->bs_vector_flags & 0x00001000 )
 {
 	SAIL ( nif, block, tangents, A, num_vertices )
 	SAIL ( nif, block, bitangents, A, num_vertices )
@@ -403,10 +401,10 @@ if (block->C->bs_vector_flags & 0x00001000)
 
 SINK ( nif, block, G )
 
-if (block->G->has_vertex_colors)
+if ( block->G->has_vertex_colors )
 	SAIL ( nif, block, vertex_colors, A, num_vertices )
 
-if (block->C->bs_vector_flags & 0x00000001)
+if ( block->C->bs_vector_flags & 0x00000001 )
 	SAIL ( nif, block, uv_sets, A, num_vertices )
 
 SINK ( nif, block, J )
@@ -425,7 +423,7 @@ NI_READ( ni_skin_instance ) legendary_edition
 SINK ( nif, block, A )
 SAIL ( nif, block, bones, A, num_bones )
 
-char *block_type = nifp_get_block_type(nif, n);
+char *block_type = nifp_get_block_type( nif, n );
 if (ni_is_type(BS_DISMEMBER_SKIN_INSTANCE))
 {
 	SINK ( nif, block, B )
@@ -460,21 +458,31 @@ for (unsigned int i = 0; i < *block->num_skin_partition_blocks; i++)
 {
 	block->skin_partition_blocks[i] = calloc(1, sizeof(struct skin_partition));
 	struct skin_partition *skin_partition = block->skin_partition_blocks[i];
+
 	SINK ( nif, skin_partition, A )
 	SAIL ( nif, skin_partition, bones, A, num_bones )
 	SINK ( nif, skin_partition, has_vertex_map )
+
 	if (*skin_partition->has_vertex_map)
-	SAIL ( nif, skin_partition, vertex_map, A, num_vertices )
+		SAIL ( nif, skin_partition, vertex_map, A, num_vertices )
+
 	SINK ( nif, skin_partition, has_vertex_weights )
+
 	if (*skin_partition->has_vertex_weights)
-	SAIL ( nif, skin_partition, vertex_weights, A, num_vertices )
+		SAIL ( nif, skin_partition, vertex_weights, A, num_vertices )
+
 	SAIL ( nif, skin_partition, strip_lengths, A, num_strips )
+
 	SINK ( nif, skin_partition, has_faces )
+
 	if (*skin_partition->has_faces)
-	SAIL ( nif, skin_partition, triangles, A, num_triangles )
+		SAIL ( nif, skin_partition, triangles, A, num_triangles )
+
 	SINK ( nif, skin_partition, has_bone_indices )
+	
 	if (*skin_partition->has_bone_indices)
-	SAIL ( nif, skin_partition, bone_indices, A, num_vertices )
+		SAIL ( nif, skin_partition, bone_indices, A, num_vertices )
+
 	SINK ( nif, skin_partition, unknown_short )
 }
 
