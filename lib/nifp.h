@@ -232,7 +232,7 @@ legendary_edition struct ni_skin_instance_pointer
 		unsigned int num_bones;
 	} * A;
 	ni_ref *bones;
-	// dismemberment fields
+	// skip dismemberment fields ? yegh
 	struct
 	{
 		int num_partitions;

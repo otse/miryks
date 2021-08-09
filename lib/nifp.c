@@ -205,18 +205,19 @@ void read_block(Nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-// build a small language to read blockz
+// build a small language to read blockz as structs
+// i called it struct sinking
 
-static inline void sink_new(Nifp *nif, void **dest, int size) {
+static inline void sink(Nifp *nif, void **dest, int size) {
 	*dest = Depos;
 	Pos += size;
 }
 
 #define SINK( nif, block, part ) \
-	sink_new(nif, &block->part, sizeof *block->part);
+	sink(nif, &block->part, sizeof *block->part);
 
 #define SAIL( nif, block, part, group, num ) \
-	sink_new(nif, &block->part, sizeof *block->part * block->group->num);
+	sink(nif, &block->part, sizeof *block->part * block->group->num);
 
 #define SKIP(n) Pos += n;
 
