@@ -69,10 +69,10 @@ void Shader::Use()
 
 	glUseProgram(id);
 
-	scene_default->BindLights(this);
+	sceneDef->BindLights(this);
 
-	SetMat4("view", camera_current->view);
-	SetMat4("projection", camera_current->projection);
+	SetMat4("view", cameraCur->view);
+	SetMat4("projection", cameraCur->projection);
 
 	active = this;
 }

@@ -52,12 +52,12 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{
 		Skips[current] = 1;
-		struct ni_node_pointer *block_pointer = Blocks[current];
+		struct ni_node_pointer *block = Blocks[current];
 		if (rd->ni_node_callback)
 			rd->ni_node_callback(rd, Blocks[current]);
-		for (int i = 0; i < block_pointer->A->num_children; i++)
+		for (int i = 0; i < block->A->num_children; i++)
 		{
-		int b = block_pointer->children[i];
+		int b = block->children[i];
 		visit(rd, current, b);
 		}
 	}
@@ -65,15 +65,15 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
 	{
 		Skips[current] = 1;
-		struct ni_tri_shape_pointer *block_pointer = Blocks[current];
+		struct ni_tri_shape_pointer *block = Blocks[current];
 		if (rd->ni_tri_shape_callback)
 			rd->ni_tri_shape_callback(rd, Blocks[current]);
-		if (block_pointer->A->skin_instance == -1)
-			visit(rd, current, block_pointer->A->data);
+		if (block->A->skin_instance == -1)
+			visit(rd, current, block->A->data);
 		else
-			visit(rd, current, block_pointer->A->skin_instance);
-		visit(rd, current, block_pointer->B->shader_property);
-		visit(rd, current, block_pointer->B->alpha_property);
+			visit(rd, current, block->A->skin_instance);
+		visit(rd, current, block->B->shader_property);
+		visit(rd, current, block->B->alpha_property);
 	}
 
 	else if ( ni_is_type(NI_TRI_SHAPE_DATA) )
@@ -88,23 +88,26 @@ static void visit(NifpRd *rd, int parent, int current)
 	{
 		needs_parent
 		Skips[current] = 1;
+		struct bs_tri_shape_pointer *block = Blocks[current];
 		if (rd->bs_tri_shape_callback)
 			rd->bs_tri_shape_callback(rd, Blocks[current]);
+		visit(rd, current, block->refs->shader_property);
+		visit(rd, current, block->refs->alpha_property);
 	}
 
 	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) )
 	{
 		needs_parent
-		struct bs_lighting_shader_property_pointer *block_pointer = Blocks[current];
+		struct bs_lighting_shader_property_pointer *block = Blocks[current];
 		if (rd->bs_lighting_shader_property_callback)
 			rd->bs_lighting_shader_property_callback(rd, Blocks[current]);
-		visit(rd, current, block_pointer->B->texture_set);
+		visit(rd, current, block->B->texture_set);
 	}
 
 	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) )
 	{
 		needs_parent
-		struct bs_effect_shader_property_pointer *block_pointer = Blocks[current];
+		struct bs_effect_shader_property_pointer *block = Blocks[current];
 		if (rd->bs_effect_shader_property_callback)
 			rd->bs_effect_shader_property_callback(rd, Blocks[current]);
 	}
@@ -126,12 +129,12 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) )
 	{
 		needs_parent
-		struct ni_skin_instance_pointer *block_pointer = Blocks[current];
+		struct ni_skin_instance_pointer *block = Blocks[current];
 		if (rd->ni_skin_instance_callback)
 			rd->ni_skin_instance_callback(rd, Blocks[current]);
-		visit(rd, current, block_pointer->A->data);
-		visit(rd, current, block_pointer->A->skin_partition);
-		//visit(rd, current, block_pointer->A->skeleton_root);
+		visit(rd, current, block->A->data);
+		visit(rd, current, block->A->skin_partition);
+		//visit(rd, current, block->A->skeleton_root);
 	}
 
 	else if ( ni_is_type(NI_SKIN_DATA) )
@@ -155,5 +158,5 @@ static void visit(NifpRd *rd, int parent, int current)
 	}
 }
 
-static void visit_other(NifpRd *rd, void *block_pointer) {}
-static void visit_block(NifpRd *rd, void *block_pointer) {}
+static void visit_other(NifpRd *rd, void *block) {}
+static void visit_block(NifpRd *rd, void *block) {}

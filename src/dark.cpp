@@ -70,12 +70,10 @@ int main()
 	basefile_handle("basefile");
 	setup_glfw();
 	load_plugins_archives();
-	first_person_camera = new FirstPersonCamera;
-	pan_camera = new ViewerCamera;
 	opengl_init_scene();
-	render_target_default = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
+	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 	collision_init();
-	camera_current = first_person_camera;
+	cameraCur = personCam;
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	import_nif(rc, true);
 	//nifp_test();
@@ -115,17 +113,17 @@ void dark::simple_viewer(Rc *rc)
 	static DrawGroup *drawGroup = nullptr;
 	if (mesh)
 	{
-		scene_default->drawGroups.Remove(drawGroup);
+		sceneDef->drawGroups.Remove(drawGroup);
 		delete mesh;
 		delete drawGroup;
 	}
 	Nif *nif = import_nif(rc, true);
 	mesh = new Mesh(nif);
-	drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), first_person_camera->pos));
-	scene_default->drawGroups.Add(drawGroup);
+	drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), personCam->pos));
+	sceneDef->drawGroups.Add(drawGroup);
 	HideCursor();
-	camera_current = pan_camera;
-	pan_camera->pos = drawGroup->aabb.center();
-	//pan_camera->pos = first_person_camera->pos;
-	pan_camera->radius = drawGroup->aabb.radius2() * 2;
+	cameraCur = viewerCam;
+	viewerCam->pos = drawGroup->aabb.center();
+	//viewerCam->pos = personCam->pos;
+	viewerCam->radius = drawGroup->aabb.radius2() * 2;
 }

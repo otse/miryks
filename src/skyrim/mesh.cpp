@@ -1,3 +1,7 @@
+extern "C"
+{	
+#include <half.h>
+}
 #include <lib.h>
 
 #include "mesh.h"
@@ -208,6 +212,56 @@ namespace skyrim
 	void bs_tri_shape_callback(Rd *rd, bs_tri_shape_pointer *block)
 	{
 		printf("mesh.cpp bs tri shape callback !!! ");
+		Mesh *mesh = (Mesh *)rd->data;
+		Group *group = mesh->nested(rd);
+		matrix_from_common(group, block->common);
+		Geometry *geometry = new Geometry();
+		group->geometry = geometry;
+		geometry->material->src = &simple;
+		geometry->Clear(block->infos->num_vertices, block->infos->num_triangles * 3);
+		if (!block->infos->num_vertices)
+			return;
+		if (block->infos->num_triangles)
+		{
+			for (int i = 0; i < block->infos->num_triangles; i++)
+			{
+				unsigned short *triangle = (unsigned short *)&block->triangles[i];
+				geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
+			}
+		}
+		if ( block->vertex_data_all )
+		{
+		for (int i = 0; i < block->infos->num_vertices; i++)
+		{
+			struct bs_vertex_data_sse_all *vertex_data =
+				&block->vertex_data_all[i]; 
+			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);
+			union { float f; uint32_t i; } u, v;
+			u.i = half_to_float(vertex_data->uv.u);
+			v.i = half_to_float(vertex_data->uv.v);
+			geometry->vertices[i].uv = vec2(u.f, v.f);
+			float xf, yf, zf;
+			xf = (double( vertex_data->normal.x ) / 255.0) * 2.0 - 1.0;
+			yf = (double( vertex_data->normal.y ) / 255.0) * 2.0 - 1.0;
+			zf = (double( vertex_data->normal.z ) / 255.0) * 2.0 - 1.0;
+			geometry->vertices[i].normal = vec3(xf, yf, zf);
+			geometry->material->tangents = true;
+			xf = (double( vertex_data->tangent.x ) / 255.0) * 2.0 - 1.0;
+			yf = (double( vertex_data->tangent.y ) / 255.0) * 2.0 - 1.0;
+			zf = (double( vertex_data->tangent.z ) / 255.0) * 2.0 - 1.0;
+			geometry->vertices[i].tangent = vec3(xf, yf, zf);
+			auto c = vertex_data->vertex_colors;
+			geometry->vertices[i].color = vec4(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
+			/*if (block->C->bs_vector_flags & 0x00001000)
+			{
+				geometry->material->tangents = true;
+				geometry->vertices[i].tangent = gloomVec3(block->tangents[i]);
+				geometry->vertices[i].bitangent = gloomVec3(block->bitangents[i]);
+			}*/
+			//if (block->G->has_vertex_colors)
+		}
+		}
+		geometry->SetupMesh();
 	}
 	void bs_lighting_shader_property_callback(Rd *rd, bs_lighting_shader_property_pointer *block)
 	{

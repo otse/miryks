@@ -43,8 +43,8 @@ namespace dark
 
 	std::string editme;
 
-	FirstPersonCamera *first_person_camera;
-	ViewerCamera *pan_camera;
+	FirstPersonCamera *personCam;
+	ViewerCamera *viewerCam;
 	RenderTarget *render_target;
 
 	// todo extern this

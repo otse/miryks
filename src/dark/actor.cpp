@@ -99,7 +99,7 @@ namespace dark
 			group->Add(mesh->baseGroup);
 			//printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
-			scene_default->drawGroups.Add(drawGroup);
+			sceneDef->drawGroups.Add(drawGroup);
 		}
 		else
 		{
@@ -161,12 +161,12 @@ namespace dark
 			return;
 		drawGroup->matrix = ref->second->matrix;
 		csphere = new CSphere(vec3(drawGroup->matrix[3]) /*+vec3(0, 0, 1)*/);
-		scene_default->drawGroups.Add(drawGroup);
+		sceneDef->drawGroups.Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
 		mirror->matrix = drawGroup->matrix;
 		mirror->matrix = glm::translate(mirror->matrix, vec3(50, 0, 0));*/
-		//scene_default->Add(mirror);
+		//sceneDef->Add(mirror);
 	}
 
 	void Human::step()
@@ -201,11 +201,11 @@ namespace dark
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4());
 		drawGroup->group->visible = false;
-		scene_default->drawGroups.Add(drawGroup);
-//camera_current->group->Add(human->group);
+		sceneDef->drawGroups.Add(drawGroup);
+//cameraCur->group->Add(human->group);
 //fpc = new FirstPersonCamera;
 #endif
-		pose = vec3(camera_current->pos);
+		pose = vec3(cameraCur->pos);
 
 		thirdPersonCamera = new ViewerCamera;
 	}
@@ -213,7 +213,7 @@ namespace dark
 	void Player::step()
 	{
 		move();
-		camera_current->pos = vec3(pose);
+		cameraCur->pos = vec3(pose);
 		using namespace MyKeys;
 		if (w)
 		{
@@ -224,11 +224,11 @@ namespace dark
 		}
 #if NO_HUMAN_PLAYER
 		human->step();
-		//if (!dynamic_cast<FirstPersonCamera *>(camera_current))
+		//if (!dynamic_cast<FirstPersonCamera *>(cameraCur))
 		//	return;
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
 		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
-		drawGroup->matrix = rotate(drawGroup->matrix, -camera_current->yaw, vec3(0, 0, 1));
+		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCur->yaw, vec3(0, 0, 1));
 		drawGroup->Reset();
 #endif
 	}
@@ -239,24 +239,24 @@ namespace dark
 
 		if (thirdPerson)
 		{
-			camera_current = thirdPersonCamera;
+			cameraCur = thirdPersonCamera;
 #if NO_HUMAN_PLAYER
 			drawGroup->group->visible = true;
 #endif
 			thirdPersonCamera->pos = pose;
-			thirdPersonCamera->yaw = first_person_camera->yaw;
-			thirdPersonCamera->pitch = first_person_camera->pitch;
+			thirdPersonCamera->yaw = personCam->yaw;
+			thirdPersonCamera->pitch = personCam->pitch;
 			thirdPersonCamera->radius = 200;
 		}
 		else
 		{
-			camera_current = first_person_camera;
+			cameraCur = personCam;
 #if NO_HUMAN_PLAYER
 			drawGroup->group->visible = false;
 #endif
-			first_person_camera->pos = pose;
-			first_person_camera->yaw = thirdPersonCamera->yaw;
-			first_person_camera->pitch = thirdPersonCamera->pitch;
+			personCam->pos = pose;
+			personCam->yaw = thirdPersonCamera->yaw;
+			personCam->pitch = thirdPersonCamera->pitch;
 		}
 	}
 
@@ -264,7 +264,7 @@ namespace dark
 	{
 		using namespace MyKeys;
 
-		yaw = camera_current->yaw;
+		yaw = cameraCur->yaw;
 
 		auto forward = [&](float n)
 		{

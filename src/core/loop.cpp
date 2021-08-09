@@ -14,6 +14,7 @@
 #include <renderer/material.h>
 #include <renderer/shader.h>
 #include <renderer/rendertarget.h>
+#include <renderer/lights.h>
 
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
@@ -81,9 +82,9 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 	{
-		if (camera_current == pan_camera)
+		if (cameraCur == viewerCam)
 		{
-			camera_current = first_person_camera;
+			cameraCur = personCam;
 			HideCursor();
 		}
 		else
@@ -152,7 +153,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 static void doKeys()
 {
 	using namespace MyKeys;
-	//if (!dynamic_cast<FirstPersonCamera *>(camera_current))
+	//if (!dynamic_cast<FirstPersonCamera *>(cameraCur))
 	//	return;
 	// caused stirrings
 	// third person wouldnt work and i thought it was somehow vec assignment
@@ -170,7 +171,7 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 {
 	static double x2 = x;
 	static double y2 = y;
-	camera_current->Mouse((float)(x - x2), (float)(y - y2));
+	cameraCur->Mouse((float)(x - x2), (float)(y - y2));
 	x2 = x;
 	y2 = y;
 }
@@ -319,7 +320,13 @@ void dark::programLoop()
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	scene_default->drawGroups.Add(first_person_camera->drawGroup);
+	sceneDef->drawGroups.Add(personCam->drawGroup);
+
+	PointLight *myself = new PointLight;
+	myself->color = vec3(1.f);
+	myself->distance = 500.0f;
+
+	sceneDef->pointLights.Add(myself);
 
 	do
 	{
@@ -364,7 +371,10 @@ void dark::programLoop()
 		if (player1)
 			player1->step();
 
-		camera_current->Update(delta);
+		cameraCur->Update(delta);
+
+		myself->matrix = cameraCur->group->matrixWorld;
+		myself->Calc();
 
 		// someDraugr
 		if (someDraugr)
@@ -381,8 +391,8 @@ void dark::programLoop()
 
 		//collision_simulate();
 
-		//scene_default->Order();
-		scene_default->DrawItems();
+		//sceneDef->Order();
+		sceneDef->DrawItems();
 
 		Material::Unuse(nullptr, nullptr);
 

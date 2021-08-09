@@ -250,52 +250,6 @@ SAIL ( nif, block, effects, B, num_effects )
 
 END_READ()
 
-NI_READ ( bs_tri_shape ) special_edition
-
-block->common = read_ni_common_layout( nif, n );
-
-SINK (nif, block, bounding_sphere)
-SINK (nif, block, refs)
-
-//printf("skin shader alpha %i %i %i\n", block->refs->skin, block->refs->shader_property, block->refs->alpha_property);
-
-SINK (nif, block, infos)
-
-//printf("num triangles vertices %hu %hu\n", block->infos->num_triangles, block->infos->num_vertices);
-//printf("data size %u\n", block->infos->data_size);
-//printf("data size %u\n", block->infos->data_size);
-
-int vertex, uvs, normals, tangents, colors, skinned;
-nifp_sse_dissect_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
-
-if ( vertex && uvs && normals && tangents && colors )
-{
-	//printf("vertex_desc seems static - all\n");;
-	SAIL ( nif, block, vertex_data_all, infos, num_vertices)
-}
-
-SAIL ( nif, block, triangles, infos, num_triangles )
-SINK ( nif, block, particle_data_size )
-
-/*
-if (block->vertex_data_all)
-{
-	printf("&block->vertex_data[0] = %i\n", &block->vertex_data_all[0]);
-	printf("&block->vertex_data[1] = %i\n", &block->vertex_data_all[1]);
-	sizeof(struct bs_vertex_data_sse_all);
-	struct bs_vertex_data_sse_all *zero = &block->vertex_data_all[0];
-	printf("bs_vertex_data_sse[0] vertex x is %f\n", zero->vertex.x);
-	printf("bs_vertex_data_sse[0] bitangent x is %f\n", zero->bitangent_x);
-	printf("bs_vertex_data_sse[0] normal is %u\n", zero->normal.x);
-	printf("bs_vertex_data_sse[0] bitangent y is %u\n", zero->bitangent_y);
-	printf("bs_vertex_data_sse[0] bitangent z is %u\n", zero->bitangent_z);
-	printf("bs_vertex_data_sse[0] vertex_colors is %u %u %u %u\n", zero->vertex_colors.r, zero->vertex_colors.g, zero->vertex_colors.b, zero->vertex_colors.a);
-	printf("particle data size %u\n", *block->particle_data_size);
-}
-*/
-
-END_READ()
-
 NI_READ( bs_lighting_shader_property )
 
 SINK ( nif, block, A )
@@ -439,6 +393,8 @@ NI_READ( ni_skin_data ) legendary_edition
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, B )
 
+// todo build a macro to do this dirty part
+
 block->bone_list = malloc(sizeof(struct bone_data *) * block->B->num_bones);
 for (unsigned int i = 0; i < block->B->num_bones; i++)
 {
@@ -486,5 +442,55 @@ for (unsigned int i = 0; i < *block->num_skin_partition_blocks; i++)
 
 	SINK ( nif, skin_partition, unknown_short )
 }
+
+END_READ()
+
+NI_READ ( bs_tri_shape ) special_edition
+
+block->common = read_ni_common_layout( nif, n );
+
+SINK ( nif, block, bounding_sphere )
+SINK ( nif, block, refs )
+
+//printf("skin shader alpha %i %i %i\n", block->refs->skin, block->refs->shader_property, block->refs->alpha_property);
+
+SINK ( nif, block, infos )
+
+printf("num triangles vertices %hu %hu\n", block->infos->num_triangles, block->infos->num_vertices);
+//printf("data size %u\n", block->infos->data_size);
+//printf("data size %u\n", block->infos->data_size);
+
+int vertex, uvs, normals, tangents, colors, skinned;
+nifp_sse_dissect_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
+
+if ( vertex && uvs && normals && tangents && colors )
+{
+	printf("vertex_desc seems static - all\n");
+	SAIL ( nif, block, vertex_data_all, infos, num_vertices)
+}
+
+SAIL ( nif, block, triangles, infos, num_triangles )
+SINK ( nif, block, particle_data_size )
+
+if (block->vertex_data_all)
+{
+	printf("&block->vertex_data[0] = %i\n", &block->vertex_data_all[0]);
+	printf("&block->vertex_data[1] = %i\n", &block->vertex_data_all[1]);
+	sizeof(struct bs_vertex_data_sse_all);
+
+	ShortTriangle *triangle = &block->triangles[0];
+	struct bs_vertex_data_sse_all *zero = &block->vertex_data_all[0];
+	printf("bs_vertex_data_sse[0] vertex x is %f\n", zero->vertex.x);
+	printf("bs_vertex_data_sse[0] bitangent x is %f\n", zero->bitangent_x);
+	printf("bs_vertex_data_sse[0] normal is %u\n", zero->normal.x);
+	printf("bs_vertex_data_sse[0] bitangent y is %u\n", zero->bitangent_y);
+	printf("bs_vertex_data_sse[0] bitangent z is %u\n", zero->bitangent_z);
+	printf("bs_vertex_data_sse[0] vertex_colors is %u %u %u %u\n", zero->vertex_colors.r, zero->vertex_colors.g, zero->vertex_colors.b, zero->vertex_colors.a);
+	printf("particle data size %u\n", *block->particle_data_size);
+
+	printf("triangle %hu %hu %hu\n", triangle->a, triangle->b, triangle->c);
+	
+}
+
 
 END_READ()

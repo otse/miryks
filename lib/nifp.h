@@ -181,16 +181,22 @@ inline void api nifp_sse_dissect_vertex_desc(
 	*skinned = flags & 1 << 0x6;
 }
 
+typedef struct { float x, y, z; } Vector3;
+typedef struct { unsigned short u, v; } HalfTexCoord;
+typedef struct { unsigned char x, y, z; } ByteVector3;
+typedef struct { unsigned char r, g, b, a; } ByteColor4;
+typedef struct { unsigned short a, b, c; } ShortTriangle;
+
 special_edition struct bs_vertex_data_sse_all
 {
-	struct { float x, y, z; } vertex;
+	Vector3 vertex;
 	float bitangent_x;
-	struct { unsigned short a; } uv;
-	struct { unsigned char x, y, z; } normal;
+	HalfTexCoord uv;
+	ByteVector3 normal;
 	unsigned char bitangent_y;
-	struct { unsigned char x, y, z; } tangent;
+	ByteVector3 tangent;
 	unsigned char bitangent_z;
-	struct { unsigned char r, g, b, a; } vertex_colors;
+	ByteColor4 vertex_colors;
 };
 
 special_edition struct bs_vertex_data_sse_some
@@ -218,7 +224,7 @@ struct bs_tri_shape_pointer
 	} *infos;
 	struct bs_vertex_data_sse_all  *vertex_data_all;
 	struct bs_vertex_data_sse_some *vertex_data_some;
-	struct { unsigned short a, b, c; } *triangles;
+	ShortTriangle *triangles;
 	unsigned int *particle_data_size;
 };
 

@@ -70,7 +70,6 @@ void FirstPersonCamera::Update(float time)
 	//matrix = glm::inverse(matrix);
 
 	group->matrix = glm::inverse(view);
-	
 	group->Update(); // Important
 	
 	drawGroup->Reset();
@@ -143,6 +142,9 @@ void ViewerCamera::Update(float time)
 
 	view = glm::translate(view, -pan);
 	view = glm::translate(view, -pos);
+
+	group->matrix = glm::inverse(view);
+	group->Update(); // Important
 
 	Camera::SetProjection();
 }
