@@ -45,31 +45,31 @@ header string: %s\
 		Hedr->num_groups);
 }
 
-static char *print_vec_2p(char *s, struct vec_2p v)
+static char *print_vec_2p(char *s, Vec2 v)
 {
 	snprintf(s, 200, "[%f, %f]", v.x, v.y);
 	return s;
 }
 
-static char *print_vec_3p(char *s, struct vec_3p v)
+static char *print_vec_3p(char *s, Vec3 v)
 {
 	snprintf(s, 200, "[%f, %f, %f]", v.x, v.y, v.z);
 	return s;
 }
 
-static char *print_vec_4p(char *s, struct vec_4p v)
+static char *print_vec_4p(char *s, Vec4 v)
 {
 	snprintf(s, 200, "[%f, %f, %f, %f]", v.x, v.y, v.z, v.w);
 	return s;
 }
 
-static char *print_ushort_3p(char *s, struct ushort_3p v)
+static char *print_ushort_3p(char *s, struct ushort3 v)
 {
 	snprintf(s, 200, "[%hu, %hu, %hu]", v.x, v.y, v.z);
 	return s;
 }
 
-static char *print_mat_3p(char *s, struct mat_3p v)
+static char *print_mat_3p(char *s, Mat3 v)
 {
 #define V ((float *)&v)
 	snprintf(

@@ -396,17 +396,17 @@ void *read_ni_skin_partition(nifpr)
 	SinkOld(nif, skin_partition, skin_partition, has_vertex_weights, 1);
 	if (*skin_partition->has_vertex_weights)
 	SinkOld(nif, skin_partition, skin_partition, vertex_weights,
-		Arr(skin_partition->A->num_vertices, struct vec_4p));
+		Arr(skin_partition->A->num_vertices, Vec4));
 	SinkOld(nif, skin_partition, skin_partition, strip_lengths,
 		Arr(skin_partition->A->num_strips, unsigned short));
 	SinkOld(nif, skin_partition, skin_partition, has_faces, 1);
 	if (*skin_partition->has_faces)
 	SinkOld(nif, skin_partition, skin_partition, triangles,
-		Arr(skin_partition->A->num_triangles, struct ushort_3p));
+		Arr(skin_partition->A->num_triangles, struct ushort3));
 	SinkOld(nif, skin_partition, skin_partition, has_bone_indices, 1);
 	if (*skin_partition->has_bone_indices)
 	SinkOld(nif, skin_partition, skin_partition, bone_indices,
-		Arr(skin_partition->A->num_vertices, struct byte_4p));
+		Arr(skin_partition->A->num_vertices, Byte4));
 	SinkOld(nif, skin_partition, skin_partition, unknown_short, 2);
 	}
 	return block_pointer;

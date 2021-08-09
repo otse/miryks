@@ -88,13 +88,13 @@ extern struct nifppair nifmap[5000];
 
 #pragma pack(push, 1)
 
-struct vec_2p{ float x, y; };
-struct vec_3p{ float x, y, z; };
-struct vec_4p{ float x, y, z, w; };
-struct mat_3p{ float n[9]; };
-struct mat_4p{ float n[16]; };
-struct ushort_3p{ unsigned short x, y, z; };
-struct byte_4p{ unsigned char a, b, c, d; };
+typedef struct { float x, y; } Vec2;
+typedef struct { float x, y, z; } Vec3;
+typedef struct { float x, y, z, w; } Vec4;
+typedef struct { float n[9]; } Mat3;
+typedef struct { float n[16]; } Mat4;
+typedef struct { unsigned char a, b, c, d; } Byte4;
+typedef struct { unsigned short x, y, z; } ushort3;
 
 struct nifp_hedr
 {
@@ -130,8 +130,8 @@ struct ni_common_layout_pointer
 	struct {
 		ni_ref controller;
 		unsigned int flags;
-		struct vec_3p translation;
-		struct mat_3p rotation;
+		Vec3 translation;
+		Mat3 rotation;
 		float scale;
 		ni_ref collision_object;
 	} *A;
@@ -194,7 +194,7 @@ struct bs_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
 	struct {
-		struct vec_3p center;
+		Vec3 center;
 		float radius;
 	} *bounding_sphere;
 	struct {
@@ -243,8 +243,8 @@ struct ni_skin_data_pointer
 {
 	struct
 	{
-		struct mat_3p rotation;
-		struct vec_3p translation;
+		Mat3 rotation;
+		Vec3 translation;
 		float scale;
 	} * skin_transform;
 	struct
@@ -259,13 +259,13 @@ struct bone_data
 {
 	struct
 	{
-		struct mat_3p rotation;
-		struct vec_3p translation;
+		Mat3 rotation;
+		Vec3 translation;
 		float scale;
 	} * skin_transform;
 	struct
 	{
-		struct vec_3p bounding_sphere_offset;
+		Vec3 bounding_sphere_offset;
 		float bounding_sphere_radius;
 		unsigned short num_vertices;
 	} * B;
@@ -298,12 +298,12 @@ struct skin_partition
 	unsigned char *has_vertex_map;
 	unsigned short *vertex_map;
 	unsigned char *has_vertex_weights;
-	struct vec_4p *vertex_weights;
+	Vec4 *vertex_weights;
 	unsigned short *strip_lengths;
 	unsigned char *has_faces;
-	struct ushort_3p *triangles;
+	struct ushort3 *triangles;
 	unsigned char *has_bone_indices;
-	struct byte_4p *bone_indices;
+	Byte4 *bone_indices;
 	unsigned short *unknown_short;
 };
 
@@ -318,24 +318,24 @@ struct ni_tri_shape_data_pointer
 		unsigned char compress_flags;
 		unsigned char has_vertices;
 	} *A;
-	struct vec_3p *vertices;
+	Vec3 *vertices;
 	struct
 	{
 		unsigned short bs_vector_flags;
 		unsigned int material_crc;
 		unsigned char has_normals;
 	} *C;
-	struct vec_3p *normals;
-	struct vec_3p *tangents;
-	struct vec_3p *bitangents;
+	Vec3 *normals;
+	Vec3 *tangents;
+	Vec3 *bitangents;
 	struct
 	{
-		struct vec_3p center;
+		Vec3 center;
 		float radius;
 		unsigned char has_vertex_colors;
 	} *G;
-	struct vec_4p *vertex_colors;
-	struct vec_2p *uv_sets;
+	Vec4 *vertex_colors;
+	Vec2 *uv_sets;
 	struct
 	{
 		unsigned short consistency_flags;
@@ -344,7 +344,7 @@ struct ni_tri_shape_data_pointer
 		unsigned int num_triangle_points;
 		unsigned char has_triangles;
 	} *J;
-	struct ushort_3p *triangles;
+	struct ushort3 *triangles;
 	struct
 	{
 		unsigned short num_match_groups;
@@ -367,16 +367,16 @@ struct bs_lighting_shader_property_pointer
 		ni_ref controller;
 		unsigned int shader_flags_1;
 		unsigned int shader_flags_2;
-		struct vec_2p uv_offset;
-		struct vec_2p uv_scale;
+		Vec2 uv_offset;
+		Vec2 uv_scale;
 		ni_ref texture_set;
-		struct vec_3p emissive_color;
+		Vec3 emissive_color;
 		float emissive_multiple;
 		unsigned int texture_clamp_mode;
 		float alpha;
 		float refraction_strength;
 		float glossiness;
-		struct vec_3p specular_color;
+		Vec3 specular_color;
 		float specular_strength;
 		float lighting_effect_1;
 		float lighting_effect_2;
@@ -395,8 +395,8 @@ struct bs_effect_shader_property_pointer {
 		ni_ref controller;
 		unsigned int shader_flags_1;
 		unsigned int shader_flags_2;
-		struct vec_2p uv_offset;
-		struct vec_2p uv_scale;
+		Vec2 uv_offset;
+		Vec2 uv_scale;
 	} *B;
 	char *source_texture; // sized string
 	struct
@@ -409,7 +409,7 @@ struct bs_effect_shader_property_pointer {
 		float falloff_stop_angle;
 		float falloff_start_opacity;
 		float falloff_stop_opacity;
-		struct vec_4p emissive_color;
+		Vec4 emissive_color;
 		float emissive_multiple;
 		float soft_falloff_depth;
 	} *C;
@@ -481,8 +481,8 @@ struct ni_transform_interpolator_pointer
 {
 	struct
 	{
-		struct vec_3p translation;
-		struct vec_4p rotation;
+		Vec3 translation;
+		Vec4 rotation;
 		float scale;
 	} * transform;
 	struct
@@ -518,13 +518,13 @@ struct ni_transform_data_pointer
 struct quaternion_key_pointer
 {
 	float time;
-	struct vec_4p value;
+	Vec4 value;
 };
 
 struct translation_key_pointer
 {
 	float time;
-	struct vec_3p value;
+	Vec3 value;
 };
 
 struct ni_text_key_extra_data_pointer
