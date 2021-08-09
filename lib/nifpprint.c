@@ -63,7 +63,7 @@ static char *print_vec_4p(char *s, Vec4 v)
 	return s;
 }
 
-static char *print_ushort_3p(char *s, struct ushort3 v)
+static char *print_ushort_3p(char *s, ushort3 v)
 {
 	snprintf(s, 200, "[%hu, %hu, %hu]", v.x, v.y, v.z);
 	return s;

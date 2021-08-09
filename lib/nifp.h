@@ -125,7 +125,7 @@ struct ni_common_layout_pointer
 	struct {
 		int name;
 		unsigned int num_extra_data_list;
-	} *F;
+	} * F;
 	ni_ref *extra_data_list;
 	struct {
 		ni_ref controller;
@@ -134,7 +134,7 @@ struct ni_common_layout_pointer
 		Mat3 rotation;
 		float scale;
 		ni_ref collision_object;
-	} *A;
+	} * A;
 };
 
 struct ni_node_pointer
@@ -142,12 +142,12 @@ struct ni_node_pointer
 	struct ni_common_layout_pointer *common;
 	struct {
 		unsigned int num_children;
-	} *A;
+	} * A;
 	ni_ref *children;
 	struct
 	{
 		unsigned int num_effects;
-	} *B;
+	} * B;
 	ni_ref *effects;
 };
 
@@ -301,7 +301,7 @@ struct skin_partition
 	Vec4 *vertex_weights;
 	unsigned short *strip_lengths;
 	unsigned char *has_faces;
-	struct ushort3 *triangles;
+	ushort3 *triangles;
 	unsigned char *has_bone_indices;
 	Byte4 *bone_indices;
 	unsigned short *unknown_short;
@@ -317,14 +317,14 @@ struct ni_tri_shape_data_pointer
 		unsigned char keep_flags;
 		unsigned char compress_flags;
 		unsigned char has_vertices;
-	} *A;
+	} * A;
 	Vec3 *vertices;
 	struct
 	{
 		unsigned short bs_vector_flags;
 		unsigned int material_crc;
 		unsigned char has_normals;
-	} *C;
+	} * C;
 	Vec3 *normals;
 	Vec3 *tangents;
 	Vec3 *bitangents;
@@ -333,7 +333,7 @@ struct ni_tri_shape_data_pointer
 		Vec3 center;
 		float radius;
 		unsigned char has_vertex_colors;
-	} *G;
+	} * G;
 	Vec4 *vertex_colors;
 	Vec2 *uv_sets;
 	struct
@@ -343,12 +343,12 @@ struct ni_tri_shape_data_pointer
 		unsigned short num_triangles;
 		unsigned int num_triangle_points;
 		unsigned char has_triangles;
-	} *J;
-	struct ushort3 *triangles;
+	} * J;
+	ushort3 *triangles;
 	struct
 	{
 		unsigned short num_match_groups;
-	} *L;
+	} * L;
 	ni_ref *match_groups;
 };
 static int test1 = sizeof(struct ni_tri_shape_data_pointer);
@@ -360,7 +360,7 @@ struct bs_lighting_shader_property_pointer
 		unsigned int skyrim_shader_type;
 		int name;
 		unsigned int num_extra_data_list;
-	} *A;
+	} * A;
 	ni_ref *extra_data_list;
 	struct
 	{
@@ -380,7 +380,7 @@ struct bs_lighting_shader_property_pointer
 		float specular_strength;
 		float lighting_effect_1;
 		float lighting_effect_2;
-	} *B;
+	} * B;
 };
 
 struct bs_effect_shader_property_pointer {
@@ -388,7 +388,7 @@ struct bs_effect_shader_property_pointer {
 	{
 		int name;
 		unsigned int num_extra_data_list;
-	} *A;
+	} * A;
 	ni_ref *extra_data_list;
 	struct
 	{
@@ -397,7 +397,7 @@ struct bs_effect_shader_property_pointer {
 		unsigned int shader_flags_2;
 		Vec2 uv_offset;
 		Vec2 uv_scale;
-	} *B;
+	} * B;
 	char *source_texture; // sized string
 	struct
 	{
@@ -412,7 +412,7 @@ struct bs_effect_shader_property_pointer {
 		Vec4 emissive_color;
 		float emissive_multiple;
 		float soft_falloff_depth;
-	} *C;
+	} * C;
 	char *greyscale_texture; // sized string
 };
 
@@ -421,7 +421,7 @@ struct bs_shader_texture_set_pointer
 	struct
 	{
 		int num_textures;
-	} *A;
+	} * A;
 	char **textures; // sized strings
 };
 
