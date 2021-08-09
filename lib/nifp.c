@@ -30,9 +30,7 @@ api Nifp *nifp_saved(void *key) {
 #define Buf    nif->buf
 #define Pos    nif->pos
 #define Blocks nif->blocks
-#define Depos  Buf + Pos
-
-#define FromBuf(x) *(x*)(Depos); Pos += sizeof(x); // only used twice remove
+#define Depos  (Buf + Pos)
 
 api char *nifp_get_string(Nifp *nif, int i) {
 	if (i == -1)
@@ -73,14 +71,16 @@ api void nifp_read(Nifp *nif) {
 
 static void read_short_string(Nifp *nif, char **string) {
 	// has \0
-	char len = FromBuf(char);
+	char len = *(char *)Depos;
+	Pos += sizeof(char);
 	*string = Depos;
 	Pos += len;
 }
 
 static void read_sized_string(Nifp *nif, char **string) {
 	// doesnt have \0
-	unsigned int len = FromBuf(unsigned int);
+	unsigned int len = *(unsigned int *)Depos;
+	Pos += sizeof(unsigned int);
 	*string = malloc(sizeof(char) * len + 1);
 	strncpy(*string, Depos, len);
 	(*string)[len] = '\0';
@@ -91,13 +91,13 @@ static void read_sized_string(Nifp *nif, char **string) {
 
 static void hedr_read_header_string(Nifp *nif) {
 	// Gamebryo File Format, Version 20.2.0.7\n
-	int newline = (char *)memchr(Buf, 0x0A, 50) - Buf;
-	assertm(newline, "nifp hedr");
-	char *string = malloc(sizeof(char) * newline + 1);
-	strncpy(string, Buf, newline);
+	int n = strchr(Buf, '\n') - Buf + 1;
+	char *string = malloc(sizeof(char) * n);
+	strncpy(string, Buf, n);
+	string[n - 1] = '\0';
 	Hedr->header_string = string;
 	Hedr->version = string + 30;
-	Pos += newline + 1;
+	Pos += n;
 }
 
 static void read_mem(Nifp *nif, void *dest, int size) {
@@ -202,25 +202,35 @@ void read_block(Nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-static void sink_val(Nifp *nif, char **dest, int size) {
+// < deprecated!!
+
+#define Arr(count, type) count * sizeof(type)
+
+static void sink_old(Nifp *nif, char *block_pointer, int src, int size) {
+	printf("uh oh old sink\n");
+	char **dest = block_pointer + src;
 	*dest = Depos;
 	Pos += size;
 }
 
 #define SinkOld(nif, block_pointer, layout, part, size) \
-	sink_val(nif, (char *)block_pointer, offsetof(struct layout, part), size)
+	sink_old(nif, (char *)block_pointer, offsetof(struct layout, part), size)
 
-// (the magic here is sizeof *unary-expression)
+// deprecated!! >
+
+static void sink_new(Nifp *nif, void **dest, int size) {
+	*dest = Depos;
+	Pos += size;
+}
 
 #define Sink(nif, block, part) \
-	sink_val(nif, &block->part, sizeof *block->part)
+	sink_new(nif, &block->part, sizeof *block->part)
 
 #define Sail(nif, block, part, group, num) \
-	sink_val(nif, &block->part, sizeof *block->part * block->group->num)
+	sink_new(nif, &block->part, sizeof *block->part * block->group->num)
 
 #define CHEESE_CALLOC(type) type *block = calloc(1, sizeof(type))
 
-#define Arr(count, type) count * sizeof(type)
 
 void *read_ni_common_layout(nifpr)
 {
@@ -269,6 +279,7 @@ void *read_bs_tri_shape(Nifp *nif, int n)
 	printf("bs_vertex_data_sse[0] vertex_colors is %u %u %u %u\n", zero->vertex_colors.r, zero->vertex_colors.g, zero->vertex_colors.b, zero->vertex_colors.a);
 
 	printf("particle data size %u\n", *block->particle_data_size);
+	return block;
 }
 
 void *read_ni_tri_shape(nifpr)
