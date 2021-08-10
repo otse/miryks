@@ -57,6 +57,9 @@ void Texture::load()
 {
 	DDSFile *dds = ddsloader_load_buf(buf, size);
 
+	if (!dds || !buf)
+		return;
+
 	int offset = 0;
 	int count = dds->dwMipMapCount;
 	int w = dds->dwWidth;

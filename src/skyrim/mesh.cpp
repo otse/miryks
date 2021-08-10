@@ -226,7 +226,7 @@ namespace skyrim
 	special_edition
 	void bs_tri_shape_callback(Rd *rd, bs_tri_shape_pointer *block)
 	{
-		printf("mesh.cpp bs tri shape callback !!! ");
+		// printf("mesh.cpp bs tri shape callback !!! ");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->nested(rd);
 		matrix_from_common(group, block->common);

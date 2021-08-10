@@ -1,8 +1,8 @@
-// see header for stuff
-
 #include "common.h"
 
 #include "bsa.h"
+
+// based on Ortham/libbsa
 
 #if BSA_VER==105
 #include <lz4frame_static.h>

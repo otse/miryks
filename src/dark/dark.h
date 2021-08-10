@@ -57,7 +57,7 @@ namespace dark
 	extern unsigned int fps;
 
 	void setup_glfw();
-	void programLoop();
+	void program_while();
 
 	void simple_viewer(Resource *);
 	void doImGui();

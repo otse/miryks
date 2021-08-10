@@ -86,7 +86,7 @@ int main()
 	//yagrum_set_rotate_speed(3.0);
 	// simple_start_screen();
 #if 1
-	load_gloomgen();
+	// load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
@@ -97,7 +97,7 @@ int main()
 
 	//player1 = new Player();
 
-	programLoop();
+	program_while();
 	return 1;
 }
 
@@ -119,7 +119,8 @@ void dark::simple_viewer(Rc *rc)
 	}
 	Nif *nif = import_nif(rc, true);
 	mesh = new Mesh(nif);
-	drawGroup = new DrawGroup(mesh->baseGroup, translate(mat4(1.0), personCam->pos));
+	drawGroup = new DrawGroup(
+		mesh->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->drawGroups.Add(drawGroup);
 	HideCursor();
 	cameraCur = viewerCam;

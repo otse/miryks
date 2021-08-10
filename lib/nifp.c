@@ -1,6 +1,9 @@
-// see header
+/// nif with pointers
 
-// will read legendary and special edition nifs
+// will read, sort legendary and special edition nifs
+
+// has its own block reading language called sink, sail
+// :)
 
 #include "common.h"
 
@@ -205,7 +208,7 @@ void big_block_reader(Nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-// build a language to read blockz
+// sink, sail
 
 static inline void sink(Nifp *nif, void **dest, int size) {
 	*dest = Depos;
@@ -464,7 +467,6 @@ else {
 	// marker cocheading
 	printf("\nsse for %s has %i %i %i %i %i %i\n", nif->path, vertex, uvs, normals, tangents, colors);
 }
-
 
 SAIL ( nif, block, triangles, infos, num_triangles )
 SINK ( nif, block, particle_data_size )

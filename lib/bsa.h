@@ -1,6 +1,8 @@
 #ifndef LIB_BSA_H
 #define LIB_BSA_H
 
+// based on Ortham/libbsa
+
 #define BSA_VER 105
 
 #define api

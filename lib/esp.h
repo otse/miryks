@@ -1,12 +1,7 @@
 #ifndef LIB_ESP_H
 #define LIB_ESP_H
 
-// part of gloom
-
-// only for le
-// can easily be altered for se
-
-// C adaptation of Ortham/libespm
+// based on Ortham/libespm
 
 #define api
 

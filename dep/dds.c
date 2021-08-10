@@ -8,7 +8,10 @@
 #define ffread(a, b) memcpy(a, buf + pos, b); pos += b;
 
 DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
-	
+	if (!buf)
+		return 0;
+	// this can happen
+
 	//printf("ddsloader load buf\n");
 	unsigned int isDx10;
 	

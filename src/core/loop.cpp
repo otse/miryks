@@ -305,7 +305,7 @@ void dark::renderImGui()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
-void dark::programLoop()
+void dark::program_while()
 {
 	render_target = new RenderTarget(dark::width, dark::height, GL_RGB, GL_FLOAT);
 	Quadt quad;

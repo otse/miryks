@@ -18,6 +18,7 @@
 
 namespace dark
 {
+	// todo todo todo
 	const char *dataFolder = "Data/";
 
 	Rc *load_rc(const char *prepend, const char *path, unsigned long flags)
@@ -53,16 +54,16 @@ namespace dark
 
 	Mesh *create_simple_mesh_from_modl(const char *model, bool store)
 	{
-		static std::map<const char *, Mesh *> simple_meshes;
-		if (simple_meshes.count(model) && store)
-			return simple_meshes[model];
+		static std::map<const char *, Mesh *> map;
+		if (map.count(model) && store)
+			return map[model];
 		Rc *rc = load_rc("meshes\\", model, 0x1);
 		if (rc==NULL)
 			return nullptr;
 		Nif *nif = import_nif(rc, true);
 		Mesh *mesh = new Mesh(nif);
 		if (store)
-			simple_meshes.emplace(model, mesh);
+			map.emplace(model, mesh);
 		return mesh;
 	}
 

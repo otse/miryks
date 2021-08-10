@@ -57,8 +57,8 @@ project "dark-sse"
 	}
 	
 	libdirs {
-		"C:/New folder/glfw-3.3.4-32/src/%{cfg.longname}",
-		"C:/New folder/zlib-1.2.11-32/%{cfg.longname}",
+		"C:/New folder/glfw-3.3.4-32/src/Release",
+		"C:/New folder/zlib-1.2.11-32/Release",
 		"C:/New folder/lz4-1.9.3-32/Release",
 		"C:/New folder/bullet3-3.17-32/lib/Release",
 		"C:/New folder/libpng-1.6.35-32/Release"

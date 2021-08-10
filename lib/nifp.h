@@ -1,7 +1,7 @@
 #ifndef LIB_NIFP_H
 #define LIB_NIFP_H
 
-/// nif with pointers for special edition
+/// nif with pointers
 
 #define api
 
