@@ -29,7 +29,7 @@ api void free_nifprd(NifpRd **p) {
 api void nifp_rd(NifpRd *rd) {
 	// printf("nif rd\n");
 	Nifp *nif = rd->nif;
-	assertm(rd->nif, "nifprd nif not set");
+	assertm(rd->nif!=NULL, "nifprd nif not set");
 	rd->skips = calloc(Hedr->num_blocks, sizeof(char));
 	//rd->nif = nif;
 	for (int n = 0; n < Hedr->num_blocks; n++)
@@ -37,8 +37,10 @@ api void nifp_rd(NifpRd *rd) {
 }
 
 #define needs_parent if (-1 == parent) return;
+#define traverse_once Skips[current] = 1;
 
-// very very horrible function
+// needs rewriting some time
+
 static void visit(NifpRd *rd, int parent, int current)
 {
 	Nifp *nif = rd->nif;
@@ -51,7 +53,7 @@ static void visit(NifpRd *rd, int parent, int current)
 
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{
-		Skips[current] = 1;
+		traverse_once
 		struct ni_node_pointer *block = Blocks[current];
 		if (rd->ni_node_callback)
 			rd->ni_node_callback(rd, Blocks[current]);
@@ -64,7 +66,7 @@ static void visit(NifpRd *rd, int parent, int current)
 
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
 	{
-		Skips[current] = 1;
+		traverse_once
 		struct ni_tri_shape_pointer *block = Blocks[current];
 		if (rd->ni_tri_shape_callback)
 			rd->ni_tri_shape_callback(rd, Blocks[current]);
@@ -87,7 +89,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_type(BS_TRI_SHAPE) )
 	{
 		needs_parent
-		Skips[current] = 1;
+		traverse_once
 		struct bs_tri_shape_pointer *block = Blocks[current];
 		if (rd->bs_tri_shape_callback)
 			rd->bs_tri_shape_callback(rd, Blocks[current]);

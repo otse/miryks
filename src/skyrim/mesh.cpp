@@ -208,6 +208,21 @@ namespace skyrim
 		}
 		geometry->SetupMesh();
 	}
+	vec3 bytestofloat(ByteVector3 &vec)
+	{
+		float xf, yf, zf;
+		xf = (double( vec.x ) / 255.0) * 2.0 - 1.0;
+		yf = (double( vec.y ) / 255.0) * 2.0 - 1.0;
+		zf = (double( vec.z ) / 255.0) * 2.0 - 1.0;
+		return vec3(xf, yf, zf);
+	}
+	vec2 halftexcoord(HalfTexCoord &uv)
+	{
+		union { float f; uint32_t i; } u, v;
+		u.i = half_to_float(uv.u);
+		v.i = half_to_float(uv.v);
+		return vec2(u.f, v.f);
+	}
 	special_edition
 	void bs_tri_shape_callback(Rd *rd, bs_tri_shape_pointer *block)
 	{
@@ -236,29 +251,27 @@ namespace skyrim
 			struct bs_vertex_data_sse_all *vertex_data =
 				&block->vertex_data_all[i]; 
 			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);
-			union { float f; uint32_t i; } u, v;
-			u.i = half_to_float(vertex_data->uv.u);
-			v.i = half_to_float(vertex_data->uv.v);
-			geometry->vertices[i].uv = vec2(u.f, v.f);
-			float xf, yf, zf;
-			xf = (double( vertex_data->normal.x ) / 255.0) * 2.0 - 1.0;
-			yf = (double( vertex_data->normal.y ) / 255.0) * 2.0 - 1.0;
-			zf = (double( vertex_data->normal.z ) / 255.0) * 2.0 - 1.0;
-			geometry->vertices[i].normal = vec3(xf, yf, zf);
+			
+			geometry->vertices[i].uv = halftexcoord(vertex_data->uv);
+			geometry->vertices[i].normal = bytestofloat(vertex_data->normal);
 			geometry->material->tangents = true;
-			xf = (double( vertex_data->tangent.x ) / 255.0) * 2.0 - 1.0;
-			yf = (double( vertex_data->tangent.y ) / 255.0) * 2.0 - 1.0;
-			zf = (double( vertex_data->tangent.z ) / 255.0) * 2.0 - 1.0;
-			geometry->vertices[i].tangent = vec3(xf, yf, zf);
+			geometry->vertices[i].tangent = bytestofloat(vertex_data->tangent);
 			auto c = vertex_data->vertex_colors;
 			geometry->vertices[i].color = vec4(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
-			/*if (block->C->bs_vector_flags & 0x00001000)
-			{
-				geometry->material->tangents = true;
-				geometry->vertices[i].tangent = gloomVec3(block->tangents[i]);
-				geometry->vertices[i].bitangent = gloomVec3(block->bitangents[i]);
-			}*/
-			//if (block->G->has_vertex_colors)
+		}
+		}
+		if ( block->vertex_data_no_clr )
+		{
+		for (int i = 0; i < block->infos->num_vertices; i++)
+		{
+			struct bs_vertex_data_sse_no_clr *vertex_data =
+				&block->vertex_data_no_clr[i]; 
+			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);
+			
+			geometry->vertices[i].uv = halftexcoord(vertex_data->uv);
+			geometry->vertices[i].normal = bytestofloat(vertex_data->normal);
+			geometry->material->tangents = true;
+			geometry->vertices[i].tangent = bytestofloat(vertex_data->tangent);
 		}
 		}
 		geometry->SetupMesh();

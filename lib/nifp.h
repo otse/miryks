@@ -199,12 +199,18 @@ special_edition struct bs_vertex_data_sse_all
 	ByteColor4 vertex_colors;
 };
 
-special_edition struct bs_vertex_data_sse_some
+special_edition struct bs_vertex_data_sse_no_clr
 {
-	int x;
+	Vector3 vertex;
+	float bitangent_x;
+	HalfTexCoord uv;
+	ByteVector3 normal;
+	unsigned char bitangent_y;
+	ByteVector3 tangent;
+	unsigned char bitangent_z;
 };
 
-struct bs_tri_shape_pointer
+special_edition struct bs_tri_shape_pointer
 {
 	struct ni_common_layout_pointer *common;
 	struct {
@@ -222,8 +228,8 @@ struct bs_tri_shape_pointer
 	unsigned short num_vertices;
 	unsigned int data_size;
 	} *infos;
-	struct bs_vertex_data_sse_all  *vertex_data_all;
-	struct bs_vertex_data_sse_some *vertex_data_some;
+	struct bs_vertex_data_sse_all    *vertex_data_all;
+	struct bs_vertex_data_sse_no_clr *vertex_data_no_clr;
 	ShortTriangle *triangles;
 	unsigned int *particle_data_size;
 };
@@ -238,7 +244,7 @@ legendary_edition struct ni_skin_instance_pointer
 		unsigned int num_bones;
 	} * A;
 	ni_ref *bones;
-	// skip dismemberment fields ? yegh
+	// skip dismemberment fields for now
 	struct
 	{
 		int num_partitions;

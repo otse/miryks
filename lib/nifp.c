@@ -119,7 +119,7 @@ static void read_sized_strings(Nifp *nif, char ***dest, int count) {
 	read_sized_string(nif, &(*dest)[i]);
 }
 
-api void nifp_read_header(Nifp *nif) {
+void nifp_read_header(Nifp *nif) {
 	hedr_read_header_string(nif);
 	read_mem(nif, &Hedr->unknown_1, 17);
 	read_short_string(nif, &Hedr->author);
@@ -140,7 +140,7 @@ api void nifp_read_header(Nifp *nif) {
 #define nifpr Nifp *nif, int n
 
 // todo get RID of these function declarations somehow
-static void read_block(Nifp *, int);
+static void big_block_reader(Nifp *, int);
 
 legendary_edition
 static void *read_ni_common_layout(nifpr);
@@ -160,7 +160,7 @@ static void *read_ni_transform_data(nifpr);
 special_edition
 static void *read_bs_tri_shape(nifpr);
 
-api void nifp_read_blocks(Nifp *nif)
+void nifp_read_blocks(Nifp *nif)
 {
 	// printf("nifp path %s\n", nif->path);
 	unsigned int pos = Pos;
@@ -169,13 +169,13 @@ api void nifp_read_blocks(Nifp *nif)
 	{
 	Blocks[i] = NULL;
 	// printf("nifp block begin at %i %04x\n", Pos, Pos);
-	read_block(nif, i);
+	big_block_reader(nif, i);
 	pos += Hedr->block_sizes[i];
 	Pos = pos;
 	}
 }
 
-void read_block(Nifp *nif, int n)
+void big_block_reader(Nifp *nif, int n)
 {
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
@@ -205,8 +205,7 @@ void read_block(Nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-// build a small language to read blockz as structs
-// i called it struct sinking
+// build a language to read blockz
 
 static inline void sink(Nifp *nif, void **dest, int size) {
 	*dest = Depos;
@@ -307,13 +306,11 @@ SINK ( nif, block, A )
 if ( block->A->num_rotation_keys > 0 )
 {
 	SINK ( nif, block, B )
-	if (block->B->rotation_type == 2) // quadratic key
-	SAIL ( nif, block, quaternion_keys, A, num_rotation_keys )
+
+	if (block->B->rotation_type == 2)
+		SAIL ( nif, block, quaternion_keys, A, num_rotation_keys )
 	else
-	{
-	printf("0x01");
-	return NULL;
-	}
+		return NULL;
 }
 SINK ( nif, block, translations )
 SAIL ( nif, block, translation_keys, translations, num_keys )
@@ -321,8 +318,6 @@ SINK ( nif, block, scales )
 SAIL ( nif, block, scale_keys, scales, num_keys )
 
 END_READ()
-
-// legendary edition stuff below
 
 NI_READ( ni_tri_shape ) legendary_edition
 
@@ -451,46 +446,27 @@ block->common = read_ni_common_layout( nif, n );
 
 SINK ( nif, block, bounding_sphere )
 SINK ( nif, block, refs )
-
-//printf("skin shader alpha %i %i %i\n", block->refs->skin, block->refs->shader_property, block->refs->alpha_property);
-
 SINK ( nif, block, infos )
-
-printf("num triangles vertices %hu %hu\n", block->infos->num_triangles, block->infos->num_vertices);
-//printf("data size %u\n", block->infos->data_size);
-//printf("data size %u\n", block->infos->data_size);
 
 int vertex, uvs, normals, tangents, colors, skinned;
 nifp_sse_dissect_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
 
+// all models use these two variants it seems
 if ( vertex && uvs && normals && tangents && colors )
-{
-	printf("vertex_desc seems static - all\n");
 	SAIL ( nif, block, vertex_data_all, infos, num_vertices)
+
+else if ( vertex && uvs && normals && tangents && !colors )
+	SAIL ( nif, block, vertex_data_no_clr, infos, num_vertices)
+
+else {
+	// xmarkerx
+	// marker_prison
+	// marker cocheading
+	printf("\nsse for %s has %i %i %i %i %i %i\n", nif->path, vertex, uvs, normals, tangents, colors);
 }
+
 
 SAIL ( nif, block, triangles, infos, num_triangles )
 SINK ( nif, block, particle_data_size )
-
-if (block->vertex_data_all)
-{
-	printf("&block->vertex_data[0] = %i\n", &block->vertex_data_all[0]);
-	printf("&block->vertex_data[1] = %i\n", &block->vertex_data_all[1]);
-	sizeof(struct bs_vertex_data_sse_all);
-
-	ShortTriangle *triangle = &block->triangles[0];
-	struct bs_vertex_data_sse_all *zero = &block->vertex_data_all[0];
-	printf("bs_vertex_data_sse[0] vertex x is %f\n", zero->vertex.x);
-	printf("bs_vertex_data_sse[0] bitangent x is %f\n", zero->bitangent_x);
-	printf("bs_vertex_data_sse[0] normal is %u\n", zero->normal.x);
-	printf("bs_vertex_data_sse[0] bitangent y is %u\n", zero->bitangent_y);
-	printf("bs_vertex_data_sse[0] bitangent z is %u\n", zero->bitangent_z);
-	printf("bs_vertex_data_sse[0] vertex_colors is %u %u %u %u\n", zero->vertex_colors.r, zero->vertex_colors.g, zero->vertex_colors.b, zero->vertex_colors.a);
-	printf("particle data size %u\n", *block->particle_data_size);
-
-	printf("triangle %hu %hu %hu\n", triangle->a, triangle->b, triangle->c);
-	
-}
-
 
 END_READ()

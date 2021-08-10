@@ -86,7 +86,7 @@ int main()
 	//yagrum_set_rotate_speed(3.0);
 	// simple_start_screen();
 #if 1
-	//load_gloomgen();
+	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
