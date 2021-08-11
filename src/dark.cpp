@@ -35,6 +35,7 @@ void load_plugins_archives()
 	get_plugins()[2] = load_plugin(PLUGIN_2);
 	get_plugins()[3] = load_plugin(PLUGIN_3);
 	get_plugins()[4] = load_plugin(PLUGIN_4);
+	get_plugins()[5] = load_plugin(PLUGIN_5);
 	get_archives()[0] = load_archive(ARCHIVE_0);
 	//get_archives()[1] = load_archive(ARCHIVE_1);
 	//get_archives()[2] = load_archive(ARCHIVE_2);
@@ -82,11 +83,8 @@ int main()
 	simple_viewer(rc);
 #endif
 	//put_it_fullscreen();
-	//yagrum_queue("", 2.0, true);
-	//yagrum_set_rotate_speed(3.0);
-	// simple_start_screen();
 #if 1
-	// load_gloomgen();
+	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");

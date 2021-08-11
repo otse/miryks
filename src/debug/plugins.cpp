@@ -63,10 +63,10 @@ void im_record(record *rec)
 		ImGui::Text(s);
 		if (ImGui::TreeNode("formId"))
 		{
-			if (rec->fi)
+			if (rec->form_id)
 			{
 				char s[200];
-				esp_print_form_id(plugin, s, rec->fi);
+				esp_print_form_id(plugin, s, rec->form_id);
 				ImGui::Text(s);
 			}
 			ImGui::TreePop();

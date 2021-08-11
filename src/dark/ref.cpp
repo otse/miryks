@@ -90,12 +90,28 @@ namespace dark
 		baseObject = esp_get_form_id(id);
 
 		if (!baseObject.valid())
-			return;
-
-		assertm(baseObject.valid(), "cant find refs Name-BaseId record");
-
-		if (baseObject.sigany({"STAT", "DOOR", "FURN", "BOOK", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "SLGM", "SCRL", "INGR", "MISC"}))
 		{
+			char hex[10];
+			snprintf(hex, 10, "%08X", id);
+			printf("\ncant find form_id %s %u\n\n", hex, id);
+			return;
+		}
+		else
+		{
+		}
+
+		// "STAT", "DOOR", "FURN", "BOOK", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "SLGM", "SCRL", "INGR", "MISC"
+		
+		if (baseObject.sigany({
+			"STAT",
+			//"DOOR",
+			"FURN",
+			"CONT",
+			//"MISC",
+			//"ALCH"
+			}))
+		{
+			printf("refr has base %s - %s\n", baseObject.rcd->form_id->hex, baseObject.editorId());
 			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)
 			{
@@ -170,6 +186,10 @@ namespace dark
 			}
 
 			//point_light->decay = _j["Falloff Exponent"];
+		}
+		else
+		{
+			baseObject = nullptr; // invalidate
 		}
 
 		if (mesh)

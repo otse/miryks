@@ -14,7 +14,9 @@
 
 int esp_skip_subrecords = 0; // fast option
 
-static espp plugins[5] = { NULL };
+#define PLUGINS 8
+
+static espp plugins[PLUGINS] = { NULL };
 
 #define COUNT_OF(x) sizeof(x) / sizeof(0[x])
 
@@ -31,7 +33,7 @@ unsigned int hedr_num_records(espp esp)
 {
 	if (esp_skip_subrecords)
 	return 200;
-	return *(unsigned int *)((*(subrecord ***)esp->header->subrecords)[0]->data + 4);
+	return *(unsigned int *)((*(subrecord ***)esp->header->subrecords)[0]->data + 4); // wtfff sry
 }
 
 espp plugin_slate()
@@ -65,11 +67,9 @@ recordp read_record(espp esp)
 {
 	// Todo, clean big unclear assignments lik these thruout the program
 	recordp rec;
-	rec = malloc(sizeof(record));
-	rec->fi = NULL;
+	rec = calloc(1, sizeof(record));
 	// head
 	rec->r = 'r';
-	rec->indices = 0;
 	rec->id = Count.records++;
 	rec->offset = Pos;
 	rec->hed = Buf + Pos;
@@ -129,7 +129,7 @@ inline subrecordp read_field(espp esp, recordp rec, unsigned int override)
 	buf = rec->buf;
 	}
 	subrecordp sub;
-	sub = malloc(sizeof(subrecord));
+	sub = calloc(1, sizeof(subrecord));
 	// hed
 	sub->s = 's';
 	sub->index = rec->indices++;
@@ -150,7 +150,7 @@ inline void read_grup_records(espp, grupp);
 
 grupp read_grup(espp esp)
 {
-	grupp grp = malloc(sizeof(grup));
+	grupp grp = calloc(1, sizeof(grup));
 	//grup->lowest = grup->highest = 0;
 	// hed
 	grp->g = 'g';
@@ -198,16 +198,16 @@ api grupp esp_top_grup(const espp esp, const char type[5])
 	return NULL;
 }
 
-inline void build_form_id(espp esp, recordp record, struct form_id *fi)
+
+
+inline void build_form_id(struct form_id *form_id, unsigned int formId)
 {
-	fi->esp = esp;
-	record->fi = fi;
-	fi->formId = record->hed->formId;
-	fi->record = record;
-	//snprintf(form_id.hex, 10, "%08X", record->hed->formId);
-	//form_id.hex = 0;
-	fi->modIndex = fi->formId >> 24;
-	fi->objectIndex = fi->formId & ~(fi->modIndex << 24);
+	form_id->formId = formId;
+#if SNPRINTF_FORM_ID
+	snprintf(form_id->hex, 9, "%08X", formId);
+#endif
+	form_id->modIndex = formId >> 24;
+	form_id->objectIndex = formId & ~(form_id->modIndex << 24);
 	//if (modIndex >= masters.size())
 	//fi->plugin = parentPluginName;
 	//else
@@ -216,25 +216,27 @@ inline void build_form_id(espp esp, recordp record, struct form_id *fi)
 
 void make_form_ids(espp esp)
 {
-	// Unused
 	esp->formIds = calloc(esp->records->size, sizeof(struct form_id));
 	for (unsigned int i = 0; i < esp->records->size; i++)
-	build_form_id(esp, esp->records->elements[i], &esp->formIds[i]);
+	{
+	recordp rec = esp->records->elements[i];
+	build_form_id(&esp->formIds[i], rec->hed->formId);
+	rec->form_id = &esp->formIds[i];
+	}
 }
 
 api recordp esp_get_form_id(unsigned int formId)
 {
-	for (int i = 5; i --> 0; )
-	{
-	espp esp = plugins[i];
+	struct form_id form_id;
+	build_form_id(&form_id, formId);
+	espp esp = get_plugins()[form_id.modIndex];
 	if (esp == NULL)
-	continue;
+	return NULL;
 	for (unsigned int j = 0; j < esp->records->size; j++)
 	{
 	recordp rec = esp->records->elements[j];
-	if (rec->fi->formId == formId)
+	if (rec->form_id->objectIndex == form_id.objectIndex)
 	return rec;
-	}
 	}
 	return NULL;
 }
@@ -285,7 +287,7 @@ api esppp get_plugins()
 
 api espp has_plugin(const char *name)
 {
-	for (int i = 5; i-- > 0;)
+	for (int i = PLUGINS; i-- > 0;)
 	if (plugins[i] != NULL && 0 == strcmp(name, plugins[i]->name))
 	return plugins[i];
 	return NULL;
@@ -297,7 +299,7 @@ api void free_plugin(esppp p)
 	*p = NULL;
 	if (esp == NULL)
 	return;
-	for (int i = 5; i --> 0; )
+	for (int i = PLUGINS; i --> 0; )
 	if (esp == plugins[i])
 	plugins[i] = NULL;
 	for (unsigned int i = 0; i < esp->records->size; i++)

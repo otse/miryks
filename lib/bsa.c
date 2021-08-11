@@ -12,8 +12,8 @@
 
 #define Hedr bsa->hdr
 
-static int read(Bsa *, void *, unsigned);
-static int seek(Bsa *, unsigned);
+static int read(Bsa *, void *, unsigned long size);
+static int seek(Bsa *, unsigned long offset);
 
 char *bsa_read_bzstring(Bsa *);
 
@@ -42,7 +42,7 @@ api Bsa *bsa_load(const char *path)
 #if 0
 	printf("\
 	header_flags\n\
-	\n0x1   %i\n0x2   %i\\n0x4   %i\\n0x8   %i\\n0x10  %i\\n0x20  %i\\n0x40  %i\\n0x80  %i\\n0x100 %i\\n0x200 %i\\n\
+	\n0x1   %i\n0x2   %i\n0x4   %i\n0x8   %i\n0x10  %i\n0x20  %i\n0x40  %i\n0x80  %i\n0x100 %i\n0x200 %i\n\
 	",
 	Hedr.archive_flags & 0x1,
 	Hedr.archive_flags & 0x2,
@@ -127,7 +127,7 @@ void resources(Bsa *bsa)
 	bsa->r[i] = r;
 	for (unsigned int j = 0; j < bsa->fld[i].num; j++)
 	{
-	bsa->rc[r] = malloc(sizeof(Rc));
+	bsa->rc[r] = calloc(1, sizeof(Rc));
 	*bsa->rc[r] = (Rc){bsa, i, j, r, -1, bsa->cb[r], NULL};
 	bsa_rc_path(bsa, i, r);
 	r++;
@@ -208,7 +208,7 @@ char *bsa_uncompress(Rc *rc)
 	uint32_t size = *(uint32_t *)&src[0];
 	rc->size -= sizeof(uint32_t);
 	src += sizeof(uint32_t);
-	char *dest = malloc(size * sizeof(char));
+	char *dest = malloc(sizeof(char) * size);
 	LZ4F_decompressionContext_t context = NULL;
 	LZ4F_createDecompressionContext(&context, LZ4F_VERSION);
 	LZ4F_decompressOptions_t options;
@@ -233,19 +233,37 @@ api int bsa_read(Rc *rc) {
 	return 1;
 	Bsa *bsa = rc->bsa;
 	struct bsa_file *f = &bsa->file[rc->i][rc->j];
-	int offset = f->offset;
-	int size = f->size;
+	unsigned long offset = f->offset;
+	unsigned long size = f->size;
 	if (Hedr.archive_flags & EMBED_FILE_NAMES)
 	{
 	// bstring
 	unsigned char x;
 	seek(bsa, offset);
 	read(bsa, &x, 1);
-	offset += x + 1;
-	size -= x + 1;
+	x += 1;
+	#if 0
+	char *str = malloc(sizeof(char) * x);
+	read(bsa, str, x - 1);
+	str[x-1] = '\0';
+	printf("embed file name: %s\n", str);
+	free(str);
+	#endif
+	offset += x;
+	size -= x;
 	}
 	rc->size = size;
-	rc->buf = malloc(rc->size);
+	rc->buf = malloc(sizeof(char) * rc->size);
+	#if 0
+	if (!rc->buf)
+	{
+		printf("\n\ncant malloc buf of size %i\n\n", rc->size);
+		printf("malloc max is %u", SIZE_MAX);
+		printf("info: bsa is %s\n", rc->bsa->path);
+		return 0;
+	}
+	#endif
+	//printf("bsa going to read %s\n", rc->name);
 	seek(bsa, offset);
 	read(bsa, rc->buf, rc->size);
 	if ((Hedr.archive_flags & 0x4) != (f->size & INVERT_COMPRESSED))
@@ -262,7 +280,7 @@ api void bsa_free(Bsa **b)
 	Bsa *bsa = *b;
 	*b = NULL;
 	fclose(bsa->stream);
-	return;
+	#if 0
 	// Delete file records
 	if (Hedr.folders)
 	{
@@ -282,6 +300,7 @@ api void bsa_free(Bsa **b)
 	// Other
 	free(bsa);
 	*b = NULL;
+	#endif
 }
 
 // archive ext stuff below
@@ -320,17 +339,18 @@ api Rc *bsa_find_more(const char *p, unsigned long flags)
 	if (Hedr.file_flags == 0 || test)
 	rc = bsa_find(bsa, p);
 	if (rc!=NULL)
-	break;  
+	break;
 	}
 	return rc;
 }
 
-static int read(Bsa *bsa, void *data, unsigned size)
+static int read(Bsa *bsa, void *data, unsigned long size)
 {
-	return fread(data, 1, size, (FILE *)bsa->stream);
+	
+	return fread(data, 1, (long)size, (FILE *)bsa->stream);
 }
 
-static int seek(Bsa *bsa, unsigned offset)
+static int seek(Bsa *bsa, unsigned long offset)
 {
-	return fseek((FILE *)bsa->stream, offset, SEEK_SET);
+	return fseek((FILE *)bsa->stream, (long)offset, SEEK_SET);
 }

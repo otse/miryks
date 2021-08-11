@@ -79,6 +79,8 @@ if (field->hed->sgn == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
 if (field->hed->sgn == *(unsigned int *)"FULL")
 snprintf(s, 300, "%s", field->data);
+if (field->hed->sgn == *(unsigned int *)"MAST")
+snprintf(s, 300, "%s", field->data);
 if (field->hed->sgn == *(unsigned int *)"HEDR")
 snprintf(s, 300, "\
 \n  version: %.2f\

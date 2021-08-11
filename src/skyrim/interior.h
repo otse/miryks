@@ -31,7 +31,7 @@ namespace skyrim
 		std::map<std::string, Ref *> editorIds;
 
 		void update();
-		void parsegrup(int, Cell &, Grup);
+		void parsegrup(int, Grup);
 		void loadcell();
 		void unload();
 		void placecamera();
@@ -51,7 +51,7 @@ namespace skyrim
 	{
 		Cell cell;
 		Grup a, b, c;
-		cgrupp top = esp_top_grup(get_plugins()[4], "CELL");
+		cgrupp top = esp_top_grup(get_plugins()[MY_PLUGIN], "CELL");
 		bool stop = false;
 		a(top).foreach(0, [&](unsigned int i) {
 		b(a.get<grup *>(i)).foreach(2, [&](unsigned int j) {
@@ -76,7 +76,7 @@ namespace skyrim
 	static Cell find_cell_loop(const char *name)
 	{
 		Cell cell;
-		grupp top = esp_top_grup(get_plugins()[4], "CELL");
+		grupp top = esp_top_grup(get_plugins()[MY_PLUGIN], "CELL");
 		Grup a, b, c;
 		a = top;
 		assertc(a.hed().group_type == 0);

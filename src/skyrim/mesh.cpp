@@ -233,6 +233,8 @@ namespace skyrim
 		Geometry *geometry = new Geometry();
 		group->geometry = geometry;
 		geometry->material->src = &simple;
+		if (!block->vertex_data_all && !block->vertex_data_no_clr)
+			return;
 		geometry->Clear(block->infos->num_vertices, block->infos->num_triangles * 3);
 		if (!block->infos->num_vertices)
 			return;
@@ -251,7 +253,6 @@ namespace skyrim
 			struct bs_vertex_data_sse_all *vertex_data =
 				&block->vertex_data_all[i]; 
 			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);
-			
 			geometry->vertices[i].uv = halftexcoord(vertex_data->uv);
 			geometry->vertices[i].normal = bytestofloat(vertex_data->normal);
 			geometry->material->tangents = true;
@@ -267,7 +268,6 @@ namespace skyrim
 			struct bs_vertex_data_sse_no_clr *vertex_data =
 				&block->vertex_data_no_clr[i]; 
 			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);
-			
 			geometry->vertices[i].uv = halftexcoord(vertex_data->uv);
 			geometry->vertices[i].normal = bytestofloat(vertex_data->normal);
 			geometry->material->tangents = true;

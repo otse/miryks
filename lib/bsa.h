@@ -38,7 +38,7 @@ typedef struct Rc
 {
 	struct Bsa *bsa;
 	int i, j, r;
-	int size;
+	unsigned long size;
 	const char *name;
 	const unsigned char *buf;
 	char path[255];

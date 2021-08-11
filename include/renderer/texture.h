@@ -12,7 +12,7 @@ Texture *GetProduceTexture(const char *);
 struct Texture
 {
 	friend Texture *GetProduceTexture(const char *);
-	GLuint tid;
+	GLuint tid = 0;
 	int size;
 	const unsigned char *buf = nullptr;
 	const std::string path;

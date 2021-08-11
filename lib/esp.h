@@ -5,6 +5,9 @@
 
 #define api
 
+// used for debugging but costly
+#define SNPRINTF_FORM_ID 1
+
 struct form_id;
 
 struct esp;
@@ -44,15 +47,6 @@ struct esp
 
 #pragma pack(push, 1)
 
-struct form_id
-{
-	struct esp *esp;
-	unsigned int formId, modIndex, objectIndex;
-	char hex[9];
-	struct record *record;
-	void *plugin;
-};
-
 struct grup_header
 {
 	unsigned int sgn, size, label;
@@ -77,6 +71,17 @@ typedef struct esp_dud {
 	char x;
 } esp_dud;
 
+#pragma pack(pop)
+
+struct form_id
+{
+	struct esp *esp;
+	unsigned int formId, modIndex, objectIndex;
+#if SNPRINTF_FORM_ID
+	char hex[9];
+#endif
+};
+
 struct grup
 {
 	char g;
@@ -93,7 +98,7 @@ struct record
 	unsigned int id;
 	long offset;
 	const struct record_header *hed;
-	struct form_id *fi;
+	struct form_id *form_id;
 	revised_array *subrecords;
 	unsigned char *data;
 	unsigned int actualSize;
@@ -128,9 +133,6 @@ typedef const esp * cespp;
 typedef const grup * cgrupp;
 typedef const record * crecordp;
 typedef const subrecord * csubrecordp;
-
-
-#pragma pack(pop)
 
 api espp plugin_slate();
 api int plugin_load(espp );

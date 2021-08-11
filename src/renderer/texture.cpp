@@ -50,6 +50,8 @@ Texture::Texture(const std::string &path) : path(path)
 		test = true;
 #endif
 	load();
+	free((void *)rc->buf);
+	rc->buf = NULL;
 }
 Texture::~Texture() {}
 

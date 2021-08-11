@@ -19,13 +19,16 @@ DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 
 	int pos = 0;
 	
-	unsigned char *filesig = malloc(4);
+	char filesig[4];
 	ffread(filesig, 4);
 
 	//printf("filesig %s\n", filesig);
 	
 	if(memcmp(filesig, "DDS ", 4) != 0)
+	{
+		printf("\nThis is Not a DDS File\n");
 		goto exit; // not a dds file
+	}
 	
 	file = malloc(sizeof(DDSFile));
 	if(file == 0)
@@ -60,7 +63,6 @@ DDSFile* ddsloader_load_buf(const unsigned char* buf, int size) {
 	ffread(file->blBuffer, file->dwBufferSize);
 	
 exit:
-	free(filesig);
 	return file;
 }
 

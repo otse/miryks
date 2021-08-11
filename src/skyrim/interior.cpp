@@ -28,16 +28,17 @@ namespace skyrim
 	{
 		// get_right_cell(editorId); doesnt work
 		loaded_cell = find_cell_loop(editorId);
-		parsegrup(8, loaded_cell, loaded_cell.persistent);
-		parsegrup(9, loaded_cell, loaded_cell.temporary);
+		parsegrup(8, loaded_cell.persistent);
+		parsegrup(9, loaded_cell.temporary);
 	}
 
 	static void PlaceCameraDud(Interior *);
 
-	void Interior::parsegrup(int group_type, Cell &cell, Grup wgrp)
+	void Interior::parsegrup(int group_type, Grup wgrp)
 	{
 		if (!wgrp.valid())
 			return;
+		printf("intr parsegrup %i\n", group_type);
 		wgrp.foreach(group_type, [&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
 			if (wrcd.sig(REFR))

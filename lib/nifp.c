@@ -215,18 +215,14 @@ static inline void sink(Nifp *nif, void **dest, int size) {
 	Pos += size;
 }
 
-#define SINK( nif, block, part ) \
-	sink(nif, &block->part, sizeof *block->part);
-
-#define SAIL( nif, block, part, group, num ) \
-	sink(nif, &block->part, sizeof *block->part * block->group->num);
+#define SINK( nif, block, part )			 sink(nif, &block->part, sizeof *block->part);
+#define SAIL( nif, block, part, group, num ) sink(nif, &block->part, sizeof *block->part * block->group->num);
 
 #define SKIP(n) Pos += n;
 
 #define CALLOC( type ) type *block = calloc(1, sizeof(type));
 
-#define NI_READ(x) \
-void *read_ ## x ( Nifp *nif, int n ) \
+#define NI_READ(x) void *read_ ## x ( Nifp *nif, int n ) \
 { \
 	CALLOC(struct x ## _pointer)
 
@@ -466,6 +462,8 @@ else {
 	// marker_prison
 	// marker cocheading
 	printf("\nsse for %s has %i %i %i %i %i %i\n", nif->path, vertex, uvs, normals, tangents, colors);
+	return block;
+	SKIP ( block->infos->data_size )
 }
 
 SAIL ( nif, block, triangles, infos, num_triangles )

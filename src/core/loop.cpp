@@ -111,11 +111,11 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 		Record object = Record(dungeon->loaded_cell.wrcd);
 		char dest[512];
 		strcpy(dest, object.editorId());
-		espp esp = get_plugins()[3];
+		espp esp = get_plugins()[MY_PLUGIN];
 		const char *name = esp->name;
 		espp has = has_plugin(name);
 		free_plugin(&has);
-		get_plugins()[3] = load_plugin(name, true);
+		get_plugins()[MY_PLUGIN] = load_plugin(name, true);
 		delete dungeon;
 		dungeon = new Interior(dest);
 		dungeon->alreadyTeleported = true;
