@@ -5,8 +5,13 @@
 
 #define api
 
-// used for debugging but costly
-#define SNPRINTF_FORM_ID 1
+#define SNPRINTF_FORM_ID 0
+
+#define PLUGINS_SAVE_OFFSETS 1
+
+#define SUPPORT_XXX_LARGE_SUBRECORDS 1 // doesnt do anything yet
+
+// positions have type unsigned
 
 struct form_id;
 
@@ -21,6 +26,7 @@ typedef struct record record;
 typedef struct subrecord subrecord;
 
 extern int esp_skip_subrecords;
+extern int esp_only_read_first_subrecord;
 
 typedef struct revised_array
 {
@@ -32,16 +38,16 @@ struct esp
 {
 	const char *name;
 	void *file;
-	long pos;
+	unsigned pos;
 	const char *buf;
-	long filesize;
+	unsigned filesize;
 	int active;
 	record *header;
 	revised_array * grups, * records;
 	struct form_id *formIds;
 	struct
 	{
-	unsigned int grups, records, fields, uncompress;
+	unsigned short grups, records, subrecords, uncompress;
 	} count;
 };
 
@@ -85,7 +91,7 @@ struct form_id
 struct grup
 {
 	char g;
-	unsigned int id;
+	unsigned short id;
 	const struct grup_header *hed;
 	unsigned char *data;
 	revised_array * mixed;
@@ -94,26 +100,32 @@ struct grup
 struct record
 {
 	char r;
-	unsigned int indices;
-	unsigned int id;
-	long offset;
 	const struct record_header *hed;
-	struct form_id *form_id;
+#if PLUGINS_SAVE_OFFSETS
+	unsigned offset;
+#endif
+	unsigned short indices;
+	unsigned short id;
 	revised_array *subrecords;
 	unsigned char *data;
 	unsigned int actualSize;
+	struct form_id *form_id;
+	esp *esp;
+	char lazy;
 	// compression related
-	long pos;
+	unsigned pos;
 	char *buf;
 };
 
 struct subrecord
 {
 	char s;
-	unsigned int index;
-	unsigned int id;
-	long offset;
 	const struct subrecord_header *hed;
+#if PLUGINS_SAVE_OFFSETS
+	unsigned offset;
+#endif
+	unsigned int index;
+	unsigned short id;
 	unsigned int actualSize;
 	unsigned char *data;
 };
@@ -135,7 +147,9 @@ typedef const record * crecordp;
 typedef const subrecord * csubrecordp;
 
 api espp plugin_slate();
-api int plugin_load(espp );
+api int plugin_load(espp);
+
+api void esp_read_lazy_record(crecordp);
 
 api void esp_print_form_id(espp, char *, struct form_id *);
 api void esp_print_grup(espp, char *, grupp);

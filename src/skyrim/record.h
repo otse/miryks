@@ -35,7 +35,10 @@ namespace skyrim
 		{
 			rcd = p;
 			if (p)
+			{
+				esp_read_lazy_record((recordp)rcd);
 				assertc(rcd->r == 'r');
+			}
 		}
 		inline bool valid() const
 		{

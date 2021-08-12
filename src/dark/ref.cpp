@@ -104,14 +104,20 @@ namespace dark
 		
 		if (baseObject.sigany({
 			"STAT",
-			//"DOOR",
+			"DOOR",
 			"FURN",
+			"BOOK",
 			"CONT",
-			//"MISC",
-			//"ALCH"
+			"ARMO",
+			"WEAP",
+			"MISC",
+			"ALCH",
+			"INGR"
 			}))
 		{
+#if SNPRINTF_FORM_ID
 			printf("refr has base %s - %s\n", baseObject.rcd->form_id->hex, baseObject.editorId());
+#endif
 			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)
 			{

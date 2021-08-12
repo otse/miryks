@@ -75,12 +75,12 @@ int main()
 	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 	collision_init();
 	cameraCur = personCam;
-	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	import_nif(rc, true);
-	//nifp_test();
 #if 1
 	// Secret bucket beginning
+	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	import_nif(rc, true);
 	simple_viewer(rc);
+	//nifp_test();
 #endif
 	//put_it_fullscreen();
 #if 1

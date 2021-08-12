@@ -1,5 +1,7 @@
 // see header for stuff
 
+// warning program very ugly
+
 #include "common.h"
 
 #include "esp.h"
@@ -13,6 +15,8 @@
 #define Count esp->count
 
 int esp_skip_subrecords = 0; // fast option
+
+int esp_only_read_first_subrecord = 1;
 
 #define PLUGINS 8
 
@@ -33,13 +37,12 @@ unsigned int hedr_num_records(espp esp)
 {
 	if (esp_skip_subrecords)
 	return 200;
-	return *(unsigned int *)((*(subrecord ***)esp->header->subrecords)[0]->data + 4); // wtfff sry
+	return *(unsigned int *)((*(subrecord ***)esp->header->subrecords)[0]->data + 4); // bad dont do this
 }
 
 espp plugin_slate()
 {
-	espp plugin = malloc(sizeof(esp));
-	memset(plugin, 0, sizeof(esp));
+	espp plugin = calloc(1, sizeof(esp));
 	return plugin;
 }
 
@@ -61,27 +64,30 @@ api int plugin_load(espp esp)
 }
 
 void uncompress_record(espp, recordp);
-inline void read_record_fields(espp, recordp);
+inline void read_record_subrecords(espp, recordp);
 
 recordp read_record(espp esp)
 {
-	// Todo, clean big unclear assignments lik these thruout the program
 	recordp rec;
 	rec = calloc(1, sizeof(record));
 	// head
 	rec->r = 'r';
 	rec->id = Count.records++;
+#if PLUGINS_SAVE_OFFSETS
 	rec->offset = Pos;
+#endif
 	rec->hed = Buf + Pos;
 	Pos += sizeof(struct record_header);
 	Pos += 0;
 	rec->actualSize = rec->hed->size;
 	rec->data = Buf + Pos;
-	narray(&rec->subrecords, 6);
+	rec->lazy = esp_only_read_first_subrecord;
+	rec->esp = esp;
+	narray(&rec->subrecords, 1);
 	insert(esp->records, rec);
 	// printf("R %.4s %u > ", (char *)&rec->hed->sgn, rec->hed->dataSize);
 	// fields
-	if (esp_skip_subrecords)
+	if ( esp_skip_subrecords )
 	Pos += rec->hed->size;
 	else
 	{
@@ -89,39 +95,57 @@ recordp read_record(espp esp)
 	{
 	rec->buf = 0; rec->pos = 0;
 	uncompress_record(esp, rec);
-	read_record_fields(esp, rec);
+	read_record_subrecords(esp, rec);
 	Pos += rec->hed->size;
 	}
 	else
-	read_record_fields(esp, rec);
+	read_record_subrecords(esp, rec);
 	}
 	return rec;
 }
 
-inline subrecordp read_field(espp, recordp, unsigned int);
+inline subrecordp read_subrecord(espp, recordp, unsigned int);
 
-inline void read_record_fields(espp esp, recordp rec)
+inline void read_record_subrecords(espp esp, recordp rec)
 {
-	long *pos = &Pos;
+	unsigned *pos = &Pos;
 	if (rec->hed->flags & 0x00040000)
 	pos = &rec->pos;
-	long start = *pos;
+	unsigned start = *pos;
 	unsigned int large = 0;
 	while(*pos - start < rec->actualSize)
 	{
 	subrecordp sub;
-	sub = read_field(esp, rec, large);
+	sub = read_subrecord(esp, rec, large);
 	large = 0;
 	if (sub->hed->sgn == *(unsigned int *)"XXXX")
 	large = *(unsigned int *)sub->data;
 	else
 	insert(rec->subrecords, sub);
+	if ( rec->lazy )
+	{
+	*pos = start + rec->actualSize;
+	break;
+	}
 	}
 }
 
-inline subrecordp read_field(espp esp, recordp rec, unsigned int override)
+api void esp_read_lazy_record(recordp rec)
 {
-	long *pos = &Pos;
+	if (rec->lazy)
+	{
+	printf("reading lazy record\n");
+	rec->lazy = 0;
+	//rec->subrecords->size = 0;
+	rec->esp->pos = rec->offset;
+	rec->esp->pos += sizeof(struct record_header);
+	read_record_subrecords(rec->esp, rec);
+	}
+}
+
+inline subrecordp read_subrecord(espp esp, recordp rec, unsigned int override)
+{
+	unsigned *pos = &Pos;
 	char *buf = Buf;
 	if (rec->hed->flags & 0x00040000)
 	{
@@ -133,8 +157,10 @@ inline subrecordp read_field(espp esp, recordp rec, unsigned int override)
 	// hed
 	sub->s = 's';
 	sub->index = rec->indices++;
-	sub->id = Count.fields++;
+	sub->id = Count.subrecords++;
+#if PLUGINS_SAVE_OFFSETS
 	sub->offset = Pos;
+#endif
 	sub->hed = buf + *pos;
 	*pos += sizeof(struct subrecord_header);
 	sub->actualSize = override == 0 ? sub->hed->size : override;
@@ -151,34 +177,31 @@ inline void read_grup_records(espp, grupp);
 grupp read_grup(espp esp)
 {
 	grupp grp = calloc(1, sizeof(grup));
-	//grup->lowest = grup->highest = 0;
-	// hed
 	grp->g = 'g';
 	grp->id = Count.grups++;
 	grp->hed = Buf + Pos;
 	Pos += sizeof(struct grup_header);
 	Pos += 0;
 	grp->data = Buf + Pos;
-	narray(&grp->mixed, 12);
+	narray(&grp->mixed, 1);
 	// printf("G %.4s %u > ", (char *)&grup->hed->sgn, grup->hed->size);
 	// records
 	read_grup_records(esp, grp);
-	// printf("\nend grup\n");
 	return grp;
 }
 
 const unsigned int peek_type(espp esp)
 {
-	return *(unsigned int *) (Buf + Pos);
+	return *(unsigned *) (Buf + Pos);
 }
 
 inline void read_grup_records(espp esp, grupp grp)
 {
-	long size = grp->hed->size - sizeof(struct grup_header) - 16;
-	long start = Pos;
+	unsigned size = grp->hed->size - sizeof(struct grup_header);
+	unsigned start = Pos;
 	while (Pos - start < size)
 	{
-	if (peek_type(esp) == *(unsigned int *) "GRUP")
+	if (peek_type(esp) == *(unsigned int *)"GRUP")
 	insert(grp->mixed, read_grup(esp));
 	else
 	insert(grp->mixed, read_record(esp));
@@ -198,7 +221,8 @@ api grupp esp_top_grup(const espp esp, const char type[5])
 	return NULL;
 }
 
-
+// 439341069
+// 4294967295
 
 inline void build_form_id(struct form_id *form_id, unsigned int formId)
 {
@@ -208,10 +232,6 @@ inline void build_form_id(struct form_id *form_id, unsigned int formId)
 #endif
 	form_id->modIndex = formId >> 24;
 	form_id->objectIndex = formId & ~(form_id->modIndex << 24);
-	//if (modIndex >= masters.size())
-	//fi->plugin = parentPluginName;
-	//else
-	//fi->plugin = masters[fi->modIndex];
 }
 
 void make_form_ids(espp esp)
@@ -268,7 +288,6 @@ api revised_array * esp_filter_objects(const espp esp, const char type[5])
 
 void uncompress_record(espp esp, recordp rec)
 {
-	// Workhorse code that is similar to how Bsa does it
 	char *src = rec->data;
 	const unsigned int realSize = *(unsigned int *)src;
 	const unsigned int size = rec->hed->size - 4;

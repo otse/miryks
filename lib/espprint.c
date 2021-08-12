@@ -60,7 +60,11 @@ id: %u\
 record->id,
 (char *)&record->hed->sgn,
 record->hed->size,
+#if PLUGINS_SAVE_OFFSETS
 record->offset,
+#else
+0,
+#endif
 record->hed->flags,
 record->hed->formId,
 record->hed->formId,
@@ -105,7 +109,11 @@ id: %u\
 field->id,
 (char *)&field->hed->sgn,
 field->actualSize,
+#if PLUGINS_SAVE_OFFSETS
 field->offset,
+#else
+0,
+#endif
 &field->data,
 specifics(esp, x, field)
 );
