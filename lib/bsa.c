@@ -119,8 +119,9 @@ void bsa_rc_path(Bsa *bsa, int i, int r)
 
 void resources(Bsa *bsa)
 {
-	bsa->rc = malloc(sizeof(Rc *) * Hedr.files);
-	bsa->r = malloc(sizeof(int) * Hedr.folders);
+	// abstract file records
+	bsa->rc = calloc(Hedr.files, sizeof(Rc *));
+	bsa->r = calloc(Hedr.folders, sizeof(int));
 	int r = 0;
 	for (unsigned int i = 0; i < Hedr.folders; i++)
 	{
@@ -128,7 +129,7 @@ void resources(Bsa *bsa)
 	for (unsigned int j = 0; j < bsa->fld[i].num; j++)
 	{
 	bsa->rc[r] = calloc(1, sizeof(Rc));
-	*bsa->rc[r] = (Rc){bsa, i, j, r, -1, bsa->cb[r], NULL};
+	*bsa->rc[r] = (Rc){bsa, i, j, r, 0L, bsa->cb[r], NULL, ""};
 	bsa_rc_path(bsa, i, r);
 	r++;
 	}

@@ -51,6 +51,8 @@ struct esp
 	} count;
 };
 
+typedef esp Esp;
+
 #pragma pack(push, 1)
 
 struct grup_header

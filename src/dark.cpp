@@ -12,12 +12,13 @@
 using namespace dark;
 using namespace skyrim;
 
+
 void load_bucket()
 {
 	return;
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	import_nif(rc, true);
-	simple_viewer(rc);
+	Nif *nif = import_nif(rc, true);
+	simple_viewer(nif);
 }
 
 void load_gloomgen()
@@ -76,10 +77,10 @@ int main()
 	collision_init();
 	cameraCur = personCam;
 #if 1
-	// Secret bucket beginning
+	// Bucket beginning
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	import_nif(rc, true);
-	simple_viewer(rc);
+	Nif *nif = import_nif(rc, true);
+	simple_viewer(nif);
 	//nifp_test();
 #endif
 	//put_it_fullscreen();
@@ -105,7 +106,7 @@ int main()
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 
-void dark::simple_viewer(Rc *rc)
+void dark::simple_viewer(Nif *nif)
 {
 	static Mesh *mesh = nullptr;
 	static DrawGroup *drawGroup = nullptr;
@@ -115,7 +116,6 @@ void dark::simple_viewer(Rc *rc)
 		delete mesh;
 		delete drawGroup;
 	}
-	Nif *nif = import_nif(rc, true);
 	mesh = new Mesh(nif);
 	drawGroup = new DrawGroup(
 		mesh->baseGroup, translate(mat4(1.0), personCam->pos));

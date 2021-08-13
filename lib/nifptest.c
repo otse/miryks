@@ -21,7 +21,7 @@ void nifp_test()
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;
 	nifp_read(bucket);
-	nifp_save(rc, bucket);
+	// ext_nifp_save(rc, bucket);
 	// visitor
 	NifpRd *rd = calloc_nifprd();
 	rd->nif = bucket;

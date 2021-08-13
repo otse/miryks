@@ -16,7 +16,7 @@ using namespace dark;
 
 static std::stringstream ss;
 
-static Plugin *plugin = NULL;
+static espp plugin = NULL;
 
 void im_grup(grupp , int);
 void im_record(record *);
@@ -118,7 +118,7 @@ void esp_gui()
 		// Unload gui-mounted plugin
 		if (plugin && !has_plugin(plugin->name))
 			free_plugin(&plugin);
-		Plugin *replace = load_plugin(buf, false);
+		espp replace = load_plugin(buf, false);
 		if (replace)
 		{
 			plugin = replace;

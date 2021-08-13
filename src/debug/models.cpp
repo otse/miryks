@@ -15,16 +15,16 @@ void nifp_gui()
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
-	for (int i = 0; i < nifs; i++)
+	for (const auto &[key, value] : nifs)
 	{
-		Nif *nif = nifmap[i].value;
+		Nifp *nif = value;
 
 		//if (!nif->path)
 		//continue;
 
 		if (ImGui::TreeNode(nif->path))
 		{
-			ImGui::Text("key # %i", nifmap[i].key);
+			ImGui::Text("key # %i", key);
 			ImGui::Separator();
 			if (ImGui::TreeNode("Header"))
 			{
@@ -100,7 +100,7 @@ void nifp_gui()
 
 			if (ImGui::Button(VIEW_NIF))
 			{
-				simple_viewer((Resource *)nifmap[i].key);
+				simple_viewer(nif);
 			}
 
 			ImGui::TreePop();

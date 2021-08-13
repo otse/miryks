@@ -76,7 +76,7 @@ namespace dark
 				nif->path = path;
 				fbuf(path, (char **)&nif->buf);
 				nifp_read(nif);
-				nifp_save(nif, nif);
+				ext_nifp_save(nif, nif);
 				draugrAttack = new Keyframes(nif);
 			}
 		}
@@ -142,7 +142,7 @@ namespace dark
 				nif->path = path;
 				fbuf(path, (char **)&nif->buf);
 				nifp_read(nif);
-				nifp_save(nif, nif);
+				ext_nifp_save(nif, nif);
 				humanIdle = new Keyframes(nif);
 			}
 		}

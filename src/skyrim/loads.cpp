@@ -18,8 +18,37 @@
 
 namespace dark
 {
-	// todo todo todo
-	const char *dataFolder = "Data/";
+	std::map<void *, Nif *> nifs;
+
+	int ext_nifp_save(void *key, Nif *nif)
+	{
+		nifs.emplace(key, nif);
+	}
+
+	Nif *ext_nifp_saved(void *key)
+	{
+		auto has = nifs.find(key);
+		if (has != nifs.end())
+			*has->second;
+		return nullptr;
+	}
+
+	Nif *import_nif(Rc *rc, bool store)
+	{
+		assertm(rc, "import_nif null rc");
+		Nif *nif;
+		nif = ext_nifp_saved(rc);
+		if (store && nif)
+			return nif;
+		bsa_read(rc);
+		nif = calloc_nifp();
+		nif->path = rc->path;
+		nif->buf = rc->buf;
+		nifp_read(nif);
+		if (store)
+			ext_nifp_save(rc, nif);
+		return nif;
+	}
 
 	Rc *load_rc(const char *prepend, const char *path, unsigned long flags)
 	{
@@ -33,23 +62,6 @@ namespace dark
 			printf("no rc at %s\n", s);
 		bsa_read(rc);
 		return rc;
-	}
-
-	Nif *import_nif(Rc *rc, bool store)
-	{
-		assertm(rc, "import_nif null rc");
-		Nif *nif;
-		nif = nifp_saved(rc);
-		if (store && nif)
-			return nif;
-		bsa_read(rc);
-		nif = calloc_nifp();
-		nif->path = rc->path;
-		nif->buf = rc->buf;
-		nifp_read(nif);
-		if (store)
-			nifp_save(rc, nif);
-		return nif;
 	}
 
 	Mesh *create_simple_mesh_from_modl(const char *model, bool store)
@@ -70,7 +82,7 @@ namespace dark
 	espp load_plugin(const char *filename, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
-		std::string path = editme + dataFolder + filename;
+		std::string path = editme + "/Data/" + filename;
 		char *buf;
 		int ret;
 		espp esp;
@@ -100,7 +112,7 @@ namespace dark
 		Bsa *bsa = bsa_get(filename);
 		if (bsa)
 			return bsa;
-		std::string path = editme + dataFolder + filename;
+		std::string path = editme + "/Data/" + filename;
 		if (exists(path.c_str()))
 			return bsa_load(path.c_str());
 		else if (exists(filename))

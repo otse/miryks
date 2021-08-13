@@ -38,10 +38,10 @@ typedef struct Rc
 {
 	struct Bsa *bsa;
 	int i, j, r;
-	unsigned long size;
+	long size;
 	const char *name;
 	const unsigned char *buf;
-	char path[255];
+	char path[260];
 } Rc;
 
 typedef struct Bsa

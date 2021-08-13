@@ -16,7 +16,13 @@ struct nifp_hedr;
 struct Nifp;
 struct NifpRd;
 
-typedef struct Nifp
+typedef struct Nifp Nifp;
+typedef struct NifpRd NifpRd;
+
+typedef Nifp Nif;
+typedef NifpRd Rd;
+
+struct Nifp
 {
 	int num;
 	const char *path;
@@ -24,11 +30,11 @@ typedef struct Nifp
 	unsigned pos;
 	struct nifp_hedr *hdr;
 	void **blocks;
-} Nifp;
+};
 
-#define Callback(x) void (*x ## _callback) (struct NifpRd *, struct x ## _pointer *);
+#define callback(x) void (*x ## _callback) (struct NifpRd *, struct x ## _pointer *);
 
-typedef struct NifpRd
+struct NifpRd
 {
 	int x;
 	char *skips;
@@ -36,22 +42,21 @@ typedef struct NifpRd
 	void *data;
 	int parent, current;
 	void (*other) (struct NifpRd *, void *block_pointer);
-	Callback(ni_node)
-	Callback(ni_tri_shape)
-	Callback(ni_tri_shape_data)
-	Callback(bs_lighting_shader_property)
-	Callback(bs_effect_shader_property)
-	Callback(bs_shader_texture_set)
-	Callback(ni_alpha_property)
-	Callback(ni_controller_sequence)
-	Callback(ni_skin_instance)
-	Callback(ni_skin_data)
-	Callback(ni_skin_partition)
-	special_edition
-	Callback(bs_tri_shape)
-} NifpRd;
+	callback(ni_node)
+	callback(ni_tri_shape)
+	callback(ni_tri_shape_data)
+	callback(bs_tri_shape) special_edition
+	callback(bs_shader_texture_set)
+	callback(ni_alpha_property)
+	callback(ni_controller_sequence)
+	callback(ni_skin_instance)
+	callback(ni_skin_data)
+	callback(ni_skin_partition)
+	callback(bs_lighting_shader_property)
+	callback(bs_effect_shader_property)
+};
 
-#undef Callback
+#undef callback
 
 void nifp_test();
 
@@ -67,8 +72,6 @@ api void free_nifprd(NifpRd **);
 api void nifp_rd(NifpRd *);
 
 api void nifp_read(Nifp *);
-api void nifp_save(void *, Nifp *);
-api Nifp *nifp_saved(void *);
 
 api char *nifp_get_string(Nifp *, int);
 api char *nifp_get_block_type(Nifp *, int);
@@ -76,16 +79,6 @@ api void *nifp_get_block(Nifp *, int);
 
 api void nifp_print_hedr(Nifp *, char *);
 api void nifp_print_block(Nifp *, int, char [1000]);
-
-#define NIFP_GET_BLOCK(y, x, nif, i)  struct x *y = (struct x *)nifp_get_block(nif, i)
-
-struct nifppair
-{
-	void *key;
-	Nifp *value;
-};
-extern int nifs;
-extern struct nifppair nifmap[5000];
 
 #pragma pack(push, 1)
 
@@ -163,75 +156,6 @@ legendary_edition struct ni_tri_shape_pointer
 	{
 		ni_ref shader_property, alpha_property;
 	} * B;
-};
-
-#define offset_bs_vertex_desc(flags) \
-	(unsigned short)((flags & 0xFFFFFF0000000000) >> 44)
-
-inline void api nifp_sse_dissect_vertex_desc(
-	unsigned long long bs_vertex_desc,
-	int *vertex, int *uvs, int *normals, int *tangents, int *colors, int *skinned)
-{
-	unsigned short flags = offset_bs_vertex_desc(bs_vertex_desc);
-	*vertex = flags & 1 << 0x0;
-	*uvs = flags & 1 << 0x1;
-	*normals = flags & 1 << 0x3;
-	*tangents = flags & 1 << 0x4;
-	*colors = flags & 1 << 0x5;
-	*skinned = flags & 1 << 0x6;
-}
-
-typedef struct { float x, y, z; } Vector3;
-typedef struct { unsigned short u, v; } HalfTexCoord;
-typedef struct { unsigned char x, y, z; } ByteVector3;
-typedef struct { unsigned char r, g, b, a; } ByteColor4;
-typedef struct { unsigned short a, b, c; } ShortTriangle;
-
-special_edition struct bs_vertex_data_sse_all
-{
-	Vector3 vertex;
-	float bitangent_x;
-	HalfTexCoord uv;
-	ByteVector3 normal;
-	unsigned char bitangent_y;
-	ByteVector3 tangent;
-	unsigned char bitangent_z;
-	ByteColor4 vertex_colors;
-};
-
-special_edition struct bs_vertex_data_sse_no_clr
-{
-	Vector3 vertex;
-	float bitangent_x;
-	HalfTexCoord uv;
-	ByteVector3 normal;
-	unsigned char bitangent_y;
-	ByteVector3 tangent;
-	unsigned char bitangent_z;
-};
-
-special_edition struct bs_tri_shape_pointer
-{
-	struct ni_common_layout_pointer *common;
-	struct {
-		Vec3 center;
-		float radius;
-	} *bounding_sphere;
-	struct {
-		ni_ref skin;
-		ni_ref shader_property;
-		ni_ref alpha_property;
-	} *refs;
-	struct {
-	unsigned long long vertex_desc;
-	unsigned short num_triangles;
-	unsigned short num_vertices;
-	unsigned int data_size;
-	} *infos;
-	struct bs_vertex_data_sse_all    *vertex_data_all;
-	struct bs_vertex_data_sse_no_clr *vertex_data_no_clr;
-	ShortTriangle *triangles;
-	unsigned int *particle_data_size;
 };
 
 legendary_edition struct ni_skin_instance_pointer
@@ -552,6 +476,75 @@ struct ni_text_key_extra_data_pointer
 		unsigned int num_text_keys;
 	} * A;
 	ni_ref *text_keys;
+};
+
+#define offset_bs_vertex_desc(flags) \
+	(unsigned short)((flags & 0xFFFFFF0000000000) >> 44)
+
+inline void api nifp_sse_dissect_vertex_desc(
+	unsigned long long bs_vertex_desc,
+	int *vertex, int *uvs, int *normals, int *tangents, int *colors, int *skinned)
+{
+	unsigned short flags = offset_bs_vertex_desc(bs_vertex_desc);
+	*vertex = flags & 1 << 0x0;
+	*uvs = flags & 1 << 0x1;
+	*normals = flags & 1 << 0x3;
+	*tangents = flags & 1 << 0x4;
+	*colors = flags & 1 << 0x5;
+	*skinned = flags & 1 << 0x6;
+}
+
+typedef struct { float x, y, z; } Vector3;
+typedef struct { unsigned short u, v; } HalfTexCoord;
+typedef struct { unsigned char x, y, z; } ByteVector3;
+typedef struct { unsigned char r, g, b, a; } ByteColor4;
+typedef struct { unsigned short a, b, c; } ShortTriangle;
+
+special_edition struct bs_vertex_data_sse_all
+{
+	Vector3 vertex;
+	float bitangent_x;
+	HalfTexCoord uv;
+	ByteVector3 normal;
+	unsigned char bitangent_y;
+	ByteVector3 tangent;
+	unsigned char bitangent_z;
+	ByteColor4 vertex_colors;
+};
+
+special_edition struct bs_vertex_data_sse_no_clr
+{
+	Vector3 vertex;
+	float bitangent_x;
+	HalfTexCoord uv;
+	ByteVector3 normal;
+	unsigned char bitangent_y;
+	ByteVector3 tangent;
+	unsigned char bitangent_z;
+};
+
+special_edition struct bs_tri_shape_pointer
+{
+	struct ni_common_layout_pointer *common;
+	struct {
+		Vec3 center;
+		float radius;
+	} *bounding_sphere;
+	struct {
+		ni_ref skin;
+		ni_ref shader_property;
+		ni_ref alpha_property;
+	} *refs;
+	struct {
+	unsigned long long vertex_desc;
+	unsigned short num_triangles;
+	unsigned short num_vertices;
+	unsigned int data_size;
+	} *infos;
+	struct bs_vertex_data_sse_all    *vertex_data_all;
+	struct bs_vertex_data_sse_no_clr *vertex_data_no_clr;
+	ShortTriangle *triangles;
+	unsigned int *particle_data_size;
 };
 
 #pragma pack(pop)

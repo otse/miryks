@@ -1,36 +1,13 @@
 /// nif with pointers
 
-// will read, sort legendary and special edition nifs
+// will read, sort both legendary and special edition nifs
 
-// has its own block reading language called sink, sail
-// :)
+// has its own block reading language down the middle
 
 #include "common.h"
 
 #include "nifp.h"
 #include "nitypes.h"
-
-// ignore
-
-int nifs = 0;
-struct nifppair nifmap[5000];
-
-api void nifp_save(void *key, Nifp *nif) {
-	nif->num = nifs;
-	nifmap[nifs].key = key;
-	nifmap[nifs].value = nif;
-	nifs++;
-	assertm(nifs < 5000, "nifp overflow");
-}
-
-// ignore
-
-api Nifp *nifp_saved(void *key) {
-	for (int i = 0; i < nifs; i++)
-	if (nifmap[i].key == key)
-	return nifmap[i].value;
-	return NULL;
-}
 
 #define Hedr   nif->hdr
 #define Buf    nif->buf
@@ -57,9 +34,8 @@ api void *nifp_get_block(Nifp *nif, int i) {
 }
 
 api Nifp *calloc_nifp() {
-	Nifp *nif = malloc(sizeof(Nifp));
-	memset(nif, 0, sizeof(Nifp));
-	nif->hdr = malloc(sizeof(struct nifp_hedr));
+	Nifp *nif = calloc(1, sizeof(Nifp));
+	nif->hdr = calloc(1, sizeof(struct nifp_hedr));
 	return nif;
 }
 
@@ -142,7 +118,6 @@ void nifp_read_header(Nifp *nif) {
 
 #define nifpr Nifp *nif, int n
 
-// todo get RID of these function declarations somehow
 static void big_block_reader(Nifp *, int);
 
 legendary_edition
@@ -178,6 +153,8 @@ void nifp_read_blocks(Nifp *nif)
 	}
 }
 
+#define woo ni_is_any(x, y, z) block = read_ni_node(nif, n);
+
 void big_block_reader(Nifp *nif, int n)
 {
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
@@ -208,7 +185,8 @@ void big_block_reader(Nifp *nif, int n)
 	Blocks[n] = block;
 }
 
-// sink, sail
+// language to read blockz
+// most blocks here are actually for legendary edition
 
 static inline void sink(Nifp *nif, void **dest, int size) {
 	*dest = Depos;
@@ -231,75 +209,58 @@ static inline void sink(Nifp *nif, void **dest, int size) {
 } \
 
 NI_READ ( ni_common_layout )
-
 SINK ( nif, block, F )
 SAIL ( nif, block, extra_data_list, F, num_extra_data_list )
 SINK ( nif, block, A )
-
 END_READ()
 
 NI_READ( ni_node )
-
 block->common = read_ni_common_layout( nif, n );
 SINK ( nif, block, A )
 SAIL ( nif, block, children, A, num_children )
 SINK ( nif, block, B )
 SAIL ( nif, block, effects, B, num_effects )
-
 END_READ()
 
 NI_READ( bs_lighting_shader_property )
-
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, B )
-
 END_READ()
 
 NI_READ( bs_effect_shader_property )
-
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, B )
 read_sized_string( nif, &block->source_texture );
 SINK ( nif, block, C )
 read_sized_string( nif, &block->greyscale_texture );
-
 END_READ()
 
 NI_READ( bs_shader_texture_set )
-
 SINK ( nif, block, A )
 read_sized_strings( nif, &block->textures, block->A->num_textures );
-
 END_READ()
 
 NI_READ(ni_alpha_property)
-
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, C )
-
 END_READ()
 
 NI_READ( ni_controller_sequence )
-
 SINK ( nif, block, A )
 SAIL ( nif, block, controlled_blocks, A, num_controlled_blocks )
 SINK ( nif, block, C )
-
 END_READ()
 
 NI_READ( ni_transform_interpolator )
-
 //printf("read_ni_transform_interpolator\n");
 SINK ( nif, block, transform )
 SINK ( nif, block, B )
-
 END_READ()
 
 NI_READ( ni_transform_data ) legendary_edition
-
 SINK ( nif, block, A )
 
 if ( block->A->num_rotation_keys > 0 )
@@ -315,21 +276,17 @@ SINK ( nif, block, translations )
 SAIL ( nif, block, translation_keys, translations, num_keys )
 SINK ( nif, block, scales )
 SAIL ( nif, block, scale_keys, scales, num_keys )
-
 END_READ()
 
 NI_READ( ni_tri_shape ) legendary_edition
-
 printf("read ni tri shape pointer!\n");
 block->common = read_ni_common_layout( nif, n );
 SINK ( nif, block, A )
 SKIP( 9 )
 SINK ( nif, block, B )
-
 END_READ()
 
 NI_READ( ni_tri_shape_data ) legendary_edition
-
 printf(" ni tri shape data in sse ?!\n");
 
 SINK ( nif, block, A )
@@ -378,11 +335,9 @@ if (ni_is_type(BS_DISMEMBER_SKIN_INSTANCE))
 	SINK ( nif, block, B )
 	SAIL ( nif, block, partitions, B, num_partitions )
 }
-
 END_READ()
 
 NI_READ( ni_skin_data ) legendary_edition
-
 //printf("read ni skin data\n");
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, B )
@@ -401,7 +356,6 @@ for (unsigned int i = 0; i < block->B->num_bones; i++)
 END_READ()
 
 NI_READ( ni_skin_partition ) legendary_edition
-
 SINK ( nif, block, num_skin_partition_blocks )
 
 block->skin_partition_blocks = calloc(*block->num_skin_partition_blocks, sizeof(struct skin_partition *));
@@ -436,11 +390,9 @@ for (unsigned int i = 0; i < *block->num_skin_partition_blocks; i++)
 
 	SINK ( nif, skin_partition, unknown_short )
 }
-
 END_READ()
 
 NI_READ ( bs_tri_shape ) special_edition
-
 block->common = read_ni_common_layout( nif, n );
 
 SINK ( nif, block, bounding_sphere )
@@ -468,5 +420,4 @@ else {
 
 SAIL ( nif, block, triangles, infos, num_triangles )
 SINK ( nif, block, particle_data_size )
-
 END_READ()

@@ -41,7 +41,7 @@ namespace dark
 		char *lvalue = (char *)nif->buf;
 		fbuf(path, &lvalue);
 		nifp_read(nif);
-		nifp_save(nif, nif);
+		ext_nifp_save(nif, nif);
 		Kf *kf = new Kf(nif);
 		return kf;
 	}

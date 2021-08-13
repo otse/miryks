@@ -114,10 +114,8 @@ namespace skyrim
 			}
 
 			Bone *bone = has->second;
-			ni_transform_interpolator_pointer *tip = (ni_transform_interpolator_pointer *)
-				nifp_get_block(model, cbp->interpolator);
-			ni_transform_data_pointer *tdp = (ni_transform_data_pointer *)
-				nifp_get_block(model, tip->B->data);
+			auto tip = (ni_transform_interpolator_pointer *)nifp_get_block(model, cbp->interpolator);
+			auto tdp = (ni_transform_data_pointer *)nifp_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)
 				continue;
 			vec4 ro = gloomVec4(tip->transform->rotation);

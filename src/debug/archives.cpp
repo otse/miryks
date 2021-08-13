@@ -8,7 +8,7 @@ using namespace dark;
 
 static char hedrstr[600] = {"not loaded"};
 
-Archive *bsa = NULL;
+Bsa *bsa = NULL;
 
 void bsa_gui()
 {
@@ -31,7 +31,7 @@ void bsa_gui()
 	if (strcmp(buf, buf2))
 	{
 		memcpy(buf2, buf, MAX);
-		Archive *replace = load_archive(buf2);
+		Bsa *replace = load_archive(buf2);
 		if (replace)
 		{
 			bsa = replace;
@@ -59,7 +59,7 @@ void bsa_gui()
 		return;
 	}
 
-	auto func = [&](Resource *rc) {
+	auto func = [&](Rc *rc) {
 		if (!rc)
 			return;
 		ImGui::Separator();
@@ -83,12 +83,13 @@ void bsa_gui()
 		{
 			bsa_read(rc);
 		}
-		if (rc->size > -1)
+		if (rc->size > 0)
 		{
 			ImGui::SameLine();
 			if (ImGui::Button(VIEW_NIF))
 			{
-				simple_viewer(rc);
+				Nif *nif = import_nif(rc, true);
+				simple_viewer(nif);
 			}
 		}
 
@@ -112,7 +113,7 @@ void bsa_gui()
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
 
-			static Resource *rc = nullptr;
+			static Rc *rc = nullptr;
 
 			if (reset)
 			{
@@ -154,8 +155,8 @@ void bsa_gui()
 			static const char *items[BSA_MAX_SEARCHES];
 			static int num = 0;
 
-			static Resource *rc = nullptr;
-			static Resource *rcs[BSA_MAX_SEARCHES];
+			static Rc *rc = nullptr;
+			static Rc *rcs[BSA_MAX_SEARCHES];
 
 			if (reset)
 			{
@@ -233,7 +234,8 @@ void bsa_gui()
 								ImGui::SameLine();
 								if (ImGui::Button(VIEW_NIF))
 								{
-									simple_viewer(rc);
+									Nif *nif = import_nif(rc, true);
+									simple_viewer(nif);
 								}
 							}
 							ImGui::Separator();

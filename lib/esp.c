@@ -134,7 +134,7 @@ api void esp_read_lazy_record(recordp rec)
 {
 	if (rec->lazy)
 	{
-	printf("reading lazy record\n");
+	//printf("reading lazy record\n");
 	rec->lazy = 0;
 	//rec->subrecords->size = 0;
 	rec->esp->pos = rec->offset;

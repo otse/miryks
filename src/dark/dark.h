@@ -6,7 +6,7 @@
 
 #define INAL_BAD_SORRY "Inal bad, sorry"
 
-// c lib defs
+// c defs
 struct grup;
 struct record;
 struct subrecord;
@@ -16,10 +16,6 @@ struct Bsa;
 struct Nifp;
 struct NifpRd;
 
-typedef Rc Resource;
-typedef esp Plugin;
-typedef esp Esp;
-typedef Bsa Archive;
 typedef Nifp Nif;
 typedef NifpRd Rd;
 typedef subrecord Field;
@@ -48,10 +44,14 @@ using namespace skyrim;
 
 namespace dark
 {
+	extern std::map<void *, Nif *> nifs;
+
+	int ext_nifp_save(void *, Nifp *);
+	Nifp *ext_nifp_saved(void *);
 	Rc *load_rc(const char *, const char *, unsigned long);
 	Nif *import_nif(Rc *, bool);
 	Mesh *create_simple_mesh_from_modl(const char *, bool);
-	Esp *load_plugin(const char *, bool = true);
+	esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
 
 	extern unsigned int fps;
@@ -59,7 +59,7 @@ namespace dark
 	void setup_glfw();
 	void program_while();
 
-	void simple_viewer(Resource *);
+	void simple_viewer(Nif *);
 	void doImGui();
 	void renderImGui();
 
