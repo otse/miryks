@@ -108,7 +108,7 @@ id: %u\
 ",
 field->id,
 (char *)&field->hed->sgn,
-field->actualSize,
+field->hed->size,
 #if PLUGINS_SAVE_OFFSETS
 field->offset,
 #else

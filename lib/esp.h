@@ -7,10 +7,6 @@
 
 #define SNPRINTF_FORM_ID 0
 
-#define PLUGINS_SAVE_OFFSETS 1
-
-#define SUPPORT_XXX_LARGE_SUBRECORDS 1 // doesnt do anything yet
-
 // positions have type unsigned
 
 struct form_id;
@@ -43,12 +39,12 @@ struct esp
 	unsigned filesize;
 	int active;
 	record *header;
-	revised_array * grups, * records;
+	revised_array * grups, * records, * large;
 	struct form_id *formIds;
 	struct
 	{
 	unsigned short grups, records, subrecords, uncompress;
-	} count;
+	} ids;
 };
 
 typedef esp Esp;
@@ -102,19 +98,17 @@ struct grup
 struct record
 {
 	char r;
-	const struct record_header *hed;
-#if PLUGINS_SAVE_OFFSETS
-	unsigned offset;
-#endif
-	unsigned short indices;
 	unsigned short id;
+	unsigned short indices;
+	unsigned offset;
+	const struct record_header *hed;
 	revised_array *subrecords;
 	unsigned char *data;
-	unsigned int actualSize;
 	struct form_id *form_id;
 	esp *esp;
 	char lazy;
 	// compression related
+	unsigned int size2;
 	unsigned pos;
 	char *buf;
 };
@@ -122,13 +116,9 @@ struct record
 struct subrecord
 {
 	char s;
-	const struct subrecord_header *hed;
-#if PLUGINS_SAVE_OFFSETS
-	unsigned offset;
-#endif
-	unsigned int index;
 	unsigned short id;
-	unsigned int actualSize;
+	unsigned offset;
+	const struct subrecord_header *hed;
 	unsigned char *data;
 };
 

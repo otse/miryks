@@ -9,11 +9,6 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
-#define Buf esp->buf
-#define Pos esp->pos
-
-#define Count esp->count
-
 int esp_skip_subrecords = 0; // fast option
 
 int esp_only_read_first_subrecord = 1;
@@ -22,11 +17,13 @@ int esp_only_read_first_subrecord = 1;
 
 static espp plugins[PLUGINS] = { NULL };
 
-#define COUNT_OF(x) sizeof(x) / sizeof(0[x])
-
 inline void narray(revised_array **, unsigned int);
 inline void grow(revised_array *);
 inline void insert(revised_array *, void *);
+
+#define Buf esp->buf
+#define Pos esp->pos
+#define Ids esp->ids
 
 void make_form_ids(espp );
 
@@ -54,6 +51,7 @@ api int plugin_load(espp esp)
 	esp->header = read_record(esp);
 	narray(&esp->grups, 200);
 	narray(&esp->records, hedr_num_records(esp));
+	narray(&esp->large, 10);
 	while(Pos < esp->filesize)
 	{
 	grupp grp = read_grup(esp);
@@ -64,110 +62,112 @@ api int plugin_load(espp esp)
 }
 
 void uncompress_record(espp, recordp);
-inline void read_record_subrecords(espp, recordp);
+inline void process_record(espp, recordp);
 
 recordp read_record(espp esp)
 {
 	recordp rec;
 	rec = calloc(1, sizeof(record));
-	// head
 	rec->r = 'r';
-	rec->id = Count.records++;
-#if PLUGINS_SAVE_OFFSETS
+	rec->id = Ids.records++;
 	rec->offset = Pos;
-#endif
 	rec->hed = Buf + Pos;
 	Pos += sizeof(struct record_header);
-	Pos += 0;
-	rec->actualSize = rec->hed->size;
+	rec->size2 = rec->hed->size;
 	rec->data = Buf + Pos;
 	rec->lazy = esp_only_read_first_subrecord;
 	rec->esp = esp;
 	narray(&rec->subrecords, 1);
 	insert(esp->records, rec);
-	// printf("R %.4s %u > ", (char *)&rec->hed->sgn, rec->hed->dataSize);
-	// fields
 	if ( esp_skip_subrecords )
 	Pos += rec->hed->size;
-	else
+	
+	else if (rec->hed->flags & 0x00040000)
 	{
-	if (rec->hed->flags & 0x00040000)
-	{
-	rec->buf = 0; rec->pos = 0;
+	rec->buf = 0;
+	rec->pos = 0;
 	uncompress_record(esp, rec);
-	read_record_subrecords(esp, rec);
-	Pos += rec->hed->size;
+	process_record(esp, rec);
+	Pos += rec->hed->size; // Actual buffer is still behind
 	}
 	else
-	read_record_subrecords(esp, rec);
-	}
+	process_record(esp, rec);
+	
 	return rec;
 }
 
-inline subrecordp read_subrecord(espp, recordp, unsigned int);
+inline subrecordp read_sub(espp, recordp);
 
-inline void read_record_subrecords(espp esp, recordp rec)
+inline void process_record(espp esp, recordp rec)
 {
-	unsigned *pos = &Pos;
+	unsigned *pos;
+
 	if (rec->hed->flags & 0x00040000)
 	pos = &rec->pos;
-	unsigned start = *pos;
-	unsigned int large = 0;
-	while(*pos - start < rec->actualSize)
-	{
-	subrecordp sub;
-	sub = read_subrecord(esp, rec, large);
-	large = 0;
-	if (sub->hed->sgn == *(unsigned int *)"XXXX")
-	large = *(unsigned int *)sub->data;
 	else
-	insert(rec->subrecords, sub);
-	if ( rec->lazy )
+	pos = &Pos;
+
+	unsigned begin = *pos;
+
+	unsigned int large = 0;
+
+	while(*pos - begin < rec->size2)
 	{
-	*pos = start + rec->actualSize;
-	break;
+		subrecordp sub = read_sub(esp, rec);
+
+		if (sub->hed->sgn == *(unsigned int *)"XXXX")
+		{
+		// idk?
+		large = *(unsigned int *)sub->data;
+		subrecordp sub = read_sub(esp, rec);
+		*pos += large;
+		}
+
+		insert(rec->subrecords, sub);
+		
+		if ( rec->lazy )
+			break;
 	}
-	}
+	*pos = begin + rec->size2;
 }
 
 api void esp_read_lazy_record(recordp rec)
 {
 	if (rec->lazy)
 	{
-	//printf("reading lazy record\n");
 	rec->lazy = 0;
-	//rec->subrecords->size = 0;
 	rec->esp->pos = rec->offset;
 	rec->esp->pos += sizeof(struct record_header);
-	read_record_subrecords(rec->esp, rec);
+	process_record(rec->esp, rec);
 	}
 }
 
-inline subrecordp read_subrecord(espp esp, recordp rec, unsigned int override)
+inline subrecordp read_sub(espp esp, recordp rec)
 {
-	unsigned *pos = &Pos;
-	char *buf = Buf;
+	unsigned *pos;
+	char *buf;
+
+	// point to uncompressed or file space
 	if (rec->hed->flags & 0x00040000)
 	{
 	pos = &rec->pos;
 	buf = rec->buf;
 	}
+	else
+	{
+	pos = &Pos;
+	buf = Buf;
+	}
+
 	subrecordp sub;
 	sub = calloc(1, sizeof(subrecord));
-	// hed
 	sub->s = 's';
-	sub->index = rec->indices++;
-	sub->id = Count.subrecords++;
-#if PLUGINS_SAVE_OFFSETS
+	sub->id = Ids.subrecords++;
 	sub->offset = Pos;
-#endif
 	sub->hed = buf + *pos;
 	*pos += sizeof(struct subrecord_header);
-	sub->actualSize = override == 0 ? sub->hed->size : override;
-	// data
 	sub->data = buf + *pos;
-	*pos += sub->actualSize;
-	// printf("S %.4s %u > ", (char *)&sub->hed->sgn, sub->hed->size);
+	*pos += sub->hed->size;
 	return sub;
 }
 
@@ -178,14 +178,13 @@ grupp read_grup(espp esp)
 {
 	grupp grp = calloc(1, sizeof(grup));
 	grp->g = 'g';
-	grp->id = Count.grups++;
+	grp->id = Ids.grups++;
 	grp->hed = Buf + Pos;
 	Pos += sizeof(struct grup_header);
 	Pos += 0;
 	grp->data = Buf + Pos;
 	narray(&grp->mixed, 1);
-	// printf("G %.4s %u > ", (char *)&grup->hed->sgn, grup->hed->size);
-	// records
+
 	read_grup_records(esp, grp);
 	return grp;
 }
@@ -295,8 +294,8 @@ void uncompress_record(espp esp, recordp rec)
 	rec->buf = malloc(realSize * sizeof(char));
 	int ret = uncompress(rec->buf, (uLongf*)&realSize, src, size);
 	assertm(ret == Z_OK, "esp zlib");
-	rec->actualSize = realSize;
-	Count.uncompress++;
+	rec->size2 = realSize;
+	Ids.uncompress++;
 }
 
 api esppp get_plugins()
