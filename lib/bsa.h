@@ -46,9 +46,9 @@ typedef struct Rc
 
 typedef struct Bsa
 {
-	char *path, filename[260];
-	struct bsa_hedr hdr;
+	char filename[100];
 	void *stream;
+	struct bsa_hedr hdr;
 	struct bsa_fld *fld;
 	struct bsa_file **file;
 	Rc **rc;

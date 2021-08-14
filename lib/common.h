@@ -32,7 +32,7 @@ int exists(const char *);
 //char *fsamplevar(const char *, const char *, const char *);
 
 char *file_stem(char[260], const char *, char);
-char *file_name(char[260], const char *, char);
+char *file_name(char[100], const char *, char);
 char *abf(const char *, const char *);
 
 char *ReadFile2(const char *);

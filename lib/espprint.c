@@ -2,7 +2,7 @@
 
 #include "esp.h"
 
-api void esp_print_form_id(espp esp, char *s, struct form_id *fi)
+api void esp_print_form_id(Esp *esp, char *s, struct form_id *fi)
 {
 int w = snprintf(s, 200, "\
 modIndex: %u\
@@ -16,7 +16,7 @@ fi->objectIndex
 #define LOW(x) ((x) & 0xff)
 #define HIGH(x) ((x) >> 8)
 
-api void esp_print_grup(espp esp, char *s, grupp grup)
+api void esp_print_grup(Esp *esp, char *s, grupp grup)
 {
 int w = snprintf(s, 200, "\
 id: %u\
@@ -29,18 +29,18 @@ id: %u\
 \nelements: %u\
 ",
 grup->id,
-(char *)&grup->hed->sgn,
-grup->hed->size,
-(char *)&grup->hed->label,
-grup->hed->group_type,
-grup->hed->time_stamp,
-LOW(grup->hed->version_control_info),
-HIGH(grup->hed->version_control_info),
+(char *)&grup->hed.sgn,
+grup->hed.size,
+(char *)&grup->hed.label,
+grup->hed.group_type,
+grup->hed.time_stamp,
+LOW(grup->hed.version_control_info),
+HIGH(grup->hed.version_control_info),
 grup->mixed->size
 );
 }
 
-api void esp_print_record(espp esp, char *s, record *record)
+api void esp_print_record(Esp *esp, char *s, record *record)
 {
 int w = snprintf(s, 200, "\
 id: %u\
@@ -58,34 +58,34 @@ id: %u\
 \nfields: %i\
 ",
 record->id,
-(char *)&record->hed->sgn,
-record->hed->size,
+(char *)&record->hed.sgn,
+record->hed.size,
 #if PLUGINS_SAVE_OFFSETS
 record->offset,
 #else
 0,
 #endif
-record->hed->flags,
-record->hed->formId,
-record->hed->formId,
-(record->hed->flags & 0x00040000) != 0,
-record->hed->time_stamp,
-LOW(record->hed->version_control_info),
-HIGH(record->hed->version_control_info),
-record->hed->form_version,
+record->hed.flags,
+record->hed.formId,
+record->hed.formId,
+(record->hed.flags & 0x00040000) != 0,
+record->hed.time_stamp,
+LOW(record->hed.version_control_info),
+HIGH(record->hed.version_control_info),
+record->hed.form_version,
 record->subrecords->size
 );
 }
 
-char *specifics(espp esp, char *s, subrecord *field)
+char *specifics(Esp *esp, char *s, subrecord *field)
 {
-if (field->hed->sgn == *(unsigned int *)"EDID")
+if (field->hed.sgn == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
-if (field->hed->sgn == *(unsigned int *)"FULL")
+if (field->hed.sgn == *(unsigned int *)"FULL")
 snprintf(s, 300, "%s", field->data);
-if (field->hed->sgn == *(unsigned int *)"MAST")
+if (field->hed.sgn == *(unsigned int *)"MAST")
 snprintf(s, 300, "%s", field->data);
-if (field->hed->sgn == *(unsigned int *)"HEDR")
+if (field->hed.sgn == *(unsigned int *)"HEDR")
 snprintf(s, 300, "\
 \n  version: %.2f\
 \n  numRecords: %u\
@@ -95,7 +95,7 @@ snprintf(s, 300, "\
 	return s;
 }
 
-api void esp_print_field(espp esp, char *s, subrecord *field)
+api void esp_print_field(Esp *esp, char *s, subrecord *field)
 {
 char x[300] = "Not Handled\0";
 int w = snprintf(s, 400, "\
@@ -107,8 +107,8 @@ id: %u\
 \nvalue: %s\
 ",
 field->id,
-(char *)&field->hed->sgn,
-field->hed->size,
+(char *)&field->hed.sgn,
+field->hed.size,
 #if PLUGINS_SAVE_OFFSETS
 field->offset,
 #else

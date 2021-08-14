@@ -63,7 +63,7 @@ namespace skyrim
 		for (int i = 0; i < grp->mixed->size; i++)
 		{
 			crecordp rcd = (crecordp)grp->mixed->elements[i];
-			if (rcd->hed->sgn == *(unsigned int *)"REFR")
+			if (rcd->hed.sgn == *(unsigned int *)"REFR")
 			{
 				// make Ref
 			}

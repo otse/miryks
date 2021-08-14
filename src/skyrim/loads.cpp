@@ -79,30 +79,25 @@ namespace dark
 		return mesh;
 	}
 
-	espp load_plugin(const char *filename, bool essential)
+	Esp *load_plugin(const char *filename, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = editme + "/Data/" + filename;
-		char *buf;
-		int ret;
-		espp esp;
+		Esp *esp;
 		esp = has_plugin(filename);
 		if (esp)
 			return esp;
-		if ((ret = fbuf(path.c_str(), &buf)) == -1)
-			ret = fbuf(filename, &buf);
-		if (ret == -1)
+		if (exists(path.c_str()))
+			return plugin_load(path.c_str());
+		else if (exists(filename))
+			return plugin_load(filename);
+		else
 		{
 			printf("couldn't find %s in /Data or /bin\n", filename);
 			if (essential)
 				exit(1);
 			return nullptr;
 		}
-		esp = plugin_slate();
-		esp->name = filename;
-		esp->buf = buf;
-		esp->filesize = ret;
-		plugin_load(esp);
 		return esp;
 	}
 
@@ -117,6 +112,10 @@ namespace dark
 			return bsa_load(path.c_str());
 		else if (exists(filename))
 			return bsa_load(filename);
+		else
+		{
+			printf("couldn't find %s in /Data or /bin\n", filename);
+		}
 		return nullptr;
 	}
 }

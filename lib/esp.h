@@ -7,7 +7,9 @@
 
 #define SNPRINTF_FORM_ID 0
 
-// positions have type unsigned
+// weird things
+// only capitalized type is esp struct
+// offsets have the type unsigned (an unsigned int)
 
 struct form_id;
 
@@ -21,6 +23,8 @@ typedef struct grup grup;
 typedef struct record record;
 typedef struct subrecord subrecord;
 
+typedef esp Esp;
+
 extern int esp_skip_subrecords;
 extern int esp_only_read_first_subrecord;
 
@@ -32,13 +36,14 @@ typedef struct revised_array
 
 struct esp
 {
-	const char *name;
+	char filename[100];
+	void *stream;
+	record *header;
 	void *file;
 	unsigned pos;
 	const char *buf;
 	unsigned filesize;
 	int active;
-	record *header;
 	revised_array * grups, * records, * large;
 	struct form_id *formIds;
 	struct
@@ -90,27 +95,28 @@ struct grup
 {
 	char g;
 	unsigned short id;
-	const struct grup_header *hed;
+	const struct grup_header hed;
 	unsigned char *data;
 	revised_array * mixed;
 };
 
 struct record
 {
+	char *read;
 	char r;
 	unsigned short id;
 	unsigned short indices;
 	unsigned offset;
-	const struct record_header *hed;
+	const struct record_header hed;
 	revised_array *subrecords;
-	unsigned char *data;
 	struct form_id *form_id;
-	esp *esp;
+	Esp *esp;
 	char lazy;
 	// compression related
-	unsigned int size2;
-	unsigned pos;
 	char *buf;
+	char *data;
+	unsigned int size;
+	unsigned pos;
 };
 
 struct subrecord
@@ -118,47 +124,41 @@ struct subrecord
 	char s;
 	unsigned short id;
 	unsigned offset;
-	const struct subrecord_header *hed;
+	const struct subrecord_header hed;
 	unsigned char *data;
 };
 
-typedef esp * espp;
-typedef esp ** esppp;
-
 typedef grup * grupp;
 typedef grup ** gruppp;
-
 typedef record * recordp;
-
 typedef subrecord * subrecordp;
 
 typedef const esp * cespp;
-
 typedef const grup * cgrupp;
 typedef const record * crecordp;
 typedef const subrecord * csubrecordp;
 
-api espp plugin_slate();
-api int plugin_load(espp);
+api Esp *plugin_slate();
+api Esp *plugin_load(const char *);
 
 api void esp_read_lazy_record(crecordp);
 
-api void esp_print_form_id(espp, char *, struct form_id *);
-api void esp_print_grup(espp, char *, grupp);
-api void esp_print_record(espp, char *, recordp);
-api void esp_print_field(espp, char *, subrecordp);
+api void esp_print_form_id(Esp *, char *, struct form_id *);
+api void esp_print_grup(Esp *, char *, grupp);
+api void esp_print_record(Esp *, char *, recordp);
+api void esp_print_field(Esp *, char *, subrecordp);
 
-api esppp get_plugins();
+api Esp **get_plugins();
 
-api espp has_plugin(const char *);
+api Esp *has_plugin(const char *);
 
-api revised_array *esp_filter_objects(const espp, const char [5]);
+api revised_array *esp_filter_objects(const Esp *, const char [5]);
 
 api recordp esp_get_form_id(unsigned int);
 
-api grupp esp_top_grup(const espp, const char [5]);
+api grupp esp_top_grup(const Esp *, const char [5]);
 
-api void free_plugin(esppp);
+api void free_plugin(Esp **);
 api void free_esp_array(revised_array ** );
 
 #endif

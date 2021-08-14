@@ -200,7 +200,7 @@ namespace dark
 
 		if (mesh)
 		{
-			if (baseObject.rcd->hed->formId != 0x32)
+			if (baseObject.rcd->hed.formId != 0x32)
 			{
 				drawGroup = new DrawGroupSortable(mesh->baseGroup, matrix);
 				sceneDef->drawGroups.Add(drawGroup);

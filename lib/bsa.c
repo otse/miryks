@@ -24,11 +24,8 @@ void resources(Bsa *);
 
 api Bsa *bsa_load(const char *path)
 {
-	Bsa *bsa = malloc(sizeof(Bsa));
-	memset(bsa, 0, sizeof(Bsa));
-	bsa->path = malloc(sizeof(char) * strlen(path) + 1);
+	Bsa *bsa = calloc(1, sizeof(Bsa));
 	file_name(bsa->filename, path, '/');
-	strcpy(bsa->path, path);
 	bsa->stream = fopen(path, "rb");
 	assertm(
 		bsa->stream, path);
@@ -138,7 +135,7 @@ void resources(Bsa *bsa)
 
 api Rc *bsa_find(Bsa *bsa, const char *p)
 {
-	char stem[260], name[260];
+	char stem[260], name[100];
 	file_stem(stem, p, '\\');
 	file_name(name, p, '\\');
 	if (stem==NULL||name==NULL)

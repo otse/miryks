@@ -47,7 +47,7 @@ namespace skyrim
 		}
 		inline const grup_header &hed() const
 		{
-			return *grp->hed;
+			return grp->hed;
 		}
 		inline const revised_array &mixed() const
 		{
