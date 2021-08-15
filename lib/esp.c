@@ -9,7 +9,7 @@
 #include <zlib.h>
 #include <sys/stat.h>
 
-int esp_only_read_first_subrecord = 1;
+int only_read_editorid = 1;
 
 #define PLUGINS 8
 
@@ -26,7 +26,7 @@ inline void insert(revised_array *, void *);
 
 void make_form_ids(Esp *);
 
-recordp read_record(Esp *);
+rcdp read_record(Esp *, int skippable);
 grupp read_grup(Esp *);
 
 unsigned int hedr_num_records(Esp *esp)
@@ -42,7 +42,7 @@ api Esp *plugin_load(const char *path)
 	assertm(
 		esp->stream, path);
 	printf("goign to read the esp header\n");
-	esp->header = read_record(esp);
+	esp->header = read_record(esp, 0);
 	narray(&esp->grups, 200);
 	narray(&esp->records, hedr_num_records(esp));
 	narray(&esp->large, 10);
@@ -55,17 +55,19 @@ api Esp *plugin_load(const char *path)
 	return 1;
 }
 
-void uncompress_record(Esp *, recordp);
-inline void process_record(Esp *, recordp);
+#define Read(T, SIZE) T->buf = read(esp, T->buf, SIZE);
 
-recordp read_record(Esp *esp)
+void uncompress_record(Esp *, rcdp);
+inline void process_record(Esp *, rcdp);
+
+rcdp read_record(Esp *esp, int skippable)
 {
 	printf("read rcd\n");
-	recordp rcd = calloc(1, sizeof(record));
+	rcdp rcd = calloc(1, sizeof(record));
 
 	rcd->r = 'r';
 	rcd->id = Ids.records++;
-	rcd->lazy = esp_only_read_first_subrecord;
+	rcd->lazy = only_read_editorid;
 	rcd->esp = esp;
 
 	read(esp, &rcd->hed, sizeof(struct record_header));
@@ -79,32 +81,36 @@ recordp read_record(Esp *esp)
 	//narray(&rcd->subrecords, 1);
 	//insert(esp->records, rcd);
 	
-	rcd->buf = malloc(rcd->hed.size);
-	read(esp, rcd->buf, rcd->hed.size);
-	
 	if (rcd->hed.flags & 0x00040000)
 	{
-	uncompress_record(esp, rcd);
-	process_record(esp, rcd);
+		// Read entire record
+		rcd->buf = malloc(rcd->size);
+		rcd->read = rcd->size;
+		read(esp, rcd->buf, rcd->size);
+
+		printf("rcd %.4s is compressed\n", (char *)&rcd->hed.sgn);
+		uncompress_record(esp, rcd);
+		process_record(esp, rcd);
 	}
 	else
-	process_record(esp, rcd);
+		process_record(esp, rcd);
 	
 	return rcd;
 }
 
-inline subrecordp read_sub(Esp *, recordp);
+inline subrecordp read_sub(Esp *, rcdp);
 
-inline void process_record(Esp *esp, recordp rcd)
+inline void process_record(Esp *esp, rcdp rcd)
 {
 	printf("process record\n");
+
 	unsigned begin = rcd->pos;
 
 	unsigned int large = 0;
-
+	unsigned int i = 0;
 	while(rcd->pos - begin < rcd->size)
 	{
-		subrecordp sub = read_sub(esp, rcd);
+		subrecordp sub = read_sub(esp, rcd, i++);
 
 		if (sub->hed.sgn == *(unsigned int *)"XXXX")
 		{
@@ -120,7 +126,7 @@ inline void process_record(Esp *esp, recordp rcd)
 	seek(esp, rcd->offset + rcd->size);
 }
 
-api void esp_read_lazy_record(recordp rcd)
+api void esp_read_lazy_record(rcdp rcd)
 {
 	if (rcd->lazy)
 	{
@@ -131,10 +137,10 @@ api void esp_read_lazy_record(recordp rcd)
 	}
 }
 
-inline subrecordp read_sub(Esp *esp, recordp rcd)
+inline subrecordp read_sub(Esp *esp, rcdp rcd, unsigned int n)
 {
 	printf("read sub\n");
-
+	
 	subrecordp sub;
 	sub = calloc(1, sizeof(subrecord));
 	sub->s = 's';
@@ -143,7 +149,7 @@ inline subrecordp read_sub(Esp *esp, recordp rcd)
 	//sub->hed = buf + *pos;
 	rcd->pos += sizeof(struct subrecord_header);
 	sub->data = buf + *pos;
-	*pos += sub->hed.size;
+	//*pos += sub->hed.size;
 	return sub;
 }
 
@@ -179,7 +185,7 @@ inline void read_grup_records(Esp *esp, grupp grp)
 	if (peek_type(esp) == *(unsigned int *)"GRUP")
 	insert(grp->mixed, read_grup(esp));
 	else
-	insert(grp->mixed, read_record(esp));
+	insert(grp->mixed, read_record(esp, 1));
 	}
 }
 
@@ -214,13 +220,13 @@ void make_form_ids(Esp *esp)
 	esp->formIds = calloc(esp->records->size, sizeof(struct form_id));
 	for (unsigned int i = 0; i < esp->records->size; i++)
 	{
-	recordp rcd = esp->records->elements[i];
+	rcdp rcd = esp->records->elements[i];
 	build_form_id(&esp->formIds[i], rcd->hed.formId);
 	rcd->form_id = &esp->formIds[i];
 	}
 }
 
-api recordp esp_get_form_id(unsigned int formId)
+api rcdp esp_get_form_id(unsigned int formId)
 {
 	struct form_id form_id;
 	build_form_id(&form_id, formId);
@@ -229,7 +235,7 @@ api recordp esp_get_form_id(unsigned int formId)
 	return NULL;
 	for (unsigned int j = 0; j < esp->records->size; j++)
 	{
-	recordp rcd = esp->records->elements[j];
+	rcdp rcd = esp->records->elements[j];
 	if (rcd->form_id->objectIndex == form_id.objectIndex)
 	return rcd;
 	}
@@ -261,7 +267,7 @@ api revised_array * esp_filter_objects(const Esp *esp, const char type[5])
 	return filtered;
 }
 
-void uncompress_record(Esp *esp, recordp rcd)
+void uncompress_record(Esp *esp, rcdp rcd)
 {
 	printf("uncompress");
 	// char *src = rcd->data;
@@ -301,7 +307,7 @@ api void free_plugin(Esp **p)
 	plugins[i] = NULL;
 	for (unsigned int i = 0; i < esp->records->size; i++)
 	{
-	recordp rcd = esp->records->elements[i];
+	rcdp rcd = esp->records->elements[i];
 	if (rcd->hed.flags & 0x00040000)
 	free(rcd->buf);
 	free_esp_array(&rcd->subrecords);
@@ -341,9 +347,9 @@ inline void insert(revised_array * a, void * element) {
 	a->elements[a->size++] = element;
 }
 
-static int read(Esp *esp, void *data, size_t count)
+static int read(Esp *esp, void *data, size_t size)
 {
-	return fread(data, 1, count, (FILE *)esp->stream);
+	return fread(data, size, 1, (FILE *)esp->stream);
 }
 
 static int seek(Esp *esp, long int offset)

@@ -25,9 +25,6 @@ typedef struct subrecord subrecord;
 
 typedef esp Esp;
 
-extern int esp_skip_subrecords;
-extern int esp_only_read_first_subrecord;
-
 typedef struct revised_array
 {
 	void **elements;
@@ -102,7 +99,6 @@ struct grup
 
 struct record
 {
-	char *read;
 	char r;
 	unsigned short id;
 	unsigned short indices;
@@ -112,9 +108,12 @@ struct record
 	struct form_id *form_id;
 	Esp *esp;
 	char lazy;
-	// compression related
+	// buffer related
 	char *buf;
+	unsigned int til;
+	unsigned int read;
 	char *data;
+	// compression related
 	unsigned int size;
 	unsigned pos;
 };
@@ -125,12 +124,15 @@ struct subrecord
 	unsigned short id;
 	unsigned offset;
 	const struct subrecord_header hed;
+	// buffer related
+	char *buf;
 	unsigned char *data;
 };
 
 typedef grup * grupp;
 typedef grup ** gruppp;
 typedef record * recordp;
+typedef recordp rcdp;
 typedef subrecord * subrecordp;
 
 typedef const esp * cespp;
