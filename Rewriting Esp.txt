@@ -1,0 +1,39 @@
+Rewriting Esp.c
+
+Too many spaghetti functions that count
+on the records random state of being
+compressed, partly read or fully read.
+
+A grup and record only have a size,
+not an amount of pointers necessary -stat.
+So I can't reserve arrays? Until we invent
+counting these structures, an array
+that uses realloc is still used. (Bad)
+
+Incidentally we're still Win32, theres a
+one-and-a-half gigabyte wall before
+mallocs will fail. Updating to file streams
+is good, and only reading what you have to.
+
+A record can be optimized to only read
+sub-record zero. Simple, the editorId.
+Just ignore the entire rest of the record.
+
+Also, once you read the record in full,
+only read the headers of the fields. That's
+a 32 bit word or type, and a 16 bit size.
+Skip the data, 90% of the time we don't
+need it.
+
+When we use the .data getter of record.h:
+wrcd.data<float *>("BLUH");
+
+Then we read the subs payload from disk,
+we call esp_read_data(), to go with
+Bsa.c convention.
+
+Grups are skippable as well, only read and save
+the header and it's partial state. Before
+looping the data, then read its records but
+again, only read child grups headers until
+we express a depth search of some kind.
