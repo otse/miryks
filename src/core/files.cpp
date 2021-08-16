@@ -15,7 +15,7 @@
 
 int fbuf(const char *path, char **dest, bool cap)
 {
-	// printf("fbuf path %s", path);
+	// printf("fbuf path %s\n", path);
 	int mode = std::ifstream::binary | std::ifstream::ate;
 	std::ifstream is(path, mode);
 	if (is)

@@ -32,7 +32,7 @@ char *file_stem(char s[260], const char *p, char delim)
 	return s;
 }
 
-char *file_name(char s[100], const char *p, char delim)
+char *file_name(char s[260], const char *p, char delim)
 {
 	const char *c = strrchr(p, delim);
 	if (!c)

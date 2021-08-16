@@ -26,7 +26,7 @@ void im_grup(grupp grp, int top_grup = -1)
 {
 	Grup Grp = grp; // we have no need for this here
 	char t[100];
-	snprintf(t, 100, "GRUP %i %.4s", grp->id, (char *)&grp->hed.label);
+	snprintf(t, 100, "GRUP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))
 	{
 		char s[100];
@@ -50,12 +50,12 @@ void im_record(record *rec)
 {
 	char *edid = nullptr;
 	Field *first = (subrecord *)rec->subrecords->elements[0];
-	if (first->hed.sgn == *(unsigned int *) "EDID")
+	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
 		edid = (char *)first->data;
 	}
 	char t[130];
-	snprintf(t, 130, "%.4s %i - %s", (char *)&rec->hed.sgn, rec->id, edid);
+	snprintf(t, 130, "%.4s %i - %s", (char *)&rec->hed->sgn, rec->id, edid);
 	if (ImGui::TreeNode(t))
 	{
 		char s[200];
@@ -82,7 +82,7 @@ void im_record(record *rec)
 void im_subrecord(Field *field)
 {
 	char t[100];
-	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed.sgn, field->id);
+	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->sgn, field->id);
 	if (ImGui::TreeNode(t))
 	{
 		char s[400];

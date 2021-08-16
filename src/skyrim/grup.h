@@ -33,7 +33,10 @@ namespace skyrim
 		{
 			grp = p;
 			if (grp)
+			{
+				esp_read_lazy_grup((grupp)grp);
 				(*this)(grp);
+			}
 		}
 		X &operator()(cgrupp p)
 		{
@@ -47,7 +50,7 @@ namespace skyrim
 		}
 		inline const grup_header &hed() const
 		{
-			return grp->hed;
+			return *grp->hed;
 		}
 		inline const revised_array &mixed() const
 		{

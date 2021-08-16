@@ -33,23 +33,21 @@ typedef struct revised_array
 
 struct esp
 {
-	char filename[100];
+	char filename[260];
 	void *stream;
 	record *header;
 	void *file;
 	unsigned pos;
-	const char *buf;
 	unsigned filesize;
 	int active;
 	revised_array * grups, * records, * large;
 	struct form_id *formIds;
 	struct
 	{
-	unsigned short grups, records, subrecords, uncompress;
+	unsigned int grups, records, subrecords, uncompress;
 	} ids;
 };
 
-typedef esp Esp;
 
 #pragma pack(push, 1)
 
@@ -61,10 +59,21 @@ struct grup_header
 	unsigned int unknown;
 };
 
+struct grup_header_small
+{
+	unsigned int sgn, size, label;
+	int group_type;
+};
+
 struct record_header
 {
 	unsigned int sgn, size, flags, formId;
 	unsigned short time_stamp, version_control_info, form_version, unknown;
+};
+
+struct record_header_small
+{
+	unsigned int sgn, size, flags, formId;
 };
 
 struct subrecord_header
@@ -91,29 +100,29 @@ struct form_id
 struct grup
 {
 	char g;
-	unsigned short id;
-	const struct grup_header hed;
+	unsigned int id;
+	unsigned offset;
+	const struct grup_header *hed;
 	unsigned char *data;
+	struct esp *esp;
 	revised_array * mixed;
+	char unread;
 };
 
 struct record
 {
 	char r;
-	unsigned short id;
+	unsigned int id;
 	unsigned short indices;
 	unsigned offset;
-	const struct record_header hed;
+	const struct record_header *hed;
 	revised_array *subrecords;
 	struct form_id *form_id;
-	Esp *esp;
+	struct esp *esp;
 	char lazy;
-	// buffer related
-	char *buf;
 	unsigned int til;
-	unsigned int read;
-	char *data;
 	// compression related
+	char *buf;
 	unsigned int size;
 	unsigned pos;
 };
@@ -121,46 +130,52 @@ struct record
 struct subrecord
 {
 	char s;
-	unsigned short id;
+	unsigned int id;
 	unsigned offset;
-	const struct subrecord_header hed;
+	const struct subrecord_header *hed;
+	//int skip;
 	// buffer related
 	char *buf;
 	unsigned char *data;
 };
 
+typedef esp * espp;
+typedef esp ** esppp;
+
 typedef grup * grupp;
 typedef grup ** gruppp;
 typedef record * recordp;
-typedef recordp rcdp;
 typedef subrecord * subrecordp;
+
+typedef recordp rcdp;
+typedef subrecordp rcdbp;
 
 typedef const esp * cespp;
 typedef const grup * cgrupp;
 typedef const record * crecordp;
 typedef const subrecord * csubrecordp;
 
-api Esp *plugin_slate();
-api Esp *plugin_load(const char *);
+api espp plugin_load(const char *);
 
-api void esp_read_lazy_record(crecordp);
+api void esp_read_lazy_grup(grupp);
+api void esp_read_lazy_record(rcdp);
 
-api void esp_print_form_id(Esp *, char *, struct form_id *);
-api void esp_print_grup(Esp *, char *, grupp);
-api void esp_print_record(Esp *, char *, recordp);
-api void esp_print_field(Esp *, char *, subrecordp);
+api void esp_print_form_id(espp, char *, struct form_id *);
+api void esp_print_grup(espp, char *, grupp);
+api void esp_print_record(espp, char *, recordp);
+api void esp_print_field(espp, char *, subrecordp);
 
-api Esp **get_plugins();
+api esppp get_plugins();
 
-api Esp *has_plugin(const char *);
+api espp has_plugin(const char *);
 
-api revised_array *esp_filter_objects(const Esp *, const char [5]);
+api revised_array *esp_filter_objects(cespp, const char [5]);
 
 api recordp esp_get_form_id(unsigned int);
 
-api grupp esp_top_grup(const Esp *, const char [5]);
+api grupp esp_top_grup(cespp, const char [5]);
 
-api void free_plugin(Esp **);
-api void free_esp_array(revised_array ** );
+api void free_plugin(esppp);
+api void free_esp_array(revised_array **);
 
 #endif

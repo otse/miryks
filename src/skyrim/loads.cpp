@@ -23,6 +23,7 @@ namespace dark
 	int ext_nifp_save(void *key, Nif *nif)
 	{
 		nifs.emplace(key, nif);
+		return 1;
 	}
 
 	Nif *ext_nifp_saved(void *key)

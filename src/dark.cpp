@@ -74,6 +74,7 @@ int main()
 	load_plugins_archives();
 	opengl_init_scene();
 	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
+	printf("now collide\n");
 	collision_init();
 	cameraCur = personCam;
 #if 1
@@ -85,6 +86,7 @@ int main()
 #endif
 	//put_it_fullscreen();
 #if 1
+	printf("loading gloom gen?\n");
 	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");

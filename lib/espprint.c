@@ -29,13 +29,13 @@ id: %u\
 \nelements: %u\
 ",
 grup->id,
-(char *)&grup->hed.sgn,
-grup->hed.size,
-(char *)&grup->hed.label,
-grup->hed.group_type,
-grup->hed.time_stamp,
-LOW(grup->hed.version_control_info),
-HIGH(grup->hed.version_control_info),
+(char *)&grup->hed->sgn,
+grup->hed->size,
+(char *)&grup->hed->label,
+grup->hed->group_type,
+grup->hed->time_stamp,
+LOW(grup->hed->version_control_info),
+HIGH(grup->hed->version_control_info),
 grup->mixed->size
 );
 }
@@ -58,34 +58,34 @@ id: %u\
 \nfields: %i\
 ",
 record->id,
-(char *)&record->hed.sgn,
-record->hed.size,
+(char *)&record->hed->sgn,
+record->hed->size,
 #if PLUGINS_SAVE_OFFSETS
 record->offset,
 #else
 0,
 #endif
-record->hed.flags,
-record->hed.formId,
-record->hed.formId,
-(record->hed.flags & 0x00040000) != 0,
-record->hed.time_stamp,
-LOW(record->hed.version_control_info),
-HIGH(record->hed.version_control_info),
-record->hed.form_version,
+record->hed->flags,
+record->hed->formId,
+record->hed->formId,
+(record->hed->flags & 0x00040000) != 0,
+record->hed->time_stamp,
+LOW(record->hed->version_control_info),
+HIGH(record->hed->version_control_info),
+record->hed->form_version,
 record->subrecords->size
 );
 }
 
 char *specifics(Esp *esp, char *s, subrecord *field)
 {
-if (field->hed.sgn == *(unsigned int *)"EDID")
+if (field->hed->sgn == *(unsigned int *)"EDID")
 snprintf(s, 300, "%s", field->data);
-if (field->hed.sgn == *(unsigned int *)"FULL")
+if (field->hed->sgn == *(unsigned int *)"FULL")
 snprintf(s, 300, "%s", field->data);
-if (field->hed.sgn == *(unsigned int *)"MAST")
+if (field->hed->sgn == *(unsigned int *)"MAST")
 snprintf(s, 300, "%s", field->data);
-if (field->hed.sgn == *(unsigned int *)"HEDR")
+if (field->hed->sgn == *(unsigned int *)"HEDR")
 snprintf(s, 300, "\
 \n  version: %.2f\
 \n  numRecords: %u\
@@ -107,8 +107,8 @@ id: %u\
 \nvalue: %s\
 ",
 field->id,
-(char *)&field->hed.sgn,
-field->hed.size,
+(char *)&field->hed->sgn,
+field->hed->size,
 #if PLUGINS_SAVE_OFFSETS
 field->offset,
 #else

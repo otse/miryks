@@ -34,7 +34,7 @@ namespace skyrim
 		X(crecordp p)
 		{
 			rcd = p;
-			if (p)
+			if (rcd)
 			{
 				esp_read_lazy_record((recordp)rcd);
 				assertc(rcd->r == 'r');
@@ -46,7 +46,7 @@ namespace skyrim
 		}
 		inline const record_header &hed() const
 		{
-			return rcd->hed;
+			return *rcd->hed;
 		}
 		inline const revised_array &subrecords() const
 		{
@@ -72,7 +72,7 @@ namespace skyrim
 			for (unsigned int i = 0; i < subrecords().size; i++)
 			{
 				csubrecordp sub = get(i);
-				if (*(unsigned int *)sgn == sub->hed.sgn)
+				if (*(unsigned int *)sgn == sub->hed->sgn)
 					if (skip-- < 1)
 						return sub;
 			}

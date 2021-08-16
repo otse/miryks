@@ -37,7 +37,6 @@ void SetShaderSources()
 	fbuf("gl/fx.frag", &fxs[2], true);
 	fbuf("gl/post.vert", &postquad[1], true);
 	fbuf("gl/post.frag", &postquad[2], true);
-	printf("set shader sources\n");
 #else
 	static std::vector<std::string> sources;
 	sources.push_back(basefile_offshore("basefile", "gl/simple.vert"));
