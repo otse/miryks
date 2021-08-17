@@ -104,7 +104,7 @@ namespace dark
 		
 		if (baseObject.sigany({
 			"STAT",
-			"DOOR",
+			/*"DOOR",
 			"FURN",
 			"BOOK",
 			"CONT",
@@ -112,7 +112,7 @@ namespace dark
 			"WEAP",
 			"MISC",
 			"ALCH",
-			"INGR"
+			"INGR"*/
 			}))
 		{
 #if SNPRINTF_FORM_ID

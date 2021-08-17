@@ -5,11 +5,11 @@
 
 #define api
 
-#define SNPRINTF_FORM_ID 0
+#define PLUGINS 8
 
 // weird things
 // only capitalized type is esp struct
-// offsets have the type unsigned (an unsigned int)
+// we use type `unsigned` for offsets
 
 struct form_id;
 
@@ -40,6 +40,7 @@ struct esp
 	unsigned pos;
 	unsigned filesize;
 	int active;
+	char override;
 	revised_array * grups, * records, * large;
 	struct form_id *formIds;
 	struct
@@ -92,9 +93,6 @@ struct form_id
 {
 	struct esp *esp;
 	unsigned int formId, modIndex, objectIndex;
-#if SNPRINTF_FORM_ID
-	char hex[9];
-#endif
 };
 
 struct grup
@@ -106,7 +104,8 @@ struct grup
 	unsigned char *data;
 	struct esp *esp;
 	revised_array * mixed;
-	char unread;
+	unsigned int size;
+	char looped;
 };
 
 struct record
@@ -116,11 +115,10 @@ struct record
 	unsigned short indices;
 	unsigned offset;
 	const struct record_header *hed;
-	revised_array *subrecords;
-	struct form_id *form_id;
+	revised_array *rcdbs;
+	struct form_id form_id;
 	struct esp *esp;
-	char lazy;
-	unsigned int til;
+	char looped;
 	// compression related
 	char *buf;
 	unsigned int size;
@@ -157,8 +155,8 @@ typedef const subrecord * csubrecordp;
 
 api espp plugin_load(const char *);
 
-api void esp_read_lazy_grup(grupp);
-api void esp_read_lazy_record(rcdp);
+api void esp_check_grup(grupp);
+api void esp_check_rcd(rcdp);
 
 api void esp_print_form_id(espp, char *, struct form_id *);
 api void esp_print_grup(espp, char *, grupp);

@@ -34,7 +34,7 @@ namespace skyrim
 			grp = p;
 			if (grp)
 			{
-				esp_read_lazy_grup((grupp)grp);
+				esp_check_grup((grupp)grp);
 				(*this)(grp);
 			}
 		}

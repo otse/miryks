@@ -36,8 +36,8 @@ namespace skyrim
 			rcd = p;
 			if (rcd)
 			{
-				esp_read_lazy_record((recordp)rcd);
 				assertc(rcd->r == 'r');
+				esp_check_rcd((recordp)rcd);
 			}
 		}
 		inline bool valid() const
@@ -50,7 +50,7 @@ namespace skyrim
 		}
 		inline const revised_array &subrecords() const
 		{
-			return *rcd->subrecords;
+			return *rcd->rcdbs;
 		}
 		inline csubrecordp get(unsigned int i) const
 		{

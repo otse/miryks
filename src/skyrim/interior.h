@@ -39,6 +39,7 @@ namespace skyrim
 
 	static Cell capture_cell(Record wrcd, Grup wgrp)
 	{
+		printf("capturing cell\n");
 		Cell cell;
 		cell.wrcd = wrcd;
 		cell.persistent = wgrp.get<grup *>(0);
@@ -83,6 +84,7 @@ namespace skyrim
 		for (unsigned int i = 0; i < a.mixed().size; i++)
 		{
 			b = a.get<grup *>(i);
+			//printf("grup 0")
 			assertc(b.hed().group_type == 2);
 			for (unsigned int j = 0; j < b.mixed().size; j++)
 			{

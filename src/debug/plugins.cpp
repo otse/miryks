@@ -46,34 +46,34 @@ void im_grup(grupp grp, int top_grup = -1)
 	}
 }
 
-void im_record(record *rec)
+void im_record(record *rcd)
 {
 	char *edid = nullptr;
-	Field *first = (subrecord *)rec->subrecords->elements[0];
+	Field *first = (subrecord *)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
 		edid = (char *)first->data;
 	}
 	char t[130];
-	snprintf(t, 130, "%.4s %i - %s", (char *)&rec->hed->sgn, rec->id, edid);
+	snprintf(t, 130, "%.4s %i - %s", (char *)&rcd->hed->sgn, rcd->id, edid);
 	if (ImGui::TreeNode(t))
 	{
 		char s[200];
-		esp_print_record(plugin, s, rec);
+		esp_print_record(plugin, s, rcd);
 		ImGui::Text(s);
 		if (ImGui::TreeNode("formId"))
 		{
-			if (rec->form_id)
+			//if (rcd.form_id)
 			{
 				char s[200];
-				esp_print_form_id(plugin, s, rec->form_id);
+				esp_print_form_id(plugin, s, &rcd->form_id);
 				ImGui::Text(s);
 			}
 			ImGui::TreePop();
 		}
-		for (unsigned int i = 0; i < rec->subrecords->size; i++)
+		for (unsigned int i = 0; i < rcd->rcdbs->size; i++)
 		{
-			im_subrecord((subrecord *)rec->subrecords->elements[i]);
+			im_subrecord((subrecord *)rcd->rcdbs->elements[i]);
 		}
 		ImGui::TreePop();
 	}
