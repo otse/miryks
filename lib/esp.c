@@ -153,6 +153,12 @@ rcdbp read_rcdb(espp esp, rcdp rcd)
 
 void read_rcdb_data(espp esp, rcdp rcd, rcdbp rcdb)
 {
+	if (rcdb->data)
+		return;
+	if (rcd->buf)
+		rcd->pos = rcdb->offset;
+	else
+		disk_seek(esp, rcdb->offset);
 	rcdb->data = malloc(rcdb->hed->size);
 	read(esp, rcd, &rcdb->data, rcdb->hed->size);
 }
@@ -214,7 +220,7 @@ void loop_rcd(espp esp, rcdp rcd)
 		if (rcdb->hed->sgn == *(unsigned int *)"XXXX")
 		{
 			printf("oef");
-			//read_rcdb_data(esp, rcd, rcdb);
+			read_rcdb_data(esp, rcd, rcdb);
 			rcdbp discard = read_rcdb(esp, rcd);
 			if (rcd->buf)
 				printf("\ncompressed oversized sub!!\n\n");
@@ -242,6 +248,8 @@ api void esp_check_rcd(rcdp rcd)
 		for (unsigned int i = 0; i < rcd->rcdbs->size; i++)
 		{
 			rcdbp rcdb = rcd->rcdbs->elements[i];
+			if (rcdb->data)
+				continue;
 			if (rcd->buf)
 				rcd->pos = rcdb->offset;
 			else

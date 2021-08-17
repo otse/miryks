@@ -2,6 +2,7 @@
 #include <core/files.h>
 
 #include <skyrim/grup.h>
+#include <skyrim/record.h>
 
 extern "C"
 {
@@ -24,7 +25,7 @@ void im_subrecord(Field *);
 
 void im_grup(grupp grp, int top_grup = -1)
 {
-	Grup Grp = grp; // we have no need for this here
+	Grup wgrp = grp; // invokes unlooped grup
 	char t[100];
 	snprintf(t, 100, "GRUP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))
@@ -49,6 +50,7 @@ void im_grup(grupp grp, int top_grup = -1)
 void im_record(record *rcd)
 {
 	char *edid = nullptr;
+	Record wrcd = rcd; // invokes read partials
 	Field *first = (subrecord *)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
