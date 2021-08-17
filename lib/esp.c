@@ -36,7 +36,7 @@ static long int disk_tell(espp);
 //void make_form_ids(espp);
 
 rcdp read_record(espp, int);
-grupp read_grup(espp, grupp, int);
+grupp read_grup(espp, int);
 
 unsigned int hedr_num_records(espp esp)
 {
@@ -60,12 +60,12 @@ api espp plugin_load(const char *path)
 	spamf("goign to read the esp header\n");
 	esp->header = read_record(esp, 0);
 	narray(&esp->grups, hedr_num_records(esp));
-	narray(&esp->records, 400);
+	narray(&esp->records, 128);
 	narray(&esp->large, 10);
 	int num = 0;
 	while(Pos < esp->filesize)
 	{
-	grupp grp = read_grup(esp, NULL, 1);
+	grupp grp = read_grup(esp, 1);
 	insert(esp->grups, grp);
 	}
 	spamf("last\n");
@@ -78,7 +78,35 @@ char *uncompress_record(espp, rcdp);
 void loop_rcd(espp, rcdp, int);
 void loop_grup(espp, grupp, int);
 
+void skip(espp esp, rcdp rcd, size_t);
+void read(espp esp, rcdp rcd, void **, size_t);
+
+rcdbp read_rcdb(espp esp, rcdp rcd, int);
+rcdbp read_rcdb_data(espp esp, rcdp rcd, rcdbp, int);
+
+static void *grp_temp[40000]; // keep this high
+static rcdbp rcdb_temp[40000]; // keep this high
+
 struct form_id build_form_id(unsigned int);
+
+grupp read_grup(espp esp, int fast)
+{
+	spamf("read_grup\n");
+	grupp grp = calloc(1, sizeof(struct grup));
+	grp->g = 'g';
+	grp->id = esp->ids.grups++;
+	grp->esp = esp;
+	disk_read(esp, &grp->hed, sizeof(struct grup_header));
+	grp->offset = Pos;
+	grp->size = grp->hed->size - sizeof(struct grup_header);
+	if (fast)
+	{
+		disk_seek(esp, grp->offset + grp->size);
+		return grp;
+	}
+	loop_grup(esp, grp, fast);
+	return grp;
+}
 
 rcdp read_record(espp esp, int fast)
 {
@@ -92,44 +120,75 @@ rcdp read_record(espp esp, int fast)
 	disk_read(esp, &rcd->hed, sizeof(struct record_header));
 	rcd->offset = Pos;
 	rcd->size = rcd->hed->size;
+	rcd->partial = fast;
 
 	rcd->form_id = build_form_id(rcd->hed->formId);
 
 	insert(esp->records, rcd);
 
-	spamf("rcd - sgn, size %.4s %u\n", (char *)&rcd->hed->sgn, rcd->hed->size);
+	spamf("%.4s %u\n", (char *)&rcd->hed->sgn, rcd->hed->size);
+
 	if (rcd->hed->flags & 0x00040000)
 	{
-		//if (!fast)
-		{
-			//printf("rcd %.4s is compressed\n", (char *)&rcd->hed->sgn);
-			
-			disk_read(esp, &rcd->buf, rcd->size);
-			uncompress_record(esp, rcd);
-			//printf("real size %u\n", rcd->size);
-			loop_rcd(esp, rcd, 0);
-			//skip()
-			
-			//disk_seek(esp, rcd->offset + rcd->size);
-		}
+		disk_read(esp, &rcd->buf, rcd->size);
+		uncompress_record(esp, rcd);
+		loop_rcd(esp, rcd, 0);
 	}
 	else
 		loop_rcd(esp, rcd, fast);
+
 	disk_seek(esp, rcd->offset + rcd->hed->size);
 	return rcd;
 }
 
-#define espp_rcdp espp esp, rcdp rcd
+rcdbp read_rcdb(espp esp, rcdp rcd, int nah)
+{
+	// printf("read rcdb\n");
+	rcdbp rcdb = calloc(1, sizeof(struct subrecord));
+	rcdb->s = 's';
+	rcdb->id = esp->ids.subrecords++;
+	read(esp, rcd, &rcdb->hed, sizeof(struct subrecord_header));
+	rcdb->offset = rcd->buf ? rcd->pos : Pos;
+	read_rcdb_data(esp, rcd, rcdb, nah);
+	return rcdb;
+}
 
-void skip(espp_rcdp, size_t);
-void read(espp_rcdp, rcdbp, void **, size_t);
+unsigned int peek_type(espp esp)
+{
+	unsigned int *sgn;
+	disk_read(esp, &sgn, sizeof(unsigned int));
+	disk_seek(esp, Pos - 4);
+	return *sgn;
+}
 
-rcdbp read_rcdb(espp_rcdp, int);
-rcdbp read_rcdb_data(espp_rcdp, rcdbp, int);
+void loop_grup(espp esp, grupp grp, int fast)
+{
+	disk_seek(grp->esp, grp->offset);
+	
+	unsigned start = Pos;
+	unsigned int num = 0;
+	while (Pos - start < grp->size)
+	{
+		if (peek_type(esp) == *(unsigned int *)"GRUP")
+		{
+			grupp grp2 = read_grup(esp, fast);
+			grp_temp[num++] = grp2;
+		}
+		else
+		{
+			rcdp rcd = read_record(esp, fast);
+			grp_temp[num++] = rcd;
+		}
+		assertm(num < 40000, "overflow");
+	}
+	narray(&grp->mixed, num);
+	for (unsigned int i = 0; i < num; i++)
+		insert(grp->mixed, grp_temp[i]);
+	assertc(Pos == grp->offset + grp->size);
+	grp->looped = 1;
+}
 
-static rcdbp rcdb_temp[40000]; // keep this high
-
-void loop_rcd(espp_rcdp, int fast)
+void loop_rcd(espp esp, rcdp rcd, int fast)
 {
 	assertc(rcd->buf || Pos == rcd->offset);
 
@@ -144,12 +203,10 @@ void loop_rcd(espp_rcdp, int fast)
 	while(rcd->pos - begin < rcd->size)
 	{
 		assertm(num < 40000, "overflow");
-		rcdbp rcdb = read_rcdb(esp, rcd, 0);
+		rcdbp rcdb = read_rcdb(esp, rcd, fast && num > 0);
 		if (rcdb->hed->sgn == *(unsigned int *)"XXXX")
 		{
-			//disk_seek(esp, rcdb->offset);
 			read_rcdb_data(esp, rcd, rcdb, 0);
-			printf("\nuh no\n\n");
 			rcdbp discard = read_rcdb(esp, rcd, 1);
 			if (rcd->buf)
 				printf("\ncompressed oversized sub!!\n\n");
@@ -158,18 +215,17 @@ void loop_rcd(espp_rcdp, int fast)
 		}
 		rcdb_temp[num++] = rcdb;
 	}
-
 	narray(&rcd->rcdbs, num);
 	for (unsigned int i = 0; i < num; i++)
 		insert(rcd->rcdbs, rcdb_temp[i]);
-	rcd->looped = 1;
+	rcd->partial = fast;
 }
 
 api void esp_check_grup(grupp grp)
 {
+	// Did we loop it or just discover it
 	if (!grp->looped)
 	{
-		//printf("esp_check_grup: type %i !\n", grp->hed->group_type);
 		disk_seek(grp->esp, grp->offset);
 		loop_grup(grp->esp, grp, 1);
 	}
@@ -177,17 +233,22 @@ api void esp_check_grup(grupp grp)
 
 api void esp_check_rcd(rcdp rcd)
 {
-	if (!rcd->looped)
+	if (rcd->partial)
 	{
-		printf("rcd %.4s is unlooped\n", (char *)&rcd->hed->sgn);
-		if (rcd->buf)
-			rcd->pos = 0;
-		disk_seek(rcd->esp, rcd->offset);
-		loop_rcd(rcd->esp, rcd, 0);
+		//printf("checked partial rcd\n");
+		for (unsigned int i = 0; i < rcd->rcdbs->size; i++)
+		{
+			rcdbp rcdb = rcd->rcdbs->elements[i];
+			if (rcd->buf)
+				rcd->pos = rcdb->offset;
+			else
+				disk_seek(rcd->esp, rcdb->offset);
+			read_rcdb_data(rcd->esp, rcd, rcdb, 0);
+		}
 	}
 }
 
-void read(espp_rcdp, void **dest, size_t size)
+void read(espp esp, rcdp rcd, void **dest, size_t size)
 {
 	if (rcd->buf)
 		*dest = rcd->buf + rcd->pos;
@@ -196,7 +257,7 @@ void read(espp_rcdp, void **dest, size_t size)
 	rcd->pos += size;
 }
 
-void skip(espp_rcdp, size_t n)
+void skip(espp esp, rcdp rcd, size_t n)
 {
 	// printf("skip %u\n", n);
 	if (!rcd->buf)
@@ -207,25 +268,7 @@ void skip(espp_rcdp, size_t n)
 	rcd->pos += n;
 }
 
-rcdbp read_rcdb(espp_rcdp, int nah)
-{
-	// printf("read rcdb\n");
-	rcdbp rcdb = calloc(1, sizeof(struct subrecord));
-	rcdb->s = 's';
-	rcdb->id = esp->ids.subrecords++;
-	read(esp, rcd, &rcdb->hed, sizeof(struct subrecord_header));
-	//if (rcd->buf)
-	//printf("rcdb - sgn, size %.4s %hu\n", (char *)&rcdb->hed->sgn, rcdb->hed->size);
-	rcdb->offset = rcd->buf ? rcd->pos : Pos;
-	read_rcdb_data(esp, rcd, rcdb, nah);
-#if 0
-	if (rcdb->hed->sgn == *(unsigned int *)"MAST")
-		printf("MAST %s\n", (char *)rcdb->data);
-#endif
-	return rcdb;
-}
-
-rcdbp read_rcdb_data(espp_rcdp, rcdbp rcdb, int nah)
+rcdbp read_rcdb_data(espp esp, rcdp rcd, rcdbp rcdb, int nah)
 {
 	if (nah)
 	{
@@ -238,74 +281,6 @@ rcdbp read_rcdb_data(espp_rcdp, rcdbp rcdb, int nah)
 		read(esp, rcd, &rcdb->data, rcdb->hed->size);
 	}
 	return rcdb;
-}
-
-
-grupp read_grup(espp esp, grupp parent, int fast)
-{
-	spamf("read_grup\n");
-	grupp grp = calloc(1, sizeof(struct grup));
-	grp->g = 'g';
-	grp->id = esp->ids.grups++;
-	grp->esp = esp;
-	disk_read(esp, &grp->hed, sizeof(struct grup_header));
-	if (!parent)
-		spamf("top grp %u %.4s\n", esp->grups->size, (char *)&grp->hed->label);
-	grp->offset = Pos;
-	grp->size = grp->hed->size - sizeof(struct grup_header);
-	if (fast /*&& grp->hed->group_type >= 2 && grp->hed->group_type <= 5*/)
-	{
-		disk_seek(esp, grp->offset + grp->size);
-		return grp;
-	}
-	loop_grup(esp, grp, fast);
-	return grp;
-}
-
-unsigned int peek_type(espp esp)
-{
-	unsigned int *sgn;
-	disk_read(esp, &sgn, sizeof(unsigned int));
-	disk_seek(esp, Pos - 4);
-	return *sgn;
-}
-
-static void *grp_temp[40000]; // keep this high
-
-void loop_grup(espp esp, grupp grp, int fast)
-{
-	assertc(esp->pos == grp->offset);
-	
-	unsigned start = Pos;
-	unsigned int num = 0;
-	while (Pos - start < grp->size)
-	{
-	assertm(num < 40000, "overflow");
-	if (peek_type(esp) == *(unsigned int *)"GRUP")
-	{
-		grupp grp2 = read_grup(esp, grp, fast);
-		grp_temp[num++] = grp2;
-	}
-	else
-	{
-		rcdp rcd = read_record(esp, fast);
-		grp_temp[num++] = rcd;
-	}
-	}
-	narray(&grp->mixed, num);
-	for (unsigned int i = 0; i < num; i++)
-		insert(grp->mixed, grp_temp[i]);
-	if (Pos != grp->offset + grp->size)
-	{
-		printf("expected Pos == %u, got %u\n", grp->offset + grp->size, Pos);
-	}
-	assertc(Pos == grp->offset + grp->size);
-	if (grp->looped)
-	{
-		printf("looped an unlooped grup, mixed %i, size %u\n", grp->mixed, grp->mixed->size);
-	}
-	grp->looped = 1;
-	//disk_seek(esp, grp->offset + size);
 }
 
 //void make_top_grup_revisit
@@ -371,7 +346,7 @@ api revised_array *esp_filter_objects(cespp esp, const char type[5])
 	return filtered;
 }
 
-char *uncompress_record(espp_rcdp)
+char *uncompress_record(espp esp, rcdp rcd)
 {
 	//printf("uncompress\n");
 	// char *src = rcd->data;

@@ -11,6 +11,9 @@
 // only capitalized type is esp struct
 // we use type `unsigned` for offsets
 
+// also, a rcd only uses a buf when its compressed
+// otherwise, we use the disk
+
 struct form_id;
 
 struct esp;
@@ -118,7 +121,7 @@ struct record
 	revised_array *rcdbs;
 	struct form_id form_id;
 	struct esp *esp;
-	char looped;
+	char partial;
 	// compression related
 	char *buf;
 	unsigned int size;
