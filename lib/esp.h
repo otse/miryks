@@ -43,7 +43,6 @@ struct esp
 	unsigned pos;
 	unsigned filesize;
 	int active;
-	char override;
 	revised_array * grups, * records, * large;
 	struct form_id *formIds;
 	struct
