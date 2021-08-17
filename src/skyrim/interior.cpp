@@ -26,14 +26,6 @@ namespace skyrim
 
 	void Interior::loadcell()
 	{
-		// Cheekily load them top groups
-		for (unsigned int i = 0; i < PLUGINS; i++)
-		{
-			Grup grp;
-			grp = Grup(esp_top_grup(get_plugins()[i], "STAT"));
-			//grp = Grup(esp_top_grup(get_plugins()[i], "MISC"));
-		}
-
 		// get_right_cell(editorId); doesnt work
 		loaded_cell = find_cell_loop(editorId);
 		parsegrup(8, loaded_cell.persistent);

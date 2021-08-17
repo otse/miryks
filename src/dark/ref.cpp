@@ -93,7 +93,7 @@ namespace dark
 		{
 			char hex[10];
 			snprintf(hex, 10, "%08X", id);
-			printf("\ncant find form_id %s %u\n\n", hex, id);
+			//printf("\ncant find form_id %s %u\n\n", hex, id);
 			return;
 		}
 		else
@@ -104,7 +104,7 @@ namespace dark
 		
 		if (baseObject.sigany({
 			"STAT",
-			/*"DOOR",
+			"DOOR",
 			"FURN",
 			"BOOK",
 			"CONT",
@@ -112,7 +112,7 @@ namespace dark
 			"WEAP",
 			"MISC",
 			"ALCH",
-			"INGR"*/
+			"INGR"
 			}))
 		{
 #if SNPRINTF_FORM_ID

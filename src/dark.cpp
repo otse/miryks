@@ -21,6 +21,18 @@ void load_bucket()
 	simple_viewer(nif);
 }
 
+void load_top_groups()
+{
+	// todo redo
+	const char *words[] = {
+		"STAT", "DOOR", "FURN", "BOOK", "CONT", "ARMO", "WEAP", "MISC", "ALCH", "INGR"
+	};
+	size_t n = sizeof(words)/sizeof(words[0]);
+	for (unsigned int i = 0; i < PLUGINS; i++)
+		for (unsigned int j = 0; j < n; j++)
+			Grup grp = esp_top_grup(get_plugins()[i], words[j]);
+}
+
 void load_gloomgen()
 {
 	dungeon = new Interior("DarkSeSewer");
@@ -87,6 +99,7 @@ int main()
 	//put_it_fullscreen();
 #if 1
 	printf("loading gloom gen?\n");
+	load_top_groups();
 	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");

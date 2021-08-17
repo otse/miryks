@@ -102,11 +102,11 @@ rcdp read_record(espp esp, int fast)
 	{
 		//if (!fast)
 		{
-			printf("rcd %.4s is compressed\n", (char *)&rcd->hed->sgn);
+			//printf("rcd %.4s is compressed\n", (char *)&rcd->hed->sgn);
 			
 			disk_read(esp, &rcd->buf, rcd->size);
 			uncompress_record(esp, rcd);
-			printf("real size %u\n", rcd->size);
+			//printf("real size %u\n", rcd->size);
 			loop_rcd(esp, rcd, 0);
 			//skip()
 			
@@ -169,7 +169,7 @@ api void esp_check_grup(grupp grp)
 {
 	if (!grp->looped)
 	{
-		printf("esp_check_grup: type %i !\n", grp->hed->group_type);
+		//printf("esp_check_grup: type %i !\n", grp->hed->group_type);
 		disk_seek(grp->esp, grp->offset);
 		loop_grup(grp->esp, grp, 1);
 	}
@@ -214,8 +214,8 @@ rcdbp read_rcdb(espp_rcdp, int nah)
 	rcdb->s = 's';
 	rcdb->id = esp->ids.subrecords++;
 	read(esp, rcd, &rcdb->hed, sizeof(struct subrecord_header));
-	if (rcd->buf)
-	printf("rcdb - sgn, size %.4s %hu\n", (char *)&rcdb->hed->sgn, rcdb->hed->size);
+	//if (rcd->buf)
+	//printf("rcdb - sgn, size %.4s %hu\n", (char *)&rcdb->hed->sgn, rcdb->hed->size);
 	rcdb->offset = rcd->buf ? rcd->pos : Pos;
 	read_rcdb_data(esp, rcd, rcdb, nah);
 #if 0
@@ -373,13 +373,13 @@ api revised_array *esp_filter_objects(cespp esp, const char type[5])
 
 char *uncompress_record(espp_rcdp)
 {
-	printf("uncompress\n");
+	//printf("uncompress\n");
 	// char *src = rcd->data;
 	// dont use rcd->data, use rcd->offset + sizeof header ?
 	char *src = rcd->buf;
 	unsigned int realSize = *(unsigned int *)src;
 	unsigned int size = rcd->hed->size - 4;
-	printf("un size %i\n", size);
+	//printf("un size %i\n", size);
 	src += 4;
 	char *dest = malloc(realSize * sizeof(char));
 	int ret = uncompress(dest, (uLongf*)&realSize, src, size);
