@@ -359,8 +359,8 @@ effect shader property\
 \nfallof_stop_angle: %f\
 \nfallof_start_opacity: %f\
 \nfallof_stop_opacity: %f\
-\nemissive_color: [%f, %f, %f, %f]\
-\nemissive_multiple: %f\
+\nebase_color: [%f, %f, %f, %f]\
+\nebase_color_scale: %f\
 \nsoft_faloff_depth: %f\
 \ngreyscale_texture: %s\
 ",
@@ -379,16 +379,16 @@ block->C->texture_clamp_mode,
 block->C->lighting_influence,
 block->C->env_map_min_lod,
 block->C->unknown_byte,
-block->C->falloff_start_angle,
-block->C->falloff_stop_angle,
-block->C->falloff_start_opacity,
-block->C->falloff_stop_opacity,
-block->C->emissive_color.x,
-block->C->emissive_color.y,
-block->C->emissive_color.z,
-block->C->emissive_color.w,
-block->C->emissive_multiple,
-block->C->soft_falloff_depth,
+block->falloff->start_angle,
+block->falloff->stop_angle,
+block->falloff->start_opacity,
+block->falloff->stop_opacity,
+block->D->base_color.x,
+block->D->base_color.y,
+block->D->base_color.z,
+block->D->base_color.w,
+block->D->base_color_scale,
+block->D->soft_falloff_depth,
 block->greyscale_texture
 );
 }

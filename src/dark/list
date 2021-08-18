@@ -3,7 +3,7 @@
 #define PLUGIN_2		    "Dawnguard.esm"
 #define PLUGIN_3		    "HearthFires.esm"
 #define PLUGIN_4		    "Dragonborn.esm"
-#define PLUGIN_5		    "dark.esp"
+#define PLUGIN_5		    "Gloom.esp"
 
 #define MY_PLUGIN 5
 

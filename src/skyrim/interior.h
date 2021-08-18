@@ -27,7 +27,7 @@ namespace skyrim
 		bool alreadyTeleported = false;
 
 		Cell loaded_cell;
-		std::vector<Ref *> refs, iterables;
+		std::vector<Ref *> refs, lootables, mstts;
 		std::map<std::string, Ref *> editorIds;
 
 		void update();
@@ -39,7 +39,7 @@ namespace skyrim
 
 	static Cell capture_cell(Record wrcd, Grup wgrp)
 	{
-		printf("capturing cell\n");
+		// printf("capturing cell\n");
 		Cell cell;
 		cell.wrcd = wrcd;
 		cell.persistent = wgrp.get<grup *>(0);

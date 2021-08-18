@@ -54,6 +54,9 @@ struct NifpRd
 	callback(ni_skin_partition)
 	callback(bs_lighting_shader_property)
 	callback(bs_effect_shader_property)
+	callback(bs_effect_shader_property_float_controller)
+	callback(ni_float_interpolator)
+	callback(ni_float_data)
 };
 
 #undef callback
@@ -346,15 +349,34 @@ struct bs_effect_shader_property_pointer {
 		unsigned char lighting_influence;
 		unsigned char env_map_min_lod;
 		unsigned char unknown_byte;
-		float falloff_start_angle;
-		float falloff_stop_angle;
-		float falloff_start_opacity;
-		float falloff_stop_opacity;
-		Vec4 emissive_color;
-		float emissive_multiple;
-		float soft_falloff_depth;
 	} * C;
+	struct {
+		float start_angle, stop_angle, start_opacity, stop_opacity;
+	} * falloff;
+	struct {
+		Vec4 base_color;
+		float base_color_scale;
+		float soft_falloff_depth;
+	} * D;
 	char *greyscale_texture; // sized string
+};
+
+struct bs_effect_shader_property_float_controller_pointer {
+	struct {
+		ni_ref next_controller;
+		unsigned short flags;
+		float frequency, phase, start_time, stop_time;
+		ni_ref target, interpolator;
+		unsigned int controlled_variable;
+	} * A;
+};
+
+struct ni_float_interpolator_pointer {
+	int x;
+};
+
+struct ni_float_data_pointer {
+	int x;
 };
 
 struct bs_shader_texture_set_pointer

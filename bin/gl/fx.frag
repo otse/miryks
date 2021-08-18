@@ -225,7 +225,7 @@ void main()
 		float dist_y = abs(normal.y);
 
 		float fade_x = 1.0 - dist_x;
-		float fade_y = 1.0;// - dist_y;
+		float fade_y = 1.0 - dist_y;
 
 		float fades = clamp(fade_x * fade_y, 0.0, 1.0);
 
@@ -240,7 +240,7 @@ void main()
 		//fade = fade + fade2 / 2.0;
 
 		//diffuseColor.a = (vColor.a * opacity) * fade;// * fade2;
-		diffuseColor.a = vColor.a * fades;
+		diffuseColor.a = vColor.a * opacity * fades;
 
 	#endif
 
@@ -290,8 +290,8 @@ void main()
 		PointLight b = PointLight(
 			a.package[0],
 			a.package[1],
-			a.package[2][0] * 3.0,
-			a.package[2][1] * 1.0,
+			a.package[2][0] * 1.0,
+			a.package[2][1],
 			mat3(0.0));
 
 		calcPointLight( b, geometry, directLight );

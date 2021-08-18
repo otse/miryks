@@ -25,6 +25,7 @@ struct DrawGroup
 
 struct DrawGroupSortable : DrawGroup
 {
+	bool hasTransparency = false;;
 	DrawGroupSortable(Group *, mat4 = mat4(1.0));
 	virtual ~DrawGroupSortable(){};
 	virtual void Draw();

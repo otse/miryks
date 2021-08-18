@@ -38,20 +38,21 @@ namespace skyrim
 	{
 		if (!wgrp.valid())
 			return;
-		printf("loop cell subgroup %i\n", group_type);
+		// printf("loop cell subgroup %i\n", group_type);
 		wgrp.foreach(group_type, [&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
-			if (wrcd.sig(REFR))
+			if (wrcd.sig("REFR"))
 			{
 				Ref *ref = new Ref(wrcd.rcd);
 				refs.push_back(ref);
 				const char *editorId = wrcd.editorId();
 				if (editorId)
 					editorIds.emplace(editorId, ref);
-				if (ref->baseObject.valid() && ref->baseObject.sigany({WEAP, MISC}))
-				{
-					iterables.push_back(ref);
-				}
+				if (ref->baseObject.valid())
+					if(ref->baseObject.sigany( { "WEAP", "MISC" } ))
+						lootables.push_back(ref);
+					else if (ref->baseObject.sig("MSTT"))
+						mstts.push_back(ref);
 			}
 			return false;
 		});
@@ -81,7 +82,7 @@ namespace skyrim
 			if (*(wrcd.base()) == 0x0000003B)
 			{
 				float *locationalData = wrcd.data<float *>("DATA");
-				printf("found random xmarker for camera\n");
+				// printf("found random xmarker for camera\n");
 				personCam->pos = *cast_vec_3(locationalData);
 				personCam->pos.z += EYE_HEIGHT;
 				personCam->yaw = cast_vec_3(locationalData + 3)->z;
@@ -113,16 +114,20 @@ namespace skyrim
 
 	void Interior::update()
 	{
-		std::vector<Ref *> closest = iterables;
-		std::sort(iterables.begin(), iterables.end(), myfunction);
-
-		for (auto it = closest.begin(); it != closest.end(); ++it)
+		std::vector<Ref *> closest = lootables;
+		std::sort(lootables.begin(), lootables.end(), myfunction);
+		
+		for (Ref *ref : closest)
 		{
-			Ref *ref = *it;
-
 			if (ref->displayAsItem())
 				return;
 		}
+
+		for (Ref *mstt : mstts)
+		{
+			mstt->step();
+		}
+
 	}
 
 } // namespace dark

@@ -25,6 +25,7 @@ namespace skyrim
 		Group *baseGroup, *lastGroup;
 		void construct();
 		Group *nested(Rd *);
+		void forward();
 	};
 
 	class SkinnedMesh

@@ -130,6 +130,9 @@ static void *read_ni_tri_shape(nifpr);
 static void *read_ni_tri_shape_data(nifpr);
 static void *read_bs_lighting_shader_property(nifpr);
 static void *read_bs_effect_shader_property(nifpr);
+static void *read_bs_effect_shader_property_float_controller(nifpr);
+static void *read_ni_float_interpolator(nifpr);
+static void *read_ni_float_data(nifpr);
 static void *read_bs_shader_texture_set(nifpr);
 static void *read_ni_alpha_property(nifpr);
 static void *read_ni_controller_sequence(nifpr);
@@ -155,38 +158,38 @@ void nifp_read_blocks(Nifp *nif)
 
 #define woo ni_is_any(x, y, z) block = read_ni_node(nif, n);
 
+// todo macro?
+
 void big_block_reader(Nifp *nif, int n)
 {
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
 	if (0) ;
-	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) block = read_ni_node(nif, n);
-	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) block = read_ni_skin_instance(nif, n);
-	else if ( ni_is_type(NI_SKIN_DATA) ) block = read_ni_skin_data(nif, n);
-	else if ( ni_is_type(NI_SKIN_PARTITION) ) block = read_ni_skin_partition(nif, n);
-	special_edition
-	else if ( ni_is_type(BS_TRI_SHAPE) ) block = read_bs_tri_shape(nif, n);
+	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) 			block = read_ni_node(nif, n);
+	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) 	block = read_ni_skin_instance(nif, n);
+	else if ( ni_is_type(NI_SKIN_DATA) ) 										block = read_ni_skin_data(nif, n);
+	else if ( ni_is_type(NI_SKIN_PARTITION) ) 									block = read_ni_skin_partition(nif, n);
+	else if ( ni_is_type(BS_TRI_SHAPE) ) 										block = read_bs_tri_shape(nif, n); special_edition
 	else if ( ni_is_type(BS_DYNAMIC_TRI_SHAPE) ) 0;
-	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) block = read_ni_tri_shape(nif, n);
-	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) block = read_ni_alpha_property(nif, n);
-	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) block = read_ni_tri_shape_data(nif, n);
-	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) block = read_bs_lighting_shader_property(nif, n);
-	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) ) block = read_bs_effect_shader_property(nif, n);
-	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) ) 0;
-	else if ( ni_is_type(NI_FLOAT_INTERPOLATOR) ) 0;
-	else if ( ni_is_type(NI_FLOAT_DATA) ) 0;
-	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) block = read_bs_shader_texture_set(nif, n);
-	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) block = read_ni_controller_sequence(nif, n);
+	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) 				block = read_ni_tri_shape(nif, n);
+	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) 									block = read_ni_alpha_property(nif, n);
+	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) 									block = read_ni_tri_shape_data(nif, n);
+	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) 						block = read_bs_lighting_shader_property(nif, n);
+	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) )							block = read_bs_effect_shader_property(nif, n);
+	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) )			block = read_bs_effect_shader_property_float_controller(nif, n);
+	else if ( ni_is_type(NI_FLOAT_INTERPOLATOR) )								block = read_ni_float_interpolator(nif, n);
+	else if ( ni_is_type(NI_FLOAT_DATA) )										block = read_ni_float_data(nif, n);
+	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) 								block = read_bs_shader_texture_set(nif, n);
+	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) 								block = read_ni_controller_sequence(nif, n);
 	else if ( ni_is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
 	else if ( ni_is_type(NI_STRING_EXTRA_DATA) ) 0;
-	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) block = read_ni_transform_interpolator(nif, n); 
-	else if ( ni_is_type(NI_TRANSFORM_DATA) ) block = read_ni_transform_data(nif, n);
+	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) 							block = read_ni_transform_interpolator(nif, n); 
+	else if ( ni_is_type(NI_TRANSFORM_DATA) ) 									block = read_ni_transform_data(nif, n);
 	else if ( ni_is_type(BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA) ) 0;
 	Blocks[n] = block;
 }
 
 // language to read blockz
-// most blocks here are actually for legendary edition
 
 static inline void sink(Nifp *nif, void **dest, int size) {
 	*dest = Depos;
@@ -200,67 +203,84 @@ static inline void sink(Nifp *nif, void **dest, int size) {
 
 #define CALLOC( type ) type *block = calloc(1, sizeof(type));
 
-#define NI_READ(x) void *read_ ## x ( Nifp *nif, int n ) \
+#define BEGIN(x) void *read_ ## x ( Nifp *nif, int n ) \
 { \
 	CALLOC(struct x ## _pointer)
 
-#define END_READ() \
+#define END() \
 	return block; \
 } \
 
-NI_READ ( ni_common_layout )
+BEGIN ( ni_common_layout )
 SINK ( nif, block, F )
 SAIL ( nif, block, extra_data_list, F, num_extra_data_list )
 SINK ( nif, block, A )
-END_READ()
+END()
 
-NI_READ( ni_node )
+BEGIN( ni_node )
 block->common = read_ni_common_layout( nif, n );
 SINK ( nif, block, A )
 SAIL ( nif, block, children, A, num_children )
 SINK ( nif, block, B )
 SAIL ( nif, block, effects, B, num_effects )
-END_READ()
+END()
 
-NI_READ( bs_lighting_shader_property )
+BEGIN( bs_lighting_shader_property )
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, B )
-END_READ()
+END()
 
-NI_READ( bs_effect_shader_property )
+BEGIN( bs_effect_shader_property )
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, B )
 read_sized_string( nif, &block->source_texture );
 SINK ( nif, block, C )
+SINK ( nif, block, falloff )
+SINK ( nif, block, D )
 read_sized_string( nif, &block->greyscale_texture );
-END_READ()
+END()
 
-NI_READ( bs_shader_texture_set )
+BEGIN( bs_effect_shader_property_float_controller )
+printf("float controller\n");
+SINK ( nif, block, A )
+END()
+
+BEGIN( ni_float_interpolator )
+printf("float interpolator\n");
+
+END()
+
+BEGIN( ni_float_data )
+printf("float data\n");
+
+END()
+
+BEGIN( bs_shader_texture_set )
 SINK ( nif, block, A )
 read_sized_strings( nif, &block->textures, block->A->num_textures );
-END_READ()
+END()
 
-NI_READ(ni_alpha_property)
+BEGIN(ni_alpha_property)
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, C )
-END_READ()
+END()
 
-NI_READ( ni_controller_sequence )
+BEGIN( ni_controller_sequence )
 SINK ( nif, block, A )
 SAIL ( nif, block, controlled_blocks, A, num_controlled_blocks )
 SINK ( nif, block, C )
-END_READ()
+END()
 
-NI_READ( ni_transform_interpolator )
+BEGIN( ni_transform_interpolator )
 //printf("read_ni_transform_interpolator\n");
 SINK ( nif, block, transform )
 SINK ( nif, block, B )
-END_READ()
+END()
 
-NI_READ( ni_transform_data ) legendary_edition
+BEGIN( ni_transform_data ) legendary_edition
 SINK ( nif, block, A )
 
 if ( block->A->num_rotation_keys > 0 )
@@ -276,17 +296,17 @@ SINK ( nif, block, translations )
 SAIL ( nif, block, translation_keys, translations, num_keys )
 SINK ( nif, block, scales )
 SAIL ( nif, block, scale_keys, scales, num_keys )
-END_READ()
+END()
 
-NI_READ( ni_tri_shape ) legendary_edition
+BEGIN( ni_tri_shape ) legendary_edition
 printf("read ni tri shape pointer!\n");
 block->common = read_ni_common_layout( nif, n );
 SINK ( nif, block, A )
 SKIP( 9 )
 SINK ( nif, block, B )
-END_READ()
+END()
 
-NI_READ( ni_tri_shape_data ) legendary_edition
+BEGIN( ni_tri_shape_data ) legendary_edition
 printf(" ni tri shape data in sse ?!\n");
 
 SINK ( nif, block, A )
@@ -322,9 +342,9 @@ SINK ( nif, block, L )
 
 SAIL ( nif, block, match_groups, L, num_match_groups )
 
-END_READ()
+END()
 
-NI_READ( ni_skin_instance ) legendary_edition
+BEGIN( ni_skin_instance ) legendary_edition
 
 SINK ( nif, block, A )
 SAIL ( nif, block, bones, A, num_bones )
@@ -335,9 +355,9 @@ if (ni_is_type(BS_DISMEMBER_SKIN_INSTANCE))
 	SINK ( nif, block, B )
 	SAIL ( nif, block, partitions, B, num_partitions )
 }
-END_READ()
+END()
 
-NI_READ( ni_skin_data ) legendary_edition
+BEGIN( ni_skin_data ) legendary_edition
 //printf("read ni skin data\n");
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, B )
@@ -353,9 +373,9 @@ for (unsigned int i = 0; i < block->B->num_bones; i++)
 	SINK ( nif, bone_data, B )
 	SAIL ( nif, bone_data, vertex_weights, B, num_vertices )
 }
-END_READ()
+END()
 
-NI_READ( ni_skin_partition ) legendary_edition
+BEGIN( ni_skin_partition ) legendary_edition
 SINK ( nif, block, num_skin_partition_blocks )
 
 block->skin_partition_blocks = calloc(*block->num_skin_partition_blocks, sizeof(struct skin_partition *));
@@ -390,9 +410,9 @@ for (unsigned int i = 0; i < *block->num_skin_partition_blocks; i++)
 
 	SINK ( nif, skin_partition, unknown_short )
 }
-END_READ()
+END()
 
-NI_READ ( bs_tri_shape ) special_edition
+BEGIN ( bs_tri_shape ) special_edition
 block->common = read_ni_common_layout( nif, n );
 
 SINK ( nif, block, bounding_sphere )
@@ -413,11 +433,11 @@ else {
 	// xmarkerx
 	// marker_prison
 	// marker cocheading
-	printf("\nsse for %s has %i %i %i %i %i %i\n", nif->path, vertex, uvs, normals, tangents, colors);
-	return block;
+	// printf("\nsse for %s has %i %i %i %i %i %i\n", nif->path, vertex, uvs, normals, tangents, colors);
 	SKIP ( block->infos->data_size )
+	return block;
 }
 
 SAIL ( nif, block, triangles, infos, num_triangles )
 SINK ( nif, block, particle_data_size )
-END_READ()
+END()

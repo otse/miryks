@@ -25,7 +25,7 @@ void load_top_groups()
 {
 	// todo redo
 	const char *words[] = {
-		"STAT", "DOOR", "FURN", "BOOK", "CONT", "ARMO", "WEAP", "MISC", "ALCH", "INGR"
+		"STAT", "DOOR", "FURN", "BOOK", "CONT", "ARMO", "WEAP", "MISC", "ALCH", "INGR", "LIGH", "MSTT"
 	};
 	size_t n = sizeof(words)/sizeof(words[0]);
 	for (unsigned int i = 0; i < PLUGINS; i++)
@@ -35,7 +35,7 @@ void load_top_groups()
 
 void load_gloomgen()
 {
-	dungeon = new Interior("DarkSeSewer");
+	dungeon = new Interior("GloomGen");
 	dungeon->loadcell();
 	//player1 = new Player();
 }
@@ -96,7 +96,7 @@ int main()
 	simple_viewer(nif);
 	//nifp_test();
 #endif
-	//put_it_fullscreen();
+	put_it_fullscreen();
 #if 1
 	printf("loading gloom gen?\n");
 	load_top_groups();

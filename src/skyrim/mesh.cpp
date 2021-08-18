@@ -12,22 +12,28 @@ extern "C"
 
 using namespace dark;
 
+#define callback(x) static void (x ## _callback) (Rd *, x ## _pointer *);
+
 namespace skyrim
 {
 	static void other(Rd *, void *);
-	static void ni_node_callback						(Rd *, ni_node_pointer *);
-	static void ni_node_callback_2						(Rd *, ni_node_pointer *);
-	static void ni_tri_shape_callback					(Rd *, ni_tri_shape_pointer *);
-	static void ni_tri_shape_callback_2					(Rd *, ni_tri_shape_pointer *);
-	static void ni_tri_shape_data_callback				(Rd *, ni_tri_shape_data_pointer *);
-	static void bs_lighting_shader_property_callback	(Rd *, bs_lighting_shader_property_pointer *);
-	static void bs_effect_shader_property_callback		(Rd *, bs_effect_shader_property_pointer *);
-	static void bs_shader_texture_set_callback			(Rd *, bs_shader_texture_set_pointer *);
-	static void ni_alpha_property_callback				(Rd *, ni_alpha_property_pointer *);
-	static void ni_skin_instance_callback				(Rd *, ni_skin_instance_pointer *);
-	static void ni_skin_data_callback					(Rd *, ni_skin_data_pointer *);
-	static void ni_skin_partition_callback				(Rd *, ni_skin_partition_pointer *);
-	static void bs_tri_shape_callback					(Rd *, bs_tri_shape_pointer *); special_edition
+	callback(ni_node)
+	callback(ni_tri_shape)
+	callback(ni_tri_shape_data)
+	callback(bs_lighting_shader_property)
+	callback(bs_effect_shader_property)
+	callback(bs_effect_shader_property_float_controller)
+	callback(ni_float_interpolator)
+	callback(ni_float_data)
+	callback(bs_shader_texture_set)
+	callback(ni_alpha_property)
+	callback(ni_skin_instance)
+	callback(ni_skin_data)
+	callback(ni_skin_partition)
+	callback(bs_tri_shape) special_edition
+	// for skinnedmesh
+	static void ni_node_callback_2      (Rd *, ni_node_pointer *);
+	static void ni_tri_shape_callback_2 (Rd *, ni_tri_shape_pointer *);
 
 	Mesh::Mesh()
 	{
@@ -116,6 +122,10 @@ namespace skyrim
 			skeleton->step();
 		initial();
 	}
+	void Mesh::forward()
+	{
+		
+	}
 	Group *Mesh::nested(Rd *rd)
 	{
 		Group *group = new GroupBounded();
@@ -124,6 +134,7 @@ namespace skyrim
 		lastGroup = group;
 		return group;
 	}
+	
 	void other(Rd *rd, void *block_pointer)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
@@ -233,6 +244,11 @@ namespace skyrim
 		Geometry *geometry = new Geometry();
 		group->geometry = geometry;
 		geometry->material->src = &simple;
+		const char *name = nifp_get_string(rd->nif, block->common->F->name);
+		if (strstr(name, "Marker"))
+		{
+			return;
+		}
 		if (!block->vertex_data_all && !block->vertex_data_no_clr)
 			return;
 		geometry->Clear(block->infos->num_vertices, block->infos->num_triangles * 3);
@@ -313,23 +329,26 @@ namespace skyrim
 	}
 	void bs_effect_shader_property_callback(Rd *rd, bs_effect_shader_property_pointer *block)
 	{
-		//printf(" mesh bs effect shader cb ");
 		Mesh *mesh = (Mesh *)rd->data;
 		Geometry *geometry = mesh->lastGroup->geometry;
 		if (geometry)
 		{
 			Material *material = geometry->material;
-			//material->src = &basic;
-			material->color = vec3(1.0);
-			material->emissive = gloomVec3(block->C->emissive_color);
+			material->src = &fxs;
+			material->transparent = true;
+			material->blending = true;
+			material->color = gloomVec3(block->D->base_color);
+			material->opacity = block->D->base_color_scale;
 			material->map = GetProduceTexture(block->source_texture);
 			//printf("source texture is %s\n", block->source_texture);
 			if (block->B->shader_flags_2 & 0x00000020)
 				material->vertexColors = true;
 			if (block->B->shader_flags_1 & 0x80000000) // z buffer test
-				0;									   // material->testing = true;
+				material->testing = true;
 			if (block->B->shader_flags_2 & 0x00000001) // z buffer write
-				0;									   // material->testing = true;
+				material->testing = true;
+			if (block->B->shader_flags_2 & 0x00000010)
+				material->doubleSided = true;
 		}
 	}
 	void bs_shader_texture_set_callback(Rd *rd, bs_shader_texture_set_pointer *block)

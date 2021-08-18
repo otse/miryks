@@ -51,6 +51,14 @@ void Scene::DrawItems()
 
 	std::sort(drawGroups.ts.begin(), drawGroups.ts.end(), EarlyZKills);
 
+	auto TransparencyLast = [](const DrawGroup *a, const DrawGroup *b) -> bool {
+		const DrawGroupSortable *dgs = dynamic_cast<const DrawGroupSortable *>(a);
+		if (dgs && dgs->hasTransparency)
+			return false;
+		return true;
+	};
+	std::sort(drawGroups.ts.begin(), drawGroups.ts.end(), TransparencyLast);
+
 	for (DrawGroup *drawGroup : drawGroups.ts)
 		drawGroup->Draw();
 }

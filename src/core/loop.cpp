@@ -325,12 +325,14 @@ void dark::program_while()
 
 	sceneDef->drawGroups.Add(personCam->drawGroup);
 
+	#if 0
 	PointLight *myself = new PointLight;
 	myself->color = vec3(1.f);
 	myself->distance = 500.0f;
 
 	sceneDef->pointLights.Add(myself);
-
+	#endif
+	
 	do
 	{
 		time = glfwGetTime();
@@ -376,9 +378,11 @@ void dark::program_while()
 
 		cameraCur->Update(delta);
 
+		#if 0
 		myself->matrix = cameraCur->group->matrixWorld;
 		myself->Calc();
-
+		#endif
+		
 		// someDraugr
 		if (someDraugr)
 			someDraugr->step();

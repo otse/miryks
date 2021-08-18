@@ -29,5 +29,7 @@ namespace dark
 		void forBaseId(formId);
 		float getDistance();
 		bool displayAsItem();
+
+		void step();
 	};
 } // namespace dark

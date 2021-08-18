@@ -71,14 +71,10 @@ api espp plugin_load(const char *path)
 	while(Pos < esp->filesize)
 	{
 	grupp grp = read_grp(esp);
-	//loop_grup(esp, grp);
 	insert(esp->grups, grp);
 	}
-	printf("last\n");
 	return esp;
 }
-
-
 
 void skip(espp esp, rcdp rcd, size_t);
 void read(espp esp, rcdp rcd, void **, size_t);
@@ -219,7 +215,7 @@ void loop_rcd(espp esp, rcdp rcd)
 
 		if (rcdb->hed->sgn == *(unsigned int *)"XXXX")
 		{
-			printf("oef");
+			// printf("oef");
 			read_rcdb_data(esp, rcd, rcdb);
 			rcdbp discard = read_rcdb(esp, rcd);
 			if (rcd->buf)
@@ -304,6 +300,8 @@ inline struct form_id build_form_id(unsigned int formId)
 	return form_id;
 }
 
+// We do not map the TES4 -> MASTers
+// For my mod, this is fine
 api rcdp esp_get_form_id(unsigned int formId)
 {
 	struct form_id form_id;

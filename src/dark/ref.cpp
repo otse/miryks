@@ -42,6 +42,14 @@ namespace dark
 		delete spotLight;
 	}
 
+	void Ref::step()
+	{
+		if (baseObject.sig("MSTT"))
+		{
+			
+		}
+	}
+
 	void Ref::go()
 	{
 		matrix = mat4(1.0);
@@ -115,9 +123,6 @@ namespace dark
 			"INGR"
 			}))
 		{
-#if SNPRINTF_FORM_ID
-			printf("refr has base %s - %s\n", baseObject.rcd->form_id->hex, baseObject.editorId());
-#endif
 			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)
 			{
@@ -128,7 +133,16 @@ namespace dark
 				mesh = create_simple_mesh_from_modl(modl, true);
 			}
 		}
-		else if (baseObject.sig(__LIGH__))
+		else if (baseObject.sig("MSTT"))
+		{
+			printf("this is a mstt\n");
+
+			auto modl = baseObject.data<const char *>("MODL", 0);
+
+			mesh = create_simple_mesh_from_modl(modl, true);
+
+		}
+		else if (baseObject.sig("LIGH"))
 		{
 			struct Struct
 			{
@@ -195,6 +209,10 @@ namespace dark
 		}
 		else
 		{
+			auto editorId = baseObject.editorId();
+			
+			printf("ref.cpp cant become %.4s edid %s\n", (char *)&baseObject.hed().sgn, editorId);
+			
 			baseObject = nullptr; // invalidate
 		}
 
