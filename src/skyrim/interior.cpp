@@ -16,61 +16,94 @@
 
 namespace skyrim
 {
-	Interior::Interior(const char *editorId)
+	Cell capture_cell(Record wrcd, Grup wgrp)
 	{
-		this->editorId = editorId;
+		Cell cell;
+		cell.wrcd = wrcd;
+		cell.persistent = wgrp.get<grup *>(0);
+		cell.temporary = wgrp.get<grup *>(1);
+		return cell;
+	}
+
+	Cell find_cell_foreach(const char *name)
+	{
+		Cell cell;
+		Grup a, b, c;
+		grupp top = esp_top_grup(get_plugins()[MY_ESP], Cells);
+		bool stop = false;
+		a(top).foreach(0, [&](unsigned int i) {
+		b(a.get<grup *>(i)).foreach(2, [&](unsigned int j) {
+		c(b.get<grup *>(j)).foreach(3, [&](unsigned int &k) {
+			Record wrcd = c.get<record *>(k);
+			Grup wgrp = c.get<grup *>(++k);
+			if (wrcd.hasEditorId(name)) {
+				printf("foreach found\n");
+				cell = capture_cell(wrcd, wgrp);
+				stop = true;
+			}
+			return stop;
+			});
+			return stop;
+			});
+			return stop;
+		});
+		return cell;
+	}
+
+	Interior::Interior(const char *edId)
+	{
+		editorId = edId;
 		Group *group = new Group();
 	}
 
-	void Interior::loadcell()
+	void Interior::load()
 	{
-		cell = find_cell_loop(editorId);
-		parsegrup(8, cell.persistent);
-		parsegrup(9, cell.temporary);
+		cell = find_cell_foreach(editorId);
+		subgroup(cell.persistent, 8);
+		subgroup(cell.temporary, 9);
 	}
-
-	static void PlaceCameraDud(Interior *);
-
-	void Interior::parsegrup(int group_type, Grup wgrp)
+	
+	void Interior::subgroup(Grup wgrp, int group_type)
 	{
+		auto things = {
+			Doors,
+			Furniture,
+			Books,
+			Containers,
+			Armor,
+			Weapons,
+			Ammo,
+			Misc,
+			Alchemy,
+			Ingredients
+		};
 		if (!wgrp.valid())
 			return;
-		// printf("loop cell subgroup %i\n", group_type);
 		wgrp.foreach(group_type, [&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
 			if (wrcd.sig(REFR))
 			{
 				Ref *ref = new Ref(wrcd.rcd);
 				refs.push_back(ref);
-				const char *name = wrcd.editorId();
-				if (name)
-					editorIds.emplace(name, ref);
+				const char *edId = wrcd.editorId();
+				if (edId)
+					editorIds.emplace(edId, ref);
 				if (ref->baseObject.valid())
-					if(ref->baseObject.sigany( { WEAP, MISC } ))
-						lootables.push_back(ref);
+				{
+					if (ref->baseObject.sigany( things ))
+						labels.push_back(ref);
 					else if (ref->baseObject.sig( MSTT ))
 						mstts.push_back(ref);
+				}
 			}
 			return false;
 		});
-		placecamera();
-	}
-
-	void parsegrup_no_wrapper(cgrupp grp)
-	{
-		for (unsigned int i = 0; i < grp->mixed->size; i++)
-		{
-			crecordp rcd = (crecordp)grp->mixed->elements[i];
-			if (rcd->hed->sgn == *(unsigned int *)REFR)
-			{
-				// make Ref
-			}
-		}
+		put_cam_on_random_xmarker();
 	}
 	
-	void Interior::placecamera()
+	// todo horrible
+	void Interior::put_cam_on_random_xmarker()
 	{
-		// Place the camera at the first XMarker you find
 		if (alreadyTeleported)
 			return;
 		Grup wgrp = cell.persistent;
@@ -111,8 +144,8 @@ namespace skyrim
 
 	void Interior::update()
 	{
-		std::vector<Ref *> closest = lootables;
-		std::sort(lootables.begin(), lootables.end(), myfunction);
+		std::vector<Ref *> closest = labels;
+		std::sort(labels.begin(), labels.end(), myfunction);
 		
 		for (Ref *ref : closest)
 			if (ref->displayAsItem())

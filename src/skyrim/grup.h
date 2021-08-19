@@ -32,21 +32,18 @@ namespace skyrim
 		X(cgrupp p)
 		{
 			grp = p;
-			if (grp)
-			{
-				esp_check_grup((grupp)grp);
-				(*this)(grp);
-			}
+			(*this)(grp);
 		}
 		X &operator()(cgrupp p)
 		{
 			grp = p;
 			assertc(grp->g == 'g');
+			esp_check_grup((grupp)grp);
 			return *this;
 		}
 		inline bool valid() const
 		{
-			return !!grp;
+			return grp != nullptr;
 		}
 		inline const grup_header &hed() const
 		{
@@ -83,11 +80,12 @@ namespace skyrim
 		/*
 		cgrupp getgrup(unsigned int i) const
 		{
-			// just use get<grup * or record *>
+			// just use get<grup *>
 			return get<grup *>(i, 'g');
 		}
 		crecordp getrecord(unsigned int i) const
 		{
+			// just use get<record *>
 			return get<record *>(i, 'r');
 		}
 		// << bluh >>

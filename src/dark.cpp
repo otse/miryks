@@ -1,5 +1,4 @@
 #include <png.h>
-#include <array>
 
 #include <core/files.h>
 #include <core/basefile.h>
@@ -18,31 +17,10 @@ void load_bucket()
 	simple_viewer(nif);
 }
 
-void dark::load_definitions(espp plugin)
-{
-	std::array<const char *, 13> words = {
-		Statics,
-		Lights,
-		Doors,
-		Furniture,
-		Books,
-		Containers,
-		Armor,
-		Weapons,
-		Ammo,
-		Misc,
-		Alchemy,
-		Ingredients,
-		Mists,
-	};
-	for (const char *word : words)
-		esp_check_grup(esp_top_grup(plugin, word));
-}
-
 void load_gloomgen()
 {
 	dungeon = new Interior("GloomGen");
-	dungeon->loadcell();
+	dungeon->load();
 	//player1 = new Player();
 }
 
@@ -99,10 +77,8 @@ int main()
 	// Bucket beginning
 	load_bucket();
 #endif
-	put_it_fullscreen();
+	// put_it_fullscreen();
 #if 1
-	for (int i = 0; i < PLUGINS; i++)
-		load_definitions(get_plugins()[i]);
 	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");
@@ -111,9 +87,8 @@ int main()
 	//someHuman = new Human();
 	//someHuman->Place("gloomgenman");
 #endif
-
+\
 	//player1 = new Player();
-
 	program_while();
 	return 1;
 }
@@ -125,7 +100,7 @@ namespace dark
 		esppp loc = &get_plugins()[MY_ESP];
 		free_plugin(loc);
 		*loc = load_plugin(PLUGIN_5, true);
-		load_definitions(*loc);
+		//load_definitions(*loc);
 	}
 
 	void reload_dungeon()
@@ -136,7 +111,7 @@ namespace dark
 			delete dungeon;
 			dungeon = new Interior(editorId);
 			dungeon->alreadyTeleported = true;
-			dungeon->loadcell();
+			dungeon->load();
 		}
 	}
 }
@@ -147,6 +122,7 @@ namespace dark
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 
+// todo uglies
 void dark::simple_viewer(Nif *nif)
 {
 	static Mesh *mesh = nullptr;

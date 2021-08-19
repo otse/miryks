@@ -57,7 +57,7 @@ namespace dark
 					   { return std::tolower(c); });
 		const char *s = str.c_str();
 		Rc *rc = bsa_find_more(s, flags);
-		if (rc==NULL)
+		if (rc == NULL)
 			printf("no rc at %s\n", s);
 		bsa_read(rc);
 		return rc;
@@ -69,7 +69,7 @@ namespace dark
 		if (map.count(model) && store)
 			return map[model];
 		Rc *rc = load_rc("meshes\\", model, 0x1);
-		if (rc==NULL)
+		if (rc == NULL)
 			return nullptr;
 		Nif *nif = import_nif(rc, true);
 		Mesh *mesh = new Mesh(nif);
@@ -82,14 +82,14 @@ namespace dark
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = editme + "/Data/" + filename;
-		Esp *esp;
-		esp = has_plugin(filename);
-		if (esp)
-			return esp;
+		espp plugin;
+		plugin = has_plugin(filename);
+		if (plugin)
+			return plugin;
 		if (exists(path.c_str()))
-			return plugin_load(path.c_str());
+			plugin = plugin_load(path.c_str());
 		else if (exists(filename))
-			return plugin_load(filename);
+			plugin = plugin_load(filename);
 		else
 		{
 			printf("couldn't find %s in /Data or /bin\n", filename);
@@ -97,7 +97,29 @@ namespace dark
 				exit(1);
 			return nullptr;
 		}
-		return esp;
+		load_definitions(plugin);
+		return plugin;
+	}
+
+	void load_definitions(espp plugin)
+	{
+		static const auto definitions = {
+			Statics,
+			Lights,
+			Doors,
+			Furniture,
+			Books,
+			Containers,
+			Armor,
+			Weapons,
+			Ammo,
+			Misc,
+			Alchemy,
+			Ingredients,
+			Mists,
+		};
+		for (const char *word : definitions)
+			esp_check_grup(esp_top_grup(plugin, word));
 	}
 
 	Bsa *load_archive(const char *filename)
