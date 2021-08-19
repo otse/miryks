@@ -51,7 +51,7 @@ namespace dark
 		crecordp race = nullptr;
 		Grup array;
 		grupp top = esp_top_grup(get_plugins()[0], "RACE");
-		array(top).foreach(0, [&](unsigned int &i) {
+		array(top).foreach([&](unsigned int &i) {
 			Record object = array.get<record *>(i);
 			auto editorId = object.editorId();
 			if (strcmp(editorId, raceId) == 0)
@@ -60,7 +60,7 @@ namespace dark
 				return true;
 			}
 			return false;
-		});
+		}, 0);
 		assertc(race);
 		return race;
 	}

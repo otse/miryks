@@ -103,7 +103,7 @@ namespace dark
 
 	void load_definitions(espp plugin)
 	{
-		static const auto definitions = {
+		static const auto things = {
 			Statics,
 			Lights,
 			Doors,
@@ -118,7 +118,7 @@ namespace dark
 			Ingredients,
 			Mists,
 		};
-		for (const char *word : definitions)
+		for (const char *word : things)
 			esp_check_grup(esp_top_grup(plugin, word));
 	}
 

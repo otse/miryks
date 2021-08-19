@@ -30,23 +30,18 @@ namespace skyrim
 		Cell cell;
 		Grup a, b, c;
 		grupp top = esp_top_grup(get_plugins()[MY_ESP], Cells);
-		bool stop = false;
-		a(top).foreach(0, [&](unsigned int i) {
-		b(a.get<grup *>(i)).foreach(2, [&](unsigned int j) {
-		c(b.get<grup *>(j)).foreach(3, [&](unsigned int &k) {
+		a(top).foreach([&](unsigned int i) {
+		return b(a.get<grup *>(i)).foreach([&](unsigned int j) {
+		return c(b.get<grup *>(j)).foreach([&](unsigned int &k) {
 			Record wrcd = c.get<record *>(k);
 			Grup wgrp = c.get<grup *>(++k);
 			if (wrcd.hasEditorId(name)) {
 				printf("foreach found\n");
 				cell = capture_cell(wrcd, wgrp);
-				stop = true;
+				return true;
 			}
-			return stop;
-			});
-			return stop;
-			});
-			return stop;
-		});
+			return false;
+		}, 3);}, 2);}, 0);
 		return cell;
 	}
 
@@ -79,7 +74,7 @@ namespace skyrim
 		};
 		if (!wgrp.valid())
 			return;
-		wgrp.foreach(group_type, [&](unsigned int i) {
+		wgrp.foreach([&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
 			if (wrcd.sig(REFR))
 			{
@@ -97,7 +92,7 @@ namespace skyrim
 				}
 			}
 			return false;
-		});
+		}, group_type);
 		put_cam_on_random_xmarker();
 	}
 	
@@ -107,7 +102,7 @@ namespace skyrim
 		if (alreadyTeleported)
 			return;
 		Grup wgrp = cell.persistent;
-		wgrp.foreach(8, [&](unsigned int i) {
+		wgrp.foreach([&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
 			if (*(wrcd.base()) == 0x0000003B)
 			{
@@ -120,7 +115,7 @@ namespace skyrim
 				return true;
 			}
 			return false;
-		});
+		}, 8);
 	}
 	
 	Interior::~Interior()

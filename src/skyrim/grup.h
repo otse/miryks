@@ -53,7 +53,7 @@ namespace skyrim
 		{
 			return *grp->mixed;
 		}
-		int foreach (int group_type, grupfunc f)
+		bool foreach(grupfunc f, int group_type)
 		{
 			assertc(valid());
 			assertc(hed().group_type == group_type);

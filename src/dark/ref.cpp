@@ -105,7 +105,7 @@ namespace dark
 			return;
 		}
 		
-		std::vector<const char *> simple = {
+		std::vector<const char *> things = {
 			Statics,
 			Doors,
 			Furniture,
@@ -119,7 +119,7 @@ namespace dark
 			Ingredients
 		};
 		
-		if (baseObject.sigany(simple))
+		if (baseObject.sigany(things))
 		{
 			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)
