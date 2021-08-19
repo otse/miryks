@@ -50,7 +50,7 @@ namespace dark
 	{
 		crecordp race = nullptr;
 		Grup array;
-		grupp top = esp_top_grup(get_plugins()[0], __RACE__);
+		grupp top = esp_top_grup(get_plugins()[0], "RACE");
 		array(top).foreach(0, [&](unsigned int &i) {
 			Record object = array.get<record *>(i);
 			auto editorId = object.editorId();
@@ -69,7 +69,7 @@ namespace dark
 	{
 		Record race = Record(GetRace(raceId));
 		ExportRaceHkxToKf(raceId);
-		auto anam = race.data<char *>(_ANAM_, 0);
+		auto anam = race.data<char *>("ANAM", 0);
 		Rc *rc = load_rc("meshes\\", model, 0x1);
 		Nif *character = import_nif(rc, false);
 		skeleton = new Skeleton(anam);

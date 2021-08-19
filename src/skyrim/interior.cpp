@@ -41,7 +41,7 @@ namespace skyrim
 		// printf("loop cell subgroup %i\n", group_type);
 		wgrp.foreach(group_type, [&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
-			if (wrcd.sig("REFR"))
+			if (wrcd.sig(REFR))
 			{
 				Ref *ref = new Ref(wrcd.rcd);
 				refs.push_back(ref);
@@ -49,9 +49,9 @@ namespace skyrim
 				if (editorId)
 					editorIds.emplace(editorId, ref);
 				if (ref->baseObject.valid())
-					if(ref->baseObject.sigany( { "WEAP", "MISC" } ))
+					if(ref->baseObject.sigany( { WEAP, MISC } ))
 						lootables.push_back(ref);
-					else if (ref->baseObject.sig("MSTT"))
+					else if (ref->baseObject.sig( MSTT ))
 						mstts.push_back(ref);
 			}
 			return false;
@@ -64,7 +64,7 @@ namespace skyrim
 		for (unsigned int i = 0; i < grp->mixed->size; i++)
 		{
 			crecordp rcd = (crecordp)grp->mixed->elements[i];
-			if (rcd->hed->sgn == *(unsigned int *)"REFR")
+			if (rcd->hed->sgn == *(unsigned int *)REFR)
 			{
 				// make Ref
 			}

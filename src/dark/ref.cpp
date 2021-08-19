@@ -101,27 +101,25 @@ namespace dark
 		{
 			char hex[10];
 			snprintf(hex, 10, "%08X", id);
-			//printf("\ncant find form_id %s %u\n\n", hex, id);
+			printf("\ncant find form_id %s %u\n\n", hex, id);
 			return;
 		}
-		else
-		{
-		}
-
-		// "STAT", "DOOR", "FURN", "BOOK", "ALCH", "CONT", "ARMO", "WEAP", "FLOR", "TREE", "SLGM", "SCRL", "INGR", "MISC"
 		
-		if (baseObject.sigany({
-			"STAT",
-			"DOOR",
-			"FURN",
-			"BOOK",
-			"CONT",
-			"ARMO",
-			"WEAP",
-			"MISC",
-			"ALCH",
-			"INGR"
-			}))
+		std::vector<const char *> simple = {
+			Statics,
+			Doors,
+			Furniture,
+			Books,
+			Containers,
+			Armor,
+			Weapons,
+			Ammo,
+			Misc,
+			Alchemy,
+			Ingredients
+		};
+		
+		if (baseObject.sigany(simple))
 		{
 			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)
@@ -133,7 +131,7 @@ namespace dark
 				mesh = create_simple_mesh_from_modl(modl, true);
 			}
 		}
-		else if (baseObject.sig("MSTT"))
+		else if (baseObject.sig(MSTT))
 		{
 			printf("this is a mstt\n");
 
@@ -142,7 +140,7 @@ namespace dark
 			mesh = create_simple_mesh_from_modl(modl, true);
 
 		}
-		else if (baseObject.sig("LIGH"))
+		else if (baseObject.sig(LIGH))
 		{
 			struct Struct
 			{
@@ -158,8 +156,8 @@ namespace dark
 			Light *light = nullptr;
 
 			auto editorId = baseObject.editorId();
-			auto DATA = baseObject.data<int *>(_DATA_);
-			auto FNAM = baseObject.data<float *>(_FNAM_);
+			auto DATA = baseObject.data<int *>("DATA");
+			auto FNAM = baseObject.data<float *>("FNAM");
 
 			Struct *data = (Struct *)DATA;
 
@@ -259,8 +257,8 @@ namespace dark
 			return false;
 		}
 
-		auto FULL = baseObject.data<char *>(_FULL_);
-		auto DESC = baseObject.data<const char *>(_DESC_);
+		auto FULL = baseObject.data<char *>("FULL");
+		auto DESC = baseObject.data<const char *>("DESC");
 
 		const char *itemName = "Something";
 		if (FULL)

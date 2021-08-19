@@ -8,7 +8,7 @@
 #include <renderer/types.h>
 
 template <typename T>
-struct Container
+struct Bluh
 {
 	std::vector<T *> ts;
 	void Add(T *t)
@@ -23,9 +23,9 @@ struct Container
 struct Scene
 {
 public:
-	Container<DrawGroup> drawGroups;
-	Container<PointLight> pointLights;
-	Container<SpotLight> spotLights;
+	Bluh<DrawGroup> drawGroups;
+	Bluh<PointLight> pointLights;
+	Bluh<SpotLight> spotLights;
 	
 	//std::vector<DrawGroup *> drawGroups;
 	//std::vector<PointLight *> pointLights;

@@ -21,16 +21,27 @@ void load_bucket()
 	simple_viewer(nif);
 }
 
-void load_top_groups()
+void load_definitions()
 {
-	// todo redo
 	const char *words[] = {
-		"STAT", "DOOR", "FURN", "BOOK", "CONT", "ARMO", "WEAP", "MISC", "ALCH", "INGR", "LIGH", "MSTT"
+		Statics,
+		Lights,
+		Doors,
+		Furniture,
+		Books,
+		Containers,
+		Armor,
+		Weapons,
+		Ammo,
+		Misc,
+		Alchemy,
+		Ingredients,
+		Mists,
 	};
 	size_t n = sizeof(words)/sizeof(words[0]);
-	for (unsigned int i = 0; i < PLUGINS; i++)
-		for (unsigned int j = 0; j < n; j++)
-			Grup grp = esp_top_grup(get_plugins()[i], words[j]);
+	for (int i = PLUGINS; i-- > 0;)
+	for (unsigned int j = 0; j < n; j++)
+	Grup(esp_top_grup(get_plugins()[i], words[j]));
 }
 
 void load_gloomgen()
@@ -84,6 +95,7 @@ int main()
 	basefile_handle("basefile");
 	setup_glfw();
 	load_plugins_archives();
+	nifp_test();
 	opengl_init_scene();
 	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 	printf("now collide\n");
@@ -94,12 +106,11 @@ int main()
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	Nif *nif = import_nif(rc, true);
 	simple_viewer(nif);
-	//nifp_test();
 #endif
 	put_it_fullscreen();
 #if 1
 	printf("loading gloom gen?\n");
-	load_top_groups();
+	load_definitions();
 	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");

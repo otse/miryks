@@ -6,12 +6,6 @@
 #include <lib.h>
 #include <skyrim/skyrim.h>
 
-#define REFR "REFR"
-#define WEAP "WEAP"
-#define MISC "MISC"
-#define EDID "EDID"
-#define NAME "NAME"
-
 // wrap for lib struct see /lib
 
 // several useful things in here

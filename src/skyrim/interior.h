@@ -52,7 +52,7 @@ namespace skyrim
 	{
 		Cell cell;
 		Grup a, b, c;
-		cgrupp top = esp_top_grup(get_plugins()[MY_PLUGIN], "CELL");
+		cgrupp top = esp_top_grup(get_plugins()[MY_PLUGIN], Cells);
 		bool stop = false;
 		a(top).foreach(0, [&](unsigned int i) {
 		b(a.get<grup *>(i)).foreach(2, [&](unsigned int j) {
@@ -72,12 +72,12 @@ namespace skyrim
 		return cell;
 	}
 
-	// the very same function but using for-loops
+	// the exact same function but using for-loops
 	// leave this here
 	static Cell find_cell_loop(const char *name)
 	{
 		Cell cell;
-		grupp top = esp_top_grup(get_plugins()[MY_PLUGIN], "CELL");
+		grupp top = esp_top_grup(get_plugins()[MY_PLUGIN], Cells);
 		Grup a, b, c;
 		a = top;
 		assertc(a.hed().group_type == 0);

@@ -2,6 +2,9 @@
 
 // based on the much more clearer Ortham/libespm
 
+// has some bugs
+// will probably not load
+
 #include "common.h"
 
 #include "esp.h"
@@ -71,6 +74,8 @@ api espp plugin_load(const char *path)
 	while(Pos < esp->filesize)
 	{
 	grupp grp = read_grp(esp);
+	// if you want everything ready to use, uncomment this
+	//loop_grup(esp, grp);
 	insert(esp->grups, grp);
 	}
 	return esp;

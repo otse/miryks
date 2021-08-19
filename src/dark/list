@@ -25,3 +25,44 @@
 #define ARCHIVE_15	    	"Skyrim - Textures7.bsa"
 #define ARCHIVE_16	    	"Skyrim - Textures8.bsa"
 #define ARCHIVE_17		    "Skyrim - Patch.bsa"
+
+#define xstr(word) #word
+
+#define REFR xstr(REFR)
+#define STAT xstr(STAT)
+#define LIGH xstr(LIGH)
+#define MSTT xstr(MSTT)
+#define DOOR xstr(DOOR)
+#define FURN xstr(FURN)
+#define BOOK xstr(BOOK)
+#define CONT xstr(CONT)
+#define ARMO xstr(ARMO)
+#define WEAP xstr(WEAP)
+#define AMMO xstr(AMMO)
+#define MISC xstr(MISC)
+#define ALCH xstr(ALCH)
+#define INGR xstr(INGR)
+
+#define References REFR
+#define Statics STAT
+#define Doors DOOR
+#define Furniture FURN
+#define Books BOOK
+#define Containers CONT
+#define Armor ARMO
+#define Weapons WEAP
+#define Ammo AMMO
+#define Misc MISC
+#define Alchemy ALCH
+#define Ingredients INGR
+#define Lights LIGH
+#define Mists MSTT
+
+#define CELL xstr(CELL)
+#define GMST xstr(GMST)
+
+#define Cells CELL
+#define Classes CLAS
+#define GameSettings GMST
+
+//#undef str
