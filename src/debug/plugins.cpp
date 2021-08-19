@@ -21,7 +21,7 @@ static Esp *plugin = NULL;
 
 void im_grup(grupp , int);
 void im_record(record *);
-void im_subrecord(Field *);
+void im_subrecord(subrecord *);
 
 void im_grup(grupp grp, int top_grup = -1)
 {
@@ -51,7 +51,7 @@ void im_record(record *rcd)
 {
 	char *edid = nullptr;
 	Record wrcd = rcd; // invokes read partials
-	Field *first = (subrecord *)rcd->rcdbs->elements[0];
+	subrecord *first = (subrecord *)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
 		edid = (char *)first->data;
@@ -81,7 +81,7 @@ void im_record(record *rcd)
 	}
 }
 
-void im_subrecord(Field *field)
+void im_subrecord(subrecord *field)
 {
 	char t[100];
 	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->sgn, field->id);

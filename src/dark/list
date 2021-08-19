@@ -30,8 +30,6 @@
 
 #define REFR xstr(REFR)
 #define STAT xstr(STAT)
-#define LIGH xstr(LIGH)
-#define MSTT xstr(MSTT)
 #define DOOR xstr(DOOR)
 #define FURN xstr(FURN)
 #define BOOK xstr(BOOK)
@@ -42,6 +40,11 @@
 #define MISC xstr(MISC)
 #define ALCH xstr(ALCH)
 #define INGR xstr(INGR)
+#define LIGH xstr(LIGH)
+#define MSTT xstr(MSTT)
+#define CELL xstr(CELL)
+#define CLAS xstr(CLAS)
+#define GMST xstr(GMST)
 
 #define References REFR
 #define Statics STAT
@@ -57,12 +60,6 @@
 #define Ingredients INGR
 #define Lights LIGH
 #define Mists MSTT
-
-#define CELL xstr(CELL)
-#define GMST xstr(GMST)
-
 #define Cells CELL
 #define Classes CLAS
 #define GameSettings GMST
-
-//#undef str

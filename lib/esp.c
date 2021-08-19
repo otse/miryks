@@ -1,6 +1,6 @@
 // see header for stuff
 
-// based on the much more clearer Ortham/libespm
+// based on Ortham/libespm
 
 // has some bugs
 // will probably not load
@@ -237,6 +237,8 @@ void loop_rcd(espp esp, rcdp rcd)
 
 api void esp_check_grup(grupp grp)
 {
+	if (grp==NULL)
+		return;
 	if (!grp->looped)
 		loop_grup(grp->esp, grp);
 }

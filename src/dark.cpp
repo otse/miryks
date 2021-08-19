@@ -1,9 +1,8 @@
 #include <png.h>
+#include <array>
 
 #include <core/files.h>
 #include <core/basefile.h>
-
-#include <lib.h>
 
 #include <dark/dark.h>
 
@@ -12,10 +11,8 @@
 using namespace dark;
 using namespace skyrim;
 
-
 void load_bucket()
 {
-	return;
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	Nif *nif = import_nif(rc, true);
 	simple_viewer(nif);
@@ -23,7 +20,7 @@ void load_bucket()
 
 void load_definitions()
 {
-	const char *words[] = {
+	std::array<const char *, 13> words = {
 		Statics,
 		Lights,
 		Doors,
@@ -38,10 +35,9 @@ void load_definitions()
 		Ingredients,
 		Mists,
 	};
-	size_t n = sizeof(words)/sizeof(words[0]);
-	for (int i = PLUGINS; i-- > 0;)
-	for (unsigned int j = 0; j < n; j++)
-	Grup(esp_top_grup(get_plugins()[i], words[j]));
+	for (int i = 0; i < PLUGINS; i++)
+	for (const char *word : words)
+	esp_check_grup(esp_top_grup(get_plugins()[i], word));
 }
 
 void load_gloomgen()
@@ -103,13 +99,10 @@ int main()
 	cameraCur = personCam;
 #if 1
 	// Bucket beginning
-	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	Nif *nif = import_nif(rc, true);
-	simple_viewer(nif);
+	load_bucket();
 #endif
 	put_it_fullscreen();
 #if 1
-	printf("loading gloom gen?\n");
 	load_definitions();
 	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");

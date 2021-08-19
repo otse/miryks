@@ -3,7 +3,7 @@
 #include <cstdarg>
 #include <vector>
 
-#include <lib.h>
+
 #include <skyrim/skyrim.h>
 
 // wrap for lib struct see /lib

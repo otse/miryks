@@ -1,24 +1,13 @@
 #pragma once
 
+#include <lib.h>
+
 #include <renderer/types.h>
 
 #include "list"
 
-#define INAL_BAD_SORRY "Inal bad, sorry"
-
-// c defs
-struct grup;
-struct record;
-struct subrecord;
-struct Rc;
-struct esp;
-struct Bsa;
-struct Nifp;
-struct NifpRd;
-
 typedef Nifp Nif;
 typedef NifpRd Rd;
-typedef subrecord Field;
 
 namespace dark
 {
@@ -51,7 +40,7 @@ namespace dark
 	Rc *load_rc(const char *, const char *, unsigned long);
 	Nif *import_nif(Rc *, bool);
 	Mesh *create_simple_mesh_from_modl(const char *, bool);
-	esp *load_plugin(const char *, bool = true);
+	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
 
 	extern unsigned int fps;

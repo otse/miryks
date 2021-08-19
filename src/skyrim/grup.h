@@ -2,7 +2,7 @@
 
 #include <cstdarg>
 
-#include <lib.h>
+
 
 #include <skyrim/record.h>
 

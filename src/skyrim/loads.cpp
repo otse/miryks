@@ -1,4 +1,4 @@
-#include <lib.h>
+
 
 #include <dark/dark.h>
 
@@ -13,8 +13,6 @@
 #include <renderer/scene.h>
 
 #include <algorithm>
-
-// these importers use the c at /lib
 
 namespace dark
 {

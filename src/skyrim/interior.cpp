@@ -1,5 +1,5 @@
 #include <skyrim_units>
-#include <lib.h>
+
 
 #include "skyrim.h"
 #include "interior.h"
