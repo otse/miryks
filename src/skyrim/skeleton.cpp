@@ -86,7 +86,7 @@ namespace skyrim
 	}
 	void Animation::step()
 	{
-		float adv = dark::delta;
+		float adv = delta;
 		if (play)
 			time += adv;
 		if (time >= keyframes->csp->C->stop_time)

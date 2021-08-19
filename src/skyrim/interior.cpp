@@ -1,6 +1,5 @@
 #include <skyrim_units>
 
-
 #include "skyrim.h"
 #include "interior.h"
 #include "mesh.h"
@@ -15,21 +14,19 @@
 #include <renderer/camera.h>
 #include <renderer/lights.h>
 
-
 namespace skyrim
 {
-	Interior::Interior(const char *edid)
+	Interior::Interior(const char *editorId)
 	{
-		editorId = edid;
+		this->editorId = editorId;
 		Group *group = new Group();
 	}
 
 	void Interior::loadcell()
 	{
-		// get_right_cell(editorId); doesnt work
-		loaded_cell = find_cell_loop(editorId);
-		parsegrup(8, loaded_cell.persistent);
-		parsegrup(9, loaded_cell.temporary);
+		cell = find_cell_loop(editorId);
+		parsegrup(8, cell.persistent);
+		parsegrup(9, cell.temporary);
 	}
 
 	static void PlaceCameraDud(Interior *);
@@ -45,9 +42,9 @@ namespace skyrim
 			{
 				Ref *ref = new Ref(wrcd.rcd);
 				refs.push_back(ref);
-				const char *editorId = wrcd.editorId();
-				if (editorId)
-					editorIds.emplace(editorId, ref);
+				const char *name = wrcd.editorId();
+				if (name)
+					editorIds.emplace(name, ref);
 				if (ref->baseObject.valid())
 					if(ref->baseObject.sigany( { WEAP, MISC } ))
 						lootables.push_back(ref);
@@ -76,7 +73,7 @@ namespace skyrim
 		// Place the camera at the first XMarker you find
 		if (alreadyTeleported)
 			return;
-		Grup wgrp = loaded_cell.persistent;
+		Grup wgrp = cell.persistent;
 		wgrp.foreach(8, [&](unsigned int i) {
 			Record wrcd = wgrp.get<record *>(i);
 			if (*(wrcd.base()) == 0x0000003B)
@@ -92,7 +89,7 @@ namespace skyrim
 			return false;
 		});
 	}
-
+	
 	Interior::~Interior()
 	{
 		unload();
@@ -118,16 +115,11 @@ namespace skyrim
 		std::sort(lootables.begin(), lootables.end(), myfunction);
 		
 		for (Ref *ref : closest)
-		{
 			if (ref->displayAsItem())
 				return;
-		}
 
 		for (Ref *mstt : mstts)
-		{
 			mstt->step();
-		}
-
 	}
 
 } // namespace dark

@@ -18,7 +18,7 @@ void load_bucket()
 	simple_viewer(nif);
 }
 
-void load_definitions()
+void dark::load_definitions(espp plugin)
 {
 	std::array<const char *, 13> words = {
 		Statics,
@@ -35,9 +35,8 @@ void load_definitions()
 		Ingredients,
 		Mists,
 	};
-	for (int i = 0; i < PLUGINS; i++)
 	for (const char *word : words)
-	esp_check_grup(esp_top_grup(get_plugins()[i], word));
+		esp_check_grup(esp_top_grup(plugin, word));
 }
 
 void load_gloomgen()
@@ -93,7 +92,6 @@ int main()
 	load_plugins_archives();
 	nifp_test();
 	opengl_init_scene();
-	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 	printf("now collide\n");
 	collision_init();
 	cameraCur = personCam;
@@ -103,7 +101,8 @@ int main()
 #endif
 	put_it_fullscreen();
 #if 1
-	load_definitions();
+	for (int i = 0; i < PLUGINS; i++)
+		load_definitions(get_plugins()[i]);
 	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	//someDraugr->PutDown("gloomgendraugr");
@@ -117,6 +116,29 @@ int main()
 
 	program_while();
 	return 1;
+}
+
+namespace dark
+{
+	void reload_my_plugin()
+	{
+		esppp loc = &get_plugins()[MY_ESP];
+		free_plugin(loc);
+		*loc = load_plugin(PLUGIN_5, true);
+		load_definitions(*loc);
+	}
+
+	void reload_dungeon()
+	{
+		if (dungeon)
+		{
+			const char *editorId = dungeon->editorId;
+			delete dungeon;
+			dungeon = new Interior(editorId);
+			dungeon->alreadyTeleported = true;
+			dungeon->loadcell();
+		}
+	}
 }
 
 #include <skyrim/mesh.h>

@@ -278,7 +278,7 @@ namespace dark
 			pose.y += n * sin(-yaw);
 		};
 
-		float speed = 200.f * dark::delta;
+		float speed = 200.f * delta;
 
 		if (shift)
 			speed /= 10;

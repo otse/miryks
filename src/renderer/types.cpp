@@ -6,9 +6,14 @@
 #include <renderer/camera.h>
 #include <renderer/scene.h>
 #include <renderer/shader.h>
+#include <renderer/rendertarget.h>
 
 #include <renderer/material.h>
 #include <renderer/texture.h>
+
+int width = 1920;
+int height = 1080;
+float delta = 0;
 
 Camera *cameraCur = nullptr;
 Scene *sceneCur = nullptr, *sceneDef = nullptr;
@@ -29,7 +34,7 @@ void detectGlfwError()
 	const char *description;
 	int code = glfwGetError(&description);
 	if (description)
-		printf("code ", code, "description ", description);
+		printf("code %i description %s\n", code, description);
 }
 
 void detectOpenGLError(const std::string where)
@@ -52,6 +57,10 @@ void opengl_init_scene()
 	sceneCur = sceneDef;
 
 	cameraCur = personCam; // dangle
+
+	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
+
+	//renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 
 	SetShaderSources();
 }

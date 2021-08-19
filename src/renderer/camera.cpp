@@ -25,7 +25,7 @@ Camera::Camera()
 }
 
 void Camera::SetProjection() {
-	float aspect = (float)dark::width / (float)dark::height;
+	float aspect = (float)width / (float)height;
 
 	projection = glm::perspective(radians(fzoom), aspect, 5.0f, 10000.0f);
 }

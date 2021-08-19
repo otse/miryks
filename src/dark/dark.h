@@ -45,6 +45,10 @@ namespace dark
 
 	extern unsigned int fps;
 
+	void reload_my_plugin();
+	void reload_dungeon();
+	
+	void load_definitions(espp plugin);
 	void setup_glfw();
 	void program_while();
 
@@ -54,9 +58,6 @@ namespace dark
 
 	void HideCursor();
 	void ShowCursor();
-
-	extern int width, height;
-	extern float delta;
 
 	extern std::string editme;
 

@@ -79,4 +79,7 @@ struct RenderSettings
 };
 extern RenderSettings renderSettings;
 
+extern int width, height;
+extern float delta;
+
 #endif

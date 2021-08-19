@@ -30,8 +30,8 @@ void render_stats(bool *open)
 
 	ImGui::Text("(F10)");
 	ImGui::Text("window %.0f x %.0f", io.DisplaySize.x, io.DisplaySize.y);
-	ImGui::Text("fps %u", dark::fps);
-	ImGui::Text("delta %.5f", dark::delta);
+	ImGui::Text("fps %u", fps);
+	ImGui::Text("delta %.5f", delta);
 
 	//ImGui::Separator();
 	ImGui::End();

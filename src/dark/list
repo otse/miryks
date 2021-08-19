@@ -5,7 +5,7 @@
 #define PLUGIN_4		    "Dragonborn.esm"
 #define PLUGIN_5		    "Gloom.esp"
 
-#define MY_PLUGIN 5
+#define MY_ESP 5
 
 #define ARCHIVE_0		    "Skyrim - Misc.bsa"
 #define ARCHIVE_1		    "Skyrim - Shaders.bsa"

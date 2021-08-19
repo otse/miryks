@@ -23,10 +23,7 @@ namespace skyrim
 		Interior(const char *);
 		~Interior();
 
-		const char *editorId;
-		bool alreadyTeleported = false;
-
-		Cell loaded_cell;
+		Cell cell;
 		std::vector<Ref *> refs, lootables, mstts;
 		std::map<std::string, Ref *> editorIds;
 
@@ -35,6 +32,9 @@ namespace skyrim
 		void loadcell();
 		void unload();
 		void placecamera();
+
+		const char *editorId = nullptr;
+		bool alreadyTeleported = false;
 	};
 
 	static Cell capture_cell(Record wrcd, Grup wgrp)
@@ -47,12 +47,12 @@ namespace skyrim
 		return cell;
 	}
 
-	// modern function that uses lambdas, with built-in group_type safety
+	// Modern function that uses lambdas, with built-in group_type safety
 	static Cell find_cell_foreach(const char *name)
 	{
 		Cell cell;
 		Grup a, b, c;
-		cgrupp top = esp_top_grup(get_plugins()[MY_PLUGIN], Cells);
+		cgrupp top = esp_top_grup(get_plugins()[MY_ESP], Cells);
 		bool stop = false;
 		a(top).foreach(0, [&](unsigned int i) {
 		b(a.get<grup *>(i)).foreach(2, [&](unsigned int j) {
@@ -72,12 +72,11 @@ namespace skyrim
 		return cell;
 	}
 
-	// the exact same function but using for-loops
-	// leave this here
+	// For comparison, the  same function but using for-loops
 	static Cell find_cell_loop(const char *name)
 	{
 		Cell cell;
-		grupp top = esp_top_grup(get_plugins()[MY_PLUGIN], Cells);
+		grupp top = esp_top_grup(get_plugins()[MY_ESP], Cells);
 		Grup a, b, c;
 		a = top;
 		assertc(a.hed().group_type == 0);

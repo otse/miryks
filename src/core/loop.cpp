@@ -106,21 +106,8 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 	else if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
 	{
-		printf(" reload esp ! \n");
-		// Save current cell name
-		Record object = Record(dungeon->loaded_cell.wrcd);
-		char dest[512];
-		strcpy(dest, object.editorId());
-		espp esp = get_plugins()[MY_PLUGIN];
-		char filename[100];
-		memcpy((void *)filename, esp->filename, 100);
-		espp has = has_plugin(filename);
-		free_plugin(&has);
-		get_plugins()[MY_PLUGIN] = load_plugin(filename, true);
-		delete dungeon;
-		dungeon = new Interior(dest);
-		dungeon->alreadyTeleported = true;
-		dungeon->loadcell();
+		reload_my_plugin();
+		reload_dungeon();
 	}
 	else if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
 	{
@@ -154,10 +141,6 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 static void doKeys()
 {
 	using namespace MyKeys;
-	//if (!dynamic_cast<FirstPersonCamera *>(cameraCur))
-	//	return;
-	// caused stirrings
-	// third person wouldnt work and i thought it was somehow vec assignment
 	w = glfwGetKey(window, GLFW_KEY_W);
 	a = glfwGetKey(window, GLFW_KEY_A);
 	s = glfwGetKey(window, GLFW_KEY_S);
@@ -181,8 +164,8 @@ void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
 	printf("framebuffer_size_callback %i %i\n", width, height);
 	glViewport(0, 0, width, height);
-	dark::width = width;
-	dark::height = height;
+	::width = width;
+	::height = height;
 }
 
 void setupImgui()
@@ -310,7 +293,7 @@ void dark::renderImGui()
 
 void dark::program_while()
 {
-	render_target = new RenderTarget(dark::width, dark::height, GL_RGB, GL_FLOAT);
+	//render_target = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
 	double fps;
@@ -337,7 +320,7 @@ void dark::program_while()
 	{
 		time = glfwGetTime();
 		now = time;
-		dark::delta = now - prev;
+		delta = now - prev;
 		prev = now;
 		if ((time - prevTime) > 1.0 || frames == 0)
 		{
@@ -346,18 +329,16 @@ void dark::program_while()
 			glfwSetWindowTitle(window, title);
 			prevTime = time;
 			frames = 0;
-			dark::fps = (int)fps;
+			::fps = (int)fps;
 		}
 		frames++;
 
-		static bool doOnce = true;
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glViewport(0, 0, dark::width, dark::height);
+		glViewport(0, 0, width, height);
 
 		if (useFbo)
 		{
-			render_target->Bind();
+			renderTargetDef->Bind();
 		}
 		else
 		{
@@ -412,10 +393,8 @@ void dark::program_while()
 
 		if (useFbo)
 		{
-			quad.Draw(render_target);
+			quad.Draw(renderTargetDef);
 		}
-
-		doOnce = false;
 
 		renderImGui();
 
