@@ -46,7 +46,8 @@ namespace dark
 	{
 		if (baseObject.sig("MSTT"))
 		{
-			
+			if(mesh)
+				mesh->forward();
 		}
 	}
 
@@ -155,13 +156,13 @@ namespace dark
 
 			Light *light = nullptr;
 
-			auto editorId = baseObject.editorId();
+			auto edId = baseObject.editorId();
 			auto DATA = baseObject.data<int *>("DATA");
 			auto FNAM = baseObject.data<float *>("FNAM");
 
 			Struct *data = (Struct *)DATA;
 
-			if (editorId)
+			if (edId)
 			{
 				//printf("ligh edid %s\n", LIGH.baseId);
 			}
@@ -207,9 +208,9 @@ namespace dark
 		}
 		else
 		{
-			auto editorId = baseObject.editorId();
+			auto edId = baseObject.editorId();
 			
-			printf("ref.cpp cant become %.4s edid %s\n", (char *)&baseObject.hed().sgn, editorId);
+			printf("ref.cpp cant become %.4s edid %s\n", (char *)&baseObject.hed().sgn, edId);
 			
 			baseObject = nullptr; // invalidate
 		}

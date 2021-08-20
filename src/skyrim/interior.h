@@ -17,6 +17,8 @@ namespace skyrim
 		Grup persistent, temporary;
 	};
 
+	Cell find_interior_cell(const char *, int);
+
 	class Interior
 	{
 	public:
@@ -25,7 +27,7 @@ namespace skyrim
 
 		Cell cell;
 		std::vector<Ref *> refs, labels, mstts;
-		std::map<std::string, Ref *> editorIds;
+		std::map<std::string, Ref *> edIds;
 
 		void update();
 		void subgroup(Grup, int);
@@ -33,11 +35,8 @@ namespace skyrim
 		void unload();
 		void put_cam_on_random_xmarker();
 
-		const char *editorId = nullptr;
+		const char *edId = nullptr;
 		bool alreadyTeleported = false;
 	};
-
-	Cell capture_cell(Record, Grup);
-	Cell find_cell_foreach(const char *name);
 
 }

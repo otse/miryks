@@ -23,8 +23,8 @@ namespace skyrim
 		Nif *nif = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
-		void construct();
 		Group *nested(Rd *);
+		void construct();
 		void forward();
 	};
 

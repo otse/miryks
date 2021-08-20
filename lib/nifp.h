@@ -372,11 +372,22 @@ struct bs_effect_shader_property_float_controller_pointer {
 };
 
 struct ni_float_interpolator_pointer {
-	int x;
+	struct {
+	float value;
+	ni_ref data;
+	} * A;
 };
 
 struct ni_float_data_pointer {
-	int x;
+	struct {
+		unsigned int num_keys, key_type;
+	} * A;
+	struct {
+		float time, value;
+	} *linear_keys;
+	struct {
+		float time, value, forward, backward;
+	} *quadratic_keys;
 };
 
 struct bs_shader_texture_set_pointer

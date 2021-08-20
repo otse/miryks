@@ -113,7 +113,6 @@ static void visit(NifpRd *rd, int parent, int current)
 		if (rd->bs_effect_shader_property_callback)
 			rd->bs_effect_shader_property_callback(rd, Blocks[current]);
 		visit(rd, current, block->B->controller);
-
 	}
 
 	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) )

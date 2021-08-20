@@ -97,19 +97,18 @@ namespace dark
 {
 	void reload_my_plugin()
 	{
-		esppp loc = &get_plugins()[MY_ESP];
-		free_plugin(loc);
-		*loc = load_plugin(PLUGIN_5, true);
-		//load_definitions(*loc);
+		esppp plugin = &get_plugins()[MY_ESP];
+		free_plugin(plugin);
+		*plugin = load_plugin(PLUGIN_5, true);
 	}
 
 	void reload_dungeon()
 	{
 		if (dungeon)
 		{
-			const char *editorId = dungeon->editorId;
+			const char *edId = dungeon->edId;
 			delete dungeon;
-			dungeon = new Interior(editorId);
+			dungeon = new Interior(edId);
 			dungeon->alreadyTeleported = true;
 			dungeon->load();
 		}

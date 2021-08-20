@@ -243,18 +243,19 @@ read_sized_string( nif, &block->greyscale_texture );
 END()
 
 BEGIN( bs_effect_shader_property_float_controller )
-printf("float controller\n");
 SINK ( nif, block, A )
 END()
 
 BEGIN( ni_float_interpolator )
-printf("float interpolator\n");
-
+SINK ( nif, block, A )
 END()
 
 BEGIN( ni_float_data )
-printf("float data\n");
-
+SINK ( nif, block, A )
+if ( block->A->key_type == 2 )
+SAIL ( nif, block, linear_keys, A, num_keys )
+if ( block->A->key_type == 3 )
+SAIL ( nif, block, quadratic_keys, A, num_keys )
 END()
 
 BEGIN( bs_shader_texture_set )

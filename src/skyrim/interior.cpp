@@ -16,7 +16,7 @@
 
 namespace skyrim
 {
-	Cell capture_cell(Record wrcd, Grup wgrp)
+	static Cell capture_cell(Record wrcd, Grup wgrp)
 	{
 		Cell cell;
 		cell.wrcd = wrcd;
@@ -25,17 +25,17 @@ namespace skyrim
 		return cell;
 	}
 
-	Cell find_cell_foreach(const char *name)
+	Cell find_interior_cell(const char *edId, int plugin)
 	{
 		Cell cell;
 		Grup a, b, c;
-		grupp top = esp_top_grup(get_plugins()[MY_ESP], Cells);
+		grupp top = esp_top_grup(get_plugins()[plugin], Cells);
 		a(top).foreach([&](unsigned int i) {
 		return b(a.get<grup *>(i)).foreach([&](unsigned int j) {
 		return c(b.get<grup *>(j)).foreach([&](unsigned int &k) {
 			Record wrcd = c.get<record *>(k);
 			Grup wgrp = c.get<grup *>(++k);
-			if (wrcd.hasEditorId(name)) {
+			if (wrcd.hasEditorId(edId)) {
 				printf("foreach found\n");
 				cell = capture_cell(wrcd, wgrp);
 				return true;
@@ -47,20 +47,31 @@ namespace skyrim
 
 	Interior::Interior(const char *edId)
 	{
-		editorId = edId;
+		this->edId = edId;
 		Group *group = new Group();
+	}
+
+	Interior::~Interior()
+	{
+		unload();
 	}
 
 	void Interior::load()
 	{
-		cell = find_cell_foreach(editorId);
+		cell = find_interior_cell(edId, MY_ESP);
 		subgroup(cell.persistent, 8);
 		subgroup(cell.temporary, 9);
+	}
+
+	void Interior::unload()
+	{
+		for (Ref *ref : refs)
+			delete ref;
 	}
 	
 	void Interior::subgroup(Grup wgrp, int group_type)
 	{
-		auto things = {
+		auto showLabelsFor = {
 			Doors,
 			Furniture,
 			Books,
@@ -82,10 +93,10 @@ namespace skyrim
 				refs.push_back(ref);
 				const char *edId = wrcd.editorId();
 				if (edId)
-					editorIds.emplace(edId, ref);
+					edIds.emplace(edId, ref);
 				if (ref->baseObject.valid())
 				{
-					if (ref->baseObject.sigany( things ))
+					if (ref->baseObject.sigany( showLabelsFor ))
 						labels.push_back(ref);
 					else if (ref->baseObject.sig( MSTT ))
 						mstts.push_back(ref);
@@ -96,7 +107,6 @@ namespace skyrim
 		put_cam_on_random_xmarker();
 	}
 	
-	// todo horrible
 	void Interior::put_cam_on_random_xmarker()
 	{
 		if (alreadyTeleported)
@@ -106,8 +116,8 @@ namespace skyrim
 			Record wrcd = wgrp.get<record *>(i);
 			if (*(wrcd.base()) == 0x0000003B)
 			{
-				float *locationalData = wrcd.data<float *>("DATA");
 				// printf("found random xmarker for camera\n");
+				float *locationalData = wrcd.data<float *>("DATA");
 				personCam->pos = *cast_vec_3(locationalData);
 				personCam->pos.z += EYE_HEIGHT;
 				personCam->yaw = cast_vec_3(locationalData + 3)->z;
@@ -115,21 +125,7 @@ namespace skyrim
 				return true;
 			}
 			return false;
-		}, 8);
-	}
-	
-	Interior::~Interior()
-	{
-		unload();
-	}
-
-	void Interior::unload()
-	{
-		for (auto it = refs.begin(); it != refs.end(); ++it)
-		{
-			Ref *ref = *it;
-			delete ref;
-		}
+		});
 	}
 
 	bool myfunction(Ref *l, Ref *r)

@@ -39,12 +39,12 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			const char *editorId = "";
+			const char *edId = "";
 
 			if (dungeon)
-				editorId = dungeon->cell.wrcd.editorId();
+				edId = dungeon->cell.wrcd.editorId();
 
-			if (0 != strcmp(items[current], editorId))
+			if (0 != strcmp(items[current], edId))
 			{
 				if (ImGui::Button("Load"))
 				{

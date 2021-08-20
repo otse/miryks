@@ -53,8 +53,8 @@ namespace dark
 		grupp top = esp_top_grup(get_plugins()[0], "RACE");
 		array(top).foreach([&](unsigned int &i) {
 			Record object = array.get<record *>(i);
-			auto editorId = object.editorId();
-			if (strcmp(editorId, raceId) == 0)
+			auto edId = object.editorId();
+			if (strcmp(edId, raceId) == 0)
 			{
 				race = object.rcd;
 				return true;
@@ -91,8 +91,8 @@ namespace dark
 
 	void BodyPart::PutDown(const char *q)
 	{
-		auto ref = dungeon->editorIds.find(q);
-		if (ref != dungeon->editorIds.end())
+		auto ref = dungeon->edIds.find(q);
+		if (ref != dungeon->edIds.end())
 		{
 			Group *group = new Group();
 			group->Add(skeleton->baseBone->group);
@@ -156,8 +156,8 @@ namespace dark
 
 	void Human::Place(const char *q)
 	{
-		auto ref = dungeon->editorIds.find(q);
-		if (ref == dungeon->editorIds.end())
+		auto ref = dungeon->edIds.find(q);
+		if (ref == dungeon->edIds.end())
 			return;
 		drawGroup->matrix = ref->second->matrix;
 		csphere = new CSphere(vec3(drawGroup->matrix[3]) /*+vec3(0, 0, 1)*/);
