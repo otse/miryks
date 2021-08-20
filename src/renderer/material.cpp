@@ -21,7 +21,7 @@ Material::Material()
 	
 	map = normalMap = glowMap = nullptr;
 
-	transparent = doubleSided = blending = testing = decal = tangents = skinning = false;
+	transparent = doubleSided = blending = zwrite = testing = decal = tangents = skinning = false;
 	dust = modelSpaceNormals = vertexColors = false;
 
 	testFunc = GL_LESS;
@@ -194,6 +194,8 @@ void Material::Use()
 	}
 	if (testing)
 		glDepthFunc(GL_LEQUAL);
+	if (!zwrite)
+		glDepthMask(GL_FALSE);
 	if (decal)
 	{
 		glEnable(GL_POLYGON_OFFSET_FILL);
@@ -219,6 +221,7 @@ void Material::Use()
 
 void Material::Unuse(Material *a, Material *b)
 {
+	glDepthMask(GL_TRUE);
 	if (!a || a->map && !b->map)
 	{
 		glActiveTexture(GL_TEXTURE0 + 0);

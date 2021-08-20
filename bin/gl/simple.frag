@@ -294,7 +294,7 @@ void main()
 	#ifndef DONT_USE_SPECULAR_MAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );
-		specularStrength = texelSpecular.a * 0.5;
+		specularStrength = texelSpecular.a * 1.0;
 
 	#endif
 
@@ -391,7 +391,7 @@ void main()
 	material.specularColor = specular + vec3(0.0, 0.8, 0.5);
 	material.specularColor /= 4.0;
 	//material.specularColor = vec3(127.0/255.0, 127.0/255.0, 127.0/255.0);
-	material.specularShininess = glossiness / 1000 * 100; // shininess 1000 = shiny, 3000 = matt, 2000 = default
+	material.specularShininess = glossiness / 2000 * 100; // shininess 1000 = shiny, 3000 = matt, 2000 = default
 	material.specularStrength = specularStrength;
 
 	GeometricContext geometry;

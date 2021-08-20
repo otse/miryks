@@ -129,7 +129,7 @@ namespace skyrim
 	{
 		// for mists! do the following
 		// stolen from nifskope i think
-		auto float_controller = [](Rd *rd, bs_effect_shader_property_float_controller_pointer *block) {
+		auto callback = [](Rd *rd, bs_effect_shader_property_float_controller_pointer *block) {
 			Mesh *mesh = (Mesh *)rd->data;
 			auto target = (bs_effect_shader_property_pointer *)nifp_get_block(rd->nif, block->A->target);
 			//auto shape = (bs_tri_shape_pointer *)nifp_get_block(rd->nif, target->meta.parent);
@@ -143,9 +143,9 @@ namespace skyrim
 					next_controller = (bs_effect_shader_property_float_controller_pointer *)nifp_get_block(rd->nif, controller->A->next_controller);
 				if (target)
 					group = mesh->groups[target->meta.parent];
-				if (!group)
+				if (!group || !group->geometry)
 					return;
-				controller->meta.time += delta * 3.0;
+				controller->meta.time += delta * 1.0;
 				if (controller->meta.time > controller->A->stop_time)
 					controller->meta.time -= controller->A->stop_time;
 				float *uv = &target->meta.u;
@@ -161,25 +161,28 @@ namespace skyrim
 						auto data = (ni_float_data_pointer *)nifp_get_block(rd->nif, interpolator->A->data);
 						for (unsigned int i = data->A->num_keys; i-- > 0;)
 						{
-							// todo template this vomit
-
 							int j = (i + 1 >= data->A->num_keys) ? 0 : i + 1;
-							if (data->A->key_type == 1 || data->linear_keys)
+							if (data->linear_keys)
 							{
 								auto one = &data->linear_keys[i];
 								auto two = &data->linear_keys[j];
+								if (one->time > controller->meta.time)
+									continue;
 								float ratio = (controller->meta.time - two->time) / (two->time - one->time) + 1.0f;
 								ratio = ratio < 0 ? 0 : ratio > 1 ? 1 : ratio;
 
 								float a = one->value * (1.0f - ratio);
 								float b = two->value * ratio;
 								*uv = a + b;
+								break;
 							}
 
-							else if (data->A->key_type == 2)
+							else if (data->quadratic_keys)
 							{
 								auto one = &data->quadratic_keys[i];
 								auto two = &data->quadratic_keys[j];
+								if (one->time > controller->meta.time)
+									continue;
 								float ratio = (controller->meta.time - two->time) / (two->time - one->time) + 1.0f;
 								ratio = ratio < 0 ? 0 : ratio > 1 ? 1 : ratio;
 
@@ -188,23 +191,27 @@ namespace skyrim
 
 								float x = easeInOutQuad(ratio);
 								*uv = (one->value * x) + (two->value * (1.0 - x));
+								break;
 							}
 						}
 					}
 				}
+
+				Material *material = group->geometry->material;
+				
 				float u, v, s, t;
 				u = target->meta.u + target->B->uv_offset.x;
 				v = target->meta.v + target->B->uv_offset.y;
-				s = target->B->uv_scale.x;
-				t = target->B->uv_scale.y;
-
-				group->geometry->material->setUvTransformDirectly(u, v, s, t, 0, 0, 0);
+				s = 1.0f / target->B->uv_scale.x;
+				t = 1.0f / target->B->uv_scale.y;
+				
+				material->setUvTransformDirectly(u, v, s, t, 0, 0, 0);
 			}
 		};
 		Rd *rd = calloc_nifprd();
 		rd->nif = nif;
 		rd->data = this;
-		rd->bs_effect_shader_property_float_controller_callback = float_controller;
+		rd->bs_effect_shader_property_float_controller_callback = callback;
 		nifp_rd(rd);
 		free_nifprd(&rd);
 	}
@@ -397,6 +404,8 @@ namespace skyrim
 			if (block->B->shader_flags_1 & 0x00001000)
 				//printf("Model_Space_Normals\n");
 				material->modelSpaceNormals = true;
+			if (block->B->shader_flags_2 & 0x00000001)
+				material->zwrite = true;
 			if (block->B->shader_flags_2 & 0x00000020)
 				material->vertexColors = true;
 			if (block->B->shader_flags_2 & 0x00000010)
@@ -416,19 +425,15 @@ namespace skyrim
 			Material *material = geometry->material;
 			material->src = &fxs;
 			material->transparent = true;
-			material->testing = false;
-			material->blending = true;
-			material->doubleSided = true;
 			material->color = gloomVec3(block->D->base_color);
 			material->opacity = block->D->base_color_scale;
 			material->map = GetProduceTexture(block->source_texture);
-			//printf("source texture is %s\n", block->source_texture);
 			if (block->B->shader_flags_2 & 0x00000020)
 				material->vertexColors = true;
-			//if (block->B->shader_flags_1 & 0x80000000) // z buffer test
-			//	material->testing = true;
-			//if (block->B->shader_flags_2 & 0x00000001) // z buffer write
-			//	material->testing = true;
+			if (block->B->shader_flags_1 & 0x80000000)
+				material->testing = true;
+			if (block->B->shader_flags_2 & 0x00000001)
+				material->zwrite = true;
 			if (block->B->shader_flags_2 & 0x00000010)
 				material->doubleSided = true;
 		}
@@ -460,7 +465,6 @@ namespace skyrim
 	}
 	void ni_alpha_property_callback(Rd *rd, ni_alpha_property_pointer *block)
 	{
-		// printf("ni alpha property");
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
 		Geometry *geometry = group->geometry;

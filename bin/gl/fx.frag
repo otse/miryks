@@ -23,7 +23,6 @@ uniform sampler2D map;
 uniform sampler2D normalMap;
 
 #define ASH
-#define USE_A_HEMISPHERE
 #define USE_NORMALMAP
 #define USE_SPECULARMAP
 #define USE_TANGENT
@@ -193,13 +192,9 @@ void RE_Direct(
 
 void main()
 {
-	//vec4 diffuseColor = vec4(color, 1.0);
-	vec4 diffuseColor = vec4(1.0, 0.85, 1.0, opacity);
+	vec4 diffuseColor = vec4(color, opacity);
 
-	//vec3 fogColor = vec3(11.0 / 255.0, 6.0 / 255.0, 5.0 / 255.0);
-	vec3 fogColor = vec3(6.0 / 255.0, 6.0 / 255.0, 11.0 / 255.0);
-
-	vec3 ambientLightColor = vec3(15.0/255.0, 20.0/255.0, 10.0/255.0) * 1.0;
+	vec3 fogColor = vec3(6.0 / 255.0, 9.0 / 255.0, 11.0 / 255.0) * 1.0;
 
 	float fogNear = 1000.0 / ONE_SKYRIM_UNIT_IN_CM;
 	float fogFar = 6000.0 / ONE_SKYRIM_UNIT_IN_CM;
@@ -219,19 +214,17 @@ void main()
 
 	#if defined(BS_EFFECT_SHADER) && !defined(COBWEB)
 
-		//diffuseColor.a /= 2.0;
-
 		float dist_x = abs(normal.x);
 		float dist_y = abs(normal.y);
 
 		float fade_x = 1.0 - dist_x;
-		float fade_y = 0.7 - dist_y + 0.7;
+		float fade_y = 1.0 - dist_y;
 
 		float fades = clamp(fade_x * fade_y, 0.0, 1.0);
 
 		//vec3 fade_normal = normalize(vec3(fade_x, 0, 0) + vec3(0, fade_y, 0));
 
-		float dist = clamp(vViewPosition.z / 100.0, 0.0, 1.0);
+		float dist = clamp(vViewPosition.z / 300.0, 0.0, 1.0);
 
 		fades *= dist;
 		
@@ -289,9 +282,9 @@ void main()
 
 		PointLight b = PointLight(
 			a.package[0],
-			a.package[1],
+			a.package[1] / 2.0,
 			a.package[2][0],
-			a.package[2][1] / 1.0,
+			a.package[2][1],
 			mat3(0.0));
 
 		calcPointLight( b, geometry, directLight );
@@ -300,12 +293,13 @@ void main()
 	}
 
 	vec3 irradiance = ambientLightColor * PI;
-	//irradiance *= PI; // ?
 
 	/*HemisphereLight hemiLight;
 	hemiLight.direction = normalize(vec3(0, 0, -1.0) * mat3(inverse(view)));
 	hemiLight.skyColor = vec3(0.0, 0.0, 0.0) * 0.3;
 	hemiLight.groundColor = vec3(0.0, 0.0, 0) * 0.3;
+
+//#define USE_A_HEMISPHERE
 
 	#ifdef USE_A_HEMISPHERE
 

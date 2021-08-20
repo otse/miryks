@@ -16,7 +16,7 @@ struct Material
 	Shader *shader;
 	Texture *map, *normalMap, *glowMap;
 
-	bool transparent, doubleSided, blending, testing, decal, tangents, skinning;
+	bool transparent, doubleSided, blending, testing, zwrite, decal, tangents, skinning;
 	bool dust, modelSpaceNormals, vertexColors;
 
 	int testFunc;
