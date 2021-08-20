@@ -359,6 +359,10 @@ struct bs_effect_shader_property_pointer {
 		float soft_falloff_depth;
 	} * D;
 	char *greyscale_texture; // sized string
+	struct {
+		ni_ref parent;
+		float u, v;
+	} meta;
 };
 
 struct bs_effect_shader_property_float_controller_pointer {
@@ -369,12 +373,15 @@ struct bs_effect_shader_property_float_controller_pointer {
 		ni_ref target, interpolator;
 		unsigned int controlled_variable;
 	} * A;
+	struct {
+		float time;
+	} meta;
 };
 
 struct ni_float_interpolator_pointer {
 	struct {
-	float value;
-	ni_ref data;
+		float value;
+		ni_ref data;
 	} * A;
 };
 

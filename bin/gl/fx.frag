@@ -225,13 +225,13 @@ void main()
 		float dist_y = abs(normal.y);
 
 		float fade_x = 1.0 - dist_x;
-		float fade_y = 1.0 - dist_y;
+		float fade_y = 0.7 - dist_y + 0.7;
 
 		float fades = clamp(fade_x * fade_y, 0.0, 1.0);
 
 		//vec3 fade_normal = normalize(vec3(fade_x, 0, 0) + vec3(0, fade_y, 0));
 
-		float dist = clamp(vViewPosition.z / 200.0, 0.0, 1.0);
+		float dist = clamp(vViewPosition.z / 100.0, 0.0, 1.0);
 
 		fades *= dist;
 		
@@ -290,8 +290,8 @@ void main()
 		PointLight b = PointLight(
 			a.package[0],
 			a.package[1],
-			a.package[2][0] * 1.0,
-			a.package[2][1],
+			a.package[2][0],
+			a.package[2][1] / 1.0,
 			mat3(0.0));
 
 		calcPointLight( b, geometry, directLight );

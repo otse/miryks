@@ -122,9 +122,91 @@ namespace skyrim
 			skeleton->step();
 		initial();
 	}
+	double easeInOutQuad( double t ) {
+		return t < 0.5 ? 2 * t * t : t * (4 - 2 * t) - 1;
+	}
 	void Mesh::forward()
 	{
-		
+		// for mists! do the following
+		// stolen from nifskope i think
+		auto float_controller = [](Rd *rd, bs_effect_shader_property_float_controller_pointer *block) {
+			Mesh *mesh = (Mesh *)rd->data;
+			auto target = (bs_effect_shader_property_pointer *)nifp_get_block(rd->nif, block->A->target);
+			//auto shape = (bs_tri_shape_pointer *)nifp_get_block(rd->nif, target->meta.parent);
+			Group *group = nullptr;
+			auto next_controller = block;
+			while(next_controller)
+			{
+				auto controller = next_controller;
+				next_controller = nullptr;
+				if (controller->A->next_controller > -1)
+					next_controller = (bs_effect_shader_property_float_controller_pointer *)nifp_get_block(rd->nif, controller->A->next_controller);
+				if (target)
+					group = mesh->groups[target->meta.parent];
+				if (!group)
+					return;
+				controller->meta.time += delta * 3.0;
+				if (controller->meta.time > controller->A->stop_time)
+					controller->meta.time -= controller->A->stop_time;
+				float *uv = &target->meta.u;
+				if (controller->A->controlled_variable == 6)
+					uv = &target->meta.u;
+				else if (controller->A->controlled_variable == 8)
+					uv = &target->meta.v;
+				auto interpolator = (ni_float_interpolator_pointer *)nifp_get_block(rd->nif, controller->A->interpolator);
+				if (controller->A->interpolator)
+				{
+					if (interpolator->A->data)
+					{
+						auto data = (ni_float_data_pointer *)nifp_get_block(rd->nif, interpolator->A->data);
+						for (unsigned int i = data->A->num_keys; i-- > 0;)
+						{
+							// todo template this vomit
+
+							int j = (i + 1 >= data->A->num_keys) ? 0 : i + 1;
+							if (data->A->key_type == 1 || data->linear_keys)
+							{
+								auto one = &data->linear_keys[i];
+								auto two = &data->linear_keys[j];
+								float ratio = (controller->meta.time - two->time) / (two->time - one->time) + 1.0f;
+								ratio = ratio < 0 ? 0 : ratio > 1 ? 1 : ratio;
+
+								float a = one->value * (1.0f - ratio);
+								float b = two->value * ratio;
+								*uv = a + b;
+							}
+
+							else if (data->A->key_type == 2)
+							{
+								auto one = &data->quadratic_keys[i];
+								auto two = &data->quadratic_keys[j];
+								float ratio = (controller->meta.time - two->time) / (two->time - one->time) + 1.0f;
+								ratio = ratio < 0 ? 0 : ratio > 1 ? 1 : ratio;
+
+								float x2 = ratio * ratio;
+								float x3 = x2 * ratio;
+
+								float x = easeInOutQuad(ratio);
+								*uv = (one->value * x) + (two->value * (1.0 - x));
+							}
+						}
+					}
+				}
+				float u, v, s, t;
+				u = target->meta.u + target->B->uv_offset.x;
+				v = target->meta.v + target->B->uv_offset.y;
+				s = target->B->uv_scale.x;
+				t = target->B->uv_scale.y;
+
+				group->geometry->material->setUvTransformDirectly(u, v, s, t, 0, 0, 0);
+			}
+		};
+		Rd *rd = calloc_nifprd();
+		rd->nif = nif;
+		rd->data = this;
+		rd->bs_effect_shader_property_float_controller_callback = float_controller;
+		nifp_rd(rd);
+		free_nifprd(&rd);
 	}
 	Group *Mesh::nested(Rd *rd)
 	{
@@ -334,17 +416,19 @@ namespace skyrim
 			Material *material = geometry->material;
 			material->src = &fxs;
 			material->transparent = true;
+			material->testing = false;
 			material->blending = true;
+			material->doubleSided = true;
 			material->color = gloomVec3(block->D->base_color);
 			material->opacity = block->D->base_color_scale;
 			material->map = GetProduceTexture(block->source_texture);
 			//printf("source texture is %s\n", block->source_texture);
 			if (block->B->shader_flags_2 & 0x00000020)
 				material->vertexColors = true;
-			if (block->B->shader_flags_1 & 0x80000000) // z buffer test
-				material->testing = true;
-			if (block->B->shader_flags_2 & 0x00000001) // z buffer write
-				material->testing = true;
+			//if (block->B->shader_flags_1 & 0x80000000) // z buffer test
+			//	material->testing = true;
+			//if (block->B->shader_flags_2 & 0x00000001) // z buffer write
+			//	material->testing = true;
 			if (block->B->shader_flags_2 & 0x00000010)
 				material->doubleSided = true;
 		}

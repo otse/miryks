@@ -21,6 +21,7 @@ namespace skyrim
 		Mesh(Nif *);
 		~Mesh();
 		Nif *nif = nullptr;
+		//Material *aa;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
 		Group *nested(Rd *);
@@ -34,6 +35,7 @@ namespace skyrim
 		Mesh *mesh;
 		Skeleton *skeleton;
 		Group *lastShape;
+
 		std::vector<ni_ref> shapes;
 		//std::vector<SkinPartition *> skins;
 		SkinnedMesh()

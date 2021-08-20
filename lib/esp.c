@@ -386,6 +386,7 @@ api void free_plugin(esppp p)
 	*p = NULL;
 	if (esp == NULL)
 	return;
+	printf("free plugin\n");
 	for (int i = PLUGINS; i --> 0; )
 	if (esp == plugins[i])
 	plugins[i] = NULL;

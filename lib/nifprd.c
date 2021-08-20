@@ -110,6 +110,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	{
 		needs_parent
 		struct bs_effect_shader_property_pointer *block = Blocks[current];
+		block->meta.parent = rd->parent;
 		if (rd->bs_effect_shader_property_callback)
 			rd->bs_effect_shader_property_callback(rd, Blocks[current]);
 		visit(rd, current, block->B->controller);

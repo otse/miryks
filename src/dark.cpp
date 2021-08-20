@@ -77,7 +77,7 @@ int main()
 	// Bucket beginning
 	load_bucket();
 #endif
-	// put_it_fullscreen();
+	put_it_fullscreen();
 #if 1
 	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");

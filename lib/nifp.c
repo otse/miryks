@@ -240,10 +240,13 @@ SINK ( nif, block, C )
 SINK ( nif, block, falloff )
 SINK ( nif, block, D )
 read_sized_string( nif, &block->greyscale_texture );
+block->meta.u = 0;
+block->meta.v = 0;
 END()
 
 BEGIN( bs_effect_shader_property_float_controller )
 SINK ( nif, block, A )
+block->meta.time = 0;
 END()
 
 BEGIN( ni_float_interpolator )
@@ -252,9 +255,9 @@ END()
 
 BEGIN( ni_float_data )
 SINK ( nif, block, A )
-if ( block->A->key_type == 2 )
+if ( block->A->key_type == 1 )
 SAIL ( nif, block, linear_keys, A, num_keys )
-if ( block->A->key_type == 3 )
+if ( block->A->key_type == 2 )
 SAIL ( nif, block, quadratic_keys, A, num_keys )
 END()
 
