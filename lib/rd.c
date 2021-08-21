@@ -51,10 +51,10 @@ static void visit(Rd *rd, int parent, int current)
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[current]];
 	if (0) ;
 
-	else if ( nif_types(NiNode, BSLeafAnimNode, BSFadeNode) )
+	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) )
 	{
 		traverse_once
-		ninode block = Blocks[current];
+		NiNode *block = Blocks[current];
 		if (rd->ni_node_callback)
 			rd->ni_node_callback(rd, Blocks[current]);
 		for (int i = 0; i < block->A->num_children; i++)
@@ -64,10 +64,10 @@ static void visit(Rd *rd, int parent, int current)
 		}
 	}
 
-	else if ( nif_types(NiTriShape, BSLODTriShape, NULL) )
+	else if ( nif_types(NiTriShapeS, BSLODTriShapeS, NULL) )
 	{
 		traverse_once
-		nitrishape block = Blocks[current];
+		NiTriShape *block = Blocks[current];
 		if (rd->ni_tri_shape_callback)
 			rd->ni_tri_shape_callback(rd, Blocks[current]);
 		if (block->A->skin_instance == -1)
@@ -78,7 +78,7 @@ static void visit(Rd *rd, int parent, int current)
 		visit(rd, current, block->B->alpha_property);
 	}
 
-	else if ( nif_type(NiTriShapeData) )
+	else if ( nif_type(NiTriShapeDataS) )
 	{
 		needs_parent
 		if (rd->ni_tri_shape_data_callback)
@@ -86,76 +86,76 @@ static void visit(Rd *rd, int parent, int current)
 	}
 
 	special_edition
-	else if ( nif_type(BSTriShape) )
+	else if ( nif_type(BSTriShapeS) )
 	{
 		needs_parent
 		traverse_once
-		bstrishape block = Blocks[current];
+		BSTriShape *block = Blocks[current];
 		if (rd->bs_tri_shape_callback)
 			rd->bs_tri_shape_callback(rd, Blocks[current]);
 		visit(rd, current, block->refs->shader_property);
 		visit(rd, current, block->refs->alpha_property);
 	}
 
-	else if ( nif_type(BSLightingShaderProperty) )
+	else if ( nif_type(BSLightingShaderPropertyS) )
 	{
 		needs_parent
-		bslightingshaderproperty block = Blocks[current];
+		BSLightingShaderProperty *block = Blocks[current];
 		if (rd->bs_lighting_shader_property_callback)
 			rd->bs_lighting_shader_property_callback(rd, Blocks[current]);
 		visit(rd, current, block->B->texture_set);
 	}
 
-	else if ( nif_type(BSEffectShaderProperty) )
+	else if ( nif_type(BSEffectShaderPropertyS) )
 	{
 		needs_parent
-		bseffectshaderproperty block = Blocks[current];
+		BSEffectShaderProperty *block = Blocks[current];
 		block->meta.parent = rd->parent;
 		if (rd->bs_effect_shader_property_callback)
 			rd->bs_effect_shader_property_callback(rd, Blocks[current]);
 		visit(rd, current, block->B->controller);
 	}
 
-	else if ( nif_type(BSEffectShaderPropertyFloatController) )
+	else if ( nif_type(BSEffectShaderPropertyFloatControllerS) )
 	{
 		needs_parent
-		bseffectshaderpropertyfloatcontroller block = Blocks[current];
+		BSEffectShaderPropertyFloatController *block = Blocks[current];
 		if (rd->bs_effect_shader_property_float_controller_callback)
 			rd->bs_effect_shader_property_float_controller_callback(rd, Blocks[current]);
 		visit(rd, current, block->A->next_controller);
 	}
 
-	else if ( nif_type(NiFloatInterpolator) )
+	else if ( nif_type(NiFloatInterpolatorS) )
 	{
 		needs_parent
-		nifloatinterpolator block = Blocks[current];
+		NiFloatInterpolator *block = Blocks[current];
 		if (rd->ni_float_interpolator_callback)
 			rd->ni_float_interpolator_callback(rd, Blocks[current]);
 	}
 
-	else if ( nif_type(NiFloatData) )
+	else if ( nif_type(NiFloatDataS) )
 	{
 
 	}
 
-	else if ( nif_type(BSShaderTextureSet) )
+	else if ( nif_type(BSShaderTextureSetS) )
 	{
 		needs_parent
 		if (rd->bs_shader_texture_set_callback)
 			rd->bs_shader_texture_set_callback(rd, Blocks[current]);
 	}
 
-	else if ( nif_type(NiAlphaProperty) )
+	else if ( nif_type(NiAlphaPropertyS) )
 	{
 		needs_parent
 		if (rd->ni_alpha_property_callback)
 			rd->ni_alpha_property_callback(rd, Blocks[current]);
 	}
 
-	else if ( nif_types(NiSkinInstance, BSDismemberSkinInstance, NULL) )
+	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, NULL) )
 	{
 		needs_parent
-		niskininstance block = Blocks[current];
+		NiSkinInstance *block = Blocks[current];
 		if (rd->ni_skin_instance_callback)
 			rd->ni_skin_instance_callback(rd, Blocks[current]);
 		visit(rd, current, block->A->data);
@@ -163,14 +163,14 @@ static void visit(Rd *rd, int parent, int current)
 		//visit(rd, current, block->A->skeleton_root);
 	}
 
-	else if ( nif_type(NiSkinData) )
+	else if ( nif_type(NiSkinDataS) )
 	{
 		needs_parent
 		if (rd->ni_skin_data_callback)
 			rd->ni_skin_data_callback(rd, Blocks[current]);
 	}
 
-	else if ( nif_type(NiSkinPartition) )
+	else if ( nif_type(NiSkinPartitionS) )
 	{
 		needs_parent
 		if (rd->ni_skin_partition_callback)

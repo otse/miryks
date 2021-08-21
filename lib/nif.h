@@ -2,6 +2,7 @@
 #define LIB_NIF_H
 
 /// nif.h
+
 #include "niftypes.h"
 
 #define api
@@ -134,9 +135,9 @@ struct ni_common_layout_t
 	} * A;
 };
 
-struct ni_node_t
+NiNode
 {
-	nicommonlayout common;
+	struct ni_common_layout_t *common;
 	struct {
 		unsigned int num_children;
 	} * A;
@@ -148,9 +149,9 @@ struct ni_node_t
 	NiRef *effects;
 };
 
-legendary_edition struct ni_tri_shape_t
+NiTriShape
 {
-	nicommonlayout common;
+	struct ni_common_layout_t *common;
 	struct
 	{
 		NiRef data, skin_instance;
@@ -161,7 +162,7 @@ legendary_edition struct ni_tri_shape_t
 	} * B;
 };
 
-legendary_edition struct ni_skin_instance_t
+NiSkinInstance
 {
 	struct
 	{
@@ -177,13 +178,14 @@ legendary_edition struct ni_skin_instance_t
 	struct body_part_list_t *partitions;
 };
 
-legendary_edition struct body_part_list_t
+legendary_edition
+struct body_part_list_t
 {
 	unsigned short part_flag;
 	unsigned short body_part;
 };
 
-legendary_edition struct ni_skin_data_t
+NiSkinData
 {
 	struct
 	{
@@ -199,7 +201,8 @@ legendary_edition struct ni_skin_data_t
 	struct bone_data_t **bone_list;
 };
 
-legendary_edition struct bone_data_t
+legendary_edition
+struct bone_data_t
 {
 	struct
 	{
@@ -217,26 +220,28 @@ legendary_edition struct bone_data_t
 };
 
 // todo this could be anonymous
-legendary_edition struct bone_vert_data_t
+legendary_edition
+struct bone_vert_data_t
 {
 	unsigned short index;
 	float weight;
 };
 
-legendary_edition struct ni_skin_partition_t
+legendary_edition
+struct ni_skin_partition_t
 {
 	unsigned int *num_skin_partition_blocks;
 	struct skin_partition_t **skin_partition_blocks;
 };
 
-special_edition
 typedef struct { float x, y, z; } Vector3;
 typedef struct { unsigned short u, v; } HalfTexCoord;
 typedef struct { unsigned char x, y, z; } ByteVector3;
 typedef struct { unsigned char r, g, b, a; } ByteColor4;
 typedef struct { unsigned short a, b, c; } ShortTriangle;
 
-special_edition struct ni_skin_partition_data_1
+special_edition
+struct ni_skin_partition_data_1
 {
 	Vector3 vertex;
 	float bitangent_x;
@@ -254,7 +259,8 @@ special_edition struct ni_skin_partition_data_1
 	} bone_indices;
 };
 
-legendary_edition struct skin_partition_t
+legendary_edition
+struct skin_partition_t
 {
 	struct {
 		unsigned int num_partitions, data_size, vertex_size;
@@ -262,7 +268,7 @@ legendary_edition struct skin_partition_t
 	} * A; 
 };
 
-legendary_edition struct ni_tri_shape_data_t
+NiTriShapeData
 {
 	struct
 	{
@@ -304,7 +310,7 @@ legendary_edition struct ni_tri_shape_data_t
 	NiRef *match_groups;
 };
 
-struct bs_lighting_shader_property_t
+BSLightingShaderProperty
 {
 	struct
 	{
@@ -328,7 +334,8 @@ struct bs_lighting_shader_property_t
 	} * B;
 };
 
-struct bs_effect_shader_property_t {
+BSEffectShaderProperty
+{
 	struct
 	{
 		int name;
@@ -363,7 +370,8 @@ struct bs_effect_shader_property_t {
 	} meta;
 };
 
-struct bs_effect_shader_property_float_controller_t {
+BSEffectShaderPropertyFloatController
+{
 	struct {
 		NiRef next_controller;
 		unsigned short flags;
@@ -376,14 +384,16 @@ struct bs_effect_shader_property_float_controller_t {
 	} meta;
 };
 
-struct ni_float_interpolator_t {
+NiFloatInterpolator
+{
 	struct {
 		float value;
 		NiRef data;
 	} * A;
 };
 
-struct ni_float_data_t {
+NiFloatData
+{
 	struct {
 		unsigned int num_keys, key_type;
 	} * A;
@@ -395,7 +405,7 @@ struct ni_float_data_t {
 	} *quadratic_keys;
 };
 
-struct bs_shader_texture_set_t
+BSShaderTextureSet
 {
 	struct
 	{
@@ -404,7 +414,7 @@ struct bs_shader_texture_set_t
 	char **textures; // sized strings
 };
 
-struct ni_alpha_property_t
+NiAlphaProperty
 {
 	struct
 	{
@@ -420,7 +430,7 @@ struct ni_alpha_property_t
 	} * C;
 };
 
-struct ni_controller_sequence_t
+NiControllerSequence
 {
 	struct
 	{
@@ -450,7 +460,7 @@ struct controlled_block_t
 	int node_name, property_type, controller_type, controller_id, interpolator_id;
 };
 
-struct ni_transform_interpolator_t
+NiTransformInterpolator
 {
 	struct
 	{
@@ -464,7 +474,7 @@ struct ni_transform_interpolator_t
 	} * B;
 };
 
-struct ni_transform_data_t
+NiTransformData
 {
 	struct
 	{
@@ -525,7 +535,7 @@ inline void api nif_sse_dissect_vertex_desc(
 	*skinned = flags & 1 << 0x6;
 }
 
-special_edition struct bs_vertex_data_sse_all
+struct bs_vertex_data_sse_all
 {
 	Vector3 vertex;
 	float bitangent_x;
@@ -537,7 +547,7 @@ special_edition struct bs_vertex_data_sse_all
 	ByteColor4 vertex_colors;
 };
 
-special_edition struct bs_vertex_data_sse_no_clr
+struct bs_vertex_data_sse_no_clr
 {
 	Vector3 vertex;
 	float bitangent_x;
@@ -548,7 +558,7 @@ special_edition struct bs_vertex_data_sse_no_clr
 	unsigned char bitangent_z;
 };
 
-special_edition struct bs_tri_shape_t
+BSTriShape
 {
 	struct ni_common_layout_t *common;
 	struct {

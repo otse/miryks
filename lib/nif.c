@@ -161,27 +161,27 @@ void big_block_reader(Nif *nif, int n)
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
 	if (0) ;
-	else if ( nif_types(NiNode, BSLeafAnimNode, BSFadeNode) ) 		  block = read_ni_node(nif, n);
-	else if ( nif_types(NiSkinInstance, BSDismemberSkinInstance, 0) ) block = read_ni_skin_instance(nif, n);
-	else if ( nif_type(NiSkinData) ) 								  block = read_ni_skin_data(nif, n);
-	else if ( nif_type(NiSkinPartition) ) 						      block = read_ni_skin_partition(nif, n);
-	else if ( nif_type(BSTriShape) )                                  block = read_bs_tri_shape(nif, n); special_edition
-	else if ( nif_type(BSDynamicTriShape) ) 0;
-	else if ( nif_types(NiTriShape, BSLODTriShape, 0) )               block = read_ni_tri_shape(nif, n);
-	else if ( nif_type(NiAlphaProperty) )                             block = read_ni_alpha_property(nif, n);
-	else if ( nif_type(NiTriShapeData) )                              block = read_ni_tri_shape_data(nif, n);
-	else if ( nif_type(BSLightingShaderProperty) )                    block = read_bs_lighting_shader_property(nif, n);
-	else if ( nif_type(BSEffectShaderProperty) )                      block = read_bs_effect_shader_property(nif, n);
-	else if ( nif_type(BSEffectShaderPropertyFloatController) )       block = read_bs_effect_shader_property_float_controller(nif, n);
-	else if ( nif_type(NiFloatInterpolator) )                         block = read_ni_float_interpolator(nif, n);
-	else if ( nif_type(NiFloatData) )                                 block = read_ni_float_data(nif, n);
-	else if ( nif_type(BSShaderTextureSet) )                          block = read_bs_shader_texture_set(nif, n);
-	else if ( nif_type(NiControllerSequence) )                        block = read_ni_controller_sequence(nif, n);
-	else if ( nif_type(NiTextKeyExtraData) ) 0;
-	else if ( nif_type(NiStringExtraData) ) 0;
-	else if ( nif_type(NiTransformInterpolator) )                     block = read_ni_transform_interpolator(nif, n); 
-	else if ( nif_type(NiTransformData) )                             block = read_ni_transform_data(nif, n);
-	else if ( nif_type(BSDecalPlacementVectorExtraData) ) 0;
+	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) )        block = read_ni_node(nif, n);
+	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, 0) ) block = read_ni_skin_instance(nif, n);
+	else if ( nif_type(NiSkinDataS) ) 								    block = read_ni_skin_data(nif, n);
+	else if ( nif_type(NiSkinPartitionS) ) 						        block = read_ni_skin_partition(nif, n);
+	else if ( nif_type(BSTriShapeS) )                                   block = read_bs_tri_shape(nif, n); special_edition
+	else if ( nif_type(BSDynamicTriShapeS) ) 0;
+	else if ( nif_types(NiTriShapeS, BSLODTriShapeS, 0) )               block = read_ni_tri_shape(nif, n);
+	else if ( nif_type(NiAlphaPropertyS) )                              block = read_ni_alpha_property(nif, n);
+	else if ( nif_type(NiTriShapeDataS) )                               block = read_ni_tri_shape_data(nif, n);
+	else if ( nif_type(BSLightingShaderPropertyS) )                     block = read_bs_lighting_shader_property(nif, n);
+	else if ( nif_type(BSEffectShaderPropertyS) )                       block = read_bs_effect_shader_property(nif, n);
+	else if ( nif_type(BSEffectShaderPropertyFloatControllerS) )        block = read_bs_effect_shader_property_float_controller(nif, n);
+	else if ( nif_type(NiFloatInterpolatorS) )                          block = read_ni_float_interpolator(nif, n);
+	else if ( nif_type(NiFloatDataS) )                                  block = read_ni_float_data(nif, n);
+	else if ( nif_type(BSShaderTextureSetS) )                           block = read_bs_shader_texture_set(nif, n);
+	else if ( nif_type(NiControllerSequenceS) )                         block = read_ni_controller_sequence(nif, n);
+	else if ( nif_type(NiTextKeyExtraDataS) ) 0;
+	else if ( nif_type(NiStringExtraDataS) ) 0;
+	else if ( nif_type(NiTransformInterpolatorS) )                      block = read_ni_transform_interpolator(nif, n); 
+	else if ( nif_type(NiTransformDataS) )                              block = read_ni_transform_data(nif, n);
+	else if ( nif_type(BSDecalPlacementVectorExtraDataS) ) 0;
 	Blocks[n] = block;
 }
 
@@ -348,7 +348,7 @@ BEGIN( ni_skin_instance ) legendary_edition
 SINK ( nif, block, A )
 SAIL ( nif, block, bones, A, num_bones )
 char *block_type = nif_get_block_type( nif, n );
-if (nif_type(BSDismemberSkinInstance))
+if (nif_type(BSDismemberSkinInstanceS))
 {
 	SINK ( nif, block, B )
 	SAIL ( nif, block, partitions, B, num_partitions )

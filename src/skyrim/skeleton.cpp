@@ -13,7 +13,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	static void ni_node_callback(Rd *, ninode);
+	static void ni_node_callback(Rd *, NiNode *);
 
 	Skeleton::Skeleton()
 	{
@@ -56,7 +56,7 @@ namespace skyrim
 		lastBone = bone;
 		return bone;
 	}
-	void matrix_from_common(Bone *bone, nicommonlayout common)
+	void matrix_from_common(Bone *bone, ni_common_layout_t *common)
 	{
 		bone->group->matrix = translate(bone->group->matrix, gloomVec3(common->A->translation));
 		bone->group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
@@ -64,7 +64,7 @@ namespace skyrim
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
 	}
-	void ni_node_callback(Rd *rd, ninode block)
+	void ni_node_callback(Rd *rd, NiNode *block)
 	{
 		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
@@ -80,9 +80,9 @@ namespace skyrim
 	// keyframes
 	Keyframes::Keyframes(Nif *nif) : model(nif)
 	{
-		assertm(strcmp(model->hdr->block_types[0], NiControllerSequence) == 0, "block 0 not a controller sequence");
+		assertm(strcmp(model->hdr->block_types[0], NiControllerSequenceS) == 0, "block 0 not a controller sequence");
 
-		csp = (nicontrollersequence)model->blocks[0];
+		csp = (NiControllerSequence *)model->blocks[0];
 	}
 	void Animation::step()
 	{
@@ -114,8 +114,8 @@ namespace skyrim
 			}
 
 			Bone *bone = has->second;
-			auto tip = (nitransforminterpolator)nif_get_block(model, cbp->interpolator);
-			auto tdp = (nitransformdata)nif_get_block(model, tip->B->data);
+			auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);
+			auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)
 				continue;
 			vec4 ro = gloomVec4(tip->transform->rotation);
