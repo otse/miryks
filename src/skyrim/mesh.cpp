@@ -17,8 +17,10 @@ namespace skyrim
 {
 	static void other(Rd *, void *);
 	callback(ni_node)
+	#ifdef SLE
 	callback(ni_tri_shape)
 	callback(ni_tri_shape_data)
+	#endif
 	callback(bs_lighting_shader_property)
 	callback(bs_effect_shader_property)
 	callback(bs_effect_shader_property_float_controller)
@@ -29,7 +31,7 @@ namespace skyrim
 	callback(ni_skin_instance)
 	callback(ni_skin_data)
 	callback(ni_skin_partition)
-	callback(bs_tri_shape) special_edition
+	callback(bs_tri_shape)
 	// for skinnedmesh
 	static void ni_node_callback_2      (Rd *, NiNode *);
 	static void ni_tri_shape_callback_2 (Rd *, NiTriShape *);
@@ -55,13 +57,15 @@ namespace skyrim
 		rd->data = this;
 		rd->other = other;
 		rd->ni_node_callback = ni_node_callback;
+		rd->bs_tri_shape_callback = bs_tri_shape_callback;
+		#ifdef SLE
 		rd->ni_tri_shape_callback = ni_tri_shape_callback;
 		rd->ni_tri_shape_data_callback = ni_tri_shape_data_callback;
+		#endif
 		rd->bs_lighting_shader_property_callback = bs_lighting_shader_property_callback;
 		rd->bs_effect_shader_property_callback = bs_effect_shader_property_callback;
 		rd->bs_shader_texture_set_callback = bs_shader_texture_set_callback;
 		rd->ni_alpha_property_callback = ni_alpha_property_callback;
-		rd->bs_tri_shape_callback = bs_tri_shape_callback; special_edition
 		nif_rd(rd);
 		free_nifprd(&rd);
 		baseGroup->Update();
@@ -74,7 +78,9 @@ namespace skyrim
 		rd->data = this;
 		rd->other = other;
 		rd->ni_node_callback = ni_node_callback_2;
+		#ifdef SLE
 		rd->ni_tri_shape_callback = ni_tri_shape_callback_2;
+		#endif
 		rd->ni_skin_instance_callback = ni_skin_instance_callback;
 		rd->ni_skin_data_callback = ni_skin_data_callback;
 		rd->ni_skin_partition_callback = ni_skin_partition_callback;
@@ -242,7 +248,7 @@ namespace skyrim
 		Group *group = mesh->nested(rd);
 		matrix_from_common(group, block->common);
 	}
-	legendary_edition
+	#ifdef SLE
 	void ni_tri_shape_callback(Rd *rd, NiTriShape *block)
 	{
 		// printf("ni tri shape callback %s\n", block->common.name_string);
@@ -257,6 +263,7 @@ namespace skyrim
 			group->geometry->material->src = &simple;
 		}
 	}
+	#endif
 	void ni_node_callback_2(Rd *rd, NiNode *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
@@ -267,13 +274,14 @@ namespace skyrim
 		//if (group->geometry)
 		//	group->geometry->material->color = vec3(1);
 	}
-	legendary_edition
+	#ifdef SLE
 	void ni_tri_shape_callback_2(Rd *rd, NiTriShape *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		smesh->lastShape = smesh->mesh->groups[rd->current];
 	}
-	legendary_edition
+	#endif
+	#ifdef SLE
 	void ni_tri_shape_data_callback(Rd *rd, NiTriShapeData *block)
 	{
 		// printf("ni tri shape data callback\n");
@@ -308,6 +316,7 @@ namespace skyrim
 		}
 		geometry->SetupMesh();
 	}
+	#endif
 	vec3 bytestofloat(ByteVector3 &vec)
 	{
 		float xf, yf, zf;

@@ -119,6 +119,7 @@
         "stop_token": "cpp",
         "thread": "cpp",
         "bsa.h": "c",
-        "niftypes.h": "c"
+        "niftypes.h": "c",
+        "nif.h": "c"
     }
 }

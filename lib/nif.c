@@ -110,7 +110,6 @@ void nif_read_header(Nif *nif) {
 	Hedr->end = Pos;
 }
 
-// lengthy read declarations
 
 #define DECLARE(x) void *read_ ## x (Nif *, int);
 
@@ -121,8 +120,11 @@ DECLARE( ni_common_layout )
 DECLARE( ni_skin_instance )
 DECLARE( ni_skin_data )
 DECLARE( ni_skin_partition )
+DECLARE( bs_tri_shape )
+#ifdef SLE
 DECLARE( ni_tri_shape )
 DECLARE( ni_tri_shape_data )
+#endif
 DECLARE( bs_lighting_shader_property )
 DECLARE( bs_effect_shader_property )
 DECLARE( bs_effect_shader_property_float_controller )
@@ -133,7 +135,6 @@ DECLARE( ni_alpha_property )
 DECLARE( ni_controller_sequence )
 DECLARE( ni_transform_interpolator )
 DECLARE( ni_transform_data )
-DECLARE( bs_tri_shape )
 
 void nif_read_blocks(Nif *nif)
 {
@@ -151,8 +152,6 @@ void nif_read_blocks(Nif *nif)
 }
 
 #define READ(x) block = read_ ## x(nif, n)
-
-// todo macro?
 
 void big_block_reader(Nif *nif, int n)
 {
@@ -187,7 +186,6 @@ void big_block_reader(Nif *nif, int n)
 	Blocks[n] = block;
 }
 
-// language to read blocks
 
 static inline void sink(Nif *nif, void **dest, int size) {
 	*dest = Depos;

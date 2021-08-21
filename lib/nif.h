@@ -181,7 +181,6 @@ NiSkinInstance
 	struct body_part_list_t *partitions;
 };
 
-legendary_edition
 struct body_part_list_t
 {
 	unsigned short part_flag;
@@ -204,7 +203,6 @@ NiSkinData
 	struct bone_data_t **bone_list;
 };
 
-legendary_edition
 struct bone_data_t
 {
 	struct
@@ -223,14 +221,12 @@ struct bone_data_t
 };
 
 // todo this could be anonymous
-legendary_edition
 struct bone_vert_data_t
 {
 	unsigned short index;
 	float weight;
 };
 
-legendary_edition
 struct ni_skin_partition_t
 {
 	unsigned int *num_skin_partition_blocks;
@@ -262,7 +258,6 @@ struct ni_skin_partition_data_1
 	} bone_indices;
 };
 
-legendary_edition
 struct skin_partition_t
 {
 	struct {
