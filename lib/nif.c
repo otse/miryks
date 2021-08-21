@@ -1,12 +1,8 @@
-/// nif with pointers
-
-// will read, sort both legendary and special edition nifs
-
-// has its own block reading language down the middle
+/// nif.c
 
 #include "common.h"
 
-#include "nifp.h"
+#include "nif.h"
 #include "nitypes.h"
 
 #define Hedr   nif->hdr
@@ -15,43 +11,43 @@
 #define Blocks nif->blocks
 #define Depos  (Buf + Pos)
 
-api char *nifp_get_string(Nifp *nif, int i) {
+api char *nif_get_string(Nif *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Hedr->strings[i];
 }
 
-api char *nifp_get_block_type(Nifp *nif, int i) {
+api char *nif_get_block_type(Nif *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Hedr->block_types[Hedr->block_type_index[i]];
 }
 
-api void *nifp_get_block(Nifp *nif, int i) {
+api void *nif_get_block(Nif *nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Blocks[i];
 }
 
-api Nifp *calloc_nifp() {
-	Nifp *nif = calloc(1, sizeof(Nifp));
-	nif->hdr = calloc(1, sizeof(struct nifp_hedr));
+api Nif *calloc_nifp() {
+	Nif *nif = calloc(1, sizeof(Nif));
+	nif->hdr = calloc(1, sizeof(struct NifHeader));
 	return nif;
 }
 
-api void free_nifp(Nifp **p) {
-	Nifp *nif = *p;
+api void free_nifp(Nif **p) {
+	Nif *nif = *p;
 	free(nif);
 	*p = NULL;
 }
 
-api void nifp_read(Nifp *nif) {
-	assertm(Buf, "nifp buf is null ??");
-	nifp_read_header(nif);
-	nifp_read_blocks(nif);
+api void nif_read(Nif *nif) {
+	assertm(Buf, "nif buf is null ??");
+	nif_read_header(nif);
+	nif_read_blocks(nif);
 }
 
-static void read_short_string(Nifp *nif, char **string) {
+static void read_short_string(Nif *nif, char **string) {
 	// has \0
 	char len = *(char *)Depos;
 	Pos += sizeof(char);
@@ -59,7 +55,7 @@ static void read_short_string(Nifp *nif, char **string) {
 	Pos += len;
 }
 
-static void read_sized_string(Nifp *nif, char **string) {
+static void read_sized_string(Nif *nif, char **string) {
 	// doesnt have \0
 	unsigned int len = *(unsigned int *)Depos;
 	Pos += sizeof(unsigned int);
@@ -71,7 +67,7 @@ static void read_sized_string(Nifp *nif, char **string) {
 
 // begin hedr
 
-static void hedr_read_header_string(Nifp *nif) {
+static void hedr_read_header_string(Nif *nif) {
 	// Gamebryo File Format, Version 20.2.0.7\n
 	int n = strchr(Buf, '\n') - Buf + 1;
 	char *string = malloc(sizeof(char) * n);
@@ -82,23 +78,23 @@ static void hedr_read_header_string(Nifp *nif) {
 	Pos += n;
 }
 
-static void read_mem(Nifp *nif, void *dest, int size) {
+static void read_mem(Nif *nif, void *dest, int size) {
 	memcpy(dest, Depos, size);
 	Pos += size;
 }
 
-static void read_array(Nifp *nif, void **dest, int size) {
+static void read_array(Nif *nif, void **dest, int size) {
 	*dest = malloc(size);
 	read_mem(nif, *dest, size);
 }
 
-static void read_sized_strings(Nifp *nif, char ***dest, int count) {
+static void read_sized_strings(Nif *nif, char ***dest, int count) {
 	*dest = malloc(count * sizeof(char *));
 	for (int i = 0; i < count; i++)
 	read_sized_string(nif, &(*dest)[i]);
 }
 
-void nifp_read_header(Nifp *nif) {
+void nif_read_header(Nif *nif) {
 	hedr_read_header_string(nif);
 	read_mem(nif, &Hedr->unknown_1, 17);
 	read_short_string(nif, &Hedr->author);
@@ -116,9 +112,9 @@ void nifp_read_header(Nifp *nif) {
 
 // read blockz
 
-#define nifpr Nifp *nif, int n
+#define nifpr Nif *nif, int n
 
-static void big_block_reader(Nifp *, int);
+static void big_block_reader(Nif *, int);
 
 legendary_edition
 static void *read_ni_common_layout(nifpr);
@@ -141,7 +137,7 @@ static void *read_ni_transform_data(nifpr);
 special_edition
 static void *read_bs_tri_shape(nifpr);
 
-void nifp_read_blocks(Nifp *nif)
+void nif_read_blocks(Nif *nif)
 {
 	// printf("nifp path %s\n", nif->path);
 	unsigned int pos = Pos;
@@ -160,7 +156,7 @@ void nifp_read_blocks(Nifp *nif)
 
 // todo macro?
 
-void big_block_reader(Nifp *nif, int n)
+void big_block_reader(Nif *nif, int n)
 {
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
@@ -191,7 +187,7 @@ void big_block_reader(Nifp *nif, int n)
 
 // language to read blockz
 
-static inline void sink(Nifp *nif, void **dest, int size) {
+static inline void sink(Nif *nif, void **dest, int size) {
 	*dest = Depos;
 	Pos += size;
 }
@@ -203,9 +199,9 @@ static inline void sink(Nifp *nif, void **dest, int size) {
 
 #define CALLOC( type ) type *block = calloc(1, sizeof(type));
 
-#define BEGIN(x) void *read_ ## x ( Nifp *nif, int n ) \
+#define BEGIN(x) void *read_ ## x ( Nif *nif, int n ) \
 { \
-	CALLOC(struct x ## _pointer)
+	CALLOC(struct x)
 
 #define END() \
 	return block; \
@@ -349,11 +345,9 @@ SAIL ( nif, block, match_groups, L, num_match_groups )
 END()
 
 BEGIN( ni_skin_instance ) legendary_edition
-
 SINK ( nif, block, A )
 SAIL ( nif, block, bones, A, num_bones )
-
-char *block_type = nifp_get_block_type( nif, n );
+char *block_type = nif_get_block_type( nif, n );
 if (ni_is_type(BS_DISMEMBER_SKIN_INSTANCE))
 {
 	SINK ( nif, block, B )
@@ -365,9 +359,7 @@ BEGIN( ni_skin_data ) legendary_edition
 //printf("read ni skin data\n");
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, B )
-
 // todo build a macro to do this dirty part
-
 block->bone_list = malloc(sizeof(struct bone_data *) * block->B->num_bones);
 for (unsigned int i = 0; i < block->B->num_bones; i++)
 {
@@ -379,46 +371,10 @@ for (unsigned int i = 0; i < block->B->num_bones; i++)
 }
 END()
 
-//sle outcomment
-/*
-legendary_edition
 BEGIN( ni_skin_partition ) legendary_edition
 SINK ( nif, block, num_skin_partition_blocks )
 
-block->skin_partition_blocks = calloc(*block->num_skin_partition_blocks, sizeof(struct skin_partition *));
-for (unsigned int i = 0; i < *block->num_skin_partition_blocks; i++)
-{
-	block->skin_partition_blocks[i] = calloc(1, sizeof(struct skin_partition));
-	struct skin_partition *skin_partition = block->skin_partition_blocks[i];
-
-	SINK ( nif, skin_partition, A )
-	SAIL ( nif, skin_partition, bones, A, num_bones )
-	SINK ( nif, skin_partition, has_vertex_map )
-
-	if (*skin_partition->has_vertex_map)
-		SAIL ( nif, skin_partition, vertex_map, A, num_vertices )
-
-	SINK ( nif, skin_partition, has_vertex_weights )
-
-	if (*skin_partition->has_vertex_weights)
-		SAIL ( nif, skin_partition, vertex_weights, A, num_vertices )
-
-	SAIL ( nif, skin_partition, strip_lengths, A, num_strips )
-
-	SINK ( nif, skin_partition, has_faces )
-
-	if (*skin_partition->has_faces)
-		SAIL ( nif, skin_partition, triangles, A, num_triangles )
-
-	SINK ( nif, skin_partition, has_bone_indices )
-	
-	if (*skin_partition->has_bone_indices)
-		SAIL ( nif, skin_partition, bone_indices, A, num_vertices )
-
-	SINK ( nif, skin_partition, unknown_short )
-}
 END()
-*/
 
 BEGIN ( bs_tri_shape ) special_edition
 block->common = read_ni_common_layout( nif, n );
@@ -428,7 +384,7 @@ SINK ( nif, block, refs )
 SINK ( nif, block, infos )
 
 int vertex, uvs, normals, tangents, colors, skinned;
-nifp_sse_dissect_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
+nif_sse_dissect_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
 
 // all models use these two variants it seems
 if ( vertex && uvs && normals && tangents && colors )

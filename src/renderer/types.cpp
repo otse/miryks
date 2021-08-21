@@ -58,8 +58,6 @@ void opengl_init_scene()
 
 	cameraCur = personCam; // dangle
 
-	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
-
 	//renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 
 	SetShaderSources();

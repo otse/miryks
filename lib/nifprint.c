@@ -1,12 +1,12 @@
 #include "common.h"
 
-#include "nifp.h"
+#include "nif.h"
 #include "nitypes.h"
 
 #define Hedr   nif->hdr
 #define Blocks nif->blocks
 
-api void nifp_print_hedr(Nifp *nif, char *s)
+api void nif_print_hedr(Nif *nif, char *s)
 {
 	snprintf(
 		s, 600,
@@ -101,7 +101,7 @@ static char *print_mat_4p(char *s, float *v)
 	return s;
 }
 
-static char *print_ni_common_layout_pointer(Nifp *nif, char s[600], struct ni_common_layout_pointer *block_pointer)
+static char *print_ni_common_layout(Nif *nif, char s[600], struct ni_common_layout *block)
 {
 	char x[200], y[200];
 	snprintf(
@@ -117,22 +117,22 @@ name: %s [%i]\
 \nscale: %f\
 \ncollision_object: %i\
 ",
-		nifp_get_string(nif, block_pointer->F->name),
-		block_pointer->F->name,
-		block_pointer->F->num_extra_data_list,
-		block_pointer->A->controller,
-		block_pointer->A->flags,
-		print_vec_3p(x, block_pointer->A->translation),
-		print_mat_3p(y, block_pointer->A->rotation),
-		block_pointer->A->scale,
-		block_pointer->A->collision_object);
+		nif_get_string(nif, block->F->name),
+		block->F->name,
+		block->F->num_extra_data_list,
+		block->A->controller,
+		block->A->flags,
+		print_vec_3p(x, block->A->translation),
+		print_mat_3p(y, block->A->rotation),
+		block->A->scale,
+		block->A->collision_object);
 	return s;
 }
 
-static void print_ni_node_pointer(Nifp *nif, int n, char s[1000])
+static void print_ni_node(Nif *nif, int n, char s[1000])
 {
 	char x[600];
-	struct ni_node_pointer *block_pointer = Blocks[n];
+	struct ni_node *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -142,15 +142,15 @@ static void print_ni_node_pointer(Nifp *nif, int n, char s[1000])
 \nchildren\
 \nnum_effects: %u\
 ",
-		print_ni_common_layout_pointer(nif, x, block_pointer->common),
-		block_pointer->A->num_children,
-		block_pointer->B->num_effects);
+		print_ni_common_layout(nif, x, block->common),
+		block->A->num_children,
+		block->B->num_effects);
 }
 
-static void print_ni_tri_shape_pointer(Nifp *nif, int n, char s[1000])
+static void print_ni_tri_shape(Nif *nif, int n, char s[1000])
 {
 	char x[600];
-	struct ni_tri_shape_pointer *block_pointer = Blocks[n];
+	struct ni_tri_shape *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -162,17 +162,17 @@ static void print_ni_tri_shape_pointer(Nifp *nif, int n, char s[1000])
 \nshader_property: %i\
 \nalpha_property: %i\
 ",
-		print_ni_common_layout_pointer(nif, x, block_pointer->common),
-		block_pointer->A->data,
-		block_pointer->A->skin_instance,
-		block_pointer->B->shader_property,
-		block_pointer->B->alpha_property);
+		print_ni_common_layout(nif, x, block->common),
+		block->A->data,
+		block->A->skin_instance,
+		block->B->shader_property,
+		block->B->alpha_property);
 }
 
-static void print_ni_tri_shape_data_pointer(Nifp *nif, int n, char s[1000])
+static void print_ni_tri_shape_data(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200], e[200], f[200], g[200], h[200], i[200], j[200], k[200], l[200], m[200], o[200], p[200];
-	struct ni_tri_shape_data_pointer *block_pointer = Blocks[n];
+	struct ni_tri_shape_data *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -216,50 +216,50 @@ group_id: %i\
 \nnum_match_groups: %hu\
 \nmatch_groups\
 ",
-		block_pointer->A->group_id,
-		block_pointer->A->num_vertices,
-		block_pointer->A->keep_flags,
-		block_pointer->A->compress_flags,
-		block_pointer->A->has_vertices,
-		print_vec_3p(a, block_pointer->vertices[0]),
-		block_pointer->A->num_vertices,
-		print_vec_3p(b, block_pointer->vertices[block_pointer->A->num_vertices - 1]),
-		block_pointer->C->bs_vector_flags,
-		block_pointer->C->material_crc,
-		block_pointer->C->has_normals,
-		block_pointer->C->has_normals ? print_vec_3p(c, block_pointer->normals[0]) : "",
-		block_pointer->A->num_vertices,
-		block_pointer->C->has_normals ? print_vec_3p(d, block_pointer->normals[block_pointer->A->num_vertices - 1]) : "",
-		print_vec_3p(e, block_pointer->tangents[0]),
-		block_pointer->A->num_vertices,
-		print_vec_3p(f, block_pointer->tangents[block_pointer->A->num_vertices - 1]),
-		print_vec_3p(g, block_pointer->bitangents[0]),
-		block_pointer->A->num_vertices,
-		print_vec_3p(h, block_pointer->bitangents[block_pointer->A->num_vertices - 1]),
-		print_vec_3p(i, block_pointer->G->center),
-		block_pointer->G->radius,
-		block_pointer->G->has_vertex_colors,
-		block_pointer->G->has_vertex_colors ? print_vec_4p(j, block_pointer->vertex_colors[0]) : "",
-		block_pointer->A->num_vertices,
-		block_pointer->G->has_vertex_colors ? print_vec_4p(k, block_pointer->vertex_colors[block_pointer->A->num_vertices - 1]) : "",
-		print_vec_2p(l, block_pointer->uv_sets[0]),
-		block_pointer->A->num_vertices,
-		print_vec_2p(m, block_pointer->uv_sets[block_pointer->A->num_vertices - 1]),
-		block_pointer->J->consistency_flags,
-		block_pointer->J->additional_data,
-		block_pointer->J->num_triangles,
-		block_pointer->J->num_triangle_points,
-		block_pointer->J->has_triangles,
-		print_ushort_3p(o, block_pointer->triangles[0]),
-		block_pointer->J->num_triangles,
-		block_pointer->J->has_triangles ? print_ushort_3p(p, block_pointer->triangles[block_pointer->J->num_triangles - 1]) : "",
-		block_pointer->L->num_match_groups);
+		block->A->group_id,
+		block->A->num_vertices,
+		block->A->keep_flags,
+		block->A->compress_flags,
+		block->A->has_vertices,
+		print_vec_3p(a, block->vertices[0]),
+		block->A->num_vertices,
+		print_vec_3p(b, block->vertices[block->A->num_vertices - 1]),
+		block->C->bs_vector_flags,
+		block->C->material_crc,
+		block->C->has_normals,
+		block->C->has_normals ? print_vec_3p(c, block->normals[0]) : "",
+		block->A->num_vertices,
+		block->C->has_normals ? print_vec_3p(d, block->normals[block->A->num_vertices - 1]) : "",
+		print_vec_3p(e, block->tangents[0]),
+		block->A->num_vertices,
+		print_vec_3p(f, block->tangents[block->A->num_vertices - 1]),
+		print_vec_3p(g, block->bitangents[0]),
+		block->A->num_vertices,
+		print_vec_3p(h, block->bitangents[block->A->num_vertices - 1]),
+		print_vec_3p(i, block->G->center),
+		block->G->radius,
+		block->G->has_vertex_colors,
+		block->G->has_vertex_colors ? print_vec_4p(j, block->vertex_colors[0]) : "",
+		block->A->num_vertices,
+		block->G->has_vertex_colors ? print_vec_4p(k, block->vertex_colors[block->A->num_vertices - 1]) : "",
+		print_vec_2p(l, block->uv_sets[0]),
+		block->A->num_vertices,
+		print_vec_2p(m, block->uv_sets[block->A->num_vertices - 1]),
+		block->J->consistency_flags,
+		block->J->additional_data,
+		block->J->num_triangles,
+		block->J->num_triangle_points,
+		block->J->has_triangles,
+		print_ushort_3p(o, block->triangles[0]),
+		block->J->num_triangles,
+		block->J->has_triangles ? print_ushort_3p(p, block->triangles[block->J->num_triangles - 1]) : "",
+		block->L->num_match_groups);
 }
 
-static void print_bs_lighting_shader_property_pointer(Nifp *nif, int n, char s[1000])
+static void print_bs_lighting_shader_property(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
-	struct bs_lighting_shader_property_pointer *block_pointer = Blocks[n];
+	struct bs_lighting_shader_property *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -284,31 +284,31 @@ skyrim_shader_type: %u\
 \nlighting_effect_1: %f\
 \nlighting_effect_2: %f\
 ",
-		block_pointer->A->skyrim_shader_type,
-		nifp_get_string(nif, block_pointer->A->name),
-		block_pointer->A->name,
-		block_pointer->A->num_extra_data_list,
-		block_pointer->B->controller,
-		block_pointer->B->shader_flags_1,
-		block_pointer->B->shader_flags_2,
-		print_vec_2p(a, block_pointer->B->uv_offset),
-		print_vec_2p(b, block_pointer->B->uv_scale),
-		block_pointer->B->texture_set,
-		print_vec_3p(c, block_pointer->B->emissive_color),
-		block_pointer->B->emissive_multiple,
-		block_pointer->B->texture_clamp_mode,
-		block_pointer->B->alpha,
-		block_pointer->B->refraction_strength,
-		block_pointer->B->glossiness,
-		print_vec_3p(d, block_pointer->B->specular_color),
-		block_pointer->B->specular_strength,
-		block_pointer->B->lighting_effect_1,
-		block_pointer->B->lighting_effect_2);
+		block->A->skyrim_shader_type,
+		nif_get_string(nif, block->A->name),
+		block->A->name,
+		block->A->num_extra_data_list,
+		block->B->controller,
+		block->B->shader_flags_1,
+		block->B->shader_flags_2,
+		print_vec_2p(a, block->B->uv_offset),
+		print_vec_2p(b, block->B->uv_scale),
+		block->B->texture_set,
+		print_vec_3p(c, block->B->emissive_color),
+		block->B->emissive_multiple,
+		block->B->texture_clamp_mode,
+		block->B->alpha,
+		block->B->refraction_strength,
+		block->B->glossiness,
+		print_vec_3p(d, block->B->specular_color),
+		block->B->specular_strength,
+		block->B->lighting_effect_1,
+		block->B->lighting_effect_2);
 }
 
-static void print_bs_shader_texture_set_pointer(Nifp *nif, int n, char s[1000])
+static void print_bs_shader_texture_set(Nif *nif, int n, char s[1000])
 {
-	struct bs_shader_texture_set_pointer *block_pointer = Blocks[n];
+	struct bs_shader_texture_set *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -323,22 +323,22 @@ num_textures: %i\
 \ntextures 7: %s\
 \ntextures 8: %s\
 ",
-		block_pointer->A->num_textures,
-		block_pointer->textures[0],
-		block_pointer->textures[1],
-		block_pointer->textures[2],
-		block_pointer->textures[3],
-		block_pointer->textures[4],
-		block_pointer->textures[5],
-		block_pointer->textures[6],
-		block_pointer->textures[7],
-		block_pointer->textures[8]);
+		block->A->num_textures,
+		block->textures[0],
+		block->textures[1],
+		block->textures[2],
+		block->textures[3],
+		block->textures[4],
+		block->textures[5],
+		block->textures[6],
+		block->textures[7],
+		block->textures[8]);
 }
 
-static void print_bs_effect_shader_property_pointer(Nifp *nif, int n, char s[1000])
+static void print_bs_effect_shader_property(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
-	struct bs_effect_shader_property_pointer *block = Blocks[n];
+	struct bs_effect_shader_property *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -365,7 +365,7 @@ effect shader property\
 \ngreyscale_texture: %s\
 ",
 block->A->name,
-nifp_get_string(nif, block->A->name),
+nif_get_string(nif, block->A->name),
 block->A->num_extra_data_list,
 block->B->controller,
 block->B->shader_flags_1,
@@ -393,9 +393,9 @@ block->greyscale_texture
 );
 }
 
-static void print_ni_controller_sequence_pointer(Nifp *nif, int n, char s[1000])
+static void print_ni_controller_sequence(Nif *nif, int n, char s[1000])
 {
-	struct ni_controller_sequence_pointer *block_pointer = Blocks[n];
+	struct ni_controller_sequence *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -413,24 +413,24 @@ name: %i\
 \naccum_root_name: %i\
 \nnum_anim_note_arrays: %hu\
 ",
-		block_pointer->A->name,
-		block_pointer->A->num_controlled_blocks,
-		block_pointer->A->array_grow_by,
-		block_pointer->C->weight,
-		block_pointer->C->text_keys,
-		block_pointer->C->cycle_type,
-		block_pointer->C->frequency,
-		block_pointer->C->start_time,
-		block_pointer->C->stop_time,
-		block_pointer->C->manager,
-		block_pointer->C->accum_root_name,
-		block_pointer->C->num_anim_note_arrays);
+		block->A->name,
+		block->A->num_controlled_blocks,
+		block->A->array_grow_by,
+		block->C->weight,
+		block->C->text_keys,
+		block->C->cycle_type,
+		block->C->frequency,
+		block->C->start_time,
+		block->C->stop_time,
+		block->C->manager,
+		block->C->accum_root_name,
+		block->C->num_anim_note_arrays);
 }
 
-static void print_ni_transform_interpolator(Nifp *nif, int n, char s[1000])
+static void print_ni_transform_interpolator(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200];//, c[200], d[200];
-	struct ni_transform_interpolator_pointer *block_pointer = Blocks[n];
+	struct ni_transform_interpolator *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -440,15 +440,15 @@ transform:\
 \n scale: %f\
 \ndata: %i\
 ",
-		print_vec_3p(a, block_pointer->transform->translation),
-		print_vec_4p(b, block_pointer->transform->rotation),
-		block_pointer->transform->scale,
-		block_pointer->B->data);
+		print_vec_3p(a, block->transform->translation),
+		print_vec_4p(b, block->transform->rotation),
+		block->transform->scale,
+		block->B->data);
 }
 
-static void print_ni_transform_data(Nifp *nif, int n, char s[1000])
+static void print_ni_transform_data(Nif *nif, int n, char s[1000])
 {
-	struct ni_transform_data_pointer *block_pointer = Blocks[n];
+	struct ni_transform_data *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -463,16 +463,16 @@ num_rotation_keys: %u\
 \n num_keys: %u\
 \n keys: -\
 ",
-		block_pointer->A->num_rotation_keys,
-		block_pointer->A->num_rotation_keys > 0 ? block_pointer->B->rotation_type : 0,
-		block_pointer->translations->num_keys,
-		block_pointer->translations->interpolation,
-		block_pointer->scales->num_keys);
+		block->A->num_rotation_keys,
+		block->A->num_rotation_keys > 0 ? block->B->rotation_type : 0,
+		block->translations->num_keys,
+		block->translations->interpolation,
+		block->scales->num_keys);
 }
 
-static void print_ni_skin_instance(Nifp *nif, int n, char s[1000])
+static void print_ni_skin_instance(Nif *nif, int n, char s[1000])
 {
-	struct ni_skin_instance_pointer *block_pointer = Blocks[n];
+	struct ni_skin_instance *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -484,17 +484,17 @@ data: %i\
 \nnum_partitions: %i\
 \npartitions: -\
 ",
-		block_pointer->A->data,
-		block_pointer->A->skin_partition,
-		block_pointer->A->skeleton_root,
-		block_pointer->A->num_bones,
-		block_pointer->B->num_partitions);
+		block->A->data,
+		block->A->skin_partition,
+		block->A->skeleton_root,
+		block->A->num_bones,
+		block->B->num_partitions);
 }
 
-static void print_ni_skin_data(Nifp *nif, int n, char s[1000])
+static void print_ni_skin_data(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200];//, c[200], d[200];
-	struct ni_skin_data_pointer *block_pointer = Blocks[n];
+	struct ni_skin_data *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -506,19 +506,19 @@ skin_transform:\
 \nhas_vertex_weights: %u\
 \nbone_list: -\
 ",
-		print_mat_3p(a, block_pointer->skin_transform->rotation),
-		print_vec_3p(b, block_pointer->skin_transform->translation),
-		block_pointer->skin_transform->scale,
-		block_pointer->B->num_bones,
-		block_pointer->B->has_vertex_weights);
+		print_mat_3p(a, block->skin_transform->rotation),
+		print_vec_3p(b, block->skin_transform->translation),
+		block->skin_transform->scale,
+		block->B->num_bones,
+		block->B->has_vertex_weights);
 }
 
 static char *print_skin_partition(char *, struct skin_partition *);
 
-static void print_ni_skin_partition(Nifp *nif, int n, char s[1000])
+static void print_ni_skin_partition(Nif *nif, int n, char s[1000])
 {
 	char a[1000];
-	struct ni_skin_partition_pointer *block_pointer = Blocks[n];
+	struct ni_skin_partition *block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -527,12 +527,13 @@ num_skin_partition_blocks: %u\
 \nskin_partition 0:\
 \n%s\
 ",
-		*block_pointer->num_skin_partition_blocks,
-		(block_pointer->num_skin_partition_blocks > 0 ? print_skin_partition(a, block_pointer->skin_partition_blocks[0]) : NULL));
+		*block->num_skin_partition_blocks,
+		(block->num_skin_partition_blocks > 0 ? print_skin_partition(a, block->skin_partition_blocks[0]) : NULL));
 }
 
 static char *print_skin_partition(char *s, struct skin_partition *skin_partition)
 {
+	/*
 	snprintf(
 		s, 1000,
 		"\
@@ -556,10 +557,11 @@ static char *print_skin_partition(char *s, struct skin_partition *skin_partition
 		*skin_partition->has_faces,
 		*skin_partition->has_bone_indices
 		);
+	return s;*/
 	return s;
 }
 
-static void print_ni_alpha_property(Nifp *nif, int n, char s[1000])
+static void print_ni_alpha_property(Nif *nif, int n, char s[1000])
 {
 	const char *blendModes[] = {
 		"One",
@@ -585,8 +587,8 @@ static void print_ni_alpha_property(Nifp *nif, int n, char s[1000])
 		"Never"
 	};
 	char x[600];
-	struct ni_alpha_property_pointer *block_pointer = Blocks[n];
-	unsigned short flags = block_pointer->C->flags;
+	struct ni_alpha_property *block = Blocks[n];
+	unsigned short flags = block->C->flags;
 	snprintf(
 		s, 1000,
 		"\
@@ -604,34 +606,34 @@ name: %s [%i]\
 \nalpha test function: %s\
 \nalpha test threshold: %u\
 ",
-		nifp_get_string(nif, block_pointer->A->name),
-		block_pointer->A->name,
-		block_pointer->A->num_extra_data_list,
-		block_pointer->C->controller,
-		block_pointer->C->flags,
-		block_pointer->C->treshold,
+		nif_get_string(nif, block->A->name),
+		block->A->name,
+		block->A->num_extra_data_list,
+		block->C->controller,
+		block->C->flags,
+		block->C->treshold,
 		flags & 1 ? "yes" : "no",
 		blendModes[flags >> 1 & 0x0f],
 		blendModes[flags >> 5 & 0x0f],
 		flags & ( 1 << 9 ) ? "yes" : "no",
 		testModes[flags >> 10 & 0x07],
-		block_pointer->C->treshold
+		block->C->treshold
 		//testModes[1]
 	);
 }
 
-api void nifp_print_block(Nifp *nif, int n, char s[1000])
+api void nif_print_block(Nif *nif, int n, char s[1000])
 {
 	s[0] = '\0';
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	if (0);
-	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) print_ni_node_pointer(nif, n, s);
-	else if ( ni_is_type(NI_TRI_SHAPE) ) print_ni_tri_shape_pointer(nif, n, s);
-	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) print_ni_tri_shape_data_pointer(nif, n, s);
-	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) print_bs_lighting_shader_property_pointer(nif, n, s);
-	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) ) print_bs_effect_shader_property_pointer(nif, n, s);
-	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) print_bs_shader_texture_set_pointer(nif, n, s);
-	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) print_ni_controller_sequence_pointer(nif, n, s);
+	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) print_ni_node(nif, n, s);
+	else if ( ni_is_type(NI_TRI_SHAPE) ) print_ni_tri_shape(nif, n, s);
+	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) print_ni_tri_shape_data(nif, n, s);
+	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) print_bs_lighting_shader_property(nif, n, s);
+	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) ) print_bs_effect_shader_property(nif, n, s);
+	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) print_bs_shader_texture_set(nif, n, s);
+	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) print_ni_controller_sequence(nif, n, s);
 	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) print_ni_transform_interpolator(nif, n, s);
 	else if ( ni_is_type(NI_TRANSFORM_DATA) ) print_ni_transform_data(nif, n, s);
 	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) print_ni_skin_instance(nif, n, s);

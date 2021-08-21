@@ -3,7 +3,6 @@ extern "C"
 #include <half.h>
 }
 
-
 #include "mesh.h"
 
 #include <renderer/shader.h>
@@ -12,7 +11,7 @@ extern "C"
 
 using namespace dark;
 
-#define callback(x) static void (x ## _callback) (Rd *, x ## _pointer *);
+#define callback(x) static void (x ## _callback) (Rd *, x ##  *);
 
 namespace skyrim
 {
@@ -32,8 +31,8 @@ namespace skyrim
 	callback(ni_skin_partition)
 	callback(bs_tri_shape) special_edition
 	// for skinnedmesh
-	static void ni_node_callback_2      (Rd *, ni_node_pointer *);
-	static void ni_tri_shape_callback_2 (Rd *, ni_tri_shape_pointer *);
+	static void ni_node_callback_2      (Rd *, ni_node *);
+	static void ni_tri_shape_callback_2 (Rd *, ni_tri_shape *);
 
 	Mesh::Mesh()
 	{
@@ -63,7 +62,7 @@ namespace skyrim
 		rd->bs_shader_texture_set_callback = bs_shader_texture_set_callback;
 		rd->ni_alpha_property_callback = ni_alpha_property_callback;
 		rd->bs_tri_shape_callback = bs_tri_shape_callback; special_edition
-		nifp_rd(rd);
+		nif_rd(rd);
 		free_nifprd(&rd);
 		baseGroup->Update();
 	}
@@ -79,18 +78,19 @@ namespace skyrim
 		rd->ni_skin_instance_callback = ni_skin_instance_callback;
 		rd->ni_skin_data_callback = ni_skin_data_callback;
 		rd->ni_skin_partition_callback = ni_skin_partition_callback;
-		nifp_rd(rd);
+		nif_rd(rd);
 		free_nifprd(&rd);
 		initial();
 	}
 	void SkinnedMesh::initial()
 	{
+		/*
 		for (ni_ref index : shapes)
 		{
 			//Group *group = mesh->groups[index];
-			auto shape = (ni_tri_shape_pointer *)nifp_get_block(mesh->nif, index);
-			auto si = (ni_skin_instance_pointer *)nifp_get_block(mesh->nif, shape->A->skin_instance);
-			auto sp = (ni_skin_partition_pointer *)nifp_get_block(mesh->nif, si->A->skin_partition);
+			auto shape = (ni_tri_shape *)nif_get_block(mesh->nif, index);
+			auto si = (ni_skin_instance *)nif_get_block(mesh->nif, shape->A->skin_instance);
+			auto sp = (ni_skin_partition *)nif_get_block(mesh->nif, si->A->skin_partition);
 			
 			for (unsigned int k = 0; k < *sp->num_skin_partition_blocks; k++)
 			{
@@ -102,8 +102,8 @@ namespace skyrim
 				material->bindMatrix = group->matrixWorld;
 				for (int i = 0; i < part->A->num_bones; i++)
 				{
-					auto node = (ni_node_pointer *)nifp_get_block(mesh->nif, si->bones[part->bones[i]]);
-					char *name = nifp_get_string(mesh->nif, node->common->F->name);
+					auto node = (ni_node *)nif_get_block(mesh->nif, si->bones[part->bones[i]]);
+					char *name = nif_get_string(mesh->nif, node->common->F->name);
 					auto has = skeleton->bonesNamed.find(name);
 					if (has == skeleton->bonesNamed.end())
 					{
@@ -114,7 +114,7 @@ namespace skyrim
 					material->boneMatrices.push_back(bone->group->matrixWorld * inverse(bone->rest));
 				}
 			}
-		}
+		}*/
 	}
 	void SkinnedMesh::forward()
 	{
@@ -129,10 +129,10 @@ namespace skyrim
 	{
 		// for mists! do the following
 		// stolen from nifskope i think
-		auto callback = [](Rd *rd, bs_effect_shader_property_float_controller_pointer *block) {
+		auto callback = [](Rd *rd, bs_effect_shader_property_float_controller *block) {
 			Mesh *mesh = (Mesh *)rd->data;
-			auto target = (bs_effect_shader_property_pointer *)nifp_get_block(rd->nif, block->A->target);
-			//auto shape = (bs_tri_shape_pointer *)nifp_get_block(rd->nif, target->meta.parent);
+			auto target = (bs_effect_shader_property *)nif_get_block(rd->nif, block->A->target);
+			//auto shape = (bs_tri_shape *)nif_get_block(rd->nif, target->meta.parent);
 			Group *group = nullptr;
 			auto next_controller = block;
 			while(next_controller)
@@ -140,7 +140,7 @@ namespace skyrim
 				auto controller = next_controller;
 				next_controller = nullptr;
 				if (controller->A->next_controller > -1)
-					next_controller = (bs_effect_shader_property_float_controller_pointer *)nifp_get_block(rd->nif, controller->A->next_controller);
+					next_controller = (bs_effect_shader_property_float_controller *)nif_get_block(rd->nif, controller->A->next_controller);
 				if (target)
 					group = mesh->groups[target->meta.parent];
 				if (!group || !group->geometry)
@@ -153,12 +153,12 @@ namespace skyrim
 					uv = &target->meta.u;
 				else if (controller->A->controlled_variable == 8)
 					uv = &target->meta.v;
-				auto interpolator = (ni_float_interpolator_pointer *)nifp_get_block(rd->nif, controller->A->interpolator);
+				auto interpolator = (ni_float_interpolator *)nif_get_block(rd->nif, controller->A->interpolator);
 				if (controller->A->interpolator)
 				{
 					if (interpolator->A->data)
 					{
-						auto data = (ni_float_data_pointer *)nifp_get_block(rd->nif, interpolator->A->data);
+						auto data = (ni_float_data *)nif_get_block(rd->nif, interpolator->A->data);
 						for (unsigned int i = data->A->num_keys; i-- > 0;)
 						{
 							int j = (i + 1 >= data->A->num_keys) ? 0 : i + 1;
@@ -212,7 +212,7 @@ namespace skyrim
 		rd->nif = nif;
 		rd->data = this;
 		rd->bs_effect_shader_property_float_controller_callback = callback;
-		nifp_rd(rd);
+		nif_rd(rd);
 		free_nifprd(&rd);
 	}
 	Group *Mesh::nested(Rd *rd)
@@ -224,18 +224,18 @@ namespace skyrim
 		return group;
 	}
 	
-	void other(Rd *rd, void *block_pointer)
+	void other(Rd *rd, void *block)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
-		//printf("Rd unhandled other block type %s\n", nifp_get_block_type(rd->nif, rd->current));
+		//printf("Rd unhandled other block type %s\n", nif_get_block_type(rd->nif, rd->current));
 	}
-	void matrix_from_common(Group *group, ni_common_layout_pointer *common)
+	void matrix_from_common(Group *group, ni_common_layout *common)
 	{
 		group->matrix = translate(group->matrix, gloomVec3(common->A->translation));
 		group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
 		group->matrix = scale(group->matrix, vec3(common->A->scale));
 	}
-	void ni_node_callback(Rd *rd, ni_node_pointer *block)
+	void ni_node_callback(Rd *rd, ni_node *block)
 	{
 		// printf("ni node callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -243,13 +243,13 @@ namespace skyrim
 		matrix_from_common(group, block->common);
 	}
 	legendary_edition
-	void ni_tri_shape_callback(Rd *rd, ni_tri_shape_pointer *block)
+	void ni_tri_shape_callback(Rd *rd, ni_tri_shape *block)
 	{
 		// printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->nested(rd);
 		matrix_from_common(group, block->common);
-		if (strstr(nifp_get_string(rd->nif, block->common->F->name), "Marker") != NULL)
+		if (strstr(nif_get_string(rd->nif, block->common->F->name), "Marker") != NULL)
 			group->visible = false;
 		//if (block->A->skin_instance == -1)
 		{
@@ -257,7 +257,7 @@ namespace skyrim
 			group->geometry->material->src = &simple;
 		}
 	}
-	void ni_node_callback_2(Rd *rd, ni_node_pointer *block)
+	void ni_node_callback_2(Rd *rd, ni_node *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		if (rd->current == 0)
@@ -268,13 +268,13 @@ namespace skyrim
 		//	group->geometry->material->color = vec3(1);
 	}
 	legendary_edition
-	void ni_tri_shape_callback_2(Rd *rd, ni_tri_shape_pointer *block)
+	void ni_tri_shape_callback_2(Rd *rd, ni_tri_shape *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		smesh->lastShape = smesh->mesh->groups[rd->current];
 	}
 	legendary_edition
-	void ni_tri_shape_data_callback(Rd *rd, ni_tri_shape_data_pointer *block)
+	void ni_tri_shape_data_callback(Rd *rd, ni_tri_shape_data *block)
 	{
 		// printf("ni tri shape data callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -324,7 +324,7 @@ namespace skyrim
 		return vec2(u.f, v.f);
 	}
 	special_edition
-	void bs_tri_shape_callback(Rd *rd, bs_tri_shape_pointer *block)
+	void bs_tri_shape_callback(Rd *rd, bs_tri_shape *block)
 	{
 		// printf("mesh.cpp bs tri shape callback !!! ");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -333,7 +333,7 @@ namespace skyrim
 		Geometry *geometry = new Geometry();
 		group->geometry = geometry;
 		geometry->material->src = &simple;
-		const char *name = nifp_get_string(rd->nif, block->common->F->name);
+		const char *name = nif_get_string(rd->nif, block->common->F->name);
 		if (strstr(name, "Marker"))
 		{
 			return;
@@ -379,7 +379,7 @@ namespace skyrim
 		}
 		geometry->SetupMesh();
 	}
-	void bs_lighting_shader_property_callback(Rd *rd, bs_lighting_shader_property_pointer *block)
+	void bs_lighting_shader_property_callback(Rd *rd, bs_lighting_shader_property *block)
 	{
 		// printf("bs lighting shader property callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -416,7 +416,7 @@ namespace skyrim
 				material->defines += "#define TREE_ANIM\n";
 		}
 	}
-	void bs_effect_shader_property_callback(Rd *rd, bs_effect_shader_property_pointer *block)
+	void bs_effect_shader_property_callback(Rd *rd, bs_effect_shader_property *block)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
 		Geometry *geometry = mesh->lastGroup->geometry;
@@ -438,7 +438,7 @@ namespace skyrim
 				material->doubleSided = true;
 		}
 	}
-	void bs_shader_texture_set_callback(Rd *rd, bs_shader_texture_set_pointer *block)
+	void bs_shader_texture_set_callback(Rd *rd, bs_shader_texture_set *block)
 	{
 		// printf("bs shader texture set callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -463,7 +463,7 @@ namespace skyrim
 			}
 		}
 	}
-	void ni_alpha_property_callback(Rd *rd, ni_alpha_property_pointer *block)
+	void ni_alpha_property_callback(Rd *rd, ni_alpha_property *block)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
@@ -503,26 +503,33 @@ namespace skyrim
 		}
 	}
 	legendary_edition
-	void ni_skin_instance_callback(Rd *rd, ni_skin_instance_pointer *block)
+	void ni_skin_instance_callback(Rd *rd, ni_skin_instance *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		Nif *nif = smesh->mesh->nif;
-		assertm(0 == strcmp(nifp_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
-		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, rd->parent);
+		assertm(0 == strcmp(nif_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
+		auto shape = (ni_tri_shape *)nif_get_block(nif, rd->parent);
 		smesh->shapes.push_back(rd->parent);
 	}
 	legendary_edition
-	void ni_skin_data_callback(Rd *rd, ni_skin_data_pointer *block)
+	void ni_skin_data_callback(Rd *rd, ni_skin_data *block)
 	{
 		//
 	}
-	legendary_edition
-	void ni_skin_partition_callback(Rd *rd, ni_skin_partition_pointer *block)
+	special_edition
+	void ni_skin_partition_callback(Rd *rd, ni_skin_partition *block)
 	{
+
+	}
+	/*
+	legendary_edition
+	void ni_skin_partition_callback(Rd *rd, ni_skin_partition *block)
+	{
+		
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		auto nif = smesh->mesh->nif;
-		auto shape = (ni_tri_shape_pointer *)nifp_get_block(nif, smesh->shapes.back());
-		auto data = (ni_tri_shape_data_pointer *)nifp_get_block(nif, shape->A->data);
+		auto shape = (ni_tri_shape *)nif_get_block(nif, smesh->shapes.back());
+		auto data = (ni_tri_shape_data *)nif_get_block(nif, shape->A->data);
 		for (unsigned int k = 0; k < *block->num_skin_partition_blocks; k++)
 		{
 			struct skin_partition *part = block->skin_partition_blocks[k];
@@ -579,5 +586,6 @@ namespace skyrim
 		}
 		smesh->lastShape->Update();
 	}
+	*/
 
 } // namespace dark

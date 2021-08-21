@@ -1,7 +1,7 @@
-#ifndef LIB_NIFP_H
-#define LIB_NIFP_H
+#ifndef LIB_NIF_H
+#define LIB_NIF_H
 
-/// nif with pointers
+/// nif.h
 
 #define api
 
@@ -11,37 +11,34 @@
 
 typedef int ni_ref;
 
-struct nifp_hedr;
+struct NifHeader;
 
-struct Nifp;
-struct NifpRd;
+struct Nif;
+struct Rd;
 
-typedef struct Nifp Nifp;
-typedef struct NifpRd NifpRd;
+typedef struct Nif Nif;
+typedef struct Rd Rd;
 
-typedef Nifp Nif;
-typedef NifpRd Rd;
-
-struct Nifp
+struct Nif
 {
 	int num;
 	const char *path;
 	const unsigned char *buf;
 	unsigned pos;
-	struct nifp_hedr *hdr;
+	struct NifHeader *hdr;
 	void **blocks;
 };
 
-#define callback(x) void (*x ## _callback) (struct NifpRd *, struct x ## _pointer *);
+#define callback(x) void (*x ## _callback) (struct Rd *, struct x *);
 
-struct NifpRd
+struct Rd
 {
 	int x;
 	char *skips;
-	Nifp *nif;
+	Nif *nif;
 	void *data;
 	int parent, current;
-	void (*other) (struct NifpRd *, void *block_pointer);
+	void (*other) (struct Rd *, void *block);
 	callback(ni_node)
 	callback(ni_tri_shape)
 	callback(ni_tri_shape_data)
@@ -61,39 +58,31 @@ struct NifpRd
 
 #undef callback
 
-void nifp_test();
+void nif_test();
 
-void nifp_read_header(Nifp *);
-void nifp_read_blocks(Nifp *);
+void nif_read_header(Nif *);
+void nif_read_blocks(Nif *);
 
-api Nifp   *calloc_nifp();
-api NifpRd *calloc_nifprd();
+api Nif *calloc_nifp();
+api Rd   *calloc_nifprd();
 
-api void free_nifp  (Nifp **);
-api void free_nifprd(NifpRd **);
+api void free_nifp  (Nif **);
+api void free_nifprd(Rd **);
 
-api void nifp_rd(NifpRd *);
+api void nif_rd(Rd *);
 
-api void nifp_read(Nifp *);
+api void nif_read(Nif *);
 
-api char *nifp_get_string(Nifp *, int);
-api char *nifp_get_block_type(Nifp *, int);
-api void *nifp_get_block(Nifp *, int);
+api char *nif_get_string(Nif *, int);
+api char *nif_get_block_type(Nif *, int);
+api void *nif_get_block(Nif *, int);
 
-api void nifp_print_hedr(Nifp *, char *);
-api void nifp_print_block(Nifp *, int, char [1000]);
+api void nif_print_hedr(Nif *, char *);
+api void nif_print_block(Nif *, int, char [1000]);
 
-#pragma pack(push, 1)
 
-typedef struct { float x, y; } Vec2;
-typedef struct { float x, y, z; } Vec3;
-typedef struct { float x, y, z, w; } Vec4;
-typedef struct { float n[9]; } Mat3;
-typedef struct { float n[16]; } Mat4;
-typedef struct { unsigned char a, b, c, d; } Byte4;
-typedef struct { unsigned short x, y, z; } ushort3;
 
-struct nifp_hedr
+struct NifHeader
 {
 	char *header_string;
 	char *version;
@@ -117,7 +106,17 @@ struct nifp_hedr
 	int end;
 };
 
-struct ni_common_layout_pointer
+#pragma pack(push, 1)
+
+typedef struct { float x, y; } Vec2;
+typedef struct { float x, y, z; } Vec3;
+typedef struct { float x, y, z, w; } Vec4;
+typedef struct { float n[9]; } Mat3;
+typedef struct { float n[16]; } Mat4;
+typedef struct { unsigned char a, b, c, d; } Byte4;
+typedef struct { unsigned short x, y, z; } ushort3;
+
+struct ni_common_layout
 {
 	struct {
 		int name;
@@ -134,9 +133,9 @@ struct ni_common_layout_pointer
 	} * A;
 };
 
-struct ni_node_pointer
+struct ni_node
 {
-	struct ni_common_layout_pointer *common;
+	struct ni_common_layout *common;
 	struct {
 		unsigned int num_children;
 	} * A;
@@ -148,9 +147,9 @@ struct ni_node_pointer
 	ni_ref *effects;
 };
 
-legendary_edition struct ni_tri_shape_pointer
+legendary_edition struct ni_tri_shape
 {
-	struct ni_common_layout_pointer *common;
+	struct ni_common_layout *common;
 	struct
 	{
 		ni_ref data, skin_instance;
@@ -161,13 +160,11 @@ legendary_edition struct ni_tri_shape_pointer
 	} * B;
 };
 
-legendary_edition struct ni_skin_instance_pointer
+legendary_edition struct ni_skin_instance
 {
 	struct
 	{
-		ni_ref data;
-		ni_ref skin_partition;
-		ni_ref skeleton_root;
+		ni_ref data, skin_partition, skeleton_root;
 		unsigned int num_bones;
 	} * A;
 	ni_ref *bones;
@@ -185,7 +182,7 @@ legendary_edition struct body_part_list
 	unsigned short body_part;
 };
 
-legendary_edition struct ni_skin_data_pointer
+legendary_edition struct ni_skin_data
 {
 	struct
 	{
@@ -224,39 +221,46 @@ legendary_edition struct bone_vert_data
 	float weight;
 };
 
-//sle outcomment
-/*
-legendary_edition struct ni_skin_partition_pointer
+legendary_edition struct ni_skin_partition
 {
 	unsigned int *num_skin_partition_blocks;
 	struct skin_partition **skin_partition_blocks;
 };
 
+special_edition
+typedef struct { float x, y, z; } Vector3;
+typedef struct { unsigned short u, v; } HalfTexCoord;
+typedef struct { unsigned char x, y, z; } ByteVector3;
+typedef struct { unsigned char r, g, b, a; } ByteColor4;
+typedef struct { unsigned short a, b, c; } ShortTriangle;
+
+special_edition struct ni_skin_partition_data_1
+{
+	Vector3 vertex;
+	float bitangent_x;
+	HalfTexCoord uv;
+	ByteVector3 normal;
+	unsigned char bitangent_y;
+	ByteVector3 tangent;
+	unsigned char bitangent_z;
+	//ByteColor4 vertex_colors;
+	struct {
+		unsigned short weight1, weight2, weight3, weight4;
+	} bone_weights;
+	struct {
+		unsigned char index1, index2, index3, index4;
+	} bone_indices;
+};
+
 legendary_edition struct skin_partition
 {
-	struct
-	{
-		unsigned short num_vertices;
-		unsigned short num_triangles;
-		unsigned short num_bones;
-		unsigned short num_strips;
-		unsigned short num_weights_per_vertex;
-	} * A;
-	unsigned short *bones;
-	unsigned char *has_vertex_map;
-	unsigned short *vertex_map;
-	unsigned char *has_vertex_weights;
-	Vec4 *vertex_weights;
-	unsigned short *strip_lengths;
-	unsigned char *has_faces;
-	ushort3 *triangles;
-	unsigned char *has_bone_indices;
-	Byte4 *bone_indices;
-	unsigned short *unknown_short;
+	struct {
+		unsigned int num_partitions, data_size, vertex_size;
+		unsigned long long vertex_desc;
+	} * A; 
 };
-*/
 
-legendary_edition struct ni_tri_shape_data_pointer
+legendary_edition struct ni_tri_shape_data
 {
 	struct
 	{
@@ -300,7 +304,7 @@ legendary_edition struct ni_tri_shape_data_pointer
 	ni_ref *match_groups;
 };
 
-struct bs_lighting_shader_property_pointer
+struct bs_lighting_shader_property
 {
 	struct
 	{
@@ -330,7 +334,7 @@ struct bs_lighting_shader_property_pointer
 	} * B;
 };
 
-struct bs_effect_shader_property_pointer {
+struct bs_effect_shader_property {
 	struct
 	{
 		int name;
@@ -368,7 +372,7 @@ struct bs_effect_shader_property_pointer {
 	} meta;
 };
 
-struct bs_effect_shader_property_float_controller_pointer {
+struct bs_effect_shader_property_float_controller {
 	struct {
 		ni_ref next_controller;
 		unsigned short flags;
@@ -381,14 +385,14 @@ struct bs_effect_shader_property_float_controller_pointer {
 	} meta;
 };
 
-struct ni_float_interpolator_pointer {
+struct ni_float_interpolator {
 	struct {
 		float value;
 		ni_ref data;
 	} * A;
 };
 
-struct ni_float_data_pointer {
+struct ni_float_data {
 	struct {
 		unsigned int num_keys, key_type;
 	} * A;
@@ -400,7 +404,7 @@ struct ni_float_data_pointer {
 	} *quadratic_keys;
 };
 
-struct bs_shader_texture_set_pointer
+struct bs_shader_texture_set
 {
 	struct
 	{
@@ -409,7 +413,7 @@ struct bs_shader_texture_set_pointer
 	char **textures; // sized strings
 };
 
-struct ni_alpha_property_pointer
+struct ni_alpha_property
 {
 	struct
 	{
@@ -425,7 +429,7 @@ struct ni_alpha_property_pointer
 	} * C;
 };
 
-struct ni_controller_sequence_pointer
+struct ni_controller_sequence
 {
 	struct
 	{
@@ -433,7 +437,7 @@ struct ni_controller_sequence_pointer
 		unsigned int num_controlled_blocks;
 		unsigned int array_grow_by;
 	} * A;
-	struct controlled_block_pointer *controlled_blocks;
+	struct controlled_block *controlled_blocks;
 	struct
 	{
 		float weight;
@@ -449,7 +453,7 @@ struct ni_controller_sequence_pointer
 	ni_ref *anim_note_arrays;
 };
 
-struct controlled_block_pointer
+struct controlled_block
 {
 	ni_ref interpolator;
 	ni_ref controller;
@@ -461,7 +465,7 @@ struct controlled_block_pointer
 	int interpolator_id;
 };
 
-struct ni_transform_interpolator_pointer
+struct ni_transform_interpolator
 {
 	struct
 	{
@@ -475,7 +479,7 @@ struct ni_transform_interpolator_pointer
 	} * B;
 };
 
-struct ni_transform_data_pointer
+struct ni_transform_data
 {
 	struct
 	{
@@ -485,13 +489,13 @@ struct ni_transform_data_pointer
 	{
 		unsigned int rotation_type;
 	} * B;
-	struct quaternion_key_pointer *quaternion_keys;
+	struct quaternion_key *quaternion_keys;
 	struct
 	{
 		unsigned int num_keys;
 		unsigned int interpolation;
 	} * translations;
-	struct translation_key_pointer *translation_keys;
+	struct translation_key *translation_keys;
 	struct
 	{
 		unsigned int num_keys;
@@ -499,19 +503,19 @@ struct ni_transform_data_pointer
 	ni_ref *scale_keys;
 };
 
-struct quaternion_key_pointer
+struct quaternion_key
 {
 	float time;
 	Vec4 value;
 };
 
-struct translation_key_pointer
+struct translation_key
 {
 	float time;
 	Vec3 value;
 };
 
-struct ni_text_key_extra_data_pointer
+struct ni_text_key_extra_data
 {
 	struct
 	{
@@ -524,7 +528,7 @@ struct ni_text_key_extra_data_pointer
 #define offset_bs_vertex_desc(flags) \
 	(unsigned short)((flags & 0xFFFFFF0000000000) >> 44)
 
-inline void api nifp_sse_dissect_vertex_desc(
+inline void api nif_sse_dissect_vertex_desc(
 	unsigned long long bs_vertex_desc,
 	int *vertex, int *uvs, int *normals, int *tangents, int *colors, int *skinned)
 {
@@ -536,12 +540,6 @@ inline void api nifp_sse_dissect_vertex_desc(
 	*colors = flags & 1 << 0x5;
 	*skinned = flags & 1 << 0x6;
 }
-
-typedef struct { float x, y, z; } Vector3;
-typedef struct { unsigned short u, v; } HalfTexCoord;
-typedef struct { unsigned char x, y, z; } ByteVector3;
-typedef struct { unsigned char r, g, b, a; } ByteColor4;
-typedef struct { unsigned short a, b, c; } ShortTriangle;
 
 special_edition struct bs_vertex_data_sse_all
 {
@@ -566,22 +564,19 @@ special_edition struct bs_vertex_data_sse_no_clr
 	unsigned char bitangent_z;
 };
 
-special_edition struct bs_tri_shape_pointer
+special_edition struct bs_tri_shape
 {
-	struct ni_common_layout_pointer *common;
+	struct ni_common_layout *common;
 	struct {
 		Vec3 center;
 		float radius;
 	} *bounding_sphere;
 	struct {
-		ni_ref skin;
-		ni_ref shader_property;
-		ni_ref alpha_property;
+		ni_ref skin, shader_property, alpha_property;
 	} *refs;
 	struct {
 	unsigned long long vertex_desc;
-	unsigned short num_triangles;
-	unsigned short num_vertices;
+	unsigned short num_triangles, num_vertices;
 	unsigned int data_size;
 	} *infos;
 	struct bs_vertex_data_sse_all    *vertex_data_all;

@@ -117,6 +117,7 @@
         "queue": "cpp",
         "set": "cpp",
         "stop_token": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "bsa.h": "c"
     }
 }

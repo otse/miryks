@@ -1,13 +1,13 @@
 #include "common.h"
-#include "nifp.h"
+#include "nif.h"
 #include "bsa.h"
 
-void test_callback(NifpRd *, int, int);
-static void test_bucket_against_known_values(Nifp *);
+void test_callback(Rd *, int, int);
+static void test_bucket_against_known_values(Nif *);
 
 // look at mesh.cc for good example of rd
 
-void nifp_test()
+void nif_test()
 {
 	// We use Rc from bsa.h
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
@@ -17,25 +17,25 @@ void nifp_test()
 	assertm(rc, "mh no bucket02a");
 	bsa_read(rc);
 	// setup
-	Nifp *bucket = calloc_nifp();
+	Nif *bucket = calloc_nifp();
 	bucket->path = rc->path;
 	bucket->buf = rc->buf;
-	nifp_read(bucket);
-	// ext_nifp_save(rc, bucket);
+	nif_read(bucket);
+	// ext_nif_save(rc, bucket);
 	// visitor
-	NifpRd *rd = calloc_nifprd();
+	Rd *rd = calloc_nifprd();
 	rd->nif = bucket;
 	rd->data = 0xf; // like a Mesh instance
 	rd->other = test_callback;
-	nifp_rd(rd);
+	nif_rd(rd);
 	// cleanup
 	free_nifprd(&rd);
 	free_nifp(&bucket);
 	//char str[600];
-	//nifp_print_hedr(bucket, str);
+	//nif_print_hedr(bucket, str);
 	//printf("nifp hedr end %i\n", bucket->hdr->end);
 }
 
-static void test_callback(NifpRd *rd, int parent, int current)
+static void test_callback(Rd *rd, int parent, int current)
 {
 }

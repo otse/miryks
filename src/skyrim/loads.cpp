@@ -18,13 +18,13 @@ namespace dark
 {
 	std::map<void *, Nif *> nifs;
 
-	int ext_nifp_save(void *key, Nif *nif)
+	int ext_nif_save(void *key, Nif *nif)
 	{
 		nifs.emplace(key, nif);
 		return 1;
 	}
 
-	Nif *ext_nifp_saved(void *key)
+	Nif *ext_nif_saved(void *key)
 	{
 		auto has = nifs.find(key);
 		if (has != nifs.end())
@@ -36,16 +36,16 @@ namespace dark
 	{
 		assertm(rc, "import_nif null rc");
 		Nif *nif;
-		nif = ext_nifp_saved(rc);
+		nif = ext_nif_saved(rc);
 		if (store && nif)
 			return nif;
 		bsa_read(rc);
 		nif = calloc_nifp();
 		nif->path = rc->path;
 		nif->buf = rc->buf;
-		nifp_read(nif);
+		nif_read(nif);
 		if (store)
-			ext_nifp_save(rc, nif);
+			ext_nif_save(rc, nif);
 		return nif;
 	}
 

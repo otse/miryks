@@ -1,35 +1,35 @@
 #include "common.h"
 
-// nif with pointers rundown
+/// nif rundown
 
-#include "nifp.h"
+#include "nif.h"
 #include "nitypes.h"
 
 #define Hedr   nif->hdr
 #define Blocks nif->blocks
 #define Skips  rd->skips
 
-void visit      (NifpRd *, int, int);
-void visit_other(NifpRd *, int, int);
-void visit_block(NifpRd *, void *);
+void visit      (Rd *, int, int);
+void visit_other(Rd *, int, int);
+void visit_block(Rd *, void *);
 
-api NifpRd *calloc_nifprd() {
-	NifpRd *rd = calloc(1, sizeof(NifpRd));
+api Rd *calloc_nifprd() {
+	Rd *rd = calloc(1, sizeof(Rd));
 	rd->other = visit_other;
 	return rd;
 }
 
-api void free_nifprd(NifpRd **p) {
-	NifpRd *rd = *p;
+api void free_nifprd(Rd **p) {
+	Rd *rd = *p;
 	free(rd->skips);
 	free(rd);
 	*p = NULL;
 }
 
-api void nifp_rd(NifpRd *rd) {
+api void nif_rd(Rd *rd) {
 	// printf("nif rd\n");
-	Nifp *nif = rd->nif;
-	assertm(rd->nif!=NULL, "nifprd nif not set");
+	Nif *nif = rd->nif;
+	assertm(rd->nif!=NULL, "nifrd nif not set");
 	rd->skips = calloc(Hedr->num_blocks, sizeof(char));
 	//rd->nif = nif;
 	for (int n = 0; n < Hedr->num_blocks; n++)
@@ -41,9 +41,9 @@ api void nifp_rd(NifpRd *rd) {
 
 // needs rewriting some time
 
-static void visit(NifpRd *rd, int parent, int current)
+static void visit(Rd *rd, int parent, int current)
 {
-	Nifp *nif = rd->nif;
+	Nif *nif = rd->nif;
 	if (-1 == current || rd->skips[current])
 	return;
 	rd->parent = parent; rd->current = current;
@@ -54,7 +54,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) )
 	{
 		traverse_once
-		struct ni_node_pointer *block = Blocks[current];
+		struct ni_node *block = Blocks[current];
 		if (rd->ni_node_callback)
 			rd->ni_node_callback(rd, Blocks[current]);
 		for (int i = 0; i < block->A->num_children; i++)
@@ -67,7 +67,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) )
 	{
 		traverse_once
-		struct ni_tri_shape_pointer *block = Blocks[current];
+		struct ni_tri_shape *block = Blocks[current];
 		if (rd->ni_tri_shape_callback)
 			rd->ni_tri_shape_callback(rd, Blocks[current]);
 		if (block->A->skin_instance == -1)
@@ -90,7 +90,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	{
 		needs_parent
 		traverse_once
-		struct bs_tri_shape_pointer *block = Blocks[current];
+		struct bs_tri_shape *block = Blocks[current];
 		if (rd->bs_tri_shape_callback)
 			rd->bs_tri_shape_callback(rd, Blocks[current]);
 		visit(rd, current, block->refs->shader_property);
@@ -100,7 +100,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) )
 	{
 		needs_parent
-		struct bs_lighting_shader_property_pointer *block = Blocks[current];
+		struct bs_lighting_shader_property *block = Blocks[current];
 		if (rd->bs_lighting_shader_property_callback)
 			rd->bs_lighting_shader_property_callback(rd, Blocks[current]);
 		visit(rd, current, block->B->texture_set);
@@ -109,7 +109,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) )
 	{
 		needs_parent
-		struct bs_effect_shader_property_pointer *block = Blocks[current];
+		struct bs_effect_shader_property *block = Blocks[current];
 		block->meta.parent = rd->parent;
 		if (rd->bs_effect_shader_property_callback)
 			rd->bs_effect_shader_property_callback(rd, Blocks[current]);
@@ -119,7 +119,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) )
 	{
 		needs_parent
-		struct bs_effect_shader_property_float_controller_pointer *block = Blocks[current];
+		struct bs_effect_shader_property_float_controller *block = Blocks[current];
 		if (rd->bs_effect_shader_property_float_controller_callback)
 			rd->bs_effect_shader_property_float_controller_callback(rd, Blocks[current]);
 		visit(rd, current, block->A->next_controller);
@@ -128,7 +128,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_type(NI_FLOAT_INTERPOLATOR) )
 	{
 		needs_parent
-		struct ni_float_interpolator_pointer *block = Blocks[current];
+		struct ni_float_interpolator *block = Blocks[current];
 		if (rd->ni_float_interpolator_callback)
 			rd->ni_float_interpolator_callback(rd, Blocks[current]);
 	}
@@ -155,7 +155,7 @@ static void visit(NifpRd *rd, int parent, int current)
 	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) )
 	{
 		needs_parent
-		struct ni_skin_instance_pointer *block = Blocks[current];
+		struct ni_skin_instance *block = Blocks[current];
 		if (rd->ni_skin_instance_callback)
 			rd->ni_skin_instance_callback(rd, Blocks[current]);
 		visit(rd, current, block->A->data);
@@ -184,5 +184,5 @@ static void visit(NifpRd *rd, int parent, int current)
 	}
 }
 
-static void visit_other(NifpRd *rd, void *block) {}
-static void visit_block(NifpRd *rd, void *block) {}
+static void visit_other(Rd *rd, void *block) {}
+static void visit_block(Rd *rd, void *block) {}

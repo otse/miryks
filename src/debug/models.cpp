@@ -6,7 +6,7 @@
 
 using namespace dark;
 
-void nifp_gui()
+void nif_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
@@ -17,7 +17,7 @@ void nifp_gui()
 
 	for (const auto &[key, value] : nifs)
 	{
-		Nifp *nif = value;
+		Nif *nif = value;
 
 		//if (!nif->path)
 		//continue;
@@ -29,7 +29,7 @@ void nifp_gui()
 			if (ImGui::TreeNode("Header"))
 			{
 				char s[500];
-				nifp_print_hedr(nif, s);
+				nif_print_hedr(nif, s);
 				ImGui::TextWrapped(s);
 				if (ImGui::TreeNode("Block Types"))
 				{
@@ -85,7 +85,7 @@ void nifp_gui()
 					if (ImGui::TreeNode(buf))
 					{
 						char s[1500];
-						nifp_print_block(nif, i, s);
+						nif_print_block(nif, i, s);
 						if (s[0] != '\0')
 							ImGui::TextWrapped(s);
 						else

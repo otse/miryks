@@ -6,9 +6,6 @@
 
 #include "list"
 
-typedef Nifp Nif;
-typedef NifpRd Rd;
-
 namespace dark
 {
 	class Ref;
@@ -35,8 +32,8 @@ namespace dark
 {
 	extern std::map<void *, Nif *> nifs;
 
-	int ext_nifp_save(void *, Nifp *);
-	Nifp *ext_nifp_saved(void *);
+	int ext_nif_save(void *, Nif *);
+	Nif *ext_nif_saved(void *);
 	Rc *load_rc(const char *, const char *, unsigned long);
 	Nif *import_nif(Rc *, bool);
 	Mesh *create_simple_mesh_from_modl(const char *, bool);
@@ -90,7 +87,7 @@ namespace dark
 
 void esp_gui();
 void bsa_gui();
-void nifp_gui();
+void nif_gui();
 void cell_gui();
 void hero_menu();
 void render_stats(bool *);

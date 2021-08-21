@@ -68,7 +68,7 @@ int main()
 	basefile_handle("basefile");
 	setup_glfw();
 	load_plugins_archives();
-	nifp_test();
+	nif_test();
 	opengl_init_scene();
 	printf("now collide\n");
 	collision_init();

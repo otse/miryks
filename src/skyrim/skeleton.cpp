@@ -13,7 +13,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	static void ni_node_callback(Rd *, ni_node_pointer *);
+	static void ni_node_callback(Rd *, ni_node *);
 
 	Skeleton::Skeleton()
 	{
@@ -43,7 +43,7 @@ namespace skyrim
 		rd->data = this;
 		//rd->other = other;
 		rd->ni_node_callback = ni_node_callback;
-		nifp_rd(rd);
+		nif_rd(rd);
 		free_nifprd(&rd);
 		baseBone->group->Update();
 	}
@@ -52,11 +52,11 @@ namespace skyrim
 		Bone *bone = new Bone();
 		bones[rd->current] = bone;
 		bones[rd->parent]->group->Add(bone->group);
-		bonesNamed[nifp_get_string(rd->nif, name)] = bone;
+		bonesNamed[nif_get_string(rd->nif, name)] = bone;
 		lastBone = bone;
 		return bone;
 	}
-	void matrix_from_common(Bone *bone, ni_common_layout_pointer *common)
+	void matrix_from_common(Bone *bone, ni_common_layout *common)
 	{
 		bone->group->matrix = translate(bone->group->matrix, gloomVec3(common->A->translation));
 		bone->group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
@@ -64,7 +64,7 @@ namespace skyrim
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
 	}
-	void ni_node_callback(Rd *rd, ni_node_pointer *block)
+	void ni_node_callback(Rd *rd, ni_node *block)
 	{
 		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
@@ -82,7 +82,7 @@ namespace skyrim
 	{
 		assertm(strcmp(model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
 
-		csp = (ni_controller_sequence_pointer *)model->blocks[0];
+		csp = (ni_controller_sequence *)model->blocks[0];
 	}
 	void Animation::step()
 	{
@@ -99,12 +99,12 @@ namespace skyrim
 	void Animation::simpleNonInterpolated()
 	{
 		Nif *model = keyframes->model;
-		struct controlled_block_pointer *cbp;
+		struct controlled_block *cbp;
 		for (unsigned int i = 0; i < keyframes->csp->A->num_controlled_blocks; i++)
 		{
 			// Match node_name to a skeleton bone
 			cbp = &keyframes->csp->controlled_blocks[i];
-			char *name = nifp_get_string(model, cbp->node_name);
+			char *name = nif_get_string(model, cbp->node_name);
 			auto has = skeleton->bonesNamed.find(name);
 			if (has == skeleton->bonesNamed.end())
 			{
@@ -114,8 +114,8 @@ namespace skyrim
 			}
 
 			Bone *bone = has->second;
-			auto tip = (ni_transform_interpolator_pointer *)nifp_get_block(model, cbp->interpolator);
-			auto tdp = (ni_transform_data_pointer *)nifp_get_block(model, tip->B->data);
+			auto tip = (ni_transform_interpolator *)nif_get_block(model, cbp->interpolator);
+			auto tdp = (ni_transform_data *)nif_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)
 				continue;
 			vec4 ro = gloomVec4(tip->transform->rotation);
@@ -171,7 +171,7 @@ namespace skyrim
 int num = tdp->A->num_rotation_keys;
 			if (num > 1)
 			{
-				auto res = interpolate<quaternion_key_pointer, vec4>(this, num, tdp->quaternion_keys);
+				auto res = interpolate<quaternion_key, vec4>(this, num, tdp->quaternion_keys);
 				//printf(" res ratio %f\n", res.ratio);
 				if (res.one && res.two)
 				{
@@ -198,7 +198,7 @@ int num = tdp->A->num_rotation_keys;
 			num = tdp->translations->num_keys;
 			if (num > 0)
 			{
-				auto res2 = interpolate<translation_key_pointer, vec3>(this, num, tdp->translation_keys);
+				auto res2 = interpolate<translation_key, vec3>(this, num, tdp->translation_keys);
 				if (res2.one && res2.two)
 				{
 					const vec3 v1 = gloomVec3(res2.one->value) * (1.0f - res2.ratio);

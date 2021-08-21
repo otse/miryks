@@ -75,8 +75,8 @@ namespace dark
 				Nif *nif = calloc_nifp();
 				nif->path = path;
 				fbuf(path, (char **)&nif->buf);
-				nifp_read(nif);
-				ext_nifp_save(nif, nif);
+				nif_read(nif);
+				ext_nif_save(nif, nif);
 				draugrAttack = new Keyframes(nif);
 			}
 		}
@@ -141,8 +141,8 @@ namespace dark
 				Nif *nif = calloc_nifp();
 				nif->path = path;
 				fbuf(path, (char **)&nif->buf);
-				nifp_read(nif);
-				ext_nifp_save(nif, nif);
+				nif_read(nif);
+				ext_nif_save(nif, nif);
 				humanIdle = new Keyframes(nif);
 			}
 		}

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include <dark/dark.h>
 #include <skyrim/skyrim.h>
 

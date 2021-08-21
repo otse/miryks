@@ -276,7 +276,7 @@ void dark::doImGui()
 	if (!hideDebugGuis)
 	{
 		bsa_gui();
-		nifp_gui();
+		nif_gui();
 		esp_gui();
 		cell_gui();
 		opengl_gui();
@@ -293,7 +293,7 @@ void dark::renderImGui()
 
 void dark::program_while()
 {
-	//render_target = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
+	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
 	double fps;
