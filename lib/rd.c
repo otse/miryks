@@ -57,7 +57,7 @@ static void visit(Rd *rd, int parent, int current)
 		NiNode *block = Blocks[current];
 		if (rd->ni_node_callback)
 			rd->ni_node_callback(rd, Blocks[current]);
-		for (int i = 0; i < block->A->num_children; i++)
+		for (unsigned int i = 0; i < block->A->num_children; i++)
 		{
 		int b = block->children[i];
 		visit(rd, current, b);

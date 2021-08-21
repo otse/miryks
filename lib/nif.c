@@ -114,8 +114,6 @@ void nif_read_header(Nif *nif) {
 
 #define DECLARE(x) void *read_ ## x (Nif *, int);
 
-#define nifpr Nif *nif, int n
-
 static void big_block_reader(Nif *, int);
 
 DECLARE( ni_node )
@@ -163,13 +161,17 @@ void big_block_reader(Nif *nif, int n)
 	if (0) 0;
 	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) )        READ( ni_node );
 	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, 0) ) READ( ni_skin_instance );
-	else if ( nif_type(NiSkinDataS) ) 								    READ( ni_skin_data );
-	else if ( nif_type(NiSkinPartitionS) ) 						        READ( ni_skin_partition );
-	else if ( nif_type(BSTriShapeS) )                                   READ( bs_tri_shape );
+	else if ( nif_type(NiSkinDataS) )                                   READ( ni_skin_data );
+	else if ( nif_type(NiSkinPartitionS) )                              READ( ni_skin_partition );
 	else if ( nif_type(BSDynamicTriShapeS) ) ;
-	else if ( nif_types(NiTriShapeS, BSLODTriShapeS, 0) )               READ( ni_tri_shape );
 	else if ( nif_type(NiAlphaPropertyS) )                              READ( ni_alpha_property );
+	#ifdef SLE
+	else if ( nif_types(NiTriShapeS, BSLODTriShapeS, 0) )               READ( ni_tri_shape );
 	else if ( nif_type(NiTriShapeDataS) )                               READ( ni_tri_shape_data );
+	#endif
+	#ifdef SSE
+	else if ( nif_type(BSTriShapeS) )                                   READ( bs_tri_shape );
+	#endif
 	else if ( nif_type(BSLightingShaderPropertyS) )                     READ( bs_lighting_shader_property );
 	else if ( nif_type(BSEffectShaderPropertyS) )                       READ( bs_effect_shader_property );
 	else if ( nif_type(BSEffectShaderPropertyFloatControllerS) )        READ( bs_effect_shader_property_float_controller );
@@ -192,8 +194,8 @@ static inline void sink(Nif *nif, void **dest, int size) {
 	Pos += size;
 }
 
-#define SINK( nif, block, part )			 sink(nif, &block->part, sizeof *block->part);
-#define SAIL( nif, block, part, group, num ) sink(nif, &block->part, sizeof *block->part * block->group->num);
+#define SINK( nif, block, member )             sink(nif, &block->member, sizeof *block->member);
+#define SAIL( nif, block, member, group, num ) sink(nif, &block->member, sizeof *block->member * block->group->num);
 
 #define SKIP(n) Pos += n;
 
@@ -280,7 +282,7 @@ SINK ( nif, block, transform )
 SINK ( nif, block, B )
 END ()
 
-BEGIN( ni_transform_data ) legendary_edition
+BEGIN( ni_transform_data )
 SINK ( nif, block, A )
 
 if ( block->A->num_rotation_keys > 0 )
@@ -298,16 +300,20 @@ SINK ( nif, block, scales )
 SAIL ( nif, block, scale_keys, scales, num_keys )
 END ()
 
-BEGIN( ni_tri_shape ) legendary_edition
-printf("read ni tri shape pointer!\n");
+#ifdef SLE
+
+BEGIN( ni_tri_shape )
+printf("read NiTriShape\n");
+
 block->common = read_ni_common_layout( nif, n );
 SINK ( nif, block, A )
 SKIP( 9 )
 SINK ( nif, block, B )
+
 END ()
 
-BEGIN( ni_tri_shape_data ) legendary_edition
-printf(" ni tri shape data in sse ?!\n");
+BEGIN( ni_tri_shape_data )
+printf("read NiTriShapeData\n");
 
 SINK ( nif, block, A )
 
@@ -344,7 +350,9 @@ SAIL ( nif, block, match_groups, L, num_match_groups )
 
 END ()
 
-BEGIN( ni_skin_instance ) legendary_edition
+#endif
+
+BEGIN( ni_skin_instance )
 SINK ( nif, block, A )
 SAIL ( nif, block, bones, A, num_bones )
 char *block_type = nif_get_block_type( nif, n );
@@ -355,7 +363,7 @@ if (nif_type(BSDismemberSkinInstanceS))
 }
 END ()
 
-BEGIN( ni_skin_data ) legendary_edition
+BEGIN( ni_skin_data )
 //printf("read ni skin data\n");
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, B )
@@ -371,12 +379,12 @@ for (unsigned int i = 0; i < block->B->num_bones; i++)
 }
 END ()
 
-BEGIN( ni_skin_partition ) legendary_edition
+BEGIN( ni_skin_partition )
 SINK ( nif, block, num_skin_partition_blocks )
 
 END ()
 
-BEGIN ( bs_tri_shape ) special_edition
+BEGIN ( bs_tri_shape )
 block->common = read_ni_common_layout( nif, n );
 
 SINK ( nif, block, bounding_sphere )

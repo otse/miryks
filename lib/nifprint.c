@@ -147,6 +147,8 @@ static void print_ni_node(Nif *nif, int n, char s[1000])
 		block->B->num_effects);
 }
 
+#ifdef SLE
+
 static void print_ni_tri_shape(Nif *nif, int n, char s[1000])
 {
 	char x[600];
@@ -169,7 +171,6 @@ static void print_ni_tri_shape(Nif *nif, int n, char s[1000])
 		block->B->alpha_property);
 }
 
-/*
 static void print_ni_tri_shape_data(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200], e[200], f[200], g[200], h[200], i[200], j[200], k[200], l[200], m[200], o[200], p[200];
@@ -256,7 +257,8 @@ group_id: %i\
 		block->J->has_triangles ? print_ushort_3p(p, block->triangles[block->J->num_triangles - 1]) : "",
 		block->L->num_match_groups);
 }
-*/
+
+#endif
 
 static void print_bs_lighting_shader_property(Nif *nif, int n, char s[1000])
 {
@@ -630,8 +632,10 @@ api void nif_print_block(Nif *nif, int n, char s[1000])
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	if (0);
 	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) ) print_ni_node(nif, n, s);
+	#ifdef SLE
 	else if ( nif_type(NiTriShapeS) ) print_ni_tri_shape(nif, n, s);
-	// else if ( nif_type(NiTriShapeData) ) print_ni_tri_shape_data(nif, n, s);
+	else if ( nif_type(NiTriShapeData) ) print_ni_tri_shape_data(nif, n, s);
+	#endif
 	else if ( nif_type(BSLightingShaderPropertyS) ) print_bs_lighting_shader_property(nif, n, s);
 	else if ( nif_type(BSEffectShaderPropertyS) ) print_bs_effect_shader_property(nif, n, s);
 	else if ( nif_type(BSShaderTextureSetS) ) print_bs_shader_texture_set(nif, n, s);

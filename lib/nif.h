@@ -11,6 +11,9 @@
 
 #define legendary_edition
 
+//#define LSE
+#define SSE
+
 #define NiRef int
 
 struct NifHeader;
