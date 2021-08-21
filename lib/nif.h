@@ -2,6 +2,7 @@
 #define LIB_NIF_H
 
 /// nif.h
+#include "niftypes.h"
 
 #define api
 
@@ -9,7 +10,7 @@
 
 #define legendary_edition
 
-typedef int ni_ref;
+#define NiRef int
 
 struct NifHeader;
 
@@ -64,7 +65,7 @@ void nif_read_header(Nif *);
 void nif_read_blocks(Nif *);
 
 api Nif *calloc_nifp();
-api Rd   *calloc_nifprd();
+api Rd  *calloc_nifprd();
 
 api void free_nifp  (Nif **);
 api void free_nifprd(Rd **);
@@ -106,55 +107,57 @@ struct NifHeader
 	int end;
 };
 
-typedef struct { float x, y; } Vec2;
-typedef struct { float x, y, z; } Vec3;
-typedef struct { float x, y, z, w; } Vec4;
-typedef struct { float n[9]; } Mat3;
-typedef struct { float n[16]; } Mat4;
-typedef struct { unsigned char a, b, c, d; } Byte4;
-typedef struct { unsigned short x, y, z; } ushort3;
+#define Vec2 struct { float x, y; }
+#define Vec3 struct { float x, y, z; }
+#define Vec4 struct { float x, y, z, w; }
+
+#define Mat3 struct { float n[9]; }
+#define Mat4 struct { float n[16]; }
+
+#define Byte4 struct { unsigned char a, b, c, d; }
+#define ushort3 struct { unsigned short x, y, z; }
 
 struct ni_common_layout_t
 {
 	struct {
 		int name;
 		unsigned int num_extra_data_list;
-	} * F; // fuckup
-	ni_ref *extra_data_list;
+	} * F;
+	NiRef *extra_data_list;
 	struct {
-		ni_ref controller;
+		NiRef controller;
 		unsigned int flags;
 		Vec3 translation;
 		Mat3 rotation;
 		float scale;
-		ni_ref collision_object;
+		NiRef collision_object;
 	} * A;
 };
 
 struct ni_node_t
 {
-	struct ni_common_layout_t *common;
+	nicommonlayout common;
 	struct {
 		unsigned int num_children;
 	} * A;
-	ni_ref *children;
+	NiRef *children;
 	struct
 	{
 		unsigned int num_effects;
 	} * B;
-	ni_ref *effects;
+	NiRef *effects;
 };
 
 legendary_edition struct ni_tri_shape_t
 {
-	struct ni_common_layout_t *common;
+	nicommonlayout common;
 	struct
 	{
-		ni_ref data, skin_instance;
+		NiRef data, skin_instance;
 	} * A;
 	struct
 	{
-		ni_ref shader_property, alpha_property;
+		NiRef shader_property, alpha_property;
 	} * B;
 };
 
@@ -162,10 +165,10 @@ legendary_edition struct ni_skin_instance_t
 {
 	struct
 	{
-		ni_ref data, skin_partition, skeleton_root;
+		NiRef data, skin_partition, skeleton_root;
 		unsigned int num_bones;
 	} * A;
-	ni_ref *bones;
+	NiRef *bones;
 	// skip dismemberment fields for now
 	struct
 	{
@@ -213,6 +216,7 @@ legendary_edition struct bone_data_t
 	struct bone_vert_data_t *vertex_weights;
 };
 
+// todo this could be anonymous
 legendary_edition struct bone_vert_data_t
 {
 	unsigned short index;
@@ -264,9 +268,7 @@ legendary_edition struct ni_tri_shape_data_t
 	{
 		int group_id;
 		unsigned short num_vertices;
-		unsigned char keep_flags;
-		unsigned char compress_flags;
-		unsigned char has_vertices;
+		unsigned char keep_flags, compress_flags, has_vertices;
 	} * A;
 	Vec3 *vertices;
 	struct
@@ -289,7 +291,7 @@ legendary_edition struct ni_tri_shape_data_t
 	struct
 	{
 		unsigned short consistency_flags;
-		ni_ref additional_data;
+		NiRef additional_data;
 		unsigned short num_triangles;
 		unsigned int num_triangle_points;
 		unsigned char has_triangles;
@@ -299,7 +301,7 @@ legendary_edition struct ni_tri_shape_data_t
 	{
 		unsigned short num_match_groups;
 	} * L;
-	ni_ref *match_groups;
+	NiRef *match_groups;
 };
 
 struct bs_lighting_shader_property_t
@@ -310,25 +312,19 @@ struct bs_lighting_shader_property_t
 		int name;
 		unsigned int num_extra_data_list;
 	} * A;
-	ni_ref *extra_data_list;
+	NiRef *extra_data_list;
 	struct
 	{
-		ni_ref controller;
-		unsigned int shader_flags_1;
-		unsigned int shader_flags_2;
-		Vec2 uv_offset;
-		Vec2 uv_scale;
-		ni_ref texture_set;
+		NiRef controller;
+		unsigned int shader_flags_1, shader_flags_2;
+		Vec2 uv_offset, uv_scale;
+		NiRef texture_set;
 		Vec3 emissive_color;
 		float emissive_multiple;
 		unsigned int texture_clamp_mode;
-		float alpha;
-		float refraction_strength;
-		float glossiness;
+		float alpha, refraction_strength, glossiness;
 		Vec3 specular_color;
-		float specular_strength;
-		float lighting_effect_1;
-		float lighting_effect_2;
+		float specular_strength, lighting_effect_1, lighting_effect_2;
 	} * B;
 };
 
@@ -338,14 +334,12 @@ struct bs_effect_shader_property_t {
 		int name;
 		unsigned int num_extra_data_list;
 	} * A;
-	ni_ref *extra_data_list;
+	NiRef *extra_data_list;
 	struct
 	{
-		ni_ref controller;
-		unsigned int shader_flags_1;
-		unsigned int shader_flags_2;
-		Vec2 uv_offset;
-		Vec2 uv_scale;
+		NiRef controller;
+		unsigned int shader_flags_1, shader_flags_2;
+		Vec2 uv_offset, uv_scale;
 	} * B;
 	char *source_texture; // sized string
 	struct
@@ -360,22 +354,21 @@ struct bs_effect_shader_property_t {
 	} * falloff;
 	struct {
 		Vec4 base_color;
-		float base_color_scale;
-		float soft_falloff_depth;
+		float base_color_scale, soft_falloff_depth;
 	} * D;
 	char *greyscale_texture; // sized string
 	struct {
-		ni_ref parent;
+		NiRef parent;
 		float u, v;
 	} meta;
 };
 
 struct bs_effect_shader_property_float_controller_t {
 	struct {
-		ni_ref next_controller;
+		NiRef next_controller;
 		unsigned short flags;
 		float frequency, phase, start_time, stop_time;
-		ni_ref target, interpolator;
+		NiRef target, interpolator;
 		unsigned int controlled_variable;
 	} * A;
 	struct {
@@ -386,7 +379,7 @@ struct bs_effect_shader_property_float_controller_t {
 struct ni_float_interpolator_t {
 	struct {
 		float value;
-		ni_ref data;
+		NiRef data;
 	} * A;
 };
 
@@ -418,10 +411,10 @@ struct ni_alpha_property_t
 		int name;
 		unsigned int num_extra_data_list;
 	} * A;
-	ni_ref *extra_data_list;
+	NiRef *extra_data_list;
 	struct
 	{
-		ni_ref controller;
+		NiRef controller;
 		unsigned short flags;
 		unsigned char treshold;
 	} * C;
@@ -439,28 +432,22 @@ struct ni_controller_sequence_t
 	struct
 	{
 		float weight;
-		ni_ref text_keys;
+		NiRef text_keys;
 		unsigned int cycle_type;
-		float frequency;
-		float start_time;
-		float stop_time;
-		ni_ref manager;
+		float frequency, start_time, stop_time;
+		NiRef manager;
 		int accum_root_name;
 		unsigned short num_anim_note_arrays;
 	} * C;
-	ni_ref *anim_note_arrays;
+	NiRef *anim_note_arrays;
 };
 
 struct controlled_block_t
 {
-	ni_ref interpolator;
-	ni_ref controller;
+	NiRef interpolator;
+	NiRef controller;
 	unsigned char priority;
-	int node_name;
-	int property_type;
-	int controller_type;
-	int controller_id;
-	int interpolator_id;
+	int node_name, property_type, controller_type, controller_id, interpolator_id;
 };
 
 struct ni_transform_interpolator_t
@@ -473,7 +460,7 @@ struct ni_transform_interpolator_t
 	} * transform;
 	struct
 	{
-		ni_ref data;
+		NiRef data;
 	} * B;
 };
 
@@ -490,15 +477,14 @@ struct ni_transform_data_t
 	struct quaternion_key_t *quaternion_keys;
 	struct
 	{
-		unsigned int num_keys;
-		unsigned int interpolation;
+		unsigned int num_keys, interpolation;
 	} * translations;
 	struct translation_key_t *translation_keys;
 	struct
 	{
 		unsigned int num_keys;
 	} * scales;
-	ni_ref *scale_keys;
+	NiRef *scale_keys;
 };
 
 struct quaternion_key_t
@@ -520,7 +506,7 @@ struct ni_text_key_extra_data_t
 		int name;
 		unsigned int num_text_keys;
 	} * A;
-	ni_ref *text_keys;
+	NiRef *text_keys;
 };
 
 #define offset_bs_vertex_desc(flags) \
@@ -570,7 +556,7 @@ special_edition struct bs_tri_shape_t
 		float radius;
 	} *bounding_sphere;
 	struct {
-		ni_ref skin, shader_property, alpha_property;
+		NiRef skin, shader_property, alpha_property;
 	} *refs;
 	struct {
 	unsigned long long vertex_desc;
@@ -584,5 +570,11 @@ special_edition struct bs_tri_shape_t
 };
 
 #pragma pack(pop)
+
+#undef Vec2
+#undef Vec3
+#undef Vec4
+#undef Mat3
+#undef Mat4
 
 #endif

@@ -35,7 +35,7 @@ namespace skyrim
 		Skeleton *skeleton;
 		Group *lastShape;
 
-		std::vector<ni_ref> shapes;
+		std::vector<NiRef> shapes;
 		//std::vector<SkinPartition *> skins;
 		SkinnedMesh()
 		{

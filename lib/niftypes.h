@@ -46,4 +46,3 @@
 #define niskindata struct ni_skin_data_t *
 #define niskinpartition struct ni_skin_partition_t *
 #define bstrishape struct bs_tri_shape_t *
-

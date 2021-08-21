@@ -20,7 +20,7 @@ namespace skyrim
 		Skeleton();
 		Skeleton(const char *);
 
-		std::map<ni_ref, Bone *> bones;
+		std::map<NiRef, Bone *> bones;
 		std::map<const std::string, Bone *> bonesNamed;
 
 		Nif *nif;

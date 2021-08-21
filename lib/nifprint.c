@@ -45,31 +45,31 @@ header string: %s\
 		Hedr->num_groups);
 }
 
-static char *print_vec_2p(char *s, Vec2 v)
+static char *print_vec_2p(char *s, float *f)
 {
-	snprintf(s, 200, "[%f, %f]", v.x, v.y);
+	snprintf(s, 200, "[%f, %f]", f[0], f[1]);
 	return s;
 }
 
-static char *print_vec_3p(char *s, Vec3 v)
+static char *print_vec_3p(char *s, float *f)
 {
-	snprintf(s, 200, "[%f, %f, %f]", v.x, v.y, v.z);
+	snprintf(s, 200, "[%f, %f, %f]", f[0], f[1], f[2]);
 	return s;
 }
 
-static char *print_vec_4p(char *s, Vec4 v)
+static char *print_vec_4p(char *s, float *f)
 {
-	snprintf(s, 200, "[%f, %f, %f, %f]", v.x, v.y, v.z, v.w);
+	snprintf(s, 200, "[%f, %f, %f, %f]", f[0], f[1], f[2], f[3]);
 	return s;
 }
 
-static char *print_ushort_3p(char *s, ushort3 v)
+static char *print_ushort_3p(char *s, unsigned short *h)
 {
-	snprintf(s, 200, "[%hu, %hu, %hu]", v.x, v.y, v.z);
+	snprintf(s, 200, "[%hu, %hu, %hu]", h[0], h[1], h[2]);
 	return s;
 }
 
-static char *print_mat_3p(char *s, Mat3 v)
+static char *print_mat_3p(char *s, float *f)
 {
 #define V ((float *)&v)
 	snprintf(
@@ -78,9 +78,9 @@ static char *print_mat_3p(char *s, Mat3 v)
 \n   [%f, %f, %f] \
 \n   [%f, %f, %f] \
 \n   [%f, %f, %f]",
-		V[0], V[1], V[2],
-		V[3], V[4], V[5],
-		V[6], V[7], V[8]);
+		f[0], f[1], f[2],
+		f[3], f[4], f[5],
+		f[6], f[7], f[8]);
 	return s;
 }
 
@@ -122,8 +122,8 @@ name: %s [%i]\
 		block->F->num_extra_data_list,
 		block->A->controller,
 		block->A->flags,
-		print_vec_3p(x, block->A->translation),
-		print_mat_3p(y, block->A->rotation),
+		print_vec_3p(x, (float *)&block->A->translation),
+		print_mat_3p(y, (float *)&block->A->rotation),
 		block->A->scale,
 		block->A->collision_object);
 	return s;
@@ -169,6 +169,7 @@ static void print_ni_tri_shape(Nif *nif, int n, char s[1000])
 		block->B->alpha_property);
 }
 
+/*
 static void print_ni_tri_shape_data(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200], e[200], f[200], g[200], h[200], i[200], j[200], k[200], l[200], m[200], o[200], p[200];
@@ -221,16 +222,16 @@ group_id: %i\
 		block->A->keep_flags,
 		block->A->compress_flags,
 		block->A->has_vertices,
-		print_vec_3p(a, block->vertices[0]),
+		print_vec_3p(a, (float *)&block->vertices[0]),
 		block->A->num_vertices,
-		print_vec_3p(b, block->vertices[block->A->num_vertices - 1]),
+		print_vec_3p(b, (float *)&block->vertices[block->A->num_vertices - 1]),
 		block->C->bs_vector_flags,
 		block->C->material_crc,
 		block->C->has_normals,
-		block->C->has_normals ? print_vec_3p(c, block->normals[0]) : "",
+		block->C->has_normals ? print_vec_3p(c, (float *)&block->normals[0]) : "",
 		block->A->num_vertices,
-		block->C->has_normals ? print_vec_3p(d, block->normals[block->A->num_vertices - 1]) : "",
-		print_vec_3p(e, block->tangents[0]),
+		block->C->has_normals ? print_vec_3p(d, (float *)&block->normals[block->A->num_vertices - 1]) : "",
+		print_vec_3p(e, (float *)&block->tangents[0]),
 		block->A->num_vertices,
 		print_vec_3p(f, block->tangents[block->A->num_vertices - 1]),
 		print_vec_3p(g, block->bitangents[0]),
@@ -255,11 +256,12 @@ group_id: %i\
 		block->J->has_triangles ? print_ushort_3p(p, block->triangles[block->J->num_triangles - 1]) : "",
 		block->L->num_match_groups);
 }
+*/
 
 static void print_bs_lighting_shader_property(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
-	struct bs_lighting_shader_property_t *block = Blocks[n];
+	bslightingshaderproperty block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -291,16 +293,16 @@ skyrim_shader_type: %u\
 		block->B->controller,
 		block->B->shader_flags_1,
 		block->B->shader_flags_2,
-		print_vec_2p(a, block->B->uv_offset),
-		print_vec_2p(b, block->B->uv_scale),
+		print_vec_2p(a, (float *)&block->B->uv_offset),
+		print_vec_2p(b, (float *)&block->B->uv_scale),
 		block->B->texture_set,
-		print_vec_3p(c, block->B->emissive_color),
+		print_vec_3p(c, (float *)&block->B->emissive_color),
 		block->B->emissive_multiple,
 		block->B->texture_clamp_mode,
 		block->B->alpha,
 		block->B->refraction_strength,
 		block->B->glossiness,
-		print_vec_3p(d, block->B->specular_color),
+		print_vec_3p(d, (float *)&block->B->specular_color),
 		block->B->specular_strength,
 		block->B->lighting_effect_1,
 		block->B->lighting_effect_2);
@@ -308,7 +310,7 @@ skyrim_shader_type: %u\
 
 static void print_bs_shader_texture_set(Nif *nif, int n, char s[1000])
 {
-	struct bs_shader_texture_set_t *block = Blocks[n];
+	bsshadertextureset block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -338,7 +340,7 @@ num_textures: %i\
 static void print_bs_effect_shader_property(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
-	struct bs_effect_shader_property_t *block = Blocks[n];
+	bseffectshaderproperty block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -395,7 +397,7 @@ block->greyscale_texture
 
 static void print_ni_controller_sequence(Nif *nif, int n, char s[1000])
 {
-	struct ni_controller_sequence_t *block = Blocks[n];
+	nicontrollersequence block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -440,15 +442,15 @@ transform:\
 \n scale: %f\
 \ndata: %i\
 ",
-		print_vec_3p(a, block->transform->translation),
-		print_vec_4p(b, block->transform->rotation),
+		print_vec_3p(a, (float *)&block->transform->translation),
+		print_vec_4p(b, (float *)&block->transform->rotation),
 		block->transform->scale,
 		block->B->data);
 }
 
 static void print_ni_transform_data(Nif *nif, int n, char s[1000])
 {
-	struct ni_transform_data_t *block = Blocks[n];
+	nitransformdata block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -472,7 +474,7 @@ num_rotation_keys: %u\
 
 static void print_ni_skin_instance(Nif *nif, int n, char s[1000])
 {
-	struct ni_skin_instance_t *block = Blocks[n];
+	niskininstance block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -494,7 +496,7 @@ data: %i\
 static void print_ni_skin_data(Nif *nif, int n, char s[1000])
 {
 	char a[200], b[200];//, c[200], d[200];
-	struct ni_skin_data_t *block = Blocks[n];
+	niskindata block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -506,8 +508,8 @@ skin_transform:\
 \nhas_vertex_weights: %u\
 \nbone_list: -\
 ",
-		print_mat_3p(a, block->skin_transform->rotation),
-		print_vec_3p(b, block->skin_transform->translation),
+		print_mat_3p(a, (float *)&block->skin_transform->rotation),
+		print_vec_3p(b, (float *)&block->skin_transform->translation),
 		block->skin_transform->scale,
 		block->B->num_bones,
 		block->B->has_vertex_weights);
@@ -518,7 +520,7 @@ static char *print_skin_partition(char *, struct skin_partition_t *);
 static void print_ni_skin_partition(Nif *nif, int n, char s[1000])
 {
 	char a[1000];
-	struct ni_skin_partition_t *block = Blocks[n];
+	niskinpartition block = Blocks[n];
 	snprintf(
 		s, 1000,
 		"\
@@ -629,7 +631,7 @@ api void nif_print_block(Nif *nif, int n, char s[1000])
 	if (0);
 	else if ( nif_types(NiNode, BSLeafAnimNode, BSFadeNode) ) print_ni_node(nif, n, s);
 	else if ( nif_type(NiTriShape) ) print_ni_tri_shape(nif, n, s);
-	else if ( nif_type(NiTriShapeData) ) print_ni_tri_shape_data(nif, n, s);
+	// else if ( nif_type(NiTriShapeData) ) print_ni_tri_shape_data(nif, n, s);
 	else if ( nif_type(BSLightingShaderProperty) ) print_bs_lighting_shader_property(nif, n, s);
 	else if ( nif_type(BSEffectShaderProperty) ) print_bs_effect_shader_property(nif, n, s);
 	else if ( nif_type(BSShaderTextureSet) ) print_bs_shader_texture_set(nif, n, s);
