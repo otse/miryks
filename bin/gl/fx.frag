@@ -280,12 +280,18 @@ void main()
 	for ( int i = 0; i < 10; i ++ ) {
 		a = pointLights[ i ];
 
+/*
+package[0] = position;
+package[1] = color;
+package[2][0] = distance;
+package[2][1] = decay;
+*/
 		PointLight b = PointLight(
-			a.package[0],
-			a.package[1] / 2.0,
-			a.package[2][0],
-			a.package[2][1],
-			mat3(0.0));
+		a.package[0],
+		a.package[1] * 1.0,
+		a.package[2][0] / 1.0,
+		a.package[2][1],
+		mat3(0.0));
 
 		calcPointLight( b, geometry, directLight );
 		

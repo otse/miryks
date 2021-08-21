@@ -224,6 +224,8 @@ legendary_edition struct bone_vert_data
 	float weight;
 };
 
+//sle outcomment
+/*
 legendary_edition struct ni_skin_partition_pointer
 {
 	unsigned int *num_skin_partition_blocks;
@@ -252,6 +254,7 @@ legendary_edition struct skin_partition
 	Byte4 *bone_indices;
 	unsigned short *unknown_short;
 };
+*/
 
 legendary_edition struct ni_tri_shape_data_pointer
 {

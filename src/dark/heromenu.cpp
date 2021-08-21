@@ -28,14 +28,14 @@ void hero_menu()
 
 	ImGui::Begin("Hero Menu", nullptr, flags);
 
-	// ImGui::PushFont(font2);
+	ImGui::PushFont(font2);
 	ImGui::TextWrapped("Welcome to the hero menu, accessed with <H>.");
 	ImGui::Separator();
 	ImGui::TextWrapped("\nHealth: 100");
 	ImGui::TextWrapped("\nMana: 100");
 	ImGui::TextWrapped("\nStamina: 100");
 
-	// ImGui::PopFont();
+	ImGui::PopFont();
 
 	ImGui::PopStyleColor(4);
 	

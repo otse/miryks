@@ -177,13 +177,13 @@ void setupImgui()
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
-	/*
+	
 	ImFont *font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
 	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 60.0f);
 	IM_ASSERT(font2 != NULL);
 	IM_ASSERT(font3 != NULL);
-	*/
+	
 
 	ImGui::StyleColorsDark();
 

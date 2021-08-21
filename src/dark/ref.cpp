@@ -108,6 +108,7 @@ namespace dark
 		
 		std::vector<const char *> things = {
 			Statics,
+			Plants,
 			Doors,
 			Furniture,
 			Books,
@@ -284,7 +285,7 @@ namespace dark
 		static bool open = true;
 		//char s[100];
 		ImGui::Begin("##Item", &open, flags);
-		// ImGui::PushFont(font3);
+		ImGui::PushFont(font3);
 		//ImGui::PushStyleColor(IMGUI_FON)
 		//ImGui::Text(itemName);
 		ImGui::TextColored(ImVec4(1, 1, 1, 1), itemName);
@@ -293,7 +294,7 @@ namespace dark
 		{
 			ImGui::TextWrapped(DESC);
 		}
-		// ImGui::PopFont();
+		ImGui::PopFont();
 		ImGui::End();
 		//Vec2 boo(x, y);
 

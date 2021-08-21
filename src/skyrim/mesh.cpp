@@ -455,11 +455,11 @@ namespace skyrim
 				if (path.find("skyrimhd\\build\\pc\\data\\") != std::string::npos)
 					path = path.substr(23, std::string::npos);
 				if (i == 0)
-					material->map = GetProduceTexture(block->textures[i]);
+					material->map = GetProduceTexture(path.c_str());
 				if (i == 1)
-					material->normalMap = GetProduceTexture(block->textures[i]);
+					material->normalMap = GetProduceTexture(path.c_str());
 				if (i == 2)
-					material->glowMap = GetProduceTexture(block->textures[i]);
+					material->glowMap = GetProduceTexture(path.c_str());
 			}
 		}
 	}

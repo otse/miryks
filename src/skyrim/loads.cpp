@@ -117,6 +117,7 @@ namespace dark
 			Alchemy,
 			Ingredients,
 			Mists,
+			Plants,
 		};
 		for (const char *word : things)
 			esp_check_grup(esp_top_grup(plugin, word));

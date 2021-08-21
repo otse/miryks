@@ -42,6 +42,7 @@
 #define INGR xstr(INGR)
 #define LIGH xstr(LIGH)
 #define MSTT xstr(MSTT)
+#define TREE xstr(TREE)
 #define CELL xstr(CELL)
 #define CLAS xstr(CLAS)
 #define GMST xstr(GMST)
@@ -60,6 +61,7 @@
 #define Ingredients INGR
 #define Lights LIGH
 #define Mists MSTT
+#define Plants TREE
 #define Cells CELL
 #define Classes CLAS
 #define GameSettings GMST

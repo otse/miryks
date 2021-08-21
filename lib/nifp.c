@@ -379,6 +379,9 @@ for (unsigned int i = 0; i < block->B->num_bones; i++)
 }
 END()
 
+//sle outcomment
+/*
+legendary_edition
 BEGIN( ni_skin_partition ) legendary_edition
 SINK ( nif, block, num_skin_partition_blocks )
 
@@ -415,6 +418,7 @@ for (unsigned int i = 0; i < *block->num_skin_partition_blocks; i++)
 	SINK ( nif, skin_partition, unknown_short )
 }
 END()
+*/
 
 BEGIN ( bs_tri_shape ) special_edition
 block->common = read_ni_common_layout( nif, n );
