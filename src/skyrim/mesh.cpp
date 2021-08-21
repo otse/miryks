@@ -11,7 +11,7 @@ extern "C"
 
 using namespace dark;
 
-#define callback(x) static void (x ## _callback) (Rd *, x ##  *);
+#define callback(x) static void (x ## _callback) (Rd *, x ## _t *);
 
 namespace skyrim
 {
@@ -31,8 +31,8 @@ namespace skyrim
 	callback(ni_skin_partition)
 	callback(bs_tri_shape) special_edition
 	// for skinnedmesh
-	static void ni_node_callback_2      (Rd *, ni_node *);
-	static void ni_tri_shape_callback_2 (Rd *, ni_tri_shape *);
+	static void ni_node_callback_2      (Rd *, ninode);
+	static void ni_tri_shape_callback_2 (Rd *, nitrishape);
 
 	Mesh::Mesh()
 	{
@@ -129,9 +129,9 @@ namespace skyrim
 	{
 		// for mists! do the following
 		// stolen from nifskope i think
-		auto callback = [](Rd *rd, bs_effect_shader_property_float_controller *block) {
+		auto callback = [](Rd *rd, bseffectshaderpropertyfloatcontroller block) {
 			Mesh *mesh = (Mesh *)rd->data;
-			auto target = (bs_effect_shader_property *)nif_get_block(rd->nif, block->A->target);
+			auto target = (bseffectshaderproperty)nif_get_block(rd->nif, block->A->target);
 			//auto shape = (bs_tri_shape *)nif_get_block(rd->nif, target->meta.parent);
 			Group *group = nullptr;
 			auto next_controller = block;
@@ -140,7 +140,7 @@ namespace skyrim
 				auto controller = next_controller;
 				next_controller = nullptr;
 				if (controller->A->next_controller > -1)
-					next_controller = (bs_effect_shader_property_float_controller *)nif_get_block(rd->nif, controller->A->next_controller);
+					next_controller = (bseffectshaderpropertyfloatcontroller)nif_get_block(rd->nif, controller->A->next_controller);
 				if (target)
 					group = mesh->groups[target->meta.parent];
 				if (!group || !group->geometry)
@@ -153,12 +153,12 @@ namespace skyrim
 					uv = &target->meta.u;
 				else if (controller->A->controlled_variable == 8)
 					uv = &target->meta.v;
-				auto interpolator = (ni_float_interpolator *)nif_get_block(rd->nif, controller->A->interpolator);
+				auto interpolator = (nifloatinterpolator)nif_get_block(rd->nif, controller->A->interpolator);
 				if (controller->A->interpolator)
 				{
 					if (interpolator->A->data)
 					{
-						auto data = (ni_float_data *)nif_get_block(rd->nif, interpolator->A->data);
+						auto data = (nifloatdata)nif_get_block(rd->nif, interpolator->A->data);
 						for (unsigned int i = data->A->num_keys; i-- > 0;)
 						{
 							int j = (i + 1 >= data->A->num_keys) ? 0 : i + 1;
@@ -229,13 +229,13 @@ namespace skyrim
 		Mesh *mesh = (Mesh *)rd->data;
 		//printf("Rd unhandled other block type %s\n", nif_get_block_type(rd->nif, rd->current));
 	}
-	void matrix_from_common(Group *group, ni_common_layout *common)
+	void matrix_from_common(Group *group, nicommonlayout common)
 	{
 		group->matrix = translate(group->matrix, gloomVec3(common->A->translation));
 		group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
 		group->matrix = scale(group->matrix, vec3(common->A->scale));
 	}
-	void ni_node_callback(Rd *rd, ni_node *block)
+	void ni_node_callback(Rd *rd, ninode block)
 	{
 		// printf("ni node callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -243,7 +243,7 @@ namespace skyrim
 		matrix_from_common(group, block->common);
 	}
 	legendary_edition
-	void ni_tri_shape_callback(Rd *rd, ni_tri_shape *block)
+	void ni_tri_shape_callback(Rd *rd, nitrishape block)
 	{
 		// printf("ni tri shape callback %s\n", block->common.name_string);
 		Mesh *mesh = (Mesh *)rd->data;
@@ -257,7 +257,7 @@ namespace skyrim
 			group->geometry->material->src = &simple;
 		}
 	}
-	void ni_node_callback_2(Rd *rd, ni_node *block)
+	void ni_node_callback_2(Rd *rd, ninode block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		if (rd->current == 0)
@@ -268,13 +268,13 @@ namespace skyrim
 		//	group->geometry->material->color = vec3(1);
 	}
 	legendary_edition
-	void ni_tri_shape_callback_2(Rd *rd, ni_tri_shape *block)
+	void ni_tri_shape_callback_2(Rd *rd, nitrishape block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		smesh->lastShape = smesh->mesh->groups[rd->current];
 	}
 	legendary_edition
-	void ni_tri_shape_data_callback(Rd *rd, ni_tri_shape_data *block)
+	void ni_tri_shape_data_callback(Rd *rd, nitrishapedata block)
 	{
 		// printf("ni tri shape data callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -324,7 +324,7 @@ namespace skyrim
 		return vec2(u.f, v.f);
 	}
 	special_edition
-	void bs_tri_shape_callback(Rd *rd, bs_tri_shape *block)
+	void bs_tri_shape_callback(Rd *rd, bstrishape block)
 	{
 		// printf("mesh.cpp bs tri shape callback !!! ");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -379,7 +379,7 @@ namespace skyrim
 		}
 		geometry->SetupMesh();
 	}
-	void bs_lighting_shader_property_callback(Rd *rd, bs_lighting_shader_property *block)
+	void bs_lighting_shader_property_callback(Rd *rd, bslightingshaderproperty block)
 	{
 		// printf("bs lighting shader property callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -416,7 +416,7 @@ namespace skyrim
 				material->defines += "#define TREE_ANIM\n";
 		}
 	}
-	void bs_effect_shader_property_callback(Rd *rd, bs_effect_shader_property *block)
+	void bs_effect_shader_property_callback(Rd *rd, bseffectshaderproperty block)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
 		Geometry *geometry = mesh->lastGroup->geometry;
@@ -438,7 +438,7 @@ namespace skyrim
 				material->doubleSided = true;
 		}
 	}
-	void bs_shader_texture_set_callback(Rd *rd, bs_shader_texture_set *block)
+	void bs_shader_texture_set_callback(Rd *rd, bsshadertextureset block)
 	{
 		// printf("bs shader texture set callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -463,7 +463,7 @@ namespace skyrim
 			}
 		}
 	}
-	void ni_alpha_property_callback(Rd *rd, ni_alpha_property *block)
+	void ni_alpha_property_callback(Rd *rd, nialphaproperty block)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
@@ -503,21 +503,21 @@ namespace skyrim
 		}
 	}
 	legendary_edition
-	void ni_skin_instance_callback(Rd *rd, ni_skin_instance *block)
+	void ni_skin_instance_callback(Rd *rd, niskininstance block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		Nif *nif = smesh->mesh->nif;
-		assertm(0 == strcmp(nif_get_block_type(nif, rd->parent), NI_TRI_SHAPE), "root not shape");
-		auto shape = (ni_tri_shape *)nif_get_block(nif, rd->parent);
+		assertm(0 == strcmp(nif_get_block_type(nif, rd->parent), NiTriShape), "root not shape");
+		auto shape = (ni_tri_shape_t *)nif_get_block(nif, rd->parent);
 		smesh->shapes.push_back(rd->parent);
 	}
 	legendary_edition
-	void ni_skin_data_callback(Rd *rd, ni_skin_data *block)
+	void ni_skin_data_callback(Rd *rd, niskindata block)
 	{
 		//
 	}
 	special_edition
-	void ni_skin_partition_callback(Rd *rd, ni_skin_partition *block)
+	void ni_skin_partition_callback(Rd *rd, niskinpartition block)
 	{
 
 	}

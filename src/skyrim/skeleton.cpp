@@ -13,7 +13,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	static void ni_node_callback(Rd *, ni_node *);
+	static void ni_node_callback(Rd *, ninode);
 
 	Skeleton::Skeleton()
 	{
@@ -56,7 +56,7 @@ namespace skyrim
 		lastBone = bone;
 		return bone;
 	}
-	void matrix_from_common(Bone *bone, ni_common_layout *common)
+	void matrix_from_common(Bone *bone, nicommonlayout common)
 	{
 		bone->group->matrix = translate(bone->group->matrix, gloomVec3(common->A->translation));
 		bone->group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
@@ -64,7 +64,7 @@ namespace skyrim
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
 	}
-	void ni_node_callback(Rd *rd, ni_node *block)
+	void ni_node_callback(Rd *rd, ninode block)
 	{
 		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
@@ -80,9 +80,9 @@ namespace skyrim
 	// keyframes
 	Keyframes::Keyframes(Nif *nif) : model(nif)
 	{
-		assertm(strcmp(model->hdr->block_types[0], NI_CONTROLLER_SEQUENCE) == 0, "block 0 not a controller sequence");
+		assertm(strcmp(model->hdr->block_types[0], NiControllerSequence) == 0, "block 0 not a controller sequence");
 
-		csp = (ni_controller_sequence *)model->blocks[0];
+		csp = (nicontrollersequence)model->blocks[0];
 	}
 	void Animation::step()
 	{
@@ -99,7 +99,7 @@ namespace skyrim
 	void Animation::simpleNonInterpolated()
 	{
 		Nif *model = keyframes->model;
-		struct controlled_block *cbp;
+		struct controlled_block_t *cbp;
 		for (unsigned int i = 0; i < keyframes->csp->A->num_controlled_blocks; i++)
 		{
 			// Match node_name to a skeleton bone
@@ -114,8 +114,8 @@ namespace skyrim
 			}
 
 			Bone *bone = has->second;
-			auto tip = (ni_transform_interpolator *)nif_get_block(model, cbp->interpolator);
-			auto tdp = (ni_transform_data *)nif_get_block(model, tip->B->data);
+			auto tip = (nitransforminterpolator)nif_get_block(model, cbp->interpolator);
+			auto tdp = (nitransformdata)nif_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)
 				continue;
 			vec4 ro = gloomVec4(tip->transform->rotation);

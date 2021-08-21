@@ -4,5 +4,5 @@ extern "C"
 #include <bsa.h>
 #include <esp.h>
 #include <nif.h>
-#include <nitypes.h>
+#include <niftypes.h>
 }

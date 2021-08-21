@@ -51,7 +51,7 @@ namespace skyrim
 	public:
 		Keyframes(Nif *);
 		Nif *model;
-		struct ni_controller_sequence *csp;
+		struct ni_controller_sequence_t *csp;
 		bool loop = true;
 	};
 

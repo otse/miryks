@@ -3,7 +3,7 @@
 #include "common.h"
 
 #include "nif.h"
-#include "nitypes.h"
+#include "niftypes.h"
 
 #define Hedr   nif->hdr
 #define Buf    nif->buf
@@ -152,7 +152,7 @@ void nif_read_blocks(Nif *nif)
 	}
 }
 
-#define woo ni_is_any(x, y, z) block = read_ni_node(nif, n);
+#define woo nif_types(x, y, z) block = read_ni_node(nif, n);
 
 // todo macro?
 
@@ -161,27 +161,27 @@ void big_block_reader(Nif *nif, int n)
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
 	if (0) ;
-	else if ( ni_is_any(NI_NODE, BS_LEAF_ANIM_NODE, BS_FADE_NODE) ) 			block = read_ni_node(nif, n);
-	else if ( ni_is_any(NI_SKIN_INSTANCE, BS_DISMEMBER_SKIN_INSTANCE, NULL) ) 	block = read_ni_skin_instance(nif, n);
-	else if ( ni_is_type(NI_SKIN_DATA) ) 										block = read_ni_skin_data(nif, n);
-	else if ( ni_is_type(NI_SKIN_PARTITION) ) 									block = read_ni_skin_partition(nif, n);
-	else if ( ni_is_type(BS_TRI_SHAPE) ) 										block = read_bs_tri_shape(nif, n); special_edition
-	else if ( ni_is_type(BS_DYNAMIC_TRI_SHAPE) ) 0;
-	else if ( ni_is_any(NI_TRI_SHAPE, BS_LOD_TRI_SHAPE, NULL) ) 				block = read_ni_tri_shape(nif, n);
-	else if ( ni_is_type(NI_ALPHA_PROPERTY) ) 									block = read_ni_alpha_property(nif, n);
-	else if ( ni_is_type(NI_TRI_SHAPE_DATA) ) 									block = read_ni_tri_shape_data(nif, n);
-	else if ( ni_is_type(BS_LIGHTING_SHADER_PROPERTY) ) 						block = read_bs_lighting_shader_property(nif, n);
-	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY) )							block = read_bs_effect_shader_property(nif, n);
-	else if ( ni_is_type(BS_EFFECT_SHADER_PROPERTY_FLOAT_CONTROLLER) )			block = read_bs_effect_shader_property_float_controller(nif, n);
-	else if ( ni_is_type(NI_FLOAT_INTERPOLATOR) )								block = read_ni_float_interpolator(nif, n);
-	else if ( ni_is_type(NI_FLOAT_DATA) )										block = read_ni_float_data(nif, n);
-	else if ( ni_is_type(BS_SHADER_TEXTURE_SET) ) 								block = read_bs_shader_texture_set(nif, n);
-	else if ( ni_is_type(NI_CONTROLLER_SEQUENCE) ) 								block = read_ni_controller_sequence(nif, n);
-	else if ( ni_is_type(NI_TEXT_KEY_EXTRA_DATA) ) 0;
-	else if ( ni_is_type(NI_STRING_EXTRA_DATA) ) 0;
-	else if ( ni_is_type(NI_TRANSFORM_INTERPOLATOR) ) 							block = read_ni_transform_interpolator(nif, n); 
-	else if ( ni_is_type(NI_TRANSFORM_DATA) ) 									block = read_ni_transform_data(nif, n);
-	else if ( ni_is_type(BS_DECAL_PLACEMENT_VECTOR_EXTRA_DATA) ) 0;
+	else if ( nif_types(NiNode, BSLeafAnimNode, BSFadeNode) ) 		  block = read_ni_node(nif, n);
+	else if ( nif_types(NiSkinInstance, BSDismemberSkinInstance, 0) ) block = read_ni_skin_instance(nif, n);
+	else if ( nif_type(NiSkinData) ) 								  block = read_ni_skin_data(nif, n);
+	else if ( nif_type(NiSkinPartition) ) 						      block = read_ni_skin_partition(nif, n);
+	else if ( nif_type(BSTriShape) )                                  block = read_bs_tri_shape(nif, n); special_edition
+	else if ( nif_type(BSDynamicTriShape) ) 0;
+	else if ( nif_types(NiTriShape, BSLODTriShape, 0) )               block = read_ni_tri_shape(nif, n);
+	else if ( nif_type(NiAlphaProperty) )                             block = read_ni_alpha_property(nif, n);
+	else if ( nif_type(NiTriShapeData) )                              block = read_ni_tri_shape_data(nif, n);
+	else if ( nif_type(BSLightingShaderProperty) )                    block = read_bs_lighting_shader_property(nif, n);
+	else if ( nif_type(BSEffectShaderProperty) )                      block = read_bs_effect_shader_property(nif, n);
+	else if ( nif_type(BSEffectShaderPropertyFloatController) )       block = read_bs_effect_shader_property_float_controller(nif, n);
+	else if ( nif_type(NiFloatInterpolator) )                         block = read_ni_float_interpolator(nif, n);
+	else if ( nif_type(NiFloatData) )                                 block = read_ni_float_data(nif, n);
+	else if ( nif_type(BSShaderTextureSet) )                          block = read_bs_shader_texture_set(nif, n);
+	else if ( nif_type(NiControllerSequence) )                        block = read_ni_controller_sequence(nif, n);
+	else if ( nif_type(NiTextKeyExtraData) ) 0;
+	else if ( nif_type(NiStringExtraData) ) 0;
+	else if ( nif_type(NiTransformInterpolator) )                     block = read_ni_transform_interpolator(nif, n); 
+	else if ( nif_type(NiTransformData) )                             block = read_ni_transform_data(nif, n);
+	else if ( nif_type(BSDecalPlacementVectorExtraData) ) 0;
 	Blocks[n] = block;
 }
 
@@ -201,7 +201,7 @@ static inline void sink(Nif *nif, void **dest, int size) {
 
 #define BEGIN(x) void *read_ ## x ( Nif *nif, int n ) \
 { \
-	CALLOC(struct x)
+	CALLOC(struct x ## _t)
 
 #define END() \
 	return block; \
@@ -348,7 +348,7 @@ BEGIN( ni_skin_instance ) legendary_edition
 SINK ( nif, block, A )
 SAIL ( nif, block, bones, A, num_bones )
 char *block_type = nif_get_block_type( nif, n );
-if (ni_is_type(BS_DISMEMBER_SKIN_INSTANCE))
+if (nif_type(BSDismemberSkinInstance))
 {
 	SINK ( nif, block, B )
 	SAIL ( nif, block, partitions, B, num_partitions )
@@ -360,11 +360,11 @@ BEGIN( ni_skin_data ) legendary_edition
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, B )
 // todo build a macro to do this dirty part
-block->bone_list = malloc(sizeof(struct bone_data *) * block->B->num_bones);
+block->bone_list = malloc(sizeof(struct bone_data_t *) * block->B->num_bones);
 for (unsigned int i = 0; i < block->B->num_bones; i++)
 {
-	block->bone_list[i] = malloc(sizeof(struct bone_data));
-	struct bone_data *bone_data = block->bone_list[i];
+	block->bone_list[i] = malloc(sizeof(struct bone_data_t));
+	struct bone_data_t *bone_data = block->bone_list[i];
 	SINK ( nif, bone_data, skin_transform )
 	SINK ( nif, bone_data, B )
 	SAIL ( nif, bone_data, vertex_weights, B, num_vertices )
