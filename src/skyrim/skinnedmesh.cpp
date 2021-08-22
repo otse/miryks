@@ -16,23 +16,27 @@ namespace skyrim
 	SkinnedMesh::SkinnedMesh(Nif *nif, Skeleton *skeleton) : Mesh(nif),
 		skeleton(skeleton)
 	{
+		assertm(skeleton, "smesh needs skeleton");
 		construct();
 	}
 
 	void SkinnedMesh::construct()
 	{
-		assertm(skeleton, "smesh needs skeleton");
 		Rd *rd = calloc_nifprd();
 		rd->nif = nif;
 		rd->data = this;
-		//rd->other = other;
 		rd->ni_node_callback = ni_node_callback;
 		rd->ni_skin_instance_callback = ni_skin_instance_callback;
 		rd->ni_skin_data_callback = ni_skin_data_callback;
 		rd->ni_skin_partition_callback = ni_skin_partition_callback;
+		rd->bs_lighting_shader_property_callback = bs_lighting_shader_property_callback;
+		rd->bs_effect_shader_property_callback = bs_effect_shader_property_callback;
+		rd->bs_shader_texture_set_callback = bs_shader_texture_set_callback;
+		rd->ni_alpha_property_callback = ni_alpha_property_callback;
 		nif_rd(rd);
 		free_nifprd(&rd);
 		initial();
+		baseGroup->Update();
 	}
 	
 	void SkinnedMesh::initial()
@@ -81,9 +85,9 @@ namespace skyrim
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		Nif *nif = smesh->nif;
-		assertm(0 == strcmp(nif_get_block_type(nif, rd->parent), NiTriShapeS), "root not shape");
-		auto shape = (ni_tri_shape_t *)nif_get_block(nif, rd->parent);
-		smesh->shapes.push_back(rd->parent);
+		assertc(0 == strcmp(nif_get_block_type(nif, rd->parent), BSTriShapeS));
+		auto shape = (BSTriShape *)nif_get_block(nif, rd->parent);
+		smesh->shapes.push_back(shape);
 	}
 
 	void ni_skin_data_callback(Rd *rd, NiSkinData *block)
@@ -92,18 +96,14 @@ namespace skyrim
 	}
 	void ni_skin_partition_callback(Rd *rd, NiSkinPartition *block)
 	{
-
-	}
-	/*
-	legendary_edition
-	void ni_skin_partition_callback(Rd *rd, ni_skin_partition *block)
-	{
-		
+		printf("worth\n");
+		return;
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
-		auto nif = smesh->mesh->nif;
-		auto shape = (ni_tri_shape *)nif_get_block(nif, smesh->shapes.back());
-		auto data = (ni_tri_shape_data *)nif_get_block(nif, shape->A->data);
-		for (unsigned int k = 0; k < *block->num_skin_partition_blocks; k++)
+		auto nif = smesh->nif;
+		auto shape = smesh->shapes.back();
+		//auto data = (NiTriShapeData *)nif_get_block(nif, shape->A->data);
+		/*
+		for (unsigned int k = 0; k < block->A->num_skin_partition_blocks; k++)
 		{
 			struct skin_partition *part = block->skin_partition_blocks[k];
 			Group *group = new Group;
@@ -157,8 +157,7 @@ namespace skyrim
 			group->geometry = geometry;
 			smesh->lastShape->Add(group);
 		}
-		smesh->lastShape->Update();
+		smesh->lastShape->Update();*/
 	}
-	*/
 
 }

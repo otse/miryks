@@ -140,7 +140,7 @@ void nif_read_blocks(Nif *nif)
 {
 	// printf("nifp path %s\n", nif->path);
 	unsigned int pos = Pos;
-	Blocks = malloc(sizeof(void *) * Hedr->num_blocks);
+	Blocks = calloc(Hedr->num_blocks, sizeof(void *));
 	for (unsigned int i = 0; i < Hedr->num_blocks; i++)
 	{
 	Blocks[i] = NULL;
@@ -151,31 +151,31 @@ void nif_read_blocks(Nif *nif)
 	}
 }
 
-#define READ(x) block = read_ ## x(nif, n)
+#define READ(x) block = read_ ## x(nif, n);
 
 void big_block_reader(Nif *nif, int n)
 {
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
 	if (0) 0;
-	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) )        READ( ni_node );
-	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, 0) ) READ( ni_skin_instance );
-	else if ( nif_type(NiSkinDataS) )                                   READ( ni_skin_data );
-	else if ( nif_type(NiSkinPartitionS) )                              READ( ni_skin_partition );
+	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) )        READ( ni_node )
+	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, 0) ) READ( ni_skin_instance )
+	else if ( nif_type(NiSkinDataS) )                                   READ( ni_skin_data )
+	else if ( nif_type(NiSkinPartitionS) )                              READ( ni_skin_partition )
 	else if ( nif_type(BSDynamicTriShapeS) ) ;
-	else if ( nif_type(NiAlphaPropertyS) )                              READ( ni_alpha_property );
-	else if ( nif_type(BSTriShapeS) )                                   READ( bs_tri_shape );
-	else if ( nif_type(BSLightingShaderPropertyS) )                     READ( bs_lighting_shader_property );
-	else if ( nif_type(BSEffectShaderPropertyS) )                       READ( bs_effect_shader_property );
-	else if ( nif_type(BSEffectShaderPropertyFloatControllerS) )        READ( bs_effect_shader_property_float_controller );
-	else if ( nif_type(NiFloatInterpolatorS) )                          READ( ni_float_interpolator );
-	else if ( nif_type(NiFloatDataS) )                                  READ( ni_float_data );
-	else if ( nif_type(BSShaderTextureSetS) )                           READ( bs_shader_texture_set );
-	else if ( nif_type(NiControllerSequenceS) )                         READ( ni_controller_sequence );
+	else if ( nif_type(NiAlphaPropertyS) )                              READ( ni_alpha_property )
+	else if ( nif_type(BSTriShapeS) )                                   READ( bs_tri_shape )
+	else if ( nif_type(BSLightingShaderPropertyS) )                     READ( bs_lighting_shader_property )
+	else if ( nif_type(BSEffectShaderPropertyS) )                       READ( bs_effect_shader_property )
+	else if ( nif_type(BSEffectShaderPropertyFloatControllerS) )        READ( bs_effect_shader_property_float_controller )
+	else if ( nif_type(NiFloatInterpolatorS) )                          READ( ni_float_interpolator )
+	else if ( nif_type(NiFloatDataS) )                                  READ( ni_float_data )
+	else if ( nif_type(BSShaderTextureSetS) )                           READ( bs_shader_texture_set )
+	else if ( nif_type(NiControllerSequenceS) )                         READ( ni_controller_sequence )
 	else if ( nif_type(NiTextKeyExtraDataS) ) ;
 	else if ( nif_type(NiStringExtraDataS) ) ;
-	else if ( nif_type(NiTransformInterpolatorS) )                      READ( ni_transform_interpolator ); 
-	else if ( nif_type(NiTransformDataS) )                              READ( ni_transform_data );
+	else if ( nif_type(NiTransformInterpolatorS) )                      READ( ni_transform_interpolator )
+	else if ( nif_type(NiTransformDataS) )                              READ( ni_transform_data )
 	else if ( nif_type(BSDecalPlacementVectorExtraDataS) ) ;
 	Blocks[n] = block;
 }
@@ -191,37 +191,37 @@ static inline void sink(Nif *nif, void **dest, int size) {
 
 #define SKIP(n) Pos += n;
 
-#define CALLOC( type ) type *block = calloc(1, sizeof(type));
+#define CALLOC(x, y) struct x ## _t *y = calloc(1, sizeof(struct x ## _t));
 
-#define BEGIN(x) void *read_ ## x ( Nif *nif, int n ) \
+#define BLOCK(x) void *read_ ## x ( Nif *nif, int n ) \
 { \
-	CALLOC(struct x ## _t)
+	CALLOC(x, block)
 
-#define END() \
+#define BLOCKED() \
 	return block; \
 } \
 
-BEGIN ( ni_common_layout )
+BLOCK ( ni_common_layout )
 SINK ( nif, block, F )
 SAIL ( nif, block, extra_data_list, F, num_extra_data_list )
 SINK ( nif, block, A )
-END ()
+BLOCKED ()
 
-BEGIN( ni_node )
+BLOCK( ni_node )
 block->common = read_ni_common_layout( nif, n );
 SINK ( nif, block, A )
 SAIL ( nif, block, children, A, num_children )
 SINK ( nif, block, B )
 SAIL ( nif, block, effects, B, num_effects )
-END ()
+BLOCKED ()
 
-BEGIN( bs_lighting_shader_property )
+BLOCK( bs_lighting_shader_property )
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, B )
-END ()
+BLOCKED ()
 
-BEGIN( bs_effect_shader_property )
+BLOCK( bs_effect_shader_property )
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, B )
@@ -232,49 +232,49 @@ SINK ( nif, block, D )
 read_sized_string( nif, &block->greyscale_texture );
 block->meta.u = 0;
 block->meta.v = 0;
-END ()
+BLOCKED ()
 
-BEGIN( bs_effect_shader_property_float_controller )
+BLOCK( bs_effect_shader_property_float_controller )
 SINK ( nif, block, A )
 block->meta.time = 0;
-END ()
+BLOCKED ()
 
-BEGIN( ni_float_interpolator )
+BLOCK( ni_float_interpolator )
 SINK ( nif, block, A )
-END ()
+BLOCKED ()
 
-BEGIN( ni_float_data )
+BLOCK( ni_float_data )
 SINK ( nif, block, A )
 if ( block->A->key_type == 1 )
 SAIL ( nif, block, linear_keys, A, num_keys )
 if ( block->A->key_type == 2 )
 SAIL ( nif, block, quadratic_keys, A, num_keys )
-END ()
+BLOCKED ()
 
-BEGIN( bs_shader_texture_set )
+BLOCK( bs_shader_texture_set )
 SINK ( nif, block, A )
 read_sized_strings( nif, &block->textures, block->A->num_textures );
-END ()
+BLOCKED ()
 
-BEGIN(ni_alpha_property)
+BLOCK(ni_alpha_property)
 SINK ( nif, block, A )
 SAIL ( nif, block, extra_data_list, A, num_extra_data_list )
 SINK ( nif, block, C )
-END ()
+BLOCKED ()
 
-BEGIN( ni_controller_sequence )
+BLOCK( ni_controller_sequence )
 SINK ( nif, block, A )
 SAIL ( nif, block, controlled_blocks, A, num_controlled_blocks )
 SINK ( nif, block, C )
-END ()
+BLOCKED ()
 
-BEGIN( ni_transform_interpolator )
+BLOCK( ni_transform_interpolator )
 //printf("read_ni_transform_interpolator\n");
 SINK ( nif, block, transform )
 SINK ( nif, block, B )
-END ()
+BLOCKED ()
 
-BEGIN( ni_transform_data )
+BLOCK( ni_transform_data )
 SINK ( nif, block, A )
 
 if ( block->A->num_rotation_keys > 0 )
@@ -290,11 +290,11 @@ SINK ( nif, block, translations )
 SAIL ( nif, block, translation_keys, translations, num_keys )
 SINK ( nif, block, scales )
 SAIL ( nif, block, scale_keys, scales, num_keys )
-END ()
+BLOCKED ()
 
 #ifdef SLE
 
-BEGIN( ni_tri_shape )
+BLOCK( ni_tri_shape )
 printf("read NiTriShape\n");
 
 block->common = read_ni_common_layout( nif, n );
@@ -302,9 +302,9 @@ SINK ( nif, block, A )
 SKIP( 9 )
 SINK ( nif, block, B )
 
-END ()
+BLOCKED ()
 
-BEGIN( ni_tri_shape_data )
+BLOCK( ni_tri_shape_data )
 printf("read NiTriShapeData\n");
 
 SINK ( nif, block, A )
@@ -340,11 +340,11 @@ SINK ( nif, block, L )
 
 SAIL ( nif, block, match_groups, L, num_match_groups )
 
-END ()
+BLOCKED ()
 
 #endif
 
-BEGIN( ni_skin_instance )
+BLOCK( ni_skin_instance )
 SINK ( nif, block, A )
 SAIL ( nif, block, bones, A, num_bones )
 char *block_type = nif_get_block_type( nif, n );
@@ -353,12 +353,28 @@ if (nif_type(BSDismemberSkinInstanceS))
 	SINK ( nif, block, B )
 	SAIL ( nif, block, partitions, B, num_partitions )
 }
-END ()
+BLOCKED ()
 
-BEGIN( ni_skin_data )
-printf("read NiSkinData\n");
+// add some ugly macros
+#define LOOP(x, y, group, num) \
+	block->x = calloc(block->group->num, sizeof(struct y ## _t *)); \
+	for (unsigned int i = 0; i < block->group->num; i++) { \
+	block->x[i] = malloc(sizeof(struct y ## _t)); \
+	struct y ## _t *y = block->x[i];
+	
+#define ENDL() }
+
+BLOCK( ni_skin_data )
+//printf("read NiSkinData\n");
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, A )
+LOOP ( bone_list, bone_data, A, num_bones )
+ SINK ( nif, bone_data, skin_transform )
+ SINK ( nif, bone_data, bounding_sphere )
+ SINK ( nif, bone_data, A )
+ SAIL ( nif, bone_data, vertex_weights, A, num_vertices )
+ ENDL ()
+/*
 block->bone_list = malloc(sizeof(struct bone_data_t *) * block->A->num_bones);
 for (unsigned int i = 0; i < block->A->num_bones; i++)
 {
@@ -369,55 +385,55 @@ for (unsigned int i = 0; i < block->A->num_bones; i++)
 	SINK ( nif, bone_data, A )
 	SAIL ( nif, bone_data, vertex_weights, A, num_vertices )
 }
-END ()
+*/
+BLOCKED ()
 
-BEGIN( ni_skin_partition )
+BLOCK( ni_skin_partition )
 SINK ( nif, block, A )
-
 unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
-
 int vertex, uvs, normals, tangents, colors, skinned;
-nif_vertex_desc(block->A->vf, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
-
-printf("vertex %i uv %i normals %i tangents %i skinned %i\n",
-	vertex, uvs, normals, tangents, skinned);
-// all models use these two variants it seems
-if ( vertex && uvs && normals && tangents && colors )
-	sink(nif, &block->vertex_data_1, block->A->data_size / block->A->vertex_size);
-
+nif_bs_vertex_desc(block->A->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
+if ( vertex && uvs && normals && tangents && skinned )
+	sink( nif, &block->vertex_data, sizeof *block->vertex_data * block->A->data_size / block->A->vertex_size );
 else if ( vertex && uvs && normals && tangents && !colors )
 	;//SAIL ( nif, block, vertex_data_no_clr, infos, num_vertices)
-
 else {
-	// xmarkerx
-	// marker_prison
-	// marker cocheading
-	// printf("\nsse for %s has %i %i %i %i %i %i\n", nif->path, vertex, uvs, normals, tangents, colors);
+	printf(" can't read this flavor\n ");
 	SKIP ( block->A->data_size )
 	return block;
 }
+LOOP ( partitions, skin_partition, A, num_partitions )
+ SINK ( nif, skin_partition, nums )
+ SAIL ( nif, skin_partition, bones, nums, bones )
+ SINK ( nif, skin_partition, B )
+ SAIL ( nif, skin_partition, vertex_map, nums, vertices )
+ SINK ( nif, skin_partition, C )
+ SAIL ( nif, skin_partition, vertex_weights, nums, vertices )
+ SAIL ( nif, skin_partition, strip_lengths, nums, strips )
+ SINK ( nif, skin_partition, D )
+ SAIL ( nif, skin_partition, triangles, nums, triangles )
+ SINK ( nif, skin_partition, E )
+ SAIL ( nif, skin_partition, bone_indices, nums, vertices )
+ unsigned char *bone_index = (unsigned char *)&skin_partition->bone_indices[0];
+ printf(" bone_indices: %u %u %u %u\n", bone_index[0], bone_index[1], bone_index[2], bone_index[3]);
+ SINK ( nif, skin_partition, F )
+ SAIL ( nif, skin_partition, triangles_copy, nums, triangles )
+ ENDL ()
+BLOCKED ()
 
-SAIL ( nif, block, skin_partition_blocks, A, num_skin_partition_blocks )
-
-END ()
-
-BEGIN ( bs_tri_shape )
+BLOCK ( bs_tri_shape )
 block->common = read_ni_common_layout( nif, n );
-
 SINK ( nif, block, bounding_sphere )
 SINK ( nif, block, refs )
 SINK ( nif, block, infos )
-
 int vertex, uvs, normals, tangents, colors, skinned;
-nif_vertex_desc(offset_bs_vertex_desc(block->infos->vertex_desc), &vertex, &uvs, &normals, &tangents, &colors, &skinned);
-
+nif_bs_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
 // all models use these two variants it seems
 if ( vertex && uvs && normals && tangents && colors )
 	SAIL ( nif, block, vertex_data_all, infos, num_vertices)
 
 else if ( vertex && uvs && normals && tangents && !colors )
 	SAIL ( nif, block, vertex_data_no_clr, infos, num_vertices)
-
 else {
 	// xmarkerx
 	// marker_prison
@@ -426,7 +442,6 @@ else {
 	SKIP ( block->infos->data_size )
 	return block;
 }
-
 SAIL ( nif, block, triangles, infos, num_triangles )
 SINK ( nif, block, particle_data_size )
-END ()
+BLOCKED ()

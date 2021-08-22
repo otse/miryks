@@ -226,6 +226,8 @@ struct bone_data_t
 	struct bone_vert_data_t *vertex_weights;
 };
 
+typedef struct bone_data_t BoneData;
+
 // todo this could be anonymous
 struct bone_vert_data_t
 {
@@ -236,16 +238,14 @@ struct bone_vert_data_t
 NiSkinPartition
 {
 	struct {
-		unsigned int num_skin_partition_blocks, data_size, vertex_size;
-		unsigned char vf1, vf2, vf3, vf4, vf5;
-		unsigned short vf;
-		unsigned char vf8;
+		unsigned int num_partitions, data_size, vertex_size;
+		unsigned long long vertex_desc;
 	} * A;
-	struct vertex_data_1_t *vertex_data_1;
-	struct skin_partition_t **skin_partition_blocks;
+	struct vertex_data_t *vertex_data;
+	struct skin_partition_t **partitions;
 };
 
-struct vertex_data_1_t
+struct vertex_data_t
 {
 	Vec3 vertex;
 	float bitangent_x;
@@ -256,20 +256,44 @@ struct vertex_data_1_t
 	unsigned char bitangent_z;
 	//Vec4b vertex_colors;
 	struct {
-		unsigned short weight1, weight2, weight3, weight4;
+		unsigned short a, b, c, d;
 	} bone_weights;
 	struct {
-		unsigned char index1, index2, index3, index4;
+		unsigned char a, b, c, d;
 	} bone_indices;
 };
 
 struct skin_partition_t
 {
 	struct {
-		unsigned int num_partitions, data_size, vertex_size;
+		unsigned short vertices, triangles, bones, strips, weights_per_vertex;
+	} * nums; 
+	unsigned short *bones;
+	struct {
+		unsigned char has_vertex_map;
+	} * B;
+	unsigned short *vertex_map;
+	struct {
+		unsigned char has_vertex_weights;
+	} * C;
+	unsigned short *vertex_weights;
+	unsigned short *strip_lengths;
+	struct {
+		unsigned char has_faces;
+	} * D;
+	struct { unsigned short x, y, z; } *triangles;
+	struct {
+		unsigned char has_bone_indices;
+	} * E;
+	Vec4b *bone_indices;
+	struct {
+		unsigned char lod_level, global_vb;
 		unsigned long long vertex_desc;
-	} * A; 
+	} * F;
+	struct { unsigned short x, y, z; } *triangles_copy;
 };
+
+typedef struct skin_partition_t SkinPartition;
 
 NiTriShapeData
 {
@@ -525,10 +549,11 @@ struct ni_text_key_extra_data_t
 #define offset_bs_vertex_desc(flags) \
 	(unsigned short)((flags & 0xFFFFFF0000000000) >> 44)
 
-inline void api nif_vertex_desc(
-	unsigned short flags,
+inline void api nif_bs_vertex_desc(
+	unsigned long long vertex_desc,
 	int *vertex, int *uvs, int *normals, int *tangents, int *colors, int *skinned)
 {
+	unsigned short flags = offset_bs_vertex_desc(vertex_desc);
 	*vertex = flags & 1 << 0x0;
 	*uvs = flags & 1 << 0x1;
 	*normals = flags & 1 << 0x3;

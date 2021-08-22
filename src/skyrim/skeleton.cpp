@@ -51,7 +51,7 @@ namespace skyrim
 		baseBone->group->Update();
 	}
 
-	Bone *Skeleton::nested(Rd *rd, int name)
+	Bone *Skeleton::make_new_group(Rd *rd, int name)
 	{
 		Bone *bone = new Bone();
 		bones[rd->current] = bone;
@@ -74,7 +74,7 @@ namespace skyrim
 	{
 		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
-		Bone *bone = skeleton->nested(rd, block->common->F->name);
+		Bone *bone = skeleton->make_new_group(rd, block->common->F->name);
 		matrix_from_common(bone, block->common);
 	}
 

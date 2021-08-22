@@ -38,9 +38,10 @@ namespace skyrim
 		//Material *aa;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
-		Group *nested(Rd *);
+		Group *make_new_group(Rd *);
 		void construct();
 		void forward();
+		virtual void v () {};
 	};
 
 	// should have its own .h XD
@@ -50,7 +51,7 @@ namespace skyrim
 		Skeleton *skeleton = nullptr;
 		Group *lastShape = nullptr;
 
-		std::vector<NiRef> shapes;
+		std::vector<BSTriShape *> shapes;
 		//std::vector<SkinPartition *> skins;
 		SkinnedMesh();
 		SkinnedMesh(Nif *, Skeleton *);

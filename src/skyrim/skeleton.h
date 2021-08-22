@@ -27,7 +27,7 @@ namespace skyrim
 		Bone *baseBone, *lastBone;
 		Animation *animation;
 
-		Bone *nested(Rd *, int);
+		Bone *make_new_group(Rd *, int);
 
 		void load(const char *);
 		void construct();

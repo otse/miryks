@@ -5,6 +5,7 @@
 
 #include <dark/dark.h>
 
+#include <dark/actor.h>
 #include <skyrim/interior.h>
 
 using namespace dark;
@@ -80,8 +81,8 @@ int main()
 	put_it_fullscreen();
 #if 1
 	load_gloomgen();
-	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
-	//someDraugr->PutDown("gloomgendraugr");
+	someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
+	someDraugr->PutDown("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
 	//someHuman = new Human();
