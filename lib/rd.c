@@ -9,13 +9,10 @@
 #define Blocks nif->blocks
 #define Skips  rd->skips
 
-void visit      (Rd *, int, int);
-void visit_other(Rd *, int, int);
-void visit_block(Rd *, void *);
+void visit (Rd *, int, int);
 
 api Rd *calloc_nifprd() {
 	Rd *rd = calloc(1, sizeof(Rd));
-	rd->other = visit_other;
 	return rd;
 }
 
@@ -179,10 +176,8 @@ static void visit(Rd *rd, int parent, int current)
 	
 	else
 	{
+		// catch all for unknown blocks
 		if (rd->other)
 			rd->other(rd, Blocks[current]);
 	}
 }
-
-static void visit_other(Rd *rd, void *block) {}
-static void visit_block(Rd *rd, void *block) {}

@@ -18,7 +18,6 @@ namespace dark
 	{
 	public:
 		BodyPart(const char *, const char *);
-		Mesh *mesh = nullptr;
 		SkinnedMesh *smesh = nullptr;
 		Skeleton *skeleton = nullptr;
 		Animation *animation = nullptr;

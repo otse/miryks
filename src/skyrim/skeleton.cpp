@@ -23,12 +23,14 @@ namespace skyrim
 		nif = nullptr;
 		animation = nullptr;
 	}
+
 	Skeleton::Skeleton(const char *anam) : Skeleton()
 	{
 		load(anam);
 		construct();
 		baseBone->group->visible = false;
 	}
+
 	void Skeleton::load(const char *anam)
 	{
 		// printf("skeleton load anam %s\n", anam);
@@ -36,6 +38,7 @@ namespace skyrim
 		nif = import_nif(rc, true);
 		// printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
+
 	void Skeleton::construct()
 	{
 		Rd *rd = calloc_nifprd();
@@ -47,6 +50,7 @@ namespace skyrim
 		free_nifprd(&rd);
 		baseBone->group->Update();
 	}
+
 	Bone *Skeleton::nested(Rd *rd, int name)
 	{
 		Bone *bone = new Bone();
@@ -56,6 +60,7 @@ namespace skyrim
 		lastBone = bone;
 		return bone;
 	}
+
 	void matrix_from_common(Bone *bone, ni_common_layout_t *common)
 	{
 		bone->group->matrix = translate(bone->group->matrix, gloomVec3(common->A->translation));
@@ -64,6 +69,7 @@ namespace skyrim
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
 	}
+
 	void ni_node_callback(Rd *rd, NiNode *block)
 	{
 		//printf("skelly ni node callback\n");
@@ -71,6 +77,7 @@ namespace skyrim
 		Bone *bone = skeleton->nested(rd, block->common->F->name);
 		matrix_from_common(bone, block->common);
 	}
+
 	void Skeleton::step()
 	{
 		if (animation)
@@ -84,6 +91,7 @@ namespace skyrim
 
 		csp = (NiControllerSequence *)model->blocks[0];
 	}
+
 	void Animation::step()
 	{
 		float adv = delta;
@@ -96,6 +104,7 @@ namespace skyrim
 		skeleton->baseBone->group->Update();
 		//printf("cbp %i", cbp->controller);
 	}
+
 	void Animation::simpleNonInterpolated()
 	{
 		Nif *model = keyframes->model;

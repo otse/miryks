@@ -73,8 +73,7 @@ namespace dark
 		Rc *rc = load_rc("meshes\\", model, 0x1);
 		Nif *character = import_nif(rc, false);
 		skeleton = new Skeleton(anam);
-		mesh = new Mesh(character);
-		smesh = new SkinnedMesh(mesh, skeleton);
+		smesh = new SkinnedMesh(character, skeleton);
 		if (raceId == "DraugrRace")
 		{
 			animation = new Animation(draugrAttack);
@@ -96,7 +95,7 @@ namespace dark
 		{
 			Group *group = new Group();
 			group->Add(skeleton->baseBone->group);
-			group->Add(mesh->baseGroup);
+			group->Add(smesh->baseGroup);
 			//printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
 			sceneDef->drawGroups.Add(drawGroup);
@@ -141,15 +140,15 @@ namespace dark
 		group = new Group;
 		//group->matrix = glm::translate(mat4(1), vec3(0, 0, 200));
 		if (hat)
-			group->Add(hat->mesh->baseGroup);
+			group->Add(hat->smesh->baseGroup);
 		if (head)
-			group->Add(head->mesh->baseGroup);
+			group->Add(head->smesh->baseGroup);
 		if (body)
-			group->Add(body->mesh->baseGroup);
+			group->Add(body->smesh->baseGroup);
 		if (hands)
-			group->Add(hands->mesh->baseGroup);
+			group->Add(hands->smesh->baseGroup);
 		if (feet)
-			group->Add(feet->mesh->baseGroup);
+			group->Add(feet->smesh->baseGroup);
 		drawGroup = new DrawGroup(group, mat4());
 		csphere = nullptr;
 	};

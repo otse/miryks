@@ -164,12 +164,12 @@ void big_block_reader(Nif *nif, int n)
 	else if ( nif_type(NiSkinPartitionS) )                              READ( ni_skin_partition );
 	else if ( nif_type(BSDynamicTriShapeS) ) ;
 	else if ( nif_type(NiAlphaPropertyS) )                              READ( ni_alpha_property );
+	#ifdef SSE
+	else if ( nif_type(BSTriShapeS) )                                   READ( bs_tri_shape );
+	#endif
 	#ifdef SLE
 	else if ( nif_types(NiTriShapeS, BSLODTriShapeS, 0) )               READ( ni_tri_shape );
 	else if ( nif_type(NiTriShapeDataS) )                               READ( ni_tri_shape_data );
-	#endif
-	#ifdef SSE
-	else if ( nif_type(BSTriShapeS) )                                   READ( bs_tri_shape );
 	#endif
 	else if ( nif_type(BSLightingShaderPropertyS) )                     READ( bs_lighting_shader_property );
 	else if ( nif_type(BSEffectShaderPropertyS) )                       READ( bs_effect_shader_property );

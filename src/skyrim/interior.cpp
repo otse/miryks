@@ -36,7 +36,7 @@ namespace skyrim
 			Record wrcd = c.get<record *>(k);
 			Grup wgrp = c.get<grup *>(++k);
 			if (wrcd.hasEditorId(edId)) {
-				printf("foreach found\n");
+				printf("interior found\n");
 				cell = capture_cell(wrcd, wgrp);
 				return true;
 			}
