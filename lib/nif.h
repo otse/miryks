@@ -115,6 +115,9 @@ struct NifHeader
 #define Vec3 struct { float x, y, z; }
 #define Vec4 struct { float x, y, z, w; }
 
+#define Vec3b struct { unsigned char x, y, z; }
+#define Vec4b struct { unsigned char x, y, z, w; }
+
 #define Mat3 struct { float n[9]; }
 #define Mat4 struct { float n[16]; }
 
@@ -199,7 +202,7 @@ NiSkinData
 	{
 		unsigned int num_bones;
 		unsigned char has_vertex_weights;
-	} * B;
+	} * A;
 	struct bone_data_t **bone_list;
 };
 
@@ -213,10 +216,13 @@ struct bone_data_t
 	} * skin_transform;
 	struct
 	{
-		Vec3 bounding_sphere_offset;
-		float bounding_sphere_radius;
+		Vec3 offset;
+		float radius;
+	} *bounding_sphere;
+	struct
+	{
 		unsigned short num_vertices;
-	} * B;
+	} * A;
 	struct bone_vert_data_t *vertex_weights;
 };
 
@@ -227,29 +233,28 @@ struct bone_vert_data_t
 	float weight;
 };
 
-struct ni_skin_partition_t
+NiSkinPartition
 {
-	unsigned int *num_skin_partition_blocks;
+	struct {
+		unsigned int num_skin_partition_blocks, data_size, vertex_size;
+		unsigned char vf1, vf2, vf3, vf4, vf5;
+		unsigned short vf;
+		unsigned char vf8;
+	} * A;
+	struct vertex_data_1_t *vertex_data_1;
 	struct skin_partition_t **skin_partition_blocks;
 };
 
-typedef struct { float x, y, z; } Vector3;
-typedef struct { unsigned short u, v; } HalfTexCoord;
-typedef struct { unsigned char x, y, z; } ByteVector3;
-typedef struct { unsigned char r, g, b, a; } ByteColor4;
-typedef struct { unsigned short a, b, c; } ShortTriangle;
-
-special_edition
-struct ni_skin_partition_data_1
+struct vertex_data_1_t
 {
-	Vector3 vertex;
+	Vec3 vertex;
 	float bitangent_x;
-	HalfTexCoord uv;
-	ByteVector3 normal;
+	struct { unsigned short u, v; } uv;
+	Vec3b normal;
 	unsigned char bitangent_y;
-	ByteVector3 tangent;
+	Vec3b tangent;
 	unsigned char bitangent_z;
-	//ByteColor4 vertex_colors;
+	//Vec4b vertex_colors;
 	struct {
 		unsigned short weight1, weight2, weight3, weight4;
 	} bone_weights;
@@ -520,11 +525,10 @@ struct ni_text_key_extra_data_t
 #define offset_bs_vertex_desc(flags) \
 	(unsigned short)((flags & 0xFFFFFF0000000000) >> 44)
 
-inline void api nif_sse_dissect_vertex_desc(
-	unsigned long long bs_vertex_desc,
+inline void api nif_vertex_desc(
+	unsigned short flags,
 	int *vertex, int *uvs, int *normals, int *tangents, int *colors, int *skinned)
 {
-	unsigned short flags = offset_bs_vertex_desc(bs_vertex_desc);
 	*vertex = flags & 1 << 0x0;
 	*uvs = flags & 1 << 0x1;
 	*normals = flags & 1 << 0x3;
@@ -535,24 +539,24 @@ inline void api nif_sse_dissect_vertex_desc(
 
 struct bs_vertex_data_sse_all
 {
-	Vector3 vertex;
+	Vec3 vertex;
 	float bitangent_x;
-	HalfTexCoord uv;
-	ByteVector3 normal;
+	struct { unsigned short u, v; } uv;
+	Vec3b normal;
 	unsigned char bitangent_y;
-	ByteVector3 tangent;
+	Vec3b tangent;
 	unsigned char bitangent_z;
-	ByteColor4 vertex_colors;
+	Vec4b vertex_colors;
 };
 
 struct bs_vertex_data_sse_no_clr
 {
-	Vector3 vertex;
+	Vec3 vertex;
 	float bitangent_x;
-	HalfTexCoord uv;
-	ByteVector3 normal;
+	struct { unsigned short u, v; } uv;
+	Vec3b normal;
 	unsigned char bitangent_y;
-	ByteVector3 tangent;
+	Vec3b tangent;
 	unsigned char bitangent_z;
 };
 
@@ -573,7 +577,7 @@ BSTriShape
 	} *infos;
 	struct bs_vertex_data_sse_all    *vertex_data_all;
 	struct bs_vertex_data_sse_no_clr *vertex_data_no_clr;
-	ShortTriangle *triangles;
+	struct { unsigned short a, b, c; } *triangles;
 	unsigned int *particle_data_size;
 };
 

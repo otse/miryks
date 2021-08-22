@@ -513,14 +513,16 @@ skin_transform:\
 		print_mat_3p(a, (float *)&block->skin_transform->rotation),
 		print_vec_3p(b, (float *)&block->skin_transform->translation),
 		block->skin_transform->scale,
-		block->B->num_bones,
-		block->B->has_vertex_weights);
+		block->A->num_bones,
+		block->A->has_vertex_weights);
 }
 
 static char *print_skin_partition(char *, struct skin_partition_t *);
 
 static void print_ni_skin_partition(Nif *nif, int n, char s[1000])
 {
+	//return s;
+	/*
 	char a[1000];
 	NiSkinPartition *block = Blocks[n];
 	snprintf(
@@ -533,6 +535,7 @@ num_skin_partition_blocks: %u\
 ",
 		*block->num_skin_partition_blocks,
 		(block->num_skin_partition_blocks > 0 ? print_skin_partition(a, block->skin_partition_blocks[0]) : NULL));
+		*/
 }
 
 static char *print_skin_partition(char *s, struct skin_partition_t *skin_partition)

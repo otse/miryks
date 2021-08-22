@@ -164,13 +164,7 @@ void big_block_reader(Nif *nif, int n)
 	else if ( nif_type(NiSkinPartitionS) )                              READ( ni_skin_partition );
 	else if ( nif_type(BSDynamicTriShapeS) ) ;
 	else if ( nif_type(NiAlphaPropertyS) )                              READ( ni_alpha_property );
-	#ifdef SSE
 	else if ( nif_type(BSTriShapeS) )                                   READ( bs_tri_shape );
-	#endif
-	#ifdef SLE
-	else if ( nif_types(NiTriShapeS, BSLODTriShapeS, 0) )               READ( ni_tri_shape );
-	else if ( nif_type(NiTriShapeDataS) )                               READ( ni_tri_shape_data );
-	#endif
 	else if ( nif_type(BSLightingShaderPropertyS) )                     READ( bs_lighting_shader_property );
 	else if ( nif_type(BSEffectShaderPropertyS) )                       READ( bs_effect_shader_property );
 	else if ( nif_type(BSEffectShaderPropertyFloatControllerS) )        READ( bs_effect_shader_property_float_controller );
@@ -362,23 +356,48 @@ if (nif_type(BSDismemberSkinInstanceS))
 END ()
 
 BEGIN( ni_skin_data )
-//printf("read ni skin data\n");
+printf("read NiSkinData\n");
 SINK ( nif, block, skin_transform )
-SINK ( nif, block, B )
-// todo build a macro to do this dirty part
-block->bone_list = malloc(sizeof(struct bone_data_t *) * block->B->num_bones);
-for (unsigned int i = 0; i < block->B->num_bones; i++)
+SINK ( nif, block, A )
+block->bone_list = malloc(sizeof(struct bone_data_t *) * block->A->num_bones);
+for (unsigned int i = 0; i < block->A->num_bones; i++)
 {
 	block->bone_list[i] = malloc(sizeof(struct bone_data_t));
 	struct bone_data_t *bone_data = block->bone_list[i];
 	SINK ( nif, bone_data, skin_transform )
-	SINK ( nif, bone_data, B )
-	SAIL ( nif, bone_data, vertex_weights, B, num_vertices )
+	SINK ( nif, bone_data, bounding_sphere )
+	SINK ( nif, bone_data, A )
+	SAIL ( nif, bone_data, vertex_weights, A, num_vertices )
 }
 END ()
 
 BEGIN( ni_skin_partition )
-SINK ( nif, block, num_skin_partition_blocks )
+SINK ( nif, block, A )
+
+unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
+
+int vertex, uvs, normals, tangents, colors, skinned;
+nif_vertex_desc(block->A->vf, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
+
+printf("vertex %i uv %i normals %i tangents %i skinned %i\n",
+	vertex, uvs, normals, tangents, skinned);
+// all models use these two variants it seems
+if ( vertex && uvs && normals && tangents && colors )
+	sink(nif, &block->vertex_data_1, block->A->data_size / block->A->vertex_size);
+
+else if ( vertex && uvs && normals && tangents && !colors )
+	;//SAIL ( nif, block, vertex_data_no_clr, infos, num_vertices)
+
+else {
+	// xmarkerx
+	// marker_prison
+	// marker cocheading
+	// printf("\nsse for %s has %i %i %i %i %i %i\n", nif->path, vertex, uvs, normals, tangents, colors);
+	SKIP ( block->A->data_size )
+	return block;
+}
+
+SAIL ( nif, block, skin_partition_blocks, A, num_skin_partition_blocks )
 
 END ()
 
@@ -390,7 +409,7 @@ SINK ( nif, block, refs )
 SINK ( nif, block, infos )
 
 int vertex, uvs, normals, tangents, colors, skinned;
-nif_sse_dissect_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
+nif_vertex_desc(offset_bs_vertex_desc(block->infos->vertex_desc), &vertex, &uvs, &normals, &tangents, &colors, &skinned);
 
 // all models use these two variants it seems
 if ( vertex && uvs && normals && tangents && colors )

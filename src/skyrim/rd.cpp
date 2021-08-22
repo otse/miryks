@@ -18,7 +18,7 @@ namespace skyrim
 {
 	void matrix_from_common(Group *group, ni_common_layout_t *common)
 	{
-        // todo doesnt fit two columns on laptop
+		// todo doesnt fit two columns on laptop
 		group->matrix = translate(group->matrix, gloomVec3(common->A->translation));
 		group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
 		group->matrix = scale(group->matrix, vec3(common->A->scale));
@@ -32,23 +32,23 @@ namespace skyrim
 		matrix_from_common(group, block->common);
 	}
 
-	vec3 bytestofloat(ByteVector3 &vec)
+	vec3 bytestofloat(unsigned char *vec)
 	{
 		float xf, yf, zf;
-		xf = (double( vec.x ) / 255.0) * 2.0 - 1.0;
-		yf = (double( vec.y ) / 255.0) * 2.0 - 1.0;
-		zf = (double( vec.z ) / 255.0) * 2.0 - 1.0;
+		xf = (double( vec[0] ) / 255.0) * 2.0 - 1.0;
+		yf = (double( vec[1] ) / 255.0) * 2.0 - 1.0;
+		zf = (double( vec[2] ) / 255.0) * 2.0 - 1.0;
 		return vec3(xf, yf, zf);
 	}
 
-	vec2 halftexcoord(HalfTexCoord &uv)
+	vec2 halftexcoord(unsigned short *uv)
 	{
 		union { float f; uint32_t i; } u, v;
-		u.i = half_to_float(uv.u);
-		v.i = half_to_float(uv.v);
+		u.i = half_to_float(uv[0]);
+		v.i = half_to_float(uv[1]);
 		return vec2(u.f, v.f);
 	}
-    
+	
 	void bs_tri_shape_callback(Rd *rd, BSTriShape *block)
 	{
 		// printf("mesh.cpp bs tri shape callback !!! ");
@@ -82,12 +82,12 @@ namespace skyrim
 		{
 			struct bs_vertex_data_sse_all *vertex_data = &block->vertex_data_all[i]; 
 			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);
-			geometry->vertices[i].uv = halftexcoord(vertex_data->uv);
-			geometry->vertices[i].normal = bytestofloat(vertex_data->normal);
+			geometry->vertices[i].uv = halftexcoord((unsigned short *)&vertex_data->uv);
+			geometry->vertices[i].normal = bytestofloat((unsigned char *)&vertex_data->normal);
 			geometry->material->tangents = true;
-			geometry->vertices[i].tangent = bytestofloat(vertex_data->tangent);
+			geometry->vertices[i].tangent = bytestofloat((unsigned char *)&vertex_data->tangent);
 			auto c = vertex_data->vertex_colors;
-			geometry->vertices[i].color = vec4(c.r / 255.f, c.g / 255.f, c.b / 255.f, c.a / 255.f);
+			geometry->vertices[i].color = vec4(c.x / 255.f, c.y / 255.f, c.z / 255.f, c.w / 255.f);
 		}
 		}
 		if ( block->vertex_data_no_clr )
@@ -96,10 +96,10 @@ namespace skyrim
 		{
 			struct bs_vertex_data_sse_no_clr *vertex_data = &block->vertex_data_no_clr[i]; 
 			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);
-			geometry->vertices[i].uv = halftexcoord(vertex_data->uv);
-			geometry->vertices[i].normal = bytestofloat(vertex_data->normal);
+			geometry->vertices[i].uv = halftexcoord((unsigned short *)&vertex_data->uv);
+			geometry->vertices[i].normal = bytestofloat((unsigned char *)&vertex_data->normal);
 			geometry->material->tangents = true;
-			geometry->vertices[i].tangent = bytestofloat(vertex_data->tangent);
+			geometry->vertices[i].tangent = bytestofloat((unsigned char *)&vertex_data->tangent);
 		}
 		}
 		geometry->SetupMesh();

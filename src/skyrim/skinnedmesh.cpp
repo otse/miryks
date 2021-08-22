@@ -13,15 +13,11 @@ using namespace dark;
 
 namespace skyrim
 {
-    SkinnedMesh::SkinnedMesh()
-    {
-
-    };
-    SkinnedMesh::SkinnedMesh(Nif *nif, Skeleton *skeleton) : Mesh(nif),
-        skeleton(skeleton)
-    {
-        construct();
-    }
+	SkinnedMesh::SkinnedMesh(Nif *nif, Skeleton *skeleton) : Mesh(nif),
+		skeleton(skeleton)
+	{
+		construct();
+	}
 
 	void SkinnedMesh::construct()
 	{
@@ -38,6 +34,7 @@ namespace skyrim
 		free_nifprd(&rd);
 		initial();
 	}
+	
 	void SkinnedMesh::initial()
 	{
 		/*
@@ -72,12 +69,14 @@ namespace skyrim
 			}
 		}*/
 	}
+
 	void SkinnedMesh::forward()
 	{
 		if (skeleton)
 			skeleton->step();
 		initial();
 	}
+
 	void ni_skin_instance_callback(Rd *rd, NiSkinInstance *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
@@ -86,6 +85,7 @@ namespace skyrim
 		auto shape = (ni_tri_shape_t *)nif_get_block(nif, rd->parent);
 		smesh->shapes.push_back(rd->parent);
 	}
+
 	void ni_skin_data_callback(Rd *rd, NiSkinData *block)
 	{
 		//
