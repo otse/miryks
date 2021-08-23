@@ -104,12 +104,16 @@ void Geometry::SetupMesh()
 		aabb.extend(vertex.position);
 
 	glGenVertexArrays(1, &vao);
-	glGenBuffers(1, &vbo);
+
+	if (vertices.size())
+		glGenBuffers(1, &vbo);
 
 	glBindVertexArray(vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+	if (vertices.size()) {
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
+	}
 
 	if (uses_elements)
 	{

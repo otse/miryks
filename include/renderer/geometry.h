@@ -25,7 +25,7 @@ struct Geometry
 	bool lines = false;
 	bool collide = true;
 	bool skinning = false;
-	GLuint vao, vbo, ebo;
+	GLuint vao = 0, vbo = 0, ebo = 0;
 	Aabb aabb;
 	Group *parent = nullptr;
 	Material *material = nullptr;

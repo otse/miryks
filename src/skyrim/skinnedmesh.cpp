@@ -106,6 +106,16 @@ namespace skyrim
 		return vec2(u.f, v.f);
 	}
 
+	vec4 halfweights(unsigned short *hu)
+	{
+		union { float f; uint32_t i; } a, b, c, d;
+		a.i = half_to_float(hu[0]);
+		b.i = half_to_float(hu[1]);
+		c.i = half_to_float(hu[2]);
+		d.i = half_to_float(hu[3]);
+		return vec4(a.f, b.f, c.f, d.f);
+	}
+
 	void ni_skin_data_callback(Rd *rd, NiSkinData *block)
 	{
 		//printf("ni skin data\n");
@@ -117,68 +127,65 @@ namespace skyrim
 		BSTriShape *shape = (BSTriShape *)nif_get_block(smesh->nif, smesh->lastShape);
 		printf("good %i %s\n", material, nif_get_string(smesh->nif, shape->common->F->name));
 		material->prepared = false;
-		//smesh->lastGroup->geometry = nullptr;
 		if (!block->vertex_data)
 			return;
+		unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
+		std::vector<Vertex> *vertices = new std::vector<Vertex>;
+		vertices->reserve(num_vertices);
+		for (unsigned short i = 0; i < num_vertices; i++)
+		{
+			auto data = &block->vertex_data[i];
+			Vertex vertex;
+			vertex.position = gloomVec3(data->vertex);
+			vertex.uv = halftexcoord((unsigned short *)&data->uv);
+			vertex.normal = bytestofloat((unsigned char *)&data->normal);
+			vertex.tangent = bytestofloat((unsigned char *)&data->tangent);
+			auto bi = data->bone_indices;
+			vertex.skin_index = vec4(bi.a, bi.b, bi.c, bi.d);
+			vertex.skin_weight = halfweights((unsigned short *)&data->bone_weights);
+			vertices->push_back(vertex);
+		}
+		GLuint vbo;
+		glGenBuffers(1, &vbo);
+		printf("gen buffer vbo %u\n", vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBufferData(GL_ARRAY_BUFFER, num_vertices * sizeof(Vertex), &(*vertices)[0], GL_STATIC_DRAW);
+
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
 			SkinPartition *partition = block->partitions[k];
-			//printf(
-			//		"partition nums vertices %u, triangles %u, bones %u, strips %u, weights %u\n",
-			//		partition->nums->vertices, partition->nums->triangles, partition->nums->bones, partition->nums->strips, partition->nums->weights_per_vertex);
-			//if (k>0)
-				//break;
+			if (k>0)
+				continue;
+			printf(
+					"partition nums vertices %u, triangles %u, bones %u, strips %u, weights %u\n",
+					partition->nums->vertices, partition->nums->triangles, partition->nums->bones, partition->nums->strips, partition->nums->weights_per_vertex);
 			Group *group = new Group;
-			group->geometry = new Geometry();
-			Geometry *geometry = group->geometry;
+			Geometry *geometry = new Geometry();
+			group->geometry = geometry;
+			geometry->vbo = vbo;
 			geometry->material = new Material(*smesh->lastGroup->geometry->material);
 			printf("partition uses material %s\n", material->name.c_str());
 			//geometry->material->map = GetProduceTexture("textures\\actors\\draugr\\Armor.dds");
 			geometry->material->skinning = false;
+			geometry->material->testing = false;
+			geometry->material->zwrite = true;
+			geometry->material->opacity = 1;
 			geometry->skinning = false;
 			geometry->Clear(0, 0);
+			if (!*partition->has_vertex_map)
+				break;
 			if (*partition->has_faces)
 			{
-				geometry->Clear(partition->nums->vertices, partition->nums->triangles * 3);
+				geometry->Clear(0, partition->nums->triangles * 3);
 				for (unsigned short i = 0; i < partition->nums->triangles; i++)
 				{
 					auto triangle = &partition->triangles[i];
 					geometry->elements.insert(geometry->elements.end(), { triangle->a, triangle->b, triangle->c });
 				}
 			}
-			for (unsigned short i = 0; i < partition->nums->vertices; i++)
-			{
-				if (!*partition->has_vertex_map)
-					break;
-				
-				unsigned short j = partition->vertex_map[i];
-				auto vertex = &block->vertex_data[j];
-				geometry->vertices[i].position = gloomVec3(vertex->vertex);
-				//if (block->vertex_desc & 0x00000001)
-					geometry->vertices[i].uv = halftexcoord((unsigned short *)&vertex->uv);
-				//if (block->C->has_normals)
-					geometry->vertices[i].normal = bytestofloat((unsigned char *)&vertex->normal);
-				//if (data->C->bs_vector_flags & 0x00001000)
-				{
-					material->tangents = true; // ?
-					geometry->vertices[i].tangent = bytestofloat((unsigned char *)&vertex->tangent);
-					//geometry->vertices[i].bitangent = gloomVec3(data->bitangents[j]);
-				}
-				continue;
-				//if (data->G->has_vertex_colors)
-				if (*partition->has_bone_indices)
-				{
-					auto a = partition->bone_indices[i];
-					geometry->vertices[i].skin_index = vec4(a.x, a.y, a.z, a.w);
-				}
-				//if (partition->C->has_vertex_weights)
-				//	geometry->vertices[i].skin_weight = gloomVec4(part->vertex_weights[i]);
-			}
-			//if (smesh->lastShape->geometry->material->tangents)
-			//	printf("has tangents");
-			//geometry->material->bones = part->A->num_bones;
 			group->geometry->SetupMesh();
 			smesh->lastGroup->Add(group);
+			group->Update();
 		}
 		smesh->lastGroup->Update();
 	}
