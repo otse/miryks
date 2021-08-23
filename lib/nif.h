@@ -206,6 +206,7 @@ NiSkinData
 	struct bone_data_t **bone_list;
 };
 
+#define BoneData struct bone_data_t
 struct bone_data_t
 {
 	struct
@@ -225,8 +226,6 @@ struct bone_data_t
 	} * A;
 	struct bone_vert_data_t *vertex_weights;
 };
-
-typedef struct bone_data_t BoneData;
 
 // todo this could be anonymous
 struct bone_vert_data_t
@@ -263,28 +262,21 @@ struct vertex_data_t
 	} bone_indices;
 };
 
+#define SkinPartition struct skin_partition_t
 struct skin_partition_t
 {
 	struct {
 		unsigned short vertices, triangles, bones, strips, weights_per_vertex;
 	} * nums; 
 	unsigned short *bones;
-	struct {
-		unsigned char has_vertex_map;
-	} * B;
+	unsigned char *has_vertex_map;
 	unsigned short *vertex_map;
-	struct {
-		unsigned char has_vertex_weights;
-	} * C;
-	unsigned short *vertex_weights;
+	unsigned char *has_vertex_weights;
+	struct {float f[4]; } *vertex_weights;
 	unsigned short *strip_lengths;
-	struct {
-		unsigned char has_faces;
-	} * D;
+	unsigned char *has_faces;
 	struct { unsigned short x, y, z; } *triangles;
-	struct {
-		unsigned char has_bone_indices;
-	} * E;
+	unsigned char *has_bone_indices;
 	Vec4b *bone_indices;
 	struct {
 		unsigned char lod_level, global_vb;
@@ -292,8 +284,6 @@ struct skin_partition_t
 	} * F;
 	struct { unsigned short x, y, z; } *triangles_copy;
 };
-
-typedef struct skin_partition_t SkinPartition;
 
 NiTriShapeData
 {

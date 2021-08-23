@@ -200,6 +200,8 @@ namespace skyrim
 		{
 			return;
 		}
+		if (!block->infos->num_vertices)
+			return;
 		if (!block->vertex_data_all && !block->vertex_data_no_clr)
 			return;
 		geometry->Clear(block->infos->num_vertices, block->infos->num_triangles * 3);

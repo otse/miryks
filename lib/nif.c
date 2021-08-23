@@ -390,32 +390,35 @@ BLOCKED ()
 
 BLOCK( ni_skin_partition )
 SINK ( nif, block, A )
-unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
+sink( nif, &block->vertex_data, block->A->data_size );
+
 int vertex, uvs, normals, tangents, colors, skinned;
 nif_bs_vertex_desc(block->A->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
-if ( vertex && uvs && normals && tangents && skinned )
-	sink( nif, &block->vertex_data, sizeof *block->vertex_data * block->A->data_size / block->A->vertex_size );
-else if ( vertex && uvs && normals && tangents && !colors )
-	;//SAIL ( nif, block, vertex_data_no_clr, infos, num_vertices)
+if ( vertex && uvs && normals && tangents && skinned );
 else {
 	printf(" can't read this flavor\n ");
-	SKIP ( block->A->data_size )
-	return block;
+	block->vertex_data = NULL;
 }
 LOOP ( partitions, skin_partition, A, num_partitions )
  SINK ( nif, skin_partition, nums )
+ printf(" num vertices, triangles, bones, strips, weights per vertex: %u %u %u %u %u\n",
+ skin_partition->nums->vertices,
+ skin_partition->nums->triangles,
+ skin_partition->nums->bones,
+ skin_partition->nums->strips,
+ skin_partition->nums->weights_per_vertex);
  SAIL ( nif, skin_partition, bones, nums, bones )
- SINK ( nif, skin_partition, B )
+ SINK ( nif, skin_partition, has_vertex_map )
  SAIL ( nif, skin_partition, vertex_map, nums, vertices )
- SINK ( nif, skin_partition, C )
+ SINK ( nif, skin_partition, has_vertex_weights )
  SAIL ( nif, skin_partition, vertex_weights, nums, vertices )
  SAIL ( nif, skin_partition, strip_lengths, nums, strips )
- SINK ( nif, skin_partition, D )
+ SINK ( nif, skin_partition, has_faces )
  SAIL ( nif, skin_partition, triangles, nums, triangles )
- SINK ( nif, skin_partition, E )
+ unsigned short *value = (unsigned short *)&skin_partition->triangles[0];
+ printf(" value: %u %u %u\n", value[0], value[1], value[2]);
+ SINK ( nif, skin_partition, has_bone_indices )
  SAIL ( nif, skin_partition, bone_indices, nums, vertices )
- unsigned char *bone_index = (unsigned char *)&skin_partition->bone_indices[0];
- printf(" bone_indices: %u %u %u %u\n", bone_index[0], bone_index[1], bone_index[2], bone_index[3]);
  SINK ( nif, skin_partition, F )
  SAIL ( nif, skin_partition, triangles_copy, nums, triangles )
  ENDL ()

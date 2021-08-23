@@ -92,6 +92,7 @@ static void visit(Rd *rd, int parent, int current)
 			rd->bs_tri_shape_callback(rd, Blocks[current]);
 		visit(rd, current, block->refs->shader_property);
 		visit(rd, current, block->refs->alpha_property);
+		visit(rd, current, block->refs->skin);
 	}
 
 	else if ( nif_type(BSLightingShaderPropertyS) )

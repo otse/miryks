@@ -49,9 +49,8 @@ namespace skyrim
 	{
 	public:
 		Skeleton *skeleton = nullptr;
-		Group *lastShape = nullptr;
 
-		std::vector<BSTriShape *> shapes;
+		NiRef lastShape;
 		//std::vector<SkinPartition *> skins;
 		SkinnedMesh();
 		SkinnedMesh(Nif *, Skeleton *);
