@@ -117,6 +117,7 @@ struct NifHeader
 
 #define Vec3b struct { unsigned char x, y, z; }
 #define Vec4b struct { unsigned char x, y, z, w; }
+#define Vec4f struct { float x, y, z, w; }
 
 #define Mat3 struct { float n[9]; }
 #define Mat4 struct { float n[16]; }
@@ -272,7 +273,7 @@ struct skin_partition_t
 	unsigned char *has_vertex_map;
 	unsigned short *vertex_map;
 	unsigned char *has_vertex_weights;
-	struct {float f[4]; } *vertex_weights;
+	Vec4f *vertex_weights;
 	unsigned short *strip_lengths;
 	unsigned char *has_faces;
 	struct { unsigned short x, y, z; } *triangles;

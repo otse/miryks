@@ -123,26 +123,27 @@ namespace skyrim
 			return;
 		if (!numVertices)
 			return;
-		printf("block->A->num_partitions %u\n", block->A->num_partitions);
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
 			SkinPartition *partition = block->partitions[k];
+			printf("has vertex map %u\n", *partition->has_vertex_map);
 			Group *group = new Group;
 			group->geometry = new Geometry();
 			Geometry *geometry = group->geometry;
-			geometry->material = material;
+			geometry->material = new Material;
+			geometry->material->src = &simple;
 			//geometry->skinning = true;
 			geometry->Clear(0, 0);
 			if (*partition->has_faces)
 			{
 				geometry->Clear(partition->nums->vertices, partition->nums->triangles * 3);
-				for (int i = 0; i < partition->nums->triangles; i++)
+				for (unsigned short i = 0; i < partition->nums->triangles; i++)
 				{
-					unsigned short *triangle = (unsigned short *)&partition->triangles[i];
-					geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
+					auto triangle = &partition->triangles[i];
+					geometry->elements.insert(geometry->elements.end(), { triangle->x, triangle->y, triangle->z });
 				}
 			}
-			for (int i = 0; i < partition->nums->vertices; i++)
+			for (unsigned short i = 0; i < partition->nums->vertices; i++)
 			{
 				if (!*partition->has_vertex_map)
 					break;

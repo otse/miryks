@@ -362,18 +362,18 @@ BLOCKED ()
 	block->x[i] = malloc(sizeof(struct y ## _t)); \
 	struct y ## _t *y = block->x[i];
 	
-#define ENDL() }
+#define LOOPED() }
 
 BLOCK( ni_skin_data )
 //printf("read NiSkinData\n");
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, A )
 LOOP ( bone_list, bone_data, A, num_bones )
- SINK ( nif, bone_data, skin_transform )
- SINK ( nif, bone_data, bounding_sphere )
- SINK ( nif, bone_data, A )
- SAIL ( nif, bone_data, vertex_weights, A, num_vertices )
- ENDL ()
+	SINK ( nif, bone_data, skin_transform )
+	SINK ( nif, bone_data, bounding_sphere )
+	SINK ( nif, bone_data, A )
+	SAIL ( nif, bone_data, vertex_weights, A, num_vertices )
+LOOPED ()
 /*
 block->bone_list = malloc(sizeof(struct bone_data_t *) * block->A->num_bones);
 for (unsigned int i = 0; i < block->A->num_bones; i++)
@@ -391,37 +391,21 @@ BLOCKED ()
 BLOCK( ni_skin_partition )
 SINK ( nif, block, A )
 sink( nif, &block->vertex_data, block->A->data_size );
-
-int vertex, uvs, normals, tangents, colors, skinned;
-nif_bs_vertex_desc(block->A->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
-if ( vertex && uvs && normals && tangents && skinned );
-else {
-	printf(" can't read this flavor\n ");
-	block->vertex_data = NULL;
-}
 LOOP ( partitions, skin_partition, A, num_partitions )
- SINK ( nif, skin_partition, nums )
- printf(" num vertices, triangles, bones, strips, weights per vertex: %u %u %u %u %u\n",
- skin_partition->nums->vertices,
- skin_partition->nums->triangles,
- skin_partition->nums->bones,
- skin_partition->nums->strips,
- skin_partition->nums->weights_per_vertex);
- SAIL ( nif, skin_partition, bones, nums, bones )
- SINK ( nif, skin_partition, has_vertex_map )
- SAIL ( nif, skin_partition, vertex_map, nums, vertices )
- SINK ( nif, skin_partition, has_vertex_weights )
- SAIL ( nif, skin_partition, vertex_weights, nums, vertices )
- SAIL ( nif, skin_partition, strip_lengths, nums, strips )
- SINK ( nif, skin_partition, has_faces )
- SAIL ( nif, skin_partition, triangles, nums, triangles )
- unsigned short *value = (unsigned short *)&skin_partition->triangles[0];
- printf(" value: %u %u %u\n", value[0], value[1], value[2]);
- SINK ( nif, skin_partition, has_bone_indices )
- SAIL ( nif, skin_partition, bone_indices, nums, vertices )
- SINK ( nif, skin_partition, F )
- SAIL ( nif, skin_partition, triangles_copy, nums, triangles )
- ENDL ()
+	SINK ( nif, skin_partition, nums )
+	SAIL ( nif, skin_partition, bones, nums, bones )
+	SINK ( nif, skin_partition, has_vertex_map )
+	SAIL ( nif, skin_partition, vertex_map, nums, vertices )
+	SINK ( nif, skin_partition, has_vertex_weights )
+	SAIL ( nif, skin_partition, vertex_weights, nums, vertices )
+	SAIL ( nif, skin_partition, strip_lengths, nums, strips )
+	SINK ( nif, skin_partition, has_faces )
+	SAIL ( nif, skin_partition, triangles, nums, triangles )
+	SINK ( nif, skin_partition, has_bone_indices )
+	SAIL ( nif, skin_partition, bone_indices, nums, vertices )
+	SINK ( nif, skin_partition, F )
+	SAIL ( nif, skin_partition, triangles_copy, nums, triangles )
+LOOPED ()
 BLOCKED ()
 
 BLOCK ( bs_tri_shape )
