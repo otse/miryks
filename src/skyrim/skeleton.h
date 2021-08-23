@@ -6,6 +6,9 @@
 
 #include <renderer/types.h>
 #include <renderer/group.h>
+#include <renderer/geometry.h>
+
+#define SHOW 1
 
 namespace skyrim
 {
@@ -42,6 +45,10 @@ namespace skyrim
 		Bone()
 		{
 			group = new Group;
+#if SHOW
+			group->geometry = new Geometry();
+			group->geometry->SetupMesh();
+#endif
 		};
 		mat4 rest, mod, diff;
 	};

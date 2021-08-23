@@ -22,13 +22,14 @@ namespace dark
 			fmkdir("temp/draugr/hkx");
 			fmkdir("temp/draugr/kf");
 
-			if (!exists("temp/draugr/hkx/skeleton.hkx"))
+			if (!exists("temp/draugr/kf/1hmattackf.kf"))
 			{
-				Bsa *animations = get_archives()[4];
+				printf("get draugr skeleton hkx from bsa");
+				Bsa *animations = get_archives()[3];
 				Rc *skeleton = bsa_find(animations, "meshes\\actors\\draugr\\character assets\\skeleton.hkx");
 
-				//if (skeleton)
-				//	printf("hkxcmd for draugr skeleton.hkx!\n");
+				if (skeleton)
+					printf("hkxcmd for draugr skeleton.hkx!\n");
 
 				const char *fld = "meshes\\actors\\draugr\\animations";
 				unsigned int i = 0;
@@ -62,7 +63,7 @@ namespace dark
 
 				cfout2("temp/draugr/hkx/skeleton.hkx", skeleton->buf, skeleton->size);
 
-				//printf("Sec, exporting hkx to kf");
+				printf("Sec, exporting hkx to kf");
 				system("hkxcmd.exe exportkf \"temp/draugr/hkx/skeleton.hkx\" \"temp/draugr/hkx/\" \"temp/draugr/kf\"");
 
 				//if (skeleton)
@@ -71,7 +72,7 @@ namespace dark
 			else
 			{
 				const char *path = "temp/draugr/kf/1hmattackf.kf";
-				//printf("fetching random draugr kf\n");
+				printf("fetching random draugr kf\n");
 				Nif *nif = calloc_nifp();
 				nif->path = path;
 				fbuf(path, (char **)&nif->buf);

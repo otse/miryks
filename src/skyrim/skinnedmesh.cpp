@@ -42,26 +42,25 @@ namespace skyrim
 	
 	void SkinnedMesh::initial()
 	{
-		/*
-		for (ni_ref index : shapes)
+		for (NiRef ref : shapes__)
 		{
 			//Group *group = mesh->groups[index];
-			auto shape = (ni_tri_shape *)nif_get_block(mesh->nif, index);
-			auto si = (ni_skin_instance *)nif_get_block(mesh->nif, shape->A->skin_instance);
-			auto sp = (ni_skin_partition *)nif_get_block(mesh->nif, si->A->skin_partition);
+			auto shape = (BSTriShape *)nif_get_block(nif, ref);
+			auto si = (NiSkinInstance *)nif_get_block(nif, shape->refs->skin);
+			auto sp = (NiSkinPartition *)nif_get_block(nif, si->A->skin_partition);
 			
-			for (unsigned int k = 0; k < *sp->num_skin_partition_blocks; k++)
+			for (unsigned int k = 0; k < sp->A->num_partitions; k++)
 			{
-				struct skin_partition *part = sp->skin_partition_blocks[k];
-				Group *group = mesh->groups[index]->groups[k];
+				SkinPartition *partition = sp->partitions[k];
+				Group *group = groups[ref]->groups[k];
 				Material *material = group->geometry->material;
 				material->boneMatrices.clear();
-				material->boneMatrices.reserve(part->A->num_bones);
+				material->boneMatrices.reserve(partition->nums->bones);
 				material->bindMatrix = group->matrixWorld;
-				for (int i = 0; i < part->A->num_bones; i++)
+				for (unsigned short i = 0; i < partition->nums->bones; i++)
 				{
-					auto node = (ni_node *)nif_get_block(mesh->nif, si->bones[part->bones[i]]);
-					char *name = nif_get_string(mesh->nif, node->common->F->name);
+					auto node = (NiNode *)nif_get_block(nif, si->bones[partition->bones[i]]);
+					char *name = nif_get_string(nif, node->common->F->name);
 					auto has = skeleton->bonesNamed.find(name);
 					if (has == skeleton->bonesNamed.end())
 					{
@@ -72,7 +71,7 @@ namespace skyrim
 					material->boneMatrices.push_back(bone->group->matrixWorld * inverse(bone->rest));
 				}
 			}
-		}*/
+		}
 	}
 
 	void SkinnedMesh::forward()
@@ -124,8 +123,6 @@ namespace skyrim
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		Material *material = smesh->lastGroup->geometry->material;
-		BSTriShape *shape = (BSTriShape *)nif_get_block(smesh->nif, smesh->lastShape);
-		printf("good %i %s\n", material, nif_get_string(smesh->nif, shape->common->F->name));
 		material->prepared = false;
 		if (!block->vertex_data)
 			return;
@@ -147,36 +144,25 @@ namespace skyrim
 		}
 		GLuint vbo;
 		glGenBuffers(1, &vbo);
-		printf("gen buffer vbo %u\n", vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, num_vertices * sizeof(Vertex), &(*vertices)[0], GL_STATIC_DRAW);
 
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
 			SkinPartition *partition = block->partitions[k];
-			if (k>0)
-				continue;
-			printf(
-					"partition nums vertices %u, triangles %u, bones %u, strips %u, weights %u\n",
-					partition->nums->vertices, partition->nums->triangles, partition->nums->bones, partition->nums->strips, partition->nums->weights_per_vertex);
 			Group *group = new Group;
 			Geometry *geometry = new Geometry();
 			group->geometry = geometry;
 			geometry->vbo = vbo;
 			geometry->material = new Material(*smesh->lastGroup->geometry->material);
-			printf("partition uses material %s\n", material->name.c_str());
-			//geometry->material->map = GetProduceTexture("textures\\actors\\draugr\\Armor.dds");
 			geometry->material->skinning = false;
-			geometry->material->testing = false;
-			geometry->material->zwrite = true;
-			geometry->material->opacity = 1;
+			geometry->material->modelSpaceNormals = true;
 			geometry->skinning = false;
-			geometry->Clear(0, 0);
+			geometry->Clear(0, partition->nums->triangles * 3);
 			if (!*partition->has_vertex_map)
 				break;
 			if (*partition->has_faces)
 			{
-				geometry->Clear(0, partition->nums->triangles * 3);
 				for (unsigned short i = 0; i < partition->nums->triangles; i++)
 				{
 					auto triangle = &partition->triangles[i];

@@ -275,6 +275,7 @@ SINK ( nif, block, B )
 BLOCKED ()
 
 BLOCK( ni_transform_data )
+printf("NiTransformData\n");
 SINK ( nif, block, A )
 
 if ( block->A->num_rotation_keys > 0 )

@@ -42,6 +42,8 @@ namespace skyrim
 		void construct();
 		void forward();
 		virtual void v () {};
+		
+		std::vector<NiRef> shapes__;
 	};
 
 	// should have its own .h XD
@@ -51,7 +53,6 @@ namespace skyrim
 		Skeleton *skeleton = nullptr;
 
 		NiRef lastShape;
-		//std::vector<SkinPartition *> skins;
 		SkinnedMesh();
 		SkinnedMesh(Nif *, Skeleton *);
 		void construct();

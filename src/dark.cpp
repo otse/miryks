@@ -88,7 +88,6 @@ int main()
 	//someHuman = new Human();
 	//someHuman->Place("gloomgenman");
 #endif
-\
 	//player1 = new Player();
 	program_while();
 	return 1;

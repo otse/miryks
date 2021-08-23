@@ -28,7 +28,7 @@ namespace skyrim
 	{
 		load(anam);
 		construct();
-		baseBone->group->visible = false;
+		// baseBone->group->visible = false;
 	}
 
 	void Skeleton::load(const char *anam)
@@ -36,7 +36,7 @@ namespace skyrim
 		// printf("skeleton load anam %s\n", anam);
 		Rc *rc = load_rc("meshes\\", anam, 0x1);
 		nif = import_nif(rc, true);
-		// printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
+		printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
 
 	void Skeleton::construct()
@@ -94,6 +94,7 @@ namespace skyrim
 
 	void Animation::step()
 	{
+		//printf("animstep");
 		float adv = delta;
 		if (play)
 			time += adv;
@@ -138,6 +139,7 @@ namespace skyrim
 					if (key->time <= time || num == 1)
 					{
 						ro = gloomVec4(key->value);
+						//printf("ro.x%f\n", ro.x);
 						break;
 					}
 				}

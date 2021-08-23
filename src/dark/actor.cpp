@@ -76,6 +76,7 @@ namespace dark
 		smesh = new SkinnedMesh(character, skeleton);
 		if (raceId == "DraugrRace")
 		{
+			printf("animation!\n");
 			animation = new Animation(draugrAttack);
 			animation->skeleton = skeleton;
 			skeleton->animation = animation;

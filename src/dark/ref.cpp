@@ -135,7 +135,7 @@ namespace dark
 		}
 		else if (baseObject.sig(MSTT))
 		{
-			printf("this is a mstt\n");
+			// printf("this is a mstt\n");
 
 			auto modl = baseObject.data<const char *>("MODL", 0);
 

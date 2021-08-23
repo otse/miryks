@@ -187,9 +187,9 @@ namespace skyrim
 	void bs_tri_shape_callback(Rd *rd, BSTriShape *block)
 	{
 		//if (dynamic_cast<SkinnedMesh *>(mesh))
-		
 		// printf("mesh.cpp bs tri shape callback !!! ");
 		Mesh *mesh = (Mesh *)rd->data;
+		mesh->shapes__.push_back(rd->current);
 		Group *group = mesh->make_new_group(rd);
 		matrix_from_common(group, block->common);
 		Geometry *geometry = new Geometry();
@@ -319,7 +319,7 @@ namespace skyrim
 			material->name += "Textured";
 			for (int i = 0; i < block->A->num_textures; i++)
 			{
-				if (!i && dynamic_cast<SkinnedMesh *>(mesh)) printf("%s\n", block->textures[i]);
+				//if (!i && dynamic_cast<SkinnedMesh *>(mesh)) printf("%s\n", block->textures[i]);
 				std::string path = std::string(block->textures[i]);
 				if (path.empty())
 					continue;
