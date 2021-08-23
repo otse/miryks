@@ -69,6 +69,7 @@ namespace skyrim
 					}
 					Bone *bone = has->second;
 					material->boneMatrices.push_back(bone->group->matrixWorld * inverse(bone->rest));
+					//printf("b");
 				}
 			}
 		}
@@ -154,10 +155,11 @@ namespace skyrim
 			Geometry *geometry = new Geometry();
 			group->geometry = geometry;
 			geometry->vbo = vbo;
+			geometry->skinning = true;
 			geometry->material = new Material(*smesh->lastGroup->geometry->material);
-			geometry->material->skinning = false;
+			geometry->material->bones = partition->nums->bones;
+			geometry->material->skinning = true;
 			geometry->material->modelSpaceNormals = true;
-			geometry->skinning = false;
 			geometry->Clear(0, partition->nums->triangles * 3);
 			if (!*partition->has_vertex_map)
 				break;
