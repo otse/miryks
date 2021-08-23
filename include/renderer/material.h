@@ -16,6 +16,9 @@ struct Material
 	Shader *shader;
 	Texture *map, *normalMap, *glowMap;
 
+	// todo what is testing
+	// it uses lequal but messes up decals when set to true by default
+
 	bool transparent, doubleSided, blending, testing, zwrite, decal, tangents, skinning;
 	bool dust, modelSpaceNormals, vertexColors;
 

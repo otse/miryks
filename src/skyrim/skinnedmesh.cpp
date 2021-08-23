@@ -115,26 +115,27 @@ namespace skyrim
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
 		Material *material = smesh->lastGroup->geometry->material;
 		BSTriShape *shape = (BSTriShape *)nif_get_block(smesh->nif, smesh->lastShape);
-		printf("good %s\n", nif_get_string(smesh->nif, shape->common->F->name));
+		printf("good %i %s\n", material, nif_get_string(smesh->nif, shape->common->F->name));
 		material->prepared = false;
-		smesh->lastGroup->geometry = nullptr;
+		//smesh->lastGroup->geometry = nullptr;
 		if (!block->vertex_data)
 			return;
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
-			if (k>0)
-			break;
 			SkinPartition *partition = block->partitions[k];
-			printf("partition num vertices %u triangles %u\n", partition->nums->vertices, partition->nums->triangles);
+			//printf(
+			//		"partition nums vertices %u, triangles %u, bones %u, strips %u, weights %u\n",
+			//		partition->nums->vertices, partition->nums->triangles, partition->nums->bones, partition->nums->strips, partition->nums->weights_per_vertex);
+			//if (k>0)
+				//break;
 			Group *group = new Group;
 			group->geometry = new Geometry();
 			Geometry *geometry = group->geometry;
-			geometry->material = material;
-			/*geometry->material = new Material;
-			geometry->material->zwrite = true;
-			geometry->material->testing = true;
-			geometry->material->src = &simple;*/
-			//geometry->skinning = true;
+			geometry->material = new Material(*smesh->lastGroup->geometry->material);
+			printf("partition uses material %s\n", material->name.c_str());
+			//geometry->material->map = GetProduceTexture("textures\\actors\\draugr\\Armor.dds");
+			geometry->material->skinning = false;
+			geometry->skinning = false;
 			geometry->Clear(0, 0);
 			if (*partition->has_faces)
 			{
@@ -149,10 +150,10 @@ namespace skyrim
 			{
 				if (!*partition->has_vertex_map)
 					break;
+				
 				unsigned short j = partition->vertex_map[i];
 				auto vertex = &block->vertex_data[j];
 				geometry->vertices[i].position = gloomVec3(vertex->vertex);
-				continue;
 				//if (block->vertex_desc & 0x00000001)
 					geometry->vertices[i].uv = halftexcoord((unsigned short *)&vertex->uv);
 				//if (block->C->has_normals)
@@ -163,6 +164,7 @@ namespace skyrim
 					geometry->vertices[i].tangent = bytestofloat((unsigned char *)&vertex->tangent);
 					//geometry->vertices[i].bitangent = gloomVec3(data->bitangents[j]);
 				}
+				continue;
 				//if (data->G->has_vertex_colors)
 				if (*partition->has_bone_indices)
 				{

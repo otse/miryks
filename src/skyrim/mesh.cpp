@@ -197,9 +197,7 @@ namespace skyrim
 		geometry->material->src = &simple;
 		const char *name = nif_get_string(rd->nif, block->common->F->name);
 		if (strstr(name, "Marker"))
-		{
 			return;
-		}
 		if (!block->infos->num_vertices)
 			return;
 		if (!block->vertex_data_all && !block->vertex_data_no_clr)
@@ -252,6 +250,8 @@ namespace skyrim
 		if (geometry)
 		{
 			Material *material = geometry->material;
+			material->name += "LightingShader";
+			material->zwrite = false;
 			material->color = vec3(1.0);
 			material->emissive = gloomVec3(block->B->emissive_color);
 			material->specular = gloomVec3(block->B->specular_color);
@@ -289,6 +289,8 @@ namespace skyrim
 		if (geometry)
 		{
 			Material *material = geometry->material;
+			material->name += "EffectShader";
+			material->zwrite = false;
 			material->src = &fxs;
 			material->transparent = true;
 			material->color = gloomVec3(block->D->base_color);
@@ -314,8 +316,10 @@ namespace skyrim
 		if (geometry)
 		{
 			Material *material = geometry->material;
+			material->name += "Textured";
 			for (int i = 0; i < block->A->num_textures; i++)
 			{
+				if (!i && dynamic_cast<SkinnedMesh *>(mesh)) printf("%s\n", block->textures[i]);
 				std::string path = std::string(block->textures[i]);
 				if (path.empty())
 					continue;

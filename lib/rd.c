@@ -61,6 +61,7 @@ static void visit(Rd *rd, int parent, int current)
 		}
 	}
 
+	#ifdef SLE
 	else if ( nif_types(NiTriShapeS, BSLODTriShapeS, NULL) )
 	{
 		traverse_once
@@ -74,15 +75,14 @@ static void visit(Rd *rd, int parent, int current)
 		visit(rd, current, block->B->shader_property);
 		visit(rd, current, block->B->alpha_property);
 	}
-
 	else if ( nif_type(NiTriShapeDataS) )
 	{
 		needs_parent
 		if (rd->ni_tri_shape_data_callback)
 			rd->ni_tri_shape_data_callback(rd, Blocks[current]);
 	}
+	#endif
 
-	special_edition
 	else if ( nif_type(BSTriShapeS) )
 	{
 		needs_parent

@@ -26,6 +26,7 @@ Material::Material()
 
 	testFunc = GL_LESS;
 
+	zwrite = true;
 	opacity = 1;
 	treshold = 0;
 	shininess = 5;
