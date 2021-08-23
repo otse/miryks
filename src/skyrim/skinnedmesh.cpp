@@ -117,21 +117,23 @@ namespace skyrim
 		BSTriShape *shape = (BSTriShape *)nif_get_block(smesh->nif, smesh->lastShape);
 		printf("good %s\n", nif_get_string(smesh->nif, shape->common->F->name));
 		material->prepared = false;
-		//smesh->lastGroup->geometry = nullptr;
-		unsigned int numVertices = block->A->data_size / block->A->vertex_size;
+		smesh->lastGroup->geometry = nullptr;
 		if (!block->vertex_data)
-			return;
-		if (!numVertices)
 			return;
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
+			if (k>0)
+			break;
 			SkinPartition *partition = block->partitions[k];
-			printf("has vertex map %u\n", *partition->has_vertex_map);
+			printf("partition num vertices %u triangles %u\n", partition->nums->vertices, partition->nums->triangles);
 			Group *group = new Group;
 			group->geometry = new Geometry();
 			Geometry *geometry = group->geometry;
-			geometry->material = new Material;
-			geometry->material->src = &simple;
+			geometry->material = material;
+			/*geometry->material = new Material;
+			geometry->material->zwrite = true;
+			geometry->material->testing = true;
+			geometry->material->src = &simple;*/
 			//geometry->skinning = true;
 			geometry->Clear(0, 0);
 			if (*partition->has_faces)
@@ -140,7 +142,7 @@ namespace skyrim
 				for (unsigned short i = 0; i < partition->nums->triangles; i++)
 				{
 					auto triangle = &partition->triangles[i];
-					geometry->elements.insert(geometry->elements.end(), { triangle->x, triangle->y, triangle->z });
+					geometry->elements.insert(geometry->elements.end(), { triangle->a, triangle->b, triangle->c });
 				}
 			}
 			for (unsigned short i = 0; i < partition->nums->vertices; i++)
@@ -150,6 +152,7 @@ namespace skyrim
 				unsigned short j = partition->vertex_map[i];
 				auto vertex = &block->vertex_data[j];
 				geometry->vertices[i].position = gloomVec3(vertex->vertex);
+				continue;
 				//if (block->vertex_desc & 0x00000001)
 					geometry->vertices[i].uv = halftexcoord((unsigned short *)&vertex->uv);
 				//if (block->C->has_normals)

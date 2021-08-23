@@ -209,15 +209,15 @@ namespace skyrim
 			return;
 		if (block->infos->num_triangles)
 		{
-			for (int i = 0; i < block->infos->num_triangles; i++)
+			for (unsigned short i = 0; i < block->infos->num_triangles; i++)
 			{
-				unsigned short *triangle = (unsigned short *)&block->triangles[i];
-				geometry->elements.insert(geometry->elements.end(), {triangle[0], triangle[1], triangle[2]});
+				auto triangle = block->triangles[i];
+				geometry->elements.insert(geometry->elements.end(), { triangle.a, triangle.b, triangle.c });
 			}
 		}
 		if ( block->vertex_data_all )
 		{
-		for (int i = 0; i < block->infos->num_vertices; i++)
+		for (unsigned short i = 0; i < block->infos->num_vertices; i++)
 		{
 			struct bs_vertex_data_sse_all *vertex_data = &block->vertex_data_all[i]; 
 			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);
@@ -231,7 +231,7 @@ namespace skyrim
 		}
 		if ( block->vertex_data_no_clr )
 		{
-		for (int i = 0; i < block->infos->num_vertices; i++)
+		for (unsigned short i = 0; i < block->infos->num_vertices; i++)
 		{
 			struct bs_vertex_data_sse_no_clr *vertex_data = &block->vertex_data_no_clr[i]; 
 			geometry->vertices[i].position = gloomVec3(vertex_data->vertex);

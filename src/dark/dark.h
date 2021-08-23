@@ -74,8 +74,8 @@ namespace dark
 
 	// nifp float structs to glm
 	inline vec2 *cast_vec_2(float *f) { return reinterpret_cast<vec2 *>(f); }
-	inline vec3 *cast_vec_3(float *f) { return reinterpret_cast<vec3 *>(f); }
 	inline vec4 *cast_vec_4(float *f) { return reinterpret_cast<vec4 *>(f); }
+	inline vec3 *cast_vec_3(float *f) { return reinterpret_cast<vec3 *>(f); }
 	inline mat3 *cast_mat_3(float *f) { return reinterpret_cast<mat3 *>(f); }
 	inline mat4 *cast_mat_4(float *f) { return reinterpret_cast<mat4 *>(f); }
 

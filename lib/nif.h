@@ -276,7 +276,7 @@ struct skin_partition_t
 	Vec4f *vertex_weights;
 	unsigned short *strip_lengths;
 	unsigned char *has_faces;
-	struct { unsigned short x, y, z; } *triangles;
+	struct { unsigned short a, b, c; } *triangles;
 	unsigned char *has_bone_indices;
 	Vec4b *bone_indices;
 	struct {

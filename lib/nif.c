@@ -355,20 +355,21 @@ if (nif_type(BSDismemberSkinInstanceS))
 }
 BLOCKED ()
 
-// add some ugly macros
+// add ugly macro for looping subblocks
+
+#define SUBBLOCK(x, y, group, num) LOOP(x, y, group, num)
 #define LOOP(x, y, group, num) \
 	block->x = calloc(block->group->num, sizeof(struct y ## _t *)); \
 	for (unsigned int i = 0; i < block->group->num; i++) { \
 	block->x[i] = malloc(sizeof(struct y ## _t)); \
 	struct y ## _t *y = block->x[i];
-	
 #define LOOPED() }
 
 BLOCK( ni_skin_data )
 //printf("read NiSkinData\n");
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, A )
-LOOP ( bone_list, bone_data, A, num_bones )
+SUBBLOCK ( bone_list, bone_data, A, num_bones )
 	SINK ( nif, bone_data, skin_transform )
 	SINK ( nif, bone_data, bounding_sphere )
 	SINK ( nif, bone_data, A )
@@ -391,7 +392,7 @@ BLOCKED ()
 BLOCK( ni_skin_partition )
 SINK ( nif, block, A )
 sink( nif, &block->vertex_data, block->A->data_size );
-LOOP ( partitions, skin_partition, A, num_partitions )
+SUBBLOCK ( partitions, skin_partition, A, num_partitions )
 	SINK ( nif, skin_partition, nums )
 	SAIL ( nif, skin_partition, bones, nums, bones )
 	SINK ( nif, skin_partition, has_vertex_map )
