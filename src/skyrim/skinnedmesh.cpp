@@ -46,12 +46,14 @@ namespace skyrim
 		{
 			//Group *group = mesh->groups[index];
 			auto shape = (BSTriShape *)nif_get_block(nif, ref);
-			auto si = (NiSkinInstance *)nif_get_block(nif, shape->refs->skin);
-			auto sp = (NiSkinPartition *)nif_get_block(nif, si->A->skin_partition);
+			auto nsi = (NiSkinInstance *)nif_get_block(nif, shape->refs->skin);
+			auto nsp = (NiSkinPartition *)nif_get_block(nif, nsi->A->skin_partition);
 			
-			for (unsigned int k = 0; k < sp->A->num_partitions; k++)
+			for (unsigned int k = 0; k < nsp->A->num_partitions; k++)
 			{
-				SkinPartition *partition = sp->partitions[k];
+				//if (k > 0)
+				//	break;
+				SkinPartition *partition = nsp->partitions[k];
 				Group *group = groups[ref]->groups[k];
 				Material *material = group->geometry->material;
 				material->boneMatrices.clear();
@@ -59,7 +61,7 @@ namespace skyrim
 				material->bindMatrix = group->matrixWorld;
 				for (unsigned short i = 0; i < partition->nums->bones; i++)
 				{
-					auto node = (NiNode *)nif_get_block(nif, si->bones[partition->bones[i]]);
+					auto node = (NiNode *)nif_get_block(nif, nsi->bones[partition->bones[i]]);
 					char *name = nif_get_string(nif, node->common->F->name);
 					auto has = skeleton->bonesNamed.find(name);
 					if (has == skeleton->bonesNamed.end())
@@ -69,7 +71,9 @@ namespace skyrim
 					}
 					Bone *bone = has->second;
 					material->boneMatrices.push_back(bone->group->matrixWorld * inverse(bone->rest));
-					//printf("b");
+					
+					//Group *node_group = groups[nsi->bones[partition->bones[i]]];
+					//node_group->matrixWorld = bone->group->matrixWorld;
 				}
 			}
 		}
@@ -119,6 +123,17 @@ namespace skyrim
 	void ni_skin_data_callback(Rd *rd, NiSkinData *block)
 	{
 		//printf("ni skin data\n");
+		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
+		return;
+		/*
+		Group *lastGroup = smesh->lastGroup;
+		Group *group = smesh->make_new_group(rd);
+		group->geometry = lastGroup->geometry;
+		group->matrix = translate(group->matrix, gloomVec3(block->skin_transform->translation));
+		group->matrix *= inverse(mat4(gloomMat3(block->skin_transform->rotation)));
+		group->matrix = scale(group->matrix, vec3(block->skin_transform->scale));
+		*/
+
 	}
 	void ni_skin_partition_callback(Rd *rd, NiSkinPartition *block)
 	{
@@ -150,6 +165,8 @@ namespace skyrim
 
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
+			//if (k > 0)
+			//	continue;
 			SkinPartition *partition = block->partitions[k];
 			Group *group = new Group;
 			Geometry *geometry = new Geometry();

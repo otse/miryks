@@ -95,7 +95,7 @@ namespace dark
 		if (ref != dungeon->edIds.end())
 		{
 			Group *group = new Group();
-			group->Add(skeleton->baseBone->group);
+			//group->Add(skeleton->baseBone->group);
 			group->Add(smesh->baseGroup);
 			//printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
