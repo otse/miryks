@@ -81,7 +81,7 @@ void cont_menu()
 	auto name = cont->data<const char *>("FULL");
 
 	ImGui::PushFont(dark::font2);
-	ImGui::TextWrapped("%s has %u things", name, cont->items.size());
+	ImGui::TextWrapped("%s with %u things", name, cont->items.size());
 	ImGui::Separator();
 
 	for (const Item &item : cont->items)

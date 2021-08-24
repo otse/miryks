@@ -122,6 +122,8 @@ namespace dark
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
 	}
 
+	// a human is either a beggar, or a greybeard
+	// right now a greybeard will crash the game
 	Human::Human()
 	{
 		//Object race = Object(GetRace("ImperialRace"));
@@ -132,11 +134,11 @@ namespace dark
 		const bool greybeard = false;
 		if (beggar)
 		{
-			//hat = new BodyPart("ImperialRace", "clothes\\beggarclothes\\hatm_0.nif");
+			hat = new BodyPart("ImperialRace", "clothes\\beggarclothes\\hatm_0.nif");
 			//head = new BodyPart("ImperialRace", "actors\\character\\character assets\\malehead.nif");
 			body = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonerclothes_0.nif");
-			//hands = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonercuffs_0.nif");
-			//feet = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonershoes_0.nif");
+			hands = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonercuffs_0.nif");
+			feet = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonershoes_0.nif");
 		}
 		if (greybeard)
 		{
@@ -195,23 +197,19 @@ namespace dark
 		}
 	}
 
-#define NO_HUMAN_PLAYER 1
-
 	Player::Player()
 	{
 		//printf(" Player() \n");
 		// We take over with custom movement
 		Camera::DISABLE_MOVEMENT = true;
-#if NO_HUMAN_PLAYER
 		human = new Human();
 		//human->Place("gloomgenman");
-		drawGroup = new DrawGroup(human->group, mat4());
+		drawGroup = new DrawGroup(human->group, mat4(1.0));
 		drawGroup->group->visible = false;
 		sceneDef->drawGroups.Add(drawGroup);
 //cameraCur->group->Add(human->group);
 //fpc = new FirstPersonCamera;
-#endif
-		pose = vec3(cameraCur->pos);
+		pose = vec3(personCam->pos);
 
 		thirdPersonCamera = new ViewerCamera;
 	}
@@ -228,7 +226,6 @@ namespace dark
 		{
 			//human->
 		}
-#if NO_HUMAN_PLAYER
 		human->step();
 		//if (!dynamic_cast<FirstPersonCamera *>(cameraCur))
 		//	return;
@@ -236,7 +233,6 @@ namespace dark
 		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
 		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCur->yaw, vec3(0, 0, 1));
 		drawGroup->Reset();
-#endif
 	}
 
 	void Player::toggleView()
@@ -246,9 +242,7 @@ namespace dark
 		if (thirdPerson)
 		{
 			cameraCur = thirdPersonCamera;
-#if NO_HUMAN_PLAYER
 			drawGroup->group->visible = true;
-#endif
 			thirdPersonCamera->pos = pose;
 			thirdPersonCamera->yaw = personCam->yaw;
 			thirdPersonCamera->pitch = personCam->pitch;
@@ -257,9 +251,7 @@ namespace dark
 		else
 		{
 			cameraCur = personCam;
-#if NO_HUMAN_PLAYER
 			drawGroup->group->visible = false;
-#endif
 			personCam->pos = pose;
 			personCam->yaw = thirdPersonCamera->yaw;
 			personCam->pitch = thirdPersonCamera->pitch;

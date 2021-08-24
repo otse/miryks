@@ -254,7 +254,40 @@ struct vertex_data_t
 	unsigned char bitangent_y;
 	Vec3b tangent;
 	unsigned char bitangent_z;
-	//Vec4b vertex_colors;
+	Vec4b colors;
+	struct {
+		unsigned short a, b, c, d;
+	} bone_weights;
+	struct {
+		unsigned char a, b, c, d;
+	} bone_indices;
+};
+
+struct vertex_data_2_t
+{
+	Vec3 vertex;
+	float bitangent_x;
+	struct { unsigned short u, v; } uv;
+	Vec3b normal;
+	unsigned char bitangent_y;
+	Vec3b tangent;
+	unsigned char bitangent_z;
+	// no color
+	struct {
+		unsigned short a, b, c, d;
+	} bone_weights;
+	struct {
+		unsigned char a, b, c, d;
+	} bone_indices;
+};
+
+struct vertex_data_3_t
+{
+	Vec3 vertex;
+	int unknown_int;
+	// no tangents normals
+	struct { unsigned short u, v; } uv;
+	Vec4b colors;
 	struct {
 		unsigned short a, b, c, d;
 	} bone_weights;

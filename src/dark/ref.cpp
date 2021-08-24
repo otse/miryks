@@ -334,7 +334,7 @@ namespace dark
 		static bool open = true;
 		//char s[100];
 		ImGui::Begin("##Item", &open, flags);
-		ImGui::PushFont(font3);
+		ImGui::PushFont(font2);
 		//ImGui::PushStyleColor(IMGUI_FON)
 		//ImGui::Text(itemName);
 		//ImGui::TextColored(ImVec4(1, 1, 1, 1), EDID);

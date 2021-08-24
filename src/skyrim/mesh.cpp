@@ -258,17 +258,14 @@ namespace skyrim
 			material->specular *= block->B->specular_strength;
 			material->opacity = block->B->alpha;
 			material->glossiness = block->B->glossiness;
-			if (block->B->shader_flags_1 & 0x00000002)
-				; // material->skinning = true;
-			else
+			if (!(block->B->shader_flags_1 & 0x00000002))
 				material->dust = true;
+			if (block->B->shader_flags_1 & 0x00001000)
+				material->modelSpaceNormals = true;
 			if (block->B->shader_flags_1 & 0x04000000)
 				material->decal = true;
 			if (block->B->shader_flags_1 & 0x08000000) // dynamic
 				material->decal = true;
-			if (block->B->shader_flags_1 & 0x00001000)
-				//printf("Model_Space_Normals\n");
-				material->modelSpaceNormals = true;
 			if (block->B->shader_flags_2 & 0x00000001)
 				material->zwrite = true;
 			if (block->B->shader_flags_2 & 0x00000020)

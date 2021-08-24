@@ -124,6 +124,11 @@ namespace skyrim
 			return;
 		unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
 
+		int vertices, uvs, normals, tangents, colors, skinned;
+		nif_bs_vertex_desc(block->A->vertex_desc, &vertices, &uvs, &normals, &tangents, &colors, &skinned);
+
+
+
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
 			SkinPartition *partition = block->partitions[k];
@@ -136,23 +141,46 @@ namespace skyrim
 			group->geometry = geometry;
 			geometry->skinning = true;
 			geometry->material = new Material(*smesh->lastGroup->geometry->material);
+			geometry->material->tangents = tangents;
 			geometry->material->bones = partition->nums->bones;
 			geometry->material->skinning = true;
-			geometry->material->modelSpaceNormals = true;
 			geometry->Clear(partition->nums->vertices, partition->nums->triangles * 3);
 			std::map<unsigned short, unsigned short> remap;
 			for (unsigned short i = 0; i < partition->nums->vertices; i++)
 			{
 				unsigned short j = partition->vertex_map[i];
 				remap.emplace(j, i);
-				auto data = &block->vertex_data[j];
 				Vertex vertex;
-				vertex.position = cast_vec3(&data->vertex);
-				vertex.uv = halftexcoord(&data->uv);
-				vertex.normal = bytestofloat(&data->normal);
-				vertex.tangent = bytestofloat(&data->tangent);
-				vertex.skin_index = cast_bvec4(&partition->bone_indices[i]);
-				vertex.skin_weight = cast_vec4(&partition->vertex_weights[i]);
+				if (vertices && uvs && normals && tangents && colors && skinned)
+				{
+					auto data = &((vertex_data_t *)block->vertex_data)[j];
+					vertex.position = cast_vec3(&data->vertex);
+					vertex.uv = halftexcoord(&data->uv);
+					vertex.normal = bytestofloat(&data->normal);
+					vertex.tangent = bytestofloat(&data->tangent);
+					vertex.color = vec4(cast_bvec4(&data->colors)) / 255.f;
+					vertex.skin_index = cast_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = cast_vec4(&partition->vertex_weights[i]);
+				}
+				else if (vertices && uvs && normals && tangents && !colors && skinned)
+				{
+					auto data = &((vertex_data_2_t *)block->vertex_data)[j];
+					vertex.position = cast_vec3(&data->vertex);
+					vertex.uv = halftexcoord(&data->uv);
+					vertex.normal = bytestofloat(&data->normal);
+					vertex.tangent = bytestofloat(&data->tangent);
+					vertex.skin_index = cast_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = cast_vec4(&partition->vertex_weights[i]);
+				}
+				else if (vertices && uvs && !normals && !tangents && colors && skinned)
+				{
+					auto data = &((vertex_data_3_t *)block->vertex_data)[j];
+					vertex.position = cast_vec3(&data->vertex);
+					vertex.uv = halftexcoord(&data->uv);
+					vertex.color = vec4(cast_bvec4(&data->colors)) / 255.f;
+					vertex.skin_index = cast_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = cast_vec4(&partition->vertex_weights[i]);
+				}
 				geometry->vertices[i] = vertex;
 			}
 			for (unsigned short i = 0; i < partition->nums->triangles; i++)

@@ -126,7 +126,7 @@ namespace dark
 			}
 			else
 			{
-				const char *path = "temp/character/kf/1hm_idle.kf";
+				const char *path = "anims/character/1hm_idle.kf";
 				// printf("fetching human idle kf\n");
 				Nif *nif = calloc_nifp();
 				nif->path = path;
