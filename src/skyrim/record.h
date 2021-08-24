@@ -18,7 +18,7 @@ namespace skyrim
 	class Record
 	{
 	public:
-		const record *rcd;
+		const struct record *rcd;
 
 		X()
 		{

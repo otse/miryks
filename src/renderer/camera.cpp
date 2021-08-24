@@ -18,7 +18,7 @@ Camera::Camera()
 	pitch = -pif / 2;
 	view = mat4(1);
 	pos = vec3(0);
-	fzoom = 50;
+	fov = 55;
 	freeze = false;
 	group = new Group;
 	drawGroup = new DrawGroup(group);
@@ -27,7 +27,7 @@ Camera::Camera()
 void Camera::SetProjection() {
 	float aspect = (float)width / (float)height;
 
-	projection = glm::perspective(radians(fzoom), aspect, 5.0f, 10000.0f);
+	projection = glm::perspective(radians(fov), aspect, 5.0f, 10000.0f);
 }
 
 FirstPersonCamera::FirstPersonCamera() : Camera()

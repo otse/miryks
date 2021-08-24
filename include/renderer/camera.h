@@ -20,7 +20,7 @@ public:
 	vec3 pos;
 	mat4 view, /*matrix,*/ projection;
 
-	float fzoom;
+	float fov;
 	bool freeze;
 
 	static double prev[2];

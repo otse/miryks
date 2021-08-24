@@ -5,29 +5,46 @@
 
 namespace skyrim
 {
+	class Item;
 	class Container;
+	class ItemRenderer;
+
 	typedef Container Cont;
 
-	class Container {
+	class Item : public Record {
 	public:
-		static Cont *current;
-		Record wrcd;
-		Container(Record wrcd) : wrcd(wrcd)
-		{
+		Item(Record rcd) : Record(rcd) {
 
+		}
+	};
+
+	class Container : public Record {
+	public:
+		static Cont *cur;
+		Container(Record rcd) : Record(rcd)
+		{
+			Init();
 		};
 		~Container() {}
+		std::vector<Item> items;
+		void Init();
 		void Render();
 		void Activate() {
-			current = this;
+			cur = this;
 		}
 		static void Hide() {
-			current = nullptr;
+			cur = nullptr;
 		}
 		static void Step() {
-			if (current)
-				current->Render();
+			if (cur)
+				cur->Render();
 		}
+	};
+
+	class ItemRenderer
+	{
+		ItemRenderer() {};
+		~ItemRenderer() {}
 	};
     
 }

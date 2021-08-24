@@ -88,7 +88,7 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 			cameraCur = personCam;
 			HideCursor();
 		}
-		else if (Cont::current)
+		else if (Cont::cur)
 		{
 			Cont::Hide();
 		}

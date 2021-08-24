@@ -280,8 +280,7 @@ namespace dark
 
 
 	bool Ref::Use() {
-		auto FULL = baseObject.data<char *>("FULL");
-		printf("Activating a %s", FULL);
+		printf("Use %s\n", baseObject.editorId());
 		if (baseObject.sig(CONT) && container)
 			container->Activate();
 		return true;
@@ -330,8 +329,8 @@ namespace dark
 		ImGui::PushFont(font3);
 		//ImGui::PushStyleColor(IMGUI_FON)
 		//ImGui::Text(itemName);
-		ImGui::TextColored(ImVec4(1, 1, 1, 1), EDID);
-		ImGui::NewLine();
+		//ImGui::TextColored(ImVec4(1, 1, 1, 1), EDID);
+		//ImGui::NewLine();
 		if (FULL)
 		ImGui::TextColored(ImVec4(1, 1, 1, 1), FULL);
 

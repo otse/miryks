@@ -21,22 +21,22 @@ namespace skyrim
 	class Grup
 	{
 	public:
-		cgrupp grp;
+		const struct grup *grp;
 
 		X()
 		{
 			grp = nullptr;
 		}
-		X(cgrupp p)
+		X(const grup *p)
 		{
 			grp = p;
 			(*this)(grp);
 		}
-		X &operator()(cgrupp p)
+		X &operator()(const grup *p)
 		{
 			grp = p;
 			assertc(grp->g == 'g');
-			esp_check_grup((grupp)grp);
+			esp_check_grup((grup *)grp);
 			return *this;
 		}
 		inline bool valid() const

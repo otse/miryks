@@ -20,11 +20,35 @@ void cont_menu();
 
 namespace skyrim
 {
-	Cont *Cont::current = nullptr;
+	Cont *Cont::cur = nullptr;
 
 	void Cont::Render()
 	{
 		cont_menu();
+	}
+
+	void Cont::Init()
+	{
+		unsigned int *coct = data<unsigned int *>("COCT");
+
+		for (int i = 0; i < *coct; i++)
+		{
+			// container object
+			struct Cnto
+			{
+				unsigned int item, count;
+			};
+			Cnto *cnto = data<Cnto *>("CNTO", i);
+			Record wrcd = esp_get_form_id(cnto->item);
+			if (wrcd.valid())
+			{
+				for (int j = 0; j < cnto->count; j++)
+				{
+					Item item(wrcd);
+					items.push_back(item);
+				}
+			}
+		}
 	}
 }
 
@@ -49,37 +73,15 @@ void cont_menu()
 	ImGui::TextWrapped("Container");
 	ImGui::Separator();
 
-	const Cont *cont = Cont::current;
-	
-	// container count
-	unsigned int *coct = cont->wrcd.data<unsigned int *>("COCT");
+	const Cont *cont = Cont::cur;
 
-	if (!*coct)
+	for (const Item &item : cont->items)
 	{
-		ImGui::TextWrapped("< Empty >");
+		auto FULL = item.data<const char *>("FULL");
+		auto EDID = item.data<const char *>("EDID");
+		auto name = FULL ? FULL : EDID;
+		ImGui::Text("%s", name);
 	}
-	else
-	{
-		ImGui::TextWrapped("Number of items: %u", *coct);
-
-		for (int i = 0; i < *coct; i++)
-		{
-			// container object
-			struct Cnto {
-				unsigned int item, count;
-			};
-			Cnto *cnto = cont->wrcd.data<Cnto *>("CNTO", i);
-			Record item = esp_get_form_id(cnto->item);
-			if (item.valid())
-			{
-				const char *EDID = item.data<const char *>("EDID");
-				const char *FULL = item.data<const char *>("FULL");
-				if (EDID)
-				ImGui::TextWrapped("%s", EDID);
-			}
-		}
-	}
-
 
 	ImGui::PopFont();
 
