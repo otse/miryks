@@ -169,9 +169,9 @@ namespace skyrim
 				vertex.uv = halftexcoord((unsigned short *)&data->uv);
 				vertex.normal = bytestofloat((unsigned char *)&data->normal);
 				vertex.tangent = bytestofloat((unsigned char *)&data->tangent);
-				auto bi = data->bone_indices;
-				vertex.skin_index = vec4(bi.a, bi.b, bi.c, bi.d);
-				vertex.skin_weight = halfweights((unsigned short *)&data->bone_weights);
+				auto bi = partition->bone_indices[i];
+				vertex.skin_index = vec4(bi.x, bi.y, bi.z, bi.w);
+				vertex.skin_weight = gloomVec4(partition->vertex_weights[i]);
 				geometry->vertices[i] = vertex;
 			}
 			for (unsigned short i = 0; i < partition->nums->triangles; i++)
