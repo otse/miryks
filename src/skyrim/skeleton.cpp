@@ -63,8 +63,8 @@ namespace skyrim
 
 	void matrix_from_common(Bone *bone, ni_common_layout_t *common)
 	{
-		bone->group->matrix = translate(bone->group->matrix, gloomVec3(common->A->translation));
-		bone->group->matrix *= inverse(mat4(gloomMat3(common->A->rotation)));
+		bone->group->matrix = translate(bone->group->matrix, *cast_vec3((float *)&common->A->translation));
+		bone->group->matrix *= inverse(mat4(*cast_mat3((float *)&common->A->rotation)));
 		bone->group->matrix = scale(bone->group->matrix, vec3(common->A->scale));
 		bone->group->Update();
 		bone->rest = bone->group->matrixWorld;
@@ -128,7 +128,7 @@ namespace skyrim
 			auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)
 				continue;
-			vec4 ro = gloomVec4(tip->transform->rotation);
+			vec4 ro = *cast_vec4((float *)&tip->transform->rotation);
 			int num = tdp->A->num_rotation_keys;
 			if (num)
 			{
@@ -138,7 +138,7 @@ namespace skyrim
 					//printf("qk %i time %f\n", i, key->time);
 					if (key->time <= time || num == 1)
 					{
-						ro = gloomVec4(key->value);
+						ro = *cast_vec4((float *)&key->value);
 						//printf("ro.x%f\n", ro.x);
 						break;
 					}
@@ -147,7 +147,7 @@ namespace skyrim
 			// else if (num == 1)
 			// 	ro = *cast_vec_4((float *)(&tdp->quaternion_keys[0].value));
 
-			vec3 tr = gloomVec3(tip->transform->translation);
+			vec3 tr = *cast_vec3((float *)&tip->transform->translation);
 			num = tdp->translations->num_keys;
 			if (num)
 			{
@@ -157,7 +157,7 @@ namespace skyrim
 					if (key->time <= time || num == 1)
 					{
 						//printf("tr time %f\n", key->time);
-						tr = gloomVec3(key->value);
+						tr = *cast_vec3((float *)&key->value);
 						break;
 					}
 				}

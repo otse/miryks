@@ -72,16 +72,12 @@ namespace dark
 	extern Human *someHuman;
 	extern Player *player1;
 
-	// nifp float structs to glm
-	inline vec2 *cast_vec_2(float *f) { return reinterpret_cast<vec2 *>(f); }
-	inline vec4 *cast_vec_4(float *f) { return reinterpret_cast<vec4 *>(f); }
-	inline vec3 *cast_vec_3(float *f) { return reinterpret_cast<vec3 *>(f); }
-	inline mat3 *cast_mat_3(float *f) { return reinterpret_cast<mat3 *>(f); }
-	inline mat4 *cast_mat_4(float *f) { return reinterpret_cast<mat4 *>(f); }
-
-#define gloomVec3(X) *cast_vec_3((float *)&X)
-#define gloomVec4(X) *cast_vec_4((float *)&X)
-#define gloomMat3(X) *cast_mat_3((float *)&X)
+	inline vec2 *cast_vec2(float *f) { return reinterpret_cast<vec2 *>(f); }
+	inline vec4 *cast_vec4(float *f) { return reinterpret_cast<vec4 *>(f); }
+	inline bvec4 *cast_bvec4(unsigned char *u) { return reinterpret_cast<bvec4 *>(u); }
+	inline vec3 *cast_vec3(float *f) { return reinterpret_cast<vec3 *>(f); }
+	inline mat3 *cast_mat3(float *f) { return reinterpret_cast<mat3 *>(f); }
+	inline mat4 *cast_mat4(float *f) { return reinterpret_cast<mat4 *>(f); }
 
 }
 

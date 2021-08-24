@@ -165,13 +165,13 @@ namespace skyrim
 				remap.emplace(j, i);
 				auto data = &block->vertex_data[j];
 				Vertex vertex;
-				vertex.position = gloomVec3(data->vertex);
+				vertex.position = *cast_vec3((float *)&data->vertex);
 				vertex.uv = halftexcoord((unsigned short *)&data->uv);
 				vertex.normal = bytestofloat((unsigned char *)&data->normal);
 				vertex.tangent = bytestofloat((unsigned char *)&data->tangent);
 				auto bi = partition->bone_indices[i];
-				vertex.skin_index = vec4(bi.x, bi.y, bi.z, bi.w);
-				vertex.skin_weight = gloomVec4(partition->vertex_weights[i]);
+				vertex.skin_index = *cast_bvec4((unsigned char *)&partition->bone_indices[i]);
+				vertex.skin_weight = *cast_vec4((float *)&partition->vertex_weights[i]);
 				geometry->vertices[i] = vertex;
 			}
 			for (unsigned short i = 0; i < partition->nums->triangles; i++)
