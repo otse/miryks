@@ -46,7 +46,6 @@ build/obj/Release/Dark2.vcxproj.FileListAbsolute.txt
 build/obj/Debug/Dark2.vcxproj.FileListAbsolute.txt
 build/obj/Debug/vc142.idb
 bin/error.txt
-bin/imgui.ini
 bin/error.txt
 bin/Dark2.ilk
 *.db-shm
