@@ -259,7 +259,7 @@ namespace skyrim
 			material->opacity = block->B->alpha;
 			material->glossiness = block->B->glossiness;
 			if (block->B->shader_flags_1 & 0x00000002)
-				material->skinning = true;
+				; // material->skinning = true;
 			else
 				material->dust = true;
 			if (block->B->shader_flags_1 & 0x04000000)

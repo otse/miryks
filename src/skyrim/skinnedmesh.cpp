@@ -9,6 +9,8 @@ extern "C"
 #include <renderer/texture.h>
 #include <renderer/types.h>
 
+#include <map>
+
 using namespace dark;
 
 namespace skyrim
@@ -51,8 +53,6 @@ namespace skyrim
 			
 			for (unsigned int k = 0; k < nsp->A->num_partitions; k++)
 			{
-				//if (k > 0)
-				//	break;
 				SkinPartition *partition = nsp->partitions[k];
 				Group *group = groups[ref]->groups[k];
 				Material *material = group->geometry->material;
@@ -138,61 +138,53 @@ namespace skyrim
 	void ni_skin_partition_callback(Rd *rd, NiSkinPartition *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
-		Material *material = smesh->lastGroup->geometry->material;
-		material->prepared = false;
 		if (!block->vertex_data)
 			return;
 		unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
-		std::vector<Vertex> *vertices = new std::vector<Vertex>;
-		vertices->reserve(num_vertices);
-		for (unsigned short i = 0; i < num_vertices; i++)
-		{
-			auto data = &block->vertex_data[i];
-			Vertex vertex;
-			vertex.position = gloomVec3(data->vertex);
-			vertex.uv = halftexcoord((unsigned short *)&data->uv);
-			vertex.normal = bytestofloat((unsigned char *)&data->normal);
-			vertex.tangent = bytestofloat((unsigned char *)&data->tangent);
-			auto bi = data->bone_indices;
-			vertex.skin_index = vec4(bi.a, bi.b, bi.c, bi.d);
-			vertex.skin_weight = halfweights((unsigned short *)&data->bone_weights);
-			vertices->push_back(vertex);
-		}
-		GLuint vbo;
-		glGenBuffers(1, &vbo);
-		glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBufferData(GL_ARRAY_BUFFER, num_vertices * sizeof(Vertex), &(*vertices)[0], GL_STATIC_DRAW);
 
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
-			//if (k > 0)
-			//	continue;
 			SkinPartition *partition = block->partitions[k];
+			if (!*partition->has_vertex_map)
+				break;
+			if (!*partition->has_faces)
+				break;
 			Group *group = new Group;
 			Geometry *geometry = new Geometry();
 			group->geometry = geometry;
-			geometry->vbo = vbo;
 			geometry->skinning = true;
 			geometry->material = new Material(*smesh->lastGroup->geometry->material);
 			geometry->material->bones = partition->nums->bones;
 			geometry->material->skinning = true;
 			geometry->material->modelSpaceNormals = true;
-			geometry->Clear(0, partition->nums->triangles * 3);
-			if (!*partition->has_vertex_map)
-				break;
-			if (*partition->has_faces)
+			geometry->Clear(partition->nums->vertices, partition->nums->triangles * 3);
+			std::map<unsigned short, unsigned short> remap;
+			for (unsigned short i = 0; i < partition->nums->vertices; i++)
 			{
-				for (unsigned short i = 0; i < partition->nums->triangles; i++)
-				{
-					auto triangle = &partition->triangles[i];
-					geometry->elements.insert(geometry->elements.end(), { triangle->a, triangle->b, triangle->c });
-				}
+				unsigned short j = partition->vertex_map[i];
+				remap.emplace(j, i);
+				auto data = &block->vertex_data[j];
+				Vertex vertex;
+				vertex.position = gloomVec3(data->vertex);
+				vertex.uv = halftexcoord((unsigned short *)&data->uv);
+				vertex.normal = bytestofloat((unsigned char *)&data->normal);
+				vertex.tangent = bytestofloat((unsigned char *)&data->tangent);
+				auto bi = data->bone_indices;
+				vertex.skin_index = vec4(bi.a, bi.b, bi.c, bi.d);
+				vertex.skin_weight = halfweights((unsigned short *)&data->bone_weights);
+				geometry->vertices[i] = vertex;
 			}
-			group->geometry->SetupMesh();
+			for (unsigned short i = 0; i < partition->nums->triangles; i++)
+			{
+				auto triangle = partition->triangles[i];
+				geometry->elements.insert(geometry->elements.end(),
+					{remap[triangle.a], remap[triangle.b], remap[triangle.c]} );
+				
+			}
+			geometry->SetupMesh();
 			smesh->lastGroup->Add(group);
-			group->Update();
+			smesh->lastGroup->Update();
 		}
-		smesh->lastGroup->Update();
 	}
 
 }
