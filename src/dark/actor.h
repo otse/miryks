@@ -11,7 +11,7 @@ namespace dark
 
 	crecordp GetRace(const char *);
 	//void Export(const char *);
-	void ExportRaceHkxToKf(const char *);
+	
 	Keyframes *GetKeyframes(const char *);
 
 	class BodyPart

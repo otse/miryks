@@ -134,15 +134,6 @@ void Scene::BindLights(Shader *shader)
 		//direction = glm::normalize(glm::vec3(glm::inverse(mat3(sl->matrix * mat3(cameraCur->view))[2]));
 		color = sl->color * sl->intensity;
 
-		float moo = glm::cos(sl->angle);
-
-		static bool pinted = false;
-
-		if (!pinted) {
-			pinted = true;
-			printf("moo %f\n", moo);
-		} 
-
 		shader->SetVec3((index + ".position").c_str(), position);
 		shader->SetVec3((index + ".direction").c_str(), direction);
 		shader->SetVec3((index + ".color").c_str(), color);

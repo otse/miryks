@@ -1,5 +1,4 @@
 press esc to exit the (bucket) viewer camera
-and into the soltsheim jail
 
 wasd = move
 rf = up down

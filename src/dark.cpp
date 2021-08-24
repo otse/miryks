@@ -71,7 +71,6 @@ int main()
 	load_plugins_archives();
 	nif_test();
 	opengl_init_scene();
-	printf("now collide\n");
 	collision_init();
 	cameraCur = personCam;
 #if 1
