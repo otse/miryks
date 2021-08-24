@@ -261,11 +261,18 @@ namespace dark
 	namespace Refs {
 		Ref *handRef = nullptr;
 		std::vector<Ref *> labelled;
+		bool labelingEnabled = true;
+		vec3 projected;
 		void Nearby()
 		{
+			if (!labelingEnabled)
+				return;
+				
 			std::sort(labelled.begin(), labelled.end(), [](const Ref *l, const Ref *r) -> bool {
 				return l->getDistance() < r->getDistance();
 			});
+
+			handRef = nullptr;
 
 			for (Ref *ref : labelled)
 				if (ref->displayAsItem())
@@ -318,6 +325,7 @@ namespace dark
 		vec4 viewport(0.0f, 0.0f, width, height);
 
 		vec3 projected = glm::project(original, model, projection, viewport);
+		Refs::projected = projected;
 		//vec3 unprojected = glm::unProject(projected, model, projection, viewport);
 
 		ImGui::SetNextWindowPos(ImVec2(width - projected.x, projected.y));

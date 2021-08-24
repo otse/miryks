@@ -6,21 +6,28 @@ extern "C"
 #include "trash.h"
 
 #include <dark/dark.h>
+#include <skyrim/mesh.h>
 
 #include <core/files.h>
 #include <imgui.h>
 
 #include "../gooey/gooey.h"
 
+#include <renderer/group.h>
+#include <renderer/drawgroup.h>
+#include <renderer/scene.h>
 #include <renderer/shader.h>
 #include <renderer/texture.h>
 #include <renderer/types.h>
+#include <renderer/rendertarget.h>
 
 void cont_menu();
 
 namespace skyrim
 {
 	Cont *Cont::cur = nullptr;
+
+	//ItemRenderer *itemRenderer = nullptr;
 
 	void Cont::Render()
 	{
@@ -60,7 +67,7 @@ void cont_menu()
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration;
 	ImGui::SetNextWindowSize(ImVec2(600, 600));
-	ImGui::SetNextWindowPos(ImVec2(300, 300));
+	ImGui::SetNextWindowPos(ImVec2(width - Refs::projected.x, Refs::projected.y));
 
 	ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
@@ -69,11 +76,13 @@ void cont_menu()
 
 	ImGui::Begin("Container Menu", nullptr, flags);
 
-	ImGui::PushFont(dark::font2);
-	ImGui::TextWrapped("Container");
-	ImGui::Separator();
-
 	const Cont *cont = Cont::cur;
+
+	auto name = cont->data<const char *>("FULL");
+
+	ImGui::PushFont(dark::font2);
+	ImGui::TextWrapped("%s has %u things", name, cont->items.size());
+	ImGui::Separator();
 
 	for (const Item &item : cont->items)
 	{
@@ -89,3 +98,41 @@ void cont_menu()
 	
 	ImGui::End();
 }
+
+/*
+ItemRenderer::ItemRenderer()
+{
+	myScene = new Scene;
+	myCam = new ViewerCamera;
+	myScene->ambient = vec3(100.f / 255.f);
+}
+
+void ItemRenderer::View(Item *item) {
+	using namespace dark;
+	this->item = item;
+	auto modl = item->data<const char *>("MODL");
+	if (!modl)
+		return;
+	printf("itemRenderer view %s", item->data<unsigned char *>("FULL"));
+
+	Rc *rc = bsa_find_more(modl, 0x1);
+	Nif *nif = import_nif(rc, true);
+
+	static Mesh *mesh = nullptr;
+	static DrawGroup *drawGroup = nullptr;
+	if (mesh)
+	{
+		myScene->drawGroups.Remove(drawGroup);
+		delete mesh;
+		delete drawGroup;
+	}
+	mesh = new Mesh(nif);
+	drawGroup = new DrawGroup(mesh->baseGroup, mat4(1.0));
+	myScene->drawGroups.Add(drawGroup);
+	HideCursor();
+	cameraCur = viewerCam;
+	viewerCam->pos = drawGroup->aabb.center();
+	//viewerCam->pos = personCam->pos;
+	viewerCam->radius = drawGroup->aabb.radius2() * 2;
+}
+*/

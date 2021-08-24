@@ -17,6 +17,8 @@ namespace dark
 	{
 		extern Ref *handRef;
 		extern std::vector<Ref *> labelled;
+		extern bool labelingEnabled;
+		extern vec3 projected;
 		void Nearby();
 		void Activate();
 	};

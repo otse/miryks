@@ -1,7 +1,5 @@
 #include <dark/dark.h>
 
-
-
 #include <skyrim/mesh.h>
 #include <skyrim/grup.h>
 #include <skyrim/interior.h>
@@ -252,6 +250,9 @@ void dark::setup_glfw()
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	if (glfwRawMouseMotionSupported())
+    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 	int er = gladLoadGL();
 	if (er == 0)
