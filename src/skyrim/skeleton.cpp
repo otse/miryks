@@ -1,6 +1,6 @@
 #include <algorithm>
 
-
+#include <core/files.h>
 
 #include "skeleton.h"
 
@@ -14,6 +14,17 @@ using namespace dark;
 namespace skyrim
 {
 	static void ni_node_callback(Rd *, NiNode *);
+
+	Keyframes *loadAnimDisk(const char *path)
+	{
+		Nif *nif = calloc_nifp();
+		nif->path = path;
+		fbuf(path, (char **)&nif->buf);
+		nif_read(nif);
+		ext_nif_save(nif, nif);
+		Keyframes *kf = new Keyframes(nif);
+		return kf;
+	}
 
 	Skeleton::Skeleton()
 	{

@@ -69,17 +69,6 @@ namespace dark
 				//if (skeleton)
 				//	printf("draugr hkx skeleton found %i\n", (int) skeleton);
 			}
-			else
-			{
-				const char *path = "temp/draugr/kf/1hmattackf.kf";
-				printf("fetching random draugr kf\n");
-				Nif *nif = calloc_nifp();
-				nif->path = path;
-				fbuf(path, (char **)&nif->buf);
-				nif_read(nif);
-				ext_nif_save(nif, nif);
-				draugrAttack = new Keyframes(nif);
-			}
 		}
 
 		if (strcmp(raceId, "ImperialRace") == 0)

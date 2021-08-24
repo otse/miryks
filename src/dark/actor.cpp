@@ -27,6 +27,7 @@ using namespace skyrim;
 namespace dark
 {
 	Keyframes *draugrAttack = nullptr;
+	Keyframes *draugrIdle = nullptr;
 
 	Keyframes *humanIdle = nullptr;
 	Keyframes *humanForward = nullptr;
@@ -76,8 +77,13 @@ namespace dark
 		smesh = new SkinnedMesh(character, skeleton);
 		if (raceId == "DraugrRace")
 		{
+			//if (!draugrAttack)
+			//draugrAttack = loadAnimDisk("temp/draugr/kf/1hmattackf.kf");
+			if (!draugrIdle)
+			draugrIdle = loadAnimDisk("anims/draugr/alcove_wake.kf");
+			//draugrIdle = loadAnimDisk("anims/draugr/1hmidle.kf");
 			printf("animation!\n");
-			animation = new Animation(draugrAttack);
+			animation = new Animation(draugrIdle);
 			animation->skeleton = skeleton;
 			skeleton->animation = animation;
 		}
@@ -126,11 +132,11 @@ namespace dark
 		const bool greybeard = false;
 		if (beggar)
 		{
-			hat = new BodyPart("ImperialRace", "clothes\\beggarclothes\\hatm_0.nif");
-			head = new BodyPart("ImperialRace", "actors\\character\\character assets\\malehead.nif");
+			//hat = new BodyPart("ImperialRace", "clothes\\beggarclothes\\hatm_0.nif");
+			//head = new BodyPart("ImperialRace", "actors\\character\\character assets\\malehead.nif");
 			body = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonerclothes_0.nif");
-			hands = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonercuffs_0.nif");
-			feet = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonershoes_0.nif");
+			//hands = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonercuffs_0.nif");
+			//feet = new BodyPart("ImperialRace", "clothes\\prisoner\\prisonershoes_0.nif");
 		}
 		if (greybeard)
 		{

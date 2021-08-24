@@ -68,7 +68,7 @@ struct RenderSettings
 {
 	bool diffuseMaps = true;
 	bool normalMaps = true;
-	bool specularMaps = false;
+	bool specularMaps = true;
 	bool glowMaps = true;
 	bool dust = true;
 	bool axes = false;

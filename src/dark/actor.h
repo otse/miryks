@@ -6,7 +6,7 @@
 
 namespace dark
 {
-	extern Keyframes *draugrAttack;
+	extern Keyframes *draugrAttack, *draugrIdle;
 	extern Keyframes *humanIdle, *humanForward, *humanLeft, *humanRight, *humanBack;
 
 	crecordp GetRace(const char *);

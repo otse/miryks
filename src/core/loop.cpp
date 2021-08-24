@@ -65,7 +65,7 @@ static void error_callback(int error, const char *description)
 	fprintf(stderr, "Error: %s\n", description);
 }
 
-static bool useFbo = false;
+static bool useFbo = true;
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -187,7 +187,7 @@ void setupImgui()
 	
 	ImFont *font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
-	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 60.0f);
+	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 55.0f);
 	IM_ASSERT(font2 != NULL);
 	IM_ASSERT(font3 != NULL);
 	

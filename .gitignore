@@ -53,8 +53,7 @@ bin/Dark2.ilk
 *.db-wal
 *.recipe
 *.hkx
-bin/temp/draugr/kf/1hmattacka.kf
-*.kf
+bin/temp/
 bin/test.dds
 .vs/
 build/

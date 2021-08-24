@@ -378,7 +378,7 @@ void main()
 		
 		if (normalDust.z > 0.83) { // .88
 			diffuseColor.rgb = mix(dust, diffuseColor.rgb, 0.075);
-			specularStrength /= 1.0;
+			specularStrength /= 3.0;
 		}
 
 	#endif

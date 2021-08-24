@@ -17,6 +17,8 @@ namespace skyrim
 	class Keyframes;
 	class Animation;
 
+	Keyframes *loadAnimDisk(const char *);
+
 	class Skeleton
 	{
 	public:
