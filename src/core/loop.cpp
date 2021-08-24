@@ -5,6 +5,7 @@
 #include <skyrim/mesh.h>
 #include <skyrim/grup.h>
 #include <skyrim/interior.h>
+#include <skyrim/trash.h>
 
 #include <dark/actor.h>
 #include <dark/collision.h>
@@ -87,6 +88,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 			cameraCur = personCam;
 			HideCursor();
 		}
+		else if (Cont::current)
+		{
+			Cont::Hide();
+		}
 		else
 		{
 			glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -130,6 +135,10 @@ static void key_callback(GLFWwindow *window, int key, int scancode, int action, 
 	else if (key == GLFW_KEY_I && action == GLFW_PRESS && !guing)
 	{
 		i_pop = !i_pop;
+	}
+	else if (key == GLFW_KEY_E && action == GLFW_PRESS && !guing)
+	{
+		Refs::Activate();
 	}
 	else if (key == GLFW_KEY_V && action == GLFW_PRESS && !guing)
 	{
@@ -377,6 +386,7 @@ void dark::program_while()
 		if (dungeon)
 			dungeon->update();
 
+		Container::Step();
 		//collision_simulate();
 
 		//sceneDef->Order();

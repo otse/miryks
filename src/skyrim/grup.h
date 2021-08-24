@@ -2,8 +2,6 @@
 
 #include <cstdarg>
 
-
-
 #include <skyrim/record.h>
 
 #include <map>

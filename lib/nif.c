@@ -275,7 +275,7 @@ SINK ( nif, block, B )
 BLOCKED ()
 
 BLOCK( ni_transform_data )
-printf("NiTransformData\n");
+//printf("NiTransformData\n");
 SINK ( nif, block, A )
 
 if ( block->A->num_rotation_keys > 0 )
@@ -356,18 +356,15 @@ if (nif_type(BSDismemberSkinInstanceS))
 }
 BLOCKED ()
 
-// add ugly macro for looping subblocks
-
-#define SUBBLOCK(x, y, group, num) LOOP(x, y, group, num)
-#define LOOP(x, y, group, num) \
+#define SUBBLOCK(x, y, group, num) \
 	block->x = calloc(block->group->num, sizeof(struct y ## _t *)); \
 	for (unsigned int i = 0; i < block->group->num; i++) { \
 	block->x[i] = malloc(sizeof(struct y ## _t)); \
 	struct y ## _t *y = block->x[i];
+	
 #define LOOPED() }
 
 BLOCK( ni_skin_data )
-//printf("read NiSkinData\n");
 SINK ( nif, block, skin_transform )
 SINK ( nif, block, A )
 SUBBLOCK ( bone_list, bone_data, A, num_bones )
@@ -376,18 +373,6 @@ SUBBLOCK ( bone_list, bone_data, A, num_bones )
 	SINK ( nif, bone_data, A )
 	SAIL ( nif, bone_data, vertex_weights, A, num_vertices )
 LOOPED ()
-/*
-block->bone_list = malloc(sizeof(struct bone_data_t *) * block->A->num_bones);
-for (unsigned int i = 0; i < block->A->num_bones; i++)
-{
-	block->bone_list[i] = malloc(sizeof(struct bone_data_t));
-	struct bone_data_t *bone_data = block->bone_list[i];
-	SINK ( nif, bone_data, skin_transform )
-	SINK ( nif, bone_data, bounding_sphere )
-	SINK ( nif, bone_data, A )
-	SAIL ( nif, bone_data, vertex_weights, A, num_vertices )
-}
-*/
 BLOCKED ()
 
 BLOCK( ni_skin_partition )
@@ -429,7 +414,6 @@ else {
 	// marker cocheading
 	// printf("\nsse for %s has %i %i %i %i %i %i\n", nif->path, vertex, uvs, normals, tangents, colors);
 	SKIP ( block->infos->data_size )
-	return block;
 }
 SAIL ( nif, block, triangles, infos, num_triangles )
 SINK ( nif, block, particle_data_size )

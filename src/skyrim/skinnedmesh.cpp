@@ -93,48 +93,30 @@ namespace skyrim
 		smesh->lastShape = rd->parent;
 	}
 
-	static vec3 bytestofloat(unsigned char *vec)
+	static vec3 bytestofloat(void *in)
 	{
 		float xf, yf, zf;
+		unsigned char *vec = (unsigned char *)in;
 		xf = (double( vec[0] ) / 255.0) * 2.0 - 1.0;
 		yf = (double( vec[1] ) / 255.0) * 2.0 - 1.0;
 		zf = (double( vec[2] ) / 255.0) * 2.0 - 1.0;
 		return vec3(xf, yf, zf);
 	}
 
-	static vec2 halftexcoord(unsigned short *uv)
+	static vec2 halftexcoord(void *in)
 	{
+		unsigned short *uv = (unsigned short *)in;
 		union { float f; uint32_t i; } u, v;
 		u.i = half_to_float(uv[0]);
 		v.i = half_to_float(uv[1]);
 		return vec2(u.f, v.f);
 	}
 
-	vec4 halfweights(unsigned short *hu)
-	{
-		union { float f; uint32_t i; } a, b, c, d;
-		a.i = half_to_float(hu[0]);
-		b.i = half_to_float(hu[1]);
-		c.i = half_to_float(hu[2]);
-		d.i = half_to_float(hu[3]);
-		return vec4(a.f, b.f, c.f, d.f);
-	}
-
 	void ni_skin_data_callback(Rd *rd, NiSkinData *block)
 	{
-		//printf("ni skin data\n");
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
-		return;
-		/*
-		Group *lastGroup = smesh->lastGroup;
-		Group *group = smesh->make_new_group(rd);
-		group->geometry = lastGroup->geometry;
-		group->matrix = translate(group->matrix, gloomVec3(block->skin_transform->translation));
-		group->matrix *= inverse(mat4(gloomMat3(block->skin_transform->rotation)));
-		group->matrix = scale(group->matrix, vec3(block->skin_transform->scale));
-		*/
-
 	}
+
 	void ni_skin_partition_callback(Rd *rd, NiSkinPartition *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
@@ -166,10 +148,9 @@ namespace skyrim
 				auto data = &block->vertex_data[j];
 				Vertex vertex;
 				vertex.position = cast_vec3(&data->vertex);
-				vertex.uv = halftexcoord((unsigned short *)&data->uv);
-				vertex.normal = bytestofloat((unsigned char *)&data->normal);
-				vertex.tangent = bytestofloat((unsigned char *)&data->tangent);
-				auto bi = partition->bone_indices[i];
+				vertex.uv = halftexcoord(&data->uv);
+				vertex.normal = bytestofloat(&data->normal);
+				vertex.tangent = bytestofloat(&data->tangent);
 				vertex.skin_index = cast_bvec4(&partition->bone_indices[i]);
 				vertex.skin_weight = cast_vec4(&partition->vertex_weights[i]);
 				geometry->vertices[i] = vertex;
@@ -179,7 +160,6 @@ namespace skyrim
 				auto triangle = partition->triangles[i];
 				geometry->elements.insert(geometry->elements.end(),
 					{remap[triangle.a], remap[triangle.b], remap[triangle.c]} );
-				
 			}
 			geometry->SetupMesh();
 			smesh->lastGroup->Add(group);

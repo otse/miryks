@@ -5,6 +5,7 @@
 
 #include <skyrim/grup.h>
 #include <skyrim/mesh.h>
+#include <skyrim/trash.h>
 #include <core/files.h>
 
 #include <algorithm>
@@ -132,6 +133,10 @@ namespace dark
 			{
 				mesh = create_simple_mesh_from_modl(modl, true);
 			}
+			if (baseObject.sig(CONT))
+			{
+				container = new Container(baseObject);
+			}
 		}
 		else if (baseObject.sig(MSTT))
 		{
@@ -226,7 +231,7 @@ namespace dark
 		}
 	}
 
-	float Ref::getDistance()
+	float Ref::getDistance() const
 	{
 		float distance = glm::length(drawGroup->aabb.center() - vec3(personCam->hands->matrixWorld[3]));
 
@@ -248,6 +253,40 @@ namespace dark
 
 	// Todo, Omg !
 
+	bool myfunction(Ref *l, Ref *r)
+	{
+		return l->getDistance() < r->getDistance();
+	}
+
+	namespace Refs {
+		Ref *handRef = nullptr;
+		std::vector<Ref *> labelled;
+		void Nearby()
+		{
+			std::sort(labelled.begin(), labelled.end(), [](const Ref *l, const Ref *r) -> bool {
+				return l->getDistance() < r->getDistance();
+			});
+
+			for (Ref *ref : labelled)
+				if (ref->displayAsItem())
+					return;
+		}
+
+		void Activate() {
+			if (handRef)
+				handRef->Use();
+		}
+	};
+
+
+	bool Ref::Use() {
+		auto FULL = baseObject.data<char *>("FULL");
+		printf("Activating a %s", FULL);
+		if (baseObject.sig(CONT) && container)
+			container->Activate();
+		return true;
+	}
+
 	bool Ref::displayAsItem()
 	{
 		float dist = getDistance() * CM_TO_SKYRIM_UNITS;
@@ -259,6 +298,9 @@ namespace dark
 			return false;
 		}
 
+		Refs::handRef = this;
+
+		auto EDID = baseObject.data<char *>("EDID");
 		auto FULL = baseObject.data<char *>("FULL");
 		auto DESC = baseObject.data<const char *>("DESC");
 
@@ -288,12 +330,11 @@ namespace dark
 		ImGui::PushFont(font3);
 		//ImGui::PushStyleColor(IMGUI_FON)
 		//ImGui::Text(itemName);
-		ImGui::TextColored(ImVec4(1, 1, 1, 1), itemName);
+		ImGui::TextColored(ImVec4(1, 1, 1, 1), EDID);
+		ImGui::NewLine();
+		if (FULL)
+		ImGui::TextColored(ImVec4(1, 1, 1, 1), FULL);
 
-		if (DESC)
-		{
-			ImGui::TextWrapped(DESC);
-		}
 		ImGui::PopFont();
 		ImGui::End();
 		//Vec2 boo(x, y);

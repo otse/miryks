@@ -11,9 +11,21 @@ using namespace skyrim;
 
 namespace dark
 {
+	class Ref;
+
+	namespace Refs
+	{
+		extern Ref *handRef;
+		extern std::vector<Ref *> labelled;
+		void Nearby();
+		void Activate();
+	};
+	
 	class Ref : public Record
 	{
 	public:
+		Container *container = nullptr;
+
 		Ref(crecordp);
 		~Ref();
 		Record baseObject;
@@ -27,9 +39,9 @@ namespace dark
 		void forScale(float *);
 		void forLocationalData(float *);
 		void forBaseId(formId);
-		float getDistance();
+		float getDistance() const;
 		bool displayAsItem();
-
 		void step();
+		bool Use();
 	};
 } // namespace dark

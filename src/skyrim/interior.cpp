@@ -97,7 +97,7 @@ namespace skyrim
 				if (ref->baseObject.valid())
 				{
 					if (ref->baseObject.sigany( showLabelsFor ))
-						labels.push_back(ref);
+						Refs::labelled.push_back(ref);
 					else if (ref->baseObject.sig( MSTT ))
 						mstts.push_back(ref);
 				}
@@ -128,19 +128,11 @@ namespace skyrim
 		});
 	}
 
-	bool myfunction(Ref *l, Ref *r)
-	{
-		return l->getDistance() < r->getDistance();
-	}
+	
 
 	void Interior::update()
 	{
-		std::vector<Ref *> closest = labels;
-		std::sort(labels.begin(), labels.end(), myfunction);
-		
-		for (Ref *ref : closest)
-			if (ref->displayAsItem())
-				return;
+		Refs::Nearby();
 
 		for (Ref *mstt : mstts)
 			mstt->step();

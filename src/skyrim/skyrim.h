@@ -17,6 +17,7 @@ namespace skyrim
 	class Keyframes;
 	class Animation;
 	class Interior;
+	class Container;
 
 	typedef Keyframes Kf;
 }

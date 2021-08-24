@@ -3,35 +3,34 @@
 #include <cstdarg>
 #include <vector>
 
+#include <lib.h>
 
 #include <skyrim/skyrim.h>
-
-// wrap for lib struct see /lib
 
 // several useful things in here
 
 namespace skyrim
 {
-	const char *getEditorIdOnly(const recordp);
+	const char *getEditorIdOnly(const record *);
 
 #define X Record
 
 	class Record
 	{
 	public:
-		crecordp rcd;
+		const record *rcd;
 
 		X()
 		{
 			rcd = nullptr;
 		}
-		X(crecordp p)
+		X(const record *p)
 		{
 			rcd = p;
 			if (rcd)
 			{
 				assertc(rcd->r == 'r');
-				esp_check_rcd((recordp)rcd);
+				esp_check_rcd((record *)rcd);
 			}
 		}
 		inline bool valid() const
@@ -46,9 +45,9 @@ namespace skyrim
 		{
 			return *rcd->rcdbs;
 		}
-		inline csubrecordp get(unsigned int i) const
+		inline const subrecord *get(unsigned int i) const
 		{
-			return (csubrecordp)subrecords().elements[i];
+			return (const subrecord *)subrecords().elements[i];
 		}
 		inline bool sig(signature sgn) const
 		{
@@ -61,11 +60,11 @@ namespace skyrim
 					return true;
 			return false;
 		}
-		csubrecordp find(signature sgn, int skip = 0) const
+		const subrecord* find(signature sgn, int skip = 0) const
 		{
 			for (unsigned int i = 0; i < subrecords().size; i++)
 			{
-				csubrecordp sub = get(i);
+				const subrecord *sub = get(i);
 				if (*(unsigned int *)sgn == sub->hed->sgn)
 					if (skip-- < 1)
 						return sub;
@@ -75,7 +74,7 @@ namespace skyrim
 		template <typename T = void *>
 		T data(signature sig, int skip = 0) const
 		{
-			csubrecordp sub = find(sig, skip);
+			const subrecord *sub = find(sig, skip);
 			if (sub)
 				return (T)sub->data;
 			else
