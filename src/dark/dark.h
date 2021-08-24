@@ -72,12 +72,12 @@ namespace dark
 	extern Human *someHuman;
 	extern Player *player1;
 
-	inline vec2 *cast_vec2(float *f) { return reinterpret_cast<vec2 *>(f); }
-	inline vec4 *cast_vec4(float *f) { return reinterpret_cast<vec4 *>(f); }
-	inline bvec4 *cast_bvec4(unsigned char *u) { return reinterpret_cast<bvec4 *>(u); }
-	inline vec3 *cast_vec3(float *f) { return reinterpret_cast<vec3 *>(f); }
-	inline mat3 *cast_mat3(float *f) { return reinterpret_cast<mat3 *>(f); }
-	inline mat4 *cast_mat4(float *f) { return reinterpret_cast<mat4 *>(f); }
+	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
+	inline vec3 cast_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }
+	inline vec4 cast_vec4(void *f) { return *reinterpret_cast<vec4 *>(f); }
+	inline bvec4 cast_bvec4(void *u) { return *reinterpret_cast<bvec4 *>(u); }
+	inline mat3 cast_mat3(void *f) { return *reinterpret_cast<mat3 *>(f); }
+	inline mat4 cast_mat4(void *f) { return *reinterpret_cast<mat4 *>(f); }
 
 }
 

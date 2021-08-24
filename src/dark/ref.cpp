@@ -74,8 +74,8 @@ namespace dark
 		if (!locationalData)
 			return;
 
-		vec3 pos = *cast_vec3(locationalData);
-		vec3 rad = *cast_vec3(locationalData + 3);
+		vec3 pos = cast_vec3(locationalData);
+		vec3 rad = cast_vec3(locationalData + 3);
 
 		translation = translate(mat4(1.0f), pos);
 

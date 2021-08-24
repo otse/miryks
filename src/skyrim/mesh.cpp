@@ -154,8 +154,8 @@ namespace skyrim
 	void matrix_from_common(Group *group, ni_common_layout_t *common)
 	{
 		// todo doesnt fit two columns on laptop
-		group->matrix = translate(group->matrix, *cast_vec3((float *)&common->A->translation));
-		group->matrix *= inverse(mat4(*cast_mat3((float *)&common->A->rotation)));
+		group->matrix = translate(group->matrix, cast_vec3(&common->A->translation));
+		group->matrix *= inverse(mat4(cast_mat3(&common->A->rotation)));
 		group->matrix = scale(group->matrix, vec3(common->A->scale));
 	}
 
@@ -218,7 +218,7 @@ namespace skyrim
 		for (unsigned short i = 0; i < block->infos->num_vertices; i++)
 		{
 			struct bs_vertex_data_sse_all *vertex_data = &block->vertex_data_all[i]; 
-			geometry->vertices[i].position = *cast_vec3((float *)&vertex_data->vertex);
+			geometry->vertices[i].position = cast_vec3(&vertex_data->vertex);
 			geometry->vertices[i].uv = halftexcoord((unsigned short *)&vertex_data->uv);
 			geometry->vertices[i].normal = bytestofloat((unsigned char *)&vertex_data->normal);
 			geometry->material->tangents = true;
@@ -232,7 +232,7 @@ namespace skyrim
 		for (unsigned short i = 0; i < block->infos->num_vertices; i++)
 		{
 			struct bs_vertex_data_sse_no_clr *vertex_data = &block->vertex_data_no_clr[i]; 
-			geometry->vertices[i].position = *cast_vec3((float *)&vertex_data->vertex);
+			geometry->vertices[i].position = cast_vec3(&vertex_data->vertex);
 			geometry->vertices[i].uv = halftexcoord((unsigned short *)&vertex_data->uv);
 			geometry->vertices[i].normal = bytestofloat((unsigned char *)&vertex_data->normal);
 			geometry->material->tangents = true;
@@ -253,8 +253,8 @@ namespace skyrim
 			material->name += "LightingShader";
 			material->zwrite = false;
 			material->color = vec3(1.0);
-			material->emissive = *cast_vec3((float *)&block->B->emissive_color);
-			material->specular = *cast_vec3((float *)&block->B->specular_color);
+			material->emissive = cast_vec3(&block->B->emissive_color);
+			material->specular = cast_vec3(&block->B->specular_color);
 			material->specular *= block->B->specular_strength;
 			material->opacity = block->B->alpha;
 			material->glossiness = block->B->glossiness;
@@ -293,7 +293,7 @@ namespace skyrim
 			material->zwrite = false;
 			material->src = &fxs;
 			material->transparent = true;
-			material->color = *cast_vec3((float *)&block->D->base_color);
+			material->color = cast_vec3(&block->D->base_color);
 			material->opacity = block->D->base_color_scale;
 			material->map = GetProduceTexture(block->source_texture);
 			if (block->B->shader_flags_2 & 0x00000020)
