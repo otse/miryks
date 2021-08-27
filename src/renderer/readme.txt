@@ -1,4 +1,4 @@
-very basic and straightforward opengl for c++
+based on three.js fundamentals
 
 types - forward declares and general  
 group - a point in space. can have other groups. think of the sun.  
