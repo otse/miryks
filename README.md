@@ -7,8 +7,7 @@ The old master branch has fully working legendary edition code.
 Working:  
 Render indoor cells  
 Render draugr, creatures, static meshes and mists  
-Full debug suite, like a lite nifskope, press f1  
-Outcommented walkable third person character 
+Debug imguis (kinda useless) 
 
 Not working:  
 No exteriors  
