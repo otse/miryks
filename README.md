@@ -8,7 +8,8 @@ The old master branch has legendary edition code.
 
 Working:  
 Render indoor cells  
-Render draugr, creatures, static meshes and mists
+Render draugr, creatures, static meshes and mists  
+Full debug suite, like a lite nifskope, press f1
 
 Not working:  
 No exteriors  
