@@ -6,8 +6,7 @@ The old master branch has fully working legendary edition code.
 
 Working:  
 Render indoor cells  
-Render draugr, creatures, static meshes and mists  
-Debug imguis (kinda useless) 
+Render draugr, creatures, static meshes and mists 
 
 Not working:  
 No exteriors  
