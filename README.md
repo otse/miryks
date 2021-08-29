@@ -2,7 +2,7 @@
 
 Grab 1.0 from the release panel, dl size is 2.6 mb. (You will need skyrim special edition.)
 
-Some of the /src has readme.txt, it'll help avoid the 50% of empty files and plain garbage.
+Some of the /src has readme.txt to help avoid the folders with plain garbage.
 
 The old master branch has legendary edition code.
 
