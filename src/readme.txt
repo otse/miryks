@@ -4,3 +4,8 @@ ignore everything except (:
 /renderer
 /skyrim
 dark.cpp
+
+mostly trash:
+/core
+/debug
+/gooey
