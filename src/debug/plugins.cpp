@@ -1,5 +1,5 @@
 #include <dark/dark.h>
-#include <core/files.h>
+#include <dark/files.h>
 
 #include <skyrim/grup.h>
 #include <skyrim/record.h>

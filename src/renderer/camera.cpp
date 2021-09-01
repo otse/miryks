@@ -8,18 +8,13 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
-double Camera::prev[2] = { 0, 0 };
-
-bool Camera::DISABLE_LOOK = false;
-bool Camera::DISABLE_MOVEMENT = false;
-
 Camera::Camera()
 {
 	pitch = -pif / 2;
+	fov = 55;
 	view = mat4(1);
 	pos = vec3(0);
-	fov = 55;
-	freeze = false;
+	disabled = false;
 	group = new Group;
 	drawGroup = new DrawGroup(group);
 }
@@ -40,17 +35,18 @@ FirstPersonCamera::FirstPersonCamera() : Camera()
 
 void FirstPersonCamera::Mouse(float x, float y)
 {
-	if (freeze || DISABLE_LOOK)
+	if (disabled)
 		return;
 	const float sensitivity = .001f;
 	yaw += x * sensitivity;
 	pitch += y * sensitivity;
-	Camera::prev[0] = x;
-	Camera::prev[1] = y;
 }
 
 void FirstPersonCamera::Update(float time)
 {
+	if (disabled)
+		return;
+
 	Move(time);
 
 	while (yaw > 2 * pif)
@@ -81,11 +77,9 @@ void FirstPersonCamera::Update(float time)
 
 void FirstPersonCamera::Move(float delta)
 {
-	if (freeze || DISABLE_MOVEMENT)
+	if (disabled)
 		return;
 		
-	using namespace dark::MyKeys;
-
 	auto forward = [&](float n) {
 		pos.x += n * sin(yaw);
 		pos.y += n * cos(yaw);
@@ -96,22 +90,24 @@ void FirstPersonCamera::Move(float delta)
 	};
 	float speed = 500.f * delta;
 
-	if (shift)
+	using namespace dark;
+
+	if (!holding("lshift"))
 		speed /= 10;
 
-	if (w && !s)
+	if (holding("w") && !holding("s"))
 		forward(speed);
-	if (s && !w)
+	if (holding("s") && !holding("w"))
 		forward(-speed / 2);
 
-	if (a && !d)
+	if (holding("a") && !holding("d"))
 		strafe(-speed);
-	if (d && !a)
+	if (holding("d") && !holding("a"))
 		strafe(speed);
 
-	if (r)
+	if (holding("r"))
 		pos.z += speed / 2;
-	if (f)
+	if (holding("f"))
 		pos.z -= speed / 2;
 }
 
@@ -125,7 +121,7 @@ ViewerCamera::ViewerCamera() : Camera()
 
 void ViewerCamera::Mouse(float x, float y)
 {
-	if (freeze || DISABLE_LOOK)
+	if (disabled)
 		return;
 	const float sensitivity = .001f;
 	yaw += x * sensitivity;

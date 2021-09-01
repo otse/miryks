@@ -61,7 +61,7 @@ void detectGlfwError();
 void detectOpenGLError(const std::string = "?");
 
 void opengl_gui();
-void opengl_init_scene();
+void renderer_init();
 void OGLReloadShaderSource();
 
 struct RenderSettings

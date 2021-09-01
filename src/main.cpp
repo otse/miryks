@@ -1,5 +1,5 @@
 
-#include <core/basefile.h>
+#include <dark/files.h>
 
 #include <png.h>
 
@@ -14,12 +14,9 @@
 #include <renderer/geometry.h>
 #include <renderer/material.h>
 
-#include <core/files.h>
 
 #include <skyrim/interior.h>
 #include <skyrim/mesh.h>
-
-#include <dark/collision.h>
 
 #include <dark/actor.h>
 
@@ -34,12 +31,6 @@ namespace dark
 	Player *player1 = nullptr;
 
 	Image *yagrum_image = nullptr;
-
-	namespace MyKeys
-	{
-		bool w, a, s, d, r, f, v;
-		bool shift, space;
-	}
 
 	std::string editme;
 

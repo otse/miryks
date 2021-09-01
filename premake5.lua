@@ -68,7 +68,7 @@ project "dark-sse"
 		"glfw3",
 		"zlibstatic",
 		"lz4",
-		"libpng16_static",
-        "BulletDynamics","BulletCollision", "LinearMath", "Bullet3Common"
+		"libpng16_static"
+        --"BulletDynamics","BulletCollision", "LinearMath", "Bullet3Common"
 	--	"zlibstatic"
 	}

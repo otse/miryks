@@ -19,5 +19,6 @@ namespace dark
 		png_byte bit_depth;
 		unsigned int texture;
 		unsigned char *pixels = nullptr;
+		const char *path = nullptr;
 	};
 }

@@ -10,8 +10,7 @@
 struct Camera
 {
 public:
-	static bool DISABLE_LOOK, DISABLE_MOVEMENT;
-	float yaw, pitch;
+	float yaw, pitch, fov;
 	Camera();
 
 	Group *group;
@@ -20,10 +19,7 @@ public:
 	vec3 pos;
 	mat4 view, /*matrix,*/ projection;
 
-	float fov;
-	bool freeze;
-
-	static double prev[2];
+	bool disabled = false;
 
 	virtual void Mouse(float, float){};
 	virtual void Update(float){};

@@ -2,7 +2,7 @@
 
 #include <dark/dark.h>
 
-#include <core/files.h>
+#include <dark/files.h>
 
 #include "../gooey/gooey.h"
 

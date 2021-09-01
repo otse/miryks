@@ -1,5 +1,4 @@
 #include <renderer/shader.h>
-#include <core/basefile.h>
 
 extern "C"
 {
@@ -15,7 +14,7 @@ Shader *Shader::active = nullptr;
 #include <renderer/camera.h>
 #include <renderer/scene.h>
 
-#include <core/files.h>
+#include <dark/files.h>
 
 #include <glad/glad.h>
 
@@ -28,7 +27,6 @@ void SetShaderSources()
 	simple[0] = (char *)"simple";
 	basic[0] = (char *)"basic";
 	fxs[0] = (char *)"fx";
-#if 1
 	fbuf("gl/simple.vert", &simple[1], true);
 	fbuf("gl/simple.frag", &simple[2], true);
 	fbuf("gl/basic.vert", &basic[1], true);
@@ -37,21 +35,6 @@ void SetShaderSources()
 	fbuf("gl/fx.frag", &fxs[2], true);
 	fbuf("gl/post.vert", &postquad[1], true);
 	fbuf("gl/post.frag", &postquad[2], true);
-#else
-	static std::vector<std::string> sources;
-	sources.push_back(basefile_offshore("basefile", "gl/simple.vert"));
-	sources.push_back(basefile_offshore("basefile", "gl/simple.frag"));
-	sources.push_back(basefile_offshore("basefile", "gl/basic.vert"));
-	sources.push_back(basefile_offshore("basefile", "gl/basic.frag"));
-	sources.push_back(basefile_offshore("basefile", "gl/post.vert"));
-	sources.push_back(basefile_offshore("basefile", "gl/post.frag"));
-	simple[1] = (char *)sources[0].c_str();
-	simple[2] = (char *)sources[1].c_str();
-	basic[1] = (char *)sources[2].c_str();
-	basic[2] = (char *)sources[3].c_str();
-	postquad[1] = (char *)sources[4].c_str();
-	postquad[2] = (char *)sources[5].c_str();
-#endif
 }
 
 std::map<std::string, Shader *> Shader::shaders;

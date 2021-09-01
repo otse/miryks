@@ -1,9 +1,9 @@
 #include <string>
 
 #include <png.h>
-#include <core/basefile.h>
 
 #include <dark/image.h>
+#include <dark/files.h>
 
 #include <renderer/types.h>
 
@@ -26,14 +26,13 @@ namespace dark
 
 	void Image::from_resourcefile()
 	{
-		std::string thepng = basefile_offshore("img", "thepng.png");
+		char *buf;
+		int end = fbuf(path, &buf);
 		cursor = 0;
-		data = (const unsigned char *)thepng.data();
+		data = (const unsigned char *)buf;
 		cursor = data;
-#if 1
 		cursor += 8;
-#endif
-		size = thepng.length();
+		size = end;
 		unsigned char header[8];
 		memcpy(header, data, 8);
 		if (png_sig_cmp(header, 0, 8))

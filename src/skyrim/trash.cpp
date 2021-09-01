@@ -8,7 +8,6 @@ extern "C"
 #include <dark/dark.h>
 #include <skyrim/mesh.h>
 
-#include <core/files.h>
 #include <imgui.h>
 
 #include "../gooey/gooey.h"
@@ -38,7 +37,7 @@ namespace skyrim
 	{
 		unsigned int *coct = data<unsigned int *>("COCT");
 
-		for (int i = 0; i < *coct; i++)
+		for (unsigned int i = 0; i < *coct; i++)
 		{
 			// container object
 			struct Cnto
@@ -129,7 +128,7 @@ void ItemRenderer::View(Item *item) {
 	mesh = new Mesh(nif);
 	drawGroup = new DrawGroup(mesh->baseGroup, mat4(1.0));
 	myScene->drawGroups.Add(drawGroup);
-	HideCursor();
+	hide_cursor();
 	cameraCur = viewerCam;
 	viewerCam->pos = drawGroup->aabb.center();
 	//viewerCam->pos = personCam->pos;

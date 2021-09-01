@@ -46,7 +46,7 @@ void detectOpenGLError(const std::string where)
 	}
 }
 
-void opengl_init_scene()
+void renderer_init()
 {
 	cameraCur = new Camera;
 	sceneDef = new Scene;

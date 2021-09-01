@@ -1,7 +1,6 @@
 #include <png.h>
 
-#include <core/files.h>
-#include <core/basefile.h>
+#include <dark/files.h>
 
 #include <dark/dark.h>
 
@@ -10,6 +9,11 @@
 
 using namespace dark;
 using namespace skyrim;
+
+namespace dark
+{
+std::map<const char *, int> keys;
+}
 
 void load_bucket()
 {
@@ -54,31 +58,19 @@ void load_plugins_archives()
 	get_archives()[17] = load_archive(ARCHIVE_17);
 }
 
-#include <dark/collision.h>
-
 #include <renderer/camera.h>
 #include <renderer/rendertarget.h>
 
 int main()
 {
-	{
-		using namespace MyKeys;
-		w = a = s = d = r = f = v = false;
-		shift = space = false;
-	}
-	basefile_handle("basefile");
-	setup_glfw();
+	goingrate();
 	load_plugins_archives();
 	nif_test();
-	opengl_init_scene();
-	collision_init();
+	renderer_init();
 	cameraCur = personCam;
-#if 1
 	// Bucket beginning
 	load_bucket();
-#endif
 	put_it_fullscreen();
-#if 1
 	load_gloomgen();
 	someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
 	someDraugr->PutDown("gloomgendraugr");
@@ -86,7 +78,6 @@ int main()
 	//meanSkelly->PutDown("gloomgenskeleton");
 	//someHuman = new Human();
 	//someHuman->Place("gloomgenman");
-#endif
 	//player1 = new Player();
 	program_while();
 	return 1;
@@ -135,7 +126,7 @@ void dark::simple_viewer(Nif *nif)
 	drawGroup = new DrawGroup(
 		mesh->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->drawGroups.Add(drawGroup);
-	HideCursor();
+	hide_cursor();
 	cameraCur = viewerCam;
 	viewerCam->pos = drawGroup->aabb.center();
 	//viewerCam->pos = personCam->pos;

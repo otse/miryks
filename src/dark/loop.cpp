@@ -6,7 +6,6 @@
 #include <skyrim/trash.h>
 
 #include <dark/actor.h>
-#include <dark/collision.h>
 
 #include <renderer/camera.h>
 #include <renderer/scene.h>
@@ -33,143 +32,161 @@ using namespace glm;
 
 GLFWwindow *window;
 
-bool hideDebugGuis = true;
-bool cursorShowing = false;
-bool f10 = false;
-bool h_pop = false;
-bool i_pop = false;
+static bool hideDebugGuis = true;
+static bool cursorShowing = false;
+static bool f10 = false;
+static bool useFbo = true;
 
 namespace dark
 {
-	ImFont *font2;
-	ImFont *font3;
+ImFont *font2;
+ImFont *font3;
 
-	void HideCursor()
-	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		//glfwSetCursorPos(window, Camera::prev[0], Camera::prev[1]);
-		cursorShowing = false;
-		Camera::DISABLE_LOOK = Camera::DISABLE_MOVEMENT = cursorShowing;
-	}
+void hide_cursor()
+{
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	cursorShowing = false;
+}
 
-	void ShowCursor()
-	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		cursorShowing = true;
-		Camera::DISABLE_LOOK = Camera::DISABLE_MOVEMENT = cursorShowing;
-	}
-} // namespace dark
+void show_cursor()
+{
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	cursorShowing = true;
+}
+}
 
 static void error_callback(int error, const char *description)
 {
 	fprintf(stderr, "Error: %s\n", description);
 }
 
-static bool useFbo = true;
+static void toggle_debug()
+{
+	hideDebugGuis = !hideDebugGuis;
+	if (!hideDebugGuis)
+		show_cursor();
+	else
+		hide_cursor();
+}
+
+static void handle_esc()
+{
+	if (cameraCur == viewerCam)
+	{
+		cameraCur = personCam;
+		hide_cursor();
+	}
+	else if (Cont::cur)
+		Cont::Hide();
+	else
+		glfwSetWindowShouldClose(window, GLFW_TRUE);
+}
+
+static void toggle_fbo()
+{
+	useFbo = !useFbo;
+}
+
+static void toggle_cursor()
+{
+	if (cursorShowing)
+		hide_cursor();
+	else
+		show_cursor();
+}
+
+static void hotswap_plugin_and_dungeon()
+{
+	reload_my_plugin();
+	reload_dungeon();
+}
+
+static void reload_shaders()
+{
+	// kind of glitchy
+	printf(" reload shaders ! \n");
+	SetShaderSources();
+	for (auto &pair : Shader::shaders)
+		pair.second->Compile();
+}
+
+static void toggle_render_stats()
+{
+	f10 = !f10;
+}
+
+static void toggle_third_person()
+{
+	if (player1)
+		player1->toggleView();
+}
+
+static void handle_use_key()
+{
+	if (ImGui::IsAnyItemActive())
+		return;
+	Refs::Activate();
+}
 
 static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
-	bool guing = ImGui::IsAnyItemActive();
 
-	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
-	{
-		hideDebugGuis = !hideDebugGuis;
-		if (!hideDebugGuis)
-			ShowCursor();
-		else
-			HideCursor();
-	}
-	else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-	{
-		if (cameraCur == viewerCam)
-		{
-			cameraCur = personCam;
-			HideCursor();
-		}
-		else if (Cont::cur)
-		{
-			Cont::Hide();
-		}
-		else
-		{
-			glfwSetWindowShouldClose(window, GLFW_TRUE);
-		}
-	}
-
-	else if (key == GLFW_KEY_F3 && action == GLFW_PRESS)
-	{
-		if (cursorShowing)
-			HideCursor();
-		else
-			ShowCursor();
-	}
-	else if (key == GLFW_KEY_F4 && action == GLFW_PRESS)
-	{
-		useFbo = !useFbo;
-	}
-	else if (key == GLFW_KEY_F5 && action == GLFW_PRESS)
-	{
-		reload_my_plugin();
-		reload_dungeon();
-	}
-	else if (key == GLFW_KEY_F6 && action == GLFW_PRESS)
-	{
-		printf(" reload shaders ! \n");
-		SetShaderSources();
-		for (auto &pair : Shader::shaders)
-		{
-			pair.second->Compile();
-		}
-	}
-	else if (key == GLFW_KEY_F10 && action == GLFW_PRESS)
-	{
-		printf("f10");
-		f10 = !f10;
-	}
-	else if (key == GLFW_KEY_H && action == GLFW_PRESS && !guing)
-	{
-		h_pop = !h_pop;
-	}
-	else if (key == GLFW_KEY_I && action == GLFW_PRESS && !guing)
-	{
-		i_pop = !i_pop;
-	}
-	else if (key == GLFW_KEY_E && action == GLFW_PRESS && !guing)
-	{
-		Refs::Activate();
-	}
-	else if (key == GLFW_KEY_V && action == GLFW_PRESS && !guing)
-	{
-		if (player1)
-			player1->toggleView();
-	}
 }
 
-static void doKeys()
+static void get_my_keys()
 {
-	using namespace MyKeys;
-	w = glfwGetKey(window, GLFW_KEY_W);
-	a = glfwGetKey(window, GLFW_KEY_A);
-	s = glfwGetKey(window, GLFW_KEY_S);
-	d = glfwGetKey(window, GLFW_KEY_D);
-	r = glfwGetKey(window, GLFW_KEY_R);
-	f = glfwGetKey(window, GLFW_KEY_F);
-	v = glfwGetKey(window, GLFW_KEY_F);
-	shift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
+	// horribleness / shouldnt
+	auto handler = [](const char *n, int k) -> void {
+		int *p = &keys[n];
+		int c = glfwGetKey(window, k);
+		if (*p && c) *p = 2;
+		else if (c) *p = 1;
+		else if (!c) *p = 0;
+	};
+	handler("esc", GLFW_KEY_ESCAPE);
+	handler("f1", GLFW_KEY_F1);
+	handler("f3", GLFW_KEY_F3);
+	handler("f4", GLFW_KEY_F4);
+	handler("f5", GLFW_KEY_F5);
+	handler("f6", GLFW_KEY_F6);
+	handler("f10", GLFW_KEY_F10);
+	handler("w", GLFW_KEY_W);
+	handler("a", GLFW_KEY_A);
+	handler("s", GLFW_KEY_S);
+	handler("d", GLFW_KEY_D);
+	handler("r", GLFW_KEY_R);
+	handler("f", GLFW_KEY_F);
+	handler("v", GLFW_KEY_V);
+	handler("e", GLFW_KEY_E);
+	handler("lctrl", GLFW_KEY_LEFT_CONTROL);
+	handler("lshift", GLFW_KEY_LEFT_SHIFT);
+}
+
+static void handle_most_keys()
+{
+	if (pressing("esc")) handle_esc();
+	else if (pressing("f1")) toggle_debug();
+	else if (pressing("f3")) toggle_cursor();
+	else if (pressing("f4")) toggle_fbo();
+	else if (pressing("f5")) hotswap_plugin_and_dungeon();
+	else if (pressing("f6")) reload_shaders();
+	else if (pressing("f10")) toggle_render_stats();
+	else if (pressing("e")) handle_use_key();
+	else if (pressing("v")) toggle_third_person();
 }
 
 void cursor_pos_callback(GLFWwindow *window, double x, double y)
 {
 	static double x2 = x;
 	static double y2 = y;
-	cameraCur->Mouse((float)(x - x2), (float)(y - y2));
+	if (!cursorShowing)
+		cameraCur->Mouse((float)(x - x2), (float)(y - y2));
 	x2 = x;
 	y2 = y;
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-	printf("framebuffer_size_callback %i %i\n", width, height);
 	glViewport(0, 0, width, height);
 	::width = width;
 	::height = height;
@@ -183,14 +200,12 @@ void setupImgui()
 	(void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
 	
 	ImFont *font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
 	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 55.0f);
 	IM_ASSERT(font2 != NULL);
 	IM_ASSERT(font3 != NULL);
-	
 
 	ImGui::StyleColorsDark();
 
@@ -219,40 +234,33 @@ void put_it_fullscreen()
 	glViewport(0, 0, width, height);
 	//glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, mode->refreshRate);
 	//glfwSwapInterval(0); // vsync
+	// glfwSetWindowPos(window, mode->width / 2 - width / 2, mode->height / 2 - height / 2);
 }
 
-void dark::setup_glfw()
+void dark::goingrate()
 {
-	printf("setup window\n");
-
 	glfwSetErrorCallback(glfw_error_callback);
 
-	// todo blegh
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
-
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-	glfwWindowHint(GLFW_SAMPLES, 8);
 
 	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 
-	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	window = glfwCreateWindow(width, height, "gloom", NULL, NULL);
-	glfwSetWindowPos(window, mode->width / 2 - width / 2, mode->height / 2 - height / 2);
+	window = glfwCreateWindow(width, height, "dark", NULL, NULL);
+
+	glfwMakeContextCurrent(window);
 
 	glfwSetKeyCallback(window, key_callback);
-	glfwMakeContextCurrent(window);
+
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+	hide_cursor();
 
 	if (glfwRawMouseMotionSupported())
-    glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    	glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
 	int er = gladLoadGL();
 	if (er == 0)
@@ -265,7 +273,6 @@ void dark::setup_glfw()
 
 	glClearColor(0, 0, 0, 1);
 
-	glEnable(GL_TEXTURE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -279,9 +286,6 @@ void dark::doImGui()
 	ImGui::NewFrame();
 
 	render_stats(&f10);
-
-	if (h_pop)
-		hero_menu();
 
 	if (!hideDebugGuis)
 	{
@@ -362,7 +366,9 @@ void dark::program_while()
 
 		//simple_loader();
 
-		doKeys();
+		get_my_keys();
+
+		handle_most_keys();
 
 		if (player1)
 			player1->step();
@@ -388,7 +394,6 @@ void dark::program_while()
 			dungeon->update();
 
 		Container::Step();
-		//collision_simulate();
 
 		//sceneDef->Order();
 		sceneDef->DrawItems();

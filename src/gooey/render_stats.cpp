@@ -1,6 +1,5 @@
 
 #include <dark/dark.h>
-#include <core/files.h>
 
 #include "gooey.h"
 

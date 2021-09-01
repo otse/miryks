@@ -46,25 +46,28 @@ namespace dark
 	void reload_dungeon();
 	
 	void load_definitions(espp plugin);
-	void setup_glfw();
+	void goingrate();
 	void program_while();
 
 	void simple_viewer(Nif *);
 	void doImGui();
 	void renderImGui();
 
-	void HideCursor();
-	void ShowCursor();
+	void hide_cursor();
+	void show_cursor();
 
 	extern std::string editme;
 
 	extern RenderTarget *render_target;
 
-	namespace MyKeys
-	{
-		extern bool w, a, s, d, r, f, v;
-		extern bool shift, space;
-	};
+	extern std::map<const char *, int> keys;
+
+	inline bool pressing(const char *id) {
+		return keys[id] == 1;
+	}
+	inline bool holding(const char *id) {
+		return keys[id] >= 1;
+	}
 
 	extern Interior *dungeon;
 	extern BodyPart *someDraugr;

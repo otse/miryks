@@ -1,15 +1,13 @@
 #include <skyrim_units>
 
-
 #include <dark/dark.h>
 #include <dark/actor.h>
-#include <dark/collision.h>
 #include <dark/ref.h>
 
 #include <skyrim/skyrim.h>
 #include <skyrim/grup.h>
 
-#include <core/files.h>
+#include <dark/files.h>
 #include <skyrim/skeleton.h>
 #include <skyrim/interior.h>
 #include <skyrim/mesh.h>
@@ -166,7 +164,6 @@ namespace dark
 		if (ref == dungeon->edIds.end())
 			return;
 		drawGroup->matrix = ref->second->matrix;
-		csphere = new CSphere(vec3(drawGroup->matrix[3]) /*+vec3(0, 0, 1)*/);
 		sceneDef->drawGroups.Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
@@ -199,7 +196,7 @@ namespace dark
 	{
 		//printf(" Player() \n");
 		// We take over with custom movement
-		Camera::DISABLE_MOVEMENT = true;
+		personCam->disabled = true;
 		human = new Human();
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4(1.0));
@@ -216,8 +213,7 @@ namespace dark
 	{
 		move();
 		cameraCur->pos = vec3(pose);
-		using namespace MyKeys;
-		if (w)
+		if (holding("w"))
 		{
 		}
 		else
@@ -258,8 +254,6 @@ namespace dark
 
 	void Player::move()
 	{
-		using namespace MyKeys;
-
 		yaw = cameraCur->yaw;
 
 		auto forward = [&](float n)
@@ -276,22 +270,22 @@ namespace dark
 
 		float speed = 200.f * delta;
 
-		if (shift)
-			speed /= 10;
+		if (!holding("lshift"))
+		speed /= 10;
 
-		if (w && !s)
+		if (holding("w") && !holding("s"))
 			forward(speed);
-		if (s && !w)
+		if (holding("s") && !holding("w"))
 			forward(-speed / 2);
 
-		if (a && !d)
+		if (holding("a") && !holding("d"))
 			strafe(-speed);
-		if (d && !a)
+		if (holding("d") && !holding("a"))
 			strafe(speed);
 
-		if (r)
+		if (holding("r"))
 			pose.z += speed / 2;
-		if (f)
+		if (holding("f"))
 			pose.z -= speed / 2;
 	}
 

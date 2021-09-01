@@ -6,7 +6,6 @@
 #include <skyrim/grup.h>
 #include <skyrim/mesh.h>
 #include <skyrim/trash.h>
-#include <core/files.h>
 
 #include <algorithm>
 #include <cctype>
