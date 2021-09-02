@@ -6,18 +6,15 @@
 
 #include "list"
 
+#define MY_ESP 5
+
 namespace dark
 {
 	class Ref;
 	class Actor;
+	class Player;
 	class BodyPart;
 	class Human;
-	class Player;
-	
-	class CSphere;
-	class CShape;
-	class Collider;
-
 	class Image;
 }
 

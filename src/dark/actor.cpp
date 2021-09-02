@@ -155,7 +155,6 @@ namespace dark
 		if (feet)
 			group->Add(feet->smesh->baseGroup);
 		drawGroup = new DrawGroup(group, mat4());
-		csphere = nullptr;
 	};
 
 	void Human::Place(const char *q)
@@ -184,7 +183,7 @@ namespace dark
 			hands->step();
 		if (feet)
 			feet->step();
-		if (csphere)
+		//if (csphere)
 		{
 			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());
 			//drawGroup->matrix = translate(mat4(1.0), csphere->GetWorldTransform());

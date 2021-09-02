@@ -58,39 +58,40 @@ api void bsa_print_hedr(Bsa *b, char *s)
 {
 #define hedr b->hdr
 	int w = snprintf(s, 600, "\
-id:           %s\
-\nver:        %i\
-\narchive flags:\
-\n0x1:        %i\
-\n0x2:        %i\
-\n0x4:        %i\
-\n0x8:        %i\
-\n0x10:       %i\
-\n0x20:       %i\
-\n0x40:       %i\
-\n0x80:       %i\
-\n0x100:      %i\
-\n0x200:      %i\
-\n0x400:      %i\
+id: %s\
+\nver: %i\
+\nfolders: %lu\
+\nfiles: %lu\
+\nstrings: %lu, %lu\
+\nflags:\
+\n 0x1   %i\
+\n 0x2   %i\
+\n 0x4   %i\
+\n 0x8   %i\
+\n 0x10  %i\
+\n 0x20  %i\
+\n 0x40  %i\
+\n 0x80  %i\
+\n 0x100 %i\
+\n 0x200 %i\
+\n 0x400 %i\
 \nfile flags:\
-\nmeshes:     %i\
-\ntextures:   %i\
-\nmenus:      %i\
-\nsounds:     %i\
-\nvoices:     %i\
-\nshaders:    %i\
-\ntrees:      %i\
-\nfonts:      %i\
-\nmisc:       %i\
-\nfolders:    %lu\
-\nfiles:      %lu\
-\nfoldersl:   %lu\
-\nfilesl:     %lu\
-\nfile_flags: %lu\
-\nsizeof:     %zu\
+\n meshes   %i\
+\n textures %i\
+\n menus    %i\
+\n sounds   %i\
+\n voices   %i\
+\n shaders  %i\
+\n trees    %i\
+\n fonts    %i\
+\n misc     %i\
 ",
 hedr.id,
 hedr.ver,
+hedr.folders,
+hedr.files,
+hedr.foldersl,
+hedr.filesl,
 hedr.archive_flags & 0x1,
 hedr.archive_flags & 0x2,
 hedr.archive_flags & 0x4,
@@ -110,12 +111,6 @@ hedr.file_flags & BSA_VOICES,
 hedr.file_flags & BSA_SHADERS,
 hedr.file_flags & BSA_TREES,
 hedr.file_flags & BSA_FONTS,
-hedr.file_flags & BSA_MISC,
-hedr.folders,
-hedr.files,
-hedr.foldersl,
-hedr.filesl,
-hedr.file_flags,
-sizeof(struct bsa_hedr)
+hedr.file_flags & BSA_MISC
 );
 }

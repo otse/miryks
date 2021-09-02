@@ -1,10 +1,5 @@
 #include <renderer/material.h>
 
-extern "C"
-{
-#include "common.h"
-}
-
 #include <renderer/texture.h>
 #include <renderer/camera.h>
 #include <renderer/shader.h>

@@ -1,5 +1,4 @@
-#ifndef GLOOM_FILES_H
-#define GLOOM_FILES_H
+#pragma once
 
 // part of gloom
 
@@ -13,5 +12,3 @@ void fwrite(const std::string &, const std::string &);
 std::string fread(const std::string &);
 std::vector<unsigned char> *readbin(const std::string &);
 bool exists_test3(const std::string &name);
-
-#endif

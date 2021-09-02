@@ -1,6 +1,6 @@
 -- premake5.lua
 workspace "gloom-sse"
-	configurations { "Debug", "Release" }
+	configurations { "Release" } -- "Debug",
 
 project "dark-sse"
 	kind "ConsoleApp"

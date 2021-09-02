@@ -185,13 +185,6 @@ void cursor_pos_callback(GLFWwindow *window, double x, double y)
 	y2 = y;
 }
 
-void framebuffer_size_callback(GLFWwindow *window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-	::width = width;
-	::height = height;
-}
-
 void setupImgui()
 {
 	IMGUI_CHECKVERSION();
@@ -200,20 +193,14 @@ void setupImgui()
 	(void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-	
 	ImFont *font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
 	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 55.0f);
 	IM_ASSERT(font2 != NULL);
 	IM_ASSERT(font3 != NULL);
-
 	ImGui::StyleColorsDark();
-
-	// Setup Platform/Renderer bindings
-	const char *glsl_version = "#version 130";
-
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init(glsl_version);
+	ImGui_ImplOpenGL3_Init();
 }
 
 static void glfw_error_callback(int error, const char *description)
@@ -250,10 +237,6 @@ void dark::goingrate()
 	window = glfwCreateWindow(width, height, "dark", NULL, NULL);
 
 	glfwMakeContextCurrent(window);
-
-	glfwSetKeyCallback(window, key_callback);
-
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	glfwSetCursorPosCallback(window, cursor_pos_callback);
 

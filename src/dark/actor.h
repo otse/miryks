@@ -35,7 +35,6 @@ namespace dark
 	{
 		BodyPart *hat, *head, *body, *hands, *feet;
 	public:
-		CSphere *csphere;
 		Group *group;
 		DrawGroup *drawGroup = nullptr;
 		Human();
