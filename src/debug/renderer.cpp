@@ -21,8 +21,11 @@ static std::stringstream ss;
 void opengl_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
-	ImGui::SetNextWindowSize(ImVec2(400, 0));
-	ImGui::Begin("OpenGL", nullptr, flags);
+	
+	ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(ImVec2(450, 0));
+
+	ImGui::Begin("Render", nullptr, flags);
 
 	ImGui::Text("groups: %i", Group::Num);
 	ImGui::Text("geometries: %i", Geometry::Num);

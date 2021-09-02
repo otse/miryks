@@ -15,9 +15,9 @@ void cell_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
-	ImGui::SetNextWindowPos(ImVec2(1350, 0));
+	ImGui::SetNextWindowPos(ImVec2(450 * 4, 0));
 
-	ImGui::Begin("cell", nullptr, flags);
+	ImGui::Begin("Interiors", nullptr, flags);
 
 	ImGui::Separator();
 

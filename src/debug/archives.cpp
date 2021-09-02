@@ -15,8 +15,8 @@ void bsa_gui()
     ImGuiIO& io = ImGui::GetIO();
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
-	ImGui::SetNextWindowPos(ImVec2(0, 0));
 
+	ImGui::SetNextWindowPos(ImVec2(450, 0));
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::Begin("Archive", nullptr, flags);
 

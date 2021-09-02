@@ -100,7 +100,7 @@ void esp_gui()
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, io.DisplaySize.y));
-	ImGui::SetNextWindowPos(ImVec2(450, 0));
+	ImGui::SetNextWindowPos(ImVec2(450 * 2, 0));
 
 	ImGui::Begin("Plugin", nullptr, flags);
 

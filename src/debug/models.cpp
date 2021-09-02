@@ -10,8 +10,8 @@ void nif_gui()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
-	ImGui::SetNextWindowPos(ImVec2(900, 0));
-	ImGui::Begin("Nif", nullptr, flags);
+	ImGui::SetNextWindowPos(ImVec2(450 * 3, 0));
+	ImGui::Begin("Models", nullptr, flags);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
