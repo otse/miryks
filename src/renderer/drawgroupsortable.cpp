@@ -6,8 +6,6 @@
 
 #include <algorithm>
 
-// this lets you sort within!
-
 DrawGroupSortable::DrawGroupSortable(Group *group, mat4 matrix)
 	: DrawGroup(group, matrix)
 {
@@ -18,21 +16,21 @@ DrawGroupSortable::DrawGroupSortable(Group *group, mat4 matrix)
 void DrawGroupSortable::Reset()
 {
 	DrawGroup::Reset();
-	group->Flatten(group);
+	target->Flatten(target);
 }
 
 void DrawGroupSortable::Draw()
 {
-	mat4 place = matrix * group->matrix;
-	for (Group *group : group->flat)
-		group->DrawSingle(place);
+	mat4 place = matrix * target->matrix;
+	for (Group *group : target->flat)
+		group->Draw(place);
 	DrawBounds();
 }
 
 void DrawGroupSortable::Sort(std::function<bool(const Group *, const Group *)> f)
 {
-	group->Flatten(group);
-	auto &flat = group->flat;
+	target->Flatten(target);
+	auto &flat = target->flat;
 	std::sort(flat.begin(), flat.end(), f);
 }
 

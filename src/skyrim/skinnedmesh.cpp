@@ -54,7 +54,7 @@ namespace skyrim
 			for (unsigned int k = 0; k < nsp->A->num_partitions; k++)
 			{
 				SkinPartition *partition = nsp->partitions[k];
-				Group *group = groups[ref]->groups[k];
+				Group *group = groups[ref]->childGroups[k];
 				Material *material = group->geometry->material;
 				material->boneMatrices.clear();
 				material->boneMatrices.reserve(partition->nums->bones);

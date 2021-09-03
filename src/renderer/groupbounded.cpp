@@ -8,10 +8,10 @@ GroupBounded::GroupBounded() : Group()
 	axis->SetupMesh();
 }
 
-void GroupBounded::DrawSingle(const mat4 &model)
+void GroupBounded::Draw(const mat4 &left)
 {
-	Group::DrawSingle(model);
-	mat4 place = model * matrixWorld;
+	Group::Draw(left);
+	mat4 place = left * matrixWorld;
 	if (axis && renderSettings.axes)
 		axis->Draw(place);
 }

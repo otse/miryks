@@ -1,7 +1,5 @@
-#ifndef OPENGL_DRAGROUP_H
+#ifndef OPENGL_DRAWGROUP_H
 #define OPENGL_DRAWGROUP_H
-
-// part of gloom
 
 #include <functional>
 
@@ -11,11 +9,17 @@
 
 struct DrawGroup
 {
-	Aabb aabb, obb;
+	static int Num;
+	bool toggle;
 	mat4 matrix;
-	Group *const group;
-	DrawGroup(Group *, mat4 = mat4(1.0));
-	virtual ~DrawGroup(){};
+	DrawGroup *parent;
+	Group *const target;
+	std::vector<DrawGroup *> drawGroups;
+	Aabb aabb, obb;
+	DrawGroup(Group *, mat4);
+	virtual ~DrawGroup();
+	void Add(DrawGroup *);
+	void Remove(DrawGroup *);
 	void DrawBounds();
 	virtual void Draw();
 	virtual void Reset();
@@ -26,7 +30,7 @@ struct DrawGroup
 struct DrawGroupSortable : DrawGroup
 {
 	bool hasTransparency = false;;
-	DrawGroupSortable(Group *, mat4 = mat4(1.0));
+	DrawGroupSortable(Group *, mat4);
 	virtual ~DrawGroupSortable(){};
 	virtual void Draw();
 	virtual void Reset();

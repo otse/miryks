@@ -9,6 +9,8 @@
 
 #include <renderer/camera.h>
 #include <renderer/scene.h>
+#include <renderer/group.h>
+#include <renderer/drawgroup.h>
 #include <renderer/material.h>
 #include <renderer/shader.h>
 #include <renderer/rendertarget.h>
@@ -303,7 +305,7 @@ void dark::program_while()
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	sceneDef->drawGroups.Add(personCam->drawGroup);
+	sceneDef->bigGroup->Add(personCam->drawGroup);
 
 	#if 0
 	PointLight *myself = new PointLight;

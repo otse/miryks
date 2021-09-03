@@ -1,7 +1,9 @@
 #include <dark/dark.h>
 #include <dark/actor.h>
+#include <dark/ref.h>
 
 #include <renderer/group.h>
+#include <renderer/drawgroup.h>
 #include <renderer/geometry.h>
 #include <renderer/camera.h>
 #include <renderer/shader.h>
@@ -33,7 +35,26 @@ void opengl_gui()
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))
 	{
+		if (ImGui::BeginTabItem("objects"))
+		{
+			#define CheckBox(x) ImGui::Checkbox(#x, &Refs::wordGroups[*(unsigned int *)x]->toggle);
+			CheckBox(Statics);
+			CheckBox(Lights);
+			CheckBox(Doors);
+			CheckBox(Furniture);
+			CheckBox(Books);
+			CheckBox(Containers);
+			CheckBox(Armor);
+			CheckBox(Weapons);
+			CheckBox(Ammo);
+			CheckBox(Misc);
+			CheckBox(Alchemy);
+			CheckBox(Ingredients);
+			CheckBox(Mists);
+			CheckBox(Plants);
+			ImGui::EndTabItem();
 
+		}
 		if (ImGui::BeginTabItem("settings"))
 		{
 			bool a = ImGui::Checkbox("diffuse maps", &renderSettings.diffuseMaps);

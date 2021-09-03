@@ -101,7 +101,8 @@ namespace dark
 			group->Add(smesh->baseGroup);
 			//printf("make smesh->skeleton drawGroup!\n");
 			drawGroup = new DrawGroup(group, ref->second->matrix);
-			sceneDef->drawGroups.Add(drawGroup);
+			//drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
+			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else
 		{
@@ -163,7 +164,7 @@ namespace dark
 		if (ref == dungeon->edIds.end())
 			return;
 		drawGroup->matrix = ref->second->matrix;
-		sceneDef->drawGroups.Add(drawGroup);
+		sceneDef->bigGroup->Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
 		mirror->matrix = drawGroup->matrix;
@@ -199,8 +200,8 @@ namespace dark
 		human = new Human();
 		//human->Place("gloomgenman");
 		drawGroup = new DrawGroup(human->group, mat4(1.0));
-		drawGroup->group->visible = false;
-		sceneDef->drawGroups.Add(drawGroup);
+		drawGroup->target->visible = false;
+		sceneDef->bigGroup->Add(drawGroup);
 //cameraCur->group->Add(human->group);
 //fpc = new FirstPersonCamera;
 		pose = vec3(personCam->pos);
@@ -235,7 +236,7 @@ namespace dark
 		if (thirdPerson)
 		{
 			cameraCur = thirdPersonCamera;
-			drawGroup->group->visible = true;
+			drawGroup->target->visible = true;
 			thirdPersonCamera->pos = pose;
 			thirdPersonCamera->yaw = personCam->yaw;
 			thirdPersonCamera->pitch = personCam->pitch;
@@ -244,7 +245,7 @@ namespace dark
 		else
 		{
 			cameraCur = personCam;
-			drawGroup->group->visible = false;
+			drawGroup->target->visible = false;
 			personCam->pos = pose;
 			personCam->yaw = thirdPersonCamera->yaw;
 			personCam->pitch = thirdPersonCamera->pitch;

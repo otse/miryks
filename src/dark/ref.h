@@ -17,11 +17,15 @@ namespace dark
 	{
 		extern Ref *handRef;
 		extern std::vector<Ref *> labelled;
+		extern std::map<unsigned int, DrawGroup *> wordGroups;
 		extern bool labelingEnabled;
 		extern vec3 projected;
+		void Init();
 		void Nearby();
 		void Activate();
 	};
+
+	static void refs_init() { Refs::Init(); }
 	
 	class Ref : public Record
 	{
@@ -34,7 +38,8 @@ namespace dark
 		mat4 translation, rotation, scale;
 		mat4 matrix;
 		Mesh *mesh;
-		DrawGroup *drawGroup;
+		Group *refGroup;
+		DrawGroup *drawGroup = nullptr;
 		PointLight *pointLight;
 		SpotLight *spotLight;
 		void go();

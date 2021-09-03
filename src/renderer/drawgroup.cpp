@@ -1,3 +1,5 @@
+#include <templates.hpp>
+
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 #include <renderer/geometry.h>
@@ -6,10 +8,32 @@
 
 #include <algorithm>
 
+int DrawGroup::Num = 0;
+
 DrawGroup::DrawGroup(Group *group, mat4 matrix)
-	: group(group), matrix(matrix)
+	: target(group), matrix(matrix)
 {
+	toggle = true;
+	parent = nullptr;
+	Num++;
 	Reset();
+}
+
+DrawGroup::~DrawGroup()
+{
+	Num--;
+}
+
+void DrawGroup::Add(DrawGroup *drawGroup)
+{
+	drawGroup->parent = this;
+	vector_safe_add<DrawGroup *>(drawGroup, drawGroups);
+}
+
+void DrawGroup::Remove(DrawGroup *drawGroup)
+{
+	drawGroup->parent = nullptr;
+	vector_safe_remove<DrawGroup *>(drawGroup, drawGroups);
 }
 
 void DrawGroup::Reset()
@@ -19,7 +43,9 @@ void DrawGroup::Reset()
 
 void DrawGroup::Rebound()
 {
-	GroupBounded *bounded = dynamic_cast<GroupBounded *>(group);
+	if (!target)
+		return;
+	GroupBounded *bounded = dynamic_cast<GroupBounded *>(target);
 	if (bounded)
 	{
 		obb = aabb = bounded->aabb;
@@ -31,13 +57,20 @@ void DrawGroup::Rebound()
 
 void DrawGroup::Draw()
 {
-	group->DrawMultiple(matrix);
+	if (!toggle)
+		return;
+	if (target)
+		target->DrawRecursive(matrix);
+	for (DrawGroup *drawGroup : drawGroups)
+		drawGroup->Draw();
 	DrawBounds();
 }
 
 void DrawGroup::DrawBounds()
 {
-	mat4 place = matrix * group->matrix;
+	if (!target)
+		return;
+	mat4 place = matrix * target->matrix;
 	bool notTooLarge = aabb.volume() <= renderSettings.maximumBoundingVolume;
 	if (renderSettings.AABBS && aabb.geometry && notTooLarge)
 		aabb.geometry->Draw(mat4(1.0));

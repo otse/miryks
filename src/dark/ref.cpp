@@ -1,6 +1,5 @@
 #include <skyrim_units>
 
-
 #include <dark/ref.h>
 
 #include <skyrim/grup.h>
@@ -34,7 +33,8 @@ namespace dark
 
 	Ref::~Ref()
 	{
-		sceneDef->drawGroups.Remove(drawGroup);
+		if (drawGroup && drawGroup->parent)
+			drawGroup->parent->Remove(drawGroup);
 		sceneDef->pointLights.Remove(pointLight);
 		sceneDef->spotLights.Remove(spotLight);
 		delete drawGroup;
@@ -225,13 +225,19 @@ namespace dark
 			if (baseObject.rcd->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroupSortable(mesh->baseGroup, matrix);
-				sceneDef->drawGroups.Add(drawGroup);
+				auto has = Refs::wordGroups.find(baseObject.hed().sgn);
+				if (has == Refs::wordGroups.end())
+					sceneDef->bigGroup->Add(drawGroup);
+				else
+					has->second->Add(drawGroup);
 			}
 		}
 	}
 
 	float Ref::getDistance() const
 	{
+		if (drawGroup == nullptr)
+			return 0;
 		float distance = glm::length(drawGroup->aabb.center() - vec3(personCam->hands->matrixWorld[3]));
 
 		return distance;
@@ -260,8 +266,34 @@ namespace dark
 	namespace Refs {
 		Ref *handRef = nullptr;
 		std::vector<Ref *> labelled;
+		std::map<unsigned int, DrawGroup *> wordGroups;
 		bool labelingEnabled = true;
 		vec3 projected;
+		void Init()
+		{
+			static const auto things = {
+				Statics,
+				Lights,
+				Doors,
+				Furniture,
+				Books,
+				Containers,
+				Armor,
+				Weapons,
+				Ammo,
+				Misc,
+				Alchemy,
+				Ingredients,
+				Mists,
+				Plants,
+			};
+			for (const char *word : things)
+			{
+				unsigned int i = *(unsigned int *)word;
+				wordGroups[i] = new DrawGroup(nullptr, mat4(1.0));
+				sceneDef->bigGroup->Add(wordGroups[i]);
+			}
+		}
 		void Nearby()
 		{
 			if (!labelingEnabled)
@@ -299,9 +331,10 @@ namespace dark
 		// printf(" display as item %f\n", dist);
 
 		if (dist > 40)
-		{
 			return false;
-		}
+
+		if (drawGroup == nullptr)
+			return false;
 
 		Refs::handRef = this;
 

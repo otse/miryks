@@ -70,6 +70,7 @@ int main()
 	cameraCur = personCam;
 	// Bucket beginning
 	load_bucket();
+	refs_init();
 	put_it_fullscreen();
 	load_gloomgen();
 	someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
@@ -118,14 +119,14 @@ void dark::simple_viewer(Nif *nif)
 	static DrawGroup *drawGroup = nullptr;
 	if (mesh)
 	{
-		sceneDef->drawGroups.Remove(drawGroup);
+		sceneDef->bigGroup->Remove(drawGroup);
 		delete mesh;
 		delete drawGroup;
 	}
 	mesh = new Mesh(nif);
 	drawGroup = new DrawGroup(
 		mesh->baseGroup, translate(mat4(1.0), personCam->pos));
-	sceneDef->drawGroups.Add(drawGroup);
+	sceneDef->bigGroup->Add(drawGroup);
 	hide_cursor();
 	cameraCur = viewerCam;
 	viewerCam->pos = drawGroup->aabb.center();

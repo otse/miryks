@@ -23,7 +23,8 @@ struct Bluh
 struct Scene
 {
 public:
-	Bluh<DrawGroup> drawGroups;
+	DrawGroup *bigGroup;
+	
 	Bluh<PointLight> pointLights;
 	Bluh<SpotLight> spotLights;
 	

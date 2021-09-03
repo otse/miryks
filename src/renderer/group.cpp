@@ -7,8 +7,11 @@ int Group::Num = 0;
 
 Group::Group()
 {
-	Num++;
+	visible = true;
+	parent = nullptr;
+	geometry = nullptr;
 	matrix = matrixWorld = mat4(1.0f);
+	Num++;
 }
 
 Group::~Group()
@@ -19,13 +22,13 @@ Group::~Group()
 void Group::Add(Group *group)
 {
 	group->parent = this;
-	vector_safe_add<Group *>(group, groups);
+	vector_safe_add<Group *>(group, childGroups);
 }
 
 void Group::Remove(Group *group)
 {
 	group->parent = nullptr;
-	vector_safe_remove<Group *>(group, groups);
+	vector_safe_remove<Group *>(group, childGroups);
 }
 
 void Group::Update()
@@ -34,24 +37,24 @@ void Group::Update()
 		matrixWorld = matrix;
 	else
 		matrixWorld = parent->matrixWorld * matrix;
-	for (Group *child : groups)
+	for (Group *child : childGroups)
 		child->Update();
 }
 
-void Group::DrawSingle(const mat4 &model)
+void Group::Draw(const mat4 &left)
 {
-	mat4 place = model * matrixWorld;
+	mat4 place = left * matrixWorld;
 	if (geometry)
 		geometry->Draw(place);
 }
 
-void Group::DrawMultiple(const mat4 &model)
+void Group::DrawRecursive(const mat4 &left)
 {
 	if (!visible)
 		return;
-	DrawSingle(model);
-	for (Group *child : groups)
-		child->DrawMultiple(model);
+	Draw(left);
+	for (Group *child : childGroups)
+		child->DrawRecursive(left);
 }
 
 void Group::Flatten(Group *root)
@@ -60,6 +63,6 @@ void Group::Flatten(Group *root)
 	if (this == root)
 		flat.clear();
 	root->flat.push_back(this);
-	for (Group *child : groups)
+	for (Group *child : childGroups)
 		child->Flatten(root);
 }

@@ -16,6 +16,8 @@ static SpotLight *bspot;
 
 Scene::Scene()
 {
+	bigGroup = new DrawGroup(new Group, mat4(1.0));
+
 	bpoint = new PointLight;
 	bpoint->color = vec3(0.f);
 
@@ -49,7 +51,7 @@ void Scene::DrawItems()
 		return false;
 	};
 
-	std::sort(drawGroups.ts.begin(), drawGroups.ts.end(), EarlyZKills);
+	std::sort(bigGroup->drawGroups.begin(), bigGroup->drawGroups.end(), EarlyZKills);
 
 	auto TransparencyLast = [](const DrawGroup *a, const DrawGroup *b) -> bool {
 		const DrawGroupSortable *dgs = dynamic_cast<const DrawGroupSortable *>(a);
@@ -57,9 +59,9 @@ void Scene::DrawItems()
 			return false;
 		return true;
 	};
-	std::sort(drawGroups.ts.begin(), drawGroups.ts.end(), TransparencyLast);
+	std::sort(bigGroup->drawGroups.begin(), bigGroup->drawGroups.end(), TransparencyLast);
 
-	for (DrawGroup *drawGroup : drawGroups.ts)
+	for (DrawGroup *drawGroup : bigGroup->drawGroups)
 		drawGroup->Draw();
 }
 

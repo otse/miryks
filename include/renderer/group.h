@@ -1,8 +1,6 @@
 #ifndef OPENGL_GROUP_H
 #define OPENGL_GROUP_H
 
-// part of gloom
-
 #include <renderer/types.h>
 
 #include <renderer/Aabb.h>
@@ -10,19 +8,18 @@
 struct Group
 {
 	static int Num;
-	bool visible = true;
-	Group *parent = nullptr;
-	Geometry *geometry = nullptr;
-	mat4 matrix;
-	mat4 matrixWorld;
-	std::vector<Group *> groups, flat;
+	bool visible;
+	Group *parent;
+	Geometry *geometry;
+	mat4 matrix, matrixWorld;
+	std::vector<Group *> childGroups, flat;
 	Group();
 	virtual ~Group();
 	void Add(Group *);
 	void Remove(Group *);
-	void DrawMultiple(const mat4 &);
 	virtual void Update();
-	virtual void DrawSingle(const mat4 &);
+	virtual void Draw(const mat4 &);
+	virtual void DrawRecursive(const mat4 &);
 	void Flatten(Group *);
 };
 
@@ -33,7 +30,7 @@ struct GroupBounded : Group
 	GroupBounded();
 	virtual ~GroupBounded(){};
 	virtual void Update();
-	virtual void DrawSingle(const mat4 &);
+	virtual void Draw(const mat4 &);
 };
 
 #endif
