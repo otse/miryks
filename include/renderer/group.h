@@ -16,9 +16,10 @@ struct Group
 	virtual ~Group();
 	void Add(Group *);
 	void Remove(Group *);
-	virtual void DrawSelf(const mat4 &);
+	void Draw(const mat4 &);
+	virtual void DrawOverride(const mat4 &);
 	virtual void Update();
-	void DrawAll(const mat4 &);
+	void DrawChilds(const mat4 &);
 	void Flatten(Group *);
 	float GetZ() const;
 };

@@ -39,7 +39,7 @@ void DrawGroup::ManualReset()
 	Cubify();
 }
 
-bool DrawGroup::Enabled()
+bool DrawGroup::ShouldRender()
 {
 	if (!visible)
 		return false;
@@ -48,13 +48,13 @@ bool DrawGroup::Enabled()
 	return true;
 }
 
-void DrawGroup::DrawSelf(const mat4 &left)
+void DrawGroup::DrawOverride(const mat4 &left)
 {
-	if (!Enabled())
+	if (!ShouldRender())
 		return;
 	if (target)
-		target->DrawAll(matrix);
-	//DrawAll(matrix);
+		target->DrawChilds(matrix);
+	//DrawChilds(matrix);
 	//DrawBounds();
 }
 

@@ -63,7 +63,7 @@ void Scene::DrawItems()
 	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), TransparencyLast);
 #endif
 
-	bigGroup->DrawAll(mat4(1.0));
+	bigGroup->DrawChilds(mat4(1.0));
 }
 
 void Scene::CalcLights()

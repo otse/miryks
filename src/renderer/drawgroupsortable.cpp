@@ -19,13 +19,13 @@ void DrawGroupSortable::ManualReset()
 	target->Flatten(target);
 }
 
-void DrawGroupSortable::DrawSelf(const mat4 &left)
+void DrawGroupSortable::DrawOverride(const mat4 &left)
 {
-	if (!Enabled())
+	if (!ShouldRender())
 		return;
 	mat4 place = matrix * target->matrix;
 	for (Group *group : target->flat)
-		group->DrawSelf(place);
+		group->DrawOverride(place);
 	DrawBounds();
 }
 

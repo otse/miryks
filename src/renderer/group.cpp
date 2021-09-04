@@ -43,7 +43,7 @@ void Group::Update()
 		child->Update();
 }
 
-void Group::DrawSelf(const mat4 &left)
+void Group::Draw(const mat4 &left)
 {
 	mat4 place = left * matrixWorld;
 	if (geometry)
@@ -52,13 +52,18 @@ void Group::DrawSelf(const mat4 &left)
 		axis->Draw(place);
 }
 
-void Group::DrawAll(const mat4 &left)
+void Group::DrawOverride(const mat4 &left)
+{
+	Draw(left);
+}
+
+void Group::DrawChilds(const mat4 &left)
 {
 	if (!visible)
 		return;
-	DrawSelf(left);
+	DrawOverride(left);
 	for (Group *child : childGroups)
-		child->DrawAll(left);
+		child->DrawChilds(left);
 }
 
 void Group::Flatten(Group *root)
