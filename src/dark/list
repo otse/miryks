@@ -63,3 +63,5 @@
 #define Cells CELL
 #define Classes CLAS
 #define GameSettings GMST
+
+#define Things { "0", STAT, DOOR, FURN, BOOK, CONT, ARMO, WEAP, AMMO, MISC, ALCH, INGR, LIGH, MSTT, TREE }

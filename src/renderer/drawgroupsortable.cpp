@@ -21,6 +21,8 @@ void DrawGroupSortable::Reset()
 
 void DrawGroupSortable::Draw()
 {
+	if (!ShouldDraw())
+		return;
 	mat4 place = matrix * target->matrix;
 	for (Group *group : target->flat)
 		group->Draw(place);

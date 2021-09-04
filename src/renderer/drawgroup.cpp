@@ -9,10 +9,12 @@
 #include <algorithm>
 
 int DrawGroup::Num = 0;
+int DrawGroup::Mask = (~0);
 
 DrawGroup::DrawGroup(Group *group, mat4 matrix)
 	: target(group), matrix(matrix)
 {
+	mask = 1 << 0;
 	toggle = true;
 	parent = nullptr;
 	Num++;
@@ -54,10 +56,17 @@ void DrawGroup::Rebound()
 		aabb.geometrize();
 	}
 }
-
-void DrawGroup::Draw()
+bool DrawGroup::ShouldDraw()
 {
 	if (!toggle)
+		return false;
+	if (((Mask & mask) == mask) == false)
+		return false;
+	return true;
+}
+void DrawGroup::Draw()
+{
+	if (!ShouldDraw())
 		return;
 	if (target)
 		target->DrawRecursive(matrix);

@@ -9,7 +9,8 @@
 
 struct DrawGroup
 {
-	static int Num;
+	static int Num, Mask;
+	int mask;
 	bool toggle;
 	mat4 matrix;
 	DrawGroup *parent;
@@ -20,9 +21,10 @@ struct DrawGroup
 	virtual ~DrawGroup();
 	void Add(DrawGroup *);
 	void Remove(DrawGroup *);
-	void DrawBounds();
+	bool ShouldDraw();
 	virtual void Draw();
 	virtual void Reset();
+	void DrawBounds();
 	void Rebound();
 	float GetZ() const;
 };

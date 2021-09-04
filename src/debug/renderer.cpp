@@ -37,23 +37,15 @@ void opengl_gui()
 	{
 		if (ImGui::BeginTabItem("objects"))
 		{
-			#define CheckBox(x) ImGui::Checkbox(#x, &Refs::wordGroups[*(unsigned int *)x]->toggle);
-			CheckBox(Statics);
-			CheckBox(Lights);
-			CheckBox(Doors);
-			CheckBox(Furniture);
-			CheckBox(Books);
-			CheckBox(Containers);
-			CheckBox(Armor);
-			CheckBox(Weapons);
-			CheckBox(Ammo);
-			CheckBox(Misc);
-			CheckBox(Alchemy);
-			CheckBox(Ingredients);
-			CheckBox(Mists);
-			CheckBox(Plants);
+			int i = 0;
+			for(auto word : Things) {
+				int bit = 1 << i;
+				bool test = (DrawGroup::Mask & bit) == bit;
+				if (ImGui::Checkbox(word, &test))
+					DrawGroup::Mask ^= bit;
+				i++;
+			}
 			ImGui::EndTabItem();
-
 		}
 		if (ImGui::BeginTabItem("settings"))
 		{

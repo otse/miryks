@@ -225,11 +225,16 @@ namespace dark
 			if (baseObject.rcd->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroupSortable(mesh->baseGroup, matrix);
-				auto has = Refs::wordGroups.find(baseObject.hed().sgn);
-				if (has == Refs::wordGroups.end())
-					sceneDef->bigGroup->Add(drawGroup);
-				else
-					has->second->Add(drawGroup);
+				sceneDef->bigGroup->Add(drawGroup);
+				int i = 0;
+				for (auto thing : Things)
+				{
+					if (*(unsigned int *)thing == baseObject.hed().sgn) {
+						drawGroup->mask = 1 << i;
+						break;
+					}
+					i ++;
+				}
 			}
 		}
 	}
@@ -266,33 +271,10 @@ namespace dark
 	namespace Refs {
 		Ref *handRef = nullptr;
 		std::vector<Ref *> labelled;
-		std::map<unsigned int, DrawGroup *> wordGroups;
 		bool labelingEnabled = true;
 		vec3 projected;
 		void Init()
 		{
-			static const auto things = {
-				Statics,
-				Lights,
-				Doors,
-				Furniture,
-				Books,
-				Containers,
-				Armor,
-				Weapons,
-				Ammo,
-				Misc,
-				Alchemy,
-				Ingredients,
-				Mists,
-				Plants,
-			};
-			for (const char *word : things)
-			{
-				unsigned int i = *(unsigned int *)word;
-				wordGroups[i] = new DrawGroup(nullptr, mat4(1.0));
-				sceneDef->bigGroup->Add(wordGroups[i]);
-			}
 		}
 		void Nearby()
 		{

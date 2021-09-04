@@ -17,7 +17,6 @@ namespace dark
 	{
 		extern Ref *handRef;
 		extern std::vector<Ref *> labelled;
-		extern std::map<unsigned int, DrawGroup *> wordGroups;
 		extern bool labelingEnabled;
 		extern vec3 projected;
 		void Init();
