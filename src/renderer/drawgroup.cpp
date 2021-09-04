@@ -8,42 +8,57 @@
 
 #include <algorithm>
 
-int DrawGroup::Num = 0;
-int DrawGroup::Mask = (~0);
+int DGNum = 0;
+int DGMask = ~0;
 
 DrawGroup::DrawGroup(Group *group, mat4 matrix)
-	: target(group), matrix(matrix)
+	: target(group)
 {
+	this->matrix = matrix;
 	mask = 1 << 0;
-	toggle = true;
 	parent = nullptr;
-	Num++;
-	Reset();
+	DGNum++;
+	ManualReset();
 }
+/*void DrawGroup::Add(Group *group)
+{
+
+}
+void DrawGroup::Remove(Group *group)
+{
+
+}*/
 
 DrawGroup::~DrawGroup()
 {
-	Num--;
+	DGNum--;
 }
 
-void DrawGroup::Add(DrawGroup *drawGroup)
+void DrawGroup::ManualReset()
 {
-	drawGroup->parent = this;
-	vector_safe_add<DrawGroup *>(drawGroup, drawGroups);
+	Cubify();
 }
 
-void DrawGroup::Remove(DrawGroup *drawGroup)
+bool DrawGroup::Enabled()
 {
-	drawGroup->parent = nullptr;
-	vector_safe_remove<DrawGroup *>(drawGroup, drawGroups);
+	if (!visible)
+		return false;
+	if (((DGMask & mask) == mask) == false)
+		return false;
+	return true;
 }
 
-void DrawGroup::Reset()
+void DrawGroup::DrawSelf(const mat4 &left)
 {
-	Rebound();
+	if (!Enabled())
+		return;
+	if (target)
+		target->DrawAll(matrix);
+	//DrawAll(matrix);
+	//DrawBounds();
 }
 
-void DrawGroup::Rebound()
+void DrawGroup::Cubify()
 {
 	if (!target)
 		return;
@@ -56,24 +71,6 @@ void DrawGroup::Rebound()
 		aabb.geometrize();
 	}
 }
-bool DrawGroup::ShouldDraw()
-{
-	if (!toggle)
-		return false;
-	if (((Mask & mask) == mask) == false)
-		return false;
-	return true;
-}
-void DrawGroup::Draw()
-{
-	if (!ShouldDraw())
-		return;
-	if (target)
-		target->DrawRecursive(matrix);
-	for (DrawGroup *drawGroup : drawGroups)
-		drawGroup->Draw();
-	DrawBounds();
-}
 
 void DrawGroup::DrawBounds()
 {
@@ -85,9 +82,4 @@ void DrawGroup::DrawBounds()
 		aabb.geometry->Draw(mat4(1.0));
 	if (renderSettings.OBBS && obb.geometry && notTooLarge)
 		obb.geometry->Draw(place);
-}
-
-float DrawGroup::GetZ() const
-{
-	return -vec3((cameraCur->view * matrix)[3]).z;
 }

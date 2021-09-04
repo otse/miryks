@@ -1,5 +1,4 @@
-#include <renderer/Aabb.h>
-
+#include <renderer/aabb.h>
 #include <renderer/geometry.h>
 #include <renderer/material.h>
 #include <renderer/shader.h>

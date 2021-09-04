@@ -4,8 +4,7 @@
 // part of gloom
 
 #include <renderer/types.h>
-
-#include <renderer/Aabb.h>
+#include <renderer/aabb.h>
 
 struct Vertex
 {

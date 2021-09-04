@@ -2,7 +2,7 @@
 
 #include <renderer/scene.h>
 
-#include <renderer/Aabb.h>
+#include <renderer/aabb.h>
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 #include <renderer/material.h>
@@ -45,24 +45,25 @@ void Scene::DrawItems()
 	//CalcLights();
 	SortLights();
 
-	auto EarlyZKills = [](const DrawGroup *a, const DrawGroup *b) -> bool {
+	auto EarlyZKills = [](const Group *a, const Group *b) -> bool {
 		if (a->GetZ() < b->GetZ())
 			return true;
 		return false;
 	};
 
-	std::sort(bigGroup->drawGroups.begin(), bigGroup->drawGroups.end(), EarlyZKills);
+	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), EarlyZKills);
 
-	auto TransparencyLast = [](const DrawGroup *a, const DrawGroup *b) -> bool {
+#if 1
+	auto TransparencyLast = [](const Group *a, const Group *b) -> bool {
 		const DrawGroupSortable *dgs = dynamic_cast<const DrawGroupSortable *>(a);
 		if (dgs && dgs->hasTransparency)
 			return false;
 		return true;
 	};
-	std::sort(bigGroup->drawGroups.begin(), bigGroup->drawGroups.end(), TransparencyLast);
+	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), TransparencyLast);
+#endif
 
-	for (DrawGroup *drawGroup : bigGroup->drawGroups)
-		drawGroup->Draw();
+	bigGroup->DrawAll(mat4(1.0));
 }
 
 void Scene::CalcLights()

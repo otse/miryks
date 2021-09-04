@@ -22,6 +22,8 @@ typedef char *ShaderSource[3];
 struct Aabb;
 struct ShadowMapRenderer;
 
+typedef Aabb AABB;
+
 struct Light;
 struct LightShadow;
 struct DirectionalLight;

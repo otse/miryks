@@ -3,17 +3,9 @@
 
 GroupBounded::GroupBounded() : Group()
 {
-	aabb = Aabb();
+	aabb = obb = Aabb();
 	axis = new Geometry;
 	axis->SetupMesh();
-}
-
-void GroupBounded::Draw(const mat4 &left)
-{
-	Group::Draw(left);
-	mat4 place = left * matrixWorld;
-	if (axis && renderSettings.axes)
-		axis->Draw(place);
 }
 
 void GroupBounded::Update()

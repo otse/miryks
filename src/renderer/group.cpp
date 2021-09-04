@@ -1,5 +1,6 @@
 #include <templates.hpp>
 
+#include <renderer/camera.h>
 #include <renderer/group.h>
 #include <renderer/geometry.h>
 
@@ -10,6 +11,7 @@ Group::Group()
 	visible = true;
 	parent = nullptr;
 	geometry = nullptr;
+	axis = nullptr;
 	matrix = matrixWorld = mat4(1.0f);
 	Num++;
 }
@@ -41,20 +43,22 @@ void Group::Update()
 		child->Update();
 }
 
-void Group::Draw(const mat4 &left)
+void Group::DrawSelf(const mat4 &left)
 {
 	mat4 place = left * matrixWorld;
 	if (geometry)
 		geometry->Draw(place);
+	if (axis && renderSettings.axes)
+		axis->Draw(place);
 }
 
-void Group::DrawRecursive(const mat4 &left)
+void Group::DrawAll(const mat4 &left)
 {
 	if (!visible)
 		return;
-	Draw(left);
+	DrawSelf(left);
 	for (Group *child : childGroups)
-		child->DrawRecursive(left);
+		child->DrawAll(left);
 }
 
 void Group::Flatten(Group *root)
@@ -65,4 +69,9 @@ void Group::Flatten(Group *root)
 	root->flat.push_back(this);
 	for (Group *child : childGroups)
 		child->Flatten(root);
+}
+
+float Group::GetZ() const
+{
+	return -vec3((cameraCur->view * matrix)[3]).z;
 }

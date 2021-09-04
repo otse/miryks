@@ -3,7 +3,7 @@
 
 // part of gloom
 
-#include <renderer/Aabb.h>
+#include <renderer/aabb.h>
 
 struct Bound
 {

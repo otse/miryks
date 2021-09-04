@@ -2,7 +2,7 @@
 
 Grab 1.0 from the release panel, dl size is 2.6 mb. (You will need skyrim special edition.)
 
-The old master branch has fully working legendary edition code.
+The abandoned master branch is legendary edition.
 
 Working:  
 Render indoor cells  

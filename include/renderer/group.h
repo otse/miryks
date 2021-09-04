@@ -2,35 +2,33 @@
 #define OPENGL_GROUP_H
 
 #include <renderer/types.h>
-
-#include <renderer/Aabb.h>
+#include <renderer/aabb.h>
 
 struct Group
 {
 	static int Num;
 	bool visible;
 	Group *parent;
-	Geometry *geometry;
+	Geometry *geometry, *axis;
 	mat4 matrix, matrixWorld;
 	std::vector<Group *> childGroups, flat;
 	Group();
 	virtual ~Group();
 	void Add(Group *);
 	void Remove(Group *);
+	virtual void DrawSelf(const mat4 &);
 	virtual void Update();
-	virtual void Draw(const mat4 &);
-	virtual void DrawRecursive(const mat4 &);
+	void DrawAll(const mat4 &);
 	void Flatten(Group *);
+	float GetZ() const;
 };
 
 struct GroupBounded : Group
 {
-	Aabb aabb, obb;
-	Geometry *axis = nullptr;
+	AABB aabb, obb;
 	GroupBounded();
 	virtual ~GroupBounded(){};
 	virtual void Update();
-	virtual void Draw(const mat4 &);
 };
 
 #endif

@@ -40,9 +40,9 @@ void opengl_gui()
 			int i = 0;
 			for(auto word : Things) {
 				int bit = 1 << i;
-				bool test = (DrawGroup::Mask & bit) == bit;
+				bool test = (DGMask & bit) == bit;
 				if (ImGui::Checkbox(word, &test))
-					DrawGroup::Mask ^= bit;
+					DGMask ^= bit;
 				i++;
 			}
 			ImGui::EndTabItem();

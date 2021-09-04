@@ -4,38 +4,31 @@
 #include <functional>
 
 #include <renderer/types.h>
+#include <renderer/aabb.h>
 
-#include <renderer/Aabb.h>
+extern int DGNum, DGMask;
 
-struct DrawGroup
+struct DrawGroup : Group
 {
-	static int Num, Mask;
 	int mask;
-	bool toggle;
-	mat4 matrix;
-	DrawGroup *parent;
 	Group *const target;
-	std::vector<DrawGroup *> drawGroups;
-	Aabb aabb, obb;
+	AABB aabb, obb;
 	DrawGroup(Group *, mat4);
 	virtual ~DrawGroup();
-	void Add(DrawGroup *);
-	void Remove(DrawGroup *);
-	bool ShouldDraw();
-	virtual void Draw();
-	virtual void Reset();
+	virtual void DrawSelf(const mat4 &);
 	void DrawBounds();
-	void Rebound();
-	float GetZ() const;
+	void Cubify();
+	bool Enabled();
+	virtual void ManualReset();
 };
 
 struct DrawGroupSortable : DrawGroup
 {
-	bool hasTransparency = false;;
+	bool hasTransparency = false;
 	DrawGroupSortable(Group *, mat4);
 	virtual ~DrawGroupSortable(){};
-	virtual void Draw();
-	virtual void Reset();
+	virtual void DrawSelf(const mat4 &);
+	virtual void ManualReset();
 	void Sort(std::function<bool(const Group *, const Group *)>);
 	void SortDefault();
 };

@@ -9,23 +9,23 @@
 DrawGroupSortable::DrawGroupSortable(Group *group, mat4 matrix)
 	: DrawGroup(group, matrix)
 {
-	Reset();
+	ManualReset();
 	SortDefault();
 }
 
-void DrawGroupSortable::Reset()
+void DrawGroupSortable::ManualReset()
 {
-	DrawGroup::Reset();
+	DrawGroup::ManualReset();
 	target->Flatten(target);
 }
 
-void DrawGroupSortable::Draw()
+void DrawGroupSortable::DrawSelf(const mat4 &left)
 {
-	if (!ShouldDraw())
+	if (!Enabled())
 		return;
 	mat4 place = matrix * target->matrix;
 	for (Group *group : target->flat)
-		group->Draw(place);
+		group->DrawSelf(place);
 	DrawBounds();
 }
 
