@@ -48,7 +48,7 @@ bool DrawGroup::ShouldRender()
 	return true;
 }
 
-void DrawGroup::DrawCoalesce(const mat4 &left)
+void DrawGroup::Draw(const mat4 &left)
 {
 	if (!ShouldRender())
 		return;
