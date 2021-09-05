@@ -35,13 +35,31 @@ void opengl_gui()
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))
 	{
+		static std::map<const char *, const char *> map = {
+			{ "0", "Not masked" },
+			{ References, STRINGIFY(References) },
+			{ Statics, STRINGIFY(Statics) },
+			{ Doors, STRINGIFY(Doors) },
+			{ Furniture, STRINGIFY(Furniture) },
+			{ Books, STRINGIFY(Books) },
+			{ Containers, STRINGIFY(Containers) },
+			{ Armor, STRINGIFY(Armor) },
+			{ Weapons, STRINGIFY(Weapons) },
+			{ Ammo, STRINGIFY(Ammo) },
+			{ Misc, STRINGIFY(Misc) },
+			{ Alchemy, STRINGIFY(Alchemy) },
+			{ Ingredients, STRINGIFY(Ingredients) },
+			{ Lights, STRINGIFY(Lights) },
+			{ Mists, STRINGIFY(Mists) },
+			{ Plants, STRINGIFY(Plants) }
+		};
 		if (ImGui::BeginTabItem("objects"))
 		{
 			int i = 0;
 			for(auto word : Things) {
 				int bit = 1 << i;
 				bool test = (DGMask & bit) == bit;
-				if (ImGui::Checkbox(word, &test))
+				if (ImGui::Checkbox(map[word], &test))
 					DGMask ^= bit;
 				i++;
 			}
