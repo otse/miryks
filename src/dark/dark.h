@@ -42,7 +42,7 @@ namespace dark
 	void reload_my_plugin();
 	void reload_dungeon();
 	
-	void load_definitions(espp plugin);
+	void load_these_definitions(espp plugin);
 	void goingrate();
 	void program_while();
 

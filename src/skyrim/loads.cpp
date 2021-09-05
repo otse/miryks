@@ -96,11 +96,11 @@ namespace dark
 				exit(1);
 			return nullptr;
 		}
-		load_definitions(plugin);
+		load_these_definitions(plugin);
 		return plugin;
 	}
 
-	void load_definitions(espp plugin)
+	void load_these_definitions(espp plugin)
 	{
 		static const auto things = {
 			Statics,

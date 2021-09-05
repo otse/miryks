@@ -17,7 +17,7 @@ struct Group
 	void Add(Group *);
 	void Remove(Group *);
 	void Draw(const mat4 &);
-	virtual void DrawOverride(const mat4 &);
+	virtual void DrawCoalesce(const mat4 &);
 	virtual void Update();
 	void DrawChilds(const mat4 &);
 	void Flatten(Group *);

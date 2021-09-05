@@ -52,7 +52,7 @@ void Group::Draw(const mat4 &left)
 		axis->Draw(place);
 }
 
-void Group::DrawOverride(const mat4 &left)
+void Group::DrawCoalesce(const mat4 &left)
 {
 	Draw(left);
 }
@@ -61,7 +61,7 @@ void Group::DrawChilds(const mat4 &left)
 {
 	if (!visible)
 		return;
-	DrawOverride(left);
+	DrawCoalesce(left);
 	for (Group *child : childGroups)
 		child->DrawChilds(left);
 }

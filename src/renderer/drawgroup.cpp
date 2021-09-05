@@ -48,14 +48,13 @@ bool DrawGroup::ShouldRender()
 	return true;
 }
 
-void DrawGroup::DrawOverride(const mat4 &left)
+void DrawGroup::DrawCoalesce(const mat4 &left)
 {
 	if (!ShouldRender())
 		return;
 	if (target)
 		target->DrawChilds(matrix);
-	//DrawChilds(matrix);
-	//DrawBounds();
+	DrawBounds();
 }
 
 void DrawGroup::Cubify()
