@@ -22,11 +22,11 @@ struct DrawGroup : Group
 	virtual void ManualReset();
 };
 
-struct DrawGroupSortable : DrawGroup
+struct DrawGroupFlatSorted : DrawGroup
 {
 	bool hasTransparency = false;
-	DrawGroupSortable(Group *, mat4);
-	virtual ~DrawGroupSortable(){};
+	DrawGroupFlatSorted(Group *, mat4);
+	virtual ~DrawGroupFlatSorted(){};
 	virtual void DrawCoalesce(const mat4 &);
 	virtual void ManualReset();
 	void Sort(std::function<bool(const Group *, const Group *)>);

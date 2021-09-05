@@ -6,20 +6,20 @@
 
 #include <algorithm>
 
-DrawGroupSortable::DrawGroupSortable(Group *group, mat4 matrix)
+DrawGroupFlatSorted::DrawGroupFlatSorted(Group *group, mat4 matrix)
 	: DrawGroup(group, matrix)
 {
 	ManualReset();
 	SortDefault();
 }
 
-void DrawGroupSortable::ManualReset()
+void DrawGroupFlatSorted::ManualReset()
 {
 	DrawGroup::ManualReset();
 	target->Flatten(target);
 }
 
-void DrawGroupSortable::DrawCoalesce(const mat4 &left)
+void DrawGroupFlatSorted::DrawCoalesce(const mat4 &left)
 {
 	if (!ShouldRender())
 		return;
@@ -29,14 +29,14 @@ void DrawGroupSortable::DrawCoalesce(const mat4 &left)
 	DrawBounds();
 }
 
-void DrawGroupSortable::Sort(std::function<bool(const Group *, const Group *)> f)
+void DrawGroupFlatSorted::Sort(std::function<bool(const Group *, const Group *)> f)
 {
 	target->Flatten(target);
 	auto &flat = target->flat;
 	std::sort(flat.begin(), flat.end(), f);
 }
 
-void DrawGroupSortable::SortDefault()
+void DrawGroupFlatSorted::SortDefault()
 {
 	Sort([&](const Group *a, const Group *b) -> bool {
 		if (a->geometry && a->geometry->material && a->geometry->material->transparent)

@@ -37,7 +37,7 @@ struct List;
 struct Group;
 struct GroupBounded;
 struct DrawGroup;
-struct DrawGroupSortable;
+struct DrawGroupFlatSorted;
 
 struct Texture;
 struct Geometry;

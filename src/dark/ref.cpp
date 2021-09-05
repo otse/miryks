@@ -224,7 +224,7 @@ namespace dark
 		{
 			if (baseObject.rcd->hed->formId != 0x32)
 			{
-				drawGroup = new DrawGroupSortable(mesh->baseGroup, matrix);
+				drawGroup = new DrawGroupFlatSorted(mesh->baseGroup, matrix);
 				sceneDef->bigGroup->Add(drawGroup);
 				int i = 0;
 				for (auto thing : Things)
