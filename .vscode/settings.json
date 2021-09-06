@@ -6,6 +6,10 @@
         "filesystem": "cpp",
         "xlocale": "cpp",
         "xtree": "cpp",
-        "unordered_map": "cpp"
+        "unordered_map": "cpp",
+        "functional": "cpp",
+        "chrono": "cpp",
+        "forward_list": "cpp",
+        "vector": "cpp"
     }
 }

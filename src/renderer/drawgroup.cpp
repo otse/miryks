@@ -8,8 +8,8 @@
 
 #include <algorithm>
 
-int DGNum = 0;
-int DGMask = ~0;
+int DrawGroup::num = 0;
+int DrawGroup::masks = ~0;
 
 DrawGroup::DrawGroup(Group *group, mat4 matrix)
 	: target(group)
@@ -17,40 +17,30 @@ DrawGroup::DrawGroup(Group *group, mat4 matrix)
 	this->matrix = matrix;
 	mask = 1 << 0;
 	parent = nullptr;
-	DGNum++;
-	ManualReset();
+	num++;
+	Reset();
 }
-/*void DrawGroup::Add(Group *group)
-{
-
-}
-void DrawGroup::Remove(Group *group)
-{
-
-}*/
 
 DrawGroup::~DrawGroup()
 {
-	DGNum--;
+	num--;
 }
 
-void DrawGroup::ManualReset()
+void DrawGroup::Reset()
 {
 	Cubify();
 }
 
-bool DrawGroup::ShouldRender()
+bool DrawGroup::Invisible()
 {
-	if (!visible)
-		return false;
-	if (((DGMask & mask) == mask) == false)
+	if (visible && (DrawGroup::masks & mask) == mask)
 		return false;
 	return true;
 }
 
 void DrawGroup::Draw(const mat4 &left)
 {
-	if (!ShouldRender())
+	if (Invisible())
 		return;
 	if (target)
 		target->DrawChilds(matrix);
@@ -59,8 +49,6 @@ void DrawGroup::Draw(const mat4 &left)
 
 void DrawGroup::Cubify()
 {
-	if (!target)
-		return;
 	GroupBounded *bounded = dynamic_cast<GroupBounded *>(target);
 	if (bounded)
 	{

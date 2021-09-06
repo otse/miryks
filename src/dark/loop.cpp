@@ -332,6 +332,8 @@ void dark::program_while()
 		}
 		frames++;
 
+		Group::drawCalls = 0;
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, width, height);
 
@@ -346,8 +348,6 @@ void dark::program_while()
 		}
 
 		glfwPollEvents();
-
-		doImGui();
 
 		//simple_loader();
 
@@ -382,6 +382,8 @@ void dark::program_while()
 
 		//sceneDef->Order();
 		sceneDef->DrawItems();
+
+		doImGui();
 
 		Material::Unuse(nullptr, nullptr);
 

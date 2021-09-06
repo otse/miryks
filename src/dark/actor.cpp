@@ -226,7 +226,7 @@ namespace dark
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
 		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
 		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCur->yaw, vec3(0, 0, 1));
-		drawGroup->ManualReset();
+		drawGroup->Reset();
 	}
 
 	void Player::toggleView()

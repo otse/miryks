@@ -6,20 +6,19 @@
 #include <renderer/types.h>
 #include <renderer/aabb.h>
 
-extern int DGNum, DGMask;
-
 struct DrawGroup : Group
 {
+	static int num, masks;
 	int mask;
 	Group *const target;
 	AABB aabb, obb;
 	DrawGroup(Group *, mat4);
 	virtual ~DrawGroup();
 	virtual void Draw(const mat4 &);
-	bool ShouldRender();
+	bool Invisible();
 	void DrawBounds();
 	void Cubify();
-	virtual void ManualReset();
+	virtual void Reset();
 };
 
 struct DrawGroupFlatSorted : DrawGroup
@@ -28,9 +27,9 @@ struct DrawGroupFlatSorted : DrawGroup
 	DrawGroupFlatSorted(Group *, mat4);
 	virtual ~DrawGroupFlatSorted(){};
 	virtual void Draw(const mat4 &);
-	virtual void ManualReset();
-	void Sort(std::function<bool(const Group *, const Group *)>);
-	void SortDefault();
+	virtual void Reset();
+	void SortWith(std::function<bool(const Group *, const Group *)>);
+	void SortTransparency();
 };
 
 #endif

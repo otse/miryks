@@ -19,7 +19,7 @@ struct Vertex
 };
 struct Geometry
 {
-	static int Num;
+	static int num;
 	bool created = false;
 	bool lines = false;
 	bool collide = true;

@@ -29,8 +29,8 @@ void opengl_gui()
 
 	ImGui::Begin("Render", nullptr, flags);
 
-	ImGui::Text("groups: %i", Group::Num);
-	ImGui::Text("geometries: %i", Geometry::Num);
+	ImGui::Text("groups: %i", Group::num);
+	ImGui::Text("geometries: %i", Geometry::num);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))
@@ -58,9 +58,9 @@ void opengl_gui()
 			int i = 0;
 			for(auto word : Things) {
 				int bit = 1 << i;
-				bool test = (DGMask & bit) == bit;
+				bool test = (DrawGroup::masks & bit) == bit;
 				if (ImGui::Checkbox(map[word], &test))
-					DGMask ^= bit;
+					DrawGroup::masks ^= bit;
 				i++;
 			}
 			ImGui::EndTabItem();

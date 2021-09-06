@@ -6,7 +6,7 @@
 
 struct Group
 {
-	static int Num;
+	static int num, drawCalls;
 	bool visible;
 	Group *parent;
 	Geometry *geometry, *axis;
@@ -16,10 +16,10 @@ struct Group
 	virtual ~Group();
 	void Add(Group *);
 	void Remove(Group *);
+	void Flatten(Group *);
+	void DrawChilds(const mat4 &);
 	virtual void Draw(const mat4 &);
 	virtual void Update();
-	void DrawChilds(const mat4 &);
-	void Flatten(Group *);
 	float GetZ() const;
 };
 

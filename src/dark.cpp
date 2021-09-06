@@ -73,7 +73,8 @@ int main()
 	refs_init();
 	put_it_fullscreen();
 	load_gloomgen();
-	someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale.nif");
+	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale07.nif");
+	someDraugr = new BodyPart("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	someDraugr->PutDown("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");

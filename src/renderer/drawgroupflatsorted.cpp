@@ -9,19 +9,20 @@
 DrawGroupFlatSorted::DrawGroupFlatSorted(Group *group, mat4 matrix)
 	: DrawGroup(group, matrix)
 {
-	ManualReset();
-	SortDefault();
+	Reset();
+	SortTransparency();
 }
 
-void DrawGroupFlatSorted::ManualReset()
+void DrawGroupFlatSorted::Reset()
 {
-	DrawGroup::ManualReset();
+	DrawGroup::Reset();
 	target->Flatten(target);
+	flat = target->flat;
 }
 
 void DrawGroupFlatSorted::Draw(const mat4 &left)
 {
-	if (!ShouldRender())
+	if (Invisible())
 		return;
 	mat4 place = matrix * target->matrix;
 	for (Group *group : target->flat)
@@ -29,16 +30,15 @@ void DrawGroupFlatSorted::Draw(const mat4 &left)
 	DrawBounds();
 }
 
-void DrawGroupFlatSorted::Sort(std::function<bool(const Group *, const Group *)> f)
+void DrawGroupFlatSorted::SortWith(std::function<bool(const Group *, const Group *)> f)
 {
-	target->Flatten(target);
-	auto &flat = target->flat;
 	std::sort(flat.begin(), flat.end(), f);
 }
 
-void DrawGroupFlatSorted::SortDefault()
+void DrawGroupFlatSorted::SortTransparency()
 {
-	Sort([&](const Group *a, const Group *b) -> bool {
+	// This kind of works but nobody knows
+	SortWith([&](const Group *a, const Group *b) -> bool {
 		if (a->geometry && a->geometry->material && a->geometry->material->transparent)
 			this->hasTransparency = true;
 		if (a->geometry && b->geometry)

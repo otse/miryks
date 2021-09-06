@@ -4,7 +4,8 @@
 #include <renderer/group.h>
 #include <renderer/geometry.h>
 
-int Group::Num = 0;
+int Group::num = 0;
+int Group::drawCalls = 0;
 
 Group::Group()
 {
@@ -13,12 +14,12 @@ Group::Group()
 	geometry = nullptr;
 	axis = nullptr;
 	matrix = matrixWorld = mat4(1.0f);
-	Num++;
+	num++;
 }
 
 Group::~Group()
 {
-	Num--;
+	num--;
 }
 
 void Group::Add(Group *group)
@@ -45,6 +46,7 @@ void Group::Update()
 
 void Group::Draw(const mat4 &left)
 {
+	drawCalls++;
 	mat4 place = left * matrixWorld;
 	if (geometry)
 		geometry->Draw(place);

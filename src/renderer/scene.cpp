@@ -16,7 +16,7 @@ static SpotLight *bspot;
 
 Scene::Scene()
 {
-	bigGroup = new DrawGroup(new Group, mat4(1.0));
+	bigGroup = new DrawGroupFlatSorted(new Group, mat4(1.0));
 
 	bpoint = new PointLight;
 	bpoint->color = vec3(0.f);

@@ -1,5 +1,6 @@
-
 #include <dark/dark.h>
+
+#include <renderer/group.h>
 
 #include "gooey.h"
 
@@ -31,6 +32,7 @@ void render_stats(bool *open)
 	ImGui::Text("window %.0f x %.0f", io.DisplaySize.x, io.DisplaySize.y);
 	ImGui::Text("fps %u", fps);
 	ImGui::Text("delta %.5f", delta);
+	ImGui::Text("drawCalls %i", Group::drawCalls);
 
 	//ImGui::Separator();
 	ImGui::End();
