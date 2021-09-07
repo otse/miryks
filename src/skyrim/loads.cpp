@@ -31,7 +31,7 @@ namespace dark
 		return nullptr;
 	}
 
-	Rsc *load_resource(
+	Rsc *load_rsc(
 		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
@@ -75,18 +75,18 @@ namespace dark
 		return nif;
 	}
 
-	Mesh *create_simple_mesh_from_modl(const char *model, bool storage)
+	Mesh *create_simple_mesh_from_modl(const char *modl, bool storage)
 	{
 		static std::map<const char *, Mesh *> map;
-		if (map.count(model) && storage)
-			return map[model];
-		Rsc *rsc = load_resource(model);
+		if (map.count(modl) && storage)
+			return map[modl];
+		Rsc *rsc = load_rsc(modl);
 		if (rsc == NULL)
 			return nullptr;
-		Nif *nif = load_model(rsc, true);
-		Mesh *mesh = new Mesh(nif);
+		Nif *model = load_model(rsc, true);
+		Mesh *mesh = new Mesh(model);
 		if (storage)
-			map.emplace(model, mesh);
+			map.emplace(modl, mesh);
 		return mesh;
 	}
 

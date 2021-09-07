@@ -88,8 +88,8 @@ void bsa_gui()
 			ImGui::SameLine();
 			if (ImGui::Button(VIEW_NIF))
 			{
-				Nif *nif = load_model(rsc, true);
-				simple_viewer(nif);
+				Nif *model = load_model(rsc, true);
+				simple_viewer(model);
 			}
 		}
 
@@ -234,8 +234,8 @@ void bsa_gui()
 								ImGui::SameLine();
 								if (ImGui::Button(VIEW_NIF))
 								{
-									Nif *nif = load_model(rsc, true);
-									simple_viewer(nif);
+									Nif *model = load_model(rsc, true);
+									simple_viewer(model);
 								}
 							}
 							ImGui::Separator();

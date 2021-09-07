@@ -15,7 +15,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	SkinnedMesh::SkinnedMesh(Nif *nif, Skeleton *skeleton) : Mesh(nif),
+	SkinnedMesh::SkinnedMesh(Nif *model, Skeleton *skeleton) : Mesh(model),
 		skeleton(skeleton)
 	{
 		assertm(skeleton, "smesh needs skeleton");
@@ -25,7 +25,7 @@ namespace skyrim
 	void SkinnedMesh::Construct()
 	{
 		Rd *rd = calloc_nifprd();
-		rd->nif = nif;
+		rd->nif = model;
 		rd->data = this;
 		rd->ni_node_callback = ni_node_callback;
 		rd->bs_tri_shape_callback = bs_tri_shape_callback;
@@ -47,9 +47,9 @@ namespace skyrim
 		for (NiRef ref : shapes__)
 		{
 			//Group *group = mesh->groups[index];
-			auto shape = (BSTriShape *)nif_get_block(nif, ref);
-			auto nsi = (NiSkinInstance *)nif_get_block(nif, shape->refs->skin);
-			auto nsp = (NiSkinPartition *)nif_get_block(nif, nsi->A->skin_partition);
+			auto shape = (BSTriShape *)nif_get_block(model, ref);
+			auto nsi = (NiSkinInstance *)nif_get_block(model, shape->refs->skin);
+			auto nsp = (NiSkinPartition *)nif_get_block(model, nsi->A->skin_partition);
 			
 			for (unsigned int k = 0; k < nsp->A->num_partitions; k++)
 			{
@@ -61,8 +61,8 @@ namespace skyrim
 				material->bindMatrix = group->matrixWorld;
 				for (unsigned short i = 0; i < partition->nums->bones; i++)
 				{
-					auto node = (NiNode *)nif_get_block(nif, nsi->bones[partition->bones[i]]);
-					char *name = nif_get_string(nif, node->common->F->name);
+					auto node = (NiNode *)nif_get_block(model, nsi->bones[partition->bones[i]]);
+					char *name = nif_get_string(model, node->common->F->name);
 					auto has = skeleton->bonesNamed.find(name);
 					if (has == skeleton->bonesNamed.end())
 					{
@@ -89,7 +89,7 @@ namespace skyrim
 	void ni_skin_instance_callback(Rd *rd, NiSkinInstance *block)
 	{
 		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
-		assertc(0 == strcmp(nif_get_block_type(smesh->nif, rd->parent), BSTriShapeS));
+		assertc(0 == strcmp(nif_get_block_type(smesh->model, rd->parent), BSTriShapeS));
 		smesh->lastShape = rd->parent;
 	}
 

@@ -51,7 +51,7 @@ namespace dark
 		race = skyrim_get_race(raceId);
 		auto anam = race.data<char *>("ANAM", 0);
 		printf("bodypart raceid %s anam %s\n", raceId, anam);
-		Rsc *rc = load_resource(model);
+		Rsc *rc = load_rsc(model);
 		Nif *character = load_model(rc, false);
 		skeleton = new Skeleton(anam);
 		skinnedMesh = new SkinnedMesh(character, skeleton);

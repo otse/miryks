@@ -38,6 +38,7 @@ namespace skyrim
 
 	void Interior::Load()
 	{
+		printf("-- loading the dungeon --\n");
 		cell = skyrim_get_interior_cell(edId, MY_ESP);
 		Subgroup(cell.persistent, 8);
 		Subgroup(cell.temporary, 9);

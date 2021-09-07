@@ -213,7 +213,6 @@ static void glfw_error_callback(int error, const char *description)
 
 void put_it_fullscreen()
 {
-	printf("going fs !\n");
 	const GLFWvidmode *mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	width = mode->width;
 	height = mode->height;

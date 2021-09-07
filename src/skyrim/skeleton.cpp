@@ -38,7 +38,7 @@ namespace skyrim
 	void Skeleton::Load(const char *anam)
 	{
 		// printf("skeleton load anam %s\n", anam);
-		model = load_model(load_resource(anam), true);
+		model = load_model(load_rsc(anam), true);
 		//printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
 
@@ -87,7 +87,7 @@ namespace skyrim
 	}
 
 	// keyframes
-	Keyframes::Keyframes(Nif *nif) : model(nif)
+	Keyframes::Keyframes(Nif *model) : model(model)
 	{
 		assertm(strcmp(model->hdr->block_types[0], NiControllerSequenceS) == 0, "block 0 not a controller sequence");
 
@@ -249,7 +249,7 @@ int num = tdp->A->num_rotation_keys;
 	template <typename T, typename Y>
 	Lol<T, Y> interpolate(Animation *animation, int num, const T *keys)
 	{
-		Nif *nif = animation->keyframes->model;
+		Nif *model = animation->keyframes->model;
 
 		auto csp = animation->keyframes->csp;
 

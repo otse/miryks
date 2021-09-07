@@ -44,8 +44,8 @@ void darkassert(bool e)
 
 void load_bucket()
 {
-	Nif *nif = load_model(load_resource("clutter\\bucket02a.nif"), true);
-	simple_viewer(nif);
+	Nif *model = load_model(load_rsc("clutter\\bucket02a.nif"), true);
+	simple_viewer(model);
 }
 
 void load_gloomgen()
@@ -137,7 +137,7 @@ namespace dark
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 
-void dark::simple_viewer(Nif *nif)
+void dark::simple_viewer(Nif *model)
 {
 	static Mesh *mesh = nullptr;
 	static DrawGroup *drawGroup = nullptr;
@@ -147,7 +147,7 @@ void dark::simple_viewer(Nif *nif)
 		delete mesh;
 		delete drawGroup;
 	}
-	mesh = new Mesh(nif);
+	mesh = new Mesh(model);
 	drawGroup = new DrawGroup(
 		mesh->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->bigGroup->Add(drawGroup);

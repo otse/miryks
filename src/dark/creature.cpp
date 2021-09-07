@@ -19,7 +19,7 @@ namespace dark
 		animation = nullptr;
 		drawGroup = nullptr;
 		race = skyrim_get_race(editorId);
-		Nif *model = load_model(load_resource(path), true);
+		Nif *model = load_model(load_rsc(path), true);
 		skeleton = new Skeleton(race);
 		skinnedMesh = new SkinnedMesh(model, skeleton);
 	}

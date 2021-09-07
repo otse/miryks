@@ -34,7 +34,7 @@ namespace skyrim
 		Mesh();
 		Mesh(Nif *);
 		~Mesh();
-		Nif *nif = nullptr;
+		Nif *model = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
 		Group *make_new_group(Rd *);

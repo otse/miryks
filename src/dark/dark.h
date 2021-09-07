@@ -40,7 +40,7 @@ namespace dark
 	Nif *ext_nif_saved(void *);
 
 	Nif *load_model(Rsc *, bool);
-	Rsc *load_resource(const char *, const char * = "meshes\\", unsigned long = 0x1);
+	Rsc *load_rsc(const char *, const char * = "meshes\\", unsigned long = 0x1);
 	Keyframes *load_keyframes_from_disk(const char *);
 	Mesh *create_simple_mesh_from_modl(const char *, bool);
 	Esp *load_plugin(const char *, bool = true);

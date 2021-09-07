@@ -11,8 +11,6 @@ extern "C"
 
 using namespace dark;
 
-#define callback(x) static void (x ## _callback) (Rd *, x ## _t *);
-
 namespace skyrim
 {
 	Mesh::Mesh()
@@ -24,7 +22,7 @@ namespace skyrim
 	
 	Mesh::Mesh(Nif *bucket) : Mesh()
 	{
-		nif = bucket;
+		model = bucket;
 		Construct();
 	}
 
@@ -35,7 +33,7 @@ namespace skyrim
 	void Mesh::Construct()
 	{
 		Rd *rd = calloc_nifprd();
-		rd->nif = nif;
+		rd->nif = model;
 		rd->data = this;
 		//rd->other = other;
 		rd->ni_node_callback = ni_node_callback;
@@ -135,7 +133,7 @@ namespace skyrim
 			}
 		};
 		Rd *rd = calloc_nifprd();
-		rd->nif = nif;
+		rd->nif = model;
 		rd->data = this;
 		rd->bs_effect_shader_property_float_controller_callback = callback;
 		nif_rd(rd);
