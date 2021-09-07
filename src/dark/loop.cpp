@@ -218,8 +218,6 @@ void put_it_fullscreen()
 	height = mode->height;
 	glfwSetWindowPos(window, 0, 0);
 	glfwSetWindowSize(window, width, height);
-	//delete render_target;
-	//render_target = new RenderTarget(dark::width, dark::height, GL_RGB, GL_FLOAT);
 	glViewport(0, 0, width, height);
 	//glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, mode->refreshRate);
 	//glfwSwapInterval(0); // vsync

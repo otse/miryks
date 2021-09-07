@@ -24,9 +24,6 @@ namespace dark
 		skinnedMesh = new SkinnedMesh(model, skeleton);
 	}
 
-	void Creature::Load() {
-	}
-
 	void Creature::SetAnimation(Keyframes *keyframes)
 	{
 		animation = new Animation(keyframes);
@@ -39,10 +36,10 @@ namespace dark
 		auto ref = dungeon->edIds.find(q);
 		if (ref != dungeon->edIds.end())
 		{
-			//group->Add(skeleton->baseBone->group);
 			drawGroup = new DrawGroup(
 				skinnedMesh->baseGroup, ref->second->matrix);
 			//drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
+			//drawGroup->Add(new DrawGroup(skeleton->baseBone->group, mat4(1.0));
 			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else

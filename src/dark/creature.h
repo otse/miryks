@@ -11,11 +11,10 @@ namespace dark
 		Skeleton *skeleton;
 		Animation *animation;
 		DrawGroup *drawGroup;
-		Record race;
 		Creature(const char *, const char *);
 		void Place(const char *);
-		void Load();
 		void SetAnimation(Keyframes *);
 		void Step();
+		Record race;
 	};
 }

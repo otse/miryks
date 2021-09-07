@@ -36,6 +36,8 @@ Texture::Texture()
 Texture::Texture(const std::string &path) : path(path)
 {
 	//printf("new texture %s\n", path.c_str());
+	if (!path.length())
+		return;
 	Rsc *rsc = bsa_find_more(path.c_str(), 0x2);
 	if (rsc == NULL)
 	{

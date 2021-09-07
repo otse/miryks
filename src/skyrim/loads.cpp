@@ -48,31 +48,31 @@ namespace dark
 
 	Keyframes *load_keyframes_from_disk(const char *path)
 	{
-		Nif *nif = calloc_nifp();
-		nif->path = path;
-		char *lvalue = (char *)nif->buf;
-		fbuf(path, &lvalue);
-		nif_read(nif);
-		ext_nif_save(nif, nif);
-		Keyframes *keyframes = new Keyframes(nif);
+		Nif *model = calloc_nifp();
+		model->path = path;
+		char *buf = (char *)model->buf;
+		fbuf(path, &buf);
+		nif_read(model);
+		ext_nif_save(model, model);
+		Keyframes *keyframes = new Keyframes(model);
 		return keyframes;
 	}
 
 	Nif *load_model(Rsc *rsc, bool storage)
 	{
 		assertm(rsc, "load_model null rsc");
-		Nif *nif, *saved;
+		Nif *model, *saved;
 		saved = ext_nif_saved(rsc);
 		if (storage && saved)
 			return saved;
 		bsa_read(rsc);
-		nif = calloc_nifp();
-		nif->path = rsc->path;
-		nif->buf = rsc->buf;
-		nif_read(nif);
+		model = calloc_nifp();
+		model->path = rsc->path;
+		model->buf = rsc->buf;
+		nif_read(model);
 		if (storage)
-			ext_nif_save(rsc->path, nif);
-		return nif;
+			ext_nif_save(rsc->path, model);
+		return model;
 	}
 
 	Mesh *create_simple_mesh_from_modl(const char *modl, bool storage)
@@ -93,7 +93,7 @@ namespace dark
 	Esp *load_plugin(const char *filename, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
-		std::string path = editme + "/Data/" + filename;
+		std::string path = std::string(editme) + "/Data/" + filename;
 		espp plugin;
 		plugin = has_plugin(filename);
 		if (plugin)
@@ -141,7 +141,7 @@ namespace dark
 		Bsa *bsa = bsa_get(filename);
 		if (bsa)
 			return bsa;
-		std::string path = editme + "/Data/" + filename;
+		std::string path = std::string(editme) + "/Data/" + filename;
 		if (exists(path.c_str()))
 			return bsa_load(path.c_str());
 		else if (exists(filename))

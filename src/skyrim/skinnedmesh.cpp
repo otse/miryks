@@ -18,7 +18,7 @@ namespace skyrim
 	SkinnedMesh::SkinnedMesh(Nif *model, Skeleton *skeleton) : Mesh(model),
 		skeleton(skeleton)
 	{
-		assertm(skeleton, "smesh needs skeleton");
+		assertm(skeleton, "skinnedmesh needs skeleton");
 		Construct();
 	}
 
@@ -88,18 +88,18 @@ namespace skyrim
 
 	void ni_skin_instance_callback(Rd *rd, NiSkinInstance *block)
 	{
-		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
-		assertc(0 == strcmp(nif_get_block_type(smesh->model, rd->parent), BSTriShapeS));
-		smesh->lastShape = rd->parent;
+		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
+		assertc(0 == strcmp(nif_get_block_type(skinnedMesh->model, rd->parent), BSTriShapeS));
+		skinnedMesh->lastShape = rd->parent;
 	}
 
 	static vec3 bytestofloat(void *in)
 	{
 		float xf, yf, zf;
 		unsigned char *vec = (unsigned char *)in;
-		xf = (double( vec[0] ) / 255.0) * 2.0 - 1.0;
-		yf = (double( vec[1] ) / 255.0) * 2.0 - 1.0;
-		zf = (double( vec[2] ) / 255.0) * 2.0 - 1.0;
+		xf = (float)((double( vec[0] ) / 255.0) * 2.0 - 1.0);
+		yf = (float)((double( vec[1] ) / 255.0) * 2.0 - 1.0);
+		zf = (float)((double( vec[2] ) / 255.0) * 2.0 - 1.0);
 		return vec3(xf, yf, zf);
 	}
 
@@ -114,12 +114,12 @@ namespace skyrim
 
 	void ni_skin_data_callback(Rd *rd, NiSkinData *block)
 	{
-		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
+		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
 	}
 
 	void ni_skin_partition_callback(Rd *rd, NiSkinPartition *block)
 	{
-		SkinnedMesh *smesh = (SkinnedMesh *)rd->data;
+		SkinnedMesh *skinnedMesh = (SkinnedMesh *)rd->data;
 		if (!block->vertex_data)
 			return;
 		unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
@@ -140,7 +140,7 @@ namespace skyrim
 			Geometry *geometry = new Geometry();
 			group->geometry = geometry;
 			geometry->skinning = true;
-			geometry->material = new Material(*smesh->lastGroup->geometry->material);
+			geometry->material = new Material(*skinnedMesh->lastGroup->geometry->material);
 			geometry->material->tangents = tangents;
 			geometry->material->bones = partition->nums->bones;
 			geometry->material->skinning = true;
@@ -190,8 +190,8 @@ namespace skyrim
 					{remap[triangle.a], remap[triangle.b], remap[triangle.c]} );
 			}
 			geometry->SetupMesh();
-			smesh->lastGroup->Add(group);
-			smesh->lastGroup->Update();
+			skinnedMesh->lastGroup->Add(group);
+			skinnedMesh->lastGroup->Update();
 		}
 	}
 

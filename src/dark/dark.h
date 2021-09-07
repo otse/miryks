@@ -4,9 +4,7 @@
 
 #include <renderer/renderer.h>
 
-#include "list"
-
-#define MY_ESP 5 // pls remove dis
+#include <dark/list>
 
 namespace dark
 {
@@ -34,22 +32,25 @@ namespace dark
 {
 	void darkassert(bool);
 
+	extern char *editme;
+
 	extern std::map<void *, Nif *> nifs;
 
 	int ext_nif_save(void *, Nif *);
 	Nif *ext_nif_saved(void *);
 
-	Nif *load_model(Rsc *, bool);
 	Rsc *load_rsc(const char *, const char * = "meshes\\", unsigned long = 0x1);
-	Keyframes *load_keyframes_from_disk(const char *);
-	Mesh *create_simple_mesh_from_modl(const char *, bool);
+	Nif *load_model(Rsc *, bool);
 	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
+	void load_these_definitions(espp plugin);
+	
+	Keyframes *load_keyframes_from_disk(const char *);
+	Mesh *create_simple_mesh_from_modl(const char *, bool);
 
 	void reload_my_plugin();
 	void reload_dungeon();
 	
-	void load_these_definitions(espp plugin);
 	void goingrate();
 	void program_while();
 
@@ -59,10 +60,6 @@ namespace dark
 
 	void hide_cursor();
 	void show_cursor();
-
-	extern std::string editme;
-
-	extern RenderTarget *render_target;
 
 	extern std::map<const char *, int> keys;
 
@@ -94,17 +91,9 @@ void cell_gui();
 void hero_menu();
 void render_stats(bool *);
 
-void simple_loader();
-void load_bucket();
-void load_gloomgen();
 void get_img();
 
 void put_it_fullscreen();
 
 void setup_esc_menu();
 void esc_menu(bool *);
-
-void make_timer();
-
-#define READ_BSA_RESOURCE "Load"
-#define VIEW_NIF "View"

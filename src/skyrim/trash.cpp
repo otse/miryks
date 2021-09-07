@@ -48,7 +48,7 @@ namespace skyrim
 			Record wrcd = esp_get_form_id(cnto->item);
 			if (wrcd.valid())
 			{
-				for (int j = 0; j < cnto->count; j++)
+				for (unsigned int j = 0; j < cnto->count; j++)
 				{
 					Item item(wrcd);
 					items.push_back(item);

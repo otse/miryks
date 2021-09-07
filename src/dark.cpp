@@ -13,27 +13,16 @@ using namespace skyrim;
 
 namespace dark
 {
-	Interior *dungeon = nullptr;
-
 	Creature *someDraugr = nullptr, *meanSkelly = nullptr;
-
 	Human *someHuman = nullptr;
-	Player *player1 = nullptr;
-
 	Image *yagrum_image = nullptr;
-
-	std::string editme;
-
-	RenderTarget *render_target;
-
-	// todo extern this
-	int width = 1920;
-	int height = 1080;
-	float delta = 0;
 }
 
 namespace dark
 {
+char *editme;
+Interior *dungeon = nullptr;
+Player *player1 = nullptr;
 std::map<const char *, int> keys;
 }
 
@@ -57,7 +46,6 @@ void load_gloomgen()
 
 void load_plugins_archives()
 {
-	editme = fread("editme.txt");
 	get_plugins()[0] = load_plugin(PLUGIN_0);
 	get_plugins()[1] = load_plugin(PLUGIN_1);
 	get_plugins()[2] = load_plugin(PLUGIN_2);
@@ -89,6 +77,7 @@ void load_plugins_archives()
 
 int main()
 {
+	fbuf("editme.txt", &editme, 1);
 	goingrate();
 	load_plugins_archives();
 	nif_test();
@@ -113,7 +102,7 @@ namespace dark
 {
 	void reload_my_plugin()
 	{
-		struct esp **plugin = &get_plugins()[MY_ESP];
+		struct esp **plugin = &get_plugins()[5];
 		free_plugin(plugin);
 		*plugin = load_plugin(PLUGIN_5, true);
 	}

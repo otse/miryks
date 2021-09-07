@@ -79,14 +79,14 @@ void bsa_gui()
 			ImGui::TreePop();
 		}
 
-		if (ImGui::Button(READ_BSA_RESOURCE))
+		if (ImGui::Button("Read"))
 		{
 			bsa_read(rsc);
 		}
 		if (rsc->size > 0)
 		{
 			ImGui::SameLine();
-			if (ImGui::Button(VIEW_NIF))
+			if (ImGui::Button("View"))
 			{
 				Nif *model = load_model(rsc, true);
 				simple_viewer(model);
@@ -225,14 +225,14 @@ void bsa_gui()
 							bsa_print_fle_rcd(bsa, s, i, j);
 							ImGui::Text(s);
 
-							if (ImGui::Button(READ_BSA_RESOURCE))
+							if (ImGui::Button("Read"))
 							{
 								bsa_read(rsc);
 							}
 							if (rsc->size > -1)
 							{
 								ImGui::SameLine();
-								if (ImGui::Button(VIEW_NIF))
+								if (ImGui::Button("View"))
 								{
 									Nif *model = load_model(rsc, true);
 									simple_viewer(model);
