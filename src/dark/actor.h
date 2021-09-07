@@ -7,28 +7,21 @@
 namespace dark
 {
 	extern Keyframes *draugrAttack, *draugrIdle;
-	extern Keyframes *humanIdle, *humanForward, *humanLeft, *humanRight, *humanBack;
-
-	crecordp GetRace(const char *);
-	//void Export(const char *);
+	extern Keyframes *humanIdle, *humanForward, *humanLeft, *humanRight, *humanBackward;
 	
-	Keyframes *GetKeyframes(const char *);
-
-	class BodyPart
+	void load_popular_keyframes();
+	
+	class Actor
 	{
 	public:
-		BodyPart(const char *, const char *);
-		SkinnedMesh *smesh = nullptr;
-		Skeleton *skeleton = nullptr;
-		Animation *animation = nullptr;
-		DrawGroup *drawGroup = nullptr;
-		void step();
-		void PutDown(const char *);
-	};
-
-	class BZZ
-	{
-		
+		SkinnedMesh *skinnedMesh;
+		Skeleton *skeleton;
+		Animation *animation;
+		DrawGroup *drawGroup;
+		Record race;
+		Actor(const char *, const char *);
+		void Step();
+		void Place(const char *);
 	};
 
 	class Human
@@ -38,7 +31,7 @@ namespace dark
 		Group *group;
 		DrawGroup *drawGroup = nullptr;
 		Human();
-		void step();
+		void Step();
 		void Place(const char *);
 	};
 
@@ -53,7 +46,7 @@ namespace dark
 		ViewerCamera *thirdPersonCamera = nullptr;
 		Player();
 		void toggleView();
-		void step();
+		void Step();
 		void move();
 	};
 

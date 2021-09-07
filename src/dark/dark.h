@@ -2,7 +2,7 @@
 
 #include <lib.h>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 #include "list"
 
@@ -12,6 +12,7 @@ namespace dark
 {
 	class Ref;
 	class Actor;
+	class Creature;
 	class Player;
 	class BodyPart;
 	class Human;
@@ -21,23 +22,29 @@ namespace dark
 namespace skyrim
 {
 	class Mesh;
+	class SkinnedMesh;
+	class Skeleton;
+	class Keyframes;
+	class Animation;
 	class Interior;
 }
 using namespace skyrim;
 
 namespace dark
 {
+	void darkassert(bool);
+
 	extern std::map<void *, Nif *> nifs;
 
 	int ext_nif_save(void *, Nif *);
 	Nif *ext_nif_saved(void *);
-	Rc *load_rc(const char *, const char *, unsigned long);
-	Nif *import_nif(Rc *, bool);
+	Nif *load_model(Rc *, bool);
+
+	Rc *load_resource(const char *, const char * = "meshes\\", unsigned long = 0x1);
+	Keyframes *load_keyframes_from_disk(const char *);
 	Mesh *create_simple_mesh_from_modl(const char *, bool);
 	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
-
-	extern unsigned int fps;
 
 	void reload_my_plugin();
 	void reload_dungeon();
@@ -67,8 +74,7 @@ namespace dark
 	}
 
 	extern Interior *dungeon;
-	extern BodyPart *someDraugr;
-	extern BodyPart *meanSkelly;
+	extern Creature *someDraugr, *meanSkelly;
 	extern Human *someHuman;
 	extern Player *player1;
 

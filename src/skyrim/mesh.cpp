@@ -7,7 +7,7 @@ extern "C"
 
 #include <renderer/shader.h>
 #include <renderer/texture.h>
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 using namespace dark;
 
@@ -25,14 +25,14 @@ namespace skyrim
 	Mesh::Mesh(Nif *bucket) : Mesh()
 	{
 		nif = bucket;
-		construct();
+		Construct();
 	}
 
 	Mesh::~Mesh()
 	{
 	}
 
-	void Mesh::construct()
+	void Mesh::Construct()
 	{
 		Rd *rd = calloc_nifprd();
 		rd->nif = nif;
@@ -51,7 +51,7 @@ namespace skyrim
 	double easeInOutQuad( double t ) {
 		return t < 0.5 ? 2 * t * t : t * (4 - 2 * t) - 1;
 	}
-	void Mesh::forward()
+	void Mesh::Forward()
 	{
 		// for mists! do the following
 		// stolen from nifskope i think

@@ -9,7 +9,7 @@
 #include <cctype>
 #include <string>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 #include <renderer/texture.h>
 #include <renderer/camera.h>
 #include <renderer/lights.h>
@@ -25,26 +25,6 @@ namespace skyrim
 		return cell;
 	}
 
-	Cell find_interior_cell(const char *edId, int plugin)
-	{
-		Cell cell;
-		Grup a, b, c;
-		grupp top = esp_top_grup(get_plugins()[plugin], Cells);
-		a(top).foreach([&](unsigned int i) {
-		return b(a.get<grup *>(i)).foreach([&](unsigned int j) {
-		return c(b.get<grup *>(j)).foreach([&](unsigned int &k) {
-			Record wrcd = c.get<record *>(k);
-			Grup wgrp = c.get<grup *>(++k);
-			if (wrcd.hasEditorId(edId)) {
-				printf("interior found\n");
-				cell = capture_cell(wrcd, wgrp);
-				return true;
-			}
-			return false;
-		}, 3);}, 2);}, 0);
-		return cell;
-	}
-
 	Interior::Interior(const char *edId)
 	{
 		this->edId = edId;
@@ -53,23 +33,23 @@ namespace skyrim
 
 	Interior::~Interior()
 	{
-		unload();
+		Unload();
 	}
 
-	void Interior::load()
+	void Interior::Load()
 	{
-		cell = find_interior_cell(edId, MY_ESP);
-		subgroup(cell.persistent, 8);
-		subgroup(cell.temporary, 9);
+		cell = skyrim_get_interior_cell(edId, MY_ESP);
+		Subgroup(cell.persistent, 8);
+		Subgroup(cell.temporary, 9);
 	}
 
-	void Interior::unload()
+	void Interior::Unload()
 	{
 		for (Ref *ref : refs)
 			delete ref;
 	}
 	
-	void Interior::subgroup(Grup wgrp, int group_type)
+	void Interior::Subgroup(Grup wgrp, int group_type)
 	{
 		auto showLabelsFor = {
 			Doors,
@@ -130,12 +110,12 @@ namespace skyrim
 
 	
 
-	void Interior::update()
+	void Interior::Update()
 	{
 		Refs::Nearby();
 
 		for (Ref *mstt : mstts)
-			mstt->step();
+			mstt->Step();
 	}
 
 } // namespace dark

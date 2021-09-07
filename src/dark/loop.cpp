@@ -6,6 +6,7 @@
 #include <skyrim/trash.h>
 
 #include <dark/actor.h>
+#include <dark/creature.h>
 
 #include <renderer/camera.h>
 #include <renderer/scene.h>
@@ -119,8 +120,8 @@ static void toggle_render_stats()
 
 static void toggle_third_person()
 {
-	if (player1)
-		player1->toggleView();
+	//if (player1)
+	//	player1->toggleView();
 }
 
 static void handle_use_key()
@@ -295,7 +296,7 @@ void dark::program_while()
 	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
-	double fps;
+	double fps_;
 	int frames;
 	double time, prevTime;
 	char title[150];
@@ -323,12 +324,10 @@ void dark::program_while()
 		prev = now;
 		if ((time - prevTime) > 1.0 || frames == 0)
 		{
-			fps = (double)frames / (time - prevTime);
-			sprintf(title, "gloom %.0f fps - f1 for debug - f3 for mouse", fps);
-			glfwSetWindowTitle(window, title);
+			fps_ = (double)frames / (time - prevTime);
 			prevTime = time;
 			frames = 0;
-			::fps = (int)fps;
+			fps = (int)fps_;
 		}
 		frames++;
 
@@ -355,8 +354,8 @@ void dark::program_while()
 
 		handle_most_keys();
 
-		if (player1)
-			player1->step();
+		//if (player1)
+		//	player1->Step();
 
 		cameraCur->Update(delta);
 
@@ -367,16 +366,16 @@ void dark::program_while()
 		
 		// someDraugr
 		if (someDraugr)
-			someDraugr->step();
+			someDraugr->Step();
 
 		if (meanSkelly)
-			meanSkelly->step();
+			meanSkelly->Step();
 
-		if (someHuman)
-			someHuman->step();
+		//if (someHuman)
+		//	someHuman->Step();
 
 		if (dungeon)
-			dungeon->update();
+			dungeon->Update();
 
 		Container::Step();
 

@@ -3,7 +3,7 @@
 #include <dark/dark.h>
 #include <skyrim/skyrim.h>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 #include <renderer/scene.h>
 #include <renderer/group.h>
 #include <renderer/geometry.h>
@@ -35,18 +35,16 @@ namespace skyrim
 		Mesh(Nif *);
 		~Mesh();
 		Nif *nif = nullptr;
-		//Material *aa;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
 		Group *make_new_group(Rd *);
-		void construct();
-		void forward();
+		void Construct();
+		void Forward();
 		virtual void v () {};
 		
 		std::vector<NiRef> shapes__;
 	};
 
-	// should have its own .h XD
 	class SkinnedMesh : public Mesh
 	{
 	public:
@@ -55,9 +53,9 @@ namespace skyrim
 		NiRef lastShape;
 		SkinnedMesh();
 		SkinnedMesh(Nif *, Skeleton *);
-		void construct();
-		void initial();
-		void forward();
+		void Construct();
+		void Forward();
+		void Initial();
 	};
 }
 

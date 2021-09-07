@@ -5,7 +5,7 @@
 
 #include <templates.hpp>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 template <typename T>
 struct Bluh

@@ -2,6 +2,7 @@
 
 #include <dark/ref.h>
 
+#include <skyrim/record.h>
 #include <skyrim/grup.h>
 #include <skyrim/mesh.h>
 #include <skyrim/trash.h>
@@ -15,7 +16,7 @@
 #include <renderer/lights.h>
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 #include <imgui.h>
 #include <gooey/gooey.h>
@@ -28,7 +29,7 @@ namespace dark
 		drawGroup = nullptr;
 		pointLight = nullptr;
 		spotLight = nullptr;
-		go();
+		Go();
 	}
 
 	Ref::~Ref()
@@ -42,16 +43,16 @@ namespace dark
 		delete spotLight;
 	}
 
-	void Ref::step()
+	void Ref::Step()
 	{
 		if (baseObject.sig("MSTT"))
 		{
 			if(mesh)
-				mesh->forward();
+				mesh->Forward();
 		}
 	}
 
-	void Ref::go()
+	void Ref::Go()
 	{
 		matrix = mat4(1.0);
 
@@ -65,11 +66,11 @@ namespace dark
 		if (XSCL)
 			scale = glm::scale(mat4(1.0), vec3(*XSCL));
 
-		forLocationalData(locationalData);
-		forBaseId(baseId);
+		ForLocationalData(locationalData);
+		ForBaseId(baseId);
 	}
 
-	void Ref::forLocationalData(float *locationalData)
+	void Ref::ForLocationalData(float *locationalData)
 	{
 		if (!locationalData)
 			return;
@@ -86,7 +87,7 @@ namespace dark
 		matrix = translation * rotation * scale;
 	}
 
-	void Ref::forBaseId(formId baseId)
+	void Ref::ForBaseId(formId baseId)
 	{
 		if (!baseId)
 			return;
@@ -239,7 +240,7 @@ namespace dark
 		}
 	}
 
-	float Ref::getDistance() const
+	float Ref::GetDistance() const
 	{
 		if (drawGroup == nullptr)
 			return 0;
@@ -265,7 +266,7 @@ namespace dark
 
 	bool myfunction(Ref *l, Ref *r)
 	{
-		return l->getDistance() < r->getDistance();
+		return l->GetDistance() < r->GetDistance();
 	}
 
 	namespace Refs {
@@ -282,13 +283,13 @@ namespace dark
 				return;
 				
 			std::sort(labelled.begin(), labelled.end(), [](const Ref *l, const Ref *r) -> bool {
-				return l->getDistance() < r->getDistance();
+				return l->GetDistance() < r->GetDistance();
 			});
 
 			handRef = nullptr;
 
 			for (Ref *ref : labelled)
-				if (ref->displayAsItem())
+				if (ref->DisplayAsItem())
 					return;
 		}
 
@@ -306,9 +307,9 @@ namespace dark
 		return true;
 	}
 
-	bool Ref::displayAsItem()
+	bool Ref::DisplayAsItem()
 	{
-		float dist = getDistance() * CM_TO_SKYRIM_UNITS;
+		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;
 
 		// printf(" display as item %f\n", dist);
 

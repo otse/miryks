@@ -9,7 +9,7 @@ Shader *Shader::active = nullptr;
 
 //shader_t *shader_current;
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 #include <renderer/camera.h>
 #include <renderer/scene.h>

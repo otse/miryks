@@ -5,12 +5,14 @@
 
 #include <lib.h>
 
-#include <skyrim/skyrim.h>
-
 // several useful things in here
 
 namespace skyrim
 {
+	typedef unsigned int *formId;
+	typedef const char *editorId;
+	typedef const char signature[5];
+
 	const char *getEditorIdOnly(const record *);
 
 #define X Record
@@ -90,7 +92,7 @@ namespace skyrim
 		}
 
 		// << useless >>
-		inline bool hasEditorId(const char *name)
+		inline bool HasId(const char *name)
 		{
 			return 0 == strcmp(name, editorId());
 		}

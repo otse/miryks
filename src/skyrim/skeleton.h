@@ -4,7 +4,7 @@
 #include <dark/dark.h>
 #include <skyrim/skyrim.h>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 #include <renderer/group.h>
 #include <renderer/geometry.h>
 
@@ -24,6 +24,7 @@ namespace skyrim
 	public:
 		Skeleton();
 		Skeleton(const char *);
+		Skeleton(Record);
 
 		std::map<NiRef, Bone *> bones;
 		std::map<const std::string, Bone *> bonesNamed;
@@ -32,11 +33,11 @@ namespace skyrim
 		Bone *baseBone, *lastBone;
 		Animation *animation;
 
-		Bone *make_new_group(Rd *, int);
+		Bone *MakeBoneHere(Rd *, int);
 
-		void load(const char *);
-		void construct();
-		void step();
+		void Load(const char *);
+		void Construct();
+		void Step();
 	};
 
 	class Bone
@@ -60,7 +61,7 @@ namespace skyrim
 	public:
 		Keyframes(Nif *);
 		Nif *model;
-		struct ni_controller_sequence_t *csp;
+		NiControllerSequence *csp;
 		bool loop = true;
 	};
 
@@ -70,8 +71,8 @@ namespace skyrim
 		Animation(Keyframes *keyframes) : keyframes(keyframes)
 		{
 		}
-		void step();
-		void simpleNonInterpolated();
+		void Step();
+		void SimpleNonInterpolated();
 		Skeleton *skeleton = nullptr;
 		float time = 0;
 		bool play = true;

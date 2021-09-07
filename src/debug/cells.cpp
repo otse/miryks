@@ -50,7 +50,7 @@ void cell_gui()
 				{
 					delete dungeon;
 					dungeon = new Interior(items[current]);
-					dungeon->load();
+					dungeon->Load();
 				}
 			}
 			//if (items[current] == dungeon->loadedCell)

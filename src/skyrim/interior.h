@@ -11,14 +11,6 @@ using namespace dark;
 
 namespace skyrim
 {
-	struct Cell
-	{
-		Record wrcd;
-		Grup persistent, temporary;
-	};
-
-	Cell find_interior_cell(const char *, int);
-
 	class Interior
 	{
 	public:
@@ -29,10 +21,10 @@ namespace skyrim
 		std::vector<Ref *> refs, labels, mstts;
 		std::map<std::string, Ref *> edIds;
 
-		void update();
-		void subgroup(Grup, int);
-		void load();
-		void unload();
+		void Update();
+		void Subgroup(Grup, int);
+		void Load();
+		void Unload();
 		void put_cam_on_random_xmarker();
 
 		const char *edId = nullptr;

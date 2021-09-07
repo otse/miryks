@@ -10,6 +10,9 @@
         "functional": "cpp",
         "chrono": "cpp",
         "forward_list": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "cstdarg": "cpp",
+        "atomic": "cpp",
+        "memory": "cpp"
     }
 }

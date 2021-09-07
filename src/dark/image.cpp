@@ -5,7 +5,7 @@
 #include <dark/image.h>
 #include <dark/files.h>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 // adapted from github.com/ileben/GameEngine/blob/master/src/engine/image/png_read.cpp
 

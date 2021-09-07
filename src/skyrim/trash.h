@@ -5,7 +5,7 @@
 
 #include <skyrim/record.h>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 using namespace dark;
 

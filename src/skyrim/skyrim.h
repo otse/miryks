@@ -1,11 +1,12 @@
 #pragma once
 
+#include <skyrim/grup.h>
 
 namespace skyrim
 {
-	typedef unsigned int *formId;
-	typedef const char *editorId;
-	typedef const char signature[5];
+	//extern std::map<int, int> keyframes;
+
+	// unused / unusable
 	
 	class Record;
 	class Grup;
@@ -19,5 +20,14 @@ namespace skyrim
 	class Interior;
 	class Container;
 
-	typedef Keyframes Kf;
+	struct Cell
+	{
+		Record wrcd;
+		Grup persistent, temporary;
+	};
+
+	Record skyrim_get_race(const char *);
+
+	Cell skyrim_get_interior_cell(const char *, int);
+
 }

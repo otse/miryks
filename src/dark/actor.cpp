@@ -1,3 +1,5 @@
+
+#if 0
 #include <skyrim_units>
 
 #include <dark/dark.h>
@@ -24,60 +26,39 @@ using namespace skyrim;
 
 namespace dark
 {
-	Keyframes *draugrAttack = nullptr;
-	Keyframes *draugrIdle = nullptr;
-
 	Keyframes *humanIdle = nullptr;
 	Keyframes *humanForward = nullptr;
 	Keyframes *humanLeft = nullptr;
 	Keyframes *humanRight = nullptr;
-	Keyframes *humanBack = nullptr;
+	Keyframes *humanBackward = nullptr;
 
-	Keyframes *GetKeyframes(const char *path)
+	void load_popular_keyframes()
 	{
-		Nif *nif = calloc_nifp();
-		nif->path = path;
-		char *lvalue = (char *)nif->buf;
-		fbuf(path, &lvalue);
-		nif_read(nif);
-		ext_nif_save(nif, nif);
-		Kf *kf = new Kf(nif);
-		return kf;
+		draugrIdle = loadAnimDisk("anims/draugr/alcove_wake.kf");
+		humanIdle = loadAnimDisk("anims/character/1hm_idle.kf");
+		humanLeft = loadAnimDisk("anims/character/1hm_walkleft.kf");
+		humanRight = loadAnimDisk("anims/character/1hm_walkright.kf");
+		humanBackward = loadAnimDisk("anims/character/1hm_walkbackward.kf");
+		humanForward = loadAnimDisk("anims/character/1hm_walkforward.kf");
 	}
 
-	crecordp GetRace(const char *raceId)
+	Actor::Actor(const char *raceId, const char *model)
 	{
-		crecordp race = nullptr;
-		Grup array;
-		grupp top = esp_top_grup(get_plugins()[0], "RACE");
-		array(top).foreach([&](unsigned int &i) {
-			Record object = array.get<record *>(i);
-			auto edId = object.editorId();
-			if (strcmp(edId, raceId) == 0)
-			{
-				race = object.rcd;
-				return true;
-			}
-			return false;
-		}, 0);
-		assertc(race);
-		return race;
-	}
-
-	BodyPart::BodyPart(const char *raceId, const char *model)
-	{
-		Record race = Record(GetRace(raceId));
+		skinnedMesh = nullptr;
+		skeleton = nullptr;
+		animation = nullptr;
+		drawGroup = nullptr;
+		race = skyrim_get_race(raceId);
 		auto anam = race.data<char *>("ANAM", 0);
-		Rc *rc = load_rc("meshes\\", model, 0x1);
-		Nif *character = import_nif(rc, false);
+		printf("bodypart raceid %s anam %s\n", raceId, anam);
+		Rc *rc = load_resource(model);
+		Nif *character = load_model(rc, false);
 		skeleton = new Skeleton(anam);
-		smesh = new SkinnedMesh(character, skeleton);
+		skinnedMesh = new SkinnedMesh(character, skeleton);
 		if (raceId == "DraugrRace")
 		{
 			//if (!draugrAttack)
 			//draugrAttack = loadAnimDisk("temp/draugr/kf/1hmattackf.kf");
-			if (!draugrIdle)
-			draugrIdle = loadAnimDisk("anims/draugr/alcove_wake.kf");
 			//draugrIdle = loadAnimDisk("anims/draugr/1hmidle.kf");
 			animation = new Animation(draugrIdle);
 			animation->skeleton = skeleton;
@@ -85,35 +66,31 @@ namespace dark
 		}
 		if (raceId == "ImperialRace")
 		{
+			
 			animation = new Animation(humanIdle);
 			animation->skeleton = skeleton;
 			skeleton->animation = animation;
 		}
 	}
 
-	void BodyPart::PutDown(const char *q)
+	void Actor::Place(const char *q)
 	{
 		auto ref = dungeon->edIds.find(q);
 		if (ref != dungeon->edIds.end())
 		{
-			Group *group = new Group();
-			//group->Add(skeleton->baseBone->group);
-			group->Add(smesh->baseGroup);
-			//printf("make smesh->skeleton drawGroup!\n");
-			drawGroup = new DrawGroup(group, ref->second->matrix);
+			drawGroup = new DrawGroup(
+				skinnedMesh->baseGroup, ref->second->matrix);
 			//drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
 			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else
-		{
-			printf("actor put down cant find %s\n", q);
-		}
+			printf("actor:place noref %s\n", q);
 	}
 
-	void BodyPart::step()
+	void Actor::Step()
 	{
-		if (smesh)
-			smesh->forward();
+		if (skinnedMesh)
+			skinnedMesh->Forward();
 		//const float merry = 0.002;
 		//if (drawGroup)
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
@@ -172,18 +149,18 @@ namespace dark
 		//sceneDef->Add(mirror);
 	}
 
-	void Human::step()
+	void Human::Step()
 	{
 		if (hat)
-			hat->step();
+			hat->Step();
 		if (head)
-			head->step();
+			head->Step();
 		if (body)
-			body->step();
+			body->Step();
 		if (hands)
-			hands->step();
+			hands->Step();
 		if (feet)
-			feet->step();
+			feet->Step();
 		//if (csphere)
 		{
 			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());
@@ -209,7 +186,7 @@ namespace dark
 		thirdPersonCamera = new ViewerCamera;
 	}
 
-	void Player::step()
+	void Player::Step()
 	{
 		move();
 		cameraCur->pos = vec3(pose);
@@ -220,7 +197,7 @@ namespace dark
 		{
 			//human->
 		}
-		human->step();
+		human->Step();
 		//if (!dynamic_cast<FirstPersonCamera *>(cameraCur))
 		//	return;
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
@@ -273,15 +250,20 @@ namespace dark
 		if (!holding("lshift"))
 		speed /= 10;
 
-		if (holding("w") && !holding("s"))
+		if (holding("w") && !holding("s")) {
 			forward(speed);
-		if (holding("s") && !holding("w"))
+			//human
+		}
+		if (holding("s") && !holding("w")) {
 			forward(-speed / 2);
+		}
 
-		if (holding("a") && !holding("d"))
+		if (holding("a") && !holding("d")) {
 			strafe(-speed);
-		if (holding("d") && !holding("a"))
+		}
+		if (holding("d") && !holding("a")) {
 			strafe(speed);
+		}
 
 		if (holding("r"))
 			pose.z += speed / 2;
@@ -290,3 +272,4 @@ namespace dark
 	}
 
 } // namespace dark
+#endif

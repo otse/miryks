@@ -31,24 +31,8 @@ namespace dark
 		return nullptr;
 	}
 
-	Nif *import_nif(Rc *rc, bool store)
-	{
-		assertm(rc, "import_nif null rc");
-		Nif *nif;
-		nif = ext_nif_saved(rc);
-		if (store && nif)
-			return nif;
-		bsa_read(rc);
-		nif = calloc_nifp();
-		nif->path = rc->path;
-		nif->buf = rc->buf;
-		nif_read(nif);
-		if (store)
-			ext_nif_save(rc, nif);
-		return nif;
-	}
-
-	Rc *load_rc(const char *prepend, const char *path, unsigned long flags)
+	Rc *load_resource(
+		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
 		str += path;
@@ -62,17 +46,46 @@ namespace dark
 		return rc;
 	}
 
-	Mesh *create_simple_mesh_from_modl(const char *model, bool store)
+	Keyframes *load_keyframes_from_disk(const char *path)
+	{
+		Nif *nif = calloc_nifp();
+		nif->path = path;
+		char *lvalue = (char *)nif->buf;
+		fbuf(path, &lvalue);
+		nif_read(nif);
+		ext_nif_save(nif, nif);
+		Keyframes *keyframes = new Keyframes(nif);
+		return keyframes;
+	}
+
+	Nif *load_model(Rc *rc, bool useStore)
+	{
+		assertm(rc, "import_nif null rc");
+		Nif *nif, *saved;
+		nif = ext_nif_saved(rc);
+		if (useStore && nif)
+			return nif;
+		bsa_read(rc);
+		nif = calloc_nifp();
+		nif->path = rc->path;
+		nif->buf = rc->buf;
+		nif_read(nif);
+		if (useStore)
+			ext_nif_save(rc->path, nif);
+		return nif;
+	}
+
+	Mesh *create_simple_mesh_from_modl(const char *model, bool useStore)
 	{
 		static std::map<const char *, Mesh *> map;
-		if (map.count(model) && store)
+		if (map.count(model) && useStore)
 			return map[model];
-		Rc *rc = load_rc("meshes\\", model, 0x1);
+		Rc *rc = load_resource(model);
 		if (rc == NULL)
 			return nullptr;
-		Nif *nif = import_nif(rc, true);
+		Nif *nif = load_model(rc, true);
 		Mesh *mesh = new Mesh(nif);
-		if (store)
+		if (useStore)
 			map.emplace(model, mesh);
 		return mesh;
 	}

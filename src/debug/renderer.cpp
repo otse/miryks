@@ -36,7 +36,7 @@ void opengl_gui()
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))
 	{
 		static std::map<const char *, const char *> map = {
-			{ "0", "Not masked" },
+			{ "0", "Default" },
 			{ References, STRINGIFY(References) },
 			{ Statics, STRINGIFY(Statics) },
 			{ Doors, STRINGIFY(Doors) },
@@ -55,6 +55,13 @@ void opengl_gui()
 		};
 		if (ImGui::BeginTabItem("objects"))
 		{
+			bool b = DrawGroup::masks == 0;
+			if (ImGui::Checkbox("0", &b))
+				DrawGroup::masks = 0;
+			bool b2 = DrawGroup::masks == ~0;
+			if (ImGui::Checkbox("~0", &b2))
+				DrawGroup::masks = ~0;
+			ImGui::Separator();
 			int i = 0;
 			for(auto word : Things) {
 				int bit = 1 << i;

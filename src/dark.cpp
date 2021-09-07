@@ -1,10 +1,11 @@
 #include <png.h>
 
+#include <dark/dark.h>
 #include <dark/files.h>
 
-#include <dark/dark.h>
-
 #include <dark/actor.h>
+#include <dark/creature.h>
+
 #include <skyrim/interior.h>
 
 using namespace dark;
@@ -12,20 +13,46 @@ using namespace skyrim;
 
 namespace dark
 {
+	Interior *dungeon = nullptr;
+
+	Creature *someDraugr = nullptr, *meanSkelly = nullptr;
+
+	Human *someHuman = nullptr;
+	Player *player1 = nullptr;
+
+	Image *yagrum_image = nullptr;
+
+	std::string editme;
+
+	RenderTarget *render_target;
+
+	// todo extern this
+	int width = 1920;
+	int height = 1080;
+	float delta = 0;
+}
+
+namespace dark
+{
 std::map<const char *, int> keys;
+}
+
+void darkassert(bool e)
+{
+	assertc(e);
 }
 
 void load_bucket()
 {
 	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	Nif *nif = import_nif(rc, true);
+	Nif *nif = load_model(rc, true);
 	simple_viewer(nif);
 }
 
 void load_gloomgen()
 {
 	dungeon = new Interior("GloomGen");
-	dungeon->load();
+	dungeon->Load();
 	//player1 = new Player();
 }
 
@@ -67,15 +94,13 @@ int main()
 	load_plugins_archives();
 	nif_test();
 	renderer_init();
-	cameraCur = personCam;
-	// Bucket beginning
 	load_bucket();
 	refs_init();
 	put_it_fullscreen();
 	load_gloomgen();
 	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale07.nif");
-	someDraugr = new BodyPart("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
-	someDraugr->PutDown("gloomgendraugr");
+	someDraugr = new Creature("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
+	someDraugr->Place("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
 	//someHuman = new Human();
@@ -102,7 +127,7 @@ namespace dark
 			delete dungeon;
 			dungeon = new Interior(edId);
 			dungeon->alreadyTeleported = true;
-			dungeon->load();
+			dungeon->Load();
 		}
 	}
 }
@@ -113,7 +138,6 @@ namespace dark
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 
-// todo uglies
 void dark::simple_viewer(Nif *nif)
 {
 	static Mesh *mesh = nullptr;

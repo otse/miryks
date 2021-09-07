@@ -3,7 +3,7 @@
 
 // part of gloom
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 // https://learnopengl.com/Getting-started/Textures
 

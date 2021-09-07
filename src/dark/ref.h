@@ -4,7 +4,7 @@
 #include <skyrim/skyrim.h>
 #include <skyrim/record.h>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 #include <renderer/aabb.h>
 
 using namespace skyrim;
@@ -41,13 +41,13 @@ namespace dark
 		DrawGroup *drawGroup = nullptr;
 		PointLight *pointLight;
 		SpotLight *spotLight;
-		void go();
-		void forScale(float *);
-		void forLocationalData(float *);
-		void forBaseId(formId);
-		float getDistance() const;
-		bool displayAsItem();
-		void step();
+		void Go();
+		void ForScale(float *);
+		void ForLocationalData(float *);
+		void ForBaseId(formId);
+		float GetDistance() const;
+		bool DisplayAsItem();
+		void Step();
 		bool Use();
 	};
 } // namespace dark

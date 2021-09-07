@@ -3,7 +3,7 @@
 
 // stolen for gloom
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 #include <renderer/camera.h>
 #include <renderer/scene.h>

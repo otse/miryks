@@ -1,7 +1,7 @@
 #ifndef OPENGL_GROUP_H
 #define OPENGL_GROUP_H
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 #include <renderer/aabb.h>
 
 struct Group

@@ -17,7 +17,7 @@ extern "C"
 #include <renderer/scene.h>
 #include <renderer/shader.h>
 #include <renderer/texture.h>
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 #include <renderer/rendertarget.h>
 
 void cont_menu();
@@ -115,7 +115,7 @@ void ItemRenderer::View(Item *item) {
 	printf("itemRenderer view %s", item->data<unsigned char *>("FULL"));
 
 	Rc *rc = bsa_find_more(modl, 0x1);
-	Nif *nif = import_nif(rc, true);
+	Nif *nif = load_model(rc, true);
 
 	static Mesh *mesh = nullptr;
 	static DrawGroup *drawGroup = nullptr;

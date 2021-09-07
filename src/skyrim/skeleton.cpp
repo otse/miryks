@@ -1,30 +1,19 @@
-#include <algorithm>
-
 #include <dark/files.h>
 
-#include "skeleton.h"
+#include <skyrim/skeleton.h>
+#include <skyrim/record.h>
 
 #include <renderer/group.h>
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 #include <glm/gtc/quaternion.hpp>
+#include <algorithm>
 
 using namespace dark;
 
 namespace skyrim
 {
 	static void ni_node_callback(Rd *, NiNode *);
-
-	Keyframes *loadAnimDisk(const char *path)
-	{
-		Nif *nif = calloc_nifp();
-		nif->path = path;
-		fbuf(path, (char **)&nif->buf);
-		nif_read(nif);
-		ext_nif_save(nif, nif);
-		Keyframes *kf = new Keyframes(nif);
-		return kf;
-	}
 
 	Skeleton::Skeleton()
 	{
@@ -37,20 +26,24 @@ namespace skyrim
 
 	Skeleton::Skeleton(const char *anam) : Skeleton()
 	{
-		load(anam);
-		construct();
-		// baseBone->group->visible = false;
+		Load(anam);
+		Construct();
 	}
 
-	void Skeleton::load(const char *anam)
+	Skeleton::Skeleton(Record race) : Skeleton()
+	{
+		Load(race.data<char *>("ANAM"));
+	}
+
+	void Skeleton::Load(const char *anam)
 	{
 		// printf("skeleton load anam %s\n", anam);
-		Rc *rc = load_rc("meshes\\", anam, 0x1);
-		nif = import_nif(rc, true);
+		Rc *rc = load_resource(anam);
+		nif = load_model(rc, true);
 		//printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
 
-	void Skeleton::construct()
+	void Skeleton::Construct()
 	{
 		Rd *rd = calloc_nifprd();
 		rd->nif = nif;
@@ -62,7 +55,7 @@ namespace skyrim
 		baseBone->group->Update();
 	}
 
-	Bone *Skeleton::make_new_group(Rd *rd, int name)
+	Bone *Skeleton::MakeBoneHere(Rd *rd, int name)
 	{
 		Bone *bone = new Bone();
 		bones[rd->current] = bone;
@@ -83,16 +76,15 @@ namespace skyrim
 
 	void ni_node_callback(Rd *rd, NiNode *block)
 	{
-		//printf("skelly ni node callback\n");
 		Skeleton *skeleton = (Skeleton *)rd->data;
-		Bone *bone = skeleton->make_new_group(rd, block->common->F->name);
+		Bone *bone = skeleton->MakeBoneHere(rd, block->common->F->name);
 		matrix_from_common(bone, block->common);
 	}
 
-	void Skeleton::step()
+	void Skeleton::Step()
 	{
 		if (animation)
-			animation->step();
+			animation->Step();
 	}
 
 	// keyframes
@@ -103,7 +95,7 @@ namespace skyrim
 		csp = (NiControllerSequence *)model->blocks[0];
 	}
 
-	void Animation::step()
+	void Animation::Step()
 	{
 		//printf("animstep");
 		float adv = delta;
@@ -112,12 +104,12 @@ namespace skyrim
 		if (time >= keyframes->csp->C->stop_time)
 			time -= keyframes->csp->C->stop_time;
 		//printf("time %f\n", time);
-		simpleNonInterpolated();
+		SimpleNonInterpolated();
 		skeleton->baseBone->group->Update();
 		//printf("cbp %i", cbp->controller);
 	}
 
-	void Animation::simpleNonInterpolated()
+	void Animation::SimpleNonInterpolated()
 	{
 		Nif *model = keyframes->model;
 		struct controlled_block_t *cbp;

@@ -3,7 +3,7 @@
 
 #include <functional>
 
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 #include <renderer/aabb.h>
 
 struct DrawGroup : Group

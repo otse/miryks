@@ -7,7 +7,7 @@ extern "C"
 
 #include <renderer/shader.h>
 #include <renderer/texture.h>
-#include <renderer/types.h>
+#include <renderer/renderer.h>
 
 #include <map>
 
@@ -19,10 +19,10 @@ namespace skyrim
 		skeleton(skeleton)
 	{
 		assertm(skeleton, "smesh needs skeleton");
-		construct();
+		Construct();
 	}
 
-	void SkinnedMesh::construct()
+	void SkinnedMesh::Construct()
 	{
 		Rd *rd = calloc_nifprd();
 		rd->nif = nif;
@@ -38,11 +38,11 @@ namespace skyrim
 		rd->ni_alpha_property_callback = ni_alpha_property_callback;
 		nif_rd(rd);
 		free_nifprd(&rd);
-		initial();
+		Initial();
 		baseGroup->Update();
 	}
 	
-	void SkinnedMesh::initial()
+	void SkinnedMesh::Initial()
 	{
 		for (NiRef ref : shapes__)
 		{
@@ -79,11 +79,11 @@ namespace skyrim
 		}
 	}
 
-	void SkinnedMesh::forward()
+	void SkinnedMesh::Forward()
 	{
 		if (skeleton)
-			skeleton->step();
-		initial();
+			skeleton->Step();
+		Initial();
 	}
 
 	void ni_skin_instance_callback(Rd *rd, NiSkinInstance *block)
