@@ -44,8 +44,7 @@ void darkassert(bool e)
 
 void load_bucket()
 {
-	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
-	Nif *nif = load_model(rc, true);
+	Nif *nif = load_model(load_resource("clutter\\bucket02a.nif"), true);
 	simple_viewer(nif);
 }
 
@@ -98,8 +97,8 @@ int main()
 	refs_init();
 	put_it_fullscreen();
 	load_gloomgen();
-	//someDraugr = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrmale07.nif");
-	someDraugr = new Creature("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
+	someDraugr = new Creature("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
+	//someDraugr = new Creature("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	someDraugr->Place("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");

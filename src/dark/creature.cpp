@@ -14,21 +14,21 @@ namespace dark
     Keyframes *draugrAttack = nullptr;
 	Keyframes *draugrIdle = nullptr;
     
-    Creature::Creature(const char *raceEditorId, const char *path)
+    Creature::Creature(const char *editorId, const char *path)
 	{
 		animation = nullptr;
 		drawGroup = nullptr;
-		race = skyrim_get_race(raceEditorId);
-		Rc *rc = load_resource(path);
-		Nif *nif = load_model(rc, true);
+		race = skyrim_get_race(editorId);
+		Nif *model = load_model(load_resource(path), true);
 		skeleton = new Skeleton(race);
-		skinnedMesh = new SkinnedMesh(nif, skeleton);
+		skinnedMesh = new SkinnedMesh(model, skeleton);
 	}
 
 	void Creature::Load() {
 	}
 
-	void Creature::SetAnimation(Keyframes *keyframes) {
+	void Creature::SetAnimation(Keyframes *keyframes)
+	{
 		animation = new Animation(keyframes);
 		animation->skeleton = skeleton;
 		skeleton->animation = animation;

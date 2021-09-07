@@ -114,7 +114,7 @@ void ItemRenderer::View(Item *item) {
 		return;
 	printf("itemRenderer view %s", item->data<unsigned char *>("FULL"));
 
-	Rc *rc = bsa_find_more(modl, 0x1);
+	Rsc *rc = bsa_find_more(modl, 0x1);
 	Nif *nif = load_model(rc, true);
 
 	static Mesh *mesh = nullptr;

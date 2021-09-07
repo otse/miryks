@@ -10,7 +10,7 @@
 #define BSA_MAX_SEARCHES 60
 
 struct Bsa;
-struct Rc;
+struct Rsc;
 
 struct bsa_hedr
 {
@@ -34,7 +34,7 @@ struct bsa_file
 	unsigned long size, offset;
 };
 
-typedef struct Rc
+typedef struct Rsc
 {
 	struct Bsa *bsa;
 	int i, j, r;
@@ -42,7 +42,7 @@ typedef struct Rc
 	const char *name;
 	const unsigned char *buf;
 	char path[260];
-} Rc;
+} Rsc;
 
 typedef struct Bsa
 {
@@ -51,7 +51,7 @@ typedef struct Bsa
 	struct bsa_hedr hdr;
 	struct bsa_fld *fld;
 	struct bsa_file **file;
-	Rc **rc;
+	Rsc **rsc;
 	int *r;
 	const char **ca;
 	const char **cb;
@@ -66,11 +66,11 @@ api void bsa_print_fld_rcd(Bsa *, char *s, int);
 api void bsa_print_fle_rcd(Bsa *, char *s, int, int);
 api void bsa_print_rc(Bsa *, char *s, int);
 
-api int bsa_read(Rc *);
-api Rc *bsa_find(Bsa *, const char *);
-api Rc *bsa_find_more(const char *, unsigned long);
+api int bsa_read(Rsc *);
+api Rsc *bsa_find(Bsa *, const char *);
+api Rsc *bsa_find_more(const char *, unsigned long);
 
-api void bsa_search(Bsa *, Rc *[BSA_MAX_SEARCHES], const char *, int *);
+api void bsa_search(Bsa *, Rsc *[BSA_MAX_SEARCHES], const char *, int *);
 
 api Bsa **get_archives();
 

@@ -31,7 +31,7 @@ namespace dark
 		return nullptr;
 	}
 
-	Rc *load_resource(
+	Rsc *load_resource(
 		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
@@ -39,11 +39,11 @@ namespace dark
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
 					   { return std::tolower(c); });
 		const char *s = str.c_str();
-		Rc *rc = bsa_find_more(s, flags);
-		if (rc == NULL)
-			printf("no rc at %s\n", s);
-		bsa_read(rc);
-		return rc;
+		Rsc *rsc = bsa_find_more(s, flags);
+		if (rsc == NULL)
+			printf("no rsc at %s\n", s);
+		bsa_read(rsc);
+		return rsc;
 	}
 
 	Keyframes *load_keyframes_from_disk(const char *path)
@@ -58,34 +58,34 @@ namespace dark
 		return keyframes;
 	}
 
-	Nif *load_model(Rc *rc, bool useStore)
+	Nif *load_model(Rsc *rsc, bool storage)
 	{
-		assertm(rc, "import_nif null rc");
+		assertm(rsc, "load_model null rsc");
 		Nif *nif, *saved;
-		nif = ext_nif_saved(rc);
-		if (useStore && nif)
-			return nif;
-		bsa_read(rc);
+		saved = ext_nif_saved(rsc);
+		if (storage && saved)
+			return saved;
+		bsa_read(rsc);
 		nif = calloc_nifp();
-		nif->path = rc->path;
-		nif->buf = rc->buf;
+		nif->path = rsc->path;
+		nif->buf = rsc->buf;
 		nif_read(nif);
-		if (useStore)
-			ext_nif_save(rc->path, nif);
+		if (storage)
+			ext_nif_save(rsc->path, nif);
 		return nif;
 	}
 
-	Mesh *create_simple_mesh_from_modl(const char *model, bool useStore)
+	Mesh *create_simple_mesh_from_modl(const char *model, bool storage)
 	{
 		static std::map<const char *, Mesh *> map;
-		if (map.count(model) && useStore)
+		if (map.count(model) && storage)
 			return map[model];
-		Rc *rc = load_resource(model);
-		if (rc == NULL)
+		Rsc *rsc = load_resource(model);
+		if (rsc == NULL)
 			return nullptr;
-		Nif *nif = load_model(rc, true);
+		Nif *nif = load_model(rsc, true);
 		Mesh *mesh = new Mesh(nif);
-		if (useStore)
+		if (storage)
 			map.emplace(model, mesh);
 		return mesh;
 	}

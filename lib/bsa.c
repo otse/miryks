@@ -107,7 +107,7 @@ void read_filenames(Bsa *bsa)
 
 void bsa_rc_path(Bsa *bsa, int i, int r)
 {
-	char *path = bsa->rc[r]->path;
+	char *path = bsa->rsc[r]->path;
 	strcpy(path, bsa->ca[i]);
 	strcat(path, "\\");
 	strcat(path, bsa->cb[r]);
@@ -117,7 +117,7 @@ void bsa_rc_path(Bsa *bsa, int i, int r)
 void resources(Bsa *bsa)
 {
 	// abstract file records
-	bsa->rc = calloc(Hedr.files, sizeof(Rc *));
+	bsa->rsc = calloc(Hedr.files, sizeof(Rsc *));
 	bsa->r = calloc(Hedr.folders, sizeof(int));
 	int r = 0;
 	for (unsigned int i = 0; i < Hedr.folders; i++)
@@ -125,15 +125,15 @@ void resources(Bsa *bsa)
 	bsa->r[i] = r;
 	for (unsigned int j = 0; j < bsa->fld[i].num; j++)
 	{
-	bsa->rc[r] = calloc(1, sizeof(Rc));
-	*bsa->rc[r] = (Rc){bsa, i, j, r, 0L, bsa->cb[r], NULL, ""};
+	bsa->rsc[r] = calloc(1, sizeof(Rsc));
+	*bsa->rsc[r] = (Rsc){bsa, i, j, r, 0L, bsa->cb[r], NULL, ""};
 	bsa_rc_path(bsa, i, r);
 	r++;
 	}
 	}
 }
 
-api Rc *bsa_find(Bsa *bsa, const char *p)
+api Rsc *bsa_find(Bsa *bsa, const char *p)
 {
 	char stem[260], name[100];
 	file_stem(stem, p, '\\');
@@ -151,14 +151,14 @@ api Rc *bsa_find(Bsa *bsa, const char *p)
 	{
 	cmp = strcmp(name, bsa->cb[r]);
 	if (0 == cmp)
-	return bsa->rc[r];
+	return bsa->rsc[r];
 	r++;
 	}
 	}
 	return NULL;
 }
 
-api void bsa_search(Bsa *bsa, Rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num)
+api void bsa_search(Bsa *bsa, Rsc *rscs[BSA_MAX_SEARCHES], const char *s, int *num)
 {
 	char *str;
 	int r;
@@ -170,7 +170,7 @@ api void bsa_search(Bsa *bsa, Rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num
 	{
 	str = strstr(bsa->cb[r], s);
 	if (str!=NULL) {
-	rcs[n++] = bsa->rc[r];
+	rscs[n++] = bsa->rsc[r];
 	if (n>=BSA_MAX_SEARCHES)
 	goto end;
 	}
@@ -183,36 +183,36 @@ api void bsa_search(Bsa *bsa, Rc *rcs[BSA_MAX_SEARCHES], const char *s, int *num
 
 #if BSA_VER==104
 
-char *bsa_uncompress(Rc *rc)
+char *bsa_uncompress(Rsc *rsc)
 {
 	// zlib
-	char *src = rc->buf;
+	char *src = rsc->buf;
 	uint32_t size = *(uint32_t *)&src[0];
-	rc->size -= sizeof(uint32_t);
+	rsc->size -= sizeof(uint32_t);
 	src += sizeof(uint32_t);
 	char *dest = malloc(size * sizeof(char));
-	int ret = uncompress(dest, (uLongf*)&size, src, rc->size);
+	int ret = uncompress(dest, (uLongf*)&size, src, rsc->size);
 	assertm(ret == Z_OK, BSA "zlib");
-	rc->size = size;
+	rsc->size = size;
 	return dest;
 }
 
 #elif BSA_VER==105
 
-char *bsa_uncompress(Rc *rc)
+char *bsa_uncompress(Rsc *rsc)
 {
 	//printf("uncompress!\n");
-	char *src = rc->buf;
+	char *src = rsc->buf;
 	uint32_t size = *(uint32_t *)&src[0];
-	rc->size -= sizeof(uint32_t);
+	rsc->size -= sizeof(uint32_t);
 	src += sizeof(uint32_t);
 	char *dest = malloc(sizeof(char) * size);
 	LZ4F_decompressionContext_t context = NULL;
 	LZ4F_createDecompressionContext(&context, LZ4F_VERSION);
 	LZ4F_decompressOptions_t options;
 	LZ4F_errorCode_t errorCode = LZ4F_decompress(
-		context, dest, &size, src, &rc->size, &options);
-	rc->size = size;
+		context, dest, &size, src, &rsc->size, &options);
+	rsc->size = size;
 	return dest;
 }
 
@@ -224,13 +224,13 @@ char *bsa_uncompress(Rc *rc)
 
 #define INVERT_COMPRESSED 0x40000000
 
-api int bsa_read(Rc *rc) {
-	if (rc == NULL)
+api int bsa_read(Rsc *rsc) {
+	if (rsc == NULL)
 	return 0;
-	if (rc->buf)
+	if (rsc->buf)
 	return 1;
-	Bsa *bsa = rc->bsa;
-	struct bsa_file *f = &bsa->file[rc->i][rc->j];
+	Bsa *bsa = rsc->bsa;
+	struct bsa_file *f = &bsa->file[rsc->i][rsc->j];
 	unsigned long offset = f->offset;
 	unsigned long size = f->size;
 	if (Hedr.archive_flags & EMBED_FILE_NAMES)
@@ -250,25 +250,25 @@ api int bsa_read(Rc *rc) {
 	offset += x;
 	size -= x;
 	}
-	rc->size = size;
-	rc->buf = malloc(sizeof(char) * rc->size);
+	rsc->size = size;
+	rsc->buf = malloc(sizeof(char) * rsc->size);
 	#if 0
-	if (!rc->buf)
+	if (!rsc->buf)
 	{
-		printf("\n\ncant malloc buf of size %i\n\n", rc->size);
+		printf("\n\ncant malloc buf of size %i\n\n", rsc->size);
 		printf("malloc max is %u", SIZE_MAX);
-		printf("info: bsa is %s\n", rc->bsa->path);
+		printf("info: bsa is %s\n", rsc->bsa->path);
 		return 0;
 	}
 	#endif
-	//printf("bsa going to read %s\n", rc->name);
+	//printf("bsa going to read %s\n", rsc->name);
 	seek(bsa, offset);
-	read(bsa, rc->buf, rc->size);
+	read(bsa, rsc->buf, rsc->size);
 	if ((Hedr.archive_flags & 0x4) != (f->size & INVERT_COMPRESSED))
 	{
-	char *x = bsa_uncompress(rc);
-	free(rc->buf);
-	rc->buf = x;
+	char *x = bsa_uncompress(rsc);
+	free(rsc->buf);
+	rsc->buf = x;
 	}
 	return 1;
 }
@@ -325,9 +325,9 @@ api Bsa *bsa_get(const char *filename)
 	return NULL;
 }
 
-api Rc *bsa_find_more(const char *p, unsigned long flags)
+api Rsc *bsa_find_more(const char *p, unsigned long flags)
 {
-	Rc *rc = NULL;
+	Rsc *rsc = NULL;
 	for (int i = 20; i --> 0; )
 	{
 	Bsa *bsa = archives[i];
@@ -335,11 +335,11 @@ api Rc *bsa_find_more(const char *p, unsigned long flags)
 	continue;
 	int test = Hedr.file_flags & flags;
 	if (Hedr.file_flags == 0 || test)
-	rc = bsa_find(bsa, p);
-	if (rc!=NULL)
+	rsc = bsa_find(bsa, p);
+	if (rsc!=NULL)
 	break;
 	}
-	return rc;
+	return rsc;
 }
 
 static int read(Bsa *bsa, void *data, unsigned long size)

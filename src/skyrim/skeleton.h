@@ -22,19 +22,18 @@ namespace skyrim
 	class Skeleton
 	{
 	public:
-		Skeleton();
-		Skeleton(const char *);
-		Skeleton(Record);
-
 		std::map<NiRef, Bone *> bones;
 		std::map<const std::string, Bone *> bonesNamed;
 
-		Nif *nif;
+		Nif *model;
 		Bone *baseBone, *lastBone;
+
 		Animation *animation;
 
+		Skeleton();
+		Skeleton(const char *);
+		Skeleton(Record);
 		Bone *MakeBoneHere(Rd *, int);
-
 		void Load(const char *);
 		void Construct();
 		void Step();

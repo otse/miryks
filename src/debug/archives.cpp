@@ -59,21 +59,21 @@ void bsa_gui()
 		return;
 	}
 
-	auto func = [&](Rc *rc) {
-		if (!rc)
+	auto func = [&](Rsc *rsc) {
+		if (!rsc)
 			return;
 		ImGui::Separator();
 		char s[200];
 
-		bsa_print_rc(bsa, s, rc->r);
+		bsa_print_rc(bsa, s, rsc->r);
 		ImGui::Text(s);
 
 		if (ImGui::TreeNode("more data"))
 		{
-			bsa_print_fle_rcd(bsa, s, rc->i, rc->j);
+			bsa_print_fle_rcd(bsa, s, rsc->i, rsc->j);
 			ImGui::Text(s);
 
-			bsa_print_fld_rcd(bsa, s, rc->i);
+			bsa_print_fld_rcd(bsa, s, rsc->i);
 			ImGui::Text(s);
 
 			ImGui::TreePop();
@@ -81,14 +81,14 @@ void bsa_gui()
 
 		if (ImGui::Button(READ_BSA_RESOURCE))
 		{
-			bsa_read(rc);
+			bsa_read(rsc);
 		}
-		if (rc->size > 0)
+		if (rsc->size > 0)
 		{
 			ImGui::SameLine();
 			if (ImGui::Button(VIEW_NIF))
 			{
-				Nif *nif = load_model(rc, true);
+				Nif *nif = load_model(rsc, true);
 				simple_viewer(nif);
 			}
 		}
@@ -113,31 +113,31 @@ void bsa_gui()
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
 
-			static Rc *rc = nullptr;
+			static Rsc *rsc = nullptr;
 
 			if (reset)
 			{
 				str2[0] = '\0';
-				rc = nullptr;
+				rsc = nullptr;
 			}
 
 			ImGui::InputText("##Find", str, MAX);
 
-			bool rcb = !!rc;
+			bool rcb = !!rsc;
 
-			ImGui::Text(rc ? "found!" : "not found!");
+			ImGui::Text(rsc ? "found!" : "not found!");
 			ImGui::SameLine();
 			ImGui::Checkbox("##", &rcb);
 
 			if (strcmp(str, str2))
 			{
-				rc = bsa_find(bsa, str);
+				rsc = bsa_find(bsa, str);
 				memcpy(str2, str, MAX);
 			}
 
-			if (rc)
+			if (rsc)
 			{
-				func(rc);
+				func(rsc);
 			}
 
 			ImGui::EndTabItem();
@@ -155,13 +155,13 @@ void bsa_gui()
 			static const char *items[BSA_MAX_SEARCHES];
 			static int num = 0;
 
-			static Rc *rc = nullptr;
-			static Rc *rcs[BSA_MAX_SEARCHES];
+			static Rsc *rsc = nullptr;
+			static Rsc *rcs[BSA_MAX_SEARCHES];
 
 			if (reset)
 			{
 				num = 0;
-				rc = nullptr;
+				rsc = nullptr;
 			}
 
 			if (strcmp(str, str2))
@@ -185,9 +185,9 @@ void bsa_gui()
 
 			if (!(item_current > num))
 			{
-				rc = rcs[item_current];
+				rsc = rcs[item_current];
 
-				func(rc);
+				func(rsc);
 			}
 			ImGui::EndTabItem();
 		}
@@ -219,22 +219,22 @@ void bsa_gui()
 							ImGui::Separator();
 
 							char s[200];
-							Rc *rc = bsa->rc[bsa->r[i] + j];
-							bsa_print_rc(bsa, s, rc->r);
+							Rsc *rsc = bsa->rsc[bsa->r[i] + j];
+							bsa_print_rc(bsa, s, rsc->r);
 							ImGui::Text(s);
 							bsa_print_fle_rcd(bsa, s, i, j);
 							ImGui::Text(s);
 
 							if (ImGui::Button(READ_BSA_RESOURCE))
 							{
-								bsa_read(rc);
+								bsa_read(rsc);
 							}
-							if (rc->size > -1)
+							if (rsc->size > -1)
 							{
 								ImGui::SameLine();
 								if (ImGui::Button(VIEW_NIF))
 								{
-									Nif *nif = load_model(rc, true);
+									Nif *nif = load_model(rsc, true);
 									simple_viewer(nif);
 								}
 							}

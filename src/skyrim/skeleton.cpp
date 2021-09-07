@@ -20,7 +20,7 @@ namespace skyrim
 		baseBone = new Bone();
 		bones[-1] = baseBone;
 		lastBone = baseBone;
-		nif = nullptr;
+		model = nullptr;
 		animation = nullptr;
 	}
 
@@ -38,15 +38,14 @@ namespace skyrim
 	void Skeleton::Load(const char *anam)
 	{
 		// printf("skeleton load anam %s\n", anam);
-		Rc *rc = load_resource(anam);
-		nif = load_model(rc, true);
+		model = load_model(load_resource(anam), true);
 		//printf("num_blocks of skeleton %u\n", nif->hdr->num_blocks);
 	}
 
 	void Skeleton::Construct()
 	{
 		Rd *rd = calloc_nifprd();
-		rd->nif = nif;
+		rd->nif = model;
 		rd->data = this;
 		//rd->other = other;
 		rd->ni_node_callback = ni_node_callback;

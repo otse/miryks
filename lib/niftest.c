@@ -9,11 +9,11 @@ static void test_bucket_against_known_values(Nif *);
 
 void nif_test()
 {
-	// We use Rc from bsa.h
-	Rc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
+	// We use Rsc from bsa.h
+	Rsc *rc = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	// or
 	// struct bsa *meshes = get_archives()[0];
-	// struct Rc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
+	// struct Rsc *rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	assertm(rc, "mh no bucket02a");
 	bsa_read(rc);
 	// setup
