@@ -2,9 +2,13 @@
 
 #include <lib.h>
 
+#include <dark/list>
+
+#include <skyrim/skyrim.h>
+
 #include <renderer/renderer.h>
 
-#include <dark/list>
+using namespace skyrim;
 
 namespace dark
 {
@@ -17,46 +21,36 @@ namespace dark
 	class Image;
 }
 
-namespace skyrim
-{
-	class Mesh;
-	class SkinnedMesh;
-	class Skeleton;
-	class Keyframes;
-	class Animation;
-	class Interior;
-}
-using namespace skyrim;
-
 namespace dark
 {
 	void darkassert(bool);
 
 	extern char *editme;
 
-	extern std::map<void *, Nif *> nifs;
+	int ext_nif_save(const char *, Nif *);
+	Nif *ext_nif_saved(const char *);
+	std::map<const char *, Nif *> &ext_nif_map();
 
-	int ext_nif_save(void *, Nif *);
-	Nif *ext_nif_saved(void *);
-
-	Rsc *load_rsc(const char *, const char * = "meshes\\", unsigned long = 0x1);
-	Nif *load_model(Rsc *, bool);
+	Rsc *load_res(const char *, const char * = "meshes\\", unsigned long = 0x1);
+	Nif *load_model(Rsc *);
 	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
-	void load_these_definitions(espp plugin);
+	void load_these_definitions(Esp *);
 	
 	Keyframes *load_keyframes_from_disk(const char *);
-	Mesh *create_simple_mesh_from_modl(const char *, bool);
 
-	void reload_my_plugin();
+	extern Interior *dungeon;
+	extern Player *player1;
+	extern Creature *someDraugr, *meanSkelly;
+	extern Human *someHuman;
+
+	void reload_esp();
 	void reload_dungeon();
 	
 	void goingrate();
 	void program_while();
 
 	void simple_viewer(Nif *);
-	void doImGui();
-	void renderImGui();
 
 	void hide_cursor();
 	void show_cursor();
@@ -69,24 +63,19 @@ namespace dark
 	inline bool holding(const char *id) {
 		return keys[id] >= 1;
 	}
-
-	extern Interior *dungeon;
-	extern Creature *someDraugr, *meanSkelly;
-	extern Human *someHuman;
-	extern Player *player1;
-
+	
 	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
 	inline vec3 cast_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }
 	inline vec4 cast_vec4(void *f) { return *reinterpret_cast<vec4 *>(f); }
 	inline bvec4 cast_bvec4(void *u) { return *reinterpret_cast<bvec4 *>(u); }
 	inline mat3 cast_mat3(void *f) { return *reinterpret_cast<mat3 *>(f); }
 	inline mat4 cast_mat4(void *f) { return *reinterpret_cast<mat4 *>(f); }
-
 }
 
-void esp_gui();
-void bsa_gui();
-void nif_gui();
+void overlay_plugins();
+void overlay_archives();
+void overlay_models();
+
 void cell_gui();
 void hero_menu();
 void render_stats(bool *);
@@ -94,6 +83,3 @@ void render_stats(bool *);
 void get_img();
 
 void put_it_fullscreen();
-
-void setup_esc_menu();
-void esc_menu(bool *);

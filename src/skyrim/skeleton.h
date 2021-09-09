@@ -8,8 +8,6 @@
 #include <renderer/group.h>
 #include <renderer/geometry.h>
 
-#define DRAW_BONES 0
-
 namespace skyrim
 {
 	class Bone;
@@ -17,7 +15,7 @@ namespace skyrim
 	class Keyframes;
 	class Animation;
 
-	Keyframes *loadAnimDisk(const char *);
+	Keyframes *skyrim_get_keyframes(const char *);
 
 	class Skeleton
 	{
@@ -31,7 +29,6 @@ namespace skyrim
 		Animation *animation;
 
 		Skeleton();
-		Skeleton(const char *);
 		Skeleton(Record);
 		Bone *MakeBoneHere(Rd *, int);
 		void Load(const char *);
@@ -39,20 +36,13 @@ namespace skyrim
 		void Step();
 	};
 
-	class Bone
+	class Bone : public Group
 	{
 	public:
-		Group *group;
-		//std::vector<Bone *> bones;
-		Bone()
-		{
-			group = new Group;
-//#if DRAW_BONES
-//			group->geometry = new Geometry();
-//			group->geometry->SetupMesh();
-//#endif
-		};
 		mat4 rest, mod, diff;
+		Bone() : Group()
+		{
+		};
 	};
 
 	class Keyframes
@@ -60,22 +50,20 @@ namespace skyrim
 	public:
 		Keyframes(Nif *);
 		Nif *model;
-		NiControllerSequence *csp;
-		bool loop = true;
+		bool loop;
+		NiControllerSequence *controllerSequence;
 	};
 
 	class Animation
 	{
 	public:
-		Animation(Keyframes *keyframes) : keyframes(keyframes)
-		{
-		}
+		Skeleton *skeleton;
+		float time;
+		bool play;
+		Keyframes *keyframes;
+		Animation(Keyframes *);
 		void Step();
 		void SimpleNonInterpolated();
-		Skeleton *skeleton = nullptr;
-		float time = 0;
-		bool play = true;
-		Keyframes *keyframes;
 	};
 
 }

@@ -15,7 +15,6 @@ namespace dark
 {
 	Creature *someDraugr = nullptr, *meanSkelly = nullptr;
 	Human *someHuman = nullptr;
-	Image *yagrum_image = nullptr;
 }
 
 namespace dark
@@ -33,7 +32,7 @@ void darkassert(bool e)
 
 void load_bucket()
 {
-	Nif *model = load_model(load_rsc("clutter\\bucket02a.nif"), true);
+	Nif *model = load_model(load_res("clutter\\bucket02a.nif"));
 	simple_viewer(model);
 }
 
@@ -87,6 +86,7 @@ int main()
 	put_it_fullscreen();
 	load_gloomgen();
 	someDraugr = new Creature("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
+	someDraugr->SetAnimation("anims/draugr/alcove_wake.kf");
 	//someDraugr = new Creature("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	someDraugr->Place("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
@@ -98,25 +98,22 @@ int main()
 	return 1;
 }
 
-namespace dark
+void dark::reload_esp()
 {
-	void reload_my_plugin()
-	{
-		struct esp **plugin = &get_plugins()[5];
-		free_plugin(plugin);
-		*plugin = load_plugin(PLUGIN_5, true);
-	}
+	struct esp **plugin = &get_plugins()[5];
+	free_plugin(plugin);
+	*plugin = load_plugin(PLUGIN_5, true);
+}
 
-	void reload_dungeon()
+void dark::reload_dungeon()
+{
+	if (dungeon)
 	{
-		if (dungeon)
-		{
-			const char *edId = dungeon->edId;
-			delete dungeon;
-			dungeon = new Interior(edId);
-			dungeon->alreadyTeleported = true;
-			dungeon->Load();
-		}
+		const char *edId = dungeon->edId;
+		delete dungeon;
+		dungeon = new Interior(edId);
+		dungeon->alreadyTeleported = true;
+		dungeon->Load();
 	}
 }
 
@@ -132,7 +129,7 @@ void dark::simple_viewer(Nif *model)
 	static DrawGroup *drawGroup = nullptr;
 	if (mesh)
 	{
-		sceneDef->bigGroup->Remove(drawGroup);
+		drawGroup->parent->Remove(drawGroup);
 		delete mesh;
 		delete drawGroup;
 	}

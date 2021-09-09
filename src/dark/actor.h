@@ -6,11 +6,6 @@
 
 namespace dark
 {
-	extern Keyframes *draugrAttack, *draugrIdle;
-	extern Keyframes *humanIdle, *humanForward, *humanLeft, *humanRight, *humanBackward;
-	
-	void load_popular_keyframes();
-	
 	class Actor
 	{
 	public:

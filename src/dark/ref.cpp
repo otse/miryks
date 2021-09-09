@@ -48,7 +48,7 @@ namespace dark
 		if (baseObject.sig("MSTT"))
 		{
 			if(mesh)
-				mesh->Forward();
+				mesh->Step();
 		}
 	}
 
@@ -85,6 +85,17 @@ namespace dark
 		rotation = glm::rotate(rotation, -rad.z, vec3(0, 0, 1));
 
 		matrix = translation * rotation * scale;
+	}
+
+	Mesh *create_simple_mesh_from_modl(const char *modl)
+	{
+		static std::map<const char *, Mesh *> map;
+		auto has = map.find(modl);
+		if (has != map.end())
+			return has->second;
+		Mesh *mesh = new Mesh(load_model(load_res(modl)));
+		map.emplace(modl, mesh);
+		return mesh;
 	}
 
 	void Ref::ForBaseId(formId baseId)
@@ -131,7 +142,7 @@ namespace dark
 			}
 			else
 			{
-				mesh = create_simple_mesh_from_modl(modl, true);
+				mesh = create_simple_mesh_from_modl(modl);
 			}
 			if (baseObject.sig(CONT))
 			{
@@ -144,7 +155,7 @@ namespace dark
 
 			auto modl = baseObject.data<const char *>("MODL", 0);
 
-			mesh = create_simple_mesh_from_modl(modl, true);
+			mesh = create_simple_mesh_from_modl(modl);
 
 		}
 		else if (baseObject.sig(LIGH))

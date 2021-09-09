@@ -100,7 +100,7 @@ static void toggle_cursor()
 
 static void hotswap_plugin_and_dungeon()
 {
-	reload_my_plugin();
+	reload_esp();
 	reload_dungeon();
 }
 
@@ -262,7 +262,7 @@ void dark::goingrate()
 	glFrontFace(GL_CCW);
 }
 
-void dark::doImGui()
+void imgui_frame()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
@@ -272,20 +272,14 @@ void dark::doImGui()
 
 	if (!hideDebugGuis)
 	{
-		bsa_gui();
-		nif_gui();
-		esp_gui();
+		overlay_archives();
+		overlay_models();
+		overlay_plugins();
 		cell_gui();
 		opengl_gui();
 
 		ImGui::ShowDemoWindow();
 	}
-}
-
-void dark::renderImGui()
-{
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void dark::program_while()
@@ -379,7 +373,7 @@ void dark::program_while()
 		//sceneDef->Order();
 		sceneDef->DrawItems();
 
-		doImGui();
+		imgui_frame();
 
 		Material::Unuse(nullptr, nullptr);
 
@@ -395,7 +389,8 @@ void dark::program_while()
 			quad.Draw(renderTargetDef);
 		}
 
-		renderImGui();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
 	} while (!glfwWindowShouldClose(window));

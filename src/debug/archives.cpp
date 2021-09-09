@@ -10,7 +10,7 @@ static char hedrstr[600] = {"not loaded"};
 
 Bsa *bsa = NULL;
 
-void bsa_gui()
+void overlay_archives()
 {
     ImGuiIO& io = ImGui::GetIO();
 
@@ -88,7 +88,7 @@ void bsa_gui()
 			ImGui::SameLine();
 			if (ImGui::Button("View"))
 			{
-				Nif *model = load_model(rsc, true);
+				Nif *model = load_model(rsc);
 				simple_viewer(model);
 			}
 		}
@@ -234,7 +234,7 @@ void bsa_gui()
 								ImGui::SameLine();
 								if (ImGui::Button("View"))
 								{
-									Nif *model = load_model(rsc, true);
+									Nif *model = load_model(rsc);
 									simple_viewer(model);
 								}
 							}

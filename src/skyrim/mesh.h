@@ -39,7 +39,8 @@ namespace skyrim
 		Group *baseGroup, *lastGroup;
 		Group *make_new_group(Rd *);
 		void Construct();
-		void Forward();
+		void Step();
+		void Misty();
 		virtual void v () {};
 		
 		std::vector<NiRef> shapes__;
@@ -54,7 +55,7 @@ namespace skyrim
 		SkinnedMesh();
 		SkinnedMesh(Nif *, Skeleton *);
 		void Construct();
-		void Forward();
+		void Step();
 		void Initial();
 	};
 }

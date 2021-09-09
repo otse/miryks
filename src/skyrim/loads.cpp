@@ -15,15 +15,20 @@
 
 namespace dark
 {
-	std::map<void *, Nif *> nifs;
+	std::map<const char *, Nif *> nifs;
 
-	int ext_nif_save(void *key, Nif *nif)
+	std::map<const char *, Nif *> &ext_nif_map()
+	{
+		return nifs;
+	}
+	
+	int ext_nif_save(const char *key, Nif *nif)
 	{
 		nifs.emplace(key, nif);
 		return 1;
 	}
 
-	Nif *ext_nif_saved(void *key)
+	Nif *ext_nif_saved(const char *key)
 	{
 		auto has = nifs.find(key);
 		if (has != nifs.end())
@@ -31,7 +36,7 @@ namespace dark
 		return nullptr;
 	}
 
-	Rsc *load_rsc(
+	Rsc *load_res(
 		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
@@ -39,55 +44,40 @@ namespace dark
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
 					   { return std::tolower(c); });
 		const char *s = str.c_str();
-		Rsc *rsc = bsa_find_more(s, flags);
-		if (rsc == NULL)
-			printf("no rsc at %s\n", s);
-		bsa_read(rsc);
-		return rsc;
+		Rsc *res = bsa_find_more(s, flags);
+		if (res == NULL)
+			printf("no res at %s\n", s);
+		bsa_read(res);
+		return res;
 	}
 
 	Keyframes *load_keyframes_from_disk(const char *path)
 	{
+		if (Nif *saved = ext_nif_saved(path))
+			return new Keyframes(saved);
 		Nif *model = calloc_nifp();
 		model->path = path;
-		char *buf = (char *)model->buf;
-		fbuf(path, &buf);
+		int len = fbuf(path, &model->buf);
+		printf("len keyframes %i buf %i %i\n", len, model->buf);
 		nif_read(model);
-		ext_nif_save(model, model);
-		Keyframes *keyframes = new Keyframes(model);
-		return keyframes;
+		printf("ok\n");
+		ext_nif_save(path, model);
+		return new Keyframes(model);
 	}
 
-	Nif *load_model(Rsc *rsc, bool storage)
+	Nif *load_model(Rsc *res)
 	{
-		assertm(rsc, "load_model null rsc");
-		Nif *model, *saved;
-		saved = ext_nif_saved(rsc);
-		if (storage && saved)
-			return saved;
-		bsa_read(rsc);
-		model = calloc_nifp();
-		model->path = rsc->path;
-		model->buf = rsc->buf;
-		nif_read(model);
-		if (storage)
-			ext_nif_save(rsc->path, model);
-		return model;
-	}
-
-	Mesh *create_simple_mesh_from_modl(const char *modl, bool storage)
-	{
-		static std::map<const char *, Mesh *> map;
-		if (map.count(modl) && storage)
-			return map[modl];
-		Rsc *rsc = load_rsc(modl);
-		if (rsc == NULL)
+		if (res == NULL)
 			return nullptr;
-		Nif *model = load_model(rsc, true);
-		Mesh *mesh = new Mesh(model);
-		if (storage)
-			map.emplace(modl, mesh);
-		return mesh;
+		if (Nif *saved = ext_nif_saved(res->path))
+			return saved;
+		bsa_read(res);
+		Nif *model = calloc_nifp();
+		model->path = res->path;
+		model->buf = res->buf;
+		nif_read(model);
+		ext_nif_save(res->path, model);
+		return model;
 	}
 
 	Esp *load_plugin(const char *filename, bool essential)
@@ -113,7 +103,7 @@ namespace dark
 		return plugin;
 	}
 
-	void load_these_definitions(espp plugin)
+	void load_these_definitions(Esp *plugin)
 	{
 		static const auto things = {
 			Statics,
@@ -152,4 +142,6 @@ namespace dark
 		}
 		return nullptr;
 	}
+
+	
 }

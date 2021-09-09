@@ -4,10 +4,6 @@
 
 namespace skyrim
 {
-	//extern std::map<int, int> keyframes;
-
-	// unused / unusable
-	
 	class Record;
 	class Grup;
 	

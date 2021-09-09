@@ -40,7 +40,7 @@ typedef struct Rsc
 	int i, j, r;
 	long size;
 	const char *name;
-	const unsigned char *buf;
+	char *buf;
 	char path[260];
 } Rsc;
 

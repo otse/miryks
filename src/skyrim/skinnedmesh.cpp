@@ -70,7 +70,7 @@ namespace skyrim
 						continue;
 					}
 					Bone *bone = has->second;
-					material->boneMatrices.push_back(bone->group->matrixWorld * inverse(bone->rest));
+					material->boneMatrices.push_back(bone->matrixWorld * inverse(bone->rest));
 					
 					//Group *node_group = groups[nsi->bones[partition->bones[i]]];
 					//node_group->matrixWorld = bone->group->matrixWorld;
@@ -79,7 +79,7 @@ namespace skyrim
 		}
 	}
 
-	void SkinnedMesh::Forward()
+	void SkinnedMesh::Step()
 	{
 		if (skeleton)
 			skeleton->Step();
@@ -126,9 +126,7 @@ namespace skyrim
 
 		int vertices, uvs, normals, tangents, colors, skinned;
 		nif_bs_vertex_desc(block->A->vertex_desc, &vertices, &uvs, &normals, &tangents, &colors, &skinned);
-
-
-
+		
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
 			SkinPartition *partition = block->partitions[k];

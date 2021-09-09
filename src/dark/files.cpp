@@ -27,8 +27,6 @@ int fbuf(const char *path, char **dest, bool cap)
 			(*dest)[end] = '\0';
 		return end;
 	}
-	else
-		0;
 	return -1;
 }
 

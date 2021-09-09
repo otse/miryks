@@ -1,3 +1,5 @@
+#pragma once
+
 #include <dark/dark.h>
 
 #include <skyrim/record.h>
@@ -13,7 +15,7 @@ namespace dark
 		DrawGroup *drawGroup;
 		Creature(const char *, const char *);
 		void Place(const char *);
-		void SetAnimation(Keyframes *);
+		void SetAnimation(const char *);
 		void Step();
 		Record race;
 	};

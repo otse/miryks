@@ -10,23 +10,20 @@
 using namespace skyrim;
 
 namespace dark
-{
-    Keyframes *draugrAttack = nullptr;
-	Keyframes *draugrIdle = nullptr;
-    
-    Creature::Creature(const char *editorId, const char *path)
+{    
+    Creature::Creature(const char *raceId, const char *path)
 	{
 		animation = nullptr;
 		drawGroup = nullptr;
-		race = skyrim_get_race(editorId);
-		Nif *model = load_model(load_rsc(path), true);
+		race = skyrim_get_race(raceId);
+		Nif *model = load_model(load_res(path));
 		skeleton = new Skeleton(race);
 		skinnedMesh = new SkinnedMesh(model, skeleton);
 	}
 
-	void Creature::SetAnimation(Keyframes *keyframes)
+	void Creature::SetAnimation(const char *path)
 	{
-		animation = new Animation(keyframes);
+		animation = new Animation(skyrim_get_keyframes(path));
 		animation->skeleton = skeleton;
 		skeleton->animation = animation;
 	}
@@ -51,7 +48,7 @@ namespace dark
 	void Creature::Step()
 	{
 		if (skinnedMesh)
-			skinnedMesh->Forward();
+			skinnedMesh->Step();
 		//const float merry = 0.002;
 		//if (drawGroup)
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));

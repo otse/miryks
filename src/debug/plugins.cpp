@@ -94,7 +94,7 @@ void im_subrecord(subrecord *field)
 	}
 }
 
-void esp_gui()
+void overlay_plugins()
 {
 	ImGuiIO &io = ImGui::GetIO();
 

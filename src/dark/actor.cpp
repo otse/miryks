@@ -32,7 +32,7 @@ namespace dark
 	Keyframes *humanRight = nullptr;
 	Keyframes *humanBackward = nullptr;
 
-	void load_popular_keyframes()
+	void load_animations()
 	{
 		draugrIdle = loadAnimDisk("anims/draugr/alcove_wake.kf");
 		humanIdle = loadAnimDisk("anims/character/1hm_idle.kf");
@@ -51,8 +51,8 @@ namespace dark
 		race = skyrim_get_race(raceId);
 		auto anam = race.data<char *>("ANAM", 0);
 		printf("bodypart raceid %s anam %s\n", raceId, anam);
-		Rsc *rc = load_rsc(model);
-		Nif *character = load_model(rc, false);
+		Rsc *rc = load_res(model);
+		Nif *character = load_model(rc);
 		skeleton = new Skeleton(anam);
 		skinnedMesh = new SkinnedMesh(character, skeleton);
 		if (raceId == "DraugrRace")

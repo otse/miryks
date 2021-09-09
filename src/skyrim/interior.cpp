@@ -116,7 +116,7 @@ namespace skyrim
 		Refs::Nearby();
 
 		for (Ref *mstt : mstts)
-			mstt->Step();
+			mstt->mesh->Misty();
 	}
 
 } // namespace dark

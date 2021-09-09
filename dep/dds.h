@@ -263,7 +263,7 @@ typedef struct DDSFile {
 } DDSFile;
 
 
-DDSFile* ddsloader_load_buf(const unsigned char* buf, int size);
+DDSFile* ddsloader_load_buf(char* buf, int size);
 DDSFile* ddsloader_load(const char* path);
 void dds_free(DDSFile* file);
 

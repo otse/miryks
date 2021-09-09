@@ -14,7 +14,7 @@ struct Texture
 	friend Texture *GetProduceTexture(const char *);
 	GLuint tid = 0;
 	int size;
-	const unsigned char *buf = nullptr;
+	char *buf = nullptr;
 	const std::string path;
 //protected:
 	Texture();

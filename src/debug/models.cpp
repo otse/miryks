@@ -6,7 +6,7 @@
 
 using namespace dark;
 
-void nif_gui()
+void overlay_models()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
@@ -15,7 +15,7 @@ void nif_gui()
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
-	for (const auto &[key, value] : nifs)
+	for (const auto &[key, value] : ext_nif_map())
 	{
 		Nif *nif = value;
 

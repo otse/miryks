@@ -28,7 +28,7 @@ struct Nif
 {
 	int num;
 	const char *path;
-	const unsigned char *buf;
+	char *buf;
 	unsigned pos;
 	struct NifHeader *hdr;
 	void **blocks;
