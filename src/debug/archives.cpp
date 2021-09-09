@@ -59,21 +59,21 @@ void overlay_archives()
 		return;
 	}
 
-	auto func = [&](Rsc *rsc) {
-		if (!rsc)
+	auto func = [&](Res *res) {
+		if (!res)
 			return;
 		ImGui::Separator();
 		char s[200];
 
-		bsa_print_rc(bsa, s, rsc->r);
+		bsa_print_rc(bsa, s, res->r);
 		ImGui::Text(s);
 
 		if (ImGui::TreeNode("more data"))
 		{
-			bsa_print_fle_rcd(bsa, s, rsc->i, rsc->j);
+			bsa_print_fle_rcd(bsa, s, res->i, res->j);
 			ImGui::Text(s);
 
-			bsa_print_fld_rcd(bsa, s, rsc->i);
+			bsa_print_fld_rcd(bsa, s, res->i);
 			ImGui::Text(s);
 
 			ImGui::TreePop();
@@ -81,14 +81,14 @@ void overlay_archives()
 
 		if (ImGui::Button("Read"))
 		{
-			bsa_read(rsc);
+			bsa_read(res);
 		}
-		if (rsc->size > 0)
+		if (res->size > 0)
 		{
 			ImGui::SameLine();
 			if (ImGui::Button("View"))
 			{
-				Nif *model = load_model(rsc);
+				Nif *model = load_model(res);
 				simple_viewer(model);
 			}
 		}
@@ -113,31 +113,31 @@ void overlay_archives()
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
 
-			static Rsc *rsc = nullptr;
+			static Res *res = nullptr;
 
 			if (reset)
 			{
 				str2[0] = '\0';
-				rsc = nullptr;
+				res = nullptr;
 			}
 
 			ImGui::InputText("##Find", str, MAX);
 
-			bool rcb = !!rsc;
+			bool rcb = !!res;
 
-			ImGui::Text(rsc ? "found!" : "not found!");
+			ImGui::Text(res ? "found!" : "not found!");
 			ImGui::SameLine();
 			ImGui::Checkbox("##", &rcb);
 
 			if (strcmp(str, str2))
 			{
-				rsc = bsa_find(bsa, str);
+				res = bsa_find(bsa, str);
 				memcpy(str2, str, MAX);
 			}
 
-			if (rsc)
+			if (res)
 			{
-				func(rsc);
+				func(res);
 			}
 
 			ImGui::EndTabItem();
@@ -155,13 +155,13 @@ void overlay_archives()
 			static const char *items[BSA_MAX_SEARCHES];
 			static int num = 0;
 
-			static Rsc *rsc = nullptr;
-			static Rsc *rcs[BSA_MAX_SEARCHES];
+			static Res *res = nullptr;
+			static Res *rcs[BSA_MAX_SEARCHES];
 
 			if (reset)
 			{
 				num = 0;
-				rsc = nullptr;
+				res = nullptr;
 			}
 
 			if (strcmp(str, str2))
@@ -185,9 +185,9 @@ void overlay_archives()
 
 			if (!(item_current > num))
 			{
-				rsc = rcs[item_current];
+				res = rcs[item_current];
 
-				func(rsc);
+				func(res);
 			}
 			ImGui::EndTabItem();
 		}
@@ -219,22 +219,22 @@ void overlay_archives()
 							ImGui::Separator();
 
 							char s[200];
-							Rsc *rsc = bsa->rsc[bsa->r[i] + j];
-							bsa_print_rc(bsa, s, rsc->r);
+							Res *res = bsa->res[bsa->r[i] + j];
+							bsa_print_rc(bsa, s, res->r);
 							ImGui::Text(s);
 							bsa_print_fle_rcd(bsa, s, i, j);
 							ImGui::Text(s);
 
 							if (ImGui::Button("Read"))
 							{
-								bsa_read(rsc);
+								bsa_read(res);
 							}
-							if (rsc->size > -1)
+							if (res->size > -1)
 							{
 								ImGui::SameLine();
 								if (ImGui::Button("View"))
 								{
-									Nif *model = load_model(rsc);
+									Nif *model = load_model(res);
 									simple_viewer(model);
 								}
 							}

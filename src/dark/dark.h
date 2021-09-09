@@ -31,8 +31,8 @@ namespace dark
 	Nif *ext_nif_saved(const char *);
 	std::map<const char *, Nif *> &ext_nif_map();
 
-	Rsc *load_res(const char *, const char * = "meshes\\", unsigned long = 0x1);
-	Nif *load_model(Rsc *);
+	Res *load_res(const char *, const char * = "meshes\\", unsigned long = 0x1);
+	Nif *load_model(Res *);
 	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
 	void load_these_definitions(Esp *);

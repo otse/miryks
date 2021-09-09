@@ -6,7 +6,7 @@
 
 api void bsa_print_rc(Bsa *b, char *s, int r)
 {
-	Rsc *rsc = b->rsc[r];
+	Res *res = b->res[r];
 	int w = snprintf(s, 200, "\
 resource #: %i\
 \nfilename: %s\
@@ -15,10 +15,10 @@ resource #: %i\
 \ncompressed: %i\
 ",
 r,
-rsc->name,
-b->ca[rsc->i],
-rsc->buf,
-(b->hdr.archive_flags & 0x4) != (b->file[rsc->i][rsc->j].size & 0x40000000)
+res->name,
+b->ca[res->i],
+res->buf,
+(b->hdr.archive_flags & 0x4) != (b->file[res->i][res->j].size & 0x40000000)
 );
 }
 

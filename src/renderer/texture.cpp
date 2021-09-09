@@ -38,22 +38,22 @@ Texture::Texture(const std::string &path) : path(path)
 	//printf("new texture %s\n", path.c_str());
 	if (!path.length())
 		return;
-	Rsc *rsc = bsa_find_more(path.c_str(), 0x2);
-	if (rsc == NULL)
+	Res *res = bsa_find_more(path.c_str(), 0x2);
+	if (res == NULL)
 	{
 		printf("cant find texture: %s\n", path.c_str());
 		return;
 	}
-	bsa_read(rsc);
-	buf = rsc->buf;
-	size = rsc->size;
+	bsa_read(res);
+	buf = res->buf;
+	size = res->size;
 #if 0
-		cfout2("test.dds", rsc->buf, rsc->size);
+		cfout2("test.dds", res->buf, res->size);
 		test = true;
 #endif
 	load();
-	free((void *)rsc->buf);
-	rsc->buf = NULL;
+	free((void *)res->buf);
+	res->buf = NULL;
 }
 Texture::~Texture() {}
 

@@ -36,7 +36,7 @@ namespace dark
 		return nullptr;
 	}
 
-	Rsc *load_res(
+	Res *load_res(
 		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
@@ -44,7 +44,7 @@ namespace dark
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
 					   { return std::tolower(c); });
 		const char *s = str.c_str();
-		Rsc *res = bsa_find_more(s, flags);
+		Res *res = bsa_find_more(s, flags);
 		if (res == NULL)
 			printf("no res at %s\n", s);
 		bsa_read(res);
@@ -65,7 +65,7 @@ namespace dark
 		return new Keyframes(model);
 	}
 
-	Nif *load_model(Rsc *res)
+	Nif *load_model(Res *res)
 	{
 		if (res == NULL)
 			return nullptr;
