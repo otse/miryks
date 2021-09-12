@@ -24,7 +24,7 @@ namespace dark
 			png_error(png_ptr, "Read Error!");
 	}
 
-	void Image::from_resourcefile()
+	void Image::fromfile(const char *path)
 	{
 		char *buf;
 		int end = fbuf(path, &buf);

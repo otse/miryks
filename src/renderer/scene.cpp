@@ -46,7 +46,7 @@ void Scene::DrawItems()
 	SortLights();
 
 	auto EarlyZKills = [](const Group *a, const Group *b) -> bool {
-		if (a->GetZ() < b->GetZ())
+		if (a->GetZ(a->matrixWorld) < b->GetZ(b->matrixWorld))
 			return true;
 		return false;
 	};

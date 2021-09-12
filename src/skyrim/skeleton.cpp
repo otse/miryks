@@ -22,15 +22,14 @@ namespace skyrim
 
 	Skeleton::Skeleton()
 	{
-		baseBone = new Bone();
-		bones[-1] = baseBone;
-		lastBone = baseBone;
-		model = nullptr;
 		animation = nullptr;
+		model = nullptr;
+		bones[-1] = new Bone();
 	}
 
 	Skeleton::Skeleton(Record race) : Skeleton()
 	{
+		printf("skeleton anam %s\n", race.data<char *>("ANAM"));
 		model = load_model(load_res(race.data<char *>("ANAM")));
 		Construct();
 	}
@@ -40,21 +39,11 @@ namespace skyrim
 		Rd *rd = calloc_nifprd();
 		rd->nif = model;
 		rd->data = this;
-		//rd->other = other;
 		rd->ni_node_callback = ni_node_callback;
 		nif_rd(rd);
 		free_nifprd(&rd);
-		baseBone->Update();
-	}
-
-	Bone *Skeleton::MakeBoneHere(Rd *rd, int name)
-	{
-		Bone *bone = new Bone();
-		bones[rd->current] = bone;
-		bones[rd->parent]->Add(bone);
-		bonesNamed[nif_get_string(rd->nif, name)] = bone;
-		lastBone = bone;
-		return bone;
+		assertc(root);
+		root->Update();
 	}
 
 	void matrix_from_common(Bone *bone, ni_common_layout_t *common)
@@ -66,11 +55,26 @@ namespace skyrim
 		bone->rest = bone->matrixWorld;
 	}
 
+	Bone *Skeleton::MakeBoneHere(Rd *rd, NiNode *block)
+	{
+		//printf("bone name is %s\n", bone->name);
+		Bone *bone = new Bone();
+		bone->block = block;
+		bone->name = nif_get_string(rd->nif, block->common->F->name);
+		bones[rd->current] = bone;
+		bones[rd->parent]->Add(bone);
+		bonesNamed[bone->name] = bone;
+		matrix_from_common(bone, block->common);
+		if (strstr(bone->name, "[Root]")) {
+			root = bone;
+		}
+		return bone;
+	}
+
 	void ni_node_callback(Rd *rd, NiNode *block)
 	{
 		Skeleton *skeleton = (Skeleton *)rd->data;
-		Bone *bone = skeleton->MakeBoneHere(rd, block->common->F->name);
-		matrix_from_common(bone, block->common);
+		Bone *bone = skeleton->MakeBoneHere(rd, block);
 	}
 
 	void Skeleton::Step()
@@ -106,7 +110,7 @@ namespace skyrim
 		if (time >= keyframes->controllerSequence->C->stop_time)
 			time -= keyframes->controllerSequence->C->stop_time;
 		SimpleNonInterpolated();
-		skeleton->baseBone->Update();
+		skeleton->root->Update();
 	}
 
 	void Animation::SimpleNonInterpolated()

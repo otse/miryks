@@ -156,7 +156,6 @@ namespace dark
 			auto modl = baseObject.data<const char *>("MODL", 0);
 
 			mesh = create_simple_mesh_from_modl(modl);
-
 		}
 		else if (baseObject.sig(LIGH))
 		{

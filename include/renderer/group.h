@@ -20,7 +20,7 @@ struct Group
 	void DrawChilds(const mat4 &);
 	virtual void Draw(const mat4 &);
 	virtual void Update();
-	float GetZ() const;
+	float GetZ(const mat4 &) const;
 };
 
 struct GroupBounded : Group

@@ -7,6 +7,7 @@
 #include <dark/creature.h>
 
 #include <skyrim/interior.h>
+#include <gooey/yagrum.h>
 
 using namespace dark;
 using namespace skyrim;
@@ -34,6 +35,7 @@ void load_bucket()
 {
 	Nif *model = load_model(load_res("clutter\\bucket02a.nif"));
 	simple_viewer(model);
+	yagrum_queue("", 10, true);
 }
 
 void load_gloomgen()
@@ -78,6 +80,7 @@ int main()
 {
 	fbuf("editme.txt", &editme, 1);
 	goingrate();
+	load_yagrum();
 	load_plugins_archives();
 	nif_test();
 	renderer_init();

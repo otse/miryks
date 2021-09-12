@@ -8,6 +8,8 @@
 #include <dark/actor.h>
 #include <dark/creature.h>
 
+#include <gooey/yagrum.h>
+
 #include <renderer/camera.h>
 #include <renderer/scene.h>
 #include <renderer/group.h>
@@ -148,6 +150,7 @@ static void get_my_keys()
 	};
 	handler("esc", GLFW_KEY_ESCAPE);
 	handler("f1", GLFW_KEY_F1);
+	handler("f2", GLFW_KEY_F2);
 	handler("f3", GLFW_KEY_F3);
 	handler("f4", GLFW_KEY_F4);
 	handler("f5", GLFW_KEY_F5);
@@ -169,6 +172,7 @@ static void handle_most_keys()
 {
 	if (pressing("esc")) handle_esc();
 	else if (pressing("f1")) toggle_debug();
+	else if (pressing("f2")) yagrum_queue("", 5, true);
 	else if (pressing("f3")) toggle_cursor();
 	else if (pressing("f4")) toggle_fbo();
 	else if (pressing("f5")) hotswap_plugin_and_dungeon();
@@ -220,7 +224,7 @@ void put_it_fullscreen()
 	glfwSetWindowSize(window, width, height);
 	glViewport(0, 0, width, height);
 	//glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, width, height, mode->refreshRate);
-	//glfwSwapInterval(0); // vsync
+	glfwSwapInterval(1); // vsync
 	// glfwSetWindowPos(window, mode->width / 2 - width / 2, mode->height / 2 - height / 2);
 }
 
@@ -269,6 +273,8 @@ void imgui_frame()
 	ImGui::NewFrame();
 
 	render_stats(&f10);
+
+	yagrum_checker();
 
 	if (!hideDebugGuis)
 	{

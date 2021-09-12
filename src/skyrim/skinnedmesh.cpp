@@ -18,7 +18,8 @@ namespace skyrim
 	SkinnedMesh::SkinnedMesh(Nif *model, Skeleton *skeleton) : Mesh(model),
 		skeleton(skeleton)
 	{
-		assertm(skeleton, "skinnedmesh needs skeleton");
+		assertc(model);
+		assertc(skeleton);
 		Construct();
 	}
 
@@ -44,6 +45,8 @@ namespace skyrim
 	
 	void SkinnedMesh::Initial()
 	{
+		// "unoptimised" :)
+
 		for (NiRef ref : shapes__)
 		{
 			//Group *group = mesh->groups[index];
@@ -61,7 +64,8 @@ namespace skyrim
 				material->bindMatrix = group->matrixWorld;
 				for (unsigned short i = 0; i < partition->nums->bones; i++)
 				{
-					auto node = (NiNode *)nif_get_block(model, nsi->bones[partition->bones[i]]);
+					unsigned short j = partition->bones[i];
+					NiNode *node = (NiNode *)nif_get_block(model, nsi->bones[j]);
 					char *name = nif_get_string(model, node->common->F->name);
 					auto has = skeleton->bonesNamed.find(name);
 					if (has == skeleton->bonesNamed.end())

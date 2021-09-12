@@ -82,6 +82,7 @@ void opengl_gui()
 			ImGui::Checkbox("center axes", &renderSettings.axes);
 			ImGui::Checkbox("axis-aligned bounding boxes", &renderSettings.AABBS);
 			ImGui::Checkbox("oriented bounding boxes", &renderSettings.OBBS);
+			ImGui::SliderFloat("drawDistance", &renderSettings.drawDistance, 0.0f, 10000.0f, "%.1f");
 			ImGui::SliderFloat("cull big boxers", &renderSettings.maximumBoundingVolume, 0.0f, 15000000.0f, "%.1f");
 			ImGui::SliderFloat("t pose to anim ratio", &renderSettings.restRatio, 0.0f, 1.0f, "%.1f");
 

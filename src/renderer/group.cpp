@@ -48,6 +48,8 @@ void Group::Draw(const mat4 &left)
 {
 	drawCalls++;
 	mat4 place = left * matrixWorld;
+	if (GetZ(place) > renderSettings.drawDistance)
+		return;
 	if (geometry)
 		geometry->Draw(place);
 	if (axis && renderSettings.axes)
@@ -73,7 +75,7 @@ void Group::Flatten(Group *root)
 		child->Flatten(root);
 }
 
-float Group::GetZ() const
+float Group::GetZ(const mat4 &left) const
 {
-	return -vec3((cameraCur->view * matrix)[3]).z;
+	return glm::distance(cameraCur->group->matrixWorld[3], left[3]);
 }

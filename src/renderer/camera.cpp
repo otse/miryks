@@ -28,7 +28,7 @@ void Camera::SetProjection() {
 FirstPersonCamera::FirstPersonCamera() : Camera()
 {
 	eye = vec3(0);
-	hands = new Group;
+	hands = new GroupBounded;
 	hands->matrix = glm::translate(mat4(1.0), vec3(0, 0, -100));
 	group->Add(hands);
 }

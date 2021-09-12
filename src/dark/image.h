@@ -12,7 +12,7 @@ namespace dark
 		Image(){};
 		~Image(){};
 		void copy_pixels(png_structp, png_infop, unsigned char **);
-		void from_resourcefile();
+		void fromfile(const char *);
 		void create_texture();
 		const unsigned char *data, *cursor;
 		unsigned int size;
@@ -21,6 +21,5 @@ namespace dark
 		png_byte bit_depth;
 		unsigned int texture;
 		unsigned char *pixels = nullptr;
-		const char *path = nullptr;
 	};
 }

@@ -24,24 +24,29 @@ namespace skyrim
 		std::map<const std::string, Bone *> bonesNamed;
 
 		Nif *model;
-		Bone *baseBone, *lastBone;
+		Bone *baseBone, *root;
 
 		Animation *animation;
 
 		Skeleton();
 		Skeleton(Record);
-		Bone *MakeBoneHere(Rd *, int);
 		void Load(const char *);
 		void Construct();
 		void Step();
+		Bone *MakeBoneHere(Rd *, NiNode *);
+	protected:
 	};
 
 	class Bone : public Group
 	{
 	public:
+		const char *name;
+		NiNode *block;
 		mat4 rest, mod, diff;
 		Bone() : Group()
 		{
+			name = 0;
+			block = 0;
 		};
 	};
 

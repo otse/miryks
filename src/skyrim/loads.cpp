@@ -21,7 +21,7 @@ namespace dark
 	{
 		return nifs;
 	}
-	
+
 	int ext_nif_save(const char *key, Nif *nif)
 	{
 		nifs.emplace(key, nif);
@@ -58,9 +58,7 @@ namespace dark
 		Nif *model = calloc_nifp();
 		model->path = path;
 		int len = fbuf(path, &model->buf);
-		printf("len keyframes %i buf %i %i\n", len, model->buf);
 		nif_read(model);
-		printf("ok\n");
 		ext_nif_save(path, model);
 		return new Keyframes(model);
 	}
@@ -89,9 +87,15 @@ namespace dark
 		if (plugin)
 			return plugin;
 		if (exists(path.c_str()))
+		{
 			plugin = plugin_load(path.c_str());
+			if (strstr(filename, ".esp"))
+				printf("loading .esp from /Data\n");
+		}
 		else if (exists(filename))
+		{
 			plugin = plugin_load(filename);
+		}
 		else
 		{
 			printf("couldn't find %s in /Data or /bin\n", filename);
@@ -103,8 +107,32 @@ namespace dark
 		return plugin;
 	}
 
+	Bsa *load_archive(const char *filename)
+	{
+		printf("Load Archive %s\n", filename);
+		Bsa *bsa = bsa_get(filename);
+		if (bsa)
+			return bsa;
+		std::string path = std::string(editme) + "/Data/" + filename;
+		if (exists(path.c_str()))
+		{
+			return bsa_load(path.c_str());
+		}
+		else if (exists(filename))
+		{
+			return bsa_load(filename);
+		}
+		else
+		{
+			printf("couldn't find %s in /Data or /bin\n", filename);
+		}
+		return nullptr;
+	}
+
 	void load_these_definitions(Esp *plugin)
 	{
+		// we only discovered top grups at this point,
+		// we need to build the objects within by "checking" them
 		static const auto things = {
 			Statics,
 			Lights,
@@ -124,24 +152,4 @@ namespace dark
 		for (const char *word : things)
 			esp_check_grup(esp_top_grup(plugin, word));
 	}
-
-	Bsa *load_archive(const char *filename)
-	{
-		printf("Load Archive %s\n", filename);
-		Bsa *bsa = bsa_get(filename);
-		if (bsa)
-			return bsa;
-		std::string path = std::string(editme) + "/Data/" + filename;
-		if (exists(path.c_str()))
-			return bsa_load(path.c_str());
-		else if (exists(filename))
-			return bsa_load(filename);
-		else
-		{
-			printf("couldn't find %s in /Data or /bin\n", filename);
-		}
-		return nullptr;
-	}
-
-	
 }

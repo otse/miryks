@@ -78,6 +78,7 @@ struct RenderSettings
 	bool OBBS = false;
 	float maximumBoundingVolume = 512000.f;
 	float restRatio = 0.0f;
+	float drawDistance = 1000.f;
 };
 extern RenderSettings renderSettings;
 
