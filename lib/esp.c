@@ -16,7 +16,7 @@ int only_read_editorid = 1;
 int skip_field_data = 1;
 
 #if 0
-#define spamf(...) printf(__VA_ARGS__);
+#define spamf(...) if (Buf) printf(__VA_ARGS__);
 #else
 #define spamf 0;
 #endif
@@ -35,7 +35,23 @@ static long int disk_tell(espp);
 #define Buf esp->buf
 #define Pos esp->pos
 
-//void make_form_ids(espp);
+static void read(espp esp, void **data, size_t size) {
+	if (Buf)
+	{
+		printf("read from buf\n");
+		*data = (Buf + Pos);
+		Pos += size;
+	}
+	else
+		disk_read(esp, data, size);
+}
+
+static void seek(espp esp, long int offset) {
+	if (Buf)
+		Pos = offset;
+	else
+		disk_seek(esp, offset);
+}
 
 grupp read_grp(espp);
 rcdp read_rcd(espp);
@@ -54,7 +70,7 @@ unsigned int hedr_num_records(espp esp)
 	return num_records;
 }
 
-api espp plugin_load(const char *path)
+api espp plugin_load(const char *path, int whole)
 {
 	espp esp = calloc(1, sizeof(struct esp));
 	file_name(esp->filename, path, '/');
@@ -64,6 +80,11 @@ api espp plugin_load(const char *path)
 	fseek(esp->stream, 0L, SEEK_END);
 	esp->filesize = ftell(esp->stream);
 	rewind(esp->stream);
+	if (whole) {
+		disk_read(esp, &Buf, esp->filesize);
+		seek(esp, 0);
+		printf("read whole plugin into buf\n");
+	}
 	spamf("goign to read the esp header\n");
 	esp->header = read_rcd(esp);
 	esp_check_rcd(esp->header);
@@ -81,8 +102,8 @@ api espp plugin_load(const char *path)
 	return esp;
 }
 
-void skip(espp esp, rcdp rcd, size_t);
-void read(espp esp, rcdp rcd, void **, size_t);
+void skip_rcdb(espp esp, rcdp rcd, size_t);
+void read_rcd_buf_or_disk(espp esp, rcdp rcd, void **, size_t);
 
 void read_rcdb_data(espp esp, rcdp rcd, rcdbp rcdb);
 
@@ -98,11 +119,11 @@ grupp read_grp(espp esp)
 	grp->g = 'g';
 	grp->id = esp->ids.grups++;
 	grp->esp = esp;
-	disk_read(esp, &grp->hed, sizeof(struct grup_header));
+	read(esp, &grp->hed, sizeof(struct grup_header));
 	grp->offset = Pos;
 	grp->size = grp->hed->size - sizeof(struct grup_header);
 	// loop_grup(esp, grp, 1);
-	disk_seek(esp, grp->offset + grp->size);
+	seek(esp, grp->offset + grp->size);
 	return grp;
 }
 
@@ -115,7 +136,7 @@ rcdp read_rcd(espp esp)
 	rcd->r = 'r';
 	rcd->id = esp->ids.records++;
 	rcd->esp = esp;
-	disk_read(esp, &rcd->hed, sizeof(struct record_header));
+	read(esp, &rcd->hed, sizeof(struct record_header));
 	rcd->offset = Pos;
 	rcd->size = rcd->hed->size;
 	rcd->partial = 1;
@@ -124,18 +145,19 @@ rcdp read_rcd(espp esp)
 
 	insert(esp->records, rcd);
 
+	spamf("printing hed sgn:\n");
 	spamf("%.4s %u\n", (char *)&rcd->hed->sgn, rcd->hed->size);
 
 	if (rcd->hed->flags & 0x00040000)
 	{
-		disk_read(esp, &rcd->buf, rcd->size);
+		read(esp, &rcd->buf, rcd->size);
 		uncompress_record(esp, rcd);
 		loop_rcd(esp, rcd);
 	}
 	else
 		loop_rcd(esp, rcd);
 
-	disk_seek(esp, rcd->offset + rcd->hed->size);
+	seek(esp, rcd->offset + rcd->hed->size);
 	return rcd;
 }
 
@@ -145,10 +167,10 @@ rcdbp read_rcdb(espp esp, rcdp rcd)
 	rcdbp rcdb = calloc(1, sizeof(struct subrecord));
 	rcdb->s = 's';
 	rcdb->id = esp->ids.subrecords++;
-	read(esp, rcd, &rcdb->hed, sizeof(struct subrecord_header));
+	read_rcd_buf_or_disk(esp, rcd, &rcdb->hed, sizeof(struct subrecord_header));
 	rcdb->offset = rcd->buf ? rcd->pos : Pos;
 	//read_rcdb_data(esp, rcd, rcdb);
-	skip(esp, rcd, rcdb->hed->size);
+	skip_rcdb(esp, rcd, rcdb->hed->size);
 	return rcdb;
 }
 
@@ -159,22 +181,22 @@ void read_rcdb_data(espp esp, rcdp rcd, rcdbp rcdb)
 	if (rcd->buf)
 		rcd->pos = rcdb->offset;
 	else
-		disk_seek(esp, rcdb->offset);
+		seek(esp, rcdb->offset);
 	rcdb->data = malloc(rcdb->hed->size);
-	read(esp, rcd, &rcdb->data, rcdb->hed->size);
+	read_rcd_buf_or_disk(esp, rcd, &rcdb->data, rcdb->hed->size);
 }
 
 unsigned int peek_type(espp esp)
 {
 	unsigned int *sgn;
-	disk_read(esp, &sgn, sizeof(unsigned int));
-	disk_seek(esp, Pos - 4);
+	read(esp, &sgn, sizeof(unsigned int));
+	seek(esp, Pos - 4);
 	return *sgn;
 }
 
 void loop_grup(espp esp, grupp grp)
 {
-	disk_seek(grp->esp, grp->offset);
+	seek(grp->esp, grp->offset);
 	
 	unsigned start = Pos;
 	unsigned int num = 0;
@@ -225,7 +247,7 @@ void loop_rcd(espp esp, rcdp rcd)
 			rcdbp discard = read_rcdb(esp, rcd);
 			if (rcd->buf)
 				printf("\ncompressed oversized sub!!\n\n");
-			skip(esp, rcd, *(unsigned int *)rcdb->data);
+			skip_rcdb(esp, rcd, *(unsigned int *)rcdb->data);
 			continue;
 		}
 		rcdb_temp[num++] = rcdb;
@@ -256,29 +278,29 @@ api void esp_check_rcd(rcdp rcd)
 			if (rcd->buf)
 				rcd->pos = rcdb->offset;
 			else
-				disk_seek(rcd->esp, rcdb->offset);
+				seek(rcd->esp, rcdb->offset);
 			read_rcdb_data(rcd->esp, rcd, rcdb);
 		}
 		rcd->partial = 0;
 	}
 }
 
-void read(espp esp, rcdp rcd, void **dest, size_t size)
+void read_rcd_buf_or_disk(espp esp, rcdp rcd, void **dest, size_t size)
 {
 	if (rcd->buf)
 		*dest = rcd->buf + rcd->pos;
 	else
-		disk_read(esp, dest, size);
+		read(esp, dest, size);
 	rcd->pos += size;
 }
 
-void skip(espp esp, rcdp rcd, size_t n)
+void skip_rcdb(espp esp, rcdp rcd, size_t n)
 {
 	// printf("skip %u\n", n);
 	if (!rcd->buf)
 	{
 		Pos += n;
-		disk_seek(esp, Pos);
+		seek(esp, Pos);
 	}
 	rcd->pos += n;
 }
@@ -362,7 +384,7 @@ char *uncompress_record(espp esp, rcdp rcd)
 	int ret = uncompress(dest, (uLongf*)&realSize, src, size);
 	assertm(ret == Z_OK, "were zlib'd");
 	rcd->size = realSize;
-	free(rcd->buf);
+	if (!Buf) free(rcd->buf);
 	rcd->buf = dest;
 	return dest;
 }

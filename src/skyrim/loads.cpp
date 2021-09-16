@@ -78,23 +78,22 @@ namespace dark
 		return model;
 	}
 
-	Esp *load_plugin(const char *filename, bool essential)
+	Esp *load_plugin(const char *filename, bool whole, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = std::string(editme) + "/Data/" + filename;
-		espp plugin;
-		plugin = has_plugin(filename);
-		if (plugin)
-			return plugin;
+		if (Esp *has = has_plugin(filename))
+			return has;
+		Esp *plugin;
 		if (exists(path.c_str()))
 		{
-			plugin = plugin_load(path.c_str());
+			plugin = plugin_load(path.c_str(), whole);
 			if (strstr(filename, ".esp"))
 				printf("loading .esp from /Data\n");
 		}
 		else if (exists(filename))
 		{
-			plugin = plugin_load(filename);
+			plugin = plugin_load(filename, whole);
 		}
 		else
 		{

@@ -121,10 +121,6 @@ DECLARE( ni_skin_instance )
 DECLARE( ni_skin_data )
 DECLARE( ni_skin_partition )
 DECLARE( bs_tri_shape )
-#ifdef SLE
-DECLARE( ni_tri_shape )
-DECLARE( ni_tri_shape_data )
-#endif
 DECLARE( bs_lighting_shader_property )
 DECLARE( bs_effect_shader_property )
 DECLARE( bs_effect_shader_property_float_controller )
@@ -292,58 +288,6 @@ SAIL ( nif, block, translation_keys, translations, num_keys )
 SINK ( nif, block, scales )
 SAIL ( nif, block, scale_keys, scales, num_keys )
 BLOCKED ()
-
-#ifdef SLE
-
-BLOCK( ni_tri_shape )
-printf("read NiTriShape\n");
-
-block->common = read_ni_common_layout( nif, n );
-SINK ( nif, block, A )
-SKIP( 9 )
-SINK ( nif, block, B )
-
-BLOCKED ()
-
-BLOCK( ni_tri_shape_data )
-printf("read NiTriShapeData\n");
-
-SINK ( nif, block, A )
-
-if ( block->A->has_vertices )
-	SAIL ( nif, block, vertices, A, num_vertices )
-
-SINK ( nif, block, C )
-
-if ( block->C->has_normals )
-	SAIL ( nif, block, normals, A, num_vertices )
-
-if ( block->C->bs_vector_flags & 0x00001000 )
-{
-	SAIL ( nif, block, tangents, A, num_vertices )
-	SAIL ( nif, block, bitangents, A, num_vertices )
-}
-
-SINK ( nif, block, G )
-
-if ( block->G->has_vertex_colors )
-	SAIL ( nif, block, vertex_colors, A, num_vertices )
-
-if ( block->C->bs_vector_flags & 0x00000001 )
-	SAIL ( nif, block, uv_sets, A, num_vertices )
-
-SINK ( nif, block, J )
-
-if (block->J->has_triangles)
-	SAIL ( nif, block, triangles, J, num_triangles )
-
-SINK ( nif, block, L )
-
-SAIL ( nif, block, match_groups, L, num_match_groups )
-
-BLOCKED ()
-
-#endif
 
 BLOCK( ni_skin_instance )
 SINK ( nif, block, A )

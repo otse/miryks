@@ -40,6 +40,7 @@ struct esp
 	void *stream;
 	record *header;
 	void *file;
+	char *buf;
 	unsigned pos;
 	unsigned filesize;
 	int active;
@@ -155,7 +156,7 @@ typedef const grup * cgrupp;
 typedef const record * crecordp;
 typedef const subrecord * csubrecordp;
 
-api espp plugin_load(const char *);
+api espp plugin_load(const char *, int);
 
 api void esp_check_grup(grupp);
 api void esp_check_rcd(rcdp);
