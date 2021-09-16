@@ -78,24 +78,29 @@ namespace dark
 		return model;
 	}
 
-	Esp *load_plugin(const char *filename, bool mem, bool essential)
+	Esp *load_plugin(const char *filename, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = std::string(editme) + "/Data/" + filename;
-		Esp *plugin;
-		if (Esp *has = has_plugin(filename))
-			return has;
+		espp plugin;
+		plugin = has_plugin(filename);
+		if (plugin)
+			return plugin;
 		if (exists(path.c_str()))
-			plugin = plugin_load(path.c_str(), mem);
+		{
+			plugin = plugin_load(path.c_str());
+			if (strstr(filename, ".esp"))
+				printf("loading .esp from /Data\n");
+		}
 		else if (exists(filename))
-			plugin = plugin_load(filename, mem);
+		{
+			plugin = plugin_load(filename);
+		}
 		else
 		{
-			if (essential) {
-				// imgui invoked loads would be non essential
-				printf("couldn't find %s in /Data or /bin\n", filename);
+			printf("couldn't find %s in /Data or /bin\n", filename);
+			if (essential)
 				exit(1);
-			}
 			return nullptr;
 		}
 		load_these_definitions(plugin);

@@ -42,7 +42,6 @@ struct esp
 	void *file;
 	unsigned pos;
 	unsigned filesize;
-	char *buf;
 	int active;
 	revised_array * grups, * records, * large;
 	struct form_id *formIds;
@@ -156,7 +155,7 @@ typedef const grup * cgrupp;
 typedef const record * crecordp;
 typedef const subrecord * csubrecordp;
 
-api espp plugin_load(const char *, int mem);
+api espp plugin_load(const char *);
 
 api void esp_check_grup(grupp);
 api void esp_check_rcd(rcdp);

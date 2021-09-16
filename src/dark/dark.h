@@ -33,7 +33,7 @@ namespace dark
 
 	Res *load_res(const char *, const char * = "meshes\\", unsigned long = 0x1);
 	Nif *load_model(Res *);
-	Esp *load_plugin(const char *, bool = false, bool = true);
+	Esp *load_plugin(const char *, bool = true);
 	Bsa *load_archive(const char *);
 	void load_these_definitions(Esp *);
 	

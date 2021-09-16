@@ -52,7 +52,7 @@ void load_plugins_archives()
 	get_plugins()[2] = load_plugin(PLUGIN_2);
 	get_plugins()[3] = load_plugin(PLUGIN_3);
 	get_plugins()[4] = load_plugin(PLUGIN_4);
-	get_plugins()[5] = load_plugin(PLUGIN_5, true);
+	get_plugins()[5] = load_plugin(PLUGIN_5);
 	get_archives()[0] = load_archive(ARCHIVE_0);
 	//get_archives()[1] = load_archive(ARCHIVE_1);
 	//get_archives()[2] = load_archive(ARCHIVE_2);
