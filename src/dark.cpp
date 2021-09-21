@@ -3,10 +3,9 @@
 #include <dark/dark.h>
 #include <dark/files.h>
 
-#include <dark/actor.h>
-#include <dark/creature.h>
-
 #include <skyrim/interior.h>
+#include <skyrim/actors.h>
+
 #include <gooey/yagrum.h>
 
 using namespace dark;
@@ -15,14 +14,13 @@ using namespace skyrim;
 namespace dark
 {
 	Creature *someDraugr = nullptr, *meanSkelly = nullptr;
-	Human *someHuman = nullptr;
+	Character *someHuman = nullptr;
 }
 
 namespace dark
 {
-char *editme;
+//Player *player1 = nullptr;
 Interior *dungeon = nullptr;
-Player *player1 = nullptr;
 std::map<const char *, int> keys;
 }
 
@@ -33,8 +31,7 @@ void darkassert(bool e)
 
 void load_bucket()
 {
-	Nif *model = load_model(load_res("clutter\\bucket02a.nif"));
-	simple_viewer(model);
+	simple_viewer("clutter\\bucket02a.nif");
 	yagrum_queue("", 10, true);
 }
 
@@ -78,7 +75,8 @@ void load_plugins_archives()
 
 int main()
 {
-	fbuf("editme.txt", &editme, 1);
+	char **buf = &editme;
+	fbuf("editme.txt", buf, true);
 	goingrate();
 	load_yagrum();
 	load_plugins_archives();
@@ -94,8 +92,8 @@ int main()
 	someDraugr->Place("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
-	//someHuman = new Human();
-	//someHuman->Place("gloomgenman");
+	someHuman = new Character();
+	someHuman->Place("gloomgenman");
 	//player1 = new Player();
 	program_while();
 	return 1;
@@ -126,7 +124,7 @@ void dark::reload_dungeon()
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 
-void dark::simple_viewer(Nif *model)
+void dark::simple_viewer(const char *path)
 {
 	static Mesh *mesh = nullptr;
 	static DrawGroup *drawGroup = nullptr;
@@ -136,7 +134,7 @@ void dark::simple_viewer(Nif *model)
 		delete mesh;
 		delete drawGroup;
 	}
-	mesh = new Mesh(model);
+	mesh = new Mesh(path);
 	drawGroup = new DrawGroup(
 		mesh->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->bigGroup->Add(drawGroup);

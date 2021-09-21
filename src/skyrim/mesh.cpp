@@ -20,13 +20,11 @@ namespace skyrim
 		lastGroup = baseGroup;
 	}
 	
-	Mesh::Mesh(Nif *bucket) : Mesh()
+	Mesh::Mesh(const char *bucket) : Mesh()
 	{
-		model = bucket;
-		if (!bucket) {
-			printf("null bucket\n");
+		if (!bucket)
 			return;
-		}
+		model = get_nif(bucket);
 		Construct();
 	}
 
@@ -99,7 +97,7 @@ namespace skyrim
 	
 	void bs_tri_shape_callback(Rd *rd, BSTriShape *block)
 	{
-		//if (dynamic_cast<SkinnedMesh *>(mesh))
+		//if (dynamic_cast<MeshSkinned *>(mesh))
 		// printf("mesh.cpp bs tri shape callback !!! ");
 		Mesh *mesh = (Mesh *)rd->data;
 		mesh->shapes__.push_back(rd->current);
@@ -229,7 +227,7 @@ namespace skyrim
 			material->name += "Textured";
 			for (int i = 0; i < block->A->num_textures; i++)
 			{
-				//if (!i && dynamic_cast<SkinnedMesh *>(mesh)) printf("%s\n", block->textures[i]);
+				//if (!i && dynamic_cast<MeshSkinned *>(mesh)) printf("%s\n", block->textures[i]);
 				std::string path = std::string(block->textures[i]);
 				if (path.empty())
 					continue;

@@ -13,36 +13,13 @@ using namespace skyrim;
 namespace dark
 {
 	class Ref;
-	class Actor;
-	class Creature;
-	class Player;
-	class BodyPart;
-	class Human;
-	class Image;
-}
 
-namespace dark
-{
 	void darkassert(bool);
 
-	extern char *editme;
-
-	int ext_nif_save(const char *, Nif *);
-	Nif *ext_nif_saved(const char *);
-	std::map<const char *, Nif *> &ext_nif_map();
-
-	Res *load_res(const char *, const char * = "meshes\\", unsigned long = 0x1);
-	Nif *load_model(Res *);
-	Esp *load_plugin(const char *, bool = false, bool = true);
-	Bsa *load_archive(const char *);
-	void load_these_definitions(Esp *);
-	
-	Keyframes *load_keyframes_from_disk(const char *);
-
 	extern Interior *dungeon;
-	extern Player *player1;
+	//extern Player *player1;
 	extern Creature *someDraugr, *meanSkelly;
-	extern Human *someHuman;
+	extern Character *someHuman;
 
 	void reload_esp();
 	void reload_dungeon();
@@ -50,7 +27,7 @@ namespace dark
 	void goingrate();
 	void program_while();
 
-	void simple_viewer(Nif *);
+	void simple_viewer(const char *);
 
 	void hide_cursor();
 	void show_cursor();

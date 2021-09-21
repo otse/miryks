@@ -1,5 +1,5 @@
 #include <dark/dark.h>
-#include <dark/actor.h>
+
 #include <dark/ref.h>
 
 #include <renderer/group.h>
@@ -7,6 +7,8 @@
 #include <renderer/geometry.h>
 #include <renderer/camera.h>
 #include <renderer/shader.h>
+
+#include <skyrim/actors.h>
 
 //#include <glm/gtx/string_cast.hpp>
 #include <sstream>
@@ -116,7 +118,7 @@ void opengl_gui()
 		if (ImGui::BeginTabItem("player"))
 		{
 			//ss << "pos: " << glm::to_string(cameraCur->view);
-			ImGui::TextWrapped("pose %s", glm::to_string(player1->pose));
+			//ImGui::TextWrapped("pose %s", glm::to_string(player1->pose));
 			ImGui::EndTabItem();
 		}
 

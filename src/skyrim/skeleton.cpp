@@ -30,7 +30,7 @@ namespace skyrim
 	Skeleton::Skeleton(Record race) : Skeleton()
 	{
 		printf("skeleton anam %s\n", race.data<char *>("ANAM"));
-		model = load_model(load_res(race.data<char *>("ANAM")));
+		model = get_nif(race.data<char *>("ANAM"));
 		Construct();
 	}
 

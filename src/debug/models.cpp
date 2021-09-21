@@ -1,5 +1,5 @@
-
 #include <dark/dark.h>
+
 #include <dark/files.h>
 
 #include <imgui.h>
@@ -100,7 +100,7 @@ void overlay_models()
 
 			if (ImGui::Button("View"))
 			{
-				simple_viewer(nif);
+				simple_viewer(nif->path);
 			}
 
 			ImGui::TreePop();

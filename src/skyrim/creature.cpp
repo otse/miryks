@@ -1,6 +1,6 @@
 #include <dark/dark.h>
-#include <dark/creature.h>
 
+#include <skyrim/actors.h>
 #include <skyrim/record.h>
 #include <skyrim/mesh.h>
 #include <skyrim/interior.h>
@@ -9,16 +9,15 @@
 
 using namespace skyrim;
 
-namespace dark
-{    
-    Creature::Creature(const char *raceId, const char *path)
+namespace skyrim
+{
+	Creature::Creature(const char *raceId, const char *path)
 	{
 		animation = nullptr;
 		drawGroup = nullptr;
 		race = skyrim_get_race(raceId);
-		Nif *model = load_model(load_res(path));
 		skeleton = new Skeleton(race);
-		skinnedMesh = new SkinnedMesh(model, skeleton);
+		meshSkinned = new MeshSkinned(path);
 	}
 
 	void Creature::SetAnimation(const char *path)
@@ -34,7 +33,7 @@ namespace dark
 		if (ref != dungeon->edIds.end())
 		{
 			drawGroup = new DrawGroup(
-				skinnedMesh->baseGroup, ref->second->matrix);
+				meshSkinned->baseGroup, ref->second->matrix);
 			//drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
 			//drawGroup->Add(new DrawGroup(skeleton->baseBone->group, mat4(1.0));
 			sceneDef->bigGroup->Add(drawGroup);
@@ -47,8 +46,10 @@ namespace dark
 
 	void Creature::Step()
 	{
-		if (skinnedMesh)
-			skinnedMesh->Step();
+		if (skeleton)
+			skeleton->Step();
+		if (meshSkinned)
+			meshSkinned->Step(skeleton);
 		//const float merry = 0.002;
 		//if (drawGroup)
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));

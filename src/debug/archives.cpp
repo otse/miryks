@@ -88,8 +88,7 @@ void overlay_archives()
 			ImGui::SameLine();
 			if (ImGui::Button("View"))
 			{
-				Nif *model = load_model(res);
-				simple_viewer(model);
+				simple_viewer(res->path);
 			}
 		}
 
@@ -234,8 +233,7 @@ void overlay_archives()
 								ImGui::SameLine();
 								if (ImGui::Button("View"))
 								{
-									Nif *model = load_model(res);
-									simple_viewer(model);
+									simple_viewer(res->path);
 								}
 							}
 							ImGui::Separator();

@@ -4,9 +4,7 @@
 #include <skyrim/grup.h>
 #include <skyrim/interior.h>
 #include <skyrim/trash.h>
-
-#include <dark/actor.h>
-#include <dark/creature.h>
+#include <skyrim/actors.h>
 
 #include <gooey/yagrum.h>
 
@@ -368,8 +366,8 @@ void dark::program_while()
 		if (meanSkelly)
 			meanSkelly->Step();
 
-		//if (someHuman)
-		//	someHuman->Step();
+		if (someHuman)
+			someHuman->Step();
 
 		if (dungeon)
 			dungeon->Update();

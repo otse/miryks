@@ -4,17 +4,35 @@
 
 namespace skyrim
 {
+	extern char *editme;
+	
 	class Record;
 	class Grup;
+
+	int ext_nif_save(const char *, Nif *);
+	Nif *ext_nif_saved(const char *);
+	std::map<const char *, Nif *> &ext_nif_map();
+
+	Res *get_resource(const char *, const char * = "meshes\\", unsigned long = 0x1);
+	Nif *get_nif(const char *);
+	Esp *load_plugin(const char *, bool = false, bool = true);
+	Bsa *load_archive(const char *);
+	void load_these_definitions(Esp *);
+	
+	class Keyframes;
+	Keyframes *load_keyframes_from_disk(const char *);
 	
 	class Mesh;
-	class SkinnedMesh;
+	class MeshSkinned;
 	class Skeleton;
 	class Bone;
-	class Keyframes;
 	class Animation;
 	class Interior;
 	class Container;
+	class SkinnedMesh;
+	class Skeleton;
+	class Character;
+	class Creature;
 
 	struct Cell
 	{

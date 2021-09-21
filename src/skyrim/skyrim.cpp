@@ -5,6 +5,8 @@
 
 namespace skyrim {
 
+	char *editme;
+
 	Record skyrim_get_race(const char *raceId)
 	{
 		Record race;

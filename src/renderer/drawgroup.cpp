@@ -42,6 +42,11 @@ void DrawGroup::Draw(const mat4 &left)
 {
 	if (Invisible())
 		return;
+	// big ouch
+	if (childGroups.size())
+		for (Group *child : childGroups)
+			if (dynamic_cast<DrawGroup *>(child))
+				child->DrawChilds(left);
 	if (target)
 		target->DrawChilds(matrix);
 	DrawBounds();

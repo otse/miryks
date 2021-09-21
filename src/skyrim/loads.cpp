@@ -1,5 +1,3 @@
-
-
 #include <dark/dark.h>
 #include <dark/files.h>
 
@@ -13,7 +11,7 @@
 
 #include <algorithm>
 
-namespace dark
+namespace skyrim
 {
 	std::map<const char *, Nif *> nifs;
 
@@ -36,7 +34,7 @@ namespace dark
 		return nullptr;
 	}
 
-	Res *load_res(
+	Res *get_resource(
 		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
@@ -51,21 +49,12 @@ namespace dark
 		return res;
 	}
 
-	Keyframes *load_keyframes_from_disk(const char *path)
+	Nif *get_nif(const char *path)
 	{
-		if (Nif *saved = ext_nif_saved(path))
-			return new Keyframes(saved);
-		Nif *model = calloc_nifp();
-		model->path = path;
-		int len = fbuf(path, &model->buf);
-		nif_read(model);
-		ext_nif_save(path, model);
-		return new Keyframes(model);
-	}
-
-	Nif *load_model(Res *res)
-	{
-		if (res == NULL)
+		if (!path)
+			return nullptr;
+		Res *res = get_resource(path);
+		if (!res)
 			return nullptr;
 		if (Nif *saved = ext_nif_saved(res->path))
 			return saved;
@@ -78,6 +67,19 @@ namespace dark
 		return model;
 	}
 
+	Keyframes *load_keyframes_from_disk(const char *path)
+	{
+		if (Nif *saved = ext_nif_saved(path))
+			return new Keyframes(saved);
+		Nif *model = calloc_nifp();
+		model->path = path;
+		int len = fbuf(path, &model->buf);
+		nif_read(model);
+		ext_nif_save(path, model);
+		return new Keyframes(model);
+	}
+
+	
 	Esp *load_plugin(const char *filename, bool whole, bool essential)
 	{
 		printf("Load Plugin %s\n", filename);

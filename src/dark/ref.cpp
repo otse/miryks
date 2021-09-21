@@ -93,7 +93,7 @@ namespace dark
 		auto has = map.find(modl);
 		if (has != map.end())
 			return has->second;
-		Mesh *mesh = new Mesh(load_model(load_res(modl)));
+		Mesh *mesh = new Mesh(modl);
 		map.emplace(modl, mesh);
 		return mesh;
 	}

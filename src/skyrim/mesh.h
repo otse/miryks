@@ -32,7 +32,7 @@ namespace skyrim
 	{
 	public:
 		Mesh();
-		Mesh(Nif *);
+		Mesh(const char *);
 		~Mesh();
 		Nif *model = nullptr;
 		std::map<int, Group *> groups;
@@ -46,17 +46,26 @@ namespace skyrim
 		std::vector<NiRef> shapes__;
 	};
 
-	class SkinnedMesh : public Mesh
+	class MeshSkinned : public Mesh
 	{
 	public:
-		Skeleton *skeleton = nullptr;
-
 		NiRef lastShape;
-		SkinnedMesh();
-		SkinnedMesh(Nif *, Skeleton *);
+		MeshSkinned(const char *);
 		void Construct();
+		void Step(Skeleton *);
+		void Initial(Skeleton *);
+	};
+
+	class SkinnedMesh
+	{
+	public:
+		MeshSkinned *meshSkinned = nullptr;
+		Skeleton *skeleton = nullptr;
+		Animation *animation = nullptr;
+		DrawGroup *drawGroup = nullptr;
+		SkinnedMesh(const char *);
+		~SkinnedMesh();
 		void Step();
-		void Initial();
 	};
 }
 

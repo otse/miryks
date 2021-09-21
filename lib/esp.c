@@ -38,18 +38,25 @@ static long int disk_tell(espp);
 static void read(espp esp, void **data, size_t size) {
 	if (Buf)
 	{
-		printf("read from buf\n");
-		*data = (Buf + Pos);
+		// we have the whole file,
+		// the data is just an offset
+		*data = Buf + Pos;
 		Pos += size;
 	}
 	else
+		// we have a handle,
+		// the data needs to be pulled
 		disk_read(esp, data, size);
 }
 
 static void seek(espp esp, long int offset) {
 	if (Buf)
+		// we have the whole file,
+		// our offset is just a number
 		Pos = offset;
 	else
+		// we have a handle,
+		// we seek set on the open file
 		disk_seek(esp, offset);
 }
 
@@ -81,6 +88,7 @@ api espp plugin_load(const char *path, int whole)
 	esp->filesize = ftell(esp->stream);
 	rewind(esp->stream);
 	if (whole) {
+		// read the whole file
 		disk_read(esp, &Buf, esp->filesize);
 		seek(esp, 0);
 		printf("read whole plugin into buf\n");
@@ -384,7 +392,9 @@ char *uncompress_record(espp esp, rcdp rcd)
 	int ret = uncompress(dest, (uLongf*)&realSize, src, size);
 	assertm(ret == Z_OK, "were zlib'd");
 	rcd->size = realSize;
-	if (!Buf) free(rcd->buf);
+	if (!Buf)
+		// free the whole file
+		free(rcd->buf);
 	rcd->buf = dest;
 	return dest;
 }
