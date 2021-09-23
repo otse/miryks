@@ -11,7 +11,7 @@ namespace skyrim {
 	{
 		Record race;
 		Grup array;
-		grupp top = esp_top_grup(get_plugins()[0], "RACE");
+		GRUP top = esp_top_grup(get_plugins()[0], "RACE");
 		array(top).foreach([&](unsigned int &i) {
 			Record object = array.get<record *>(i);
 			auto edId = object.editorId();
@@ -30,7 +30,7 @@ namespace skyrim {
 	{
 		Cell cell;
 		Grup a, b, c;
-		grupp top = esp_top_grup(get_plugins()[plugin], "CELL");
+		GRUP top = esp_top_grup(get_plugins()[plugin], "CELL");
 		a(top).foreach([&](unsigned int i) {
 		return b(a.get<grup *>(i)).foreach([&](unsigned int j) {
 		return c(b.get<grup *>(j)).foreach([&](unsigned int &k) {

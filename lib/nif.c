@@ -11,43 +11,43 @@
 #define Blocks nif->blocks
 #define Depos  (Buf + Pos)
 
-api char *nif_get_string(Nif *nif, int i) {
+api char *nif_get_string(NIF nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Hedr->strings[i];
 }
 
-api char *nif_get_block_type(Nif *nif, int i) {
+api char *nif_get_block_type(NIF nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Hedr->block_types[Hedr->block_type_index[i]];
 }
 
-api void *nif_get_block(Nif *nif, int i) {
+api void *nif_get_block(NIF nif, int i) {
 	if (i == -1)
 	return NULL;
 	return Blocks[i];
 }
 
-api Nif *calloc_nifp() {
-	Nif *nif = calloc(1, sizeof(Nif));
+api NIF calloc_nifp() {
+	NIF nif = calloc(1, sizeof(Nif));
 	nif->hdr = calloc(1, sizeof(struct NifHeader));
 	return nif;
 }
 
-api void free_nifp(Nif **p) {
-	Nif *nif = *p;
+api void free_nifp(NIF *p) {
+	NIF nif = *p;
 	free(nif);
 	*p = NULL;
 }
 
-api void nif_read(Nif *nif) {
+api void nif_read(NIF nif) {
 	assertm(Buf, "nif buf is null ??");
 	nif_read_header(nif);
 	nif_read_blocks(nif);
 }
 
-static void read_short_string(Nif *nif, char **string) {
+static void read_short_string(NIF nif, char **string) {
 	// has \0
 	char len = *(char *)Depos;
 	Pos += sizeof(char);
@@ -55,7 +55,7 @@ static void read_short_string(Nif *nif, char **string) {
 	Pos += len;
 }
 
-static void read_sized_string(Nif *nif, char **string) {
+static void read_sized_string(NIF nif, char **string) {
 	// doesnt have \0
 	unsigned int len = *(unsigned int *)Depos;
 	Pos += sizeof(unsigned int);
@@ -67,7 +67,7 @@ static void read_sized_string(Nif *nif, char **string) {
 
 // begin hedr
 
-static void hedr_read_header_string(Nif *nif) {
+static void hedr_read_header_string(NIF nif) {
 	// Gamebryo File Format, Version 20.2.0.7\n
 	int n = strchr(Buf, '\n') - Buf + 1;
 	char *string = malloc(sizeof(char) * n);
@@ -78,23 +78,23 @@ static void hedr_read_header_string(Nif *nif) {
 	Pos += n;
 }
 
-static void read_mem(Nif *nif, void *dest, int size) {
+static void read_mem(NIF nif, void *dest, int size) {
 	memcpy(dest, Depos, size);
 	Pos += size;
 }
 
-static void read_array(Nif *nif, void **dest, int size) {
+static void read_array(NIF nif, void **dest, int size) {
 	*dest = malloc(size);
 	read_mem(nif, *dest, size);
 }
 
-static void read_sized_strings(Nif *nif, char ***dest, int count) {
+static void read_sized_strings(NIF nif, char ***dest, int count) {
 	*dest = malloc(count * sizeof(char *));
 	for (int i = 0; i < count; i++)
 	read_sized_string(nif, &(*dest)[i]);
 }
 
-void nif_read_header(Nif *nif) {
+void nif_read_header(NIF nif) {
 	hedr_read_header_string(nif);
 	read_mem(nif, &Hedr->unknown_1, 17);
 	read_short_string(nif, &Hedr->author);
@@ -111,9 +111,9 @@ void nif_read_header(Nif *nif) {
 }
 
 
-#define DECLARE(x) void *read_ ## x (Nif *, int);
+#define DECLARE(x) void *read_ ## x (NIF , int);
 
-static void big_block_reader(Nif *, int);
+static void big_block_reader(NIF , int);
 
 DECLARE( ni_node )
 DECLARE( ni_common_layout )
@@ -132,7 +132,7 @@ DECLARE( ni_controller_sequence )
 DECLARE( ni_transform_interpolator )
 DECLARE( ni_transform_data )
 
-void nif_read_blocks(Nif *nif)
+void nif_read_blocks(NIF nif)
 {
 	// printf("nifp path %s\n", nif->path);
 	unsigned int pos = Pos;
@@ -149,7 +149,7 @@ void nif_read_blocks(Nif *nif)
 
 #define READ(x) block = read_ ## x(nif, n);
 
-void big_block_reader(Nif *nif, int n)
+void big_block_reader(NIF nif, int n)
 {
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	void *block = NULL;
@@ -177,7 +177,7 @@ void big_block_reader(Nif *nif, int n)
 }
 
 
-static inline void sink(Nif *nif, void **dest, int size) {
+static inline void sink(NIF nif, void **dest, int size) {
 	*dest = Depos;
 	Pos += size;
 }
@@ -189,7 +189,7 @@ static inline void sink(Nif *nif, void **dest, int size) {
 
 #define CALLOC(x, y) struct x ## _t *y = calloc(1, sizeof(struct x ## _t));
 
-#define BLOCK(x) void *read_ ## x ( Nif *nif, int n ) \
+#define BLOCK(x) void *read_ ## x ( NIF nif, int n ) \
 { \
 	CALLOC(x, block)
 

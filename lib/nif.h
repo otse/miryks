@@ -1,6 +1,7 @@
 #ifndef LIB_NIF_H
 #define LIB_NIF_H
 
+
 /// nif.h
 
 #include "niftypes.h"
@@ -18,6 +19,9 @@
 
 struct NifHeader;
 
+#define NIF Nif *
+#define RD Rd *
+
 struct Nif;
 struct Rd;
 
@@ -34,16 +38,16 @@ struct Nif
 	void **blocks;
 };
 
-#define callback(x) void (*x ## _callback) (struct Rd *, struct x ## _t *);
+#define callback(x) void (*x ## _callback) (RD , struct x ## _t *);
 
 struct Rd
 {
 	int x;
 	char *skips;
-	Nif *nif;
+	NIF nif;
 	void *data;
 	int parent, current;
-	void (*other) (struct Rd *, void *block);
+	void (*other) (RD, void *block);
 	callback(ni_node)
 	callback(ni_tri_shape)
 	callback(ni_tri_shape_data)
@@ -65,25 +69,25 @@ struct Rd
 
 void nif_test();
 
-void nif_read_header(Nif *);
-void nif_read_blocks(Nif *);
+void nif_read_header(NIF);
+void nif_read_blocks(NIF);
 
-api Nif *calloc_nifp();
-api Rd  *calloc_nifprd();
+api NIF calloc_nifp();
+api RD  calloc_nifprd();
 
-api void free_nifp  (Nif **);
-api void free_nifprd(Rd **);
+api void free_nifp  (NIF *);
+api void free_nifprd(RD *);
 
-api void nif_rd(Rd *);
+api void nif_rd(RD);
 
-api void nif_read(Nif *);
+api void nif_read(NIF);
 
-api char *nif_get_string(Nif *, int);
-api char *nif_get_block_type(Nif *, int);
-api void *nif_get_block(Nif *, int);
+api char *nif_get_string(NIF, int);
+api char *nif_get_block_type(NIF, int);
+api void *nif_get_block(NIF, int);
 
-api void nif_print_hedr(Nif *, char *);
-api void nif_print_block(Nif *, int, char [1000]);
+api void nif_print_hedr(NIF, char *);
+api void nif_print_block(NIF, int, char [1000]);
 
 #pragma pack(push, 1) // important
 

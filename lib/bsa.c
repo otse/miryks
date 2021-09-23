@@ -12,19 +12,19 @@
 
 #define Hedr bsa->hdr
 
-static int read(Bsa *, void *, unsigned long size);
-static int seek(Bsa *, unsigned long offset);
+static int read(BSA, void *, unsigned long size);
+static int seek(BSA, unsigned long offset);
 
-char *bsa_read_bzstring(Bsa *);
+char *bsa_read_bzstring(BSA);
 
-void read_folder_records(Bsa *);
-void read_file_records(Bsa *);
-void read_filenames(Bsa *);
-void resources(Bsa *);
+void read_folder_records(BSA);
+void read_file_records(BSA );
+void read_filenames(BSA);
+void resources(BSA);
 
-api Bsa *bsa_load(const char *path)
+api BSA bsa_load(const char *path)
 {
-	Bsa *bsa = calloc(1, sizeof(Bsa));
+	BSA bsa = calloc(1, sizeof(Bsa));
 	file_name(bsa->filename, path, '/');
 	bsa->stream = fopen(path, "rb");
 	assertm(
@@ -60,13 +60,13 @@ api Bsa *bsa_load(const char *path)
 	return bsa;
 }
 
-void read_folder_records(Bsa *bsa)
+void read_folder_records(BSA bsa)
 {
 	bsa->fld = malloc(sizeof(struct bsa_fld) * Hedr.folders);
 	read(bsa, bsa->fld, Hedr.folders * sizeof(struct bsa_fld));
 }
 
-char *bsa_read_bzstring(Bsa *bsa)
+char *bsa_read_bzstring(BSA bsa)
 {
 	int c = 0;
 	read(bsa, &c, 1);
@@ -75,7 +75,7 @@ char *bsa_read_bzstring(Bsa *bsa)
 	return name;
 } 
 
-void read_file_records(Bsa *bsa)
+void read_file_records(BSA bsa)
 {
 	bsa->file = malloc(sizeof(struct bsa_file *) * Hedr.folders);
 	bsa->ca = malloc(sizeof(char *) * Hedr.folders);
@@ -88,7 +88,7 @@ void read_file_records(Bsa *bsa)
 	}
 }
 
-void read_filenames(Bsa *bsa)
+void read_filenames(BSA bsa)
 {
 	char *buf = malloc(sizeof(char) * Hedr.filesl);
 	bsa->cb = malloc(sizeof(char *) * Hedr.files);
@@ -105,7 +105,7 @@ void read_filenames(Bsa *bsa)
 	}
 }
 
-void bsa_rc_path(Bsa *bsa, int i, int r)
+void bsa_rc_path(BSA bsa, int i, int r)
 {
 	char *path = bsa->res[r]->path;
 	strcpy(path, bsa->ca[i]);
@@ -114,10 +114,10 @@ void bsa_rc_path(Bsa *bsa, int i, int r)
 	//return path;
 }
 
-void resources(Bsa *bsa)
+void resources(BSA bsa)
 {
 	// abstract file records
-	bsa->res = calloc(Hedr.files, sizeof(Res *));
+	bsa->res = calloc(Hedr.files, sizeof(RES ));
 	bsa->r = calloc(Hedr.folders, sizeof(int));
 	int r = 0;
 	for (unsigned int i = 0; i < Hedr.folders; i++)
@@ -133,7 +133,7 @@ void resources(Bsa *bsa)
 	}
 }
 
-api Res *bsa_find(Bsa *bsa, const char *p)
+api RES bsa_find(BSA bsa, const char *p)
 {
 	char stem[260], name[100];
 	file_stem(stem, p, '\\');
@@ -158,7 +158,7 @@ api Res *bsa_find(Bsa *bsa, const char *p)
 	return NULL;
 }
 
-api void bsa_search(Bsa *bsa, Res *rscs[BSA_MAX_SEARCHES], const char *s, int *num)
+api void bsa_search(BSA bsa, RES rscs[BSA_MAX_SEARCHES], const char *s, int *num)
 {
 	char *str;
 	int r;
@@ -183,7 +183,7 @@ api void bsa_search(Bsa *bsa, Res *rscs[BSA_MAX_SEARCHES], const char *s, int *n
 
 #if BSA_VER==104
 
-char *bsa_uncompress(Res *res)
+char *bsa_uncompress(RES res)
 {
 	// zlib
 	char *src = res->buf;
@@ -199,7 +199,7 @@ char *bsa_uncompress(Res *res)
 
 #elif BSA_VER==105
 
-char *bsa_uncompress(Res *res)
+char *bsa_uncompress(RES res)
 {
 	//printf("uncompress!\n");
 	char *src = res->buf;
@@ -224,12 +224,12 @@ char *bsa_uncompress(Res *res)
 
 #define INVERT_COMPRESSED 0x40000000
 
-api int bsa_read(Res *res) {
+api int bsa_read(RES res) {
 	if (res == NULL)
 	return 0;
 	if (res->buf)
 	return 1;
-	Bsa *bsa = res->bsa;
+	BSA bsa = res->bsa;
 	struct bsa_file *f = &bsa->file[res->i][res->j];
 	unsigned long offset = f->offset;
 	unsigned long size = f->size;
@@ -273,9 +273,9 @@ api int bsa_read(Res *res) {
 	return 1;
 }
 
-api void bsa_free(Bsa **b)
+api void bsa_free(BSA *b)
 {
-	Bsa *bsa = *b;
+	BSA bsa = *b;
 	*b = NULL;
 	fclose(bsa->stream);
 	#if 0
@@ -303,18 +303,18 @@ api void bsa_free(Bsa **b)
 
 // archive ext stuff below
 
-static Bsa *archives[20] = { NULL };
+static BSA archives[20] = { NULL };
 
-api Bsa **get_archives()
+api BSA *get_archives()
 {
 	return archives;
 }
 
-api Bsa *bsa_get(const char *filename)
+api BSA bsa_get(const char *filename)
 {
 	for (int i = 20; i --> 0; )
 	{
-	Bsa *bsa = archives[i];
+	BSA bsa = archives[i];
 	if (bsa==NULL)
 	continue;
 	if (bsa->filename==NULL)
@@ -325,12 +325,12 @@ api Bsa *bsa_get(const char *filename)
 	return NULL;
 }
 
-api Res *bsa_find_more(const char *p, unsigned long flags)
+api RES bsa_find_more(const char *p, unsigned long flags)
 {
-	Res *res = NULL;
+	RES res = NULL;
 	for (int i = 20; i --> 0; )
 	{
-	Bsa *bsa = archives[i];
+	BSA bsa = archives[i];
 	if (bsa==NULL)
 	continue;
 	int test = Hedr.file_flags & flags;
@@ -342,13 +342,13 @@ api Res *bsa_find_more(const char *p, unsigned long flags)
 	return res;
 }
 
-static int read(Bsa *bsa, void *data, unsigned long size)
+static int read(BSA bsa, void *data, unsigned long size)
 {
 	
 	return fread(data, 1, (long)size, (FILE *)bsa->stream);
 }
 
-static int seek(Bsa *bsa, unsigned long offset)
+static int seek(BSA bsa, unsigned long offset)
 {
 	return fseek((FILE *)bsa->stream, (long)offset, SEEK_SET);
 }

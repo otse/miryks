@@ -8,7 +8,7 @@ using namespace dark;
 
 static char hedrstr[600] = {"not loaded"};
 
-Bsa *bsa = NULL;
+BSA bsa = NULL;
 
 void overlay_archives()
 {
@@ -31,7 +31,7 @@ void overlay_archives()
 	if (strcmp(buf, buf2))
 	{
 		memcpy(buf2, buf, MAX);
-		Bsa *replace = load_archive(buf2);
+		BSA replace = load_archive(buf2);
 		if (replace)
 		{
 			bsa = replace;
@@ -59,7 +59,7 @@ void overlay_archives()
 		return;
 	}
 
-	auto func = [&](Res *res) {
+	auto func = [&](RES res) {
 		if (!res)
 			return;
 		ImGui::Separator();
@@ -112,7 +112,7 @@ void overlay_archives()
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
 
-			static Res *res = nullptr;
+			static RES res = nullptr;
 
 			if (reset)
 			{
@@ -154,8 +154,8 @@ void overlay_archives()
 			static const char *items[BSA_MAX_SEARCHES];
 			static int num = 0;
 
-			static Res *res = nullptr;
-			static Res *rcs[BSA_MAX_SEARCHES];
+			static RES res = nullptr;
+			static RES rcs[BSA_MAX_SEARCHES];
 
 			if (reset)
 			{
@@ -218,7 +218,7 @@ void overlay_archives()
 							ImGui::Separator();
 
 							char s[200];
-							Res *res = bsa->res[bsa->r[i] + j];
+							RES res = bsa->res[bsa->r[i] + j];
 							bsa_print_rc(bsa, s, res->r);
 							ImGui::Text(s);
 							bsa_print_fle_rcd(bsa, s, i, j);

@@ -16,6 +16,11 @@
 
 struct form_id;
 
+#define ESP Esp *
+#define GRUP grup *
+#define RCD record *
+#define SRCD subrecord *
+
 struct esp;
 struct grup;
 struct record;
@@ -94,7 +99,7 @@ typedef struct esp_dud {
 
 struct form_id
 {
-	struct esp *esp;
+	ESP esp;
 	unsigned int formId, modIndex, objectIndex;
 };
 
@@ -105,7 +110,7 @@ struct grup
 	unsigned offset;
 	const struct grup_header *hed;
 	unsigned char *data;
-	struct esp *esp;
+	ESP esp;
 	revised_array * mixed;
 	unsigned int size;
 	char looped;
@@ -120,7 +125,7 @@ struct record
 	const struct record_header *hed;
 	revised_array *rcdbs;
 	struct form_id form_id;
-	struct esp *esp;
+	ESP esp;
 	char partial;
 	// compression related
 	char *buf;
@@ -140,7 +145,6 @@ struct subrecord
 	unsigned char *data;
 };
 
-typedef esp * espp;
 typedef esp ** esppp;
 
 typedef grup * grupp;
@@ -156,27 +160,27 @@ typedef const grup * cgrupp;
 typedef const record * crecordp;
 typedef const subrecord * csubrecordp;
 
-api espp plugin_load(const char *, int);
+api ESP plugin_load(const char *, int);
 
 api void esp_check_grup(grupp);
 api void esp_check_rcd(rcdp);
 
-api void esp_print_form_id(espp, char *, struct form_id *);
-api void esp_print_grup(espp, char *, grupp);
-api void esp_print_record(espp, char *, recordp);
-api void esp_print_field(espp, char *, subrecordp);
+api void esp_print_form_id(ESP, char *, struct form_id *);
+api void esp_print_grup(ESP, char *, GRUP);
+api void esp_print_record(ESP, char *, RCD);
+api void esp_print_field(ESP, char *, SRCD);
 
-api esppp get_plugins();
+api ESP *get_plugins();
 
-api espp has_plugin(const char *);
+api ESP has_plugin(const char *);
 
-api revised_array *esp_filter_objects(cespp, const char [5]);
+api revised_array *esp_filter_objects(const ESP, const char [5]);
 
 api recordp esp_get_form_id(unsigned int);
 
-api grupp esp_top_grup(cespp, const char [5]);
+api GRUP esp_top_grup(const ESP, const char [5]);
 
-api void free_plugin(esppp);
+api void free_plugin(ESP *);
 api void free_esp_array(revised_array **);
 
 #endif

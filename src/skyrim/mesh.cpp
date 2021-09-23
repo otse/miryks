@@ -34,7 +34,7 @@ namespace skyrim
 
 	void Mesh::Construct()
 	{
-		Rd *rd = calloc_nifprd();
+		RD rd = calloc_nifprd();
 		rd->nif = model;
 		rd->data = this;
 		rd->ni_node_callback = ni_node_callback;
@@ -53,7 +53,7 @@ namespace skyrim
 
 	}
 
-	Group *Mesh::make_new_group(Rd *rd)
+	Group *Mesh::make_new_group(RD rd)
 	{
 		Group *group = new GroupBounded();
 		groups[rd->current] = group;
@@ -70,7 +70,7 @@ namespace skyrim
 		group->matrix = scale(group->matrix, vec3(common->A->scale));
 	}
 
-	void ni_node_callback(Rd *rd, NiNode *block)
+	void ni_node_callback(RD rd, NiNode *block)
 	{
 		// printf("ni node callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -95,7 +95,7 @@ namespace skyrim
 		return vec2(u.f, v.f);
 	}
 	
-	void bs_tri_shape_callback(Rd *rd, BSTriShape *block)
+	void bs_tri_shape_callback(RD rd, BSTriShape *block)
 	{
 		//if (dynamic_cast<MeshSkinned *>(mesh))
 		// printf("mesh.cpp bs tri shape callback !!! ");
@@ -153,7 +153,7 @@ namespace skyrim
 		geometry->SetupMesh();
 	}
 
-	void bs_lighting_shader_property_callback(Rd *rd, BSLightingShaderProperty *block)
+	void bs_lighting_shader_property_callback(RD rd, BSLightingShaderProperty *block)
 	{
 		// printf("bs lighting shader property callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -190,7 +190,7 @@ namespace skyrim
 		}
 	}
 
-	void bs_effect_shader_property_callback(Rd *rd, BSEffectShaderProperty *block)
+	void bs_effect_shader_property_callback(RD rd, BSEffectShaderProperty *block)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
 		Geometry *geometry = mesh->lastGroup->geometry;
@@ -215,7 +215,7 @@ namespace skyrim
 		}
 	}
 
-	void bs_shader_texture_set_callback(Rd *rd, BSShaderTextureSet *block)
+	void bs_shader_texture_set_callback(RD rd, BSShaderTextureSet *block)
 	{
 		// printf("bs shader texture set callback\n");
 		Mesh *mesh = (Mesh *)rd->data;
@@ -243,7 +243,7 @@ namespace skyrim
 		}
 	}
 
-	void ni_alpha_property_callback(Rd *rd, NiAlphaProperty *block)
+	void ni_alpha_property_callback(RD rd, NiAlphaProperty *block)
 	{
 		Mesh *mesh = (Mesh *)rd->data;
 		Group *group = mesh->lastGroup;
@@ -289,7 +289,7 @@ namespace skyrim
 	void Mesh::Misty()
 	{
 		// mists
-		auto callback = [](Rd *rd, BSEffectShaderPropertyFloatController *block) {
+		auto callback = [](RD rd, BSEffectShaderPropertyFloatController *block) {
 			Mesh *mesh = (Mesh *)rd->data;
 			auto target = (BSEffectShaderProperty *)nif_get_block(rd->nif, block->A->target);
 			//auto shape = (bs_tri_shape *)nif_get_block(rd->nif, target->meta.parent);
@@ -368,7 +368,7 @@ namespace skyrim
 				material->setUvTransformDirectly(u, v, s, t, 0, 0, 0);
 			}
 		};
-		Rd *rd = calloc_nifprd();
+		RD rd = calloc_nifprd();
 		rd->nif = model;
 		rd->data = this;
 		rd->bs_effect_shader_property_float_controller_callback = callback;

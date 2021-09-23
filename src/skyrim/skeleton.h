@@ -23,7 +23,7 @@ namespace skyrim
 		std::map<NiRef, Bone *> bones;
 		std::map<const std::string, Bone *> bonesNamed;
 
-		Nif *model;
+		NIF model;
 		Bone *baseBone, *root;
 
 		Animation *animation;
@@ -33,7 +33,7 @@ namespace skyrim
 		void Load(const char *);
 		void Construct();
 		void Step();
-		Bone *MakeBoneHere(Rd *, NiNode *);
+		Bone *MakeBoneHere(RD, NiNode *);
 	protected:
 	};
 
@@ -53,8 +53,8 @@ namespace skyrim
 	class Keyframes
 	{
 	public:
-		Keyframes(Nif *);
-		Nif *model;
+		Keyframes(NIF);
+		NIF model;
 		bool loop;
 		NiControllerSequence *controllerSequence;
 	};

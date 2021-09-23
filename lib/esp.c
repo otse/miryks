@@ -21,21 +21,21 @@ int skip_field_data = 1;
 #define spamf 0;
 #endif
 
-static espp plugins[PLUGINS] = { NULL };
+static ESP plugins[PLUGINS] = { NULL };
 
 // horrible c vector
 inline void narray(revised_array **, unsigned int);
 inline void grow(revised_array *);
 inline void insert(revised_array *, void *);
 
-static int disk_read(espp, void **, size_t);
-static int disk_seek(espp, long int);
-static long int disk_tell(espp);
+static int disk_read(ESP, void **, size_t);
+static int disk_seek(ESP, long int);
+static long int disk_tell(ESP);
 
 #define Buf esp->buf
 #define Pos esp->pos
 
-static void read(espp esp, void **data, size_t size) {
+static void read(ESP esp, void **data, size_t size) {
 	if (Buf)
 	{
 		// we have the whole file,
@@ -49,7 +49,7 @@ static void read(espp esp, void **data, size_t size) {
 		disk_read(esp, data, size);
 }
 
-static void seek(espp esp, long int offset) {
+static void seek(ESP esp, long int offset) {
 	if (Buf)
 		// we have the whole file,
 		// our offset is just a number
@@ -60,26 +60,26 @@ static void seek(espp esp, long int offset) {
 		disk_seek(esp, offset);
 }
 
-grupp read_grp(espp);
-rcdp read_rcd(espp);
-rcdbp read_rcdb(espp, rcdp);
+GRUP read_grp(ESP);
+RCD read_rcd(ESP);
+SRCD read_rcdb(ESP, RCD);
 
-char *uncompress_record(espp, rcdp);
-void loop_rcd(espp, rcdp);
-void loop_grup(espp, grupp);
+char *uncompress_record(ESP, RCD);
+void loop_rcd(ESP, RCD);
+void loop_grup(ESP, GRUP);
 
-unsigned int hedr_num_records(espp esp)
+unsigned int hedr_num_records(ESP esp)
 {
-	rcdbp hedr = (*(subrecord ***)esp->header->rcdbs)[0];
+	SRCD hedr = (*(subrecord ***)esp->header->rcdbs)[0];
 	float version = *(float *)(hedr->data);
 	unsigned int num_records = *(unsigned int *)(hedr->data + 4);
 	// printf("hedr tes4 version %f\n", version);
 	return num_records;
 }
 
-api espp plugin_load(const char *path, int whole)
+api ESP plugin_load(const char *path, int whole)
 {
-	espp esp = calloc(1, sizeof(struct esp));
+	ESP esp = calloc(1, sizeof(struct esp));
 	file_name(esp->filename, path, '/');
 	esp->stream = fopen(path, "rb");
 	assertm(
@@ -102,7 +102,7 @@ api espp plugin_load(const char *path, int whole)
 	int num = 0;
 	while(Pos < esp->filesize)
 	{
-	grupp grp = read_grp(esp);
+	GRUP grp = read_grp(esp);
 	// if you want everything ready to use, uncomment this
 	//loop_grup(esp, grp);
 	insert(esp->grups, grp);
@@ -110,20 +110,20 @@ api espp plugin_load(const char *path, int whole)
 	return esp;
 }
 
-void skip_rcdb(espp esp, rcdp rcd, size_t);
-void read_rcd_buf_or_disk(espp esp, rcdp rcd, void **, size_t);
+void skip_rcdb(ESP esp, RCD rcd, size_t);
+void read_rcd_buf_or_disk(ESP esp, RCD rcd, void **, size_t);
 
-void read_rcdb_data(espp esp, rcdp rcd, rcdbp rcdb);
+void read_rcdb_data(ESP esp, RCD rcd, SRCD rcdb);
 
 static void *grp_temp[40000]; // keep this high
-static rcdbp rcdb_temp[40000]; // keep this high
+static SRCD rcdb_temp[40000]; // keep this high
 
 struct form_id build_form_id(unsigned int);
 
-grupp read_grp(espp esp)
+GRUP read_grp(ESP esp)
 {
 	spamf("read_grp\n");
-	grupp grp = calloc(1, sizeof(struct grup));
+	GRUP grp = calloc(1, sizeof(struct grup));
 	grp->g = 'g';
 	grp->id = esp->ids.grups++;
 	grp->esp = esp;
@@ -135,11 +135,11 @@ grupp read_grp(espp esp)
 	return grp;
 }
 
-rcdp read_rcd(espp esp)
+RCD read_rcd(ESP esp)
 {
 	spamf("read rcd\n");
 
-	rcdp rcd = calloc(1, sizeof(struct record));
+	RCD rcd = calloc(1, sizeof(struct record));
 
 	rcd->r = 'r';
 	rcd->id = esp->ids.records++;
@@ -169,10 +169,10 @@ rcdp read_rcd(espp esp)
 	return rcd;
 }
 
-rcdbp read_rcdb(espp esp, rcdp rcd)
+SRCD read_rcdb(ESP esp, RCD rcd)
 {
 	spamf("read rcdb\n");
-	rcdbp rcdb = calloc(1, sizeof(struct subrecord));
+	SRCD rcdb = calloc(1, sizeof(struct subrecord));
 	rcdb->s = 's';
 	rcdb->id = esp->ids.subrecords++;
 	read_rcd_buf_or_disk(esp, rcd, &rcdb->hed, sizeof(struct subrecord_header));
@@ -182,7 +182,7 @@ rcdbp read_rcdb(espp esp, rcdp rcd)
 	return rcdb;
 }
 
-void read_rcdb_data(espp esp, rcdp rcd, rcdbp rcdb)
+void read_rcdb_data(ESP esp, RCD rcd, SRCD rcdb)
 {
 	if (rcdb->data)
 		return;
@@ -194,7 +194,7 @@ void read_rcdb_data(espp esp, rcdp rcd, rcdbp rcdb)
 	read_rcd_buf_or_disk(esp, rcd, &rcdb->data, rcdb->hed->size);
 }
 
-unsigned int peek_type(espp esp)
+unsigned int peek_type(ESP esp)
 {
 	unsigned int *sgn;
 	read(esp, &sgn, sizeof(unsigned int));
@@ -202,7 +202,7 @@ unsigned int peek_type(espp esp)
 	return *sgn;
 }
 
-void loop_grup(espp esp, grupp grp)
+void loop_grup(ESP esp, GRUP grp)
 {
 	seek(grp->esp, grp->offset);
 	
@@ -212,12 +212,12 @@ void loop_grup(espp esp, grupp grp)
 	{
 		if (peek_type(esp) == *(unsigned int *)"GRUP")
 		{
-			grupp grp2 = read_grp(esp);
+			GRUP grp2 = read_grp(esp);
 			grp_temp[num++] = grp2;
 		}
 		else
 		{
-			rcdp rcd = read_rcd(esp);
+			RCD rcd = read_rcd(esp);
 			grp_temp[num++] = rcd;
 		}
 		assertm(num < 40000, "overflow");
@@ -229,7 +229,7 @@ void loop_grup(espp esp, grupp grp)
 	grp->looped = 1;
 }
 
-void loop_rcd(espp esp, rcdp rcd)
+void loop_rcd(ESP esp, RCD rcd)
 {
 	assertc(rcd->buf || Pos == rcd->offset);
 
@@ -244,7 +244,7 @@ void loop_rcd(espp esp, rcdp rcd)
 	while(rcd->pos - begin < rcd->size)
 	{
 		assertm(num < 40000, "overflow");
-		rcdbp rcdb = read_rcdb(esp, rcd);
+		SRCD rcdb = read_rcdb(esp, rcd);
 		//if (num == 0)
 		//read_rcdb_data(esp, rcd, rcdb);
 
@@ -252,7 +252,7 @@ void loop_rcd(espp esp, rcdp rcd)
 		{
 			// printf("oef");
 			read_rcdb_data(esp, rcd, rcdb);
-			rcdbp discard = read_rcdb(esp, rcd);
+			SRCD discard = read_rcdb(esp, rcd);
 			if (rcd->buf)
 				printf("\ncompressed oversized sub!!\n\n");
 			skip_rcdb(esp, rcd, *(unsigned int *)rcdb->data);
@@ -265,7 +265,7 @@ void loop_rcd(espp esp, rcdp rcd)
 		insert(rcd->rcdbs, rcdb_temp[i]);
 }
 
-api void esp_check_grup(grupp grp)
+api void esp_check_grup(GRUP grp)
 {
 	if (grp==NULL)
 		return;
@@ -273,14 +273,14 @@ api void esp_check_grup(grupp grp)
 		loop_grup(grp->esp, grp);
 }
 
-api void esp_check_rcd(rcdp rcd)
+api void esp_check_rcd(RCD rcd)
 {
 	if (rcd->partial)
 	{
 		//printf("checked partial rcd\n");
 		for (unsigned int i = 0; i < rcd->rcdbs->size; i++)
 		{
-			rcdbp rcdb = rcd->rcdbs->elements[i];
+			SRCD rcdb = rcd->rcdbs->elements[i];
 			if (rcdb->data)
 				continue;
 			if (rcd->buf)
@@ -293,7 +293,7 @@ api void esp_check_rcd(rcdp rcd)
 	}
 }
 
-void read_rcd_buf_or_disk(espp esp, rcdp rcd, void **dest, size_t size)
+void read_rcd_buf_or_disk(ESP esp, RCD rcd, void **dest, size_t size)
 {
 	if (rcd->buf)
 		*dest = rcd->buf + rcd->pos;
@@ -302,7 +302,7 @@ void read_rcd_buf_or_disk(espp esp, rcdp rcd, void **dest, size_t size)
 	rcd->pos += size;
 }
 
-void skip_rcdb(espp esp, rcdp rcd, size_t n)
+void skip_rcdb(ESP esp, RCD rcd, size_t n)
 {
 	// printf("skip %u\n", n);
 	if (!rcd->buf)
@@ -315,13 +315,13 @@ void skip_rcdb(espp esp, rcdp rcd, size_t n)
 
 //void make_top_grup_revisit
 
-api grupp esp_top_grup(cespp esp, const char type[5])
+api GRUP esp_top_grup(const ESP esp, const char type[5])
 {
 	if (esp==NULL)
 		return NULL;
 	for (unsigned int i = 0; i < esp->grups->size; i++)
 	{
-	grupp grp = esp->grups->elements[i];
+	GRUP grp = esp->grups->elements[i];
 	if (*(unsigned int *)type == grp->hed->label)
 	return esp->grups->elements[i];
 	}
@@ -339,16 +339,16 @@ inline struct form_id build_form_id(unsigned int formId)
 
 // We do not map the TES4 -> MASTers
 // For my mod, this is fine
-api rcdp esp_get_form_id(unsigned int formId)
+api RCD esp_get_form_id(unsigned int formId)
 {
 	struct form_id form_id;
 	form_id = build_form_id(formId);
-	espp esp = get_plugins()[form_id.modIndex];
+	ESP esp = get_plugins()[form_id.modIndex];
 	if (esp == NULL)
 	return NULL;
 	for (unsigned int j = 0; j < esp->records->size; j++)
 	{
-	rcdp rcd = esp->records->elements[j];
+	RCD rcd = esp->records->elements[j];
 	if (rcd->form_id.objectIndex == form_id.objectIndex)
 	return rcd;
 	}
@@ -365,20 +365,20 @@ api void esp_array_loop(EspCArray *array, void (*func)(subrecord *field, void *d
 }
 */
 
-api revised_array *esp_filter_objects(cespp esp, const char type[5])
+api revised_array *esp_filter_objects(const ESP esp, const char type[5])
 {
 	revised_array *filtered;
 	narray(&filtered, 100);
 	for (unsigned int i = 0; i < esp->records->size; i++)
 	{
-	record *record = esp->records->elements[i];
+	RCD record = esp->records->elements[i];
 	if (record->hed->sgn == *(unsigned int *)type)
 	insert(filtered, record);
 	}
 	return filtered;
 }
 
-char *uncompress_record(espp esp, rcdp rcd)
+char *uncompress_record(ESP esp, RCD rcd)
 {
 	//printf("uncompress\n");
 	// char *src = rcd->data;
@@ -399,12 +399,12 @@ char *uncompress_record(espp esp, rcdp rcd)
 	return dest;
 }
 
-api esppp get_plugins()
+api ESP *get_plugins()
 {
 	return plugins;
 }
 
-api espp has_plugin(const char *name)
+api ESP has_plugin(const char *name)
 {
 	for (int i = PLUGINS; i-- > 0;)
 	if (plugins[i] != NULL && 0 == strcmp(name, plugins[i]->filename))
@@ -412,9 +412,9 @@ api espp has_plugin(const char *name)
 	return NULL;
 }
 
-api void free_plugin(esppp p)
+api void free_plugin(ESP *p)
 {
-	espp esp = *p;
+	ESP esp = *p;
 	*p = NULL;
 	if (esp == NULL)
 	return;
@@ -424,7 +424,7 @@ api void free_plugin(esppp p)
 	plugins[i] = NULL;
 	for (unsigned int i = 0; i < esp->records->size; i++)
 	{
-	rcdp rcd = esp->records->elements[i];
+	RCD rcd = esp->records->elements[i];
 	if (rcd->hed->flags & 0x00040000)
 	free(rcd->buf);
 	free_esp_array(&rcd->rcdbs);
@@ -465,7 +465,7 @@ inline void insert(revised_array * a, void * element) {
 	a->elements[a->size++] = element;
 }
 
-static int disk_read(espp esp, void **data, size_t size)
+static int disk_read(ESP esp, void **data, size_t size)
 {
 	if (size < 1)
 		return 0;
@@ -477,14 +477,14 @@ static int disk_read(espp esp, void **data, size_t size)
 	return pos;
 }
 
-static int disk_seek(espp esp, long int offset)
+static int disk_seek(ESP esp, long int offset)
 {
 	Pos = offset;
 	int ok = fseek((FILE *)esp->stream, offset, SEEK_SET);
 	return ok;
 }
 
-static long int disk_tell(espp esp)
+static long int disk_tell(ESP esp)
 {
 	unsigned pos = ftell((FILE *)esp->stream);
 	return pos;

@@ -22,7 +22,7 @@ namespace skyrim
 		Construct();
 	}
 
-	void ni_node_omit_callback(Rd *rd, NiNode *block)
+	void ni_node_omit_callback(RD rd, NiNode *block)
 	{
 		// theres too many hint nodes in a skinned mesh that we dont care about
 		if (rd->current != 0)
@@ -34,7 +34,7 @@ namespace skyrim
 
 	void MeshSkinned::Construct()
 	{
-		Rd *rd = calloc_nifprd();
+		RD rd = calloc_nifprd();
 		rd->nif = model;
 		rd->data = this;
 		rd->ni_node_callback = ni_node_omit_callback;
@@ -96,7 +96,7 @@ namespace skyrim
 		Initial(skeleton);
 	}
 
-	void ni_skin_instance_callback(Rd *rd, NiSkinInstance *block)
+	void ni_skin_instance_callback(RD rd, NiSkinInstance *block)
 	{
 		MeshSkinned *meshSkinned = (MeshSkinned *)rd->data;
 		assertc(0 == strcmp(nif_get_block_type(meshSkinned->model, rd->parent), BSTriShapeS));
@@ -122,12 +122,12 @@ namespace skyrim
 		return vec2(u.f, v.f);
 	}
 
-	void ni_skin_data_callback(Rd *rd, NiSkinData *block)
+	void ni_skin_data_callback(RD rd, NiSkinData *block)
 	{
 		MeshSkinned *meshSkinned = (MeshSkinned *)rd->data;
 	}
 
-	void ni_skin_partition_callback(Rd *rd, NiSkinPartition *block)
+	void ni_skin_partition_callback(RD rd, NiSkinPartition *block)
 	{
 		MeshSkinned *meshSkinned = (MeshSkinned *)rd->data;
 		if (!block->vertex_data)

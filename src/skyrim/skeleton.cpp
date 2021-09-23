@@ -13,7 +13,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	static void ni_node_callback(Rd *, NiNode *);
+	static void ni_node_callback(RD, NiNode *);
 
 	Keyframes *skyrim_get_keyframes(const char *path)
 	{
@@ -36,7 +36,7 @@ namespace skyrim
 
 	void Skeleton::Construct()
 	{
-		Rd *rd = calloc_nifprd();
+		RD rd = calloc_nifprd();
 		rd->nif = model;
 		rd->data = this;
 		rd->ni_node_callback = ni_node_callback;
@@ -55,7 +55,7 @@ namespace skyrim
 		bone->rest = bone->matrixWorld;
 	}
 
-	Bone *Skeleton::MakeBoneHere(Rd *rd, NiNode *block)
+	Bone *Skeleton::MakeBoneHere(RD rd, NiNode *block)
 	{
 		//printf("bone name is %s\n", bone->name);
 		Bone *bone = new Bone();
@@ -71,7 +71,7 @@ namespace skyrim
 		return bone;
 	}
 
-	void ni_node_callback(Rd *rd, NiNode *block)
+	void ni_node_callback(RD rd, NiNode *block)
 	{
 		Skeleton *skeleton = (Skeleton *)rd->data;
 		Bone *bone = skeleton->MakeBoneHere(rd, block);
@@ -83,7 +83,7 @@ namespace skyrim
 			animation->Step();
 	}
 
-	Keyframes::Keyframes(Nif *model) : model(model)
+	Keyframes::Keyframes(NIF model) : model(model)
 	{
 		loop = true;
 		controllerSequence = nullptr;
@@ -115,7 +115,7 @@ namespace skyrim
 
 	void Animation::SimpleNonInterpolated()
 	{
-		Nif *model = keyframes->model;
+		NIF model = keyframes->model;
 		struct controlled_block_t *cbp;
 		for (unsigned int i = 0; i < keyframes->controllerSequence->A->num_controlled_blocks; i++)
 		{

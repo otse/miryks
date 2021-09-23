@@ -13,20 +13,19 @@
 
 namespace skyrim
 {
-	std::map<const char *, Nif *> nifs;
+	std::map<const char *, NIF> nifs;
 
-	std::map<const char *, Nif *> &ext_nif_map()
+	std::map<const char *, NIF> &ext_nif_map()
 	{
 		return nifs;
 	}
 
-	int ext_nif_save(const char *key, Nif *nif)
+	void ext_nif_save(const char *key, NIF nif)
 	{
 		nifs.emplace(key, nif);
-		return 1;
 	}
 
-	Nif *ext_nif_saved(const char *key)
+	NIF ext_nif_saved(const char *key)
 	{
 		auto has = nifs.find(key);
 		if (has != nifs.end())
@@ -34,7 +33,7 @@ namespace skyrim
 		return nullptr;
 	}
 
-	Res *get_resource(
+	RES get_resource(
 		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
@@ -42,24 +41,24 @@ namespace skyrim
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
 					   { return std::tolower(c); });
 		const char *s = str.c_str();
-		Res *res = bsa_find_more(s, flags);
+		RES res = bsa_find_more(s, flags);
 		if (res == NULL)
 			printf("no res at %s\n", s);
 		bsa_read(res);
 		return res;
 	}
 
-	Nif *get_nif(const char *path)
+	NIF get_nif(const char *path)
 	{
 		if (!path)
 			return nullptr;
-		Res *res = get_resource(path);
+		RES res = get_resource(path);
 		if (!res)
 			return nullptr;
-		if (Nif *saved = ext_nif_saved(res->path))
+		if (NIF saved = ext_nif_saved(res->path))
 			return saved;
 		bsa_read(res);
-		Nif *model = calloc_nifp();
+		NIF model = calloc_nifp();
 		model->path = res->path;
 		model->buf = res->buf;
 		nif_read(model);
@@ -69,9 +68,9 @@ namespace skyrim
 
 	Keyframes *load_keyframes_from_disk(const char *path)
 	{
-		if (Nif *saved = ext_nif_saved(path))
+		if (NIF saved = ext_nif_saved(path))
 			return new Keyframes(saved);
-		Nif *model = calloc_nifp();
+		NIF model = calloc_nifp();
 		model->path = path;
 		int len = fbuf(path, &model->buf);
 		nif_read(model);
@@ -80,13 +79,13 @@ namespace skyrim
 	}
 
 	
-	Esp *load_plugin(const char *filename, bool whole, bool essential)
+	ESP load_plugin(const char *filename, bool whole)
 	{
 		printf("Load Plugin %s\n", filename);
 		std::string path = std::string(editme) + "/Data/" + filename;
-		if (Esp *has = has_plugin(filename))
+		if (ESP has = has_plugin(filename))
 			return has;
-		Esp *plugin;
+		ESP plugin;
 		if (exists(path.c_str()))
 		{
 			plugin = plugin_load(path.c_str(), whole);
@@ -100,18 +99,17 @@ namespace skyrim
 		else
 		{
 			printf("couldn't find %s in /Data or /bin\n", filename);
-			if (essential)
-				exit(1);
+			exit(1);
 			return nullptr;
 		}
 		load_these_definitions(plugin);
 		return plugin;
 	}
 
-	Bsa *load_archive(const char *filename)
+	BSA load_archive(const char *filename)
 	{
 		printf("Load Archive %s\n", filename);
-		Bsa *bsa = bsa_get(filename);
+		BSA bsa = bsa_get(filename);
 		if (bsa)
 			return bsa;
 		std::string path = std::string(editme) + "/Data/" + filename;
@@ -130,7 +128,7 @@ namespace skyrim
 		return nullptr;
 	}
 
-	void load_these_definitions(Esp *plugin)
+	void load_these_definitions(ESP plugin)
 	{
 		// we only discovered top grups at this point,
 		// we need to build the objects within by "checking" them

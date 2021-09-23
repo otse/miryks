@@ -9,23 +9,23 @@
 #define Blocks nif->blocks
 #define Skips  rd->skips
 
-void visit (Rd *, int, int);
+void visit (RD, int, int);
 
-api Rd *calloc_nifprd() {
-	Rd *rd = calloc(1, sizeof(Rd));
+api RD calloc_nifprd() {
+	RD rd = calloc(1, sizeof(Rd));
 	return rd;
 }
 
-api void free_nifprd(Rd **p) {
-	Rd *rd = *p;
+api void free_nifprd(RD *p) {
+	RD rd = *p;
 	free(rd->skips);
 	free(rd);
 	*p = NULL;
 }
 
-api void nif_rd(Rd *rd) {
+api void nif_rd(RD rd) {
 	// printf("nif rd\n");
-	Nif *nif = rd->nif;
+	NIF nif = rd->nif;
 	assertm(rd->nif!=NULL, "nifrd nif not set");
 	rd->skips = calloc(Hedr->num_blocks, sizeof(char));
 	//rd->nif = nif;
@@ -38,9 +38,9 @@ api void nif_rd(Rd *rd) {
 
 // needs rewriting some time
 
-static void visit(Rd *rd, int parent, int current)
+static void visit(RD rd, int parent, int current)
 {
-	Nif *nif = rd->nif;
+	NIF nif = rd->nif;
 	if (-1 == current || rd->skips[current])
 	return;
 	rd->parent = parent; rd->current = current;

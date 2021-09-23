@@ -17,7 +17,7 @@ void overlay_models()
 
 	for (const auto &[key, value] : ext_nif_map())
 	{
-		Nif *nif = value;
+		NIF nif = value;
 
 		//if (!nif->path)
 		//continue;

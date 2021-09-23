@@ -36,10 +36,10 @@ namespace skyrim
 		Mesh();
 		Mesh(const char *);
 		~Mesh();
-		Nif *model = nullptr;
+		NIF model = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
-		Group *make_new_group(Rd *);
+		Group *make_new_group(RD);
 		void Construct();
 		void Step();
 		void Misty();
@@ -61,7 +61,7 @@ namespace skyrim
 	class SkinnedMesh
 	{
 	public:
-		MeshSkinned *meshSkinned = nullptr;
+		MeshSkinned *meshSkinned;
 		Skeleton *skeleton;
 		Animation *animation;
 		DrawGroup *drawGroup;

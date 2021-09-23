@@ -28,7 +28,7 @@ struct GroupBounded : Group
 	AABB aabb, obb;
 	GroupBounded();
 	virtual ~GroupBounded(){};
-	virtual void Update();
+	virtual void Update() override;
 };
 
 #endif
