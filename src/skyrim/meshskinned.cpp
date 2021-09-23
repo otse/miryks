@@ -15,11 +15,21 @@ using namespace dark;
 
 namespace skyrim
 {
-	MeshSkinned::MeshSkinned(const char *bucket) : Mesh(nullptr)
+	MeshSkinned::MeshSkinned(const char *bucket) : Mesh()
 	{
 		model = get_nif(bucket);
 		assertc(model);
 		Construct();
+	}
+
+	void ni_node_omit_callback(Rd *rd, NiNode *block)
+	{
+		// theres too many hint nodes in a skinned mesh that we dont care about
+		if (rd->current != 0)
+			return;
+		Mesh *mesh = (Mesh *)rd->data;
+		Group *group = mesh->make_new_group(rd);
+		matrix_from_common(group, block->common);
 	}
 
 	void MeshSkinned::Construct()
@@ -27,7 +37,7 @@ namespace skyrim
 		Rd *rd = calloc_nifprd();
 		rd->nif = model;
 		rd->data = this;
-		rd->ni_node_callback = ni_node_callback;
+		rd->ni_node_callback = ni_node_omit_callback;
 		rd->bs_tri_shape_callback = bs_tri_shape_callback;
 		rd->ni_skin_instance_callback = ni_skin_instance_callback;
 		rd->ni_skin_data_callback = ni_skin_data_callback;

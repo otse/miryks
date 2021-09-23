@@ -24,15 +24,17 @@ namespace skyrim
 	
 	class Mesh;
 	class MeshSkinned;
-	class Skeleton;
-	class Bone;
-	class Animation;
-	class Interior;
-	class Container;
 	class SkinnedMesh;
-	class Skeleton;
+
 	class Character;
 	class Creature;
+	class Skeleton;
+	class Bone;
+	class Keyframes;
+	class Animation;
+
+	class Interior;
+	class Container;
 
 	struct Cell
 	{

@@ -37,8 +37,9 @@ void opengl_gui()
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("tabs", tabBarFlags))
 	{
+		// map dark/list things to actual words
 		static std::map<const char *, const char *> map = {
-			{ "0", "Default" },
+			{ "0", "Everything else" },
 			{ References, STRINGIFY(References) },
 			{ Statics, STRINGIFY(Statics) },
 			{ Doors, STRINGIFY(Doors) },

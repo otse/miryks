@@ -7,7 +7,7 @@ material - it basically canonically sets hints and the shader for any given inst
 geometry - as it says  
 shader - code that i stole  
 drawgroup - this is an instance of a group. yes.  
-drawgroupsortable - ignore this and just use depth sorting  
+drawgroupflatsorted - just use depth sorting  
 renderable - old code  
 rendertarget - lets you render without disturbing the main screen  
 scene - lets you admit drawgroups that will get rendered, as well as lights  

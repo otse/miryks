@@ -7,6 +7,7 @@ namespace skyrim {
 	#if 1
     Character::Character(const char *raceId)
 	{
+		animation = nullptr;
 		race = skyrim_get_race(raceId);
 		skeleton = new Skeleton(race);
 		hat = head = body = hands = feet = nullptr;
@@ -19,14 +20,16 @@ namespace skyrim {
 			hands = new SkinnedMesh("clothes\\prisoner\\prisonercuffs_0.nif");
 			feet = new SkinnedMesh("clothes\\prisoner\\prisonershoes_0.nif");
 		}
+		hat->skeleton = skeleton;
+		body->skeleton = skeleton;
+		hands->skeleton = skeleton;
+		feet->skeleton = skeleton;
 		/*
 			//head = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardhat_0.nif");
 			//body = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greyboardrobe_0.nif");
 			//feet = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardboots_0.nif");
 		*/
-		//group->matrix = glm::translate(mat4(1), vec3(0, 0, 200));
 		drawGroup = new DrawGroup(nullptr, mat4(1.0));
-		/*
 		if (hat)
 			drawGroup->Add(hat->drawGroup);
 		if (head)
@@ -37,7 +40,7 @@ namespace skyrim {
 			drawGroup->Add(hands->drawGroup);
 		if (feet)
 			drawGroup->Add(feet->drawGroup);
-			*/
+		drawGroup->Update();
 	};
 
 	void Character::Place(const char *q)
@@ -45,7 +48,9 @@ namespace skyrim {
 		auto ref = dungeon->edIds.find(q);
 		if (ref == dungeon->edIds.end())
 			return;
+		printf("place at %s\n", q);
 		drawGroup->matrix = ref->second->matrix;
+		drawGroup->Update();
 		sceneDef->bigGroup->Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
@@ -54,8 +59,17 @@ namespace skyrim {
 		//sceneDef->Add(mirror);
 	}
 
+	void Character::SetAnimation(const char *path)
+	{
+		animation = new Animation(skyrim_get_keyframes(path));
+		animation->skeleton = skeleton;
+		skeleton->animation = animation;
+	}
+
 	void Character::Step()
 	{
+		if (skeleton)
+			skeleton->Step();
 		if (hat)
 			hat->Step();
 		if (head)

@@ -89,11 +89,12 @@ int main()
 	someDraugr = new Creature("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
 	someDraugr->SetAnimation("anims/draugr/alcove_wake.kf");
 	//someDraugr = new Creature("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
-	someDraugr->Place("gloomgendraugr");
+	//someDraugr->Place("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
 	someHuman = new Character();
 	someHuman->Place("gloomgenman");
+	someHuman->SetAnimation("anims/character/1hm_idle.kf");
 	//player1 = new Player();
 	program_while();
 	return 1;

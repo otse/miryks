@@ -28,6 +28,8 @@ namespace skyrim
 	callback(ni_skin_partition);
 	callback(bs_tri_shape);
 
+	void matrix_from_common(Group *, ni_common_layout_t *);
+
 	class Mesh
 	{
 	public:
@@ -60,9 +62,9 @@ namespace skyrim
 	{
 	public:
 		MeshSkinned *meshSkinned = nullptr;
-		Skeleton *skeleton = nullptr;
-		Animation *animation = nullptr;
-		DrawGroup *drawGroup = nullptr;
+		Skeleton *skeleton;
+		Animation *animation;
+		DrawGroup *drawGroup;
 		SkinnedMesh(const char *);
 		~SkinnedMesh();
 		void Step();

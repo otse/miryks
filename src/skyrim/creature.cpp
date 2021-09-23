@@ -39,9 +39,7 @@ namespace skyrim
 			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else
-		{
-			printf("actor put down cant find %s\n", q);
-		}
+			printf("cant place creature %s\n", q);
 	}
 
 	void Creature::Step()

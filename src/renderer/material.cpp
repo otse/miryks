@@ -161,7 +161,10 @@ void Material::Use()
 		{
 			char s[100];
 			snprintf(s, 100, "boneMatrices[%u]", u);
-			shader->SetMat4(s, boneMatrices[u]);
+			mat4 mat = mat4(1.0);
+			if (u < boneMatrices.size())
+				mat = boneMatrices[u];
+			shader->SetMat4(s, mat);
 		}
 	}
 

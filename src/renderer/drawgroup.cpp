@@ -19,6 +19,7 @@ DrawGroup::DrawGroup(Group *group, mat4 matrix)
 	parent = nullptr;
 	num++;
 	Reset();
+	Update();
 }
 
 DrawGroup::~DrawGroup()
@@ -42,13 +43,13 @@ void DrawGroup::Draw(const mat4 &left)
 {
 	if (Invisible())
 		return;
-	// big ouch
+	mat4 right = left * matrixWorld;
 	if (childGroups.size())
 		for (Group *child : childGroups)
 			if (dynamic_cast<DrawGroup *>(child))
-				child->DrawChilds(left);
+				child->Draw(right);
 	if (target)
-		target->DrawChilds(matrix);
+		target->DrawChilds(right);
 	DrawBounds();
 }
 
