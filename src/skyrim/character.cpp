@@ -4,21 +4,20 @@
 #include <renderer/drawgroup.h>
 
 namespace skyrim {
-	#if 1
-    Character::Character(const char *raceId)
+    SKCharacter::SKCharacter(const char *raceId)
 	{
 		animation = nullptr;
-		race = skyrim_get_race(raceId);
-		skeleton = new Skeleton(race);
+		race = SkyrimGetRace(raceId);
+		skeleton = new SKSkeleton(race);
 		hat = head = body = hands = feet = nullptr;
 		const bool beggar = true;
 		if (beggar)
 		{
-			hat = new SkinnedMesh("clothes\\beggarclothes\\hatm_0.nif");
+			hat = new SKSkinnedMesh("clothes\\beggarclothes\\hatm_0.nif");
 			//head = new BodyPart("actors\\character\\character assets\\malehead.nif");
-			body = new SkinnedMesh("clothes\\prisoner\\prisonerclothes_0.nif");
-			hands = new SkinnedMesh("clothes\\prisoner\\prisonercuffs_0.nif");
-			feet = new SkinnedMesh("clothes\\prisoner\\prisonershoes_0.nif");
+			body = new SKSkinnedMesh("clothes\\prisoner\\prisonerclothes_0.nif");
+			hands = new SKSkinnedMesh("clothes\\prisoner\\prisonercuffs_0.nif");
+			feet = new SKSkinnedMesh("clothes\\prisoner\\prisonershoes_0.nif");
 		}
 		hat->skeleton = skeleton;
 		body->skeleton = skeleton;
@@ -43,7 +42,7 @@ namespace skyrim {
 		drawGroup->Update();
 	};
 
-	void Character::Place(const char *q)
+	void SKCharacter::Place(const char *q)
 	{
 		auto ref = dungeon->edIds.find(q);
 		if (ref == dungeon->edIds.end())
@@ -59,14 +58,14 @@ namespace skyrim {
 		//sceneDef->Add(mirror);
 	}
 
-	void Character::SetAnimation(const char *path)
+	void SKCharacter::SetAnimation(const char *path)
 	{
-		animation = new Animation(skyrim_get_keyframes(path));
+		animation = new SKAnimation(skyrim_get_keyframes(path));
 		animation->skeleton = skeleton;
 		skeleton->animation = animation;
 	}
 
-	void Character::Step()
+	void SKCharacter::Step()
 	{
 		if (skeleton)
 			skeleton->Step();
@@ -87,7 +86,6 @@ namespace skyrim {
 			//drawGroup->Reset();
 		//}
 	}
-#endif
 #if 0
 	Player::Player()
 	{

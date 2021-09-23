@@ -6,8 +6,8 @@ namespace skyrim
 {
 	extern char *editme;
 	
-	class Record;
-	class Grup;
+	class SKRecord;
+	class SKGrup;
 
 	void ext_nif_save(const char *, NIF);
 	NIF ext_nif_saved(const char *);
@@ -25,31 +25,35 @@ namespace skyrim
 
 	void load_these_definitions(ESP);
 	
-	class Keyframes;
-	Keyframes *load_keyframes_from_disk(const char *);
+	class SKKeyframes;
+	SKKeyframes *load_keyframes_from_disk(const char *);
+
+	const auto GetNif = get_nif;
+	const auto GetResource = get_resource;
+	const auto LoadPlugin = load_plugin;
+	const auto LoadArchive = load_archive;
 	
-	class Mesh;
-	class MeshSkinned;
-	class SkinnedMesh;
+	class SKMesh;
+	class SKMeshSkinned;
+	class SKSkinnedMesh;
 
-	class Character;
-	class Creature;
-	class Skeleton;
-	class Bone;
-	class Keyframes;
-	class Animation;
+	class SKCharacter;
+	class SKCreature;
+	class SKSkeleton;
+	class SKBone;
+	class SKKeyframes;
+	class SKAnimation;
 
-	class Interior;
-	class Container;
+	class SKInterior;
+	class SKContainer;
 
-	struct Cell
+	struct SKCell
 	{
-		Record wrcd;
-		Grup persistent, temporary;
+		SKRecord wrcd;
+		SKGrup persistent, temporary;
 	};
+	SKRecord SkyrimGetRace(const char *);
 
-	Record skyrim_get_race(const char *);
-
-	Cell skyrim_get_interior_cell(const char *, int);
+	SKCell SkyrimGetCellInterior(const char *, int);
 
 }

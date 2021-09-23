@@ -13,14 +13,14 @@ using namespace skyrim;
 
 namespace dark
 {
-	Creature *someDraugr = nullptr, *meanSkelly = nullptr;
-	Character *someHuman = nullptr;
+	SKCreature *someDraugr = nullptr, *meanSkelly = nullptr;
+	SKCharacter *someHuman = nullptr;
 }
 
 namespace dark
 {
 //Player *player1 = nullptr;
-Interior *dungeon = nullptr;
+SKInterior *dungeon = nullptr;
 std::map<const char *, int> keys;
 }
 
@@ -37,7 +37,7 @@ void load_bucket()
 
 void load_gloomgen()
 {
-	dungeon = new Interior("GloomGen");
+	dungeon = new SKInterior("GloomGen");
 	dungeon->Load();
 	//player1 = new Player();
 }
@@ -86,13 +86,13 @@ int main()
 	refs_init();
 	put_it_fullscreen();
 	load_gloomgen();
-	someDraugr = new Creature("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
+	someDraugr = new SKCreature("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
 	someDraugr->SetAnimation("anims/draugr/alcove_wake.kf");
 	//someDraugr = new Creature("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//someDraugr->Place("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
-	someHuman = new Character();
+	someHuman = new SKCharacter();
 	someHuman->Place("gloomgenman");
 	someHuman->SetAnimation("anims/character/1hm_idle.kf");
 	//player1 = new Player();
@@ -113,7 +113,7 @@ void dark::reload_dungeon()
 	{
 		const char *edId = dungeon->edId;
 		delete dungeon;
-		dungeon = new Interior(edId);
+		dungeon = new SKInterior(edId);
 		dungeon->alreadyTeleported = true;
 		dungeon->Load();
 	}
@@ -127,7 +127,7 @@ void dark::reload_dungeon()
 
 void dark::simple_viewer(const char *path)
 {
-	static Mesh *mesh = nullptr;
+	static SKMesh *mesh = nullptr;
 	static DrawGroup *drawGroup = nullptr;
 	if (mesh)
 	{
@@ -135,7 +135,7 @@ void dark::simple_viewer(const char *path)
 		delete mesh;
 		delete drawGroup;
 	}
-	mesh = new Mesh(path);
+	mesh = new SKMesh(path);
 	drawGroup = new DrawGroup(
 		mesh->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->bigGroup->Add(drawGroup);

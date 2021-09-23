@@ -30,12 +30,12 @@ namespace skyrim
 
 	void matrix_from_common(Group *, ni_common_layout_t *);
 
-	class Mesh
+	class SKMesh
 	{
 	public:
-		Mesh();
-		Mesh(const char *);
-		~Mesh();
+		SKMesh();
+		SKMesh(const char *);
+		~SKMesh();
 		NIF model = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
@@ -48,25 +48,25 @@ namespace skyrim
 		std::vector<NiRef> shapes__;
 	};
 
-	class MeshSkinned : public Mesh
+	class SKMeshSkinned : public SKMesh
 	{
 	public:
 		NiRef lastShape;
-		MeshSkinned(const char *);
+		SKMeshSkinned(const char *);
 		void Construct();
-		void Step(Skeleton *);
-		void Initial(Skeleton *);
+		void Step(SKSkeleton *);
+		void Initial(SKSkeleton *);
 	};
 
-	class SkinnedMesh
+	class SKSkinnedMesh
 	{
 	public:
-		MeshSkinned *meshSkinned;
-		Skeleton *skeleton;
-		Animation *animation;
+		SKMeshSkinned *meshSkinned;
+		SKSkeleton *skeleton;
+		SKAnimation *animation;
 		DrawGroup *drawGroup;
-		SkinnedMesh(const char *);
-		~SkinnedMesh();
+		SKSkinnedMesh(const char *);
+		~SKSkinnedMesh();
 		void Step();
 	};
 }

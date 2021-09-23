@@ -16,9 +16,9 @@ namespace skyrim
 
 	typedef bool(*grupfuncp)(unsigned int &i);
 
-#define X Grup
+#define X SKGrup
 
-	class Grup
+	class SKGrup
 	{
 	public:
 		//const struct grup *grp;

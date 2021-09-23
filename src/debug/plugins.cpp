@@ -25,7 +25,7 @@ void im_subrecord(subrecord *);
 
 void im_grup(grupp grp, int top_grup = -1)
 {
-	Grup wgrp = grp; // invokes unlooped grup
+	SKGrup wgrp = grp; // invokes unlooped grup
 	char t[100];
 	snprintf(t, 100, "GRUP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))
@@ -50,7 +50,7 @@ void im_grup(grupp grp, int top_grup = -1)
 void im_record(record *rcd)
 {
 	char *edid = nullptr;
-	Record wrcd = rcd; // invokes read partials
+	SKRecord wrcd = rcd; // invokes read partials
 	subrecord *first = (subrecord *)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{

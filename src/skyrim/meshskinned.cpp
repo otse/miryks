@@ -15,7 +15,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	MeshSkinned::MeshSkinned(const char *bucket) : Mesh()
+	SKMeshSkinned::SKMeshSkinned(const char *bucket) : SKMesh()
 	{
 		model = get_nif(bucket);
 		assertc(model);
@@ -27,12 +27,12 @@ namespace skyrim
 		// theres too many hint nodes in a skinned mesh that we dont care about
 		if (rd->current != 0)
 			return;
-		Mesh *mesh = (Mesh *)rd->data;
+		SKMesh *mesh = (SKMesh *)rd->data;
 		Group *group = mesh->make_new_group(rd);
 		matrix_from_common(group, block->common);
 	}
 
-	void MeshSkinned::Construct()
+	void SKMeshSkinned::Construct()
 	{
 		RD rd = calloc_nifprd();
 		rd->nif = model;
@@ -51,7 +51,7 @@ namespace skyrim
 		baseGroup->Update();
 	}
 	
-	void MeshSkinned::Initial(Skeleton *skeleton)
+	void SKMeshSkinned::Initial(SKSkeleton *skeleton)
 	{
 		// "unoptimised" :)
 
@@ -81,7 +81,7 @@ namespace skyrim
 						material->boneMatrices.push_back(mat4(1.0));
 						continue;
 					}
-					Bone *bone = has->second;
+					SKBone *bone = has->second;
 					material->boneMatrices.push_back(bone->matrixWorld * inverse(bone->rest));
 					
 					//Group *node_group = groups[nsi->bones[partition->bones[i]]];
@@ -91,14 +91,14 @@ namespace skyrim
 		}
 	}
 
-	void MeshSkinned::Step(Skeleton *skeleton)
+	void SKMeshSkinned::Step(SKSkeleton *skeleton)
 	{
 		Initial(skeleton);
 	}
 
 	void ni_skin_instance_callback(RD rd, NiSkinInstance *block)
 	{
-		MeshSkinned *meshSkinned = (MeshSkinned *)rd->data;
+		SKMeshSkinned *meshSkinned = (SKMeshSkinned *)rd->data;
 		assertc(0 == strcmp(nif_get_block_type(meshSkinned->model, rd->parent), BSTriShapeS));
 		meshSkinned->lastShape = rd->parent;
 	}
@@ -124,12 +124,12 @@ namespace skyrim
 
 	void ni_skin_data_callback(RD rd, NiSkinData *block)
 	{
-		MeshSkinned *meshSkinned = (MeshSkinned *)rd->data;
+		SKMeshSkinned *meshSkinned = (SKMeshSkinned *)rd->data;
 	}
 
 	void ni_skin_partition_callback(RD rd, NiSkinPartition *block)
 	{
-		MeshSkinned *meshSkinned = (MeshSkinned *)rd->data;
+		SKMeshSkinned *meshSkinned = (SKMeshSkinned *)rd->data;
 		if (!block->vertex_data)
 			return;
 		unsigned int num_vertices = block->A->data_size / block->A->vertex_size;

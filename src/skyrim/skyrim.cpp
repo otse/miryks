@@ -7,13 +7,13 @@ namespace skyrim {
 
 	char *editme;
 
-	Record skyrim_get_race(const char *raceId)
+	SKRecord SkyrimGetRace(const char *raceId)
 	{
-		Record race;
-		Grup array;
+		SKRecord race;
+		SKGrup array;
 		GRUP top = esp_top_grup(get_plugins()[0], "RACE");
 		array(top).foreach([&](unsigned int &i) {
-			Record object = array.get<record *>(i);
+			SKRecord object = array.get<RCD>(i);
 			auto edId = object.editorId();
 			if (strcmp(edId, raceId) == 0)
 			{
@@ -26,21 +26,21 @@ namespace skyrim {
 		return race;
 	}
 
-	Cell skyrim_get_interior_cell(const char *edId, int plugin)
+	SKCell SkyrimGetCellInterior(const char *edId, int plugin)
 	{
-		Cell cell;
-		Grup a, b, c;
+		SKCell cell;
+		SKGrup a, b, c;
 		GRUP top = esp_top_grup(get_plugins()[plugin], "CELL");
 		a(top).foreach([&](unsigned int i) {
-		return b(a.get<grup *>(i)).foreach([&](unsigned int j) {
-		return c(b.get<grup *>(j)).foreach([&](unsigned int &k) {
-			Record wrcd = c.get<record *>(k);
-			Grup wgrp = c.get<grup *>(++k);
+		return b(a.get<GRUP>(i)).foreach([&](unsigned int j) {
+		return c(b.get<GRUP>(j)).foreach([&](unsigned int &k) {
+			SKRecord wrcd = c.get<RCD>(k);
+			SKGrup wgrp = c.get<GRUP>(++k);
 			if (wrcd.HasId(edId))
 			{
 				cell.wrcd = wrcd;
-				cell.persistent = wgrp.get<grup *>(0);
-				cell.temporary = wgrp.get<grup *>(1);
+				cell.persistent = wgrp.get<GRUP>(0);
+				cell.temporary = wgrp.get<GRUP>(1);
 				return true;
 			}
 			return false;

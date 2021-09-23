@@ -24,16 +24,16 @@ void cont_menu();
 
 namespace skyrim
 {
-	Cont *Cont::cur = nullptr;
+	SKContainer *SKContainer::cur = nullptr;
 
 	//ItemRenderer *itemRenderer = nullptr;
 
-	void Cont::Render()
+	void SKContainer::Render()
 	{
 		cont_menu();
 	}
 
-	void Cont::Init()
+	void SKContainer::Init()
 	{
 		unsigned int *coct = data<unsigned int *>("COCT");
 
@@ -45,12 +45,12 @@ namespace skyrim
 				unsigned int item, count;
 			};
 			Cnto *cnto = data<Cnto *>("CNTO", i);
-			Record wrcd = esp_get_form_id(cnto->item);
+			SKRecord wrcd = esp_get_form_id(cnto->item);
 			if (wrcd.valid())
 			{
 				for (unsigned int j = 0; j < cnto->count; j++)
 				{
-					Item item(wrcd);
+					SKItem item(wrcd);
 					items.push_back(item);
 				}
 			}
@@ -75,7 +75,7 @@ void cont_menu()
 
 	ImGui::Begin("Container Menu", nullptr, flags);
 
-	const Cont *cont = Cont::cur;
+	const SKContainer *cont = SKContainer::cur;
 
 	auto name = cont->data<const char *>("FULL");
 
@@ -83,7 +83,7 @@ void cont_menu()
 	ImGui::TextWrapped("%s with %u things", name, cont->items.size());
 	ImGui::Separator();
 
-	for (const Item &item : cont->items)
+	for (const SKItem &item : cont->items)
 	{
 		auto FULL = item.data<const char *>("FULL");
 		auto EDID = item.data<const char *>("EDID");

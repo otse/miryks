@@ -11,31 +11,31 @@ using namespace dark;
 
 namespace skyrim
 {
-	class Item;
-	class Container;
+	class SKItem;
+	class SKContainer;
 	//class ItemRenderer;
 
-	typedef Container Cont;
+	typedef SKContainer Cont;
 
 	//extern ItemRenderer *itemRenderer;
 
-	class Item : public Record {
+	class SKItem : public SKRecord {
 	public:
 		RenderTarget *myRt;
-		Item(Record rcd) : Record(rcd) {
+		SKItem(SKRecord rcd) : SKRecord(rcd) {
 			
 		}
 	};
 
-	class Container : public Record {
+	class SKContainer : public SKRecord {
 	public:
 		static Cont *cur;
-		Container(Record rcd) : Record(rcd)
+		SKContainer(SKRecord rcd) : SKRecord(rcd)
 		{
 			Init();
 		};
-		~Container() {}
-		std::vector<Item> items;
+		~SKContainer() {}
+		std::vector<SKItem> items;
 		void Init();
 		void Render();
 		void Activate() {

@@ -15,26 +15,26 @@ namespace skyrim
 {
 	static void ni_node_callback(RD, NiNode *);
 
-	Keyframes *skyrim_get_keyframes(const char *path)
+	SKKeyframes *skyrim_get_keyframes(const char *path)
 	{
 		return load_keyframes_from_disk(path);
 	}
 
-	Skeleton::Skeleton()
+	SKSkeleton::SKSkeleton()
 	{
 		animation = nullptr;
 		model = nullptr;
-		bones[-1] = new Bone();
+		bones[-1] = new SKBone();
 	}
 
-	Skeleton::Skeleton(Record race) : Skeleton()
+	SKSkeleton::SKSkeleton(SKRecord race) : SKSkeleton()
 	{
 		printf("skeleton anam %s\n", race.data<char *>("ANAM"));
 		model = get_nif(race.data<char *>("ANAM"));
 		Construct();
 	}
 
-	void Skeleton::Construct()
+	void SKSkeleton::Construct()
 	{
 		RD rd = calloc_nifprd();
 		rd->nif = model;
@@ -46,7 +46,7 @@ namespace skyrim
 		root->Update();
 	}
 
-	void matrix_from_common(Bone *bone, ni_common_layout_t *common)
+	void matrix_from_common(SKBone *bone, ni_common_layout_t *common)
 	{
 		bone->matrix = translate(bone->matrix, cast_vec3(&common->A->translation));
 		bone->matrix *= inverse(mat4(cast_mat3(&common->A->rotation)));
@@ -55,10 +55,10 @@ namespace skyrim
 		bone->rest = bone->matrixWorld;
 	}
 
-	Bone *Skeleton::MakeBoneHere(RD rd, NiNode *block)
+	SKBone *SKSkeleton::MakeBoneHere(RD rd, NiNode *block)
 	{
 		//printf("bone name is %s\n", bone->name);
-		Bone *bone = new Bone();
+		SKBone *bone = new SKBone();
 		bone->block = block;
 		bone->name = nif_get_string(rd->nif, block->common->F->name);
 		bones[rd->current] = bone;
@@ -73,17 +73,17 @@ namespace skyrim
 
 	void ni_node_callback(RD rd, NiNode *block)
 	{
-		Skeleton *skeleton = (Skeleton *)rd->data;
-		Bone *bone = skeleton->MakeBoneHere(rd, block);
+		SKSkeleton *skeleton = (SKSkeleton *)rd->data;
+		SKBone *bone = skeleton->MakeBoneHere(rd, block);
 	}
 
-	void Skeleton::Step()
+	void SKSkeleton::Step()
 	{
 		if (animation)
 			animation->Step();
 	}
 
-	Keyframes::Keyframes(NIF model) : model(model)
+	SKKeyframes::SKKeyframes(NIF model) : model(model)
 	{
 		loop = true;
 		controllerSequence = nullptr;
@@ -93,7 +93,7 @@ namespace skyrim
 		controllerSequence = (NiControllerSequence *)model->blocks[0];
 	}
 
-	Animation::Animation(Keyframes *keyframes) : keyframes(keyframes)
+	SKAnimation::SKAnimation(SKKeyframes *keyframes) : keyframes(keyframes)
 	{
 		skeleton = nullptr;
 		time = 0;
@@ -102,7 +102,7 @@ namespace skyrim
 			play = false;
 	}
 
-	void Animation::Step()
+	void SKAnimation::Step()
 	{
 		if (!play)
 			return;
@@ -113,7 +113,7 @@ namespace skyrim
 		skeleton->root->Update();
 	}
 
-	void Animation::SimpleNonInterpolated()
+	void SKAnimation::SimpleNonInterpolated()
 	{
 		NIF model = keyframes->model;
 		struct controlled_block_t *cbp;
@@ -130,7 +130,7 @@ namespace skyrim
 				continue;
 			}
 
-			Bone *bone = has->second;
+			SKBone *bone = has->second;
 			auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);
 			auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)

@@ -372,7 +372,7 @@ void dark::program_while()
 		if (dungeon)
 			dungeon->Update();
 
-		Container::Step();
+		SKContainer::Step();
 
 		//sceneDef->Order();
 		sceneDef->DrawItems();
