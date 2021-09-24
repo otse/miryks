@@ -2,7 +2,7 @@
 #include <dark/files.h>
 
 #include <skyrim/grup.h>
-#include <skyrim/mesh.h>
+#include <skyrim/model.h>
 
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>

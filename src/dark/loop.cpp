@@ -1,6 +1,6 @@
 #include <dark/dark.h>
 
-#include <skyrim/mesh.h>
+#include <skyrim/model.h>
 #include <skyrim/grup.h>
 #include <skyrim/interior.h>
 #include <skyrim/trash.h>

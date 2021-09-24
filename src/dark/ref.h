@@ -36,7 +36,7 @@ namespace dark
 		SKRecord baseObject;
 		mat4 translation, rotation, scale;
 		mat4 matrix;
-		SKMesh *mesh;
+		SKModel *model;
 		Group *refGroup;
 		DrawGroup *drawGroup = nullptr;
 		PointLight *pointLight;

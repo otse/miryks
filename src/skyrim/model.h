@@ -11,7 +11,7 @@
 
 #include "skeleton.h"
 
-#define callback(x) void (x ## _callback) (Rd *, x ## _t *)
+#define callback(x) void (x ## _callback) (RD, x ## _t *)
 
 namespace skyrim
 {
@@ -30,12 +30,12 @@ namespace skyrim
 
 	void matrix_from_common(Group *, ni_common_layout_t *);
 
-	class SKMesh
+	class SKModel
 	{
 	public:
-		SKMesh();
-		SKMesh(const char *);
-		~SKMesh();
+		SKModel();
+		SKModel(const char *);
+		~SKModel();
 		NIF model = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
@@ -48,11 +48,11 @@ namespace skyrim
 		std::vector<NiRef> shapes__;
 	};
 
-	class SKMeshSkinned : public SKMesh
+	class SKModelSkinned : public SKModel
 	{
 	public:
 		NiRef lastShape;
-		SKMeshSkinned(const char *);
+		SKModelSkinned(const char *);
 		void Construct();
 		void Step(SKSkeleton *);
 		void Initial(SKSkeleton *);
@@ -61,7 +61,7 @@ namespace skyrim
 	class SKSkinnedMesh
 	{
 	public:
-		SKMeshSkinned *meshSkinned;
+		SKModelSkinned *modelSkinned;
 		SKSkeleton *skeleton;
 		SKAnimation *animation;
 		DrawGroup *drawGroup;

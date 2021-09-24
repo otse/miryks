@@ -6,7 +6,7 @@ extern "C"
 #include "trash.h"
 
 #include <dark/dark.h>
-#include <skyrim/mesh.h>
+#include <skyrim/model.h>
 
 #include <imgui.h>
 

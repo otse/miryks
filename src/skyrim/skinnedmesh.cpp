@@ -1,4 +1,4 @@
-#include <skyrim/mesh.h>
+#include <skyrim/model.h>
 
 #include <renderer/drawgroup.h>
 
@@ -8,14 +8,14 @@ namespace skyrim
 	{
 		skeleton = nullptr;
 		animation = nullptr;
-		meshSkinned = new SKMeshSkinned(path);
+		modelSkinned = new SKModelSkinned(path);
 		drawGroup = new DrawGroup(
-			meshSkinned->baseGroup, mat4(1.0));
+			modelSkinned->baseGroup, mat4(1.0));
 	}
 
 	void SKSkinnedMesh::Step()
 	{
-		if (meshSkinned && skeleton)
-			meshSkinned->Step(skeleton);
+		if (modelSkinned && skeleton)
+			modelSkinned->Step(skeleton);
 	}
 }

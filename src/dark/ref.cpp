@@ -4,7 +4,7 @@
 
 #include <skyrim/record.h>
 #include <skyrim/grup.h>
-#include <skyrim/mesh.h>
+#include <skyrim/model.h>
 #include <skyrim/trash.h>
 
 #include <algorithm>
@@ -25,7 +25,7 @@ namespace dark
 {
 	Ref::Ref(crecordp rcd) : SKRecord(rcd)
 	{
-		mesh = nullptr;
+		model = nullptr;
 		drawGroup = nullptr;
 		pointLight = nullptr;
 		spotLight = nullptr;
@@ -47,8 +47,8 @@ namespace dark
 	{
 		if (baseObject.sig("MSTT"))
 		{
-			if(mesh)
-				mesh->Step();
+			if(model)
+				model->Step();
 		}
 	}
 
@@ -87,15 +87,15 @@ namespace dark
 		matrix = translation * rotation * scale;
 	}
 
-	SKMesh *create_simple_mesh_from_modl(const char *modl)
+	SKModel *create_simple_model_from_modl(const char *modl)
 	{
-		static std::map<const char *, SKMesh *> map;
+		static std::map<const char *, SKModel *> map;
 		auto has = map.find(modl);
 		if (has != map.end())
 			return has->second;
-		SKMesh *mesh = new SKMesh(modl);
-		map.emplace(modl, mesh);
-		return mesh;
+		SKModel *model = new SKModel(modl);
+		map.emplace(modl, model);
+		return model;
 	}
 
 	void Ref::ForBaseId(formId baseId)
@@ -142,7 +142,7 @@ namespace dark
 			}
 			else
 			{
-				mesh = create_simple_mesh_from_modl(modl);
+				model = create_simple_model_from_modl(modl);
 			}
 			if (baseObject.sig(CONT))
 			{
@@ -155,7 +155,7 @@ namespace dark
 
 			auto modl = baseObject.data<const char *>("MODL", 0);
 
-			mesh = create_simple_mesh_from_modl(modl);
+			model = create_simple_model_from_modl(modl);
 		}
 		else if (baseObject.sig(LIGH))
 		{
@@ -231,11 +231,11 @@ namespace dark
 			baseObject = nullptr; // invalidate
 		}
 
-		if (mesh)
+		if (model)
 		{
 			if (baseObject.rcd->hed->formId != 0x32)
 			{
-				drawGroup = new DrawGroupFlatSorted(mesh->baseGroup, matrix);
+				drawGroup = new DrawGroupFlatSorted(model->baseGroup, matrix);
 				sceneDef->bigGroup->Add(drawGroup);
 				int i = 0;
 				for (auto thing : Things)

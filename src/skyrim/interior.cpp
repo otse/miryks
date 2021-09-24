@@ -1,9 +1,9 @@
 #include <skyrim_units>
 
-#include "skyrim.h"
-#include "interior.h"
-#include "mesh.h"
-#include "grup.h"
+#include <skyrim/skyrim.h>
+#include <skyrim/interior.h>
+#include <skyrim/model.h>
+#include <skyrim/grup.h>
 
 #include <algorithm>
 #include <cctype>
@@ -116,7 +116,7 @@ namespace skyrim
 		Refs::Nearby();
 
 		for (Ref *mstt : mstts)
-			mstt->mesh->Misty();
+			mstt->model->Misty();
 	}
 
 } // namespace dark

@@ -3,7 +3,7 @@ extern "C"
 #include <half.h>
 }
 
-#include "mesh.h"
+#include <skyrim/model.h>
 
 #include <renderer/shader.h>
 #include <renderer/texture.h>
@@ -15,7 +15,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	SKMeshSkinned::SKMeshSkinned(const char *bucket) : SKMesh()
+	SKModelSkinned::SKModelSkinned(const char *bucket) : SKModel()
 	{
 		model = get_nif(bucket);
 		assertc(model);
@@ -27,12 +27,12 @@ namespace skyrim
 		// theres too many hint nodes in a skinned mesh that we dont care about
 		if (rd->current != 0)
 			return;
-		SKMesh *mesh = (SKMesh *)rd->data;
+		SKModel *mesh = (SKModel *)rd->data;
 		Group *group = mesh->make_new_group(rd);
 		matrix_from_common(group, block->common);
 	}
 
-	void SKMeshSkinned::Construct()
+	void SKModelSkinned::Construct()
 	{
 		RD rd = calloc_nifprd();
 		rd->nif = model;
@@ -51,7 +51,7 @@ namespace skyrim
 		baseGroup->Update();
 	}
 	
-	void SKMeshSkinned::Initial(SKSkeleton *skeleton)
+	void SKModelSkinned::Initial(SKSkeleton *skeleton)
 	{
 		// "unoptimised" :)
 
@@ -91,16 +91,16 @@ namespace skyrim
 		}
 	}
 
-	void SKMeshSkinned::Step(SKSkeleton *skeleton)
+	void SKModelSkinned::Step(SKSkeleton *skeleton)
 	{
 		Initial(skeleton);
 	}
 
 	void ni_skin_instance_callback(RD rd, NiSkinInstance *block)
 	{
-		SKMeshSkinned *meshSkinned = (SKMeshSkinned *)rd->data;
-		assertc(0 == strcmp(nif_get_block_type(meshSkinned->model, rd->parent), BSTriShapeS));
-		meshSkinned->lastShape = rd->parent;
+		SKModelSkinned *modelSkinned = (SKModelSkinned *)rd->data;
+		assertc(0 == strcmp(nif_get_block_type(modelSkinned->model, rd->parent), BSTriShapeS));
+		modelSkinned->lastShape = rd->parent;
 	}
 
 	static vec3 bytestofloat(void *in)
@@ -124,12 +124,12 @@ namespace skyrim
 
 	void ni_skin_data_callback(RD rd, NiSkinData *block)
 	{
-		SKMeshSkinned *meshSkinned = (SKMeshSkinned *)rd->data;
+		SKModelSkinned *modelSkinned = (SKModelSkinned *)rd->data;
 	}
 
 	void ni_skin_partition_callback(RD rd, NiSkinPartition *block)
 	{
-		SKMeshSkinned *meshSkinned = (SKMeshSkinned *)rd->data;
+		SKModelSkinned *modelSkinned = (SKModelSkinned *)rd->data;
 		if (!block->vertex_data)
 			return;
 		unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
@@ -148,7 +148,7 @@ namespace skyrim
 			Geometry *geometry = new Geometry();
 			group->geometry = geometry;
 			geometry->skinning = true;
-			geometry->material = new Material(*meshSkinned->lastGroup->geometry->material);
+			geometry->material = new Material(*modelSkinned->lastGroup->geometry->material);
 			geometry->material->tangents = tangents;
 			geometry->material->bones = partition->nums->bones;
 			geometry->material->skinning = true;
@@ -198,8 +198,8 @@ namespace skyrim
 					{remap[triangle.a], remap[triangle.b], remap[triangle.c]} );
 			}
 			geometry->SetupMesh();
-			meshSkinned->lastGroup->Add(group);
-			meshSkinned->lastGroup->Update();
+			modelSkinned->lastGroup->Add(group);
+			modelSkinned->lastGroup->Update();
 		}
 	}
 

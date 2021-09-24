@@ -2,7 +2,7 @@
 
 #include <skyrim/actors.h>
 #include <skyrim/record.h>
-#include <skyrim/mesh.h>
+#include <skyrim/model.h>
 #include <skyrim/interior.h>
 
 #include <renderer/drawgroup.h>
@@ -17,7 +17,7 @@ namespace skyrim
 		drawGroup = nullptr;
 		race = SkyrimGetRace(raceId);
 		skeleton = new SKSkeleton(race);
-		meshSkinned = new SKMeshSkinned(path);
+		modelSkinned = new SKModelSkinned(path);
 	}
 
 	void SKCreature::SetAnimation(const char *path)
@@ -33,7 +33,7 @@ namespace skyrim
 		if (ref != dungeon->edIds.end())
 		{
 			drawGroup = new DrawGroup(
-				meshSkinned->baseGroup, ref->second->matrix);
+				modelSkinned->baseGroup, ref->second->matrix);
 			//drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
 			//drawGroup->Add(new DrawGroup(skeleton->baseBone->group, mat4(1.0));
 			sceneDef->bigGroup->Add(drawGroup);
@@ -46,8 +46,8 @@ namespace skyrim
 	{
 		if (skeleton)
 			skeleton->Step();
-		if (meshSkinned)
-			meshSkinned->Step(skeleton);
+		if (modelSkinned)
+			modelSkinned->Step(skeleton);
 		//const float merry = 0.002;
 		//if (drawGroup)
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));

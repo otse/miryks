@@ -1,6 +1,6 @@
 #pragma once
 
-#include <skyrim/mesh.h>
+#include <skyrim/model.h>
 #include <skyrim/grup.h>
 
 namespace skyrim
@@ -8,7 +8,7 @@ namespace skyrim
 	class SKCreature
 	{
 	public:
-		SKMeshSkinned *meshSkinned;
+		SKModelSkinned *modelSkinned;
 		SKSkinnedMesh *skinnedMesh;
 		SKSkeleton *skeleton;
 		SKAnimation *animation;

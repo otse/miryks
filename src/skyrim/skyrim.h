@@ -33,8 +33,8 @@ namespace skyrim
 	const auto LoadPlugin = load_plugin;
 	const auto LoadArchive = load_archive;
 	
-	class SKMesh;
-	class SKMeshSkinned;
+	class SKModel;
+	class SKModelSkinned;
 	class SKSkinnedMesh;
 
 	class SKCharacter;

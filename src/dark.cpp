@@ -119,7 +119,7 @@ void dark::reload_dungeon()
 	}
 }
 
-#include <skyrim/mesh.h>
+#include <skyrim/model.h>
 
 #include <renderer/scene.h>
 #include <renderer/group.h>
@@ -127,17 +127,17 @@ void dark::reload_dungeon()
 
 void dark::simple_viewer(const char *path)
 {
-	static SKMesh *mesh = nullptr;
+	static SKModel *model = nullptr;
 	static DrawGroup *drawGroup = nullptr;
-	if (mesh)
+	if (model)
 	{
 		drawGroup->parent->Remove(drawGroup);
-		delete mesh;
+		delete model;
 		delete drawGroup;
 	}
-	mesh = new SKMesh(path);
+	model = new SKModel(path);
 	drawGroup = new DrawGroup(
-		mesh->baseGroup, translate(mat4(1.0), personCam->pos));
+		model->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->bigGroup->Add(drawGroup);
 	hide_cursor();
 	cameraCur = viewerCam;
