@@ -28,7 +28,7 @@ namespace skyrim
 		if (rd->current != 0)
 			return;
 		SKModel *mesh = (SKModel *)rd->data;
-		Group *group = mesh->make_new_group(rd);
+		Group *group = mesh->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 	}
 

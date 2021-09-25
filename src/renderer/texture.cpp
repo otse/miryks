@@ -11,6 +11,9 @@ extern "C"
 
 #include <algorithm>
 
+#define MIPMAP 1
+#define GENERATE_MIPMAP 0
+
 static std::map<const std::string, Texture *> textures;
 
 inline std::string lowercase(const char *c)
@@ -77,6 +80,10 @@ void Texture::load()
 
 	glGenTextures(1, &tid);
 
+	#if !MIPMAP
+	count = 1;
+	#endif
+
 	glBindTexture(GL_TEXTURE_2D, tid);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
@@ -120,7 +127,13 @@ void Texture::load()
 		//log_(path, " is a 4K texture");
 	}
 
-	for (int i = 0; i < count && (w || h); ++i)
+	#if GENERATE_MIPMAP
+	int fakecount = 1;
+	#else
+	int fakecount = count;
+	#endif
+
+	for (int i = 0; i < fakecount && (w || h); ++i)
 	{
 		if (w == 0 || h == 0)
 		{ // 0x1 0x2 resolutions
@@ -140,7 +153,9 @@ void Texture::load()
 	dds_free(dds);
 
 	// takes a long time
-	//glGenerateMipmap(GL_TEXTURE_2D);
+	#if GENERATE_MIPMAP
+	glGenerateMipmap(GL_TEXTURE_2D);
+	#endif
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

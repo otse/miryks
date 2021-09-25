@@ -50,10 +50,10 @@ namespace skyrim
 
 	void SKModel::Step()
 	{
-
+		
 	}
 
-	Group *SKModel::make_new_group(RD rd)
+	Group *SKModel::MakeNewGroup(RD rd)
 	{
 		Group *group = new GroupBounded();
 		groups[rd->current] = group;
@@ -74,7 +74,7 @@ namespace skyrim
 	{
 		// printf("ni node callback\n");
 		SKModel *model = (SKModel *)rd->data;
-		Group *group = model->make_new_group(rd);
+		Group *group = model->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 	}
 
@@ -101,7 +101,7 @@ namespace skyrim
 		// printf("model.cpp bs tri shape callback !!! ");
 		SKModel *model = (SKModel *)rd->data;
 		model->shapes__.push_back(rd->current);
-		Group *group = model->make_new_group(rd);
+		Group *group = model->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 		Geometry *geometry = new Geometry();
 		group->geometry = geometry;

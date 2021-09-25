@@ -39,7 +39,7 @@ namespace skyrim
 		NIF model = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
-		Group *make_new_group(RD);
+		Group *MakeNewGroup(RD);
 		void Construct();
 		void Step();
 		void Misty();
