@@ -16,10 +16,10 @@ namespace dark
 
 	void darkassert(bool);
 
-	extern SKInterior *dungeon;
+	extern Interior *dungeon;
 	//extern Player *player1;
-	extern SKCreature *someDraugr, *meanSkelly;
-	extern SKCharacter *someHuman;
+	extern Monster *someDraugr, *meanSkelly;
+	extern Char *someHuman;
 
 	void reload_esp();
 	void reload_dungeon();

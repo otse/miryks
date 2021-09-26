@@ -15,7 +15,7 @@ using namespace dark;
 
 namespace skyrim
 {
-	SKModelSkinned::SKModelSkinned(const char *bucket) : SKModel()
+	ModelSkinned::ModelSkinned(const char *bucket) : Model()
 	{
 		model = get_nif(bucket);
 		assertc(model);
@@ -27,12 +27,12 @@ namespace skyrim
 		// theres too many hint nodes in a skinned mesh that we dont care about
 		if (rd->current != 0)
 			return;
-		SKModel *mesh = (SKModel *)rd->data;
+		Model *mesh = (Model *)rd->data;
 		Group *group = mesh->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 	}
 
-	void SKModelSkinned::Construct()
+	void ModelSkinned::Construct()
 	{
 		RD rd = calloc_nifprd();
 		rd->nif = model;
@@ -51,7 +51,7 @@ namespace skyrim
 		baseGroup->Update();
 	}
 	
-	void SKModelSkinned::Initial(SKSkeleton *skeleton)
+	void ModelSkinned::Initial(Skel *skeleton)
 	{
 		// "unoptimised" :)
 
@@ -81,7 +81,7 @@ namespace skyrim
 						material->boneMatrices.push_back(mat4(1.0));
 						continue;
 					}
-					SKBone *bone = has->second;
+					Bone *bone = has->second;
 					material->boneMatrices.push_back(bone->matrixWorld * inverse(bone->rest));
 					
 					//Group *node_group = groups[nsi->bones[partition->bones[i]]];
@@ -91,14 +91,14 @@ namespace skyrim
 		}
 	}
 
-	void SKModelSkinned::Step(SKSkeleton *skeleton)
+	void ModelSkinned::Step(Skel *skeleton)
 	{
 		Initial(skeleton);
 	}
 
 	void ni_skin_instance_callback(RD rd, NiSkinInstance *block)
 	{
-		SKModelSkinned *modelSkinned = (SKModelSkinned *)rd->data;
+		ModelSkinned *modelSkinned = (ModelSkinned *)rd->data;
 		assertc(0 == strcmp(nif_get_block_type(modelSkinned->model, rd->parent), BSTriShapeS));
 		modelSkinned->lastShape = rd->parent;
 	}
@@ -124,12 +124,12 @@ namespace skyrim
 
 	void ni_skin_data_callback(RD rd, NiSkinData *block)
 	{
-		SKModelSkinned *modelSkinned = (SKModelSkinned *)rd->data;
+		ModelSkinned *modelSkinned = (ModelSkinned *)rd->data;
 	}
 
 	void ni_skin_partition_callback(RD rd, NiSkinPartition *block)
 	{
-		SKModelSkinned *modelSkinned = (SKModelSkinned *)rd->data;
+		ModelSkinned *modelSkinned = (ModelSkinned *)rd->data;
 		if (!block->vertex_data)
 			return;
 		unsigned int num_vertices = block->A->data_size / block->A->vertex_size;

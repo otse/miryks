@@ -5,36 +5,36 @@
 
 namespace skyrim
 {
-	class SKCreature
+	class Monster
 	{
 	public:
-		SKModelSkinned *modelSkinned;
-		SKSkinnedMesh *skinnedMesh;
-		SKSkeleton *skeleton;
-		SKAnimation *animation;
+		ModelSkinned *modelSkinned;
+		SkinnedMesh *skinnedMesh;
+		Skel *skel;
+		Anim *anim;
 		DrawGroup *drawGroup;
-		SKCreature(const char *, const char *);
+		Monster(const char *, const char *);
 		void Place(const char *);
 		void SetAnimation(const char *);
 		void Step();
-		SKRecord race;
+		Record race;
 	};
 
-	class SKCharacter
+	class Char
 	{
 	public:
-		SKRecord race;
-		SKSkeleton *skeleton;
-		SKAnimation *animation;
-		SKSkinnedMesh *hat, *head, *body, *hands, *feet;
+		Record race;
+		Skel *skel;
+		Anim *anim;
+		SkinnedMesh *hat, *head, *body, *hands, *feet;
 		DrawGroup *drawGroup;
-		SKCharacter(const char * = "ImperialRace");
+		Char(const char * = "ImperialRace");
 		void SetAnimation(const char *);
 		void Step();
 		void Place(const char *);
 	};
 
-	class Player : public SKCharacter
+	class Player : public Char
 	{
 	public:
 		bool thirdPerson = false;

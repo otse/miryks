@@ -11,23 +11,23 @@ using namespace skyrim;
 
 namespace skyrim
 {
-	SKCreature::SKCreature(const char *raceId, const char *path)
+	Monster::Monster(const char *raceId, const char *path)
 	{
-		animation = nullptr;
+		anim = nullptr;
 		drawGroup = nullptr;
-		race = SkyrimGetRace(raceId);
-		skeleton = new SKSkeleton(race);
-		modelSkinned = new SKModelSkinned(path);
+		race = get_race(raceId);
+		skel = new Skel(race);
+		modelSkinned = new ModelSkinned(path);
 	}
 
-	void SKCreature::SetAnimation(const char *path)
+	void Monster::SetAnimation(const char *path)
 	{
-		animation = new SKAnimation(skyrim_get_keyframes(path));
-		animation->skeleton = skeleton;
-		skeleton->animation = animation;
+		anim = new Anim(get_keyframes(path));
+		anim->skel = skel;
+		skel->anim = anim;
 	}
 
-	void SKCreature::Place(const char *q)
+	void Monster::Place(const char *q)
 	{
 		auto ref = dungeon->edIds.find(q);
 		if (ref != dungeon->edIds.end())
@@ -42,12 +42,12 @@ namespace skyrim
 			printf("cant place creature %s\n", q);
 	}
 
-	void SKCreature::Step()
+	void Monster::Step()
 	{
-		if (skeleton)
-			skeleton->Step();
+		if (skel)
+			skel->Step();
 		if (modelSkinned)
-			modelSkinned->Step(skeleton);
+			modelSkinned->Step(skel);
 		//const float merry = 0.002;
 		//if (drawGroup)
 		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));

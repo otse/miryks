@@ -11,18 +11,18 @@ using namespace dark;
 
 namespace skyrim
 {
-	class SKInterior
+	class Interior
 	{
 	public:
-		SKInterior(const char *);
-		~SKInterior();
+		Interior(const char *);
+		~Interior();
 
-		SKCell cell;
+		CellCapture cell;
 		std::vector<Ref *> refs, labels, mstts;
 		std::map<std::string, Ref *> edIds;
 
 		void Update();
-		void Subgroup(SKGrup, int);
+		void Subgroup(Grup, int);
 		void Load();
 		void Unload();
 		void put_cam_on_random_xmarker();

@@ -10,63 +10,60 @@
 
 namespace skyrim
 {
-	class SKBone;
-	class SKSkeleton;
-	class SKKeyframes;
-	class SKAnimation;
+	class Bone;
+	class Skel;
+	class Keyf;
+	class Anim;
 
-	SKKeyframes *skyrim_get_keyframes(const char *);
+	Keyf *get_keyframes(const char *);
 
-	class SKSkeleton
+	class Skel
 	{
 	public:
-		std::map<NiRef, SKBone *> bones;
-		std::map<const std::string, SKBone *> bonesNamed;
-
+		std::map<NiRef, Bone *> bones;
+		std::map<const std::string, Bone *> bonesNamed;
 		NIF model;
-		SKBone *baseBone, *root;
-
-		SKAnimation *animation;
-
-		SKSkeleton();
-		SKSkeleton(SKRecord);
+		Bone *baseBone, *root;
+		Anim *anim;
+		Skel();
+		Skel(Rcd);
 		void Load(const char *);
 		void Construct();
 		void Step();
-		SKBone *MakeBoneHere(RD, NiNode *);
+		Bone *MakeBoneHere(RD, NiNode *);
 	protected:
 	};
 
-	class SKBone : public Group
+	class Bone : public Group
 	{
 	public:
 		const char *name;
 		NiNode *block;
 		mat4 rest, mod, diff;
-		SKBone() : Group()
+		Bone() : Group()
 		{
 			name = 0;
 			block = 0;
 		};
 	};
 
-	class SKKeyframes
+	class Keyf
 	{
 	public:
-		SKKeyframes(NIF);
-		NIF model;
+		Keyf(NIF);
+		NIF nif;
 		bool loop;
 		NiControllerSequence *controllerSequence;
 	};
 
-	class SKAnimation
+	class Anim
 	{
 	public:
-		SKSkeleton *skeleton;
 		float time;
 		bool play;
-		SKKeyframes *keyframes;
-		SKAnimation(SKKeyframes *);
+		Skel *skel;
+		Keyf *keyf;
+		Anim(Keyf *);
 		void Step();
 		void SimpleNonInterpolated();
 	};

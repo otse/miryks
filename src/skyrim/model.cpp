@@ -13,14 +13,14 @@ using namespace dark;
 
 namespace skyrim
 {
-	SKModel::SKModel()
+	Model::Model()
 	{
 		baseGroup = new GroupBounded();
 		groups[-1] = baseGroup;
 		lastGroup = baseGroup;
 	}
 	
-	SKModel::SKModel(const char *bucket) : SKModel()
+	Model::Model(const char *bucket) : Model()
 	{
 		if (!bucket)
 			return;
@@ -28,11 +28,11 @@ namespace skyrim
 		Construct();
 	}
 
-	SKModel::~SKModel()
+	Model::~Model()
 	{
 	}
 
-	void SKModel::Construct()
+	void Model::Construct()
 	{
 		RD rd = calloc_nifprd();
 		rd->nif = model;
@@ -48,12 +48,12 @@ namespace skyrim
 		baseGroup->Update();
 	}
 
-	void SKModel::Step()
+	void Model::Step()
 	{
 		
 	}
 
-	Group *SKModel::MakeNewGroup(RD rd)
+	Group *Model::MakeNewGroup(RD rd)
 	{
 		Group *group = new GroupBounded();
 		groups[rd->current] = group;
@@ -73,7 +73,7 @@ namespace skyrim
 	void ni_node_callback(RD rd, NiNode *block)
 	{
 		// printf("ni node callback\n");
-		SKModel *model = (SKModel *)rd->data;
+		Model *model = (Model *)rd->data;
 		Group *group = model->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 	}
@@ -99,7 +99,7 @@ namespace skyrim
 	{
 		//if (dynamic_cast<MeshSkinned *>(model))
 		// printf("model.cpp bs tri shape callback !!! ");
-		SKModel *model = (SKModel *)rd->data;
+		Model *model = (Model *)rd->data;
 		model->shapes__.push_back(rd->current);
 		Group *group = model->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
@@ -156,7 +156,7 @@ namespace skyrim
 	void bs_lighting_shader_property_callback(RD rd, BSLightingShaderProperty *block)
 	{
 		// printf("bs lighting shader property callback\n");
-		SKModel *model = (SKModel *)rd->data;
+		Model *model = (Model *)rd->data;
 		Geometry *geometry = model->lastGroup->geometry;
 		if (geometry)
 		{
@@ -192,7 +192,7 @@ namespace skyrim
 
 	void bs_effect_shader_property_callback(RD rd, BSEffectShaderProperty *block)
 	{
-		SKModel *model = (SKModel *)rd->data;
+		Model *model = (Model *)rd->data;
 		Geometry *geometry = model->lastGroup->geometry;
 		if (geometry)
 		{
@@ -218,7 +218,7 @@ namespace skyrim
 	void bs_shader_texture_set_callback(RD rd, BSShaderTextureSet *block)
 	{
 		// printf("bs shader texture set callback\n");
-		SKModel *model = (SKModel *)rd->data;
+		Model *model = (Model *)rd->data;
 		Group *group = model->lastGroup;
 		Geometry *geometry = group->geometry;
 		if (geometry)
@@ -245,7 +245,7 @@ namespace skyrim
 
 	void ni_alpha_property_callback(RD rd, NiAlphaProperty *block)
 	{
-		SKModel *model = (SKModel *)rd->data;
+		Model *model = (Model *)rd->data;
 		Group *group = model->lastGroup;
 		Geometry *geometry = group->geometry;
 		if (geometry)
@@ -286,11 +286,11 @@ namespace skyrim
 		return t < 0.5 ? 2 * t * t : t * (4 - 2 * t) - 1;
 	}
 
-	void SKModel::Misty()
+	void Model::Misty()
 	{
 		// mists
 		auto callback = [](RD rd, BSEffectShaderPropertyFloatController *block) {
-			SKModel *model = (SKModel *)rd->data;
+			Model *model = (Model *)rd->data;
 			auto target = (BSEffectShaderProperty *)nif_get_block(rd->nif, block->A->target);
 			//auto shape = (bs_tri_shape *)nif_get_block(rd->nif, target->meta.parent);
 			Group *group = nullptr;

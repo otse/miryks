@@ -66,16 +66,16 @@ namespace skyrim
 		return model;
 	}
 
-	SKKeyframes *load_keyframes_from_disk(const char *path)
+	Keyf *load_keyframes_from_disk(const char *path)
 	{
 		if (NIF saved = ext_nif_saved(path))
-			return new SKKeyframes(saved);
+			return new Keyf(saved);
 		NIF model = calloc_nifp();
 		model->path = path;
 		int len = fbuf(path, &model->buf);
 		nif_read(model);
 		ext_nif_save(path, model);
-		return new SKKeyframes(model);
+		return new Keyf(model);
 	}
 
 	

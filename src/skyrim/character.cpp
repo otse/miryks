@@ -4,25 +4,25 @@
 #include <renderer/drawgroup.h>
 
 namespace skyrim {
-    SKCharacter::SKCharacter(const char *raceId)
+    Char::Char(const char *raceId)
 	{
-		animation = nullptr;
-		race = SkyrimGetRace(raceId);
-		skeleton = new SKSkeleton(race);
+		anim = nullptr;
+		race = get_race(raceId);
+		skel = new Skel(race);
 		hat = head = body = hands = feet = nullptr;
 		const bool beggar = true;
 		if (beggar)
 		{
-			hat = new SKSkinnedMesh("clothes\\beggarclothes\\hatm_0.nif");
+			hat = new SkinnedMesh("clothes\\beggarclothes\\hatm_0.nif");
 			//head = new BodyPart("actors\\character\\character assets\\malehead.nif");
-			body = new SKSkinnedMesh("clothes\\prisoner\\prisonerclothes_0.nif");
-			hands = new SKSkinnedMesh("clothes\\prisoner\\prisonercuffs_0.nif");
-			feet = new SKSkinnedMesh("clothes\\prisoner\\prisonershoes_0.nif");
+			body = new SkinnedMesh("clothes\\prisoner\\prisonerclothes_0.nif");
+			hands = new SkinnedMesh("clothes\\prisoner\\prisonercuffs_0.nif");
+			feet = new SkinnedMesh("clothes\\prisoner\\prisonershoes_0.nif");
 		}
-		hat->skeleton = skeleton;
-		body->skeleton = skeleton;
-		hands->skeleton = skeleton;
-		feet->skeleton = skeleton;
+		hat->skel = skel;
+		body->skel = skel;
+		hands->skel = skel;
+		feet->skel = skel;
 		/*
 			//head = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardhat_0.nif");
 			//body = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greyboardrobe_0.nif");
@@ -42,7 +42,7 @@ namespace skyrim {
 		drawGroup->Update();
 	};
 
-	void SKCharacter::Place(const char *q)
+	void Char::Place(const char *q)
 	{
 		auto ref = dungeon->edIds.find(q);
 		if (ref == dungeon->edIds.end())
@@ -58,17 +58,17 @@ namespace skyrim {
 		//sceneDef->Add(mirror);
 	}
 
-	void SKCharacter::SetAnimation(const char *path)
+	void Char::SetAnimation(const char *path)
 	{
-		animation = new SKAnimation(skyrim_get_keyframes(path));
-		animation->skeleton = skeleton;
-		skeleton->animation = animation;
+		anim = new Anim(get_keyframes(path));
+		anim->skel = skel;
+		skel->anim = anim;
 	}
 
-	void SKCharacter::Step()
+	void Char::Step()
 	{
-		if (skeleton)
-			skeleton->Step();
+		if (skel)
+			skel->Step();
 		if (hat)
 			hat->Step();
 		if (head)

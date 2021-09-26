@@ -15,9 +15,9 @@ namespace skyrim
 
 	const char *getEditorIdOnly(const RCD);
 
-#define X SKRecord
+#define X Record
 
-	class SKRecord
+	class Record
 	{
 	public:
 		//const struct record *rcd;

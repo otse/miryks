@@ -7,13 +7,13 @@ namespace skyrim {
 
 	char *editme;
 
-	SKRecord SkyrimGetRace(const char *raceId)
+	Record get_race(const char *raceId)
 	{
-		SKRecord race;
-		SKGrup array;
+		Record race;
+		Grup array;
 		GRUP top = esp_top_grup(get_plugins()[0], "RACE");
 		array(top).foreach([&](unsigned int &i) {
-			SKRecord object = array.get<RCD>(i);
+			Record object = array.get<RCD>(i);
 			auto edId = object.editorId();
 			if (strcmp(edId, raceId) == 0)
 			{
@@ -26,16 +26,16 @@ namespace skyrim {
 		return race;
 	}
 
-	SKCell SkyrimGetCellInterior(const char *edId, int plugin)
+	CellCapture SkyrimGetCellInterior(const char *edId, int plugin)
 	{
-		SKCell cell;
-		SKGrup a, b, c;
+		CellCapture cell;
+		Grup a, b, c;
 		GRUP top = esp_top_grup(get_plugins()[plugin], "CELL");
 		a(top).foreach([&](unsigned int i) {
 		return b(a.get<GRUP>(i)).foreach([&](unsigned int j) {
 		return c(b.get<GRUP>(j)).foreach([&](unsigned int &k) {
-			SKRecord wrcd = c.get<RCD>(k);
-			SKGrup wgrp = c.get<GRUP>(++k);
+			Record wrcd = c.get<RCD>(k);
+			Grup wgrp = c.get<GRUP>(++k);
 			if (wrcd.HasId(edId))
 			{
 				cell.wrcd = wrcd;

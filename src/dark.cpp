@@ -13,14 +13,14 @@ using namespace skyrim;
 
 namespace dark
 {
-	SKCreature *someDraugr = nullptr, *meanSkelly = nullptr;
-	SKCharacter *someHuman = nullptr;
+	Monster *someDraugr = nullptr, *meanSkelly = nullptr;
+	Char *someHuman = nullptr;
 }
 
 namespace dark
 {
 //Player *player1 = nullptr;
-SKInterior *dungeon = nullptr;
+Interior *dungeon = nullptr;
 std::map<const char *, int> keys;
 }
 
@@ -37,7 +37,7 @@ void load_bucket()
 
 void load_gloomgen()
 {
-	dungeon = new SKInterior("GloomGen");
+	dungeon = new Interior("GloomGen");
 	dungeon->Load();
 	//player1 = new Player();
 }
@@ -86,13 +86,13 @@ int main()
 	refs_init();
 	put_it_fullscreen();
 	load_gloomgen();
-	someDraugr = new SKCreature("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
+	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
 	someDraugr->SetAnimation("anims/draugr/alcove_wake.kf");
-	//someDraugr = new Creature("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
+	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//someDraugr->Place("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
-	someHuman = new SKCharacter();
+	someHuman = new Char();
 	someHuman->Place("gloomgenman");
 	someHuman->SetAnimation("anims/character/1hm_idle.kf");
 	//player1 = new Player();
@@ -113,7 +113,7 @@ void dark::reload_dungeon()
 	{
 		const char *edId = dungeon->edId;
 		delete dungeon;
-		dungeon = new SKInterior(edId);
+		dungeon = new Interior(edId);
 		dungeon->alreadyTeleported = true;
 		dungeon->Load();
 	}
@@ -127,7 +127,7 @@ void dark::reload_dungeon()
 
 void dark::simple_viewer(const char *path)
 {
-	static SKModel *model = nullptr;
+	static Model *model = nullptr;
 	static DrawGroup *drawGroup = nullptr;
 	if (model)
 	{
@@ -135,7 +135,7 @@ void dark::simple_viewer(const char *path)
 		delete model;
 		delete drawGroup;
 	}
-	model = new SKModel(path);
+	model = new Model(path);
 	drawGroup = new DrawGroup(
 		model->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->bigGroup->Add(drawGroup);

@@ -49,7 +49,7 @@ void cell_gui()
 				if (ImGui::Button("Load"))
 				{
 					delete dungeon;
-					dungeon = new SKInterior(items[current]);
+					dungeon = new Interior(items[current]);
 					dungeon->Load();
 				}
 			}

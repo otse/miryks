@@ -4,18 +4,18 @@
 
 namespace skyrim
 {
-	SKSkinnedMesh::SKSkinnedMesh(const char *path)
+	SkinnedMesh::SkinnedMesh(const char *path)
 	{
-		skeleton = nullptr;
+		skel = nullptr;
 		animation = nullptr;
-		modelSkinned = new SKModelSkinned(path);
+		modelSkinned = new ModelSkinned(path);
 		drawGroup = new DrawGroup(
 			modelSkinned->baseGroup, mat4(1.0));
 	}
 
-	void SKSkinnedMesh::Step()
+	void SkinnedMesh::Step()
 	{
-		if (modelSkinned && skeleton)
-			modelSkinned->Step(skeleton);
+		if (modelSkinned && skel)
+			modelSkinned->Step(skel);
 	}
 }

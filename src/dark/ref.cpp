@@ -23,7 +23,7 @@
 
 namespace dark
 {
-	Ref::Ref(crecordp rcd) : SKRecord(rcd)
+	Ref::Ref(crecordp rcd) : Record(rcd)
 	{
 		model = nullptr;
 		drawGroup = nullptr;
@@ -87,13 +87,13 @@ namespace dark
 		matrix = translation * rotation * scale;
 	}
 
-	SKModel *create_simple_model_from_modl(const char *modl)
+	Model *create_simple_model_from_modl(const char *modl)
 	{
-		static std::map<const char *, SKModel *> map;
+		static std::map<const char *, Model *> map;
 		auto has = map.find(modl);
 		if (has != map.end())
 			return has->second;
-		SKModel *model = new SKModel(modl);
+		Model *model = new Model(modl);
 		map.emplace(modl, model);
 		return model;
 	}
@@ -146,7 +146,7 @@ namespace dark
 			}
 			if (baseObject.sig(CONT))
 			{
-				container = new SKContainer(baseObject);
+				container = new Container(baseObject);
 			}
 		}
 		else if (baseObject.sig(MSTT))

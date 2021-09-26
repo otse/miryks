@@ -16,27 +16,27 @@
 
 namespace skyrim
 {
-	static SKCell capture_cell(SKRecord wrcd, SKGrup wgrp)
+	static CellCapture capture_cell(Record wrcd, Grup wgrp)
 	{
-		SKCell cell;
+		CellCapture cell;
 		cell.wrcd = wrcd;
 		cell.persistent = wgrp.get<grup *>(0);
 		cell.temporary = wgrp.get<grup *>(1);
 		return cell;
 	}
 
-	SKInterior::SKInterior(const char *edId)
+	Interior::Interior(const char *edId)
 	{
 		this->edId = edId;
 		Group *group = new Group();
 	}
 
-	SKInterior::~SKInterior()
+	Interior::~Interior()
 	{
 		Unload();
 	}
 
-	void SKInterior::Load()
+	void Interior::Load()
 	{
 		printf("-- loading the dungeon --\n");
 		cell = SkyrimGetCellInterior(edId, 5);
@@ -44,13 +44,13 @@ namespace skyrim
 		Subgroup(cell.temporary, 9);
 	}
 
-	void SKInterior::Unload()
+	void Interior::Unload()
 	{
 		for (Ref *ref : refs)
 			delete ref;
 	}
 	
-	void SKInterior::Subgroup(SKGrup wgrp, int group_type)
+	void Interior::Subgroup(Grup wgrp, int group_type)
 	{
 		auto showLabelsFor = {
 			Doors,
@@ -67,7 +67,7 @@ namespace skyrim
 		if (!wgrp.valid())
 			return;
 		wgrp.foreach([&](unsigned int i) {
-			SKRecord wrcd = wgrp.get<RCD>(i);
+			Record wrcd = wgrp.get<RCD>(i);
 			if (wrcd.sig(REFR))
 			{
 				Ref *ref = new Ref(wrcd.rcd);
@@ -88,13 +88,13 @@ namespace skyrim
 		put_cam_on_random_xmarker();
 	}
 	
-	void SKInterior::put_cam_on_random_xmarker()
+	void Interior::put_cam_on_random_xmarker()
 	{
 		if (alreadyTeleported)
 			return;
-		SKGrup wgrp = cell.persistent;
+		Grup wgrp = cell.persistent;
 		wgrp.foreach([&](unsigned int i) {
-			SKRecord wrcd = wgrp.get<RCD>(i);
+			Record wrcd = wgrp.get<RCD>(i);
 			if (*(wrcd.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");
@@ -111,7 +111,7 @@ namespace skyrim
 
 	
 
-	void SKInterior::Update()
+	void Interior::Update()
 	{
 		Refs::Nearby();
 

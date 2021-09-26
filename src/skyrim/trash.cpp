@@ -24,16 +24,16 @@ void cont_menu();
 
 namespace skyrim
 {
-	SKContainer *SKContainer::cur = nullptr;
+	Container *Container::cur = nullptr;
 
 	//ItemRenderer *itemRenderer = nullptr;
 
-	void SKContainer::Render()
+	void Container::Render()
 	{
 		cont_menu();
 	}
 
-	void SKContainer::Init()
+	void Container::Init()
 	{
 		unsigned int *coct = data<unsigned int *>("COCT");
 
@@ -45,7 +45,7 @@ namespace skyrim
 				unsigned int item, count;
 			};
 			Cnto *cnto = data<Cnto *>("CNTO", i);
-			SKRecord wrcd = esp_get_form_id(cnto->item);
+			Record wrcd = esp_get_form_id(cnto->item);
 			if (wrcd.valid())
 			{
 				for (unsigned int j = 0; j < cnto->count; j++)
@@ -75,7 +75,7 @@ void cont_menu()
 
 	ImGui::Begin("Container Menu", nullptr, flags);
 
-	const SKContainer *cont = SKContainer::cur;
+	const Container *cont = Container::cur;
 
 	auto name = cont->data<const char *>("FULL");
 

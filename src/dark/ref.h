@@ -26,17 +26,17 @@ namespace dark
 
 	static void refs_init() { Refs::Init(); }
 	
-	class Ref : public SKRecord
+	class Ref : public Record
 	{
 	public:
-		SKContainer *container = nullptr;
+		Container *container = nullptr;
 
 		Ref(crecordp);
 		~Ref();
-		SKRecord baseObject;
+		Record baseObject;
 		mat4 translation, rotation, scale;
 		mat4 matrix;
-		SKModel *model;
+		Model *model;
 		Group *refGroup;
 		DrawGroup *drawGroup = nullptr;
 		PointLight *pointLight;

@@ -15,26 +15,26 @@ namespace skyrim
 {
 	static void ni_node_callback(RD, NiNode *);
 
-	SKKeyframes *skyrim_get_keyframes(const char *path)
+	Keyf *get_keyframes(const char *path)
 	{
 		return load_keyframes_from_disk(path);
 	}
 
-	SKSkeleton::SKSkeleton()
+	Skel::Skel()
 	{
-		animation = nullptr;
+		anim = nullptr;
 		model = nullptr;
-		bones[-1] = new SKBone();
+		bones[-1] = new Bone();
 	}
 
-	SKSkeleton::SKSkeleton(SKRecord race) : SKSkeleton()
+	Skel::Skel(Rcd race) : Skel()
 	{
 		printf("skeleton anam %s\n", race.data<char *>("ANAM"));
 		model = get_nif(race.data<char *>("ANAM"));
 		Construct();
 	}
 
-	void SKSkeleton::Construct()
+	void Skel::Construct()
 	{
 		RD rd = calloc_nifprd();
 		rd->nif = model;
@@ -46,7 +46,7 @@ namespace skyrim
 		root->Update();
 	}
 
-	void matrix_from_common(SKBone *bone, ni_common_layout_t *common)
+	void matrix_from_common(Bone *bone, ni_common_layout_t *common)
 	{
 		bone->matrix = translate(bone->matrix, cast_vec3(&common->A->translation));
 		bone->matrix *= inverse(mat4(cast_mat3(&common->A->rotation)));
@@ -55,10 +55,10 @@ namespace skyrim
 		bone->rest = bone->matrixWorld;
 	}
 
-	SKBone *SKSkeleton::MakeBoneHere(RD rd, NiNode *block)
+	Bone *Skel::MakeBoneHere(RD rd, NiNode *block)
 	{
 		//printf("bone name is %s\n", bone->name);
-		SKBone *bone = new SKBone();
+		Bone *bone = new Bone();
 		bone->block = block;
 		bone->name = nif_get_string(rd->nif, block->common->F->name);
 		bones[rd->current] = bone;
@@ -73,64 +73,64 @@ namespace skyrim
 
 	void ni_node_callback(RD rd, NiNode *block)
 	{
-		SKSkeleton *skeleton = (SKSkeleton *)rd->data;
-		SKBone *bone = skeleton->MakeBoneHere(rd, block);
+		Skel *skel = (Skel *)rd->data;
+		Bone *bone = skel->MakeBoneHere(rd, block);
 	}
 
-	void SKSkeleton::Step()
+	void Skel::Step()
 	{
-		if (animation)
-			animation->Step();
+		if (anim)
+			anim->Step();
 	}
 
-	SKKeyframes::SKKeyframes(NIF model) : model(model)
+	Keyf::Keyf(NIF nif) : nif(nif)
 	{
 		loop = true;
 		controllerSequence = nullptr;
-		if (model == nullptr)
+		if (nif == nullptr)
 			return;
-		assertc(strcmp(model->hdr->block_types[0], NiControllerSequenceS) == 0);
-		controllerSequence = (NiControllerSequence *)model->blocks[0];
+		assertc(strcmp(nif->hdr->block_types[0], NiControllerSequenceS) == 0);
+		controllerSequence = (NiControllerSequence *)nif->blocks[0];
 	}
 
-	SKAnimation::SKAnimation(SKKeyframes *keyframes) : keyframes(keyframes)
+	Anim::Anim(Keyf *keyframes) : keyf(keyf)
 	{
-		skeleton = nullptr;
+		skel = nullptr;
 		time = 0;
 		play = true;
 		if (keyframes == nullptr)
 			play = false;
 	}
 
-	void SKAnimation::Step()
+	void Anim::Step()
 	{
 		if (!play)
 			return;
 		time += delta;
-		if (time >= keyframes->controllerSequence->C->stop_time)
-			time -= keyframes->controllerSequence->C->stop_time;
+		if (time >= keyf->controllerSequence->C->stop_time)
+			time -= keyf->controllerSequence->C->stop_time;
 		SimpleNonInterpolated();
-		skeleton->root->Update();
+		skel->root->Update();
 	}
 
-	void SKAnimation::SimpleNonInterpolated()
+	void Anim::SimpleNonInterpolated()
 	{
-		NIF model = keyframes->model;
+		NIF model = keyf->nif;
 		struct controlled_block_t *cbp;
-		for (unsigned int i = 0; i < keyframes->controllerSequence->A->num_controlled_blocks; i++)
+		for (unsigned int i = 0; i < keyf->controllerSequence->A->num_controlled_blocks; i++)
 		{
 			// Match node_name to a skeleton bone
-			cbp = &keyframes->controllerSequence->controlled_blocks[i];
+			cbp = &keyf->controllerSequence->controlled_blocks[i];
 			char *name = nif_get_string(model, cbp->node_name);
-			auto has = skeleton->bonesNamed.find(name);
-			if (has == skeleton->bonesNamed.end())
+			auto has = skel->bonesNamed.find(name);
+			if (has == skel->bonesNamed.end())
 			{
 				//printf("cant find bone %s\n", name);
 				// cant find shield, weapon, quiver
 				continue;
 			}
 
-			SKBone *bone = has->second;
+			Bone *bone = has->second;
 			auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);
 			auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)
