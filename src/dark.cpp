@@ -94,7 +94,8 @@ int main()
 	//meanSkelly->PutDown("gloomgenskeleton");
 	someHuman = new Char();
 	someHuman->Place("gloomgenman");
-	someHuman->SetAnimation("anims/character/1hm_idle.kf");
+	//someHuman->SetAnimation("anims/character/1hm_idle.kf");
+	someHuman->SetAnimation("anims/character/idlewarmhands_crouched.kf");
 	//player1 = new Player();
 	program_while();
 	return 1;

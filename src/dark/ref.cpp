@@ -321,13 +321,12 @@ namespace dark
 	{
 		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;
 
-		// printf(" display as item %f\n", dist);
-
 		if (dist > 40)
 			return false;
 
 		if (drawGroup == nullptr)
 			return false;
+
 
 		Refs::handRef = this;
 
@@ -337,9 +336,7 @@ namespace dark
 
 		const char *itemName = "Something";
 		if (FULL)
-		{
 			itemName = FULL;
-		}
 
 		vec3 original = vec3(0);
 
@@ -358,14 +355,12 @@ namespace dark
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar;
 		static bool open = true;
 		//char s[100];
-		ImGui::Begin("##Item", &open, flags);
+		ImGui::Begin("##ItemThing", &open, flags);
 		ImGui::PushFont(font2);
 		//ImGui::PushStyleColor(IMGUI_FON)
-		//ImGui::Text(itemName);
 		//ImGui::TextColored(ImVec4(1, 1, 1, 1), EDID);
 		//ImGui::NewLine();
-		if (FULL)
-		ImGui::TextColored(ImVec4(1, 1, 1, 1), FULL);
+		ImGui::TextColored(ImVec4(1, 1, 1, 1), itemName);
 
 		ImGui::PopFont();
 		ImGui::End();

@@ -50,24 +50,14 @@ namespace skyrim
 			delete ref;
 	}
 	
+	auto showLabelsFor = { Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients };
+
 	void Interior::Subgroup(Grup wgrp, int group_type)
 	{
-		auto showLabelsFor = {
-			Doors,
-			Furniture,
-			Books,
-			Containers,
-			Armor,
-			Weapons,
-			Ammo,
-			Misc,
-			Alchemy,
-			Ingredients
-		};
 		if (!wgrp.valid())
 			return;
 		wgrp.foreach([&](unsigned int i) {
-			Record wrcd = wgrp.get<RCD>(i);
+			Record wrcd = wgrp.get<record *>(i);
 			if (wrcd.sig(REFR))
 			{
 				Ref *ref = new Ref(wrcd.rcd);
@@ -94,7 +84,7 @@ namespace skyrim
 			return;
 		Grup wgrp = cell.persistent;
 		wgrp.foreach([&](unsigned int i) {
-			Record wrcd = wgrp.get<RCD>(i);
+			Record wrcd = wgrp.get<record *>(i);
 			if (*(wrcd.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");

@@ -93,12 +93,12 @@ namespace skyrim
 		controllerSequence = (NiControllerSequence *)nif->blocks[0];
 	}
 
-	Anim::Anim(Keyf *keyframes) : keyf(keyf)
+	Anim::Anim(Keyf *keyf) : keyf(keyf)
 	{
 		skel = nullptr;
 		time = 0;
 		play = true;
-		if (keyframes == nullptr)
+		if (keyf == nullptr)
 			play = false;
 	}
 

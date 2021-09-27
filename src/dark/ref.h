@@ -34,9 +34,9 @@ namespace dark
 		Ref(crecordp);
 		~Ref();
 		Record baseObject;
-		mat4 translation, rotation, scale;
-		mat4 matrix;
 		Model *model;
+		mat4 matrix;
+		mat4 translation, rotation, scale;
 		Group *refGroup;
 		DrawGroup *drawGroup = nullptr;
 		PointLight *pointLight;
