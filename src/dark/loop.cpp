@@ -1,5 +1,7 @@
 #include <dark/dark.h>
 
+#include <dark/player.h>
+
 #include <skyrim/model.h>
 #include <skyrim/grup.h>
 #include <skyrim/interior.h>

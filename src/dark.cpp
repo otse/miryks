@@ -3,6 +3,8 @@
 #include <dark/dark.h>
 #include <dark/files.h>
 
+#include <dark/player.h>
+
 #include <skyrim/interior.h>
 #include <skyrim/actors.h>
 
@@ -88,14 +90,14 @@ int main()
 	load_gloomgen();
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
 	someDraugr->SetAnimation("anims/draugr/alcove_wake.kf");
+	someDraugr->Place("gloomgendraugr");
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
-	//someDraugr->Place("gloomgendraugr");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
 	someHuman = new Char();
+	someHuman->SetAnimation("anims/character/idlewarmhands_crouched.kf");
 	someHuman->Place("gloomgenman");
 	//someHuman->SetAnimation("anims/character/1hm_idle.kf");
-	someHuman->SetAnimation("anims/character/idlewarmhands_crouched.kf");
 	player1 = new Player();
 	program_while();
 	return 1;

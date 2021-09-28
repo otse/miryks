@@ -64,4 +64,5 @@
 #define Classes CLAS
 #define GameSettings GMST
 
+// used for bitmasking dn't ask
 #define Things { "0", STAT, DOOR, FURN, BOOK, CONT, ARMO, WEAP, AMMO, MISC, ALCH, INGR, LIGH, MSTT, TREE }

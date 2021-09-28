@@ -13,6 +13,7 @@ using namespace skyrim;
 namespace dark
 {
 	class Ref;
+	class Player;
 
 	void darkassert(bool);
 

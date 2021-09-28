@@ -33,18 +33,4 @@ namespace skyrim
 		void Step();
 		void Place(const char *);
 	};
-
-	class Player : public Char
-	{
-	public:
-		bool thirdPerson = false;
-		vec3 pose;
-		float yaw;
-		DrawGroup *drawGroup = nullptr;
-		ViewerCamera *thirdPersonCamera = nullptr;
-		Player();
-		void toggleView();
-		void Step();
-		void Move();
-	};
 }
