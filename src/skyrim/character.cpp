@@ -3,7 +3,7 @@
 
 #include <renderer/drawgroup.h>
 
-#include <renderer/camera.h>>
+#include <renderer/camera.h>
 
 namespace skyrim {
     Char::Char(const char *raceId)

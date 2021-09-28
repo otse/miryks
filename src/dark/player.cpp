@@ -12,6 +12,7 @@ namespace dark
 	{
         yaw = 0;
         thirdPerson = false;
+		drawGroup->visible = false;
 		Place("gloomgenman");
 		thirdPersonCamera = new ViewerCamera;
 	}
@@ -36,8 +37,9 @@ namespace dark
 		{
 			SetAnim("anims/character/1hm_walkright.kf");
 		}
-		else
+		else if (!holding("w") && !holding("s") && !holding("a") && !holding("d"))
 		{
+			SetAnim("anims/character/1hm_idle.kf");
 		}
 		vec3 down = vec3(0, 0, SU_TO_CM(-150));
 		drawGroup->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
