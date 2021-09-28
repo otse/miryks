@@ -10,20 +10,17 @@
 struct Camera
 {
 public:
+	bool disabled;
 	float yaw, pitch, fov;
-	Camera();
-
+	vec3 pos;
+	mat4 view, projection;
 	Group *group;
 	DrawGroup *drawGroup;
-
-	vec3 pos;
-	mat4 view, /*matrix,*/ projection;
-
-	bool disabled = false;
-
+	Camera();
 	virtual void Mouse(float, float){};
 	virtual void Update(float){};
 
+	void Wasd(float);
 	void SetProjection();
 };
 
@@ -34,11 +31,8 @@ struct FirstPersonCamera : public Camera
 	vec3 eye;
 
 	FirstPersonCamera();
-
 	virtual void Mouse(float, float);
 	virtual void Update(float);
-
-	void Move(float);
 };
 
 struct ViewerCamera : public Camera
@@ -47,7 +41,6 @@ struct ViewerCamera : public Camera
 	float radius, zoom;
 
 	ViewerCamera();
-
 	virtual void Mouse(float, float);
 	virtual void Update(float);
 };

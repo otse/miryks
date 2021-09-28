@@ -10,32 +10,24 @@ namespace dark
 	{
         yaw = 0;
         thirdPerson = false;
-		// take over with custom movement
-		personCam->disabled = true;
 		Place("gloomgenman");
-//cameraCur->group->Add(human->group);
-//fpc = new FirstPersonCamera;
-		pose = vec3(personCam->pos);
 		thirdPersonCamera = new ViewerCamera;
 	}
 
 	void Player::Step()
 	{
-		Char::Step();
         Move();
-		cameraCur->pos = vec3(pose);
+		Char::Step();
 		if (holding("w"))
 		{
 		}
 		else
 		{
-			//human->
 		}
-		//if (!dynamic_cast<FirstPersonCamera *>(cameraCur))
-		//	return;
-		vec3 down = vec3(0, 0, 1.428f * -150);
-		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
+		vec3 down = vec3(0, 0, 1.428f / -150);
+		drawGroup->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
 		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCur->yaw, vec3(0, 0, 1));
+		drawGroup->Update();
 		drawGroup->Reset();
 	}
 
@@ -45,62 +37,25 @@ namespace dark
 
 		if (thirdPerson)
 		{
-			cameraCur = thirdPersonCamera;
-			drawGroup->target->visible = true;
-			thirdPersonCamera->pos = pose;
+			drawGroup->visible = true;
+			thirdPersonCamera->pos = cameraCur->pos;
 			thirdPersonCamera->yaw = personCam->yaw;
 			thirdPersonCamera->pitch = personCam->pitch;
 			thirdPersonCamera->radius = 200;
+			cameraCur = thirdPersonCamera;
 		}
 		else
 		{
-			cameraCur = personCam;
-			drawGroup->target->visible = false;
-			personCam->pos = pose;
+			drawGroup->visible = false;
+			personCam->pos = cameraCur->pos;
 			personCam->yaw = thirdPersonCamera->yaw;
 			personCam->pitch = thirdPersonCamera->pitch;
+			cameraCur = personCam;
 		}
 	}
 
 	void Player::Move()
 	{
-		yaw = cameraCur->yaw;
-
-		auto forward = [&](float n)
-		{
-			pose.x += n * sin(yaw);
-			pose.y += n * cos(yaw);
-		};
-
-		auto strafe = [&](float n)
-		{
-			pose.x += n * cos(-yaw);
-			pose.y += n * sin(-yaw);
-		};
-
-		float speed = 200.f * delta;
-
-		if (!holding("lshift"))
-		speed /= 10;
-
-		if (holding("w") && !holding("s")) {
-			forward(speed);
-			//human
-		}
-		if (holding("s") && !holding("w")) {
-			forward(-speed / 2);
-		}
-
-		if (holding("a") && !holding("d")) {
-			strafe(-speed);
-		}
-		if (holding("d") && !holding("a")) {
-			strafe(speed);
-		}
-
-		if (holding("r"))
-			pose.z += speed / 2;
-		if (holding("f"))
-			pose.z -= speed / 2;
+		
 	}
 }

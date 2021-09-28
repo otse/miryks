@@ -8,7 +8,6 @@ namespace dark
 	{
 	public:
 		ViewerCamera *thirdPersonCamera;
-		vec3 pose;
 		float yaw;
 		bool thirdPerson;
 		Player();
