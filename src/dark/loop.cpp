@@ -120,8 +120,8 @@ static void toggle_render_stats()
 
 static void toggle_third_person()
 {
-	//if (player1)
-	//	player1->toggleView();
+	if (player1)
+		player1->toggleView();
 }
 
 static void handle_use_key()
@@ -264,12 +264,8 @@ void dark::goingrate()
 	glFrontFace(GL_CCW);
 }
 
-void imgui_frame()
+void imgui_calls()
 {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
 	render_stats(&f10);
 
 	yagrum_checker();
@@ -341,7 +337,9 @@ void dark::program_while()
 			//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
-		imgui_frame();
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
 		glfwPollEvents();
 
@@ -351,8 +349,8 @@ void dark::program_while()
 
 		handle_most_keys();
 
-		//if (player1)
-		//	player1->Step();
+		if (player1)
+			player1->Step();
 
 		cameraCur->Update(delta);
 
@@ -376,8 +374,9 @@ void dark::program_while()
 
 		Container::Step();
 
-		//sceneDef->Order();
 		sceneDef->DrawItems();
+
+		imgui_calls();
 
 		Material::Unuse(nullptr, nullptr);
 

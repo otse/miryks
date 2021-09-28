@@ -61,6 +61,7 @@ namespace skyrim
 					return 1;
 			return 0;
 		}
+		protected:
 		template <typename T = void *>
 		inline T get(unsigned int i/*, char x = '\0'*/) const
 		{
@@ -73,22 +74,18 @@ namespace skyrim
 			//assertc(x == '\0' || x == xtype(i));
 			return (T)mixed().elements[i];
 		}
-
+		public:
+		const grup *get_grup(unsigned int i) const
+		{
+			return get<grup *>(i);
+		}
+		const record *get_record(unsigned int i) const
+		{
+			return get<record *>(i);
+		}
+		
 		// type safety comment-outs
-
 		/*
-		cgrupp getgrup(unsigned int i) const
-		{
-			// just use get<grup *>
-			return get<grup *>(i, 'g');
-		}
-		crecordp getrecord(unsigned int i) const
-		{
-			// just use get<record *>
-			return get<record *>(i, 'r');
-		}
-		// << bluh >>
-
 		char xtype(unsigned int i) const
 		{
 			return *(char *)mixed().elements[i];

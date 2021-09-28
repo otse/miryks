@@ -3,6 +3,8 @@
 
 #include <renderer/drawgroup.h>
 
+#include <renderer/camera.h>>
+
 namespace skyrim {
     Char::Char(const char *raceId)
 	{
@@ -86,27 +88,22 @@ namespace skyrim {
 			//drawGroup->Reset();
 		//}
 	}
-#if 0
-	Player::Player()
+#if 1
+	Player::Player() : Char()
 	{
-		//printf(" Player() \n");
-		// We take over with custom movement
+		// take over with custom movement
 		personCam->disabled = true;
-		human = new Human();
 		//human->Place("gloomgenman");
-		drawGroup = new DrawGroup(human->group, mat4(1.0));
-		drawGroup->target->visible = false;
-		sceneDef->bigGroup->Add(drawGroup);
 //cameraCur->group->Add(human->group);
 //fpc = new FirstPersonCamera;
 		pose = vec3(personCam->pos);
-
 		thirdPersonCamera = new ViewerCamera;
 	}
 
 	void Player::Step()
 	{
-		move();
+		Char::Step();
+		Move();
 		cameraCur->pos = vec3(pose);
 		if (holding("w"))
 		{
@@ -115,10 +112,9 @@ namespace skyrim {
 		{
 			//human->
 		}
-		human->Step();
 		//if (!dynamic_cast<FirstPersonCamera *>(cameraCur))
 		//	return;
-		vec3 down = vec3(0, 0, SU_TO_CM(-150));
+		vec3 down = vec3(0, 0, 1.428f * -150);
 		drawGroup->matrix = glm::translate(mat4(1.0), down + pose);
 		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCur->yaw, vec3(0, 0, 1));
 		drawGroup->Reset();
@@ -147,7 +143,7 @@ namespace skyrim {
 		}
 	}
 
-	void Player::move()
+	void Player::Move()
 	{
 		yaw = cameraCur->yaw;
 

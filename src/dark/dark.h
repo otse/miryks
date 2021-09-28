@@ -17,7 +17,7 @@ namespace dark
 	void darkassert(bool);
 
 	extern Interior *dungeon;
-	//extern Player *player1;
+	extern Player *player1;
 	extern Monster *someDraugr, *meanSkelly;
 	extern Char *someHuman;
 

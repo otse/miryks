@@ -26,12 +26,13 @@ namespace dark
 
 	static void refs_init() { Refs::Init(); }
 	
+	// horrible superweight class
 	class Ref : public Record
 	{
 	public:
 		Container *container = nullptr;
 
-		Ref(crecordp);
+		Ref(const RCD);
 		~Ref();
 		Record baseObject;
 		Model *model;

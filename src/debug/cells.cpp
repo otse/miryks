@@ -42,7 +42,7 @@ void cell_gui()
 			const char *edId = "";
 
 			if (dungeon)
-				edId = dungeon->cell.wrcd.editorId();
+				edId = dungeon->cell.wrcd.editor_id();
 
 			if (0 != strcmp(items[current], edId))
 			{

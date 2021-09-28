@@ -19,7 +19,7 @@ namespace dark
 
 namespace dark
 {
-//Player *player1 = nullptr;
+Player *player1 = nullptr;
 Interior *dungeon = nullptr;
 std::map<const char *, int> keys;
 }
@@ -96,7 +96,7 @@ int main()
 	someHuman->Place("gloomgenman");
 	//someHuman->SetAnimation("anims/character/1hm_idle.kf");
 	someHuman->SetAnimation("anims/character/idlewarmhands_crouched.kf");
-	//player1 = new Player();
+	player1 = new Player();
 	program_while();
 	return 1;
 }

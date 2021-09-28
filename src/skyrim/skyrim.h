@@ -55,6 +55,6 @@ namespace skyrim
 	};
 	Record get_race(const char *);
 
-	CellCapture SkyrimGetCellInterior(const char *, int);
+	CellCapture get_interior_cell(const char *, int);
 
 }

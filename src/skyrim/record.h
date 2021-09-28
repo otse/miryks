@@ -20,7 +20,6 @@ namespace skyrim
 	class Record
 	{
 	public:
-		//const struct record *rcd;
 		const RCD rcd;
 
 		X()
@@ -52,14 +51,14 @@ namespace skyrim
 		{
 			return (const SRCD)subrecords().elements[i];
 		}
-		inline bool sig(signature sgn) const
+		inline bool is_type(signature sgn) const
 		{
 			return *(unsigned int *)sgn == hed().sgn;
 		}
-		inline bool sigany(const std::vector<const char *> &sgns) const
+		inline bool is_types(const std::vector<const char *> &sgns) const
 		{
 			for (const char *sgn : sgns)
-				if (sig(sgn))
+				if (is_type(sgn))
 					return true;
 			return false;
 		}
@@ -83,19 +82,20 @@ namespace skyrim
 			else
 				return nullptr;
 		}
-		inline editorId editorId() const
+
+		// << useful: >>
+
+		inline editorId editor_id() const
 		{
 			return data<const char *>("EDID");
+		}
+		inline bool editor_id(const char *name) const
+		{
+			return 0 == strcmp(name, editor_id());
 		}
 		inline formId base() const
 		{
 			return data<unsigned int *>("NAME");
-		}
-
-		// << useless >>
-		inline bool HasId(const char *name)
-		{
-			return 0 == strcmp(name, editorId());
 		}
 	};
 

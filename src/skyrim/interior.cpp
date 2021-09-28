@@ -20,15 +20,14 @@ namespace skyrim
 	{
 		CellCapture cell;
 		cell.wrcd = wrcd;
-		cell.persistent = wgrp.get<grup *>(0);
-		cell.temporary = wgrp.get<grup *>(1);
+		cell.persistent = wgrp.get_grup(0);
+		cell.temporary = wgrp.get_grup(1);
 		return cell;
 	}
 
-	Interior::Interior(const char *edId)
+	Interior::Interior(const char *edId) : edId(edId)
 	{
-		this->edId = edId;
-		Group *group = new Group();
+		// Group *group = new Group();
 	}
 
 	Interior::~Interior()
@@ -39,7 +38,7 @@ namespace skyrim
 	void Interior::Load()
 	{
 		printf("-- loading the dungeon --\n");
-		cell = SkyrimGetCellInterior(edId, 5);
+		cell = get_interior_cell(edId, 5);
 		Subgroup(cell.persistent, 8);
 		Subgroup(cell.temporary, 9);
 	}
@@ -50,26 +49,26 @@ namespace skyrim
 			delete ref;
 	}
 	
-	auto showLabelsFor = { Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients };
+	auto LABELS = { Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients };
 
 	void Interior::Subgroup(Grup wgrp, int group_type)
 	{
 		if (!wgrp.valid())
 			return;
 		wgrp.foreach([&](unsigned int i) {
-			Record wrcd = wgrp.get<record *>(i);
-			if (wrcd.sig(REFR))
+			Record wrcd = wgrp.get_record(i);
+			if (wrcd.is_type(REFR))
 			{
 				Ref *ref = new Ref(wrcd.rcd);
 				refs.push_back(ref);
-				const char *edId = wrcd.editorId();
+				const char *edId = wrcd.editor_id();
 				if (edId)
 					edIds.emplace(edId, ref);
 				if (ref->baseObject.valid())
 				{
-					if (ref->baseObject.sigany( showLabelsFor ))
+					if (ref->baseObject.is_types( LABELS ))
 						Refs::labelled.push_back(ref);
-					else if (ref->baseObject.sig( MSTT ))
+					else if (ref->baseObject.is_type( MSTT ))
 						mstts.push_back(ref);
 				}
 			}
@@ -84,7 +83,7 @@ namespace skyrim
 			return;
 		Grup wgrp = cell.persistent;
 		wgrp.foreach([&](unsigned int i) {
-			Record wrcd = wgrp.get<record *>(i);
+			Record wrcd = wgrp.get_record(i);
 			if (*(wrcd.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");

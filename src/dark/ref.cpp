@@ -1,5 +1,7 @@
 #include <skyrim_units>
 
+// big include blob !!
+
 #include <dark/ref.h>
 
 #include <skyrim/record.h>
@@ -23,7 +25,7 @@
 
 namespace dark
 {
-	Ref::Ref(crecordp rcd) : Record(rcd)
+	Ref::Ref(const RCD rcd) : Record(rcd)
 	{
 		model = nullptr;
 		drawGroup = nullptr;
@@ -45,7 +47,7 @@ namespace dark
 
 	void Ref::Step()
 	{
-		if (baseObject.sig("MSTT"))
+		if (baseObject.is_type("MSTT"))
 		{
 			if(model)
 				model->Step();
@@ -70,6 +72,7 @@ namespace dark
 		ForBaseId(baseId);
 	}
 
+	// bad
 	void Ref::ForLocationalData(float *locationalData)
 	{
 		if (!locationalData)
@@ -87,6 +90,7 @@ namespace dark
 		matrix = translation * rotation * scale;
 	}
 
+	// bad
 	Model *create_simple_model_from_modl(const char *modl)
 	{
 		static std::map<const char *, Model *> map;
@@ -98,6 +102,7 @@ namespace dark
 		return model;
 	}
 
+	// for boo baba
 	void Ref::ForBaseId(formId baseId)
 	{
 		if (!baseId)
@@ -133,7 +138,8 @@ namespace dark
 			Ingredients
 		};
 		
-		if (baseObject.sigany(things))
+		// horrile if statements
+		if (baseObject.is_types(things))
 		{
 			auto modl = baseObject.data<const char *>("MODL", 0);
 			if (!modl)
@@ -144,12 +150,12 @@ namespace dark
 			{
 				model = create_simple_model_from_modl(modl);
 			}
-			if (baseObject.sig(CONT))
+			if (baseObject.is_type(CONT))
 			{
 				container = new Container(baseObject);
 			}
 		}
-		else if (baseObject.sig(MSTT))
+		else if (baseObject.is_type(MSTT))
 		{
 			// printf("this is a mstt\n");
 
@@ -157,8 +163,9 @@ namespace dark
 
 			model = create_simple_model_from_modl(modl);
 		}
-		else if (baseObject.sig(LIGH))
+		else if (baseObject.is_type(LIGH))
 		{
+			// decent light code !
 			struct Struct
 			{
 				unsigned int time, radius, color, flags;
@@ -172,7 +179,7 @@ namespace dark
 
 			Light *light = nullptr;
 
-			auto edId = baseObject.editorId();
+			auto edId = baseObject.editor_id();
 			auto DATA = baseObject.data<int *>("DATA");
 			auto FNAM = baseObject.data<float *>("FNAM");
 
@@ -224,7 +231,7 @@ namespace dark
 		}
 		else
 		{
-			auto edId = baseObject.editorId();
+			auto edId = baseObject.editor_id();
 			
 			printf("ref.cpp cant become %.4s edid %s\n", (char *)&baseObject.hed().sgn, edId);
 			
@@ -233,6 +240,7 @@ namespace dark
 
 		if (model)
 		{
+			// bad
 			if (baseObject.rcd->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroupFlatSorted(model->baseGroup, matrix);
@@ -279,6 +287,7 @@ namespace dark
 		return l->GetDistance() < r->GetDistance();
 	}
 
+	// very bad namespace
 	namespace Refs {
 		Ref *handRef = nullptr;
 		std::vector<Ref *> labelled;
@@ -311,12 +320,13 @@ namespace dark
 
 
 	bool Ref::Use() {
-		printf("Use %s\n", baseObject.editorId());
-		if (baseObject.sig(CONT) && container)
+		printf("Use %s\n", baseObject.editor_id());
+		if (baseObject.is_type(CONT) && container)
 			container->Activate();
 		return true;
 	}
 
+	// horrible imgui vomit
 	bool Ref::DisplayAsItem()
 	{
 		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;

@@ -45,6 +45,6 @@ namespace skyrim
 		Player();
 		void toggleView();
 		void Step();
-		void move();
+		void Move();
 	};
 }
