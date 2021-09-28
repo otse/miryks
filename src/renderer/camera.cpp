@@ -48,7 +48,7 @@ void Camera::Wasd(float delta)
 	if (holding("w") && !holding("s"))
 		forward(speed);
 	if (holding("s") && !holding("w"))
-		forward(-speed / 2);
+		forward(-speed);
 
 	if (holding("a") && !holding("d"))
 		strafe(-speed);
@@ -130,7 +130,7 @@ void ViewerCamera::Update(float time)
 {
 	if (!disabled)
 		Wasd(time);
-		
+
 	view = mat4(1.0f);
 	view = glm::rotate(view, pitch, vec3(1, 0, 0));
 	view = glm::rotate(view, yaw, vec3(0, 0, 1));

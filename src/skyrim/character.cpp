@@ -60,7 +60,7 @@ namespace skyrim {
 		//sceneDef->Add(mirror);
 	}
 
-	void Char::SetAnimation(const char *path)
+	void Char::SetAnim(const char *path)
 	{
 		anim = new Anim(get_keyframes(path));
 		anim->skel = skel;

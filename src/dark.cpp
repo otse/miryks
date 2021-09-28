@@ -89,15 +89,15 @@ int main()
 	put_it_fullscreen();
 	load_gloomgen();
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
-	someDraugr->SetAnimation("anims/draugr/alcove_wake.kf");
+	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	someDraugr->Place("gloomgendraugr");
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
 	someHuman = new Char();
-	someHuman->SetAnimation("anims/character/idlewarmhands_crouched.kf");
+	someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
 	someHuman->Place("gloomgenman");
-	//someHuman->SetAnimation("anims/character/1hm_idle.kf");
+	//someHuman->SetAnim("anims/character/1hm_idle.kf");
 	player1 = new Player();
 	program_while();
 	return 1;

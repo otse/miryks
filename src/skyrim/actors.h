@@ -15,7 +15,7 @@ namespace skyrim
 		DrawGroup *drawGroup;
 		Monster(const char *, const char *);
 		void Place(const char *);
-		void SetAnimation(const char *);
+		void SetAnim(const char *);
 		void Step();
 		Record race;
 	};
@@ -29,7 +29,7 @@ namespace skyrim
 		SkinnedMesh *hat, *head, *body, *hands, *feet;
 		DrawGroup *drawGroup;
 		Char(const char * = "ImperialRace");
-		void SetAnimation(const char *);
+		void SetAnim(const char *);
 		void Step();
 		void Place(const char *);
 	};

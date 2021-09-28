@@ -351,10 +351,10 @@ void dark::program_while()
 
 		handle_most_keys();
 
+		cameraCur->Update(delta);
+		
 		if (player1)
 			player1->Step();
-
-		cameraCur->Update(delta);
 
 		#if 0
 		myself->matrix = cameraCur->group->matrixWorld;

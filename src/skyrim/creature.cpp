@@ -20,7 +20,7 @@ namespace skyrim
 		modelSkinned = new ModelSkinned(path);
 	}
 
-	void Monster::SetAnimation(const char *path)
+	void Monster::SetAnim(const char *path)
 	{
 		anim = new Anim(get_keyframes(path));
 		anim->skel = skel;
