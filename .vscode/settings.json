@@ -1,4 +1,13 @@
 {
+    "terminal.integrated.profiles.windows": {
+        "VsDevCmd": {
+          "path": "C:\\WINDOWS\\System32\\cmd.exe",
+          "args": [
+            "/K",
+            "D:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat"
+          ]
+        }
+      },
     "terminal.integrated.defaultProfile.windows": "VsDevCmd",
     "files.associations": {
         "list": "cpp",
