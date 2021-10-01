@@ -97,7 +97,7 @@ namespace dark
 		auto has = map.find(modl);
 		if (has != map.end())
 			return has->second;
-		Model *model = new Model(modl);
+		Model *model = new Model(get_res(modl));
 		map.emplace(modl, model);
 		return model;
 	}

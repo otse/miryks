@@ -34,7 +34,7 @@ namespace skyrim
 	{
 	public:
 		Model();
-		Model(const char *);
+		Model(RES);
 		~Model();
 		NIF model = nullptr;
 		std::map<int, Group *> groups;

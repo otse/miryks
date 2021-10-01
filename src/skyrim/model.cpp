@@ -20,11 +20,11 @@ namespace skyrim
 		lastGroup = baseGroup;
 	}
 	
-	Model::Model(const char *bucket) : Model()
+	Model::Model(RES res) : Model()
 	{
-		if (!bucket)
+		if (!res)
 			return;
-		model = get_nif(bucket);
+		model = get_nif(res);
 		Construct();
 	}
 

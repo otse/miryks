@@ -33,7 +33,7 @@ void darkassert(bool e)
 
 void load_bucket()
 {
-	simple_viewer("clutter\\bucket02a.nif");
+	in_place_viewer(get_res("clutter\\bucket02a.nif"));
 	yagrum_queue("", 10, true);
 }
 
@@ -128,7 +128,7 @@ void dark::reload_dungeon()
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 
-void dark::simple_viewer(const char *path)
+void dark::in_place_viewer(RES res)
 {
 	static Model *model = nullptr;
 	static DrawGroup *drawGroup = nullptr;
@@ -138,7 +138,7 @@ void dark::simple_viewer(const char *path)
 		delete model;
 		delete drawGroup;
 	}
-	model = new Model(path);
+	model = new Model(res);
 	drawGroup = new DrawGroup(
 		model->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->bigGroup->Add(drawGroup);

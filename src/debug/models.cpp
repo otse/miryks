@@ -100,7 +100,7 @@ void overlay_models()
 
 			if (ImGui::Button("View"))
 			{
-				simple_viewer(nif->path);
+				in_place_viewer(get_res(nif->path, ""));
 			}
 
 			ImGui::TreePop();

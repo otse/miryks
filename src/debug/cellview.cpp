@@ -17,34 +17,27 @@ void cell_gui()
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::SetNextWindowPos(ImVec2(450 * 4, 0));
 
-	ImGui::Begin("Interiors", nullptr, flags);
+	ImGui::Begin("Cell View", nullptr, flags);
 
 	ImGui::Separator();
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
-	if (ImGui::BeginTabBar("CellTabs", tabBarFlags))
+	if (ImGui::BeginTabBar("CellViewTabs", tabBarFlags))
 	{
-		if (ImGui::BeginTabItem("cell view"))
+		if (ImGui::BeginTabItem("interiors"))
 		{
-			static const char *items[3] = {
-				"GloomGen",
-				"GloomAfterGen",
-				"DarkTelvanni"
+			static const char *items[1] = {
+				"GloomGen"
 			};
 
-			static int num = 3;
+			static int num = 1;
 			static int current = 0;
 
-			ImGui::ListBox("##CellView", &current, items, num, 4);
+			ImGui::ListBox("##interiors", &current, items, num, 4);
 
 			ImGui::Separator();
 
-			const char *edId = "";
-
-			if (dungeon)
-				edId = dungeon->cell.wrcd.editor_id();
-
-			if (0 != strcmp(items[current], edId))
+			if (dungeon && dungeon->cell.wrcd.editor_id(items[current]) == false)
 			{
 				if (ImGui::Button("Load"))
 				{
@@ -59,20 +52,9 @@ void cell_gui()
 
 			ImGui::EndTabItem();
 		}
-		if (ImGui::BeginTabItem("refrs"))
+		if (ImGui::BeginTabItem("world space"))
 		{
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("by edid?"))
-		{
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("bluh"))
-		{
-			ImGui::EndTabItem();
-		}
-		if (ImGui::BeginTabItem("another tab"))
-		{
+			ImGui::TextDisabled("( DarkWorld World-Space )");
 			ImGui::EndTabItem();
 		}
 

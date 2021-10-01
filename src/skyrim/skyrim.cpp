@@ -25,7 +25,11 @@ namespace skyrim {
 		return race;
 	}
 
-	CellCapture get_interior_cell(const char *edId, int plugin)
+	Record get_world_space(const char *editorId) {
+		return Record();
+	}
+
+	CellCapture get_interior_cell(const char *editorId, int plugin)
 	{
 		CellCapture cell;
 		Grup a, b, c;
@@ -35,7 +39,7 @@ namespace skyrim {
 		return c(b.get_grup(j)).foreach([&](unsigned int &k) {
 			Record wrcd = c.get_record(k);
 			Grup wgrp = c.get_grup(++k);
-			if (wrcd.editor_id(edId))
+			if (wrcd.editor_id(editorId))
 			{
 				cell.wrcd = wrcd;
 				cell.persistent = wgrp.get_grup(0);

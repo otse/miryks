@@ -33,7 +33,7 @@ namespace skyrim
 		return nullptr;
 	}
 
-	RES get_resource(
+	RES get_res(
 		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
@@ -48,14 +48,19 @@ namespace skyrim
 		return res;
 	}
 
-	NIF get_nif(const char *path)
+	NIF get_nif(const char *modl)
 	{
-		if (!path)
+		if (!modl)
 			return nullptr;
-		RES res = get_resource(path);
+		return get_nif(get_res(modl));
+	}
+
+	NIF get_nif(RES res)
+	{
 		if (!res)
 			return nullptr;
-		if (NIF saved = ext_nif_saved(res->path))
+		NIF saved = ext_nif_saved(res->path);
+		if (saved)
 			return saved;
 		bsa_read(res);
 		NIF model = calloc_nifp();

@@ -15,9 +15,9 @@ using namespace dark;
 
 namespace skyrim
 {
-	ModelSkinned::ModelSkinned(const char *bucket) : Model()
+	ModelSkinned::ModelSkinned(const char *modl) : Model()
 	{
-		model = get_nif(bucket);
+		model = get_nif(modl);
 		assertc(model);
 		Construct();
 	}

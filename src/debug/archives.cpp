@@ -88,7 +88,7 @@ void overlay_archives()
 			ImGui::SameLine();
 			if (ImGui::Button("View"))
 			{
-				simple_viewer(res->path);
+				in_place_viewer(res);
 			}
 		}
 
@@ -233,7 +233,7 @@ void overlay_archives()
 								ImGui::SameLine();
 								if (ImGui::Button("View"))
 								{
-									simple_viewer(res->path);
+									in_place_viewer(res);
 								}
 							}
 							ImGui::Separator();

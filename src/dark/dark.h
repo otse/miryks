@@ -28,7 +28,7 @@ namespace dark
 	void goingrate();
 	void program_while();
 
-	void simple_viewer(const char *);
+	void in_place_viewer(RES);
 
 	void hide_cursor();
 	void show_cursor();
