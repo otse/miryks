@@ -26,7 +26,7 @@ namespace skyrim
 		Bone *baseBone, *root;
 		Anim *anim;
 		Skel();
-		Skel(Rcd);
+		Skel(Record);
 		void Load(const char *);
 		void Construct();
 		void Step();

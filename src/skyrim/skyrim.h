@@ -9,8 +9,6 @@ namespace skyrim
 	class Record;
 	class Grup;
 
-	typedef Record Rcd;
-
 	class Char;
 	class Monster;
 	class Skel;
@@ -25,9 +23,9 @@ namespace skyrim
 	class Interior;
 	class Container;
 
-	void ext_nif_save(const char *, NIF);
-	NIF ext_nif_saved(const char *);
-	std::map<const char *, NIF> &ext_nif_map();
+	void save_nif(const char *, NIF);
+	NIF saved_nif(const char *);
+	std::map<const char *, NIF> &get_nifs();
 
 	RES get_res(
 		const char *,

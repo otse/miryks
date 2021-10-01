@@ -15,7 +15,7 @@ void overlay_models()
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
-	for (const auto &[key, value] : ext_nif_map())
+	for (const auto &[key, value] : get_nifs())
 	{
 		NIF nif = value;
 

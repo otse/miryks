@@ -15,17 +15,17 @@ namespace skyrim
 {
 	std::map<const char *, NIF> nifs;
 
-	std::map<const char *, NIF> &ext_nif_map()
+	std::map<const char *, NIF> &get_nifs()
 	{
 		return nifs;
 	}
 
-	void ext_nif_save(const char *key, NIF nif)
+	void save_nif(const char *key, NIF nif)
 	{
 		nifs.emplace(key, nif);
 	}
 
-	NIF ext_nif_saved(const char *key)
+	NIF saved_nif(const char *key)
 	{
 		auto has = nifs.find(key);
 		if (has != nifs.end())
@@ -59,7 +59,7 @@ namespace skyrim
 	{
 		if (!res)
 			return nullptr;
-		NIF saved = ext_nif_saved(res->path);
+		NIF saved = saved_nif(res->path);
 		if (saved)
 			return saved;
 		bsa_read(res);
@@ -67,19 +67,19 @@ namespace skyrim
 		model->path = res->path;
 		model->buf = res->buf;
 		nif_read(model);
-		ext_nif_save(res->path, model);
+		save_nif(res->path, model);
 		return model;
 	}
 
 	Keyf *load_keyframes_from_disk(const char *path)
 	{
-		if (NIF saved = ext_nif_saved(path))
+		if (NIF saved = saved_nif(path))
 			return new Keyf(saved);
 		NIF model = calloc_nifp();
 		model->path = path;
 		int len = fbuf(path, &model->buf);
 		nif_read(model);
-		ext_nif_save(path, model);
+		save_nif(path, model);
 		return new Keyf(model);
 	}
 

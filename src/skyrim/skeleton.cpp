@@ -27,7 +27,7 @@ namespace skyrim
 		bones[-1] = new Bone();
 	}
 
-	Skel::Skel(Rcd race) : Skel()
+	Skel::Skel(Record race) : Skel()
 	{
 		printf("skeleton anam %s\n", race.data<char *>("ANAM"));
 		model = get_nif(race.data<char *>("ANAM"));
