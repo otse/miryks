@@ -4,7 +4,7 @@
 
 #include <skyrim/model.h>
 #include <skyrim/grup.h>
-#include <skyrim/interior.h>
+#include <skyrim/cell.h>
 #include <skyrim/trash.h>
 #include <skyrim/actors.h>
 
@@ -102,8 +102,8 @@ static void toggle_cursor()
 
 static void hotswap_plugin_and_dungeon()
 {
-	reload_esp();
-	reload_dungeon();
+	reload_plugin();
+	reload_interior();
 }
 
 static void reload_shaders()
@@ -371,8 +371,8 @@ void dark::program_while()
 		if (someHuman)
 			someHuman->Step();
 
-		if (dungeon)
-			dungeon->Update();
+		if (ginterior)
+			ginterior->Update();
 
 		Container::Step();
 

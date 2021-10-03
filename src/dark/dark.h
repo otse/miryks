@@ -17,13 +17,12 @@ namespace dark
 
 	void darkassert(bool);
 
-	extern Interior *dungeon;
 	extern Player *player1;
 	extern Monster *someDraugr, *meanSkelly;
 	extern Char *someHuman;
 
-	void reload_esp();
-	void reload_dungeon();
+	void reload_plugin();
+	void reload_interior();
 	
 	void goingrate();
 	void program_while();

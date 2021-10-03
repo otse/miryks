@@ -5,9 +5,6 @@
 namespace skyrim
 {
 	extern char *editme;
-	
-	class Record;
-	class Grup;
 
 	class Char;
 	class Monster;
@@ -20,6 +17,7 @@ namespace skyrim
 	class ModelSkinned;
 	class SkinnedMesh;
 
+	struct Cell;
 	class Interior;
 	class Container;
 
@@ -42,13 +40,6 @@ namespace skyrim
 
 	Keyf *load_keyframes_from_disk(const char *);
 
-	struct CellCapture
-	{
-		Record wrcd;
-		Grup persistent, temporary;
-	};
 	Record get_race(const char *);
-	Record get_world_space(const char *);
-	CellCapture get_interior_cell(const char *, int);
 
 }

@@ -4,7 +4,7 @@
 #include <dark/files.h>
 
 #include <skyrim/grup.h>
-#include <skyrim/interior.h>
+#include <skyrim/cell.h>
 
 using namespace dark;
 
@@ -37,16 +37,16 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			if (dungeon && dungeon->cell.wrcd.editor_id(items[current]) == false)
+			if (ginterior && ginterior->cell.wrcd.editor_id(items[current]) == false)
 			{
 				if (ImGui::Button("Load"))
 				{
-					delete dungeon;
-					dungeon = new Interior(items[current]);
-					dungeon->Load();
+					delete ginterior;
+					ginterior = new Interior(items[current]);
+					ginterior->Load();
 				}
 			}
-			//if (items[current] == dungeon->loadedCell)
+			//if (items[current] == ginterior->loadedCell)
 			{
 			}
 

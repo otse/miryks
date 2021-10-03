@@ -12,32 +12,33 @@
 
 namespace skyrim
 {
-	typedef std::function<bool(unsigned int &i)> grupfunc;
-
-	typedef bool(*grupfuncp)(unsigned int &i);
-
-#define X Grup
-
 	class Grup
 	{
 	public:
-		//const struct grup *grp;
+		typedef std::function<bool(unsigned int &)> loop_func;
+
 		const GRUP grp;
 
-		X()
+		Grup()
 		{
 			grp = nullptr;
 		}
-		X(const GRUP p)
+		Grup(const GRUP p)
 		{
 			grp = p;
 			(*this)(grp);
 		}
-		X &operator()(const GRUP p)
+		Grup(const Grup &grupw)
+		{
+			grp = grupw.grp;
+			(*this)(grp);
+		}
+		Grup &operator()(const GRUP p)
 		{
 			grp = p;
 			assertc(grp->g == 'g');
 			esp_check_grup((GRUP)grp);
+			
 			return *this;
 		}
 		inline bool valid() const
@@ -52,7 +53,7 @@ namespace skyrim
 		{
 			return *grp->mixed;
 		}
-		bool foreach(grupfunc f, int group_type = -1)
+		bool loop(loop_func f, int group_type = -1)
 		{
 			assertc(valid());
 			assertc(group_type == -1 || hed().group_type == group_type);
@@ -75,11 +76,11 @@ namespace skyrim
 			return (T)mixed().elements[i];
 		}
 		public:
-		const grup *get_grup(unsigned int i) const
+		inline const grup *get_grup(unsigned int i) const
 		{
 			return get<grup *>(i);
 		}
-		const record *get_record(unsigned int i) const
+		inline const record *get_record(unsigned int i) const
 		{
 			return get<record *>(i);
 		}
@@ -92,8 +93,6 @@ namespace skyrim
 		}
 		*/
 	};
-
-#undef X
 
 	enum GrupTypes
 	{

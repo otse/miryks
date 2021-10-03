@@ -15,18 +15,16 @@ namespace skyrim
 
 	const char *getEditorIdOnly(const RCD);
 
-#define X Record
-
 	class Record
 	{
 	public:
 		const RCD rcd;
 
-		X()
+		Record()
 		{
 			rcd = nullptr;
 		}
-		X(const RCD p)
+		Record(const RCD p)
 		{
 			rcd = p;
 			if (rcd)
@@ -98,7 +96,5 @@ namespace skyrim
 			return data<unsigned int *>("NAME");
 		}
 	};
-
-#undef X
 
 }

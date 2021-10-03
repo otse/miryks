@@ -1,7 +1,7 @@
 #include <skyrim_units>
 
 #include <skyrim/skyrim.h>
-#include <skyrim/interior.h>
+#include <skyrim/cell.h>
 #include <skyrim/model.h>
 #include <skyrim/grup.h>
 
@@ -16,13 +16,34 @@
 
 namespace skyrim
 {
-	static CellCapture capture_cell(Record wrcd, Grup wgrp)
+	Interior *ginterior = nullptr;
+
+	Cell get_interior_cell(const char *editorId, int plugin)
 	{
-		CellCapture cell;
-		cell.wrcd = wrcd;
-		cell.persistent = wgrp.get_grup(0);
-		cell.temporary = wgrp.get_grup(1);
+		// todo figure out how to chain this javascript-style
+		Cell cell;
+		GRUP top = esp_top_grup(get_plugins()[plugin], "CELL");
+		Grup A, B, C;
+		A(top).loop([&](unsigned int i) {
+		return B(A.get_grup(i)).loop([&](unsigned int j) {
+		return C(B.get_grup(j)).loop([&](unsigned int &k) {
+			Record recordw = C.get_record(k);
+			Grup grupw = C.get_grup(++k);
+			if (recordw.editor_id(editorId))
+			{
+				cell.wrcd = recordw;
+				cell.persistent = grupw.get_grup(0);
+				cell.temporary = grupw.get_grup(1);
+				return true;
+			}
+			return false;
+		}, 3);}, 2);}, 0);
 		return cell;
+	}
+
+	Record get_world_space(const char *editorId)
+	{
+		return Record();
 	}
 
 	Interior::Interior(const char *edId) : edId(edId)
@@ -37,7 +58,7 @@ namespace skyrim
 
 	void Interior::Load()
 	{
-		printf("-- loading the dungeon --\n");
+		printf("-- loading the ginterior --\n");
 		cell = get_interior_cell(edId, 5);
 		Subgroup(cell.persistent, 8);
 		Subgroup(cell.temporary, 9);
@@ -51,17 +72,17 @@ namespace skyrim
 	
 	auto LABELS = { Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients };
 
-	void Interior::Subgroup(Grup wgrp, int group_type)
+	void Interior::Subgroup(Grup grupw, int group_type)
 	{
-		if (!wgrp.valid())
+		if (!grupw.valid())
 			return;
-		wgrp.foreach([&](unsigned int i) {
-			Record wrcd = wgrp.get_record(i);
-			if (wrcd.is_type(REFR))
+		grupw.loop([&](unsigned int &i) {
+			Record recordw = grupw.get_record(i);
+			if (recordw.is_type(REFR))
 			{
-				Ref *ref = new Ref(wrcd.rcd);
+				Ref *ref = new Ref(recordw.rcd);
 				refs.push_back(ref);
-				const char *edId = wrcd.editor_id();
+				const char *edId = recordw.editor_id();
 				if (edId)
 					edIds.emplace(edId, ref);
 				if (ref->baseObject.valid())
@@ -81,13 +102,13 @@ namespace skyrim
 	{
 		if (alreadyTeleported)
 			return;
-		Grup wgrp = cell.persistent;
-		wgrp.foreach([&](unsigned int i) {
-			Record wrcd = wgrp.get_record(i);
-			if (*(wrcd.base()) == 0x0000003B)
+		Grup grupw = cell.persistent;
+		grupw.loop([&](unsigned int i) {
+			Record recordw = grupw.get_record(i);
+			if (*(recordw.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");
-				float *locationalData = wrcd.data<float *>("DATA");
+				float *locationalData = recordw.data<float *>("DATA");
 				personCam->pos = cast_vec3(locationalData);
 				personCam->pos.z += EYE_HEIGHT;
 				personCam->yaw = cast_vec3(locationalData + 3).z;
@@ -108,4 +129,23 @@ namespace skyrim
 			mstt->model->Misty();
 	}
 
+	Exterior::Exterior()
+	{
+        Load();
+	}
+
+	Exterior::~Exterior()
+	{
+		Unload();
+	}
+
+	void Exterior::Load()
+	{
+		
+	}
+
+	void Exterior::Unload()
+	{
+        
+	}
 } // namespace dark

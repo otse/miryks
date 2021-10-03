@@ -1,5 +1,5 @@
 #include <skyrim/actors.h>
-#include <skyrim/interior.h>
+#include <skyrim/cell.h>
 
 #include <renderer/drawgroup.h>
 
@@ -46,8 +46,8 @@ namespace skyrim {
 
 	void Char::Place(const char *q)
 	{
-		auto ref = dungeon->edIds.find(q);
-		if (ref == dungeon->edIds.end())
+		auto ref = ginterior->edIds.find(q);
+		if (ref == ginterior->edIds.end())
 			return;
 		printf("place at %s\n", q);
 		drawGroup->matrix = ref->second->matrix;

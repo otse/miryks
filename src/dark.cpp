@@ -5,7 +5,7 @@
 
 #include <dark/player.h>
 
-#include <skyrim/interior.h>
+#include <skyrim/cell.h>
 #include <skyrim/actors.h>
 
 #include <gooey/yagrum.h>
@@ -22,7 +22,6 @@ namespace dark
 namespace dark
 {
 Player *player1 = nullptr;
-Interior *dungeon = nullptr;
 std::map<const char *, int> keys;
 }
 
@@ -39,8 +38,8 @@ void load_bucket()
 
 void load_gloomgen()
 {
-	dungeon = new Interior("GloomGen");
-	dungeon->Load();
+	ginterior = new Interior("GloomGen");
+	ginterior->Load();
 	//player1 = new Player();
 }
 
@@ -103,22 +102,22 @@ int main()
 	return 1;
 }
 
-void dark::reload_esp()
+void dark::reload_plugin()
 {
 	struct esp **plugin = &get_plugins()[5];
 	free_plugin(plugin);
 	*plugin = load_plugin(PLUGIN_5, true);
 }
 
-void dark::reload_dungeon()
+void dark::reload_interior()
 {
-	if (dungeon)
+	if (ginterior)
 	{
-		const char *edId = dungeon->edId;
-		delete dungeon;
-		dungeon = new Interior(edId);
-		dungeon->alreadyTeleported = true;
-		dungeon->Load();
+		const char *edId = ginterior->edId;
+		delete ginterior;
+		ginterior = new Interior(edId);
+		ginterior->alreadyTeleported = true;
+		ginterior->Load();
 	}
 }
 

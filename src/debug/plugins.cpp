@@ -19,11 +19,11 @@ static std::stringstream ss;
 
 static Esp *plugin = NULL;
 
-void im_grup(grupp , int);
-void im_record(record *);
-void im_subrecord(subrecord *);
+void im_grup(GRUP, int);
+void im_record(RCD);
+void im_subrecord(SRCD);
 
-void im_grup(grupp grp, int top_grup = -1)
+void im_grup(GRUP grp, int top_grup = -1)
 {
 	Grup wgrp = grp; // invokes unlooped grup
 	char t[100];
@@ -37,9 +37,9 @@ void im_grup(grupp grp, int top_grup = -1)
 		{
 			void *element = grp->mixed->elements[i];
 			if (*(char *)element == 'g')
-				im_grup((grup *)grp->mixed->elements[i]);
+				im_grup((GRUP)grp->mixed->elements[i]);
 			if (*(char *)element == 'r')
-				im_record((record *)grp->mixed->elements[i]);
+				im_record((RCD)grp->mixed->elements[i]);
 		}
 		if (grp->mixed->size)
 			ImGui::Separator();
@@ -47,7 +47,7 @@ void im_grup(grupp grp, int top_grup = -1)
 	}
 }
 
-void im_record(record *rcd)
+void im_record(RCD rcd)
 {
 	char *edid = nullptr;
 	Record wrcd = rcd; // invokes read partials
@@ -81,7 +81,7 @@ void im_record(record *rcd)
 	}
 }
 
-void im_subrecord(subrecord *field)
+void im_subrecord(SRCD field)
 {
 	char t[100];
 	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->sgn, field->id);
