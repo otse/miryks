@@ -21,14 +21,15 @@ namespace skyrim
 
 	Interior *getInterior(const char *interiorId, int plugin)
 	{
-		printf("get interior\n");
 		Interior *interior = nullptr;
+		printf("get interior\n");
 		Grup top = esp_top(get_plugins()[plugin], "CELL");
-		top.loop([&](Grup &grup, unsigned int &i) {
-			Record record = grup.get_record(i);
-			Grup grup2 = grup.get_grup(++i);
-			if (record.editor_id(interiorId)) {
-				interior = new Interior(record, grup2);
+		top.loop([&](Grup &dived) {
+			Record record = dived.get_record();
+			Grup grup = dived.next().get_grup();
+			if (record.editor_id(interiorId))
+			{
+				interior = new Interior(record, grup);
 				return true;
 			}
 			return false;
@@ -38,12 +39,12 @@ namespace skyrim
 
 	WorldSpace *getWorldSpace(const char *worldSpaceId, int plugin)
 	{
-		printf("get worldspace\n");
 		WorldSpace *worldSpace = nullptr;
+		printf("get world space\n");
 		Grup top = esp_top(get_plugins()[plugin], "WRLD");
-		top.loop([&](Grup &grup, unsigned int &i) {
-			Record record = grup.get_record(i);
-			Grup grup2 = grup.get_grup(++i);
+		top.loop([&](Grup &grup) {
+			Record record = grup.get_record();
+			Grup grup2 = grup.next().get_grup();
 			if (record.editor_id(worldSpaceId)) {
 				worldSpace = new WorldSpace(record, grup2);
 				return true;
@@ -55,8 +56,8 @@ namespace skyrim
 
 	Cell::Cell(Record r, Grup g) {
 		record = r;
-		persistent = g.get_grup(0);
-		temporary = g.get_grup(1);
+		persistent = g.get_grup();
+		temporary = g.next().get_grup();
 	}
 
 	Interior::~Interior()
@@ -82,13 +83,13 @@ namespace skyrim
 	{
 		if (!grupw.valid())
 			return;
-		grupw.loop([&](Grup &grup, unsigned int &i) {
-			Record recordw = grupw.get_record(i);
-			if (recordw.is_type(REFR))
+		grupw.loop([&](Grup &grup) {
+			Record record = grup.get_record();
+			if (record.is_type(REFR))
 			{
-				Ref *ref = new Ref(recordw.rcd);
+				Ref *ref = new Ref(record.rcd);
 				refs.push_back(ref);
-				const char *edId = recordw.editor_id();
+				const char *edId = record.editor_id();
 				if (edId)
 					edIds.emplace(edId, ref);
 				if (ref->baseObject.valid())
@@ -108,13 +109,14 @@ namespace skyrim
 	{
 		if (alreadyTeleported)
 			return;
-		Grup grupw = persistent;
-		grupw.loop([&](Grup &grup, unsigned int i) {
-			Record recordw = grup.get_record(i);
-			if (*(recordw.base()) == 0x0000003B)
+		if (!persistent.valid())
+			return;
+		persistent.loop([&](Grup &grup) {
+			Record record = grup.get_record();
+			if (*(record.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");
-				float *locationalData = recordw.data<float *>("DATA");
+				float *locationalData = record.data<float *>("DATA");
 				personCam->pos = cast_vec3(locationalData);
 				personCam->pos.z += EYE_HEIGHT;
 				personCam->yaw = cast_vec3(locationalData + 3).z;

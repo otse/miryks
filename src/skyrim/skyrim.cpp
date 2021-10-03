@@ -13,9 +13,9 @@ namespace skyrim {
 	Record get_race(const char *raceId)
 	{
 		Record race;
-		GRUP top = esp_top(get_plugins()[0], "RACE");
-		Grup(top).loop([&](Grup &grup, unsigned int i) {
-			Record recordw = grup.get_record(i);
+		Grup top = esp_top(get_plugins()[0], "RACE");
+		top.loop([&](Grup &grup) {
+			Record recordw = grup.get_record();
 			if (recordw.editor_id(raceId))
 			{
 				race = recordw.rcd;
