@@ -315,7 +315,7 @@ void skip_rcdb(ESP esp, RCD rcd, size_t n)
 
 //void make_top_grup_revisit
 
-api GRUP esp_top_grup(const ESP esp, const char type[5])
+api GRUP esp_top(const ESP esp, const char type[5])
 {
 	if (esp==NULL)
 		return NULL;

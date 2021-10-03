@@ -17,38 +17,46 @@
 namespace skyrim
 {
 	Interior *ginterior = nullptr;
+	WorldSpace *gworldSpace = nullptr;
 
-	Cell get_interior_cell(const char *editorId, int plugin)
+	Interior *getInterior(const char *interiorId, int plugin)
 	{
-		// todo figure out how to chain this javascript-style
-		Cell cell;
-		GRUP top = esp_top_grup(get_plugins()[plugin], "CELL");
-		Grup A, B, C;
-		A(top).loop([&](unsigned int i) {
-		return B(A.get_grup(i)).loop([&](unsigned int j) {
-		return C(B.get_grup(j)).loop([&](unsigned int &k) {
-			Record recordw = C.get_record(k);
-			Grup grupw = C.get_grup(++k);
-			if (recordw.editor_id(editorId))
-			{
-				cell.wrcd = recordw;
-				cell.persistent = grupw.get_grup(0);
-				cell.temporary = grupw.get_grup(1);
+		printf("get interior\n");
+		Interior *interior = nullptr;
+		Grup top = esp_top(get_plugins()[plugin], "CELL");
+		top.loop([&](Grup &grup, unsigned int &i) {
+			Record record = grup.get_record(i);
+			Grup grup2 = grup.get_grup(++i);
+			if (record.editor_id(interiorId)) {
+				interior = new Interior(record, grup2);
 				return true;
 			}
 			return false;
-		}, 3);}, 2);}, 0);
-		return cell;
+		}, 3, 2);
+		return interior;
 	}
 
-	Record get_world_space(const char *editorId)
+	WorldSpace *getWorldSpace(const char *worldSpaceId, int plugin)
 	{
-		return Record();
+		printf("get worldspace\n");
+		WorldSpace *worldSpace = nullptr;
+		Grup top = esp_top(get_plugins()[plugin], "WRLD");
+		top.loop([&](Grup &grup, unsigned int &i) {
+			Record record = grup.get_record(i);
+			Grup grup2 = grup.get_grup(++i);
+			if (record.editor_id(worldSpaceId)) {
+				worldSpace = new WorldSpace(record, grup2);
+				return true;
+			} 
+			return false;
+		}, 0);
+		return worldSpace;
 	}
 
-	Interior::Interior(const char *edId) : edId(edId)
-	{
-		// Group *group = new Group();
+	Cell::Cell(Record r, Grup g) {
+		record = r;
+		persistent = g.get_grup(0);
+		temporary = g.get_grup(1);
 	}
 
 	Interior::~Interior()
@@ -58,10 +66,8 @@ namespace skyrim
 
 	void Interior::Load()
 	{
-		printf("-- loading the ginterior --\n");
-		cell = get_interior_cell(edId, 5);
-		Subgroup(cell.persistent, 8);
-		Subgroup(cell.temporary, 9);
+		Subgroup(persistent, 8);
+		Subgroup(temporary, 9);
 	}
 
 	void Interior::Unload()
@@ -76,7 +82,7 @@ namespace skyrim
 	{
 		if (!grupw.valid())
 			return;
-		grupw.loop([&](unsigned int &i) {
+		grupw.loop([&](Grup &grup, unsigned int &i) {
 			Record recordw = grupw.get_record(i);
 			if (recordw.is_type(REFR))
 			{
@@ -102,9 +108,9 @@ namespace skyrim
 	{
 		if (alreadyTeleported)
 			return;
-		Grup grupw = cell.persistent;
-		grupw.loop([&](unsigned int i) {
-			Record recordw = grupw.get_record(i);
+		Grup grupw = persistent;
+		grupw.loop([&](Grup &grup, unsigned int i) {
+			Record recordw = grup.get_record(i);
 			if (*(recordw.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");

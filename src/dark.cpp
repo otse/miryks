@@ -38,8 +38,9 @@ void load_bucket()
 
 void load_gloomgen()
 {
-	ginterior = new Interior("GloomGen");
+	ginterior = getInterior("GloomGen", 5);
 	ginterior->Load();
+	gworldSpace = getWorldSpace("DarkWorld", 5);
 	//player1 = new Player();
 }
 
@@ -104,7 +105,7 @@ int main()
 
 void dark::reload_plugin()
 {
-	struct esp **plugin = &get_plugins()[5];
+	ESP *plugin = &get_plugins()[5];
 	free_plugin(plugin);
 	*plugin = load_plugin(PLUGIN_5, true);
 }
@@ -115,7 +116,7 @@ void dark::reload_interior()
 	{
 		const char *edId = ginterior->edId;
 		delete ginterior;
-		ginterior = new Interior(edId);
+		ginterior = getInterior(edId, 5);
 		ginterior->alreadyTeleported = true;
 		ginterior->Load();
 	}

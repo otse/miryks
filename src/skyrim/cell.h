@@ -11,26 +11,29 @@ using namespace dark;
 
 namespace skyrim
 {
-	Record get_world_space(const char *);
-	Cell get_interior_cell(const char *, int);
+	Interior *getInterior(const char *, int);
+
+	WorldSpace *getWorldSpace(const char *, int);
 	
 	extern Interior *ginterior;
+	extern WorldSpace *gworldSpace;
 
-	struct Cell
-	{
-		Record wrcd;
-		Grup persistent, temporary;
-	};
-
-	class Interior
+	class Cell
 	{
 	public:
-		static Interior *ginterior;
+		Record record;
+		Grup persistent, temporary;
+		Cell(Record, Grup);
+	};
 
-		Interior(const char *);
+	class Interior : public Cell
+	{
+	public:
+		Interior(Record r, Grup g) : Cell(r, g) {
+			
+		}
 		~Interior();
 
-		Cell cell;
 		std::vector<Ref *> refs, labels, mstts;
 		std::map<std::string, Ref *> edIds;
 
@@ -42,6 +45,17 @@ namespace skyrim
 
 		const char *edId = nullptr;
 		bool alreadyTeleported = false;
+	};
+
+	class WorldSpace {
+	public:
+		Record record;
+		Grup grup;
+		WorldSpace(Record r, Grup g) {
+			printf("WorldSpaced");
+			record = r;
+			grup = g;
+		}
 	};
 
 	class Exterior

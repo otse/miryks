@@ -37,12 +37,12 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			if (ginterior && ginterior->cell.wrcd.editor_id(items[current]) == false)
+			if (ginterior && ginterior->record.editor_id(items[current]) == false)
 			{
 				if (ImGui::Button("Load"))
 				{
 					delete ginterior;
-					ginterior = new Interior(items[current]);
+					ginterior = getInterior(items[current], 5);
 					ginterior->Load();
 				}
 			}
@@ -55,6 +55,7 @@ void cell_gui()
 		if (ImGui::BeginTabItem("world space"))
 		{
 			ImGui::TextDisabled("( DarkWorld World-Space )");
+			ImGui::Text("Amount cells: %s");
 			ImGui::EndTabItem();
 		}
 

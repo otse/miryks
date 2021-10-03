@@ -17,7 +17,8 @@ namespace skyrim
 	class ModelSkinned;
 	class SkinnedMesh;
 
-	struct Cell;
+	class WorldSpace;
+	class Cell;
 	class Interior;
 	class Container;
 

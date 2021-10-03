@@ -154,6 +154,6 @@ namespace skyrim
 			Plants,
 		};
 		for (const char *word : things)
-			esp_check_grup(esp_top_grup(plugin, word));
+			esp_check_grup(esp_top(plugin, word));
 	}
 }

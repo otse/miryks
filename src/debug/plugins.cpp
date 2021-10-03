@@ -51,7 +51,7 @@ void im_record(RCD rcd)
 {
 	char *edid = nullptr;
 	Record wrcd = rcd; // invokes read partials
-	subrecord *first = (subrecord *)rcd->rcdbs->elements[0];
+	SRCD first = (SRCD)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
 		edid = (char *)first->data;
@@ -75,7 +75,7 @@ void im_record(RCD rcd)
 		}
 		for (unsigned int i = 0; i < rcd->rcdbs->size; i++)
 		{
-			im_subrecord((subrecord *)rcd->rcdbs->elements[i]);
+			im_subrecord((SRCD)rcd->rcdbs->elements[i]);
 		}
 		ImGui::TreePop();
 	}
@@ -163,7 +163,7 @@ void overlay_plugins()
 			//if (ImGui::TreeNode("Grups"))
 			//{
 			for (unsigned int i = 0; i < plugin->grups->size; i++)
-				im_grup((grupp )plugin->grups->elements[i], i);
+				im_grup((GRUP)plugin->grups->elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();
