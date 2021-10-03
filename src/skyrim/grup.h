@@ -17,27 +17,21 @@ namespace skyrim
 	public:
 		typedef std::function<bool(Grup &)> loop_func;
 
+		unsigned int index = 0;
 		const GRUP grp;
-		int index;
 		Grup()
 		{
 			grp = nullptr;
-			index = 0;
 		}
-		Grup(const GRUP grp) : Grup()
+		Grup(GRUP grp)
 		{
 			(*this)(grp);
 		}
-		Grup &operator()(const Grup grupw)
-		{
-			(*this)(grupw.grp);
-			return *this;
-		}
-		Grup &operator()(const GRUP grp)
+		Grup &operator()(GRUP grp)
 		{
 			this->grp = grp;
 			assertc(grp->g == 'g');
-			esp_check_grup((GRUP)grp);
+			esp_check_grup(grp);
 			return *this;
 		}
 		inline bool valid() const
@@ -64,7 +58,6 @@ namespace skyrim
 		{
 			assertc(valid());
 			if (dive > 0) {
-				printf("dive %i %i - %i\n", dive, group_type, hed().group_type);
 				for (index = 0; index < size(); index++)
 					if (get_grup().loop(f, group_type, dive - 1))
 						return true;
@@ -76,7 +69,6 @@ namespace skyrim
 		protected:
 		bool call(loop_func f, int group_type = -1)
 		{
-			printf("call %i %i - %i\n", index, group_type, hed().group_type);
 			assertc(group_type == -1 || hed().group_type == group_type);
 			for (index = 0; index < size(); index++)
 				if (f(*this))
@@ -97,11 +89,11 @@ namespace skyrim
 		public:
 		inline Grup get_grup()
 		{
-			return get<GRUP>();
+			return get<grup *>();
 		}
 		inline Record get_record()
 		{
-			return get<RCD>();
+			return get<record *>();
 		}
 	};
 
