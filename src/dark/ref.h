@@ -32,7 +32,7 @@ namespace dark
 	public:
 		Container *container = nullptr;
 
-		Ref(const RCD);
+		Ref(RCD);
 		~Ref();
 		Record baseObject;
 		Model *model;

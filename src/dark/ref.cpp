@@ -25,7 +25,7 @@
 
 namespace dark
 {
-	Ref::Ref(const RCD rcd) : Record(rcd)
+	Ref::Ref(RCD rcd) : Record(rcd)
 	{
 		model = nullptr;
 		drawGroup = nullptr;

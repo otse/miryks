@@ -15,7 +15,7 @@ namespace skyrim
 
 	WorldSpace *getWorldSpace(const char *, int);
 	
-	extern Interior *ginterior;
+	extern Interior *dungeon;
 	extern WorldSpace *gworldSpace;
 
 	class Cell
@@ -47,15 +47,18 @@ namespace skyrim
 		bool alreadyTeleported = false;
 	};
 
-	class WorldSpace {
+	class WorldSpace : public Record {
 	public:
-		Record record;
 		Grup<> grup;
-		WorldSpace(Record r, Grup<> g) {
-			printf("WorldSpaced");
-			record = r;
+		WorldSpace(Record r, Grup<> g) : Record(r) {
 			grup = g;
+			printf("new WorldSpace: %s\n", data<const char *>("FULL"));
+			formId xlcn = data<formId>("XLCN");
+			int16_t *wctr = data<int16_t *>("WCTR");
+			int32_t *nam0 = data<int32_t *>("NAM0");
+			int32_t *nam9 = data<int32_t *>("NAM9");
 		}
+		void Load();
 	};
 
 	class Exterior

@@ -29,8 +29,8 @@ namespace skyrim
 
 	void Monster::Place(const char *q)
 	{
-		auto ref = ginterior->edIds.find(q);
-		if (ref != ginterior->edIds.end())
+		auto ref = dungeon->edIds.find(q);
+		if (ref != dungeon->edIds.end())
 		{
 			drawGroup = new DrawGroup(
 				modelSkinned->baseGroup, ref->second->matrix);

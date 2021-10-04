@@ -87,6 +87,8 @@ namespace skyrim
 	ESP load_plugin(const char *filename, bool whole)
 	{
 		printf("Load Plugin %s\n", filename);
+		if (strlen(filename) < 1)
+			return NULL;
 		std::string path = std::string(editme) + "/Data/" + filename;
 		if (ESP has = has_plugin(filename))
 			return has;
@@ -104,8 +106,8 @@ namespace skyrim
 		else
 		{
 			printf("couldn't find %s in /Data or /bin\n", filename);
-			exit(1);
-			return nullptr;
+			//exit(1);
+			return NULL;
 		}
 		load_these_definitions(plugin);
 		return plugin;

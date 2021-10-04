@@ -102,8 +102,8 @@ static void toggle_cursor()
 
 static void hotswap_plugin_and_dungeon()
 {
-	reload_plugin();
-	reload_interior();
+	reload_dark_esp();
+	reload_dungeon_in_place();
 }
 
 static void reload_shaders()
@@ -371,8 +371,8 @@ void dark::program_while()
 		if (someHuman)
 			someHuman->Step();
 
-		if (ginterior)
-			ginterior->Update();
+		if (dungeon)
+			dungeon->Update();
 
 		Container::Step();
 

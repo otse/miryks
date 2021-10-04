@@ -12,11 +12,11 @@
 
 namespace skyrim
 {
-	template<typename T = int>
+	template<typename T = Both>
 	class Grup
 	{
 	public:
-		typedef std::function<bool(Grup &)> loop_func;
+		typedef std::function<bool(Grup<> &)> loop_func;
 
 		unsigned int index = 0;
 		const GRUP grp;
@@ -55,31 +55,21 @@ namespace skyrim
 			index++;
 			return *this;
 		}
-		template<typename T = Grup>
-		bool templated_dive(loop_func func, int group_type = -1, int dive = 0)
+		bool dive(int dive, loop_func func, int group_type = -1)
 		{
 			assertc(valid());
-			for (index = 0; index < size(); index++)
-				if (dive > 0 && get_grup().dive(func, group_type, dive - 1))
-					return true;
-				else if (loop(func, group_type))
-					return true;
-			return false;
-		}
-		bool dive(loop_func func, int group_type = -1, int dive = 0)
-		{
-			assertc(valid());
-			for (index = 0; index < size(); index++)
-				if (dive > 0) {
-					if (get_grup().dive(func, group_type, dive - 1))
+			if (dive > 0)
+				for (; index < size(); index++) {
+					if (get_grup().dive(dive - 1, func, group_type))
 						return true;
 				}
-				else if (loop(func, group_type))
-					return true;
+			else if (loop(func, group_type))
+				return true;
 			return false;
 		}
 		bool loop(loop_func func, int group_type = -1)
 		{
+			assertc(valid());
 			assertc(group_type == -1 || hed().group_type == group_type);
 			for (index = 0; index < size(); index++)
 				if (func(*this))

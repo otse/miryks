@@ -21,8 +21,9 @@ namespace dark
 
 namespace dark
 {
-Player *player1 = nullptr;
-std::map<const char *, int> keys;
+	ESP Dark = NULL;
+	Player *player1 = nullptr;
+	std::map<const char *, int> keys;
 }
 
 void darkassert(bool e)
@@ -38,9 +39,9 @@ void load_bucket()
 
 void load_gloomgen()
 {
-	ginterior = getInterior("GloomGen", 5);
-	ginterior->Load();
-	gworldSpace = getWorldSpace("DarkWorld", 5);
+	dungeon = getInterior("GloomGen", 5);
+	dungeon->Load();
+	//gworldSpace = getWorldSpace("DarkWorld", 5);
 	//player1 = new Player();
 }
 
@@ -70,6 +71,12 @@ void load_plugins_archives()
 	get_archives()[15] = load_archive(ARCHIVE_15);
 	get_archives()[16] = load_archive(ARCHIVE_16);
 	get_archives()[17] = load_archive(ARCHIVE_17);
+	assertc(get_plugins()[0]);
+	assertc(get_plugins()[1]);
+	assertc(get_plugins()[2]);
+	assertc(get_plugins()[3]);
+	assertc(get_plugins()[4]);
+	assertc(get_plugins()[5]);
 }
 
 #include <renderer/camera.h>
@@ -82,6 +89,7 @@ int main()
 	goingrate();
 	load_yagrum();
 	load_plugins_archives();
+	Dark = get_plugins()[5];
 	nif_test();
 	renderer_init();
 	load_bucket();
@@ -103,22 +111,22 @@ int main()
 	return 1;
 }
 
-void dark::reload_plugin()
+void dark::reload_dark_esp()
 {
 	ESP *plugin = &get_plugins()[5];
 	free_plugin(plugin);
 	*plugin = load_plugin(PLUGIN_5, true);
 }
 
-void dark::reload_interior()
+void dark::reload_dungeon_in_place()
 {
-	if (ginterior)
+	if (dungeon)
 	{
-		const char *edId = ginterior->edId;
-		delete ginterior;
-		ginterior = getInterior(edId, 5);
-		ginterior->alreadyTeleported = true;
-		ginterior->Load();
+		const char *edId = dungeon->edId;
+		delete dungeon;
+		dungeon = getInterior(edId, 5);
+		dungeon->alreadyTeleported = true;
+		dungeon->Load();
 	}
 }
 

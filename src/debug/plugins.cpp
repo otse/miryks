@@ -104,35 +104,30 @@ void overlay_plugins()
 
 	ImGui::Begin("Plugin", nullptr, flags);
 
-#define MAX 230
-	static char buf[MAX] = "Skyrim.esm";
-	static char buf2[MAX] = {'\0'};
+	static const char *items[] = {
+		PLUGIN_0,
+		PLUGIN_1,
+		PLUGIN_2,
+		PLUGIN_3,
+		PLUGIN_4,
+		PLUGIN_5
+	};
 
-	static revised_array * filtered = NULL;
+	static int current = 0;
+	static int old = -1;
 
-	ImGui::InputText("##plugin", buf, IM_ARRAYSIZE(buf));
+	ImGui::Combo("plugins", &current, items, IM_ARRAYSIZE(items));
+	//ImGui::ListBox("##plugins", &current, items, num, 3);
 
-	bool reset = false;
-
-	if (strcmp(buf, buf2))
+	if (old != current)
 	{
-		memcpy(buf2, buf, MAX);
-		// Unload gui-mounted plugin
-		if (plugin && !has_plugin(plugin->filename))
-			free_plugin(&plugin);
-		Esp *replace = load_plugin(buf, false);
-		if (replace)
-		{
-			plugin = replace;
-			if (filtered) {
-				free_esp_array(&filtered);
-				filtered = NULL;
-			}
-			reset = true;
-		}
+		plugin = get_plugins()[current];
+		old = current;
 	}
 
 	ImGui::Separator();
+
+	static revised_array * filtered = NULL;
 
 	//if (plugin)
 	//{

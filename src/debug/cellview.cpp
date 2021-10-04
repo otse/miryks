@@ -27,8 +27,7 @@ void cell_gui()
 		if (ImGui::BeginTabItem("interiors"))
 		{
 			static const char *items[1] = {
-				"GloomGen"
-			};
+				"GloomGen"};
 
 			static int num = 1;
 			static int current = 0;
@@ -37,13 +36,14 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			if (ginterior && ginterior->record.editor_id(items[current]) == false)
+			if (!dungeon || dungeon && dungeon->record.editor_id(items[current]) == false)
 			{
 				if (ImGui::Button("Load"))
 				{
-					delete ginterior;
-					ginterior = getInterior(items[current], 5);
-					ginterior->Load();
+					if (dungeon)
+						delete dungeon;
+					dungeon = getInterior(items[current], 5);
+					dungeon->Load();
 				}
 			}
 			//if (items[current] == ginterior->loadedCell)
@@ -54,8 +54,19 @@ void cell_gui()
 		}
 		if (ImGui::BeginTabItem("world space"))
 		{
-			ImGui::TextDisabled("( DarkWorld World-Space )");
-			ImGui::Text("Amount cells: %s");
+			if (ImGui::Button("Go outdoors?"))
+			{
+				if (dungeon)
+				{
+					delete dungeon;
+					dungeon = nullptr;
+				}
+				if (!gworldSpace)
+				{
+					gworldSpace = getWorldSpace("DarkWorld", 5);
+					gworldSpace->Load();
+				}
+			}
 			ImGui::EndTabItem();
 		}
 

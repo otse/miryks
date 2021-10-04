@@ -9,6 +9,11 @@
 
 namespace skyrim
 {
+	class Both {
+	public:
+		Both();
+	};
+
 	typedef unsigned int *formId;
 	typedef const char *editorId;
 	typedef const char signature[5];
@@ -18,13 +23,13 @@ namespace skyrim
 	class Record
 	{
 	public:
-		const RCD rcd;
+		RCD /*const */ rcd;
 
 		Record()
 		{
 			rcd = nullptr;
 		}
-		Record(const RCD p)
+		Record(RCD p)
 		{
 			rcd = p;
 			if (rcd)

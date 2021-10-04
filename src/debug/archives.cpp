@@ -6,9 +6,7 @@ using namespace dark;
 
 #include <imgui.h>
 
-static char hedrstr[600] = {"not loaded"};
-
-BSA bsa = NULL;
+BSA archive = NULL;
 
 void overlay_archives()
 {
@@ -22,38 +20,49 @@ void overlay_archives()
 
 	static bool reset = false;
 
-#define MAX 230
-	static char buf[MAX] = "Skyrim - Meshes0.bsa";
-	static char buf2[MAX] = {'\0'};
+	static const char *items[] = {
+		ARCHIVE_0,
+		ARCHIVE_1,
+		ARCHIVE_2,
+		ARCHIVE_3,
+		ARCHIVE_4,
+		ARCHIVE_5,
+		ARCHIVE_6,
+		ARCHIVE_7,
+		ARCHIVE_8,
+		ARCHIVE_9,
+		ARCHIVE_10,
+		ARCHIVE_11,
+		ARCHIVE_12,
+		ARCHIVE_13,
+		ARCHIVE_14,
+		ARCHIVE_15,
+		ARCHIVE_16,
+		ARCHIVE_17
+	};
 
-	ImGui::InputText("##archive", buf, IM_ARRAYSIZE(buf));
+	static int current = 0;
+	static int old = -1;
 
-	if (strcmp(buf, buf2))
+	ImGui::Combo("archives", &current, items, IM_ARRAYSIZE(items));
+
+	if (old != current)
 	{
-		memcpy(buf2, buf, MAX);
-		BSA replace = load_archive(buf2);
-		if (replace)
-		{
-			bsa = replace;
-			reset = true;
+		archive = get_archives()[current];
+		if (archive) {
 		}
-		//if (bsa && bsa->unimportant) // todo also check if its unused
-		//{
-		//	printf("unloading unimportant %s\n", bsa->path);
-		//	bsa_free(&bsa);
-		//}
-		if (bsa != NULL)
-			bsa_print_hedr(bsa, hedrstr);
+		reset = true;
+		old = current;
 	}
 
 	ImGui::Separator();
 
-	if (bsa)
+	if (archive)
 	{
-		ImGui::Text(bsa->filename);
+		ImGui::Text(archive->filename);
 	}
 
-	if (!bsa)
+	if (!archive)
 	{
 		ImGui::End();
 		return;
@@ -65,15 +74,15 @@ void overlay_archives()
 		ImGui::Separator();
 		char s[200];
 
-		bsa_print_rc(bsa, s, res->r);
+		bsa_print_rc(archive, s, res->r);
 		ImGui::Text(s);
 
 		if (ImGui::TreeNode("more data"))
 		{
-			bsa_print_fle_rcd(bsa, s, res->i, res->j);
+			bsa_print_fle_rcd(archive, s, res->i, res->j);
 			ImGui::Text(s);
 
-			bsa_print_fld_rcd(bsa, s, res->i);
+			bsa_print_fld_rcd(archive, s, res->i);
 			ImGui::Text(s);
 
 			ImGui::TreePop();
@@ -96,7 +105,7 @@ void overlay_archives()
 		//ImGui::Separator();
 	};
 
-	//ImGui::Text(bsa->path);
+	//ImGui::Text(archive->path);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
@@ -104,11 +113,27 @@ void overlay_archives()
 	{
 		if (ImGui::BeginTabItem("header"))
 		{
-			ImGui::Text(hedrstr);
+			if (archive) {
+				char hedr[600];
+				bsa_print_hedr(archive, hedr);
+				ImGui::Text(hedr);
+			}
+			else
+				ImGui::Text("not loaded by dark");
 			ImGui::EndTabItem();
 		}
+		
+		if (!archive)
+		{
+			ImGui::EndTabBar();
+			ImGui::End();
+			return;
+		}
+
 		if (ImGui::BeginTabItem("find"))
 		{
+			#define MAX 230
+
 			static char str[MAX] = "meshes\\clutter\\bucket02a.nif";
 			static char str2[MAX] = {'\0'};
 
@@ -124,13 +149,13 @@ void overlay_archives()
 
 			bool rcb = !!res;
 
-			ImGui::Text(res ? "found!" : "not found!");
+			ImGui::Text(res ? "found!" : "not found");
 			ImGui::SameLine();
 			ImGui::Checkbox("##", &rcb);
 
 			if (strcmp(str, str2))
 			{
-				res = bsa_find(bsa, str);
+				res = bsa_find(archive, str);
 				memcpy(str2, str, MAX);
 			}
 
@@ -165,7 +190,7 @@ void overlay_archives()
 
 			if (strcmp(str, str2))
 			{
-				bsa_search(bsa, rcs, str, &num);
+				bsa_search(archive, rcs, str, &num);
 				for (int i = 0; i < num; i++)
 				{
 					items[i] = rcs[i]->name;
@@ -192,8 +217,8 @@ void overlay_archives()
 		}
 		if (ImGui::BeginTabItem("list"))
 		{
-			//ImGui::Text("Folders %i", bsa->hdr.folders);
-			//ImGui::Text("Files %i", bsa->hdr.files);
+			//ImGui::Text("Folders %i", archive->hdr.folders);
+			//ImGui::Text("Files %i", archive->hdr.files);
 
 			auto vec = ImVec2(0, ImGui::GetContentRegionAvail().y);
 
@@ -201,27 +226,27 @@ void overlay_archives()
 			const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
 			const bool child_is_visible = ImGui::BeginChild(child_id, vec, true, child_flags);
 			//ImGui::BeginChildFrame(1, ImVec2(0, 800));
-			for (unsigned int i = 0; i < bsa->hdr.folders; i++)
+			for (unsigned int i = 0; i < archive->hdr.folders; i++)
 			{
-				if (ImGui::TreeNode(bsa->ca[i]))
+				if (ImGui::TreeNode(archive->ca[i]))
 				{
 					char s[200];
-					bsa_print_fld_rcd(bsa, s, i);
+					bsa_print_fld_rcd(archive, s, i);
 					ImGui::Text(s);
 					ImGui::Separator();
 					ImGui::Text("Files:");
-					int r = bsa->r[i];
-					for (unsigned int j = 0; j < bsa->fld[i].num; j++)
+					int r = archive->r[i];
+					for (unsigned int j = 0; j < archive->fld[i].num; j++)
 					{
-						if (ImGui::TreeNode(bsa->cb[r]))
+						if (ImGui::TreeNode(archive->cb[r]))
 						{
 							ImGui::Separator();
 
 							char s[200];
-							RES res = bsa->res[bsa->r[i] + j];
-							bsa_print_rc(bsa, s, res->r);
+							RES res = archive->res[archive->r[i] + j];
+							bsa_print_rc(archive, s, res->r);
 							ImGui::Text(s);
-							bsa_print_fle_rcd(bsa, s, i, j);
+							bsa_print_fle_rcd(archive, s, i, j);
 							ImGui::Text(s);
 
 							if (ImGui::Button("Read"))
