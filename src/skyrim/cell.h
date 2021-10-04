@@ -22,14 +22,14 @@ namespace skyrim
 	{
 	public:
 		Record record;
-		Grup persistent, temporary;
-		Cell(Record, Grup);
+		Grup<> persistent, temporary;
+		Cell(Record, Grup<>);
 	};
 
 	class Interior : public Cell
 	{
 	public:
-		Interior(Record r, Grup g) : Cell(r, g) {
+		Interior(Record r, Grup<> g) : Cell(r, g) {
 			
 		}
 		~Interior();
@@ -38,7 +38,7 @@ namespace skyrim
 		std::map<std::string, Ref *> edIds;
 
 		void Update();
-		void Subgroup(Grup, int);
+		void Subgroup(Grup<>, int);
 		void Load();
 		void Unload();
 		void put_cam_on_random_xmarker();
@@ -50,8 +50,8 @@ namespace skyrim
 	class WorldSpace {
 	public:
 		Record record;
-		Grup grup;
-		WorldSpace(Record r, Grup g) {
+		Grup<> grup;
+		WorldSpace(Record r, Grup<> g) {
 			printf("WorldSpaced");
 			record = r;
 			grup = g;

@@ -24,7 +24,7 @@ namespace skyrim
 		Interior *interior = nullptr;
 		printf("get interior\n");
 		Grup top = esp_top(get_plugins()[plugin], "CELL");
-		top.loop([&](Grup &dived) {
+		top.dive([&](Grup<> &dived) {
 			Record record = dived.get_record();
 			Grup grup = dived.next().get_grup();
 			if (record.editor_id(interiorId))
@@ -42,7 +42,7 @@ namespace skyrim
 		WorldSpace *worldSpace = nullptr;
 		printf("get world space\n");
 		Grup top = esp_top(get_plugins()[plugin], "WRLD");
-		top.loop([&](Grup &grup) {
+		top.loop([&](Grup<> &grup) {
 			Record record = grup.get_record();
 			Grup grup2 = grup.next().get_grup();
 			if (record.editor_id(worldSpaceId)) {
@@ -54,7 +54,7 @@ namespace skyrim
 		return worldSpace;
 	}
 
-	Cell::Cell(Record r, Grup g) {
+	Cell::Cell(Record r, Grup<> g) {
 		record = r;
 		persistent = g.get_grup();
 		temporary = g.next().get_grup();
@@ -79,11 +79,11 @@ namespace skyrim
 	
 	auto LABELS = { Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients };
 
-	void Interior::Subgroup(Grup grupw, int group_type)
+	void Interior::Subgroup(Grup<> grupw, int group_type)
 	{
 		if (!grupw.valid())
 			return;
-		grupw.loop([&](Grup &grup) {
+		grupw.loop([&](Grup<> &grup) {
 			Record record = grup.get_record();
 			if (record.is_type(REFR))
 			{
@@ -111,7 +111,7 @@ namespace skyrim
 			return;
 		if (!persistent.valid())
 			return;
-		persistent.loop([&](Grup &grup) {
+		persistent.loop([&](Grup<> &grup) {
 			Record record = grup.get_record();
 			if (*(record.base()) == 0x0000003B)
 			{

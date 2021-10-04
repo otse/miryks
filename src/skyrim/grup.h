@@ -12,6 +12,7 @@
 
 namespace skyrim
 {
+	template<typename T = int>
 	class Grup
 	{
 	public:
@@ -54,24 +55,34 @@ namespace skyrim
 			index++;
 			return *this;
 		}
-		bool loop(loop_func f, int group_type = -1, int dive = 0)
+		template<typename T = Grup>
+		bool templated_dive(loop_func func, int group_type = -1, int dive = 0)
 		{
 			assertc(valid());
-			if (dive > 0) {
-				for (index = 0; index < size(); index++)
-					if (get_grup().loop(f, group_type, dive - 1))
-						return true;
-			}
-			else if (call(f, group_type))
-				return true;
+			for (index = 0; index < size(); index++)
+				if (dive > 0 && get_grup().dive(func, group_type, dive - 1))
+					return true;
+				else if (loop(func, group_type))
+					return true;
 			return false;
 		}
-		protected:
-		bool call(loop_func f, int group_type = -1)
+		bool dive(loop_func func, int group_type = -1, int dive = 0)
+		{
+			assertc(valid());
+			for (index = 0; index < size(); index++)
+				if (dive > 0) {
+					if (get_grup().dive(func, group_type, dive - 1))
+						return true;
+				}
+				else if (loop(func, group_type))
+					return true;
+			return false;
+		}
+		bool loop(loop_func func, int group_type = -1)
 		{
 			assertc(group_type == -1 || hed().group_type == group_type);
 			for (index = 0; index < size(); index++)
-				if (f(*this))
+				if (func(*this))
 					return true;
 			return false;
 		}
