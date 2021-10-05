@@ -10,7 +10,7 @@ namespace skyrim {
 
 	// Grup &Grup::end = Grup();
 
-	Record get_race(const char *raceId)
+	Record GetRace(const char *raceId)
 	{
 		Record race;
 		Grup top = esp_top(get_plugins()[0], "RACE");

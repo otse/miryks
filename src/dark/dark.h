@@ -12,7 +12,7 @@ using namespace skyrim;
 
 namespace dark
 {
-	class Ref;
+	class Reference;
 	class Player;
 
 	void darkassert(bool);

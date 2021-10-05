@@ -9,7 +9,7 @@ namespace skyrim {
     Char::Char(const char *raceId)
 	{
 		anim = nullptr;
-		race = get_race(raceId);
+		race = GetRace(raceId);
 		skel = new Skel(race);
 		hat = head = body = hands = feet = nullptr;
 		const bool beggar = true;

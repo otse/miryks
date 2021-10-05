@@ -1,6 +1,6 @@
 #include <dark/dark.h>
 
-#include <dark/ref.h>
+#include <dark/reference.h>
 
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>

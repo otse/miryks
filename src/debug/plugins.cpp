@@ -113,7 +113,7 @@ void overlay_plugins()
 		PLUGIN_5
 	};
 
-	static int current = 0;
+	static int current = 5;
 	static int old = -1;
 
 	ImGui::Combo("plugins", &current, items, IM_ARRAYSIZE(items));

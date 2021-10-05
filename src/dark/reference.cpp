@@ -2,7 +2,9 @@
 
 // big include blob !!
 
-#include <dark/ref.h>
+// needs a big cleanup sometime
+
+#include <dark/reference.h>
 
 #include <skyrim/record.h>
 #include <skyrim/grup.h>
@@ -25,7 +27,7 @@
 
 namespace dark
 {
-	Ref::Ref(RCD rcd) : Record(rcd)
+	Reference::Reference(Record refr) : Record(refr)
 	{
 		model = nullptr;
 		drawGroup = nullptr;
@@ -34,7 +36,7 @@ namespace dark
 		Go();
 	}
 
-	Ref::~Ref()
+	Reference::~Reference()
 	{
 		if (drawGroup && drawGroup->parent)
 			drawGroup->parent->Remove(drawGroup);
@@ -45,7 +47,7 @@ namespace dark
 		delete spotLight;
 	}
 
-	void Ref::Step()
+	void Reference::Step()
 	{
 		if (baseObject.is_type("MSTT"))
 		{
@@ -54,7 +56,7 @@ namespace dark
 		}
 	}
 
-	void Ref::Go()
+	void Reference::Go()
 	{
 		matrix = mat4(1.0);
 
@@ -73,7 +75,7 @@ namespace dark
 	}
 
 	// bad
-	void Ref::ForLocationalData(float *locationalData)
+	void Reference::ForLocationalData(float *locationalData)
 	{
 		if (!locationalData)
 			return;
@@ -103,7 +105,7 @@ namespace dark
 	}
 
 	// for boo baba
-	void Ref::ForBaseId(formId baseId)
+	void Reference::ForBaseId(formId baseId)
 	{
 		if (!baseId)
 			return;
@@ -258,7 +260,7 @@ namespace dark
 		}
 	}
 
-	float Ref::GetDistance() const
+	float Reference::GetDistance() const
 	{
 		if (drawGroup == nullptr)
 			return 0;
@@ -282,15 +284,15 @@ namespace dark
 
 	// Todo, Omg !
 
-	bool myfunction(Ref *l, Ref *r)
+	bool myfunction(Reference *l, Reference *r)
 	{
 		return l->GetDistance() < r->GetDistance();
 	}
 
 	// very bad namespace
 	namespace Refs {
-		Ref *handRef = nullptr;
-		std::vector<Ref *> labelled;
+		Reference *handRef = nullptr;
+		std::vector<Reference *> labelled;
 		bool labelingEnabled = true;
 		vec3 projected;
 		void Init()
@@ -301,13 +303,13 @@ namespace dark
 			if (!labelingEnabled)
 				return;
 				
-			std::sort(labelled.begin(), labelled.end(), [](const Ref *l, const Ref *r) -> bool {
+			std::sort(labelled.begin(), labelled.end(), [](const Reference *l, const Reference *r) -> bool {
 				return l->GetDistance() < r->GetDistance();
 			});
 
 			handRef = nullptr;
 
-			for (Ref *ref : labelled)
+			for (Reference *ref : labelled)
 				if (ref->DisplayAsItem())
 					return;
 		}
@@ -319,7 +321,7 @@ namespace dark
 	};
 
 
-	bool Ref::Use() {
+	bool Reference::Use() {
 		printf("Use %s\n", baseObject.editor_id());
 		if (baseObject.is_type(CONT) && container)
 			container->Activate();
@@ -327,7 +329,7 @@ namespace dark
 	}
 
 	// horrible imgui vomit
-	bool Ref::DisplayAsItem()
+	bool Reference::DisplayAsItem()
 	{
 		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;
 

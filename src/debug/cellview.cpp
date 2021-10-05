@@ -36,13 +36,13 @@ void cell_gui()
 
 			ImGui::Separator();
 
-			if (!dungeon || dungeon && dungeon->record.editor_id(items[current]) == false)
+			if (!dungeon || dungeon && dungeon->editor_id(items[current]) == false)
 			{
 				if (ImGui::Button("Load"))
 				{
 					if (dungeon)
 						delete dungeon;
-					dungeon = getInterior(items[current], 5);
+					dungeon = GetInterior(items[current], 5);
 					dungeon->Load();
 				}
 			}
@@ -63,7 +63,7 @@ void cell_gui()
 				}
 				if (!gworldSpace)
 				{
-					gworldSpace = getWorldSpace("DarkWorld", 5);
+					gworldSpace = GetWorldSpace("DarkWorld", 5);
 					gworldSpace->Load();
 				}
 			}

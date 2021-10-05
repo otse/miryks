@@ -11,12 +11,12 @@ using namespace skyrim;
 
 namespace dark
 {
-	class Ref;
+	class Reference;
 
 	namespace Refs
 	{
-		extern Ref *handRef;
-		extern std::vector<Ref *> labelled;
+		extern Reference *handRef;
+		extern std::vector<Reference *> labelled;
 		extern bool labelingEnabled;
 		extern vec3 projected;
 		void Init();
@@ -27,13 +27,13 @@ namespace dark
 	static void refs_init() { Refs::Init(); }
 	
 	// horrible superweight class
-	class Ref : public Record
+	class Reference : public Record
 	{
 	public:
 		Container *container = nullptr;
 
-		Ref(RCD);
-		~Ref();
+		Reference(Record);
+		~Reference();
 		Record baseObject;
 		Model *model;
 		mat4 matrix;

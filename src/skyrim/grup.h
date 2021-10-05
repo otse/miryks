@@ -31,8 +31,10 @@ namespace skyrim
 		Grup &operator()(GRUP grp)
 		{
 			this->grp = grp;
-			assertc(grp->g == 'g');
-			esp_check_grup(grp);
+			if (this->grp) {
+				assertc(grp->g == 'g');
+				esp_check_grup(grp);
+			}
 			return *this;
 		}
 		inline bool valid() const
@@ -60,7 +62,8 @@ namespace skyrim
 			assertc(valid());
 			if (dive > 0)
 				for (; index < size(); index++) {
-					if (get_grup().dive(dive - 1, func, group_type))
+					GRUP g = get_grup();
+					if (Grup(g).dive(dive - 1, func, group_type))
 						return true;
 				}
 			else if (loop(func, group_type))
@@ -88,11 +91,11 @@ namespace skyrim
 			return (T)mixed().elements[index];
 		}
 		public:
-		inline Grup get_grup()
+		inline grup *get_grup()
 		{
 			return get<grup *>();
 		}
-		inline Record get_record()
+		inline record *get_record()
 		{
 			return get<record *>();
 		}

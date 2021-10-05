@@ -16,8 +16,8 @@
 
 namespace skyrim
 {
-	Cell::Cell(Record r, Grup<> g) {
-		record = r;
+	Cell::Cell(Record cell, Grup<> g) : Record(cell) {
+		printf("Cell() g size %i", g.size());
 		persistent = g.get_grup();
 		temporary = g.next().get_grup();
 	}

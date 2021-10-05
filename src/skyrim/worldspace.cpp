@@ -18,29 +18,32 @@ namespace skyrim
 {
 	WorldSpace *gworldSpace = nullptr;
 	
-	WorldSpace *getWorldSpace(const char *worldSpaceId, int plugin)
+	WorldSpace *GetWorldSpace(const char *id, int plugin)
 	{
-		WorldSpace *worldSpace = nullptr;
+		WorldSpace *ws = nullptr;
 		Grup top = esp_top(get_plugins()[plugin], "WRLD");
 		top.loop([&](Grup<> &g) {
-			Record record = g.get_record();
+			Record wrld = g.get_record();
 			Grup grup = g.next().get_grup();
-			if (record.editor_id(worldSpaceId)) {
-				worldSpace = new WorldSpace(record, grup);
+			if (wrld.editor_id(id)) {
+				ws = new WorldSpace(wrld, grup);
 				return true;
 			} 
 			return false;
 		}, 0);
-		return worldSpace;
+		return ws;
 	}
 
 	void WorldSpace::Load()
 	{
-		grup.index = 2;
-		grup.dive(2, [&](Grup<> &g) {
-			
+		printf("ws load\n");
+		grupw.index = 2;
+		grupw.dive(2, [&](Grup<> &g) {
+			Record cell = g.get_record();
+			Grup grup = g.next().get_grup();
+			new Cell(cell, grup);
 			return true;
-		}, 2);
+		}, 5);
 	}
 
 }

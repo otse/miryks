@@ -1,7 +1,7 @@
 #pragma once
 
 #include <dark/dark.h>
-#include <dark/ref.h>
+#include <dark/reference.h>
 
 #include <skyrim/record.h>
 

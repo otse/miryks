@@ -18,17 +18,17 @@ namespace skyrim
 {
 	Interior *dungeon = nullptr;
 
-	Interior *getInterior(const char *interiorId, int plugin)
+	Interior *GetInterior(const char *interiorId, int plugin)
 	{
 		Interior *interior = nullptr;
 		printf("get interior\n");
 		Grup top = esp_top(get_plugins()[plugin], "CELL");
 		top.dive(2, [&](Grup<> &g) {
-			Record record = g.get_record();
+			Record cell = g.get_record();
 			Grup grup = g.next().get_grup();
-			if (record.editor_id(interiorId))
+			if (cell.editor_id(interiorId))
 			{
-				interior = new Interior(record, grup);
+				interior = new Interior(cell, grup);
 				return true;
 			}
 			return false;
@@ -49,7 +49,7 @@ namespace skyrim
 
 	void Interior::Unload()
 	{
-		for (Ref *ref : refs)
+		for (Reference *ref : refs)
 			delete ref;
 	}
 	
@@ -60,20 +60,21 @@ namespace skyrim
 		if (!grupw.valid())
 			return;
 		grupw.loop([&](Grup<> &g) {
-			Record record = g.get_record();
-			if (record.is_type(REFR))
+			Record any = g.get_record();
+			if (any.is_type(REFR))
 			{
-				Ref *ref = new Ref(record.rcd);
-				refs.push_back(ref);
-				const char *edId = record.editor_id();
+				Record refr = any;
+				Reference *reference = new Reference(refr);
+				refs.push_back(reference);
+				const char *edId = refr.editor_id();
 				if (edId)
-					edIds.emplace(edId, ref);
-				if (ref->baseObject.valid())
+					edIds.emplace(edId, reference);
+				if (reference->baseObject.valid())
 				{
-					if (ref->baseObject.is_types( LABELS ))
-						Refs::labelled.push_back(ref);
-					else if (ref->baseObject.is_type( MSTT ))
-						mstts.push_back(ref);
+					if (reference->baseObject.is_types( LABELS ))
+						Refs::labelled.push_back(reference);
+					else if (reference->baseObject.is_type( MSTT ))
+						mstts.push_back(reference);
 				}
 			}
 			return false;
@@ -107,7 +108,7 @@ namespace skyrim
 	{
 		Refs::Nearby();
 
-		for (Ref *mstt : mstts)
+		for (Reference *mstt : mstts)
 			mstt->model->Misty();
 	}
 }

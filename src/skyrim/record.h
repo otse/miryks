@@ -23,7 +23,7 @@ namespace skyrim
 	class Record
 	{
 	public:
-		RCD /*const */ rcd;
+		RCD rcd;
 
 		Record()
 		{

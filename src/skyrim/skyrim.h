@@ -41,6 +41,6 @@ namespace skyrim
 
 	Keyf *load_keyframes_from_disk(const char *);
 
-	Record get_race(const char *);
+	Record GetRace(const char *);
 
 }

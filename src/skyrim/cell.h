@@ -1,7 +1,7 @@
 #pragma once
 
 #include <dark/dark.h>
-#include <dark/ref.h>
+#include <dark/reference.h>
 
 #include <skyrim/skyrim.h>
 #include <skyrim/grup.h>
@@ -11,17 +11,16 @@ using namespace dark;
 
 namespace skyrim
 {
-	Interior *getInterior(const char *, int);
+	Interior *GetInterior(const char *, int);
 
-	WorldSpace *getWorldSpace(const char *, int);
+	WorldSpace *GetWorldSpace(const char *, int);
 	
 	extern Interior *dungeon;
 	extern WorldSpace *gworldSpace;
 
-	class Cell
+	class Cell : public Record
 	{
 	public:
-		Record record;
 		Grup<> persistent, temporary;
 		Cell(Record, Grup<>);
 	};
@@ -29,13 +28,13 @@ namespace skyrim
 	class Interior : public Cell
 	{
 	public:
-		Interior(Record r, Grup<> g) : Cell(r, g) {
+		Interior(Record cell, Grup<> g) : Cell(cell, g) {
 			
 		}
 		~Interior();
 
-		std::vector<Ref *> refs, labels, mstts;
-		std::map<std::string, Ref *> edIds;
+		std::vector<Reference *> refs, labels, mstts;
+		std::map<std::string, Reference *> edIds;
 
 		void Update();
 		void Subgroup(Grup<>, int);
@@ -49,9 +48,9 @@ namespace skyrim
 
 	class WorldSpace : public Record {
 	public:
-		Grup<> grup;
-		WorldSpace(Record r, Grup<> g) : Record(r) {
-			grup = g;
+		Grup<> grupw;
+		WorldSpace(Record wrld, Grup<> g) : Record(wrld) {
+			grupw = g;
 			printf("new WorldSpace: %s\n", data<const char *>("FULL"));
 			formId xlcn = data<formId>("XLCN");
 			int16_t *wctr = data<int16_t *>("WCTR");
