@@ -5,6 +5,7 @@
 #include <skyrim/record.h>
 
 #include <map>
+#include <array>
 #include <functional>
 
 // this lets you write cleaner code by pretending the access exists
@@ -16,22 +17,25 @@ namespace skyrim
 	class Grup
 	{
 	public:
-		typedef std::function<bool(Grup<> &)> loop_func;
+		typedef std::function<bool(Grup &)> loop_func;
 
 		unsigned int index = 0;
-		const GRUP grp;
+		GRP grp = nullptr;
 		Grup()
 		{
-			grp = nullptr;
 		}
-		Grup(GRUP grp)
+		Grup(GRP grp)
 		{
 			(*this)(grp);
 		}
-		Grup &operator()(GRUP grp)
+		Grup(Grup &grp)
+		{
+			(*this)(grp.grp);
+		}
+		Grup &operator()(GRP grp)
 		{
 			this->grp = grp;
-			if (this->grp) {
+			if (grp) {
 				assertc(grp->g == 'g');
 				esp_check_grup(grp);
 			}
@@ -57,24 +61,23 @@ namespace skyrim
 			index++;
 			return *this;
 		}
-		bool dive(int dive, loop_func func, int group_type = -1)
+		// for blocks and subblocks you can dive..
+		bool dive(loop_func func, std::vector<int> group_types, int dive = -1)
 		{
 			assertc(valid());
-			if (dive > 0)
-				for (; index < size(); index++) {
-					GRUP g = get_grup();
-					if (Grup(g).dive(dive - 1, func, group_type))
-						return true;
-				}
-			else if (loop(func, group_type))
-				return true;
+			if (dive == -1)
+				dive = group_types.size();
+			int group_type = group_types[group_types.size() - dive];
+			if (loop(dive == 1 ? func : [&](Grup &g) {
+				return g.get_grup().dive(func, group_types, dive - 1);
+			}, group_type)) return true;
 			return false;
 		}
 		bool loop(loop_func func, int group_type = -1)
 		{
 			assertc(valid());
 			assertc(group_type == -1 || hed().group_type == group_type);
-			for (index = 0; index < size(); index++)
+			for (; index < size(); index++)
 				if (func(*this))
 					return true;
 			return false;
@@ -91,11 +94,11 @@ namespace skyrim
 			return (T)mixed().elements[index];
 		}
 		public:
-		inline grup *get_grup()
+		inline Grup get_grup()
 		{
 			return get<grup *>();
 		}
-		inline record *get_record()
+		inline Record get_record()
 		{
 			return get<record *>();
 		}
