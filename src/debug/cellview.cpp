@@ -43,7 +43,7 @@ void cell_gui()
 					if (dungeon)
 						delete dungeon;
 					dungeon = GetInterior(items[current], 5);
-					dungeon->Load();
+					dungeon->Init();
 				}
 			}
 			//if (items[current] == ginterior->loadedCell)
@@ -54,6 +54,9 @@ void cell_gui()
 		}
 		if (ImGui::BeginTabItem("world space"))
 		{
+			if (gworldSpace) {
+				ImGui::Text("num total exterior cells: %i", gworldSpace->exteriors.size());
+			}
 			if (ImGui::Button("Go outdoors?"))
 			{
 				if (dungeon)
@@ -64,7 +67,7 @@ void cell_gui()
 				if (!gworldSpace)
 				{
 					gworldSpace = GetWorldSpace("DarkWorld", 5);
-					gworldSpace->Load();
+					gworldSpace->Init();
 				}
 			}
 			ImGui::EndTabItem();

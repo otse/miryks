@@ -50,9 +50,9 @@ namespace skyrim
 		{
 			return *rcd->rcdbs;
 		}
-		inline const SRCD get(unsigned int i) const
+		inline const SUB get(unsigned int i) const
 		{
-			return (const SRCD)subrecords().elements[i];
+			return (const SUB)subrecords().elements[i];
 		}
 		inline bool is_type(signature sgn) const
 		{
@@ -65,11 +65,11 @@ namespace skyrim
 					return true;
 			return false;
 		}
-		const SRCD find(signature sgn, int skip = 0) const
+		const SUB find(signature sgn, int skip = 0) const
 		{
 			for (unsigned int i = 0; i < subrecords().size; i++)
 			{
-				const SRCD sub = get(i);
+				const SUB sub = get(i);
 				if (*(unsigned int *)sgn == sub->hed->sgn)
 					if (skip-- < 1)
 						return sub;
@@ -79,7 +79,7 @@ namespace skyrim
 		template <typename T = void *>
 		T data(signature sig, int skip = 0) const
 		{
-			const SRCD sub = find(sig, skip);
+			const SUB sub = find(sig, skip);
 			if (sub)
 				return (T)sub->data;
 			else

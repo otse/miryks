@@ -26,7 +26,7 @@ namespace dark
 	void reload_dark_esp();
 	void reload_dungeon_in_place();
 	void unset_dungeon();
-	
+
 	void goingrate();
 	void program_while();
 
@@ -37,13 +37,15 @@ namespace dark
 
 	extern std::map<const char *, int> keys;
 
-	inline bool pressing(const char *id) {
+	inline bool pressing(const char *id)
+	{
 		return keys[id] == 1;
 	}
-	inline bool holding(const char *id) {
+	inline bool holding(const char *id)
+	{
 		return keys[id] >= 1;
 	}
-	
+
 	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
 	inline vec3 cast_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }
 	inline vec4 cast_vec4(void *f) { return *reinterpret_cast<vec4 *>(f); }

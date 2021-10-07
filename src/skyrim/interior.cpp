@@ -23,16 +23,20 @@ namespace skyrim
 		Interior *interior = nullptr;
 		printf("get interior\n");
 		Grup top = esp_top(get_plugins()[plugin], "CELL");
-		top.dive(2, [&](Grup<> &g) {
+		top.dive([&](Grup<> &g) {
 			Record cell = g.get_record();
-			Grup grup = g.next().get_grup();
+			Grup<> grup = g.next().get_grup();
 			if (cell.editor_id(interiorId))
 			{
 				interior = new Interior(cell, grup);
 				return true;
 			}
 			return false;
-		}, 3);
+		}, {
+			Top,
+			InteriorCellBlock,
+			InteriorCellSubBlock
+		});
 		return interior;
 	}
 
@@ -41,7 +45,7 @@ namespace skyrim
 		Unload();
 	}
 
-	void Interior::Load()
+	void Interior::Init()
 	{
 		Subgroup(persistent, 8);
 		Subgroup(temporary, 9);
@@ -60,10 +64,9 @@ namespace skyrim
 		if (!grupw.valid())
 			return;
 		grupw.loop([&](Grup<> &g) {
-			Record any = g.get_record();
-			if (any.is_type(REFR))
+			Record refr = g.get_record();
+			if (refr.is_type(REFR))
 			{
-				Record refr = any;
 				Reference *reference = new Reference(refr);
 				refs.push_back(reference);
 				const char *edId = refr.editor_id();
@@ -84,7 +87,7 @@ namespace skyrim
 	
 	void Interior::put_cam_on_random_xmarker()
 	{
-		if (alreadyTeleported)
+		if (dontTeleport)
 			return;
 		if (!persistent.valid())
 			return;
@@ -97,7 +100,7 @@ namespace skyrim
 				personCam->pos = cast_vec3(locationalData);
 				personCam->pos.z += EYE_HEIGHT;
 				personCam->yaw = cast_vec3(locationalData + 3).z;
-				alreadyTeleported = true;
+				dontTeleport = true;
 				return true;
 			}
 			return false;

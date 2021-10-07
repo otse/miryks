@@ -24,7 +24,7 @@ namespace skyrim
 		Grup top = esp_top(get_plugins()[plugin], "WRLD");
 		top.loop([&](Grup<> &g) {
 			Record wrld = g.get_record();
-			Grup grup = g.next().get_grup();
+			Grup<> grup = g.next().get_grup();
 			if (wrld.editor_id(id)) {
 				ws = new WorldSpace(wrld, grup);
 				return true;
@@ -34,16 +34,66 @@ namespace skyrim
 		return ws;
 	}
 
-	void WorldSpace::Load()
+	void WorldSpace::Init()
+	{
+		DiscoverAllCells();
+		LoadExterior(0, 0);
+	}
+
+	void WorldSpace::DiscoverAllCells()
 	{
 		printf("ws load\n");
 		grupw.index = 2;
-		grupw.dive(2, [&](Grup<> &g) {
+		grupw.dive([&](Grup<> &g) {
 			Record cell = g.get_record();
-			Grup grup = g.next().get_grup();
-			new Cell(cell, grup);
-			return true;
-		}, 5);
+			Grup<> grup = g.next().get_grup();
+			Exterior *exterior = new Exterior(cell, grup);
+			exterior->worldSpace = this;
+			exteriors.push_back(exterior);
+			return false;
+		}, {
+			WorldChildren,
+			ExteriorCellBlock,
+			ExteriorCellSubBlock
+		});
+	}
+
+	void WorldSpace::LoadExterior(int x, int y)
+	{
+		for (Exterior *exterior : exteriors)
+		{
+			if (exterior->xclc->x == x && exterior->xclc->y == y)
+			{
+				printf("loading exterior %i %i", x, y);
+				exterior->Init();
+			}
+		}
+	}
+
+	void Exterior::Init()
+	{
+		//Subgroup(persistent, 8);
+		//Subgroup(temporary, 9);
+	}
+	
+	void Exterior::Subgroup(Grup<> grupw, int group_type)
+	{
+		if (!grupw.valid())
+			return;
+		grupw.loop([&](Grup<> &g) {
+			Record refr = g.get_record();
+			if (refr.is_type(REFR))
+			{
+				Reference *reference = new Reference(refr);
+				worldSpace->references.push_back(reference);
+			}
+			return false;
+		}, group_type);
+	}
+
+	Land::Land(Record land) : Record(land)
+	{
+
 	}
 
 }

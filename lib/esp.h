@@ -18,8 +18,10 @@ struct form_id;
 
 #define ESP Esp *
 #define GRUP grup *
+#define GRP grup *
 #define RCD record *
 #define SRCD subrecord *
+#define SUB subrecord *
 
 struct esp;
 struct grup;

@@ -19,15 +19,15 @@ static std::stringstream ss;
 
 static Esp *plugin = NULL;
 
-void im_grup(GRUP, int);
+void im_grup(GRP, int);
 void im_record(RCD);
-void im_subrecord(SRCD);
+void im_subrecord(SUB);
 
-void im_grup(GRUP grp, int top_grup = -1)
+void im_grup(GRP grp, int top_grup = -1)
 {
 	Grup wgrp = grp; // invokes unlooped grup
 	char t[100];
-	snprintf(t, 100, "GRUP %i %.4s", grp->id, (char *)&grp->hed->label);
+	snprintf(t, 100, "GRP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))
 	{
 		char s[100];
@@ -37,7 +37,7 @@ void im_grup(GRUP grp, int top_grup = -1)
 		{
 			void *element = grp->mixed->elements[i];
 			if (*(char *)element == 'g')
-				im_grup((GRUP)grp->mixed->elements[i]);
+				im_grup((GRP)grp->mixed->elements[i]);
 			if (*(char *)element == 'r')
 				im_record((RCD)grp->mixed->elements[i]);
 		}
@@ -51,7 +51,7 @@ void im_record(RCD rcd)
 {
 	char *edid = nullptr;
 	Record wrcd = rcd; // invokes read partials
-	SRCD first = (SRCD)rcd->rcdbs->elements[0];
+	SUB first = (SUB)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
 		edid = (char *)first->data;
@@ -75,13 +75,13 @@ void im_record(RCD rcd)
 		}
 		for (unsigned int i = 0; i < rcd->rcdbs->size; i++)
 		{
-			im_subrecord((SRCD)rcd->rcdbs->elements[i]);
+			im_subrecord((SUB)rcd->rcdbs->elements[i]);
 		}
 		ImGui::TreePop();
 	}
 }
 
-void im_subrecord(SRCD field)
+void im_subrecord(SUB field)
 {
 	char t[100];
 	snprintf(t, 100, "%.4s##Sub %i", (char *)&field->hed->sgn, field->id);
@@ -158,7 +158,7 @@ void overlay_plugins()
 			//if (ImGui::TreeNode("Grups"))
 			//{
 			for (unsigned int i = 0; i < plugin->grups->size; i++)
-				im_grup((GRUP)plugin->grups->elements[i], i);
+				im_grup((GRP)plugin->grups->elements[i], i);
 			//ImGui::TreePop();
 			//}
 			ImGui::EndChild();

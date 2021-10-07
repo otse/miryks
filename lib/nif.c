@@ -110,7 +110,6 @@ void nif_read_header(NIF nif) {
 	Hedr->end = Pos;
 }
 
-
 #define DECLARE(x) void *read_ ## x (NIF , int);
 
 static void big_block_reader(NIF , int);
@@ -175,7 +174,6 @@ void big_block_reader(NIF nif, int n)
 	else if ( nif_type(BSDecalPlacementVectorExtraDataS) ) ;
 	Blocks[n] = block;
 }
-
 
 static inline void sink(NIF nif, void **dest, int size) {
 	*dest = Depos;

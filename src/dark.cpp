@@ -40,7 +40,7 @@ void load_bucket()
 void load_gloomgen()
 {
 	dungeon = GetInterior("GloomGen", 5);
-	dungeon->Load();
+	dungeon->Init();
 	//gworldSpace = GetWorldSpace("DarkWorld", 5);
 	//player1 = new Player();
 }
@@ -125,8 +125,8 @@ void dark::reload_dungeon_in_place()
 		const char *edId = dungeon->edId;
 		delete dungeon;
 		dungeon = GetInterior(edId, 5);
-		dungeon->alreadyTeleported = true;
-		dungeon->Load();
+		dungeon->dontTeleport = true;
+		dungeon->Init();
 	}
 }
 
