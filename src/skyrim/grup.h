@@ -8,7 +8,6 @@
 #include <array>
 #include <functional>
 
-// this lets you write cleaner code by pretending the access exists
 #define GET_JUST_RETURNS_NULLPTR 1
 
 namespace skyrim
@@ -19,55 +18,36 @@ namespace skyrim
 	public:
 		typedef std::function<bool(Grup &)> loop_func;
 
+		cgrup *grup = nullptr;
 		unsigned int index = 0;
-		GRP grp = nullptr;
-		Grup()
-		{
+
+		Grup() {
 		}
-		Grup(GRP grp)
+		Grup(cgrup *grup) : grup(grup)
 		{
-			(*this)(grp);
-		}
-		Grup(Grup &grp)
-		{
-			(*this)(grp.grp);
-		}
-		Grup &operator()(GRP grp)
-		{
-			this->grp = grp;
-			if (grp)
+			if (grup)
 			{
-				assertc(grp->g == 'g');
-				esp_check_grup(grp);
+				assertc(grup->g == 'g');
+				esp_check_grup(grup);
 			}
-			return *this;
 		}
 		inline bool valid() const
 		{
-			return grp != nullptr;
+			return grup != nullptr;
 		}
-		inline const grup_header &hed() const
+		inline const cgrup_header &hed() const
 		{
-			return *grp->hed;
+			return *grup->hed;
 		}
 		inline const revised_array &mixed() const
 		{
-			return *grp->mixed;
-		}
-		inline size_t size() const
-		{
-			return mixed().size;
-		}
-		inline int group_type() const
-		{
-			return hed().group_type;
+			return *grup->mixed;
 		}
 		Grup &next()
 		{
 			index++;
 			return *this;
 		}
-		// for blocks and subblocks you can dive..
 		bool dive(loop_func func, std::vector<int> group_types, int dive = -1)
 		{
 			assertc(valid());
@@ -85,7 +65,7 @@ namespace skyrim
 		{
 			assertc(valid());
 			assertc(group_type == -1 || hed().group_type == group_type);
-			for (; index < size(); index++)
+			for (; index < mixed().size; index++)
 				if (func(*this))
 					return true;
 			return false;
@@ -94,22 +74,20 @@ namespace skyrim
 		inline T get()
 		{
 #if GET_JUST_RETURNS_NULLPTR
-			if (index >= size())
+			if (index >= mixed().size)
 				return nullptr;
 #else
 			assertc(i < size());
 #endif
 			return (T)mixed().elements[index];
 		}
-
-	public:
 		inline Grup get_grup()
 		{
-			return get<grup *>();
+			return get<cgrup *>();
 		}
 		inline Record get_record()
 		{
-			return get<record *>();
+			return get<crecord *>();
 		}
 	};
 

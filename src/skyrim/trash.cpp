@@ -45,12 +45,12 @@ namespace skyrim
 				unsigned int item, count;
 			};
 			Cnto *cnto = data<Cnto *>("CNTO", i);
-			Record wrcd = esp_get_form_id(cnto->item);
-			if (wrcd.valid())
+			Record record = esp_get_form_id(cnto->item);
+			if (record.valid())
 			{
 				for (unsigned int j = 0; j < cnto->count; j++)
 				{
-					SKItem item(wrcd);
+					SKItem item(record);
 					items.push_back(item);
 				}
 			}

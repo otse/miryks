@@ -30,6 +30,7 @@ namespace dark
 	class Reference : public Record
 	{
 	public:
+		Cell *cell = nullptr;
 		Container *container = nullptr;
 
 		Reference(Record);

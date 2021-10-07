@@ -37,6 +37,8 @@ namespace skyrim
 			InteriorCellBlock,
 			InteriorCellSubBlock
 		});
+		if (!interior)
+			printf("fatal can't find interior\n");
 		return interior;
 	}
 
@@ -59,11 +61,12 @@ namespace skyrim
 	
 	auto LABELS = { Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients };
 
-	void Interior::Subgroup(Grup<> grupw, int group_type)
+	void Interior::Subgroup(Grup<> subgroup, int group_type)
 	{
-		if (!grupw.valid())
+		if (!subgroup.valid()) {
 			return;
-		grupw.loop([&](Grup<> &g) {
+		}
+		subgroup.loop([&](Grup<> &g) {
 			Record refr = g.get_record();
 			if (refr.is_type(REFR))
 			{

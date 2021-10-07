@@ -17,9 +17,11 @@ namespace skyrim
 	class ModelSkinned;
 	class SkinnedMesh;
 
-	class WorldSpace;
 	class Cell;
 	class Interior;
+	class WorldSpace;
+	class Exterior;
+	
 	class Container;
 
 	void save_nif(const char *, NIF);

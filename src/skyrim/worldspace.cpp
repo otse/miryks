@@ -36,6 +36,7 @@ namespace skyrim
 
 	void WorldSpace::Init()
 	{
+		sceneDef->ambient = vec3(180.0 / 255.0);
 		personCam->pos = vec3(0, 0, -2048.0);
 		DiscoverAllCells();
 		LoadExterior(0, 0);
@@ -43,9 +44,9 @@ namespace skyrim
 
 	void WorldSpace::DiscoverAllCells()
 	{
-		printf("ws load\n");
-		grupw.index = 2;
-		grupw.dive([&](Grup<> &g) {
+		printf("DiscoverAllCells\n");
+		grup.index = 2; // ignore first two world children
+		grup.dive([&](Grup<> &g) {
 			Record cell = g.get_record();
 			Grup<> grup = g.next().get_grup();
 			Exterior *exterior = new Exterior(cell, grup);
@@ -65,7 +66,7 @@ namespace skyrim
 		{
 			if (exterior->xclc->x == x && exterior->xclc->y == y)
 			{
-				printf("loading exterior %i %i", x, y);
+				printf("loading exterior %i %i\n", x, y);
 				exterior->Init();
 			}
 		}
@@ -77,18 +78,25 @@ namespace skyrim
 		Subgroup(temporary, CellTemporaryChildren);
 	}
 	
-	void Exterior::Subgroup(Grup<> grupw, int group_type)
+	void Exterior::Subgroup(Grup<> subgroup, int group_type)
 	{
-		if (!grupw.valid()) {
+		if (!subgroup.valid()) {
 			return;
 		}
-		grupw.loop([&](Grup<> &g) {
+		subgroup.loop([&](Grup<> &g) {
 			Record refr = g.get_record();
 			if (refr.is_type(REFR))
 			{
-				printf("reference from exterior cell\n");
 				Reference *reference = new Reference(refr);
-				//worldSpace->references.push_back(reference);
+				reference->cell = (Cell *)this;
+				worldSpace->references.push_back(reference);
+			}
+			else if (refr.is_type("LAND"))
+			{
+				printf("this is land\n");
+				assertc(land == nullptr);
+				land = new Land(g.get_record());
+				land->exterior = this;
 			}
 			return false;
 		}, group_type);
@@ -96,7 +104,8 @@ namespace skyrim
 
 	Land::Land(Record land) : Record(land)
 	{
-
+		exterior = nullptr;
+		printf("lets try make a land mesh\n");
 	}
 
 }

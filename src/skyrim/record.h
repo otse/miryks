@@ -18,41 +18,40 @@ namespace skyrim
 	typedef const char *editorId;
 	typedef const char signature[5];
 
-	const char *getEditorIdOnly(const RCD);
+	const char *getEditorIdOnly(const RECORD);
 
 	class Record
 	{
 	public:
-		RCD rcd;
+		crecord *record;
 
 		Record()
 		{
-			rcd = nullptr;
+			record = nullptr;
 		}
-		Record(RCD p)
+		Record(crecord *record) : record(record)
 		{
-			rcd = p;
-			if (rcd)
+			if (record)
 			{
-				assertc(rcd->r == 'r');
-				esp_check_rcd((RCD)rcd);
+				assertc(record->r == 'r');
+				esp_check_rcd(record);
 			}
 		}
 		inline bool valid() const
 		{
-			return !!rcd;
+			return !!record;
 		}
-		inline const record_header &hed() const
+		inline const crecord_header &hed() const
 		{
-			return *rcd->hed;
+			return *record->hed;
 		}
 		inline const revised_array &subrecords() const
 		{
-			return *rcd->rcdbs;
+			return *record->rcdbs;
 		}
-		inline const SUB get(unsigned int i) const
+		inline const SUBRECORD get(unsigned int i) const
 		{
-			return (const SUB)subrecords().elements[i];
+			return (const SUBRECORD)subrecords().elements[i];
 		}
 		inline bool is_type(signature sgn) const
 		{
@@ -65,11 +64,11 @@ namespace skyrim
 					return true;
 			return false;
 		}
-		const SUB find(signature sgn, int skip = 0) const
+		const SUBRECORD find(signature sgn, int skip = 0) const
 		{
 			for (unsigned int i = 0; i < subrecords().size; i++)
 			{
-				const SUB sub = get(i);
+				const SUBRECORD sub = get(i);
 				if (*(unsigned int *)sgn == sub->hed->sgn)
 					if (skip-- < 1)
 						return sub;
@@ -79,7 +78,7 @@ namespace skyrim
 		template <typename T = void *>
 		T data(signature sig, int skip = 0) const
 		{
-			const SUB sub = find(sig, skip);
+			const SUBRECORD sub = find(sig, skip);
 			if (sub)
 				return (T)sub->data;
 			else

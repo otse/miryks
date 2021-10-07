@@ -29,11 +29,11 @@ namespace skyrim
 	public:
 		Grup<> persistent, temporary;
 		uint16_t flags = 0;
-		Cell(Record cell, Grup<> g) : Record(cell)
+		Cell(Record cell, Grup<> &g) : Record(cell)
 		{
-			assertc(g.group_type() == CellChildren);
+			assertc(g.hed().group_type == CellChildren);
 
-			if (g.get_grup().group_type() == CellPersistentChildren) {
+			if (g.get_grup().hed().group_type == CellPersistentChildren) {
 				persistent = g.get_grup();
 				g.next();
 			}
@@ -45,7 +45,7 @@ namespace skyrim
 	class Interior : public Cell
 	{
 	public:
-		Interior(Record cell, Grup<> g) : Cell(cell, g)
+		Interior(Record cell, Grup<> &g) : Cell(cell, g)
 		{
 		}
 		~Interior();
@@ -66,12 +66,12 @@ namespace skyrim
 	class WorldSpace : public Record
 	{
 	public:
-		Grup<> grupw;
+		Grup<> grup;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
 		WorldSpace(Record wrld, Grup<> g) : Record(wrld)
 		{
-			grupw = g;
+			grup = g;
 			printf("new WorldSpace: %s\n", data<const char *>("FULL"));
 			formId xlcn = data<formId>("XLCN");
 			int16_t *wctr = data<int16_t *>("WCTR");
@@ -92,9 +92,12 @@ namespace skyrim
 	{
 	public:
 		WorldSpace *worldSpace;
+		Land *land;
 		XCLC *xclc;
 		Exterior(Record cell, Grup<> g) : Cell(cell, g)
 		{
+			worldSpace = nullptr;
+			land = nullptr;
 			xclc = data<XCLC *>("XCLC");
 			assertc(xclc);
 		}
@@ -105,6 +108,7 @@ namespace skyrim
 	class Land : public Record
 	{
 	public:
+		Exterior *exterior;
 		Land(Record land);
 	};
 

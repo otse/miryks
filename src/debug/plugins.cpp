@@ -17,15 +17,15 @@ using namespace dark;
 
 static std::stringstream ss;
 
-static Esp *plugin = NULL;
+static ESP plugin = NULL;
 
 void im_grup(GRP, int);
 void im_record(RCD);
 void im_subrecord(SUB);
 
-void im_grup(GRP grp, int top_grup = -1)
+void im_grup(cgrup *grp, int top_grup = -1)
 {
-	Grup wgrp = grp; // invokes unlooped grup
+	Grup grup = grp; // invokes unlooped grup
 	char t[100];
 	snprintf(t, 100, "GRP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))
@@ -50,7 +50,7 @@ void im_grup(GRP grp, int top_grup = -1)
 void im_record(RCD rcd)
 {
 	char *edid = nullptr;
-	Record wrcd = rcd; // invokes read partials
+	Record record = rcd; // invokes read partials
 	SUB first = (SUB)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{
@@ -194,7 +194,7 @@ void overlay_plugins()
 				const ImGuiID child_id = ImGui::GetID((void *)(intptr_t)0);
 				const bool child_is_visible = ImGui::BeginChild(child_id, vec, true, child_flags);
 				for (unsigned int i = 0; i < filtered->size; i++)
-					im_record((record *)filtered->elements[i]);
+					im_record((crecord *)filtered->elements[i]);
 				ImGui::EndChild();
 			}
 			ImGui::EndTabItem();

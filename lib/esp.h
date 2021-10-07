@@ -16,24 +16,24 @@
 
 struct form_id;
 
-#define ESP Esp *
-#define GRUP grup *
-#define GRP grup *
-#define RCD record *
-#define SRCD subrecord *
-#define SUB subrecord *
+#define ESP cesp *
+#define GRP cgrup *
+#define GRUP cgrup *
+#define RCD crecord *
+#define RECORD crecord *
+#define SUB csubrecord *
+#define SRCD csubrecord *
+#define SUBRECORD csubrecord *
 
-struct esp;
-struct grup;
-struct record;
-struct subrecord;
+struct cesp;
+struct cgrup;
+struct crecord;
+struct csubrecord;
 
-typedef struct esp esp;
-typedef struct grup grup;
-typedef struct record record;
-typedef struct subrecord subrecord;
-
-typedef esp Esp;
+typedef struct cesp cesp;
+typedef struct cgrup cgrup;
+typedef struct crecord crecord;
+typedef struct csubrecord csubrecord;
 
 typedef struct revised_array
 {
@@ -41,11 +41,11 @@ typedef struct revised_array
 	unsigned int size, capacity;
 } revised_array;
 
-struct esp
+struct cesp
 {
 	char filename[260];
 	void *stream;
-	record *header;
+	crecord *header;
 	void *file;
 	char *buf;
 	unsigned pos;
@@ -62,7 +62,7 @@ struct esp
 
 #pragma pack(push, 1)
 
-struct grup_header
+struct cgrup_header
 {
 	unsigned int sgn, size, label;
 	int group_type;
@@ -70,24 +70,13 @@ struct grup_header
 	unsigned int unknown;
 };
 
-struct grup_header_small
-{
-	unsigned int sgn, size, label;
-	int group_type;
-};
-
-struct record_header
+struct crecord_header
 {
 	unsigned int sgn, size, flags, formId;
 	unsigned short time_stamp, version_control_info, form_version, unknown;
 };
 
-struct record_header_small
-{
-	unsigned int sgn, size, flags, formId;
-};
-
-struct subrecord_header
+struct csubrecord_header
 {
 	unsigned int sgn;
 	unsigned short size;
@@ -105,12 +94,12 @@ struct form_id
 	unsigned int formId, modIndex, objectIndex;
 };
 
-struct grup
+struct cgrup
 {
 	char g;
 	unsigned int id;
 	unsigned offset;
-	const struct grup_header *hed;
+	const struct cgrup_header *hed;
 	unsigned char *data;
 	ESP esp;
 	revised_array * mixed;
@@ -118,13 +107,13 @@ struct grup
 	char looped;
 };
 
-struct record
+struct crecord
 {
 	char r;
 	unsigned int id;
 	unsigned short indices;
 	unsigned offset;
-	const struct record_header *hed;
+	const struct crecord_header *hed;
 	revised_array *rcdbs;
 	struct form_id form_id;
 	ESP esp;
@@ -135,12 +124,12 @@ struct record
 	unsigned pos;
 };
 
-struct subrecord
+struct csubrecord
 {
 	char s;
 	unsigned int id;
 	unsigned offset;
-	const struct subrecord_header *hed;
+	const struct csubrecord_header *hed;
 	//int skip;
 	// buffer related
 	char *buf;

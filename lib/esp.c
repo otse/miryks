@@ -70,7 +70,7 @@ void loop_grup(ESP, GRUP);
 
 unsigned int hedr_num_records(ESP esp)
 {
-	SRCD hedr = (*(subrecord ***)esp->header->rcdbs)[0];
+	SRCD hedr = (*(csubrecord ***)esp->header->rcdbs)[0];
 	float version = *(float *)(hedr->data);
 	unsigned int num_records = *(unsigned int *)(hedr->data + 4);
 	// printf("hedr tes4 version %f\n", version);
@@ -79,7 +79,7 @@ unsigned int hedr_num_records(ESP esp)
 
 api ESP plugin_load(const char *path, int whole)
 {
-	ESP esp = calloc(1, sizeof(struct esp));
+	ESP esp = calloc(1, sizeof(struct cesp));
 	file_name(esp->filename, path, '/');
 	esp->stream = fopen(path, "rb");
 	assertm(
@@ -123,13 +123,13 @@ struct form_id build_form_id(unsigned int);
 GRUP read_grp(ESP esp)
 {
 	spamf("read_grp\n");
-	GRUP grp = calloc(1, sizeof(struct grup));
+	GRUP grp = calloc(1, sizeof(struct cgrup));
 	grp->g = 'g';
 	grp->id = esp->ids.grups++;
 	grp->esp = esp;
-	read(esp, &grp->hed, sizeof(struct grup_header));
+	read(esp, &grp->hed, sizeof(struct cgrup_header));
 	grp->offset = Pos;
-	grp->size = grp->hed->size - sizeof(struct grup_header);
+	grp->size = grp->hed->size - sizeof(struct cgrup_header);
 	// loop_grup(esp, grp, 1);
 	seek(esp, grp->offset + grp->size);
 	return grp;
@@ -139,12 +139,12 @@ RCD read_rcd(ESP esp)
 {
 	spamf("read rcd\n");
 
-	RCD rcd = calloc(1, sizeof(struct record));
+	RCD rcd = calloc(1, sizeof(struct crecord));
 
 	rcd->r = 'r';
 	rcd->id = esp->ids.records++;
 	rcd->esp = esp;
-	read(esp, &rcd->hed, sizeof(struct record_header));
+	read(esp, &rcd->hed, sizeof(struct crecord_header));
 	rcd->offset = Pos;
 	rcd->size = rcd->hed->size;
 	rcd->partial = 1;
@@ -172,10 +172,10 @@ RCD read_rcd(ESP esp)
 SRCD read_rcdb(ESP esp, RCD rcd)
 {
 	spamf("read rcdb\n");
-	SRCD rcdb = calloc(1, sizeof(struct subrecord));
+	SRCD rcdb = calloc(1, sizeof(struct csubrecord));
 	rcdb->s = 's';
 	rcdb->id = esp->ids.subrecords++;
-	read_rcd_buf_or_disk(esp, rcd, &rcdb->hed, sizeof(struct subrecord_header));
+	read_rcd_buf_or_disk(esp, rcd, &rcdb->hed, sizeof(struct csubrecord_header));
 	rcdb->offset = rcd->buf ? rcd->pos : Pos;
 	//read_rcdb_data(esp, rcd, rcdb);
 	skip_rcdb(esp, rcd, rcdb->hed->size);
