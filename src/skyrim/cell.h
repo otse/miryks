@@ -31,8 +31,13 @@ namespace skyrim
 		uint16_t flags = 0;
 		Cell(Record cell, Grup<> g) : Record(cell)
 		{
-			persistent = g.get_grup();
-			temporary = g.next().get_grup();
+			assertc(g.group_type() == CellChildren);
+
+			if (g.get_grup().group_type() == CellPersistentChildren) {
+				persistent = g.get_grup();
+				g.next();
+			}
+			temporary = g.get_grup();
 			flags = *cell.data<uint16_t *>("DATA");
 		}
 	};
@@ -40,8 +45,8 @@ namespace skyrim
 	class Interior : public Cell
 	{
 	public:
-		Interior(Record cell, Grup<> g) : Cell(cell, g) {
-			
+		Interior(Record cell, Grup<> g) : Cell(cell, g)
+		{
 		}
 		~Interior();
 
@@ -57,7 +62,7 @@ namespace skyrim
 		const char *edId = nullptr;
 		bool dontTeleport = false;
 	};
-	
+
 	class WorldSpace : public Record
 	{
 	public:
@@ -78,7 +83,7 @@ namespace skyrim
 		void LoadExterior(int, int);
 	};
 
-		struct XCLC
+	struct XCLC
 	{
 		int32_t x, y, flags;
 	};

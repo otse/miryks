@@ -22,7 +22,7 @@ namespace skyrim {
 				return true;
 			}
 			return false;
-		}, 0);
+		}, Top);
 		assertc(race.valid());
 		return race;
 	}

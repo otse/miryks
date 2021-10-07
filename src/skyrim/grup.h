@@ -9,11 +9,11 @@
 #include <functional>
 
 // this lets you write cleaner code by pretending the access exists
-#define OUT_OF_BOUNDS_GET_RETURNS_NULLPTR 1
+#define GET_JUST_RETURNS_NULLPTR 1
 
 namespace skyrim
 {
-	template<typename T = Both>
+	template <typename T = Both>
 	class Grup
 	{
 	public:
@@ -35,7 +35,8 @@ namespace skyrim
 		Grup &operator()(GRP grp)
 		{
 			this->grp = grp;
-			if (grp) {
+			if (grp)
+			{
 				assertc(grp->g == 'g');
 				esp_check_grup(grp);
 			}
@@ -57,7 +58,12 @@ namespace skyrim
 		{
 			return mixed().size;
 		}
-		Grup &next() {
+		inline int group_type() const
+		{
+			return hed().group_type;
+		}
+		Grup &next()
+		{
 			index++;
 			return *this;
 		}
@@ -68,9 +74,11 @@ namespace skyrim
 			if (dive == -1)
 				dive = group_types.size();
 			int group_type = group_types[group_types.size() - dive];
-			if (loop(dive == 1 ? func : [&](Grup &g) {
-				return g.get_grup().dive(func, group_types, dive - 1);
-			}, group_type)) return true;
+			if (loop(
+					dive == 1 ? func : [&](Grup &g)
+						{ return g.get_grup().dive(func, group_types, dive - 1); },
+					group_type))
+				return true;
 			return false;
 		}
 		bool loop(loop_func func, int group_type = -1)
@@ -85,7 +93,7 @@ namespace skyrim
 		template <typename T = void *>
 		inline T get()
 		{
-#if OUT_OF_BOUNDS_GET_RETURNS_NULLPTR
+#if GET_JUST_RETURNS_NULLPTR
 			if (index >= size())
 				return nullptr;
 #else
@@ -93,7 +101,8 @@ namespace skyrim
 #endif
 			return (T)mixed().elements[index];
 		}
-		public:
+
+	public:
 		inline Grup get_grup()
 		{
 			return get<grup *>();

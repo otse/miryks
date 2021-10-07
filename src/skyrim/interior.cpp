@@ -47,8 +47,8 @@ namespace skyrim
 
 	void Interior::Init()
 	{
-		Subgroup(persistent, 8);
-		Subgroup(temporary, 9);
+		Subgroup(persistent, CellPersistentChildren);
+		Subgroup(temporary, CellTemporaryChildren);
 	}
 
 	void Interior::Unload()

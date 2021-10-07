@@ -30,12 +30,13 @@ namespace skyrim
 				return true;
 			} 
 			return false;
-		}, 0);
+		}, Top);
 		return ws;
 	}
 
 	void WorldSpace::Init()
 	{
+		personCam->pos = vec3(0, 0, -2048.0);
 		DiscoverAllCells();
 		LoadExterior(0, 0);
 	}
@@ -72,20 +73,22 @@ namespace skyrim
 
 	void Exterior::Init()
 	{
-		//Subgroup(persistent, 8);
-		//Subgroup(temporary, 9);
+		Subgroup(persistent, CellPersistentChildren);
+		Subgroup(temporary, CellTemporaryChildren);
 	}
 	
 	void Exterior::Subgroup(Grup<> grupw, int group_type)
 	{
-		if (!grupw.valid())
+		if (!grupw.valid()) {
 			return;
+		}
 		grupw.loop([&](Grup<> &g) {
 			Record refr = g.get_record();
 			if (refr.is_type(REFR))
 			{
+				printf("reference from exterior cell\n");
 				Reference *reference = new Reference(refr);
-				worldSpace->references.push_back(reference);
+				//worldSpace->references.push_back(reference);
 			}
 			return false;
 		}, group_type);
