@@ -12,18 +12,18 @@
 
 namespace skyrim
 {
+	// template doesnt do nothing yet :))
+	
 	template <typename T = Both>
 	class Grup
 	{
 	public:
 		typedef std::function<bool(Grup &)> loop_func;
-
-		cgrup *grup = nullptr;
-		unsigned int index = 0;
-
+		cgrup *me = nullptr;
+		size_t index = 0;
 		Grup() {
 		}
-		Grup(cgrup *grup) : grup(grup)
+		Grup(cgrup *grup) : me(grup)
 		{
 			if (grup)
 			{
@@ -33,15 +33,15 @@ namespace skyrim
 		}
 		inline bool valid() const
 		{
-			return grup != nullptr;
+			return me != nullptr;
 		}
 		inline const cgrup_header &hed() const
 		{
-			return *grup->hed;
+			return *me->hed;
 		}
 		inline const revised_array &mixed() const
 		{
-			return *grup->mixed;
+			return *me->mixed;
 		}
 		Grup &next()
 		{
@@ -56,7 +56,7 @@ namespace skyrim
 			int group_type = group_types[group_types.size() - dive];
 			if (loop(
 					dive == 1 ? func : [&](Grup &g)
-						{ return g.get_grup().dive(func, group_types, dive - 1); },
+						{ return g.grup().dive(func, group_types, dive - 1); },
 					group_type))
 				return true;
 			return false;
@@ -81,11 +81,11 @@ namespace skyrim
 #endif
 			return (T)mixed().elements[index];
 		}
-		inline Grup get_grup()
+		inline Grup grup()
 		{
 			return get<cgrup *>();
 		}
-		inline Record get_record()
+		inline Record record()
 		{
 			return get<crecord *>();
 		}

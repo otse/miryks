@@ -24,8 +24,8 @@ namespace skyrim
 		printf("get interior\n");
 		Grup top = esp_top(get_plugins()[plugin], "CELL");
 		top.dive([&](Grup<> &g) {
-			Record cell = g.get_record();
-			Grup<> grup = g.next().get_grup();
+			Record cell = g.record();
+			Grup<> grup = g.next().grup();
 			if (cell.editor_id(interiorId))
 			{
 				interior = new Interior(cell, grup);
@@ -67,7 +67,7 @@ namespace skyrim
 			return;
 		}
 		subgroup.loop([&](Grup<> &g) {
-			Record refr = g.get_record();
+			Record refr = g.record();
 			if (refr.is_type(REFR))
 			{
 				Reference *reference = new Reference(refr);
@@ -95,7 +95,7 @@ namespace skyrim
 		if (!persistent.valid())
 			return;
 		persistent.loop([&](Grup<> &g) {
-			Record record = g.get_record();
+			Record record = g.record();
 			if (*(record.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");

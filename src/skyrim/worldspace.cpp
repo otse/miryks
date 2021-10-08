@@ -11,8 +11,11 @@
 
 #include <renderer/renderer.h>
 #include <renderer/texture.h>
+#include <renderer/material.h>
+#include <renderer/shader.h>
 #include <renderer/camera.h>
 #include <renderer/lights.h>
+#include <renderer/drawgroup.h>
 
 namespace skyrim
 {
@@ -23,8 +26,8 @@ namespace skyrim
 		WorldSpace *ws = nullptr;
 		Grup top = esp_top(get_plugins()[plugin], "WRLD");
 		top.loop([&](Grup<> &g) {
-			Record wrld = g.get_record();
-			Grup<> grup = g.next().get_grup();
+			Record wrld = g.record();
+			Grup<> grup = g.next().grup();
 			if (wrld.editor_id(id)) {
 				ws = new WorldSpace(wrld, grup);
 				return true;
@@ -47,8 +50,8 @@ namespace skyrim
 		printf("DiscoverAllCells\n");
 		grup.index = 2; // ignore first two world children
 		grup.dive([&](Grup<> &g) {
-			Record cell = g.get_record();
-			Grup<> grup = g.next().get_grup();
+			Record cell = g.record();
+			Grup<> grup = g.next().grup();
 			Exterior *exterior = new Exterior(cell, grup);
 			exterior->worldSpace = this;
 			exteriors.push_back(exterior);
@@ -84,7 +87,7 @@ namespace skyrim
 			return;
 		}
 		subgroup.loop([&](Grup<> &g) {
-			Record refr = g.get_record();
+			Record refr = g.record();
 			if (refr.is_type(REFR))
 			{
 				Reference *reference = new Reference(refr);
@@ -95,7 +98,7 @@ namespace skyrim
 			{
 				printf("this is land\n");
 				assertc(land == nullptr);
-				land = new Land(g.get_record());
+				land = new Land(g.record());
 				land->exterior = this;
 			}
 			return false;
@@ -106,6 +109,56 @@ namespace skyrim
 	{
 		exterior = nullptr;
 		printf("lets try make a land mesh\n");
+		vhgt = data<VHGT *>("VHGT");
+		group = new GroupBounded;
+
+		Geometry *geometry = new Geometry();
+		group->geometry = geometry;
+		
+		Material *material = new Material;
+		material->color = vec3(1.0f);
+		material->src = &basic;
+		geometry->material = material;
+
+		const int grid = 33;
+		geometry->Clear(grid * grid, 1);
+
+		float div = 2048.f / grid;
+		float offset = -2048.f / 2.f;
+
+		for (int y = 0; y < grid; y++)
+		{
+			for (int x = 0; x < grid; x++)
+			{
+				int z = y*grid+x;
+				Vertex &vertex = geometry->vertices[z];
+				vertex.position = vec3(x * div - offset, y * div - offset, -2048.0);
+				vertex.color = vec4(1.0);
+			}
+		}
+
+		for (int y = 0; y < grid; y ++)
+		{
+			for (int x = 0; x < grid; x ++)
+			{
+				unsigned int a = y*grid+x;
+				unsigned int b = y*grid+x+1;
+				unsigned int c = (y+1)*grid+x;
+				geometry->elements.insert(geometry->elements.end(), { a, b, c });
+				//unsigned int d = y*grid+x+1;
+				//unsigned int e = (y+1)*grid+x;
+				//unsigned int f = (y+1)*grid+x+1;
+				//geometry->elements.insert(geometry->elements.end(), { d, e, f });
+			}
+		}
+
+		geometry->SetupMesh();
+		printf("adding land geometry to bigGroup");
+
+		group->Update();
+		drawGroup = new DrawGroupFlatSorted(group, mat4(1.0));
+		drawGroup->Update();
+		sceneDef->bigGroup->Add(drawGroup);
 	}
 
 }

@@ -48,8 +48,9 @@ void Group::Draw(const mat4 &left)
 {
 	drawCalls++;
 	mat4 place = left * matrixWorld;
-	if (GetZ(place) > renderSettings.drawDistance)
-		return;
+	// out-comment
+	//if (GetZ(place) > renderSettings.drawDistance)
+	//	return;
 	if (geometry)
 		geometry->Draw(place);
 	if (axis && renderSettings.axes)

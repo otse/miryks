@@ -33,11 +33,11 @@ namespace skyrim
 		{
 			assertc(g.hed().group_type == CellChildren);
 
-			if (g.get_grup().hed().group_type == CellPersistentChildren) {
-				persistent = g.get_grup();
+			if (g.grup().hed().group_type == CellPersistentChildren) {
+				persistent = g.grup();
 				g.next();
 			}
-			temporary = g.get_grup();
+			temporary = g.grup();
 			flags = *cell.data<uint16_t *>("DATA");
 		}
 	};
@@ -87,7 +87,6 @@ namespace skyrim
 	{
 		int32_t x, y, flags;
 	};
-
 	class Exterior : public Cell
 	{
 	public:
@@ -105,11 +104,21 @@ namespace skyrim
 		void Subgroup(Grup<>, int);
 	};
 
+	struct VHGT
+	{
+		int32_t offset;
+		char bytes[1089];
+		char unknown[3];
+		int end[ ];
+	};
 	class Land : public Record
 	{
 	public:
 		Exterior *exterior;
 		Land(Record land);
+		VHGT *vhgt;
+		Group *group;
+		DrawGroup *drawGroup;
 	};
 
 }
