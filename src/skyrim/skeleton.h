@@ -22,7 +22,7 @@ namespace skyrim
 	public:
 		std::map<NiRef, Bone *> bones;
 		std::map<const std::string, Bone *> bonesNamed;
-		NIF model;
+		Nif *model;
 		Bone *baseBone, *root;
 		Anim *anim;
 		Skel();
@@ -50,8 +50,8 @@ namespace skyrim
 	class Keyf
 	{
 	public:
-		Keyf(NIF);
-		NIF nif;
+		Keyf(Nif *);
+		Nif *nif;
 		bool loop;
 		NiControllerSequence *controllerSequence;
 	};

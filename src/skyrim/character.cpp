@@ -46,6 +46,8 @@ namespace skyrim {
 
 	void Char::Place(const char *q)
 	{
+		if (!dungeon)
+			return;
 		auto ref = dungeon->edIds.find(q);
 		if (ref == dungeon->edIds.end())
 			return;

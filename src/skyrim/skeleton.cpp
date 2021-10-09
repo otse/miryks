@@ -115,7 +115,7 @@ namespace skyrim
 
 	void Anim::SimpleNonInterpolated()
 	{
-		NIF model = keyf->nif;
+		Nif *model = keyf->nif;
 		struct controlled_block_t *cbp;
 		for (unsigned int i = 0; i < keyf->controllerSequence->A->num_controlled_blocks; i++)
 		{

@@ -1,5 +1,3 @@
-#include <skyrim_units>
-
 #include <skyrim/skyrim.h>
 #include <skyrim/cell.h>
 #include <skyrim/model.h>

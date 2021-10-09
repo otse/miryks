@@ -17,32 +17,30 @@ namespace dark
 {
 	Monster *someDraugr = nullptr, *meanSkelly = nullptr;
 	Char *someHuman = nullptr;
-}
-
-namespace dark
-{
-	ESP Dark = NULL;
 	Player *player1 = nullptr;
 	std::map<const char *, int> keys;
 }
 
-void darkassert(bool e)
+void dark::darkassert(bool e)
 {
 	assertc(e);
 }
 
-void load_bucket()
+void dark::load_bucket()
 {
 	in_place_viewer(get_res("clutter\\bucket02a.nif"));
-	yagrum_queue("", 10, true);
 }
 
-void load_gloomgen()
+void dark::load_gloomgen()
 {
 	dungeon = GetInterior("GloomGen", 5);
 	dungeon->Init();
-	//gworldSpace = GetWorldSpace("DarkWorld", 5);
-	//player1 = new Player();
+}
+
+void dark::load_darkworld()
+{
+	gworldSpace = GetWorldSpace("DarkWorld", 5);
+	gworldSpace->Init();
 }
 
 void load_plugins_archives()
@@ -89,12 +87,14 @@ int main()
 	goingrate();
 	load_yagrum();
 	load_plugins_archives();
-	Dark = get_plugins()[5];
 	nif_test();
 	renderer_init();
-	load_bucket();
+	//load_bucket();
+	yagrum_queue("", 10, true);
 	refs_init();
 	put_it_fullscreen();
+	load_darkworld();
+	#if 0
 	load_gloomgen();
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
@@ -105,6 +105,7 @@ int main()
 	someHuman = new Char();
 	someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
 	someHuman->Place("gloomgenman");
+	#endif
 	//someHuman->SetAnim("anims/character/1hm_idle.kf");
 	player1 = new Player();
 	program_while();
@@ -113,7 +114,7 @@ int main()
 
 void dark::reload_dark_esp()
 {
-	ESP *plugin = &get_plugins()[5];
+	cesp **plugin = &get_plugins()[5];
 	free_plugin(plugin);
 	*plugin = load_plugin(PLUGIN_5, true);
 }
@@ -136,7 +137,7 @@ void dark::reload_dungeon_in_place()
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 
-void dark::in_place_viewer(RES res)
+void dark::in_place_viewer(Res *res)
 {
 	static Model *model = nullptr;
 	static DrawGroup *drawGroup = nullptr;

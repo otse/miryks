@@ -13,19 +13,19 @@
 
 namespace skyrim
 {
-	std::map<const char *, NIF> nifs;
+	std::map<const char *, Nif *> nifs;
 
-	std::map<const char *, NIF> &get_nifs()
+	std::map<const char *, Nif *> &get_nifs()
 	{
 		return nifs;
 	}
 
-	void save_nif(const char *key, NIF nif)
+	void save_nif(const char *key, Nif *nif)
 	{
 		nifs.emplace(key, nif);
 	}
 
-	NIF saved_nif(const char *key)
+	Nif *saved_nif(const char *key)
 	{
 		auto has = nifs.find(key);
 		if (has != nifs.end())
@@ -33,7 +33,7 @@ namespace skyrim
 		return nullptr;
 	}
 
-	RES get_res(
+	Res *get_res(
 		const char *path, const char *prepend, unsigned long flags)
 	{
 		std::string str = prepend;
@@ -41,29 +41,29 @@ namespace skyrim
 		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
 					   { return std::tolower(c); });
 		const char *s = str.c_str();
-		RES res = bsa_find_more(s, flags);
+		Res *res = bsa_find_more(s, flags);
 		if (res == NULL)
 			printf("no res at %s\n", s);
 		bsa_read(res);
 		return res;
 	}
 
-	NIF get_nif(const char *modl)
+	Nif *get_nif(const char *modl)
 	{
 		if (!modl)
 			return nullptr;
 		return get_nif(get_res(modl));
 	}
 
-	NIF get_nif(RES res)
+	Nif *get_nif(Res *res)
 	{
 		if (!res)
 			return nullptr;
-		NIF saved = saved_nif(res->path);
+		Nif *saved = saved_nif(res->path);
 		if (saved)
 			return saved;
 		bsa_read(res);
-		NIF model = calloc_nifp();
+		Nif *model = calloc_nifp();
 		model->path = res->path;
 		model->buf = res->buf;
 		nif_read(model);
@@ -73,9 +73,9 @@ namespace skyrim
 
 	Keyf *load_keyframes_from_disk(const char *path)
 	{
-		if (NIF saved = saved_nif(path))
+		if (Nif *saved = saved_nif(path))
 			return new Keyf(saved);
-		NIF model = calloc_nifp();
+		Nif *model = calloc_nifp();
 		model->path = path;
 		int len = fbuf(path, &model->buf);
 		nif_read(model);

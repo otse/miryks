@@ -66,8 +66,7 @@ void cell_gui()
 				}
 				if (!gworldSpace)
 				{
-					gworldSpace = GetWorldSpace("DarkWorld", 5);
-					gworldSpace->Init();
+					load_darkworld();
 				}
 			}
 			ImGui::EndTabItem();

@@ -34,12 +34,12 @@ namespace skyrim
 	{
 	public:
 		Model();
-		Model(RES);
+		Model(Res *);
 		~Model();
-		NIF model = nullptr;
+		Nif *model = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
-		Group *MakeNewGroup(RD);
+		Group *MakeNewGroup(Rd *);
 		void Construct();
 		void Step();
 		void Misty();

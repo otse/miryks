@@ -20,7 +20,7 @@ namespace skyrim
 		lastGroup = baseGroup;
 	}
 	
-	Model::Model(RES res) : Model()
+	Model::Model(Res *res) : Model()
 	{
 		if (!res)
 			return;
@@ -34,7 +34,7 @@ namespace skyrim
 
 	void Model::Construct()
 	{
-		RD rd = calloc_nifprd();
+		Rd *rd = calloc_nifprd();
 		rd->nif = model;
 		rd->data = this;
 		rd->ni_node_callback = ni_node_callback;
@@ -53,7 +53,7 @@ namespace skyrim
 		
 	}
 
-	Group *Model::MakeNewGroup(RD rd)
+	Group *Model::MakeNewGroup(Rd *rd)
 	{
 		Group *group = new GroupBounded();
 		groups[rd->current] = group;
@@ -368,7 +368,7 @@ namespace skyrim
 				material->setUvTransformDirectly(u, v, s, t, 0, 0, 0);
 			}
 		};
-		RD rd = calloc_nifprd();
+		Rd *rd = calloc_nifprd();
 		rd->nif = model;
 		rd->data = this;
 		rd->bs_effect_shader_property_float_controller_callback = callback;

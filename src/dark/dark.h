@@ -17,8 +17,6 @@ namespace dark
 
 	void darkassert(bool);
 
-	extern ESP Dark;
-
 	extern Player *player1;
 	extern Monster *someDraugr, *meanSkelly;
 	extern Char *someHuman;
@@ -27,10 +25,14 @@ namespace dark
 	void reload_dungeon_in_place();
 	void unset_dungeon();
 
+	void load_bucket();
+	void load_gloomgen();
+	void load_darkworld();
+
 	void goingrate();
 	void program_while();
 
-	void in_place_viewer(RES);
+	void in_place_viewer(Res *);
 
 	void hide_cursor();
 	void show_cursor();

@@ -103,21 +103,13 @@ namespace skyrim
 		void Subgroup(Grup<>, int);
 	};
 
-	struct VHGT
-	{
-		int32_t offset;
-		char bytes[1089];
-		char unknown[3];
-		int end[ ];
-	};
 	class Land : public Record
 	{
 	public:
 		Exterior *exterior;
-		Land(Record land);
-		VHGT *vhgt;
 		Group *group;
 		DrawGroup *drawGroup;
+		Land(Record land);
 	};
 
 }
