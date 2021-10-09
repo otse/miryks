@@ -91,6 +91,7 @@ api ESP plugin_load(const char *path, int whole)
 		// read the whole file
 		disk_read(esp, &Buf, esp->filesize);
 		seek(esp, 0);
+		fclose(esp->stream);
 		printf("read whole plugin into buf\n");
 	}
 	spamf("goign to read the esp header\n");

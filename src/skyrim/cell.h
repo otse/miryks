@@ -32,7 +32,6 @@ namespace skyrim
 		Cell(Record cell, Grup<> &g) : Record(cell)
 		{
 			assertc(g.hed().group_type == CellChildren);
-
 			if (g.grup().hed().group_type == CellPersistentChildren) {
 				persistent = g.grup();
 				g.next();

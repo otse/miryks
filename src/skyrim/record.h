@@ -93,7 +93,7 @@ namespace skyrim
 		}
 		inline bool editor_id(const char *name) const
 		{
-			return 0 == strcmp(name, editor_id());
+			return editor_id() ? 0 == strcmp(name, editor_id()) : false;
 		}
 		inline formId base() const
 		{
