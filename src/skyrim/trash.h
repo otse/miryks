@@ -39,12 +39,12 @@ namespace skyrim
 		void Init();
 		void Render();
 		void Activate() {
-			show_cursor();
+			now_you_see_me();
 			Refs::labelingEnabled = false;
 			cur = this;
 		}
 		static void Hide() {
-			hide_cursor();
+			now_you_dont();
 			Refs::labelingEnabled = true;
 			cur = nullptr;
 		}

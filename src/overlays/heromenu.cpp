@@ -4,7 +4,7 @@
 
 #include <dark/files.h>
 
-#include "../gooey/gooey.h"
+#include <overlays/overlays.h>
 
 using namespace dark;
 

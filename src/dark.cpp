@@ -1,5 +1,7 @@
 #include <png.h>
 
+#include <window.h>
+
 #include <dark/dark.h>
 #include <dark/files.h>
 
@@ -8,39 +10,50 @@
 #include <skyrim/cell.h>
 #include <skyrim/actors.h>
 
-#include <gooey/yagrum.h>
+#include <overlays/overlays.h>
 
 using namespace dark;
 using namespace skyrim;
 
 namespace dark
 {
-	Monster *someDraugr = nullptr, *meanSkelly = nullptr;
-	Char *someHuman = nullptr;
-	Player *player1 = nullptr;
-	std::map<const char *, int> keys;
+Monster *someDraugr = nullptr, *meanSkelly = nullptr;
+Char *someHuman = nullptr;
+Player *player1 = nullptr;
+std::map<const char *, int> keys;
 }
 
-void dark::darkassert(bool e)
+namespace dark
+{
+void darkassert(bool e)
 {
 	assertc(e);
 }
 
-void dark::load_bucket()
+void load_bucket()
 {
-	in_place_viewer(get_res("clutter\\bucket02a.nif"));
+	view_in_place(get_res("clutter\\bucket02a.nif"));
 }
 
-void dark::load_gloomgen()
+void load_gloomgen()
 {
+	sceneDef->ambient = vec3(50.f / 255.f);
 	dungeon = GetInterior("GloomGen", 5);
 	dungeon->Init();
 }
 
-void dark::load_darkworld()
+void load_darkworld()
 {
+	sceneDef->ambient = vec3(127.f / 255.f);
 	gworldSpace = GetWorldSpace("DarkWorld", 5);
 	gworldSpace->Init();
+}
+
+void third_person()
+{
+	if (player1)
+		player1->toggleView();
+}
 }
 
 void load_plugins_archives()
@@ -84,17 +97,16 @@ int main()
 {
 	char **buf = &editme;
 	fbuf("editme.txt", buf, true);
-	goingrate();
-	load_yagrum();
 	load_plugins_archives();
 	nif_test();
+	init();
+	//load_yagrum();
 	renderer_init();
-	//load_bucket();
-	yagrum_queue("", 10, true);
+	load_bucket();
+	//yagrum_queue("", 10, true);
 	refs_init();
-	put_it_fullscreen();
-	load_darkworld();
-	#if 0
+	//load_darkworld();
+#if 1
 	load_gloomgen();
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
@@ -105,30 +117,29 @@ int main()
 	someHuman = new Char();
 	someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
 	someHuman->Place("gloomgenman");
-	#endif
+#endif
 	//someHuman->SetAnim("anims/character/1hm_idle.kf");
 	player1 = new Player();
-	program_while();
+	window_while_test();
 	return 1;
 }
 
-void dark::reload_dark_esp()
+void dark::reload_my_esp()
 {
-	cesp **plugin = &get_plugins()[5];
-	free_plugin(plugin);
-	*plugin = load_plugin(PLUGIN_5, true);
+	cesp **esp = &get_plugins()[5];
+	free_plugin(esp);
+	*esp = load_plugin(PLUGIN_5, true);
 }
 
-void dark::reload_dungeon_in_place()
+void dark::reload_dungeon()
 {
-	if (dungeon)
-	{
-		const char *edId = dungeon->edId;
-		delete dungeon;
-		dungeon = GetInterior(edId, 5);
-		dungeon->dontTeleport = true;
-		dungeon->Init();
-	}
+	if (!dungeon)
+		return;
+	const char *edId = dungeon->edId;
+	delete dungeon;
+	dungeon = GetInterior(edId, 5);
+	dungeon->dontTeleport = true;
+	dungeon->Init();
 }
 
 #include <skyrim/model.h>
@@ -137,7 +148,7 @@ void dark::reload_dungeon_in_place()
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
 
-void dark::in_place_viewer(Res *res)
+void dark::view_in_place(Res *res)
 {
 	static Model *model = nullptr;
 	static DrawGroup *drawGroup = nullptr;
@@ -151,7 +162,7 @@ void dark::in_place_viewer(Res *res)
 	drawGroup = new DrawGroup(
 		model->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->bigGroup->Add(drawGroup);
-	hide_cursor();
+	now_you_dont();
 	cameraCur = viewerCam;
 	viewerCam->pos = drawGroup->aabb.center();
 	//viewerCam->pos = personCam->pos;

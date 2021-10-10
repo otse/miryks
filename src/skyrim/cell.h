@@ -44,9 +44,7 @@ namespace skyrim
 	class Interior : public Cell
 	{
 	public:
-		Interior(Record cell, Grup<> &g) : Cell(cell, g)
-		{
-		}
+		Interior(Record, Grup<> &);
 		~Interior();
 
 		std::vector<Reference *> refs, labels, mstts;

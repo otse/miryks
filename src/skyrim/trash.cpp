@@ -10,7 +10,7 @@ extern "C"
 
 #include <imgui.h>
 
-#include "../gooey/gooey.h"
+#include <overlays/overlays.h>
 
 #include <renderer/group.h>
 #include <renderer/drawgroup.h>
@@ -79,7 +79,7 @@ void cont_menu()
 
 	auto name = cont->data<const char *>("FULL");
 
-	ImGui::PushFont(dark::font2);
+	ImGui::PushFont(font2);
 	ImGui::TextWrapped("%s with %u things", name, cont->items.size());
 	ImGui::Separator();
 
@@ -128,7 +128,7 @@ void ItemRenderer::View(Item *item) {
 	mesh = new Mesh(nif);
 	drawGroup = new DrawGroup(mesh->baseGroup, mat4(1.0));
 	myScene->drawGroups.Add(drawGroup);
-	hide_cursor();
+	hideCursor();
 	cameraCur = viewerCam;
 	viewerCam->pos = drawGroup->aabb.center();
 	//viewerCam->pos = personCam->pos;

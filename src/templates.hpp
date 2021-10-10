@@ -5,6 +5,8 @@
 template <typename T>
 bool vector_safe_add(T t, std::vector<T> &v)
 {
+	if (t == nullptr)
+		return false;
 	typename std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
 	if (has == v.end())
 	{
@@ -18,6 +20,8 @@ bool vector_safe_add(T t, std::vector<T> &v)
 template <typename T>
 bool vector_safe_remove(T t, std::vector<T> &v)
 {
+	if (t == nullptr)
+		return false;
 	typename std::vector<T>::iterator has = std::find(v.begin(), v.end(), t);
 	if (has != v.end())
 	{

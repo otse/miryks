@@ -62,7 +62,7 @@ extern RenderTarget *renderTargetDef;
 void detectGlfwError();
 void detectOpenGLError(const std::string = "?");
 
-void opengl_gui();
+void overlay_renderer();
 void renderer_init();
 void OGLReloadShaderSource();
 

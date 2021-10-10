@@ -83,6 +83,8 @@ namespace dark
 
 	void Image::create_texture()
 	{
+		printf("creating texture for %i\n", this);
+
 		glGenTextures(1, &texture);
 		glBindTexture(GL_TEXTURE_2D, texture);
 

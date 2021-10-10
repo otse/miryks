@@ -16,12 +16,17 @@ DrawGroupFlatSorted::DrawGroupFlatSorted(Group *group, mat4 matrix)
 void DrawGroupFlatSorted::Reset()
 {
 	DrawGroup::Reset();
-	target->Flatten(target);
-	flat = target->flat;
+	if (target)
+	{
+		target->Flatten(target);
+		flat = target->flat;
+	}
 }
 
 void DrawGroupFlatSorted::Draw(const mat4 &left)
 {
+	if (target == nullptr)
+		return;
 	if (Invisible())
 		return;
 	mat4 place = matrix * target->matrix;

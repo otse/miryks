@@ -19,23 +19,23 @@ namespace dark
 	{
         Move();
 		Char::Step();
-		if (pressing("w"))
+		if (pressing_key("w"))
 		{
 			SetAnim("anims/character/1hm_walkforward.kf");
 		}
-		else if (pressing("s"))
+		else if (pressing_key("s"))
 		{
 			SetAnim("anims/character/1hm_walkbackward.kf");
 		}
-		else if (pressing("a"))
+		else if (pressing_key("a"))
 		{
 			SetAnim("anims/character/1hm_walkleft.kf");
 		}
-		else if (pressing("d"))
+		else if (pressing_key("d"))
 		{
 			SetAnim("anims/character/1hm_walkright.kf");
 		}
-		else if (!holding("w") && !holding("s") && !holding("a") && !holding("d"))
+		else if (!holding_key("w") && !holding_key("s") && !holding_key("a") && !holding_key("d"))
 		{
 			SetAnim("anims/character/1hm_idle.kf");
 		}

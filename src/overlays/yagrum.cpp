@@ -1,5 +1,4 @@
-#include "gooey.h"
-#include "yagrum.h"
+#include <overlays/overlays.h>
 
 #include <dark/image.h>
 
@@ -12,7 +11,7 @@
 
 namespace yagrum
 {
-	Image *image = nullptr;
+	dark::Image *image = nullptr;
 
 	std::deque<entry> vector;
 
@@ -27,7 +26,7 @@ using namespace yagrum;
 
 void load_yagrum()
 {
-	image = new Image();
+	image = new dark::Image();
 	image->fromfile("img/yagrum.png");
 }
 

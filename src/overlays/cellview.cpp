@@ -11,7 +11,7 @@ using namespace dark;
 #include <sstream>
 #include <imgui.h>
 
-void cell_gui()
+void overlay_cellview()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
 	ImGui::SetNextWindowSize(ImVec2(450, 0));

@@ -21,7 +21,7 @@
 #include <renderer/renderer.h>
 
 #include <imgui.h>
-#include <gooey/gooey.h>
+#include <overlays/overlays.h>
 
 namespace dark
 {

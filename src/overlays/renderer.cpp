@@ -22,7 +22,7 @@ static std::stringstream ss;
 	ss.str(std::string()); \
 	ss.clear();
 
-void opengl_gui()
+void overlay_renderer()
 {
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings;
 	

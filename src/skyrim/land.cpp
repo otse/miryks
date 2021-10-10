@@ -17,7 +17,7 @@
 
 namespace skyrim
 {
-    struct VHGT
+	struct VHGT
 	{
 		int32_t offset;
 		char bytes[1089];
@@ -39,98 +39,111 @@ namespace skyrim
 		uint16_t layers;
 	};
 
-    Land::Land(Record land) : Record(land)
-    {
-        exterior = nullptr;
-        printf("lets try make a land mesh\n");
-        VHGT *vhgt = data<VHGT *>("VHGT");
-        ATXT *atxt = data<ATXT *>("ATXT");
-        BTXT *btxt = data<BTXT *>("BTXT");
+	struct VCLR {
+		char vertex_color[1089][3];
+	};
 
-        if (atxt)
-            printf("atxt layers %u\n", atxt->layers);
+	Land::Land(Record land) : Record(land)
+	{
+		exterior = nullptr;
+		printf("lets try make a land mesh\n");
+		auto vhgt = data<VHGT *>("VHGT");
+		auto atxt = data<ATXT *>("ATXT");
+		auto btxt = data<BTXT *>("BTXT");
+		auto vclr = data<VCLR *>("VCLR");
 
-        printf("btxt %i\n", btxt);
+		if (atxt)
+			printf("atxt layers %u\n", atxt->layers);
 
-        group = new GroupBounded;
+		printf("btxt %i\n", btxt);
 
-        Geometry *geometry = new Geometry();
-        group->geometry = geometry;
+		group = new GroupBounded;
 
-        Material *material = new Material;
-        material->defines += "#define DONT_USE_NORMAL_MAP\n";
-        material->defines += "#define DONT_USE_SPECULAR_MAP\n";
+		Geometry *geometry = new Geometry();
+		group->geometry = geometry;
 
-        material->map = GetProduceTexture("textures\\landscape\\dirt02.dds");
-        material->normalMap = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
-        material->color = vec3(1.f);
-        material->src = &simple;
-        geometry->material = material;
+		Material *material = new Material;
+		material->defines += "#define DONT_USE_NORMAL_MAP\n";
+		material->defines += "#define DONT_USE_SPECULAR_MAP\n";
 
-        const int grid = 33;
-        const float fgrid = grid;
+		material->map = GetProduceTexture("textures\\landscape\\dirt02.dds");
+		material->normalMap = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
+		material->color = vec3(1.f);
+		material->src = &simple;
+		geometry->material = material;
 
-        geometry->Clear(grid * grid, 1);
+		const int grid = 33;
+		const float fgrid = grid;
 
-        float heightmap[33][33] = {{0}};
-        float offset = 0;
-        float row_offset = 0;
+		geometry->Clear(grid * grid, 1);
 
-        for (int i = 0; i < 1089; i++)
-        {
-            float value = vhgt->bytes[i] * 8;
-            int row = i / 33;
-            int column = i % 33;
-            if (column == 0)
-            {
-                row_offset = 0;
-                offset += value;
-            }
-            else
-                row_offset += value;
+		float heightmap[33][33] = {{0}};
+		float offset = 0;
+		float row_offset = 0;
 
-            heightmap[column][row] = offset + row_offset;
-        }
+		for (int i = 0; i < 1089; i++)
+		{
+			float value = vhgt->bytes[i] * 8;
+			int row = i / 33;
+			int column = i % 33;
+			if (column == 0)
+			{
+				row_offset = 0;
+				offset += value;
+			}
+			else
+				row_offset += value;
 
-        const float breadth = 4096.f;
-        const float div = breadth / fgrid;
-        const float center = 0;
+			heightmap[column][row] = offset + row_offset;
+		}
 
-        const float trepeat = 33 / 4;
+		const float breadth = 4096.f;
+		const float div = breadth / fgrid;
+		const float center = 0;
 
-        for (int y = 0; y < grid; y++)
-        {
-            for (int x = 0; x < grid; x++)
-            {
-                int z = y * grid + x;
-                Vertex &vertex = geometry->vertices[z];
-                float X = x * div - center;
-                float Y = y * div - center;
-                vertex.position = vec3(X, Y, heightmap[x][y] - 2048.0);
-                vertex.color = vec4(1.0);
-                vertex.uv = vec2(x / (fgrid - 1) * trepeat, y / (fgrid - 1) * trepeat);
-            }
-        }
+		const float trepeat = 33 / 4;
 
-        for (int y = 0; y < grid - 1; y++)
-        {
-            for (int x = 0; x < grid - 1; x++)
-            {
-                unsigned int a = y * grid + x;
-                unsigned int b = y * grid + (x + 1);
-                unsigned int c = (y + 1) * grid + (x + 1);
-                unsigned int d = (y + 1) * grid + x;
-                geometry->elements.insert(geometry->elements.end(), {a, b, c});
-                geometry->elements.insert(geometry->elements.end(), {d, b, c});
-            }
-        }
+		for (int y = 0; y < grid; y++)
+		{
+			for (int x = 0; x < grid; x++)
+			{
+				int z = y * grid + x;
+				Vertex &vertex = geometry->vertices[z];
+				float X = x * div - center;
+				float Y = y * div - center;
+				vertex.position = vec3(X, Y, heightmap[x][y] - 2048.0);
+				if (vclr) {
+					char *bytes = vclr->vertex_color[z];
+					vertex.color = vec4(
+						bytes[0],
+						bytes[1],
+						bytes[2],
+						1
+					);// / 255.f;
+				}
+				vertex.uv = vec2(x / (fgrid - 1) * trepeat, y / (fgrid - 1) * trepeat);
+			}
+		}
 
-        geometry->SetupMesh();
-        printf("adding land geometry to bigGroup\n");
+		for (int y = 0; y < grid - 1; y++)
+		{
+			for (int x = 0; x < grid - 1; x++)
+			{
+				unsigned int a = y * grid + x;
+				unsigned int b = y * grid + (x + 1);
+				unsigned int c = (y + 1) * grid + (x + 1);
+				unsigned int d = (y + 1) * grid + x;
+				geometry->elements.insert(geometry->elements.end(), {a, b, c});
+				geometry->elements.insert(geometry->elements.end(), {d, b, c});
+			}
+		}
 
-        group->Update();
-        drawGroup = new DrawGroupFlatSorted(group, mat4(1.0));
-        drawGroup->Update();
-        sceneDef->bigGroup->Add(drawGroup);
-    }
+		geometry->SetupMesh();
+		printf("adding land geometry to bigGroup\n");
+
+		group->Update();
+		drawGroup = new DrawGroupFlatSorted(group, mat4(1.0));
+		drawGroup->Update();
+		sceneDef->bigGroup->Add(drawGroup);
+	}
 }

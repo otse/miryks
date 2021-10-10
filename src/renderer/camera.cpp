@@ -42,22 +42,22 @@ void Camera::Wasd(float delta)
 
 	using namespace dark;
 
-	if (!holding("lshift"))
+	if (!holding_key("lshift"))
 		speed /= 10;
 
-	if (holding("w") && !holding("s"))
+	if (holding_key("w") && !holding_key("s"))
 		forward(speed);
-	if (holding("s") && !holding("w"))
+	if (holding_key("s") && !holding_key("w"))
 		forward(-speed);
 
-	if (holding("a") && !holding("d"))
+	if (holding_key("a") && !holding_key("d"))
 		strafe(-speed);
-	if (holding("d") && !holding("a"))
+	if (holding_key("d") && !holding_key("a"))
 		strafe(speed);
 
-	if (holding("r"))
+	if (holding_key("r"))
 		pos.z += speed / 2;
-	if (holding("f"))
+	if (holding_key("f"))
 		pos.z -= speed / 2;
 }
 

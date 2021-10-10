@@ -7,6 +7,7 @@
 #include <renderer/scene.h>
 #include <renderer/shader.h>
 #include <renderer/rendertarget.h>
+#include <renderer/drawgroup.h>
 
 #include <renderer/material.h>
 #include <renderer/texture.h>
@@ -57,6 +58,8 @@ void renderer_init()
 	sceneCur = sceneDef;
 
 	cameraCur = personCam;
+
+	sceneDef->bigGroup->Add(personCam->drawGroup);
 
 	//renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 

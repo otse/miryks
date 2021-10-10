@@ -1,16 +1,22 @@
+#pragma once
 #include <string>
 #include <deque>
+#include <vector>
 
-using namespace dark;
+#include <dark/image.h>
 
-namespace dark
-{
-	class Image;
-}
+#include <imgui.h>
+
+extern ImFont *font2;
+extern ImFont *font3;
+
+void ImRotateStart();
+ImVec2 ImRotationCenter();
+void ImRotateEnd(float, ImVec2);
 
 namespace yagrum
 {
-	extern Image *image;
+	extern dark::Image *image;
 
 	struct entry
 	{

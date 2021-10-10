@@ -40,6 +40,11 @@ namespace skyrim
 		return interior;
 	}
 
+	Interior::Interior(Record cell, Grup<> &g) : Cell(cell, g)
+	{
+		sceneDef->ambient = vec3(50.f / 255.f);
+	}
+	
 	Interior::~Interior()
 	{
 		Unload();

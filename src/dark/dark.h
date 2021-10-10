@@ -10,43 +10,43 @@
 
 using namespace skyrim;
 
+void overlay_plugins();
+void overlay_archives();
+void overlay_models();
+void overlay_cellview();
+void overlay_rstats(bool *);
+
 namespace dark
 {
 	class Reference;
 	class Player;
 
-	void darkassert(bool);
-
 	extern Player *player1;
 	extern Monster *someDraugr, *meanSkelly;
 	extern Char *someHuman;
 
-	void reload_dark_esp();
-	void reload_dungeon_in_place();
-	void unset_dungeon();
+	extern std::map<const char *, int> keys;
+
+	void now_you_see_me();
+	void now_you_dont();
+	bool pressing_key(const char *);
+	bool holding_key(const char *);
+
+	void darkassert(bool);
 
 	void load_bucket();
 	void load_gloomgen();
 	void load_darkworld();
 
-	void goingrate();
-	void program_while();
+	void view_in_place(Res *);
 
-	void in_place_viewer(Res *);
+	void init();
+	void loop();
 
-	void hide_cursor();
-	void show_cursor();
-
-	extern std::map<const char *, int> keys;
-
-	inline bool pressing(const char *id)
-	{
-		return keys[id] == 1;
-	}
-	inline bool holding(const char *id)
-	{
-		return keys[id] >= 1;
-	}
+	void reload_my_esp();
+	void reload_dungeon();
+	void unset_dungeon();
+	void third_person();
 
 	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
 	inline vec3 cast_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }
@@ -56,14 +56,6 @@ namespace dark
 	inline mat4 cast_mat4(void *f) { return *reinterpret_cast<mat4 *>(f); }
 }
 
-void overlay_plugins();
-void overlay_archives();
-void overlay_models();
-
-void cell_gui();
 void hero_menu();
-void render_stats(bool *);
 
 void get_img();
-
-void put_it_fullscreen();

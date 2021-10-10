@@ -4,6 +4,7 @@
 #include <functional>
 
 #include <renderer/renderer.h>
+#include <renderer/group.h>
 #include <renderer/aabb.h>
 
 struct DrawGroup : Group

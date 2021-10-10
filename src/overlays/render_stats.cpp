@@ -2,14 +2,14 @@
 
 #include <renderer/group.h>
 
-#include "gooey.h"
+#include <overlays/overlays.h>
 
 using namespace dark;
 
 #include <sstream>
 #include <imgui.h>
 
-void render_stats(bool *open)
+void overlay_rstats(bool *open)
 {
 	if (!*open)
 		return;
