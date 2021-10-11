@@ -10,6 +10,7 @@
 #include <renderer/drawgroup.h>
 
 #include <skyrim/trash.h>
+#include <skyrim/cell.h>
 
 #include <overlays/overlays.h>
 
@@ -346,6 +347,16 @@ void window_while_test()
 
 		cameraCur->Update(delta);
 
+		if (player1)
+			player1->Step();
+		if (someDraugr)
+			someDraugr->Step();
+		if (meanSkelly)
+			meanSkelly->Step();
+		if (someHuman)
+			someHuman->Step();
+		if (dungeon)
+			dungeon->Update();
 		if (player1)
 			player1->Step();
 

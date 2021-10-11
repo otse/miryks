@@ -65,7 +65,7 @@ void reload_dungeon()
 		return;
 	const char *edId = dungeon->edId;
 	delete dungeon;
-	dungeon = get_interior(edId, 5);
+	dungeon = get_interior(edId);
 	dungeon->dontTeleport = true;
 	dungeon->Init();
 }
@@ -129,15 +129,15 @@ int main()
 	//load_world_space();
 #if 1
 	load_interior();
-	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
+	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrfemale.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	someDraugr->Place("gloomgendraugr");
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
-	someHuman = new Char();
-	someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
-	someHuman->Place("gloomgenman");
+	//someHuman = new Char();
+	//someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
+	//someHuman->Place("gloomgenman");
 #endif
 	//someHuman->SetAnim("anims/character/1hm_idle.kf");
 	player1 = new Player();
