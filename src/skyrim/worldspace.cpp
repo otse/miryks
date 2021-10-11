@@ -14,7 +14,7 @@ namespace skyrim
 {
 	WorldSpace *gworldSpace = nullptr;
 	
-	WorldSpace *GetWorldSpace(const char *id, int plugin)
+	WorldSpace *get_world_space(const char *id, int plugin)
 	{
 		WorldSpace *ws = nullptr;
 		Grup top = esp_top(get_plugins()[plugin], "WRLD");
@@ -30,18 +30,30 @@ namespace skyrim
 		return ws;
 	}
 
-	void WorldSpace::Init()
+	WorldSpace::WorldSpace(Record wrld, Grup<> g) : Record(wrld)
+	{
+		sceneDef->ambient = vec3(127.f / 255.f);
+		grup = g;
+		printf("new WorldSpace: %s\n", data<const char *>("FULL"));
+		formId xlcn = data<formId>("XLCN");
+		int16_t *wctr = data<int16_t *>("WCTR");
+		int32_t *nam0 = data<int32_t *>("NAM0");
+		int32_t *nam9 = data<int32_t *>("NAM9");
+	}
+
+	WorldSpace *WorldSpace::Init()
 	{
 		sceneDef->ambient = vec3(180.0 / 255.0);
 		personCam->pos = vec3(0, 0, -2048.0);
 		DiscoverAllCells();
 		LoadExterior(0, 0);
+		return this;
 	}
 
 	void WorldSpace::DiscoverAllCells()
 	{
 		printf("DiscoverAllCells\n");
-		grup.index = 2; // ignore first two world children
+		grup.index = 2;
 		grup.dive([&](Grup<> &g) {
 			Record cell = g.record();
 			Grup<> grup = g.next().grup();

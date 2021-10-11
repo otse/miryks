@@ -16,7 +16,7 @@ namespace skyrim
 {
 	Interior *dungeon = nullptr;
 
-	Interior *GetInterior(const char *interiorId, int plugin)
+	Interior *get_interior(const char *interiorId, int plugin)
 	{
 		Interior *interior = nullptr;
 		printf("get interior\n");
@@ -44,16 +44,17 @@ namespace skyrim
 	{
 		sceneDef->ambient = vec3(50.f / 255.f);
 	}
-	
+
 	Interior::~Interior()
 	{
 		Unload();
 	}
 
-	void Interior::Init()
+	Interior *Interior::Init()
 	{
 		Subgroup(persistent, CellPersistentChildren);
 		Subgroup(temporary, CellTemporaryChildren);
+		return this;
 	}
 
 	void Interior::Unload()

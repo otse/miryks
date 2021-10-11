@@ -42,8 +42,7 @@ void overlay_cellview()
 				{
 					if (dungeon)
 						delete dungeon;
-					dungeon = GetInterior(items[current], 5);
-					dungeon->Init();
+					load_interior(items[current]);
 				}
 			}
 			//if (items[current] == ginterior->loadedCell)
@@ -66,7 +65,7 @@ void overlay_cellview()
 				}
 				if (!gworldSpace)
 				{
-					load_darkworld();
+					load_world_space("DarkWorld");
 				}
 			}
 			ImGui::EndTabItem();

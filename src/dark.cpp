@@ -30,23 +30,19 @@ void darkassert(bool e)
 	assertc(e);
 }
 
-void load_bucket()
+void view_bucket_in_place()
 {
 	view_in_place(get_res("clutter\\bucket02a.nif"));
 }
 
-void load_gloomgen()
+void load_interior(const char *name)
 {
-	sceneDef->ambient = vec3(50.f / 255.f);
-	dungeon = GetInterior("GloomGen", 5);
-	dungeon->Init();
+	dungeon = get_interior(name)->Init();
 }
 
-void load_darkworld()
+void load_world_space(const char *name)
 {
-	sceneDef->ambient = vec3(127.f / 255.f);
-	gworldSpace = GetWorldSpace("DarkWorld", 5);
-	gworldSpace->Init();
+	gworldSpace = get_world_space(name)->Init();
 }
 
 void third_person()
@@ -100,14 +96,14 @@ int main()
 	load_plugins_archives();
 	nif_test();
 	init();
-	//load_yagrum();
+	load_yagrum();
 	renderer_init();
-	load_bucket();
-	//yagrum_queue("", 10, true);
+	view_bucket_in_place();
+	yagrum_queue("", 10, true);
 	refs_init();
-	//load_darkworld();
+	//load_world_space("DarkWorld");
 #if 1
-	load_gloomgen();
+	load_interior("GloomGen");
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	someDraugr->Place("gloomgendraugr");
@@ -137,7 +133,7 @@ void dark::reload_dungeon()
 		return;
 	const char *edId = dungeon->edId;
 	delete dungeon;
-	dungeon = GetInterior(edId, 5);
+	dungeon = get_interior(edId, 5);
 	dungeon->dontTeleport = true;
 	dungeon->Init();
 }

@@ -34,11 +34,11 @@ namespace dark
 
 	void darkassert(bool);
 
-	void load_bucket();
-	void load_gloomgen();
-	void load_darkworld();
+	void load_interior(const char *);
+	void load_world_space(const char *);
 
 	void view_in_place(Res *);
+	void view_bucket_in_place();
 
 	void init();
 	void loop();

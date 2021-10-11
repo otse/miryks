@@ -17,9 +17,9 @@ namespace skyrim
 	class WorldSpace;
 	class Land;
 
-	Interior *GetInterior(const char *, int);
+	Interior *get_interior(const char *, int = 5);
 
-	WorldSpace *GetWorldSpace(const char *, int);
+	WorldSpace *get_world_space(const char *, int = 5);
 
 	extern Interior *dungeon;
 	extern WorldSpace *gworldSpace;
@@ -50,7 +50,7 @@ namespace skyrim
 		std::vector<Reference *> refs, labels, mstts;
 		std::map<std::string, Reference *> edIds;
 
-		void Init();
+		Interior *Init();
 		void Subgroup(Grup<>, int);
 		void Unload();
 		void put_cam_on_random_xmarker();
@@ -66,16 +66,8 @@ namespace skyrim
 		Grup<> grup;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
-		WorldSpace(Record wrld, Grup<> g) : Record(wrld)
-		{
-			grup = g;
-			printf("new WorldSpace: %s\n", data<const char *>("FULL"));
-			formId xlcn = data<formId>("XLCN");
-			int16_t *wctr = data<int16_t *>("WCTR");
-			int32_t *nam0 = data<int32_t *>("NAM0");
-			int32_t *nam9 = data<int32_t *>("NAM9");
-		}
-		void Init();
+		WorldSpace(Record, Grup<>);
+		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);
 	};
