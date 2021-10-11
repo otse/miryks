@@ -1,3 +1,5 @@
+#define EDIT_ME    "editme.txt"
+
 #define PLUGIN_0   "Skyrim.esm"
 #define PLUGIN_1   "Update.esm"
 #define PLUGIN_2   "Dawnguard.esm"

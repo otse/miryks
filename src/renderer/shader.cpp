@@ -27,14 +27,14 @@ void SetShaderSources()
 	simple[0] = (char *)"simple";
 	basic[0] = (char *)"basic";
 	fxs[0] = (char *)"fx";
-	fbuf("gl/simple.vert", &simple[1], true);
-	fbuf("gl/simple.frag", &simple[2], true);
-	fbuf("gl/basic.vert", &basic[1], true);
-	fbuf("gl/basic.frag", &basic[2], true);
-	fbuf("gl/fx.vert", &fxs[1], true);
-	fbuf("gl/fx.frag", &fxs[2], true);
-	fbuf("gl/post.vert", &postquad[1], true);
-	fbuf("gl/post.frag", &postquad[2], true);
+	fbuf("gl/simple.vert", &simple[1]);
+	fbuf("gl/simple.frag", &simple[2]);
+	fbuf("gl/basic.vert", &basic[1]);
+	fbuf("gl/basic.frag", &basic[2]);
+	fbuf("gl/fx.vert", &fxs[1]);
+	fbuf("gl/fx.frag", &fxs[2]);
+	fbuf("gl/post.vert", &postquad[1]);
+	fbuf("gl/post.frag", &postquad[2]);
 }
 
 std::map<std::string, Shader *> Shader::shaders;

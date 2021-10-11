@@ -34,7 +34,7 @@ ImFont *font3;
 
 static void hotswap_plugin_and_dungeon()
 {
-	reload_my_esp();
+	reload_plugin();
 	reload_dungeon();
 }
 

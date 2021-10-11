@@ -77,7 +77,7 @@ namespace skyrim
 			return new Keyf(saved);
 		Nif *model = calloc_nifp();
 		model->path = path;
-		int len = fbuf(path, &model->buf);
+		int len = fbuf(path, &model->buf, false);
 		nif_read(model);
 		save_nif(path, model);
 		return new Keyf(model);

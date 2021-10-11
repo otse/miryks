@@ -53,8 +53,8 @@ void overlay_cellview()
 		}
 		if (ImGui::BeginTabItem("world space"))
 		{
-			if (gworldSpace) {
-				ImGui::Text("num total exterior cells: %i", gworldSpace->exteriors.size());
+			if (worldSpace) {
+				ImGui::Text("num total exterior cells: %i", worldSpace->exteriors.size());
 			}
 			if (ImGui::Button("Go outdoors?"))
 			{
@@ -63,9 +63,9 @@ void overlay_cellview()
 					delete dungeon;
 					dungeon = nullptr;
 				}
-				if (!gworldSpace)
+				if (!worldSpace)
 				{
-					load_world_space("DarkWorld");
+					load_world_space();
 				}
 			}
 			ImGui::EndTabItem();

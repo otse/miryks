@@ -27,7 +27,7 @@ namespace dark
 	void Image::fromfile(const char *path)
 	{
 		char *buf;
-		int end = fbuf(path, &buf);
+		int end = fbuf(path, &buf, false);
 		cursor = 0;
 		data = (const unsigned char *)buf;
 		cursor = data;

@@ -12,6 +12,12 @@
 
 // made to fill struct
 
+char *get_text_file(const char *name) {
+    char *x;
+    fbuf(name, &x, true);
+    return x;
+}
+
 int fbuf(const char *path, char **dest, bool cap)
 {
 	// printf("fbuf path %s\n", path);

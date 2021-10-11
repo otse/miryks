@@ -22,7 +22,7 @@ namespace skyrim
 	WorldSpace *get_world_space(const char *, int = 5);
 
 	extern Interior *dungeon;
-	extern WorldSpace *gworldSpace;
+	extern WorldSpace *worldSpace;
 
 	class Cell : public Record
 	{

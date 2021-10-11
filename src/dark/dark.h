@@ -34,8 +34,8 @@ namespace dark
 
 	void darkassert(bool);
 
-	void load_interior(const char *);
-	void load_world_space(const char *);
+	void load_interior(const char * = "GloomGen");
+	void load_world_space(const char * = "DarkWorld");
 
 	void view_in_place(Res *);
 	void view_bucket_in_place();
@@ -43,7 +43,7 @@ namespace dark
 	void init();
 	void loop();
 
-	void reload_my_esp();
+	void reload_plugin();
 	void reload_dungeon();
 	void unset_dungeon();
 	void third_person();

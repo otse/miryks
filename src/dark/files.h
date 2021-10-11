@@ -5,8 +5,10 @@
 #include <string>
 #include <vector>
 
-int fbuf(const char *, char **, bool = false);
+int fbuf(const char *, char **, bool = true);
 int fmkdir(const char *);
+
+char *get_text_file(const char *);
 
 void fwrite(const std::string &, const std::string &);
 std::string fread(const std::string &);

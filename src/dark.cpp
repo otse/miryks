@@ -15,6 +15,8 @@
 using namespace dark;
 using namespace skyrim;
 
+#define READ_WHOLE true
+
 namespace dark
 {
 Monster *someDraugr = nullptr, *meanSkelly = nullptr;
@@ -42,7 +44,7 @@ void load_interior(const char *name)
 
 void load_world_space(const char *name)
 {
-	gworldSpace = get_world_space(name)->Init();
+	worldSpace = get_world_space(name)->Init();
 }
 
 void third_person()
@@ -50,16 +52,46 @@ void third_person()
 	if (player1)
 		player1->toggleView();
 }
+
+void reload_plugin()
+{
+	free_plugin(&get_plugins()[5]);
+	get_plugins()[5] = load_plugin(PLUGIN_5, READ_WHOLE);
 }
 
-void load_plugins_archives()
+void reload_dungeon()
+{
+	if (!dungeon)
+		return;
+	const char *edId = dungeon->edId;
+	delete dungeon;
+	dungeon = get_interior(edId, 5);
+	dungeon->dontTeleport = true;
+	dungeon->Init();
+}
+}
+
+void load_archives();
+
+void load_data_files()
 {
 	get_plugins()[0] = load_plugin(PLUGIN_0);
 	get_plugins()[1] = load_plugin(PLUGIN_1);
 	get_plugins()[2] = load_plugin(PLUGIN_2);
 	get_plugins()[3] = load_plugin(PLUGIN_3);
 	get_plugins()[4] = load_plugin(PLUGIN_4);
-	get_plugins()[5] = load_plugin(PLUGIN_5, true);
+	get_plugins()[5] = load_plugin(PLUGIN_5, READ_WHOLE);
+	assertc(get_plugins()[0]);
+	assertc(get_plugins()[1]);
+	assertc(get_plugins()[2]);
+	assertc(get_plugins()[3]);
+	assertc(get_plugins()[4]);
+	assertc(get_plugins()[5]);
+	load_archives();
+}
+
+void load_archives()
+{
 	get_archives()[0] = load_archive(ARCHIVE_0);
 	//get_archives()[1] = load_archive(ARCHIVE_1);
 	//get_archives()[2] = load_archive(ARCHIVE_2);
@@ -78,12 +110,6 @@ void load_plugins_archives()
 	get_archives()[15] = load_archive(ARCHIVE_15);
 	get_archives()[16] = load_archive(ARCHIVE_16);
 	get_archives()[17] = load_archive(ARCHIVE_17);
-	assertc(get_plugins()[0]);
-	assertc(get_plugins()[1]);
-	assertc(get_plugins()[2]);
-	assertc(get_plugins()[3]);
-	assertc(get_plugins()[4]);
-	assertc(get_plugins()[5]);
 }
 
 #include <renderer/camera.h>
@@ -91,9 +117,8 @@ void load_plugins_archives()
 
 int main()
 {
-	char **buf = &editme;
-	fbuf("editme.txt", buf, true);
-	load_plugins_archives();
+	editme = get_text_file(EDIT_ME);
+	load_data_files();
 	nif_test();
 	init();
 	load_yagrum();
@@ -101,9 +126,9 @@ int main()
 	view_bucket_in_place();
 	yagrum_queue("", 10, true);
 	refs_init();
-	//load_world_space("DarkWorld");
+	//load_world_space();
 #if 1
-	load_interior("GloomGen");
+	load_interior();
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale06.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	someDraugr->Place("gloomgendraugr");
@@ -118,24 +143,6 @@ int main()
 	player1 = new Player();
 	window_while_test();
 	return 1;
-}
-
-void dark::reload_my_esp()
-{
-	cesp **esp = &get_plugins()[5];
-	free_plugin(esp);
-	*esp = load_plugin(PLUGIN_5, true);
-}
-
-void dark::reload_dungeon()
-{
-	if (!dungeon)
-		return;
-	const char *edId = dungeon->edId;
-	delete dungeon;
-	dungeon = get_interior(edId, 5);
-	dungeon->dontTeleport = true;
-	dungeon->Init();
 }
 
 #include <skyrim/model.h>

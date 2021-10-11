@@ -12,7 +12,7 @@
 
 namespace skyrim
 {
-	WorldSpace *gworldSpace = nullptr;
+	WorldSpace *worldSpace = nullptr;
 	
 	WorldSpace *get_world_space(const char *id, int plugin)
 	{
