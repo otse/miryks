@@ -29,14 +29,14 @@ namespace skyrim
 	public:
 		Grup<> persistent, temporary;
 		uint16_t flags = 0;
-		Cell(Record cell, Grup<> &g) : Record(cell)
+		Cell(Record cell, Grup<> &grup) : Record(cell)
 		{
-			assertc(g.hed().group_type == CellChildren);
-			if (g.grup().hed().group_type == CellPersistentChildren) {
-				persistent = g.grup();
-				g.next();
+			assertc(grup.hed().group_type == CellChildren);
+			if (grup.grup().hed().group_type == CellPersistentChildren) {
+				persistent = grup.grup();
+				grup.next();
 			}
-			temporary = g.grup();
+			temporary = grup.grup();
 			flags = *cell.data<uint16_t *>("DATA");
 		}
 	};
@@ -82,7 +82,7 @@ namespace skyrim
 		WorldSpace *worldSpace;
 		Land *land;
 		XCLC *xclc;
-		Exterior(Record cell, Grup<> g) : Cell(cell, g)
+		Exterior(Record cell, Grup<> grup) : Cell(cell, grup)
 		{
 			worldSpace = nullptr;
 			land = nullptr;

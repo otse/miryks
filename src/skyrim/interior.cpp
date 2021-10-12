@@ -16,11 +16,11 @@ namespace skyrim
 {
 	Interior *dungeon = nullptr;
 
-	Interior *get_interior(const char *interiorId, int plugin)
+	Interior *get_interior(const char *interiorId, int num)
 	{
+		printf("get_interior\n");
 		Interior *interior = nullptr;
-		printf("get interior\n");
-		Grup top = esp_top(get_plugins()[plugin], "CELL");
+		Grup top = esp_top(get_plugins()[num], CELL);
 		top.dive([&](Grup<> &g) {
 			Record cell = g.record();
 			Grup<> grup = g.next().grup();
@@ -31,16 +31,14 @@ namespace skyrim
 			}
 			return false;
 		}, {
-			Top,
-			InteriorCellBlock,
-			InteriorCellSubBlock
+			Top, InteriorCellBlock, InteriorCellSubBlock
 		});
 		if (!interior)
 			printf("fatal can't find interior\n");
 		return interior;
 	}
 
-	Interior::Interior(Record cell, Grup<> &g) : Cell(cell, g)
+	Interior::Interior(Record cell, Grup<> &grup) : Cell(cell, grup)
 	{
 		sceneDef->ambient = vec3(50.f / 255.f);
 	}

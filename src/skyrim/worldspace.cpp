@@ -14,26 +14,27 @@ namespace skyrim
 {
 	WorldSpace *worldSpace = nullptr;
 	
-	WorldSpace *get_world_space(const char *id, int plugin)
+	WorldSpace *get_world_space(const char *id, int num)
 	{
-		WorldSpace *ws = nullptr;
-		Grup top = esp_top(get_plugins()[plugin], "WRLD");
+		printf("get_world_space\n");
+		WorldSpace *worldSpace = nullptr;
+		Grup top = esp_top(get_plugins()[num], WRLD);
 		top.loop([&](Grup<> &g) {
 			Record wrld = g.record();
 			Grup<> grup = g.next().grup();
 			if (wrld.editor_id(id)) {
-				ws = new WorldSpace(wrld, grup);
+				worldSpace = new WorldSpace(wrld, grup);
 				return true;
 			} 
 			return false;
 		}, Top);
-		return ws;
+		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(Record wrld, Grup<> g) : Record(wrld)
+	WorldSpace::WorldSpace(Record wrld, Grup<> grup) : Record(wrld), grup(grup)
 	{
+		assertc(grup.hed().group_type == WorldChildren);
 		sceneDef->ambient = vec3(127.f / 255.f);
-		grup = g;
 		printf("new WorldSpace: %s\n", data<const char *>("FULL"));
 		formId xlcn = data<formId>("XLCN");
 		int16_t *wctr = data<int16_t *>("WCTR");
