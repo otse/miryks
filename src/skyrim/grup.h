@@ -12,7 +12,7 @@
 
 namespace skyrim
 {
-	// template doesnt do nothing yet :))
+	// template doesnt do anything
 	
 	template <typename T = Both>
 	class Grup

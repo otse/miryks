@@ -17,7 +17,7 @@
 GLFWwindow *window = nullptr;
 
 static bool cursorShowing = false;
-static bool hideOverlays = false;
+static bool hideOverlays = true;
 static bool f10 = false;
 
 void setupImgui();

@@ -1,6 +1,7 @@
 #pragma once
 
-#include <skyrim/grup.h>
+#include <lib.h>
+#include <map>
 
 #define ONE_SKYRIM_UNIT_IN_CM 1.428f
 #define CM_TO_SKYRIM_UNITS (1.f / ONE_SKYRIM_UNIT_IN_CM)
@@ -10,6 +11,8 @@
 namespace skyrim
 {
 	extern char *editme;
+
+	class Record;
 
 	class Char;
 	class Monster;
