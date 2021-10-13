@@ -28,7 +28,7 @@ namespace skyrim
 	class Cell : public Record
 	{
 	public:
-		Grup<> persistent, temporary;
+		grup<any> persistent, temporary;
 		uint16_t flags = 0;
 		Cell(Record cell, Grup<> grup) : Record(cell)
 		{
@@ -53,8 +53,7 @@ namespace skyrim
 		std::vector<Reference *> refs, labels, mstts;
 		std::map<std::string, Reference *> edIds;
 
-		Interior(cell);
-		Interior(Record, Grup<>);
+		Interior(constellation &);
 		~Interior();
 		Interior *Init();
 		void Subgroup(Grup<>, int);
@@ -78,11 +77,10 @@ namespace skyrim
 	class WorldSpace : public Record
 	{
 	public:
-		Grup<> grup;
+		grup<constellation> childs;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
 		WorldSpace(wrld);
-		WorldSpace(Record, Grup<>);
 		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);
@@ -98,7 +96,7 @@ namespace skyrim
 		WorldSpace *worldSpace;
 		Land *land;
 		XCLC *xclc;
-		Exterior(Record cell, Grup<> grup) : Cell(cell, grup)
+		Exterior(constellation temp) : Cell(temp.self, temp.childs)
 		{
 			worldSpace = nullptr;
 			land = nullptr;

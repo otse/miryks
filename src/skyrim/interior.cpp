@@ -21,22 +21,21 @@ namespace skyrim
 		printf("get_interior\n");
 		Interior *interior = nullptr;
 		constellation temp;
-		bool ok = constellation::iter(CELL).dive([&](constellation::iter &g) {
-			return (temp = g.typesake()).self.editor_id(id);
+		bool ok = constellation::iter(CELL).dive(temp, [&]() {
+			return temp.self.editor_id(id);
 		}, {
 			0, 2, 3
 		});
-		if (ok)
-			interior = new Interior(cell(temp));
+		if (ok) {
+			printf("found something");
+			interior = new Interior(temp);
+		}
 		return interior;
 	}
 
-	Interior::Interior(cell c) : Interior(c.cons.self, c.cons.childs) {
-		printf("woo");
-	}
-
-	Interior::Interior(Record cell, Grup<> grup) : Cell(cell, grup)
+	Interior::Interior(constellation &cons) : Cell(cons.self, cons.childs)
 	{
+		printf("woo");
 		sceneDef->ambient = vec3(50.f / 255.f);
 	}
 
@@ -65,8 +64,9 @@ namespace skyrim
 		if (!subgroup.valid()) {
 			return;
 		}
-		subgroup.loop([&](Grup<> &g) {
-			Record refr = g.record();
+		any temp;
+		subgroup.loop(temp, [&]() {
+			Record refr = temp.u.r;
 			if (refr.is_type(REFR))
 			{
 				Reference *reference = new Reference(refr);
@@ -93,8 +93,9 @@ namespace skyrim
 			return;
 		if (!persistent.valid())
 			return;
-		persistent.loop([&](Grup<> &g) {
-			Record record = g.record();
+		any temp;
+		persistent.loop(temp, [&]() {
+			Record record = temp.u.r;
 			if (*(record.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");

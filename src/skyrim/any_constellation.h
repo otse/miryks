@@ -13,6 +13,7 @@ struct any
 	union {
 		crecord *r;
 		cgrup *g;
+		void *v;
 	} u;
 	any() {}
 	any(iter &i)
@@ -21,7 +22,7 @@ struct any
 	}
 	void operator=(iter &i)
 	{
-
+		u.v = i.get();
 	}
 	bool match(const char *id)
 	{
