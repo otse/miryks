@@ -16,28 +16,22 @@ namespace skyrim
 {
 	Interior *dungeon = nullptr;
 
-	Interior *get_interior(const char *interiorId, int num)
+	Interior *get_interior(const char *id, int num)
 	{
 		printf("get_interior\n");
 		Interior *interior = nullptr;
-		Grup top(CELL);
-		top.dive([&](Grup<> &g) {
-			Record cell = g.record();
-			Grup<> grup = g.grup();
-			if (cell.editor_id(interiorId))
-			{
-				printf("found interior\n");
-				interior = new Interior(cell, grup);
-				return true;
-			}
-			return false;
+		cell temp;
+		bool ok = cell::top().dive([&](cell::iter &g) {
+			return (temp = g.typesake()).self.editor_id(id);
 		}, {
-			Top, InteriorCellBlock, InteriorCellSubBlock
+			0, 2, 3
 		});
-		if (!interior)
-			printf("fatal can't find interior\n");
+		if (ok)
+			interior = new Interior(temp);
 		return interior;
 	}
+
+	Interior::Interior(cell &e) : Interior(e.self, e.childs) {}
 
 	Interior::Interior(Record cell, Grup<> &grup) : Cell(cell, grup)
 	{

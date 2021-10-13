@@ -18,16 +18,16 @@ namespace skyrim
 	{
 		printf("get_world_space\n");
 		WorldSpace *worldSpace = nullptr;
-		wrld::iter top(WRLD);
-		bool ok = top.loop([&](wrld::iter &g) {
-			return (top.type = g.typesake()).editor_id(id);
+		wrld temp;
+		bool ok = wrld::top().loop([&](wrld::iter &g) {
+			return (temp = g.typesake()).self.editor_id(id);
 		}, 0);
 		if (ok)
-			worldSpace = new WorldSpace(top.type);
+			worldSpace = new WorldSpace(temp);
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(wrld &e) : WorldSpace(e, e.childs) { }
+	WorldSpace::WorldSpace(wrld &e) : WorldSpace(e.self, e.childs) { }
 
 	WorldSpace::WorldSpace(Grup<> &g) : WorldSpace(g.record(), g.grup()) {}
 
@@ -58,7 +58,6 @@ namespace skyrim
 		printf("DiscoverAllCells\n");
 		grup.index = 2;
 		grup.dive([&](Grup<> &g) {
-			//printf("dive discover exteriors i %i\n", g.index);
 			Record cell = g.record();
 			Grup<> grup = g.grup();
 			Exterior *exterior = new Exterior(cell, grup);
@@ -111,9 +110,8 @@ namespace skyrim
 					cameraCur = personCam;
 				}
 			}
-			else if (refr.is_type("LAND"))
+			else if (refr.is_type(LAND))
 			{
-				printf("this is land\n");
 				assertc(land == nullptr);
 				land = new Land(refr);
 				land->exterior = this;

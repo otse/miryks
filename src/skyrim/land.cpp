@@ -46,7 +46,7 @@ namespace skyrim
 	Land::Land(Record land) : Record(land)
 	{
 		exterior = nullptr;
-		printf("lets try make a land mesh\n");
+		
 		auto vhgt = data<VHGT *>("VHGT");
 		auto atxt = data<ATXT *>("ATXT");
 		auto btxt = data<BTXT *>("BTXT");

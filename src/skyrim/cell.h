@@ -6,6 +6,7 @@
 #include <skyrim/skyrim.h>
 #include <skyrim/grup.h>
 #include <skyrim/record.h>
+#include <skyrim/any_constellation.h>
 
 using namespace dark;
 
@@ -48,12 +49,13 @@ namespace skyrim
 	class Interior : public Cell
 	{
 	public:
-		Interior(Record, Grup<> &);
-		~Interior();
 
 		std::vector<Reference *> refs, labels, mstts;
 		std::map<std::string, Reference *> edIds;
 
+		Interior(cell &);
+		Interior(Record, Grup<> &);
+		~Interior();
 		Interior *Init();
 		void Subgroup(Grup<>, int);
 		void Unload();
@@ -70,26 +72,6 @@ namespace skyrim
 		record record;
 		base(const char *word) : word(word)
 		{
-		}
-	};
-
-	struct wrld;
-
-	struct wrld : public record
-	{
-		typedef wrld type;
-		typedef grup<wrld> iter;
-		grup<any> childs;
-		wrld() {}
-		wrld(iter &e)
-		{
-			(*this) = e;
-		}
-		void operator=(iter &e)
-		{
-			set(e.record());
-			// record::operator = (e.record());
-			childs = e.grup();
 		}
 	};
 

@@ -8,22 +8,16 @@
 #include <array>
 #include <functional>
 
-#define GET_JUST_RETURNS_NULLPTR 1
-
 namespace skyrim
 {
-	class any
-	{
-	public:
-		any() {};
-		any(grup<any> &e) {}
-	};
+	// todo cut grup in two
+	// one will be a non specialized base class
+	// second argument: everything is inline anyway
 
 	template <typename T = any>
 	struct Grup
 	{
-		typedef std::function<bool(Grup &)> loop_func;
-		T type;
+		typedef std::function<bool(Grup<T> &)> specialized_func;
 		cgrup *me = nullptr;
 		size_t index = 0;
 		Grup()
@@ -42,11 +36,11 @@ namespace skyrim
 		}
 		inline bool valid() const
 		{
-			return me != nullptr;
+			return me;
 		}
 		inline T typesake()
 		{
-			return type = T(*this);
+			return T(*this);
 		}
 		inline const cgrup_header &hed() const
 		{
@@ -56,20 +50,22 @@ namespace skyrim
 		{
 			return *me->mixed;
 		}
-		bool dive(loop_func func, std::vector<int> group_types, int dive = -1)
+		bool dive(specialized_func func, std::vector<int> group_types, int dive = -1)
 		{
 			assertc(valid());
 			if (dive == -1)
 				dive = group_types.size();
 			int group_type = group_types[group_types.size() - dive];
-			if (loop(
-					dive == 1 ? func : [&](Grup &g)
-						{ return g.grup().dive(func, group_types, dive - 1); },
-					group_type))
-				return true;
+			if (dive == 1)
+				return loop(func, group_type);
+			else
+				for (; index < mixed().size;)
+					if(grup().dive(func, group_types, dive - 1))
+						return true;
 			return false;
 		}
-		bool loop(loop_func func, int group_type = -1)
+		//template<typename T, typename Y>
+		bool loop(specialized_func func, int group_type = -1)
 		{
 			assertc(valid());
 			assertc(group_type == -1 || hed().group_type == group_type);
@@ -81,22 +77,20 @@ namespace skyrim
 		template <typename T = void *>
 		inline T get()
 		{
-#if GET_JUST_RETURNS_NULLPTR
 			if (index >= mixed().size)
 				return nullptr;
-#else
-			assertc(i < size());
-#endif
 			return (T)mixed().elements[index++];
 		}
-		inline Grup<any> grup()
+		inline Grup<any> grupany()
 		{
-			//printf("grup()\n");
+			return get<cgrup *>();
+		}
+		inline Grup<T> grup()
+		{
 			return get<cgrup *>();
 		}
 		inline Record record()
 		{
-			//printf("record()\n");
 			return get<crecord *>();
 		}
 	};

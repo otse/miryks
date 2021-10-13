@@ -19,29 +19,23 @@ namespace skyrim
 	{
 		crecord *r;
 
+		virtual void operator=(crecord *rhs)
+		{
+			r = rhs;
+			check();
+		}
+
 		record()
 		{
 			r = nullptr;
 		}
 		record(crecord *r)
 		{
-			(*this) = r;
-		}
-		//void operator=(record r) {
-		//	(*this) = r.r;
-		//}
-		void operator=(crecord *r)
-		{
-			this->r = r;
-			check();
-		}
-		void operator=(record r)
-		{
-			set(r);
+			operator = (r);
 		}
 		void set(record r)
 		{
-			(*this) = r.r;
+			operator = (r.r);
 		}
 		void check()
 		{
