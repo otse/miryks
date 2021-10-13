@@ -30,7 +30,7 @@ namespace skyrim
 	public:
 		Grup<> persistent, temporary;
 		uint16_t flags = 0;
-		Cell(Record cell, Grup<> &grup) : Record(cell)
+		Cell(Record cell, Grup<> grup) : Record(cell)
 		{
 			assertc(grup.hed().group_type == CellChildren);
 			Grup first = grup.grup();
@@ -53,8 +53,8 @@ namespace skyrim
 		std::vector<Reference *> refs, labels, mstts;
 		std::map<std::string, Reference *> edIds;
 
-		Interior(cell &);
-		Interior(Record, Grup<> &);
+		Interior(cell);
+		Interior(Record, Grup<>);
 		~Interior();
 		Interior *Init();
 		void Subgroup(Grup<>, int);
@@ -81,9 +81,8 @@ namespace skyrim
 		Grup<> grup;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
-		WorldSpace(wrld &);
+		WorldSpace(wrld);
 		WorldSpace(Record, Grup<>);
-		WorldSpace(Grup<> &);
 		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);

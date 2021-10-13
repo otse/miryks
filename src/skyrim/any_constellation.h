@@ -13,7 +13,7 @@ struct any
 	union {
 		crecord *r;
 		cgrup *g;
-	} rg;
+	} u;
 	any() {}
 	any(iter &i)
 	{
@@ -21,6 +21,11 @@ struct any
 	}
 	void operator=(iter &i)
 	{
+
+	}
+	bool match(const char *id)
+	{
+		return record(u.r).editor_id(id);
 	}
 };
 
@@ -39,44 +44,27 @@ struct constellation: any
 		self = i.record();
 		childs = i.grupany();
 	}
-};
-
-struct cell: constellation
-{
-	typedef grup<cell> iter;
-	cell() {}
-	cell(iter &i)
+	bool match(const char *id)
 	{
-		operator=(i);
-	}
-	void operator=(iter &i)
-	{
-		// custom behavior here
-		self = i.record();
-		childs = i.grupany();
-	}
-	static iter top()
-	{
-		return iter(CELL);
+		return self.editor_id(id);
 	}
 };
 
-struct wrld: constellation
+struct cell
 {
-	typedef grup<wrld> iter;
-	wrld() {}
-	wrld(iter &i)
+	const constellation cons;
+	cell(const constellation &c) : cons(c)
 	{
-		operator=(i);
+
 	}
-	void operator=(iter &i)
+};
+
+struct wrld
+{
+	const constellation cons;
+	wrld(const constellation &c) : cons(c)
 	{
-		self = i.record();
-		childs = i.grupany();
-	}
-	static iter top()
-	{
-		return iter(WRLD);
+
 	}
 };
 }

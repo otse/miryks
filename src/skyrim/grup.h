@@ -50,6 +50,10 @@ namespace skyrim
 		{
 			return *me->mixed;
 		}
+		inline bool going() const
+		{
+			return index < mixed().size;
+		}
 		bool dive(specialized_func func, std::vector<int> group_types, int dive = -1)
 		{
 			assertc(valid());
@@ -59,7 +63,7 @@ namespace skyrim
 			if (dive == 1)
 				return loop(func, group_type);
 			else
-				for (; index < mixed().size;)
+				while (going())
 					if(grup().dive(func, group_types, dive - 1))
 						return true;
 			return false;
@@ -69,10 +73,16 @@ namespace skyrim
 		{
 			assertc(valid());
 			assertc(group_type == -1 || hed().group_type == group_type);
-			for (; index < mixed().size;)
+			while (going())
 				if (func(*this))
 					return true;
 			return false;
+		}
+		bool match(const char *id, int group_type = -1)
+		{
+			return loop([]{
+				return typesake().match(id);
+			}, group_type);
 		}
 		template <typename T = void *>
 		inline T get()
@@ -83,10 +93,12 @@ namespace skyrim
 		}
 		inline Grup<any> grupany()
 		{
+			printf("grupany\n");
 			return get<cgrup *>();
 		}
 		inline Grup<T> grup()
 		{
+			printf("grup\n");
 			return get<cgrup *>();
 		}
 		inline Record record()

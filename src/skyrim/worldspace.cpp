@@ -18,18 +18,16 @@ namespace skyrim
 	{
 		printf("get_world_space\n");
 		WorldSpace *worldSpace = nullptr;
-		wrld temp;
-		bool ok = wrld::top().loop([&](wrld::iter &g) {
+		constellation temp;
+		bool ok = constellation::iter(WRLD).loop([&](constellation::iter &g) {
 			return (temp = g.typesake()).self.editor_id(id);
 		}, 0);
 		if (ok)
-			worldSpace = new WorldSpace(temp);
+			worldSpace = new WorldSpace(wrld(temp));
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(wrld &e) : WorldSpace(e.self, e.childs) { }
-
-	WorldSpace::WorldSpace(Grup<> &g) : WorldSpace(g.record(), g.grup()) {}
+	WorldSpace::WorldSpace(wrld w) : WorldSpace(w.cons.self, w.cons.childs) { }
 
 	WorldSpace::WorldSpace(Record wrld, Grup<> grup)
 		: Record(wrld),

@@ -20,20 +20,22 @@ namespace skyrim
 	{
 		printf("get_interior\n");
 		Interior *interior = nullptr;
-		cell temp;
-		bool ok = cell::top().dive([&](cell::iter &g) {
+		constellation temp;
+		bool ok = constellation::iter(CELL).dive([&](constellation::iter &g) {
 			return (temp = g.typesake()).self.editor_id(id);
 		}, {
 			0, 2, 3
 		});
 		if (ok)
-			interior = new Interior(temp);
+			interior = new Interior(cell(temp));
 		return interior;
 	}
 
-	Interior::Interior(cell &e) : Interior(e.self, e.childs) {}
+	Interior::Interior(cell c) : Interior(c.cons.self, c.cons.childs) {
+		printf("woo");
+	}
 
-	Interior::Interior(Record cell, Grup<> &grup) : Cell(cell, grup)
+	Interior::Interior(Record cell, Grup<> grup) : Cell(cell, grup)
 	{
 		sceneDef->ambient = vec3(50.f / 255.f);
 	}
