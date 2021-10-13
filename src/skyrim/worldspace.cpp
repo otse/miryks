@@ -18,16 +18,17 @@ namespace skyrim
 	{
 		printf("get_world_space\n");
 		WorldSpace *worldSpace = nullptr;
-		constellation temp;
-		bool ok = constellation::iter(WRLD).loop(temp, [&]() {
-			return temp.self.editor_id(id);
+		constellation copy;
+		bool ok = constellation::iter(WRLD).loop([&](constellation &temp) {
+			return (copy=temp).self.editor_id(id);
 		}, 0);
 		if (ok)
-			worldSpace = new WorldSpace(wrld(temp));
+			worldSpace = new WorldSpace(copy);
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(wrld w) : Record(w.cons.self), childs(w.cons.childs.me)
+	WorldSpace::WorldSpace(constellation &cons) :
+		Record(cons.self), childs(cons.childs.pointer())
 	{
 		assertc(childs.hed().group_type == WorldChildren);
 		sceneDef->ambient = vec3(127.f / 255.f);
@@ -52,7 +53,7 @@ namespace skyrim
 		printf("DiscoverAllCells\n");
 		childs.index = 2;
 		constellation temp;
-		childs.dive(temp, [&]() {
+		childs.dive([&](constellation &temp) {
 			Exterior *exterior = new Exterior(temp);
 			exterior->worldSpace = this;
 			exteriors.push_back(exterior);
@@ -87,8 +88,7 @@ namespace skyrim
 		if (!subgroup.valid()) {
 			return;
 		}
-		any temp;
-		subgroup.loop(temp, [&]() {
+		subgroup.loop([&](any &temp) {
 			Record refr = temp.u.r;
 			if (refr.is_type(REFR))
 			{

@@ -80,7 +80,7 @@ namespace skyrim
 		grup<constellation> childs;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
-		WorldSpace(wrld);
+		WorldSpace(constellation &);
 		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);

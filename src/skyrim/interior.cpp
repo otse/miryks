@@ -20,15 +20,15 @@ namespace skyrim
 	{
 		printf("get_interior\n");
 		Interior *interior = nullptr;
-		constellation temp;
-		bool ok = constellation::iter(CELL).dive(temp, [&]() {
-			return temp.self.editor_id(id);
+		constellation copy;
+		bool ok = constellation::iter(CELL).dive([&](constellation &temp) {
+			return (copy=temp).self.editor_id(id);
 		}, {
 			0, 2, 3
 		});
 		if (ok) {
 			printf("found something");
-			interior = new Interior(temp);
+			interior = new Interior(copy);
 		}
 		return interior;
 	}
@@ -64,8 +64,7 @@ namespace skyrim
 		if (!subgroup.valid()) {
 			return;
 		}
-		any temp;
-		subgroup.loop(temp, [&]() {
+		subgroup.loop([&](any &temp) {
 			Record refr = temp.u.r;
 			if (refr.is_type(REFR))
 			{
@@ -93,8 +92,7 @@ namespace skyrim
 			return;
 		if (!persistent.valid())
 			return;
-		any temp;
-		persistent.loop(temp, [&]() {
+		persistent.loop([&](any &temp) {
 			Record record = temp.u.r;
 			if (*(record.base()) == 0x0000003B)
 			{

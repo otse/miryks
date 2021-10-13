@@ -14,8 +14,7 @@ namespace skyrim {
 	{
 		Record race;
 		Grup top = esp_top(get_plugins()[0], "RACE");
-		any temp;
-		top.loop(temp, [&]() {
+		top.loop([&](any &temp) {
 			Record record = temp.u.r;
 			if (record.editor_id(raceId))
 			{
