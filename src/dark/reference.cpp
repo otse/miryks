@@ -241,7 +241,7 @@ namespace dark
 		if (model)
 		{
 			// bad
-			if (baseObject.record->hed->formId != 0x32)
+			if (baseObject.r->hed->formId != 0x32)
 			{
 				drawGroup = new DrawGroupFlatSorted(model->baseGroup, matrix);
 				sceneDef->bigGroup->Add(drawGroup);

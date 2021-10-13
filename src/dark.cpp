@@ -129,9 +129,9 @@ int main()
 	//load_world_space();
 #if 1
 	load_interior();
-	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrfemale.nif");
-	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
-	someDraugr->Place("gloomgendraugr");
+	//someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrfemale.nif");
+	//someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
+	//someDraugr->Place("gloomgendraugr");
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
@@ -140,7 +140,7 @@ int main()
 	//someHuman->Place("gloomgenman");
 #endif
 	//someHuman->SetAnim("anims/character/1hm_idle.kf");
-	player1 = new Player();
+	//player1 = new Player();
 	window_while_test();
 	return 1;
 }

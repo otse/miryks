@@ -12,7 +12,16 @@ namespace skyrim
 {
 	extern char *editme;
 
-	class Record;
+	class any;
+
+	template <typename T>
+	struct Grup;
+	template <typename T = any>
+	using grup = Grup<T>;
+
+	struct record;
+
+	typedef record Record;
 
 	class Char;
 	class Monster;

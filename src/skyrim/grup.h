@@ -12,16 +12,25 @@
 
 namespace skyrim
 {
-	// template doesnt do anything
-	
-	template <typename T = Both>
-	class Grup
+	class any
 	{
 	public:
+		any() {};
+		any(grup<any> &e) {}
+	};
+
+	template <typename T = any>
+	struct Grup
+	{
 		typedef std::function<bool(Grup &)> loop_func;
+		T type;
 		cgrup *me = nullptr;
 		size_t index = 0;
-		Grup() {
+		Grup()
+		{
+		}
+		Grup(const char *word) : Grup(esp_top(get_plugins()[5], word))
+		{
 		}
 		Grup(cgrup *grup) : me(grup)
 		{
@@ -35,6 +44,10 @@ namespace skyrim
 		{
 			return me != nullptr;
 		}
+		inline T typesake()
+		{
+			return type = T(*this);
+		}
 		inline const cgrup_header &hed() const
 		{
 			return *me->hed;
@@ -42,11 +55,6 @@ namespace skyrim
 		inline const revised_array &mixed() const
 		{
 			return *me->mixed;
-		}
-		Grup &next()
-		{
-			index++;
-			return *this;
 		}
 		bool dive(loop_func func, std::vector<int> group_types, int dive = -1)
 		{
@@ -65,7 +73,7 @@ namespace skyrim
 		{
 			assertc(valid());
 			assertc(group_type == -1 || hed().group_type == group_type);
-			for (; index < mixed().size; index++)
+			for (; index < mixed().size;)
 				if (func(*this))
 					return true;
 			return false;
@@ -79,14 +87,16 @@ namespace skyrim
 #else
 			assertc(i < size());
 #endif
-			return (T)mixed().elements[index];
+			return (T)mixed().elements[index++];
 		}
-		inline Grup grup()
+		inline Grup<any> grup()
 		{
+			//printf("grup()\n");
 			return get<cgrup *>();
 		}
 		inline Record record()
 		{
+			//printf("record()\n");
 			return get<crecord *>();
 		}
 	};

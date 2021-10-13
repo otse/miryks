@@ -18,20 +18,22 @@ namespace skyrim
 	{
 		printf("get_world_space\n");
 		WorldSpace *worldSpace = nullptr;
-		Grup top = esp_top(get_plugins()[num], WRLD);
-		top.loop([&](Grup<> &g) {
-			Record wrld = g.record();
-			Grup<> grup = g.next().grup();
-			if (wrld.editor_id(id)) {
-				worldSpace = new WorldSpace(wrld, grup);
-				return true;
-			} 
-			return false;
-		}, Top);
+		wrld::iter top(WRLD);
+		bool ok = top.loop([&](wrld::iter &g) {
+			return (top.type = g.typesake()).editor_id(id);
+		}, 0);
+		if (ok)
+			worldSpace = new WorldSpace(top.type);
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(Record wrld, Grup<> grup) : Record(wrld), grup(grup)
+	WorldSpace::WorldSpace(wrld &e) : WorldSpace(e, e.childs) { }
+
+	WorldSpace::WorldSpace(Grup<> &g) : WorldSpace(g.record(), g.grup()) {}
+
+	WorldSpace::WorldSpace(Record wrld, Grup<> grup)
+		: Record(wrld),
+		grup(grup)
 	{
 		assertc(grup.hed().group_type == WorldChildren);
 		sceneDef->ambient = vec3(127.f / 255.f);
@@ -56,8 +58,9 @@ namespace skyrim
 		printf("DiscoverAllCells\n");
 		grup.index = 2;
 		grup.dive([&](Grup<> &g) {
+			//printf("dive discover exteriors i %i\n", g.index);
 			Record cell = g.record();
-			Grup<> grup = g.next().grup();
+			Grup<> grup = g.grup();
 			Exterior *exterior = new Exterior(cell, grup);
 			exterior->worldSpace = this;
 			exteriors.push_back(exterior);
@@ -112,7 +115,7 @@ namespace skyrim
 			{
 				printf("this is land\n");
 				assertc(land == nullptr);
-				land = new Land(g.record());
+				land = new Land(refr);
 				land->exterior = this;
 			}
 			return false;

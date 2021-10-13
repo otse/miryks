@@ -20,12 +20,13 @@ namespace skyrim
 	{
 		printf("get_interior\n");
 		Interior *interior = nullptr;
-		Grup top = esp_top(get_plugins()[num], CELL);
+		Grup top(CELL);
 		top.dive([&](Grup<> &g) {
 			Record cell = g.record();
-			Grup<> grup = g.next().grup();
+			Grup<> grup = g.grup();
 			if (cell.editor_id(interiorId))
 			{
+				printf("found interior\n");
 				interior = new Interior(cell, grup);
 				return true;
 			}

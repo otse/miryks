@@ -50,7 +50,7 @@ void im_grup(cgrup *grp, int top_grup = -1)
 void im_record(RCD rcd)
 {
 	char *edid = nullptr;
-	Record record = rcd; // invokes read partials
+	record record = rcd; // invokes read partials
 	SUB first = (SUB)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{

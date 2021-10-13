@@ -32,11 +32,15 @@ namespace skyrim
 		Cell(Record cell, Grup<> &grup) : Record(cell)
 		{
 			assertc(grup.hed().group_type == CellChildren);
-			if (grup.grup().hed().group_type == CellPersistentChildren) {
-				persistent = grup.grup();
-				grup.next();
+			Grup first = grup.grup();
+			Grup second = grup.grup();
+			if (first.hed().group_type == CellPersistentChildren)
+			{
+				persistent = first;
+				temporary = second;
 			}
-			temporary = grup.grup();
+			else
+				temporary = first;
 			flags = *cell.data<uint16_t *>("DATA");
 		}
 	};
@@ -60,13 +64,44 @@ namespace skyrim
 		bool dontTeleport = false;
 	};
 
+	struct base
+	{
+		const char *word;
+		record record;
+		base(const char *word) : word(word)
+		{
+		}
+	};
+
+	struct wrld;
+
+	struct wrld : public record
+	{
+		typedef wrld type;
+		typedef grup<wrld> iter;
+		grup<any> childs;
+		wrld() {}
+		wrld(iter &e)
+		{
+			(*this) = e;
+		}
+		void operator=(iter &e)
+		{
+			set(e.record());
+			// record::operator = (e.record());
+			childs = e.grup();
+		}
+	};
+
 	class WorldSpace : public Record
 	{
 	public:
 		Grup<> grup;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
+		WorldSpace(wrld &);
 		WorldSpace(Record, Grup<>);
+		WorldSpace(Grup<> &);
 		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);

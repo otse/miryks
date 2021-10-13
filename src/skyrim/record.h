@@ -9,45 +9,58 @@
 
 namespace skyrim
 {
-	class Both {
-	public:
-		Both();
-	};
-
 	typedef unsigned int *formId;
 	typedef const char *editorId;
 	typedef const char signature[5];
 
 	const char *getEditorIdOnly(const RECORD);
 
-	class Record
+	struct record
 	{
-	public:
-		crecord *record;
+		crecord *r;
 
-		Record()
+		record()
 		{
-			record = nullptr;
+			r = nullptr;
 		}
-		Record(crecord *record) : record(record)
+		record(crecord *r)
 		{
-			if (record)
-			{
-				assertc(record->r == 'r');
-				esp_check_rcd(record);
-			}
+			(*this) = r;
+		}
+		//void operator=(record r) {
+		//	(*this) = r.r;
+		//}
+		void operator=(crecord *r)
+		{
+			this->r = r;
+			check();
+		}
+		void operator=(record r)
+		{
+			set(r);
+		}
+		void set(record r)
+		{
+			(*this) = r.r;
+		}
+		void check()
+		{
+			if (!r)
+				return;
+			assertc(r->r == 'r');
+			esp_check_rcd(r);
 		}
 		inline bool valid() const
 		{
-			return !!record;
+			return !!r;
 		}
 		inline const crecord_header &hed() const
 		{
-			return *record->hed;
+			return *r->hed;
 		}
 		inline const revised_array &subrecords() const
 		{
-			return *record->rcdbs;
+			return *r->rcdbs;
 		}
 		inline const SUBRECORD get(unsigned int i) const
 		{
