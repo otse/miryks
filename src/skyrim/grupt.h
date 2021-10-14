@@ -14,7 +14,6 @@ namespace skyrim
 {
 	struct grup_iter
 	{
-	public:
 		typedef cgrup *encapsulate;
 		typedef esp_dud *child_type;
 		encapsulate ptr;
@@ -50,9 +49,8 @@ namespace skyrim
 		}
 	};
 	template <typename next, int group_type>
-	class grup_base
+	struct grup_base
 	{
-	public:
 		grup_iter iter;
 		grup_base(cgrup *cptr) : iter(cptr)
 		{
@@ -69,9 +67,8 @@ namespace skyrim
 	};
 
 	template <typename next, int group_type>
-	class grup_down: public grup_base<next, group_type>
+	struct grup_down: grup_base<next, group_type>
 	{
-	public:
 		typedef grup_base<next, group_type> base;
 		typedef grup_down<next, group_type> self;
 		grup_down(grup_iter &iter) : grup_down(iter.get<cgrup *>())
@@ -89,8 +86,8 @@ namespace skyrim
 			while (this->iter.under())
 			{
 				next child(this->iter);
-				//if (child.call())
-				//	return true;
+				if (child.call())
+					return true;
 			}
 			return false;
 		}
@@ -114,8 +111,20 @@ namespace skyrim
 		}
 	};
 
-	struct record_with_grup
+	struct record_and_grup
 	{
-
+		typedef record_and_grup base;
+		crecord *one = nullptr;
+		cgrup *two = nullptr;
+		record_and_grup(grup_iter &iter) {
+			printf("record_and_grup\n");
+			one = iter.get<crecord *>();
+			two = iter.get<cgrup *>();
+		}
+		bool call()
+		{
+			printf("record_and_grup call\n");
+			return true;
+		}
 	};
 }
