@@ -10,15 +10,12 @@
 
 namespace skyrim
 {
-	// todo cut grup in two
-	// one will be a non specialized base class
-	// second argument: everything is inline anyway
-
-	template <typename T = any>
+	template <typename T, int Y>
 	struct Grup
 	{
 		typedef std::function<bool(T &)> specialized_func;
-		inline static specialized_func match_func = [](T &) -> bool {
+		inline static specialized_func match_func = [](T &) -> bool
+		{
 			return false;
 		};
 		cgrup *me = nullptr;
@@ -65,7 +62,8 @@ namespace skyrim
 		{
 			assertc(valid());
 			assertc(group_type == -1 || hed().group_type == group_type);
-			while (going()) {
+			while (going())
+			{
 				T temp = typesake();
 				if (func(temp))
 					return true;
@@ -74,9 +72,9 @@ namespace skyrim
 		}
 		bool match(const char *id, int group_type = -1)
 		{
-			return loop([]{
-				return typesake().match(id);
-			}, group_type);
+			return loop([]
+						{ return typesake().match(id); },
+						group_type);
 		}
 		bool dive(specialized_func func, std::vector<int> group_types, int dive = -1)
 		{
@@ -88,28 +86,26 @@ namespace skyrim
 				return loop(func, group_type);
 			else
 				while (going())
-					if(grup().dive(func, group_types, dive - 1))
+					if (grup().dive(func, group_types, dive - 1))
 						return true;
 			return false;
 		}
-		template <typename T = void *>
+		template <typename T>
 		inline T get()
 		{
-			if (index >= mixed().size)
-				return nullptr;
 			return (T)mixed().elements[index++];
 		}
-		inline Grup<any> grupany()
+		inline grup<any> grupany()
 		{
 			printf("grupany\n");
 			return get<cgrup *>();
 		}
-		inline Grup<T> grup()
+		inline grup<T> grup()
 		{
 			printf("grup\n");
 			return get<cgrup *>();
 		}
-		inline Record record()
+		inline record record()
 		{
 			return get<crecord *>();
 		}

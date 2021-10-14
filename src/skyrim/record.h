@@ -29,6 +29,7 @@ namespace skyrim
 		{
 			r = nullptr;
 		}
+		record(void *v) : record((crecord *)v) {}
 		record(crecord *r)
 		{
 			operator = (r);

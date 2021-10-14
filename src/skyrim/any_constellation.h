@@ -4,6 +4,10 @@
 
 #include <skyrim/grup.h>
 
+// first attempt at templating the horrible grup.h code
+
+// leave this here, it is bad
+
 namespace skyrim
 {
 struct any
@@ -13,7 +17,7 @@ struct any
 	union {
 		crecord *r;
 		cgrup *g;
-		void *v;
+		esp_dud *v;
 	} u;
 	any() {}
 	any(iter &i)
@@ -22,7 +26,7 @@ struct any
 	}
 	void operator=(iter &i)
 	{
-		u.v = i.get();
+		u.v = i.get<esp_dud *>();
 	}
 	bool match(const char *id)
 	{

@@ -2,6 +2,7 @@
 #include <skyrim/cell.h>
 #include <skyrim/model.h>
 #include <skyrim/grup.h>
+#include <skyrim/grupt.h>
 
 #include <algorithm>
 #include <cctype>
@@ -20,16 +21,10 @@ namespace skyrim
 	{
 		printf("get_interior\n");
 		Interior *interior = nullptr;
-		constellation copy;
-		bool ok = constellation::iter(CELL).dive([&](constellation &temp) {
-			return (copy=temp).self.editor_id(id);
-		}, {
-			0, 2, 3
-		});
-		if (ok) {
-			printf("found something");
-			interior = new Interior(copy);
-		}
+		GRUP top = esp_top(get_plugins()[5], "CELL");
+		printf("grup top 5, cell %i\n", top);
+		grup_down<grup_down<grup_down<recordt, 3>, 2>, 0> layout(top);
+		layout.call();
 		return interior;
 	}
 
@@ -61,6 +56,7 @@ namespace skyrim
 
 	void Interior::Subgroup(Grup<> subgroup, int group_type)
 	{
+		#if 0
 		if (!subgroup.valid()) {
 			return;
 		}
@@ -84,10 +80,12 @@ namespace skyrim
 			return false;
 		}, group_type);
 		put_cam_on_random_xmarker();
+		#endif
 	}
 	
 	void Interior::put_cam_on_random_xmarker()
 	{
+		#if 0
 		if (dontTeleport)
 			return;
 		if (!persistent.valid())
@@ -106,6 +104,7 @@ namespace skyrim
 			}
 			return false;
 		});
+		#endif
 	}
 	
 	void Interior::Update()

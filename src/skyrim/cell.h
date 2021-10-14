@@ -30,20 +30,7 @@ namespace skyrim
 	public:
 		grup<any> persistent, temporary;
 		uint16_t flags = 0;
-		Cell(Record cell, Grup<> grup) : Record(cell)
-		{
-			assertc(grup.hed().group_type == CellChildren);
-			Grup first = grup.grup();
-			Grup second = grup.grup();
-			if (first.hed().group_type == CellPersistentChildren)
-			{
-				persistent = first;
-				temporary = second;
-			}
-			else
-				temporary = first;
-			flags = *cell.data<uint16_t *>("DATA");
-		}
+		Cell(record, grup<>);
 	};
 
 	class Interior : public Cell

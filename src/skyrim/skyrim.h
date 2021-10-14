@@ -15,10 +15,10 @@ namespace skyrim
 	struct any;
 	struct constellation;
 
-	template <typename T>
+	template <typename T = any, int Y = -1>
 	struct Grup;
-	template <typename T = any>
-	using grup = Grup<T>;
+	template <typename T = any, int Y = -1>
+	using grup = Grup<T, Y>;
 
 	struct record;
 
