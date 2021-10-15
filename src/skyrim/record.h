@@ -24,7 +24,6 @@ namespace skyrim
 			r = rhs;
 			check();
 		}
-
 		record()
 		{
 			r = nullptr;

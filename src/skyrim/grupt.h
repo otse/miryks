@@ -82,13 +82,13 @@ namespace skyrim
 		}
 		grup_down(cgrup *cptr) : iter(cptr) {
 		}
-		bool call(void *result)
+		bool call(void *needle)
 		{
 			printf("grup_down call ptr %i\n", iter.ptr);
 			assertc(iter.hed().group_type == group_type);
 			while (iter.under())
 			{
-				if (next(iter).call(result))
+				if (next(iter).call(needle))
 					return true;
 			}
 			return false;
@@ -115,20 +115,16 @@ namespace skyrim
 		}
 	};*/
 
-	struct recordt
+	struct recordt: record
 	{
-		typedef recordt base;
-		crecord *ptr;
 		recordt()
-			: ptr(nullptr) {
+			: record() {
 		}
 		recordt(crecord *p)
-			: ptr(p) {
+			: record(p) {
 			printf("recordt\n");
-			assertc(ptr->r == 'r');
-			esp_check_rcd(ptr);
 		}
-		bool call(void *result)
+		bool call(void *needle)
 		{
 			printf("recordt call\n");
 			return true;
@@ -148,7 +144,7 @@ namespace skyrim
 		}
 		record_and_grup(const char *id)
 			:id(id) {
-			printf("id\n");
+			printf("id %s\n", id);
 		}
 		record_and_grup(grup_iter &iter)
 			: failure(false) {
@@ -156,10 +152,13 @@ namespace skyrim
 			one = iter.next_record();
 			two = iter.next_grup();
 		}
-		bool call(void *result)
+		bool call(void *needle)
 		{
+			record_and_grup *uncover = (record_and_grup *)needle;
 			printf("record_and_grup call\n");
-			return true;
+			if (one.editor_id(uncover->id))
+				return true;
+			return false;
 		}
 	};
 

@@ -19,13 +19,13 @@ namespace skyrim
 
 	Interior *get_interior(const char *id, int num)
 	{
-		printf("get_interior\n");
+		printf("get_interior %s\n", id);
 		Interior *interior = nullptr;
 		GRUP top = esp_top(get_plugins()[5], "CELL");
 		printf("grup top 5, cell %i\n", top);
-		record_and_grup result(id);
+		record_and_grup needle(id);
 		grup_down<grup_down<grup_down<record_and_grup, 3>, 2>, 0> find(top);
-		find.call(&result);
+		find.call(&needle);
 		return interior;
 	}
 
