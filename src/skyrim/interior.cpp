@@ -23,9 +23,9 @@ namespace skyrim
 		Interior *interior = nullptr;
 		GRUP top = esp_top(get_plugins()[5], "CELL");
 		printf("grup top 5, cell %i\n", top);
-		using cells = grup_down<grup_down<grup_down<record_and_grup, 3>, 2>, 0>;
-		cells find(top);
-		find.call();
+		record_and_grup result(id);
+		grup_down<grup_down<grup_down<record_and_grup, 3>, 2>, 0> find(top);
+		find.call(&result);
 		return interior;
 	}
 

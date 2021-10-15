@@ -15,26 +15,35 @@ namespace skyrim
 	struct grup_iter
 	{
 		typedef cgrup *encapsulate;
-		typedef esp_dud *child_type;
-		encapsulate ptr;
+		typedef esp_dud *low_any;
+		typedef crecord *low_record;
+		typedef cgrup *low_grup;
+		encapsulate const ptr;
 		int index;
-		grup_iter(encapsulate cptr) : ptr(cptr)
+		grup_iter(encapsulate cptr)
+			: ptr(cptr)
 		{
 			index = 0;
 			assertc(ptr->g == 'g');
 			esp_check_grup(ptr);
-			//printf("grupt label %.4s\n", (char *)&hed().label);
-			//printf("grupt mixed %i\n", ptr->mixed);
 		}
-		inline bool valid() const
+		inline low_any get()
 		{
-			return ptr;
+			return (low_any)mixed().elements[index++];
 		}
-		template <typename T>
-		inline T get()
+		inline low_record next_record()
 		{
-			return (T)mixed().elements[index++];
+			return (low_record)get();
 		}
+		inline low_grup next_grup()
+		{
+			return (low_grup)get();
+		}
+		//inline 
+		//inline bool correct() const
+		//{
+		//	return ptr;
+		//}
 		inline const cgrup_header &hed() const
 		{
 			return *(ptr->hed);
@@ -48,83 +57,112 @@ namespace skyrim
 			return index < mixed().size;
 		}
 	};
-	template <typename next, int group_type>
+
+	struct return_type
+	{
+		return_type() {}
+	};
+
+	/*template <typename next, int group_type>
 	struct grup_base
 	{
 		grup_iter iter;
-		grup_base(cgrup *cptr) : iter(cptr)
+		grup_base(cgrup *cptr)
+			: iter(cptr)
 		{
 		}
-		bool call()
-		{
-			printf("grup_base call\n");
-			return false;
-		}
-		inline next getcchild()
-		{
-			get<next::encapsulate>();
-		}
-	};
+	};*/
 
-	template <typename next, int group_type>
-	struct grup_down: grup_base<next, group_type>
+	template <typename next,int group_type>
+	struct grup_down
 	{
-		typedef grup_base<next, group_type> base;
-		typedef grup_down<next, group_type> self;
-		grup_down(grup_iter &iter) : grup_down(iter.get<cgrup *>())
-		{
-
+		grup_iter iter;
+		grup_down(grup_iter &iter)
+			: grup_down(iter.next_grup()) {
 		}
-		grup_down(cgrup *cptr) : base(cptr) {
-			printf("grup_down\n");
+		grup_down(cgrup *cptr) : iter(cptr) {
 		}
-		bool call()
+		bool call(void *result)
 		{
-			printf("grup_down call ptr %i\n", this->iter.ptr);
-			assertc(this->iter.valid());
-			assertc(this->iter.hed().group_type == group_type);
-			while (this->iter.under())
+			printf("grup_down call ptr %i\n", iter.ptr);
+			assertc(iter.hed().group_type == group_type);
+			while (iter.under())
 			{
-				next child(this->iter);
-				if (child.call())
+				if (next(iter).call(result))
 					return true;
 			}
 			return false;
 		}
 	};
 
+	/*template<
+		typename capture_type,
+		template<typename... Args> typename next,
+		typename group_type
+	>
+	struct capture
+	{
+		grup_iter iter;
+		capture(grup_iter::encapsulate iter)
+			: iter(iter) {
+
+		};
+		capture_type call()
+		{
+			next<capture_type> temp;
+			return capture_type;
+			//return next(iter).call();
+		}
+	};*/
+
 	struct recordt
 	{
 		typedef recordt base;
-		crecord *ptr = nullptr;
-		recordt(grup_iter &iter) : recordt(iter.get<crecord *>()) {
+		crecord *ptr;
+		recordt()
+			: ptr(nullptr) {
 		}
-		recordt(crecord *cptr) : ptr(cptr) {
+		recordt(crecord *p)
+			: ptr(p) {
 			printf("recordt\n");
 			assertc(ptr->r == 'r');
 			esp_check_rcd(ptr);
 		}
-		bool call()
+		bool call(void *result)
 		{
 			printf("recordt call\n");
-			return false;
+			return true;
 		}
 	};
 
 	struct record_and_grup
 	{
 		typedef record_and_grup base;
-		crecord *one = nullptr;
-		cgrup *two = nullptr;
-		record_and_grup(grup_iter &iter) {
-			printf("record_and_grup\n");
-			one = iter.get<crecord *>();
-			two = iter.get<cgrup *>();
+		recordt one;
+		cgrup *two;
+		const char *id;
+		bool failure;
+		record_and_grup()
+			: failure(true) {
+			printf("failure\n");
 		}
-		bool call()
+		record_and_grup(const char *id)
+			:id(id) {
+			printf("id\n");
+		}
+		record_and_grup(grup_iter &iter)
+			: failure(false) {
+			printf("record_and_grup\n");
+			one = iter.next_record();
+			two = iter.next_grup();
+		}
+		bool call(void *result)
 		{
 			printf("record_and_grup call\n");
 			return true;
 		}
 	};
+
+	//template<typename T = record_and_grup>
+	//using capture_cell = grup_down<grup_down<grup_down<T, 3, T>, 2, T>, 0, T>;
 }
