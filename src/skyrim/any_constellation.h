@@ -8,6 +8,7 @@
 
 // leave this here, it is bad
 
+#if 0
 namespace skyrim
 {
 struct any
@@ -73,3 +74,4 @@ struct wrld
 	}
 };
 }
+#endif

@@ -1,10 +1,10 @@
 #include <skyrim/cell.h>
 
-Cell::Cell(record cell, grup<> grup) : record(cell)
+Cell::Cell(record cell, grup<> g) : Record(cell)
 {
-    assertc(grup.hed().group_type == CellChildren);
-    auto first = grup.grup();
-    auto second = grup.grup();
+    assertc(g.hed().group_type == CellChildren);
+    grup<> first = g.next_grup();
+    grup<> second = g.next_grup();
     if (first.hed().group_type == CellPersistentChildren)
     {
         persistent = first;

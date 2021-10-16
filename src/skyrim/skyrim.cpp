@@ -13,6 +13,7 @@ namespace skyrim {
 	Record GetRace(const char *raceId)
 	{
 		Record race;
+		#if 0
 		Grup top = esp_top(get_plugins()[0], "RACE");
 		top.loop([&](any &temp) {
 			Record record = temp.u.r;
@@ -24,6 +25,7 @@ namespace skyrim {
 			return false;
 		}, Top);
 		assertc(race.valid());
+		#endif
 		return race;
 	}
 	

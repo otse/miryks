@@ -13,16 +13,17 @@ namespace skyrim
 	extern char *editme;
 
 	struct any;
-	struct constellation;
+	//struct constellation;
 
-	template <typename T = any, int Y = -1>
-	struct Grup;
-	template <typename T = any, int Y = -1>
-	using grup = Grup<T, Y>;
+	template <typename, int>
+	struct grup;
+	struct grup_wrapper;
 
 	struct record;
+	struct record_wrapper;
 
-	typedef record Record;
+	typedef record_wrapper Record;
+	typedef grup_wrapper Grup;
 
 	class Char;
 	class Monster;

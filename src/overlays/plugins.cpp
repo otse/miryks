@@ -25,7 +25,7 @@ void im_subrecord(SUB);
 
 void im_grup(cgrup *grp, int top_grup = -1)
 {
-	Grup grup = grp; // invokes unlooped grup
+	grup<> grup1 = grp; // invokes unlooped grup
 	char t[100];
 	snprintf(t, 100, "GRP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))

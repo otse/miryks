@@ -14,8 +14,8 @@ namespace skyrim
 	typedef const char signature[5];
 
 	const char *getEditorIdOnly(const RECORD);
-
-	struct record
+	
+	struct record_wrapper
 	{
 		crecord *r;
 
@@ -24,16 +24,16 @@ namespace skyrim
 			r = rhs;
 			check();
 		}
-		record()
+		record_wrapper()
 		{
 			r = nullptr;
 		}
-		record(void *v) : record((crecord *)v) {}
-		record(crecord *r)
+		record_wrapper(void *v) : record_wrapper((crecord *)v) {}
+		record_wrapper(crecord *r)
 		{
 			operator = (r);
 		}
-		void set(record r)
+		void set(record_wrapper r)
 		{
 			operator = (r.r);
 		}

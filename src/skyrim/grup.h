@@ -10,104 +10,159 @@
 
 namespace skyrim
 {
-	template <typename T, int Y>
-	struct Grup
+	struct grup_wrapper
 	{
-		typedef std::function<bool(T &)> specialized_func;
-		inline static specialized_func match_func = [](T &) -> bool
+		typedef esp_dud *low_any;
+		typedef crecord *low_record;
+		typedef cgrup *low_grup;
+		typedef low_grup encapsulate;
+		encapsulate g;
+		int index;
+		grup_wrapper(encapsulate e)
 		{
-			return false;
-		};
-		cgrup *me = nullptr;
-		size_t index = 0;
-		Grup()
-		{
+			set(e);
 		}
-		Grup(const char *word) : Grup(esp_top(get_plugins()[5], word))
+		void set(encapsulate e)
 		{
-		}
-		Grup(cgrup *grup) : me(grup)
-		{
-			if (grup)
+			g = e;
+			if (g)
 			{
-				assertc(grup->g == 'g');
-				esp_check_grup(grup);
+				index = 0;
+				assertc(g->g == 'g');
+				esp_check_grup(g);
 			}
 		}
-		inline bool valid() const
+		inline low_any get()
 		{
-			return me;
+			return (low_any)mixed().elements[index++];
 		}
-		inline T typesake()
+		inline low_record next_record()
 		{
-			return T(*this);
+			return (low_record)get();
 		}
-		inline cgrup *pointer() const
+		inline low_grup next_grup()
 		{
-			return me;
+			return (low_grup)get();
 		}
 		inline const cgrup_header &hed() const
 		{
-			return *me->hed;
+			return *(g->hed);
 		}
 		inline const revised_array &mixed() const
 		{
-			return *me->mixed;
+			return *(g->mixed);
 		}
-		inline bool going() const
+		inline bool under() const
 		{
 			return index < mixed().size;
 		}
-		bool loop(specialized_func func, int group_type = -1)
+	};
+
+	struct any
+	{
+		any() {}
+	};
+
+	/*template <typename next, int group_type>
+	struct grup_base
+	{
+		grup_wrapper iter;
+		grup_base(cgrup *cptr)
+			: iter(cptr)
 		{
-			assertc(valid());
-			assertc(group_type == -1 || hed().group_type == group_type);
-			while (going())
+		}
+	};*/
+
+	template <typename next = any, int group_type = -1>
+	struct grup : grup_wrapper
+	{
+		void operator=(const grup &rhs)
+		{
+			this->set(rhs.g);
+		}
+		grup() : grup_wrapper(nullptr)
+		{
+		}
+		grup(grup_wrapper &w) : grup_wrapper(w.next_grup())
+		{
+		}
+		grup(cgrup *cptr) : grup_wrapper(cptr)
+		{
+		}
+		template <typename return_type>
+		return_type til()
+		{
+			printf("grup til\n");
+			assertc(this->hed().group_type == group_type);
+			while (this->under())
 			{
-				T temp = typesake();
-				if (func(temp))
-					return true;
+				if (return_type ret = next(*this).til<return_type>())
+					return ret;
 			}
-			return false;
+			return return_type();
 		}
-		bool match(const char *id, int group_type = -1)
+	};
+
+	struct record : record_wrapper
+	{
+		record() : record_wrapper()
 		{
-			return loop([]
-						{ return typesake().match(id); },
-						group_type);
 		}
-		bool dive(specialized_func func, std::vector<int> group_types, int dive = -1)
+		record(record &rhs) : record(rhs.r)
 		{
-			assertc(valid());
-			if (dive == -1)
-				dive = group_types.size();
-			int group_type = group_types[group_types.size() - dive];
-			if (dive == 1)
-				return loop(func, group_type);
-			else
-				while (going())
-					if (grup().dive(func, group_types, dive - 1))
-						return true;
-			return false;
 		}
-		template <typename T>
-		inline T get()
+		record(crecord *p) : record_wrapper(p)
 		{
-			return (T)mixed().elements[index++];
+			printf("recordt\n");
 		}
-		inline grup<any> grupany()
+		template <typename return_type>
+		return_type til(void *needle)
 		{
-			printf("grupany\n");
-			return get<cgrup *>();
+			printf("recordt call\n");
+			return *this;
 		}
-		inline grup<T> grup()
+	};
+
+	struct match
+	{
+		bool good = true;
+		match()
 		{
-			printf("grup\n");
-			return get<cgrup *>();
+			good = false;
 		}
-		inline record record()
+		operator bool() const
 		{
-			return get<crecord *>();
+			return good;
+		}
+	};
+
+	struct record_and_grup : match
+	{
+		typedef record_and_grup base;
+		record one;
+		cgrup *two;
+		const char *id;
+		record_and_grup() : match()
+		{
+			// fail
+		}
+		record_and_grup(const char *id) : id(id)
+		{
+			printf("id %s\n", id);
+		}
+		record_and_grup(grup_wrapper &iter)
+		{
+			printf("record_and_grup\n");
+			one = iter.next_record();
+			two = iter.next_grup();
+		}
+		template <typename return_type>
+		return_type til()
+		{
+			printf("record_and_grup call\n");
+			if (one.editor_id("GloomGen"))
+				return *this;
+			return return_type();
 		}
 	};
 

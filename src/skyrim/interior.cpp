@@ -2,7 +2,6 @@
 #include <skyrim/cell.h>
 #include <skyrim/model.h>
 #include <skyrim/grup.h>
-#include <skyrim/grupt.h>
 
 #include <algorithm>
 #include <cctype>
@@ -23,13 +22,15 @@ namespace skyrim
 		Interior *interior = nullptr;
 		GRUP top = esp_top(get_plugins()[5], "CELL");
 		printf("grup top 5, cell %i\n", top);
-		record_and_grup needle(id);
-		grup_down<grup_down<grup_down<record_and_grup, 3>, 2>, 0> find(top);
-		find.call(&needle);
+
+		grup<grup<grup<record_and_grup, 3>, 2>, 0> constellation(top);
+
+		record_and_grup *temp;
+		auto found = constellation.til<record_and_grup>();
 		return interior;
 	}
 
-	Interior::Interior(constellation &cons) : Cell(cons.self, cons.childs)
+	Interior::Interior(record_and_grup &temp) : Cell(temp.one, temp.two)
 	{
 		printf("woo");
 		sceneDef->ambient = vec3(50.f / 255.f);
@@ -55,7 +56,7 @@ namespace skyrim
 	
 	auto LABELS = { Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients };
 
-	void Interior::Subgroup(Grup<> subgroup, int group_type)
+	void Interior::Subgroup(grup<> subgroup, int group_type)
 	{
 		#if 0
 		if (!subgroup.valid()) {

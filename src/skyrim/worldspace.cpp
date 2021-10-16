@@ -18,18 +18,20 @@ namespace skyrim
 	{
 		printf("get_world_space\n");
 		WorldSpace *worldSpace = nullptr;
+		#if 0
 		constellation copy;
 		bool ok = constellation::iter(WRLD).loop([&](constellation &temp) {
 			return (copy=temp).self.editor_id(id);
 		}, 0);
 		if (ok)
 			worldSpace = new WorldSpace(copy);
+		#endif
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(constellation &cons) :
-		Record(cons.self), childs(cons.childs.pointer())
+	WorldSpace::WorldSpace(record_and_grup &temp) : Record(temp.one)
 	{
+		childs = temp.two;
 		assertc(childs.hed().group_type == WorldChildren);
 		sceneDef->ambient = vec3(127.f / 255.f);
 		printf("new WorldSpace: %s\n", data<const char *>("FULL"));
@@ -50,6 +52,7 @@ namespace skyrim
 
 	void WorldSpace::DiscoverAllCells()
 	{
+		#if 0
 		printf("DiscoverAllCells\n");
 		childs.index = 2;
 		constellation temp;
@@ -63,6 +66,7 @@ namespace skyrim
 			ExteriorCellBlock,
 			ExteriorCellSubBlock
 		});
+		#endif
 	}
 
 	void WorldSpace::LoadExterior(int x, int y)
@@ -77,14 +81,23 @@ namespace skyrim
 		}
 	}
 
+	Exterior::Exterior(record_and_grup &temp) : Cell(temp.one, temp.two)
+	{
+		worldSpace = nullptr;
+		land = nullptr;
+		xclc = data<XCLC *>("XCLC");
+		assertc(xclc);
+	}
+
 	void Exterior::Init()
 	{
 		Subgroup(persistent, CellPersistentChildren);
 		Subgroup(temporary, CellTemporaryChildren);
 	}
 	
-	void Exterior::Subgroup(Grup<> subgroup, int group_type)
+	void Exterior::Subgroup(grup<> subgroup, int group_type)
 	{
+		#if 0
 		if (!subgroup.valid()) {
 			return;
 		}
@@ -112,6 +125,7 @@ namespace skyrim
 			}
 			return false;
 		}, group_type);
+		#endif
 	}
 
 }
