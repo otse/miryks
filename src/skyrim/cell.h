@@ -28,6 +28,7 @@ namespace skyrim
 	class Cell : public Record
 	{
 	public:
+		typedef record_and_grup type;
 		grup<any> persistent, temporary;
 		uint16_t flags = 0;
 		Cell(record, grup<>);

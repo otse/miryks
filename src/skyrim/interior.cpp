@@ -23,10 +23,14 @@ namespace skyrim
 		GRUP top = esp_top(get_plugins()[5], "CELL");
 		printf("grup top 5, cell %i\n", top);
 
-		grup<grup<grup<record_and_grup, 3>, 2>, 0> constellation(top);
+		grup<grup<grup<match, 3>, 2>, 0> constellation(top);
 
-		record_and_grup *temp;
-		auto found = constellation.til<record_and_grup>();
+		record_and_grup boo(id);
+
+		constellation(boo);
+
+		interior = new Interior(boo);
+
 		return interior;
 	}
 

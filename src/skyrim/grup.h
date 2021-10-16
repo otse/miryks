@@ -17,7 +17,7 @@ namespace skyrim
 		typedef cgrup *low_grup;
 		typedef low_grup encapsulate;
 		encapsulate g;
-		int index;
+		unsigned int index;
 		grup_wrapper(encapsulate e)
 		{
 			set(e);
@@ -58,20 +58,31 @@ namespace skyrim
 		}
 	};
 
+	
+	struct match
+	{
+		grup_wrapper &w;
+		match(grup_wrapper &w) : w(w)
+		{
+			printf("match\n");
+		}
+		template <typename return_type>
+		bool operator()(return_type &temp) // deduce
+		{
+			printf("try match!\n");
+			return_type capture(w);
+			return capture(temp);
+		}
+		//operator bool() const
+		//{
+		//	return true;
+		//}
+	};
+
 	struct any
 	{
 		any() {}
 	};
-
-	/*template <typename next, int group_type>
-	struct grup_base
-	{
-		grup_wrapper iter;
-		grup_base(cgrup *cptr)
-			: iter(cptr)
-		{
-		}
-	};*/
 
 	template <typename next = any, int group_type = -1>
 	struct grup : grup_wrapper
@@ -90,16 +101,15 @@ namespace skyrim
 		{
 		}
 		template <typename return_type>
-		return_type til()
+		bool operator()(return_type &temp) // deduce
 		{
-			printf("grup til\n");
 			assertc(this->hed().group_type == group_type);
 			while (this->under())
 			{
-				if (return_type ret = next(*this).til<return_type>())
-					return ret;
+				if (next(*this)(temp))
+					return true;
 			}
-			return return_type();
+			return false;
 		}
 	};
 
@@ -113,56 +123,52 @@ namespace skyrim
 		}
 		record(crecord *p) : record_wrapper(p)
 		{
-			printf("recordt\n");
 		}
 		template <typename return_type>
-		return_type til(void *needle)
+		bool operator()(return_type &temp) // deduce
 		{
-			printf("recordt call\n");
-			return *this;
+			printf("rare record til\n");
+			return false;
 		}
 	};
 
-	struct match
-	{
-		bool good = true;
-		match()
-		{
-			good = false;
-		}
-		operator bool() const
-		{
-			return good;
-		}
-	};
-
-	struct record_and_grup : match
+	struct record_and_grup
 	{
 		typedef record_and_grup base;
 		record one;
-		cgrup *two;
+		grup<> two;
 		const char *id;
-		record_and_grup() : match()
+		void operator=(record_and_grup &rhs)
 		{
-			// fail
+			one = rhs.one;
+			two = rhs.two;
 		}
-		record_and_grup(const char *id) : id(id)
+		record_and_grup()
 		{
+		}
+		record_and_grup(const char *id)
+		{
+			this->id = id;
 			printf("id %s\n", id);
 		}
-		record_and_grup(grup_wrapper &iter)
+		record_and_grup(grup_wrapper &w)
 		{
-			printf("record_and_grup\n");
-			one = iter.next_record();
-			two = iter.next_grup();
+			set(w);
+		}
+		void set(grup_wrapper &w)
+		{
+			one = w.next_record();
+			two = w.next_grup();
 		}
 		template <typename return_type>
-		return_type til()
+		bool operator()(return_type &temp) // deduce
 		{
-			printf("record_and_grup call\n");
-			if (one.editor_id("GloomGen"))
-				return *this;
-			return return_type();
+			if (one.editor_id(temp.id))
+			{
+				temp = *this;
+				return true;
+			}
+			return false;
 		}
 	};
 
