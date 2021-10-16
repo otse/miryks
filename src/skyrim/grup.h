@@ -73,10 +73,6 @@ namespace skyrim
 			return_type capture(w);
 			return capture(temp);
 		}
-		//operator bool() const
-		//{
-		//	return true;
-		//}
 	};
 
 	struct any
@@ -90,6 +86,9 @@ namespace skyrim
 		void operator=(const grup &rhs)
 		{
 			this->set(rhs.g);
+		}
+		grup(const char *top) : grup_wrapper(esp_top(get_plugins()[5], top))
+		{
 		}
 		grup() : grup_wrapper(nullptr)
 		{

@@ -18,12 +18,9 @@ namespace skyrim
 
 	Interior *get_interior(const char *id, int num)
 	{
-		printf("get_interior %s\n", id);
 		Interior *interior = nullptr;
-		GRUP top = esp_top(get_plugins()[5], "CELL");
-		printf("grup top 5, cell %i\n", top);
-
-		grup<grup<grup<match, 3>, 2>, 0> constellation(top);
+		
+		grup<grup<grup<match, 3>, 2>, 0> constellation("CELL");
 
 		record_and_grup boo(id);
 
