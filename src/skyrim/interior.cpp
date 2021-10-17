@@ -19,21 +19,16 @@ namespace skyrim
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		
-		grup<grup<grup<match, 3>, 2>, 0> constellation("CELL");
-
+		grup<grup<grup<any, 3>, 2>, 0> constellation(Cells);
 		record_and_grup boo(id);
-
 		constellation(boo);
-
 		interior = new Interior(boo);
-
 		return interior;
 	}
 
-	Interior::Interior(record_and_grup &temp) : Cell(temp.one, temp.two)
+	Interior::Interior(record_and_grup &rng) : Cell(rng.bonnie, rng.clyde)
 	{
-		printf("woo");
+		printf("woo\n");
 		sceneDef->ambient = vec3(50.f / 255.f);
 	}
 
@@ -54,12 +49,25 @@ namespace skyrim
 		for (Reference *ref : refs)
 			delete ref;
 	}
-	
-	auto LABELS = { Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients };
+
+	auto LABELS = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
+
+	struct make_references : capturer
+	{
+		record one;
+		Interior *interior;
+		//make_references(grup_wrapper &iterator) : any(gw)
+		//{
+		//}
+		//make_references(Interior *interior) : any(grup_wrapper()), interior(interior)
+		//{
+		//
+		//}
+	};
 
 	void Interior::Subgroup(grup<> subgroup, int group_type)
 	{
-		#if 0
+#if 0
 		if (!subgroup.valid()) {
 			return;
 		}
@@ -83,12 +91,12 @@ namespace skyrim
 			return false;
 		}, group_type);
 		put_cam_on_random_xmarker();
-		#endif
+#endif
 	}
-	
+
 	void Interior::put_cam_on_random_xmarker()
 	{
-		#if 0
+#if 0
 		if (dontTeleport)
 			return;
 		if (!persistent.valid())
@@ -107,9 +115,9 @@ namespace skyrim
 			}
 			return false;
 		});
-		#endif
+#endif
 	}
-	
+
 	void Interior::Update()
 	{
 		Refs::Nearby();

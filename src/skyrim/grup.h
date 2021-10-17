@@ -10,102 +10,120 @@
 
 namespace skyrim
 {
+	template <typename, int>
+	struct grup;
+	struct grup_wrapper;
+	struct record;
+	struct record_wrapper;
+
+	typedef esp_dud *low_any;
+
+	typedef cgrup *grup_low;
+	typedef crecord *record_low;
+
+	typedef grup_wrapper grup_high;
+	typedef record_wrapper record_high;
+
 	struct grup_wrapper
 	{
-		typedef esp_dud *low_any;
-		typedef crecord *low_record;
-		typedef cgrup *low_grup;
-		typedef low_grup encapsulate;
-		encapsulate g;
+		grup_low g;
 		unsigned int index;
-		grup_wrapper(encapsulate e)
+		grup_wrapper()
 		{
-			set(e);
+			g = nullptr;
 		}
-		void set(encapsulate e)
+		grup_wrapper(grup_low low)
 		{
-			g = e;
+			set(low);
+		}
+		void set(grup_low low)
+		{
+			g = low;
 			if (g)
 			{
 				index = 0;
-				assertc(g->g == 'g');
+				assertc(g->g == 'g'); // still blegh
 				esp_check_grup(g);
 			}
 		}
-		inline low_any get()
+		low_any get_next()
 		{
 			return (low_any)mixed().elements[index++];
 		}
-		inline low_record next_record()
+		grup_high next_grup()
 		{
-			return (low_record)get();
+			return (grup_low)get_next();
 		}
-		inline low_grup next_grup()
+		record_high next_record()
 		{
-			return (low_grup)get();
+			return (record_low)get_next();
 		}
-		inline const cgrup_header &hed() const
-		{
-			return *(g->hed);
-		}
-		inline const revised_array &mixed() const
-		{
-			return *(g->mixed);
-		}
-		inline bool under() const
+		bool under() const
 		{
 			return index < mixed().size;
 		}
+		const cgrup_header &hed() const { return *g->hed; }
+		const revised_array &mixed() const { return *g->mixed; }
 	};
 
-	
-	struct match
+	struct capturer
 	{
-		grup_wrapper &w;
-		match(grup_wrapper &w) : w(w)
-		{
-			printf("match\n");
-		}
-		template <typename return_type>
-		bool operator()(return_type &temp) // deduce
-		{
-			printf("try match!\n");
-			return_type capture(w);
-			return capture(temp);
-		}
+		
 	};
 
-	struct any
+	struct any : capturer
 	{
-		any() {}
+		grup_wrapper &iterator;
+		any(grup_wrapper &iterator) : iterator(iterator)
+		{
+		}
+		template <typename deduced>
+		bool operator()(deduced &d)
+		{
+			return deduced(iterator)(d);
+		}
 	};
 
-	template <typename next = any, int group_type = -1>
+	struct grup_top: grup_wrapper
+	{
+		static grup_top cells;
+		grup_top(const char *top) : grup_wrapper(esp_top(get_plugins()[5], top))
+		{
+			printf("grup_top\n");
+		}
+	};
+
+	template <typename next = any, int intended_group_type = -1>
 	struct grup : grup_wrapper
 	{
-		void operator=(const grup &rhs)
+		void operator=(const grup_wrapper &iterator)
 		{
-			this->set(rhs.g);
+			this->set(iterator.g);
+			int group_type = this->hed().group_type;
+			assertc(
+				intended_group_type == -1 ||
+				intended_group_type == group_type);
 		}
-		grup(const char *top) : grup_wrapper(esp_top(get_plugins()[5], top))
-		{
-		}
-		grup() : grup_wrapper(nullptr)
-		{
-		}
-		grup(grup_wrapper &w) : grup_wrapper(w.next_grup())
+		grup()
 		{
 		}
-		grup(cgrup *cptr) : grup_wrapper(cptr)
+		grup(const char *word) : grup_high(grup_top(word))
 		{
 		}
-		template <typename return_type>
-		bool operator()(return_type &temp) // deduce
+		grup(grup_high &high)
 		{
-			assertc(this->hed().group_type == group_type);
+			(*this)=high.next_grup();
+		}
+		grup(grup_low low)
+		{
+			(*this)=low;
+		}
+		template <typename deduced>
+		bool operator()(deduced &d)
+		{
 			while (this->under())
 			{
-				if (next(*this)(temp))
+				if (next(*this)(d))
 					return true;
 			}
 			return false;
@@ -114,57 +132,47 @@ namespace skyrim
 
 	struct record : record_wrapper
 	{
-		record() : record_wrapper()
+		void operator=(const record_high &rhs)
+		{
+			this->set(rhs.r);
+		}
+		record()
 		{
 		}
-		record(record &rhs) : record(rhs.r)
+		record(record_low low) : record_wrapper(low)
 		{
 		}
-		record(crecord *p) : record_wrapper(p)
-		{
-		}
-		template <typename return_type>
-		bool operator()(return_type &temp) // deduce
+		template <typename deduced>
+		bool operator()(deduced &d)
 		{
 			printf("rare record til\n");
 			return false;
 		}
 	};
 
-	struct record_and_grup
+	struct record_and_grup : capturer
 	{
-		typedef record_and_grup base;
-		record one;
-		grup<> two;
+		record bonnie;
+		grup<> clyde;
 		const char *id;
-		void operator=(record_and_grup &rhs)
-		{
-			one = rhs.one;
-			two = rhs.two;
-		}
-		record_and_grup()
-		{
-		}
 		record_and_grup(const char *id)
 		{
 			this->id = id;
-			printf("id %s\n", id);
 		}
-		record_and_grup(grup_wrapper &w)
+		record_and_grup(grup_wrapper &iterator)
 		{
-			set(w);
+			bonnie = iterator.next_record();
+			clyde = iterator.next_grup();
 		}
-		void set(grup_wrapper &w)
+		template <typename deduced>
+		bool operator()(deduced &rng)
 		{
-			one = w.next_record();
-			two = w.next_grup();
-		}
-		template <typename return_type>
-		bool operator()(return_type &temp) // deduce
-		{
-			if (one.editor_id(temp.id))
+			printf("checking id %s\n", bonnie.editor_id());
+			if (bonnie.editor_id(rng.id))
 			{
-				temp = *this;
+				printf("yes\n");
+				rng.bonnie = bonnie;
+				rng.clyde = clyde;
 				return true;
 			}
 			return false;
