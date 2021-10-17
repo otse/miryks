@@ -28,7 +28,8 @@ namespace skyrim
 
 	Interior::Interior(record_and_grup &rng) : Cell(rng.bonnie, rng.clyde)
 	{
-		printf("woo\n");
+		printf("persistent n: %i\n", persistent.mixed().size);
+		printf("temporary n: %i\n", temporary.mixed().size);
 		sceneDef->ambient = vec3(50.f / 255.f);
 	}
 
@@ -39,8 +40,8 @@ namespace skyrim
 
 	Interior *Interior::Init()
 	{
-		Subgroup(persistent, CellPersistentChildren);
-		Subgroup(temporary, CellTemporaryChildren);
+		//Sift(persistent, CellPersistentChildren);
+		Sift(temporary, CellTemporaryChildren);
 		return this;
 	}
 
@@ -52,21 +53,40 @@ namespace skyrim
 
 	auto LABELS = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
 
-	struct make_references : capturer
+	struct make_references : any
 	{
-		record one;
+		record bonnie;
 		Interior *interior;
-		//make_references(grup_wrapper &iterator) : any(gw)
+		//make_references()
 		//{
+		//	// hint
+		//	printf("hint\n");
 		//}
-		//make_references(Interior *interior) : any(grup_wrapper()), interior(interior)
-		//{
-		//
-		//}
+		make_references(Interior *interior) : interior(interior)
+		{
+		}
+		make_references(grup_wrapper &iterator)
+		{
+			bonnie = iterator.next_record();
+		}
+		bool operator()(make_references &target)
+		{
+			if (bonnie.is_type(REFR))
+			{
+				//printf("good");
+				Reference *reference = new Reference(bonnie);
+				//interior->refs.push_back(reference);
+				//if (bonnie.editor_id())
+				//	interior->edIds.emplace(bonnie.editor_id(), reference);
+			}
+			return false;
+		}
 	};
 
-	void Interior::Subgroup(grup<> subgroup, int group_type)
+	void Interior::Sift(subgroup &subgroup, int group_type)
 	{
+		make_references boo(this);
+		subgroup(boo);
 #if 0
 		if (!subgroup.valid()) {
 			return;

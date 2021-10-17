@@ -7,6 +7,7 @@ Cell::Cell(record cell, grup<> g) : Record(cell)
     auto second = g.next_grup();
     if (first.hed().group_type == CellPersistentChildren)
     {
+        printf("set persistent and temporary\n");
         persistent = first;
         temporary = second;
     }

@@ -16,16 +16,14 @@ namespace skyrim
 	struct record;
 	struct record_wrapper;
 
-	typedef esp_dud *low_any;
-
 	typedef cgrup *grup_low;
 	typedef crecord *record_low;
 
-	typedef grup_wrapper grup_high;
-	typedef record_wrapper record_high;
-
 	struct grup_wrapper
 	{
+		typedef esp_dud *low_any;
+		typedef grup_wrapper grup_high;
+		typedef record_wrapper record_high;
 		grup_low g;
 		unsigned int index;
 		grup_wrapper()
@@ -66,25 +64,30 @@ namespace skyrim
 		const revised_array &mixed() const { return *g->mixed; }
 	};
 
-	struct capturer
+	struct any
 	{
-		
-	};
-
-	struct any : capturer
-	{
-		grup_wrapper &iterator;
-		any(grup_wrapper &iterator) : iterator(iterator)
+		grup_wrapper *const iterator;
+		any() : iterator(nullptr)
+		{
+		}
+		any(grup_wrapper &iterator) : iterator(&iterator)
 		{
 		}
 		template <typename deduced>
-		bool operator()(deduced &d)
+		bool operator()(deduced &target)
 		{
-			return deduced(iterator)(d);
+			//printf("any operator()\n");
+			if (std::is_same<deduced, any>::value)
+			{
+				printf("warn");
+				return true;
+			}
+			else
+				return deduced(*iterator)(target);
 		}
 	};
 
-	struct grup_top: grup_wrapper
+	struct grup_top : grup_wrapper
 	{
 		static grup_top cells;
 		grup_top(const char *top) : grup_wrapper(esp_top(get_plugins()[5], top))
@@ -107,23 +110,19 @@ namespace skyrim
 		grup()
 		{
 		}
-		grup(const char *word) : grup_high(grup_top(word))
+		grup(grup_wrapper &iterator)
 		{
+			(*this) = iterator.next_grup();
 		}
-		grup(grup_high &high)
+		grup(const char *word) : grup_wrapper(grup_top(word)) // :() !!
 		{
-			(*this)=high.next_grup();
-		}
-		grup(grup_low low)
-		{
-			(*this)=low;
 		}
 		template <typename deduced>
-		bool operator()(deduced &d)
+		bool operator()(deduced &target)
 		{
 			while (this->under())
 			{
-				if (next(*this)(d))
+				if (next(*this)(target))
 					return true;
 			}
 			return false;
@@ -132,7 +131,8 @@ namespace skyrim
 
 	struct record : record_wrapper
 	{
-		void operator=(const record_high &rhs)
+		// copy
+		void operator=(const record_wrapper &rhs)
 		{
 			this->set(rhs.r);
 		}
@@ -142,15 +142,14 @@ namespace skyrim
 		record(record_low low) : record_wrapper(low)
 		{
 		}
-		template <typename deduced>
-		bool operator()(deduced &d)
+		bool operator()(record &target)
 		{
-			printf("rare record til\n");
-			return false;
+			// shouldnt compile
+			return true;
 		}
 	};
 
-	struct record_and_grup : capturer
+	struct record_and_grup
 	{
 		record bonnie;
 		grup<> clyde;
@@ -164,15 +163,13 @@ namespace skyrim
 			bonnie = iterator.next_record();
 			clyde = iterator.next_grup();
 		}
-		template <typename deduced>
-		bool operator()(deduced &rng)
+		bool operator()(record_and_grup &target)
 		{
 			printf("checking id %s\n", bonnie.editor_id());
-			if (bonnie.editor_id(rng.id))
+			if (bonnie.editor_id(target.id))
 			{
-				printf("yes\n");
-				rng.bonnie = bonnie;
-				rng.clyde = clyde;
+				target.bonnie = bonnie;
+				target.clyde = clyde;
 				return true;
 			}
 			return false;

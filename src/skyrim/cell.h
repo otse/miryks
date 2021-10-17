@@ -43,7 +43,7 @@ namespace skyrim
 		Interior(record_and_grup &);
 		~Interior();
 		Interior *Init();
-		void Subgroup(grup<>, int);
+		void Sift(subgroup &, int);
 		void Unload();
 		void put_cam_on_random_xmarker();
 		void Update();
