@@ -3,8 +3,13 @@
 Cell::Cell(record cell, grup<> g) : Record(cell)
 {
     assertc(g.hed().group_type == CellChildren);
-    auto first = g.next_grup();
-    auto second = g.next_grup();
+    printf("get nexts\n");
+    
+    grup<> first, second;
+    
+    first = g.next_grup();
+    second = g.next_grup();
+
     if (first.hed().group_type == CellPersistentChildren)
     {
         printf("set persistent and temporary\n");

@@ -53,31 +53,24 @@ namespace skyrim
 
 	auto LABELS = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
 
-	struct make_references : any
+	struct reference
 	{
 		record bonnie;
-		Interior *interior;
-		//make_references()
-		//{
-		//	// hint
-		//	printf("hint\n");
-		//}
-		make_references(Interior *interior) : interior(interior)
+		reference(iterator &gw)
 		{
+			bonnie = gw.next_record();
 		}
-		make_references(grup_wrapper &iterator)
+		template<typename deduced>
+		bool operator()(deduced &target)
 		{
-			bonnie = iterator.next_record();
-		}
-		bool operator()(make_references &target)
-		{
+			Interior *interior = (Interior *)target.value;
 			if (bonnie.is_type(REFR))
 			{
 				//printf("good");
 				Reference *reference = new Reference(bonnie);
-				//interior->refs.push_back(reference);
-				//if (bonnie.editor_id())
-				//	interior->edIds.emplace(bonnie.editor_id(), reference);
+				interior->refs.push_back(reference);
+				if (bonnie.editor_id())
+					interior->edIds.emplace(bonnie.editor_id(), reference);
 			}
 			return false;
 		}
@@ -85,8 +78,11 @@ namespace skyrim
 
 	void Interior::Sift(subgroup &subgroup, int group_type)
 	{
-		make_references boo(this);
-		subgroup(boo);
+		closure<reference> me((void*)this);
+		subgroup(me);
+
+		//make_references boo(this);
+		//subgroup(boo);
 #if 0
 		if (!subgroup.valid()) {
 			return;

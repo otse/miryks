@@ -19,6 +19,8 @@ namespace skyrim
 	typedef cgrup *grup_low;
 	typedef crecord *record_low;
 
+	typedef grup_wrapper iterator; 
+
 	struct grup_wrapper
 	{
 		typedef esp_dud *low_any;
@@ -48,11 +50,11 @@ namespace skyrim
 		{
 			return (low_any)mixed().elements[index++];
 		}
-		grup_high next_grup()
+		grup_low next_grup()
 		{
 			return (grup_low)get_next();
 		}
-		record_high next_record()
+		record_low next_record()
 		{
 			return (record_low)get_next();
 		}
@@ -66,24 +68,17 @@ namespace skyrim
 
 	struct any
 	{
-		grup_wrapper *const iterator;
-		any() : iterator(nullptr)
+		iterator *const gw;
+		any() : gw(nullptr)
 		{
 		}
-		any(grup_wrapper &iterator) : iterator(&iterator)
+		any(iterator &gw) : gw(&gw)
 		{
 		}
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
-			//printf("any operator()\n");
-			if (std::is_same<deduced, any>::value)
-			{
-				printf("warn");
-				return true;
-			}
-			else
-				return deduced(*iterator)(target);
+			return deduced(*gw)(target);
 		}
 	};
 
@@ -99,9 +94,9 @@ namespace skyrim
 	template <typename next = any, int intended_group_type = -1>
 	struct grup : grup_wrapper
 	{
-		void operator=(const grup_wrapper &iterator)
+		void operator=(const iterator &gw)
 		{
-			this->set(iterator.g);
+			this->set(gw.g);
 			int group_type = this->hed().group_type;
 			assertc(
 				intended_group_type == -1 ||
@@ -110,9 +105,9 @@ namespace skyrim
 		grup()
 		{
 		}
-		grup(grup_wrapper &iterator)
+		grup(iterator &gw)
 		{
-			(*this) = iterator.next_grup();
+			(*this) = gw.next_grup();
 		}
 		grup(const char *word) : grup_wrapper(grup_top(word)) // :() !!
 		{
@@ -121,10 +116,8 @@ namespace skyrim
 		bool operator()(deduced &target)
 		{
 			while (this->under())
-			{
 				if (next(*this)(target))
 					return true;
-			}
 			return false;
 		}
 	};
@@ -139,13 +132,36 @@ namespace skyrim
 		record()
 		{
 		}
+		record(iterator &gw) : record(gw.next_record())
+		{
+		}
 		record(record_low low) : record_wrapper(low)
 		{
 		}
-		bool operator()(record &target)
+		//bool operator()(record &target)
+		//{
+		//	// shouldnt compile
+		//	return true;
+		//}
+	};
+
+	template <typename next>
+	struct closure : any
+	{
+		void *const value;
+		closure(void *value) : value(value)
 		{
-			// shouldnt compile
-			return true;
+		}
+		closure(iterator &gw) : any(gw), value(nullptr)
+		{
+		}
+		template <typename deduced>
+		bool operator()(deduced &target)
+		{
+			printf("closure next any ()\n");
+			while (gw->under())
+				if (next(*gw)(target))
+					return true;
 		}
 	};
 
@@ -158,14 +174,13 @@ namespace skyrim
 		{
 			this->id = id;
 		}
-		record_and_grup(grup_wrapper &iterator)
+		record_and_grup(iterator &gw)
 		{
-			bonnie = iterator.next_record();
-			clyde = iterator.next_grup();
+			bonnie = gw.next_record();
+			clyde = gw.next_grup();
 		}
 		bool operator()(record_and_grup &target)
 		{
-			printf("checking id %s\n", bonnie.editor_id());
 			if (bonnie.editor_id(target.id))
 			{
 				target.bonnie = bonnie;
