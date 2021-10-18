@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cctype>
 #include <string>
+#include <ranges>
 
 #include <renderer/renderer.h>
 #include <renderer/texture.h>
@@ -43,6 +44,7 @@ namespace skyrim
 	{
 		//Sift(persistent, CellPersistentChildren);
 		Sift(temporary, CellTemporaryChildren);
+		PutCam();
 		return this;
 	}
 
@@ -52,27 +54,27 @@ namespace skyrim
 			delete ref;
 	}
 
-	auto LABELS = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
+	auto thingsWithLabels = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
 
-	struct reference
+	struct visitor : record
 	{
-		record bonnie;
-		// iterate
-		reference(grup_high &high)
-		{
-			bonnie = high.next_record();
-		}
 		template<typename deduced>
 		bool operator()(deduced &closure)
 		{
 			Interior *interior = (Interior *)closure.pointer;
-			if (bonnie.is_type(REFR))
+			if (this->is_type(REFR))
 			{
-				//printf("good");
-				Reference *reference = new Reference(bonnie);
+				Reference *reference = new Reference(*this);
 				interior->refs.push_back(reference);
-				if (bonnie.editor_id())
-					interior->edIds.emplace(bonnie.editor_id(), reference);
+				if (this->editor_id())
+					interior->edIds.emplace(this->editor_id(), reference);
+				/*if (reference->baseObject.valid())
+				{
+					if (reference->baseObject.is_types( thingsWithLabels ))
+						Refs::labelled.push_back(reference);
+					else if (reference->baseObject.is_type( MSTT ))
+						interior->mstts.push_back(reference);
+				}*/
 			}
 			return false;
 		}
@@ -80,45 +82,35 @@ namespace skyrim
 
 	void Interior::Sift(subgroup &subgroup, int group_type)
 	{
-		closure<reference> me((void*)this);
+		closure<visitor> me;
+		me.pointer = (void*)this;
+		subgroup.rewind();
 		subgroup(me);
-
-		//make_references boo(this);
-		//subgroup(boo);
-#if 0
-		if (!subgroup.valid()) {
-			return;
-		}
-		subgroup.loop([&](any &temp) {
-			Record refr = temp.u.r;
-			if (refr.is_type(REFR))
-			{
-				Reference *reference = new Reference(refr);
-				refs.push_back(reference);
-				const char *edId = refr.editor_id();
-				if (edId)
-					edIds.emplace(edId, reference);
-				if (reference->baseObject.valid())
-				{
-					if (reference->baseObject.is_types( LABELS ))
-						Refs::labelled.push_back(reference);
-					else if (reference->baseObject.is_type( MSTT ))
-						mstts.push_back(reference);
-				}
-			}
-			return false;
-		}, group_type);
-		put_cam_on_random_xmarker();
-#endif
 	}
 
-	void Interior::put_cam_on_random_xmarker()
+	void Interior::PutCam()
 	{
-#if 0
+		for (auto ref : refs | std::views::reverse)
+		{
+			if (*ref->base() == 0x00000032) // coc marker heading
+			{
+				float *locationalData = ref->data<float *>("DATA");
+				personCam->pos = cast_vec3(locationalData);
+				personCam->pos.z += EYE_HEIGHT;
+				personCam->yaw = cast_vec3(locationalData + 3).z;
+				dontTeleport = true;
+				break;
+			}
+		}
+		#if 0
 		if (dontTeleport)
 			return;
 		if (!persistent.valid())
 			return;
+		closure<visitor> me;
+		me.pointer = (void*)this;
+		subgroup.rewind();
+		subgroup(me);
 		persistent.loop([&](any &temp) {
 			Record record = temp.u.r;
 			if (*(record.base()) == 0x0000003B)
@@ -133,7 +125,7 @@ namespace skyrim
 			}
 			return false;
 		});
-#endif
+		#endif
 	}
 
 	void Interior::Update()

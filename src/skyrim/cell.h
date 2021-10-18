@@ -45,7 +45,7 @@ namespace skyrim
 		Interior *Init();
 		void Sift(subgroup &, int);
 		void Unload();
-		void put_cam_on_random_xmarker();
+		void PutCam();
 		void Update();
 
 		const char *edId = nullptr;

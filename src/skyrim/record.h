@@ -101,7 +101,7 @@ namespace skyrim
 		{
 			return editor_id() ? 0 == strcmp(name, editor_id()) : false;
 		}
-		inline formId base() const
+		inline const formId base() const
 		{
 			return data<unsigned int *>("NAME");
 		}

@@ -42,10 +42,22 @@ namespace skyrim
 			g = low;
 			if (g)
 			{
-				index = 0;
-				assertc(g->g == 'g'); // still blegh
+				assertc(g->g == 'g');
 				esp_check_grup(g);
+				rewind();
 			}
+		}
+		bool valid()
+		{
+			return g;
+		}
+		void rewind()
+		{
+			index = 0;
+		}
+		bool under()
+		{
+			return index < mixed().size;
 		}
 		low_any get_next()
 		{
@@ -59,12 +71,8 @@ namespace skyrim
 		{
 			return (record_low)get_next();
 		}
-		bool under() const
-		{
-			return index < mixed().size;
-		}
-		const cgrup_header &hed() const { return *g->hed; }
-		const revised_array &mixed() const { return *g->mixed; }
+		const cgrup_header &hed() { return *g->hed; }
+		const revised_array &mixed() { return *g->mixed; }
 	};
 
 	struct grup_top : grup_basic
@@ -78,35 +86,30 @@ namespace skyrim
 
 	struct any
 	{
-		grup_basic *const high;
-		any() : high(nullptr)
+		grup_basic *const iterator;
+		any() : iterator(nullptr)
 		{
 		}
-		any(grup_basic &high) : high(&high)
+		any(grup_basic &high) : iterator(&high)
 		{
 		}
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
-			return deduced(*high)(target);
+			return deduced(*iterator)(target);
 		}
 	};
 
 	template <typename next>
 	struct closure : any
 	{
-		void *const pointer;
-		closure(void *pointer) : pointer(pointer)
-		{
-		}
-		closure(grup_basic &high) : any(high), pointer(nullptr)
-		{
-		}
+		void *pointer = nullptr;
+
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
-			while (high->under())
-				if (next(*high)(target))
+			while (iterator->under())
+				if (next(*iterator)(target))
 					return true;
 			return false;
 		}

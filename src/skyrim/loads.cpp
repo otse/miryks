@@ -86,7 +86,7 @@ namespace skyrim
 	
 	ESP load_plugin(const char *filename, bool whole)
 	{
-		printf("Load Plugin %s\n", filename);
+		//printf("Load Plugin %s\n", filename);
 		if (strlen(filename) < 1)
 			return NULL;
 		std::string path = std::string(editme) + "/Data/" + filename;
@@ -96,8 +96,8 @@ namespace skyrim
 		if (exists(path.c_str()))
 		{
 			plugin = plugin_load(path.c_str(), whole);
-			if (strstr(filename, ".esp"))
-				printf("loading .esp from /Data\n");
+			//if (strstr(filename, ".esp"))
+			//	printf("loading .esp from /Data\n");
 		}
 		else if (exists(filename))
 		{
@@ -115,7 +115,7 @@ namespace skyrim
 
 	BSA load_archive(const char *filename)
 	{
-		printf("Load Archive %s\n", filename);
+		//printf("Load Archive %s\n", filename);
 		BSA bsa = bsa_get(filename);
 		if (bsa)
 			return bsa;
