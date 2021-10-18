@@ -20,11 +20,11 @@ namespace skyrim
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
+		record_and_grup target(id);
 		grup<grup<grup<any, 3>, 2>, 0> constellation;
-		constellation = grup_top(Cells);
-		record_and_grup boo(id);
-		constellation(boo);
-		interior = new Interior(boo);
+		constellation |= "CELL";
+		target(constellation);
+		interior = new Interior(target);
 		return interior;
 	}
 
@@ -58,7 +58,7 @@ namespace skyrim
 
 	struct visitor : record
 	{
-		template<typename deduced>
+		template <typename deduced>
 		bool operator()(deduced &closure)
 		{
 			Interior *interior = (Interior *)closure.pointer;
@@ -83,7 +83,7 @@ namespace skyrim
 	void Interior::Sift(subgroup &subgroup, int group_type)
 	{
 		closure<visitor> me;
-		me.pointer = (void*)this;
+		me.pointer = (void *)this;
 		subgroup.rewind();
 		subgroup(me);
 	}
@@ -102,7 +102,7 @@ namespace skyrim
 				break;
 			}
 		}
-		#if 0
+#if 0
 		if (dontTeleport)
 			return;
 		if (!persistent.valid())
@@ -125,7 +125,7 @@ namespace skyrim
 			}
 			return false;
 		});
-		#endif
+#endif
 	}
 
 	void Interior::Update()

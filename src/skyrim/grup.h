@@ -77,7 +77,6 @@ namespace skyrim
 
 	struct grup_top : grup_basic
 	{
-		static grup_top cells;
 		grup_top(const char *top) : grup_basic(esp_top(get_plugins()[5], top))
 		{
 			printf("grup_top\n");
@@ -125,6 +124,11 @@ namespace skyrim
 		grup(grup_high &high)
 		{
 			(*this) = high.next_grup();
+		}
+		// dont ask
+		void operator|=(const char *top)
+		{
+			(*this) = grup_top(top);
 		}
 		void operator=(const grup_high &rhs)
 		{
@@ -178,6 +182,11 @@ namespace skyrim
 		{
 			bonnie = high.next_record();
 			clyde = high.next_grup();
+		}
+		template<typename deduce>
+		bool operator()(deduce &iterator)
+		{
+			return iterator(*this);
 		}
 		bool operator()(record_and_grup &target)
 		{
