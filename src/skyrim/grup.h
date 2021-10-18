@@ -12,27 +12,28 @@ namespace skyrim
 {
 	template <typename, int>
 	struct grup;
-	struct grup_wrapper;
+	struct grup_basic;
+	struct grup_top;
 	struct record;
-	struct record_wrapper;
+	struct record_basic;
+	
+	typedef grup_basic grup_high;
+	typedef record_basic record_high;
 
 	typedef cgrup *grup_low;
 	typedef crecord *record_low;
 
-	typedef grup_wrapper iterator; 
-
-	struct grup_wrapper
+	struct grup_basic
 	{
 		typedef esp_dud *low_any;
-		typedef grup_wrapper grup_high;
-		typedef record_wrapper record_high;
+
 		grup_low g;
 		unsigned int index;
-		grup_wrapper()
+		grup_basic()
 		{
 			g = nullptr;
 		}
-		grup_wrapper(grup_low low)
+		grup_basic(grup_low low)
 		{
 			set(low);
 		}
@@ -66,51 +67,69 @@ namespace skyrim
 		const revised_array &mixed() const { return *g->mixed; }
 	};
 
-	struct any
-	{
-		iterator *const gw;
-		any() : gw(nullptr)
-		{
-		}
-		any(iterator &gw) : gw(&gw)
-		{
-		}
-		template <typename deduced>
-		bool operator()(deduced &target)
-		{
-			return deduced(*gw)(target);
-		}
-	};
-
-	struct grup_top : grup_wrapper
+	struct grup_top : grup_basic
 	{
 		static grup_top cells;
-		grup_top(const char *top) : grup_wrapper(esp_top(get_plugins()[5], top))
+		grup_top(const char *top) : grup_basic(esp_top(get_plugins()[5], top))
 		{
 			printf("grup_top\n");
 		}
 	};
 
-	template <typename next = any, int intended_group_type = -1>
-	struct grup : grup_wrapper
+	struct any
 	{
-		void operator=(const iterator &gw)
+		grup_basic *const high;
+		any() : high(nullptr)
 		{
-			this->set(gw.g);
+		}
+		any(grup_basic &high) : high(&high)
+		{
+		}
+		template <typename deduced>
+		bool operator()(deduced &target)
+		{
+			return deduced(*high)(target);
+		}
+	};
+
+	template <typename next>
+	struct closure : any
+	{
+		void *const pointer;
+		closure(void *pointer) : pointer(pointer)
+		{
+		}
+		closure(grup_basic &high) : any(high), pointer(nullptr)
+		{
+		}
+		template <typename deduced>
+		bool operator()(deduced &target)
+		{
+			while (high->under())
+				if (next(*high)(target))
+					return true;
+			return false;
+		}
+	};
+
+	template <typename next = any, int intended_group_type = -1>
+	struct grup : grup_basic
+	{
+		grup()
+		{
+		}
+		// iterate
+		grup(grup_high &high)
+		{
+			(*this) = high.next_grup();
+		}
+		void operator=(const grup_high &rhs)
+		{
+			this->set(rhs.g);
 			int group_type = this->hed().group_type;
 			assertc(
 				intended_group_type == -1 ||
 				intended_group_type == group_type);
-		}
-		grup()
-		{
-		}
-		grup(iterator &gw)
-		{
-			(*this) = gw.next_grup();
-		}
-		grup(const char *word) : grup_wrapper(grup_top(word)) // :() !!
-		{
 		}
 		template <typename deduced>
 		bool operator()(deduced &target)
@@ -122,47 +141,25 @@ namespace skyrim
 		}
 	};
 
-	struct record : record_wrapper
+	struct record : record_basic
 	{
-		// copy
-		void operator=(const record_wrapper &rhs)
-		{
-			this->set(rhs.r);
-		}
 		record()
 		{
 		}
-		record(iterator &gw) : record(gw.next_record())
+		// iterate
+		record(grup_high &high)
 		{
+			(*this) = high.next_record();
 		}
-		record(record_low low) : record_wrapper(low)
+		void operator=(const record_high &rhs)
 		{
+			this->set(rhs.r);
 		}
 		//bool operator()(record &target)
 		//{
 		//	// shouldnt compile
 		//	return true;
 		//}
-	};
-
-	template <typename next>
-	struct closure : any
-	{
-		void *const value;
-		closure(void *value) : value(value)
-		{
-		}
-		closure(iterator &gw) : any(gw), value(nullptr)
-		{
-		}
-		template <typename deduced>
-		bool operator()(deduced &target)
-		{
-			printf("closure next any ()\n");
-			while (gw->under())
-				if (next(*gw)(target))
-					return true;
-		}
 	};
 
 	struct record_and_grup
@@ -174,10 +171,10 @@ namespace skyrim
 		{
 			this->id = id;
 		}
-		record_and_grup(iterator &gw)
+		record_and_grup(grup_high &high)
 		{
-			bonnie = gw.next_record();
-			clyde = gw.next_grup();
+			bonnie = high.next_record();
+			clyde = high.next_grup();
 		}
 		bool operator()(record_and_grup &target)
 		{

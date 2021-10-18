@@ -19,7 +19,8 @@ namespace skyrim
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		grup<grup<grup<any, 3>, 2>, 0> constellation(Cells);
+		grup<grup<grup<any, 3>, 2>, 0> constellation;
+		constellation = grup_top(Cells);
 		record_and_grup boo(id);
 		constellation(boo);
 		interior = new Interior(boo);
@@ -56,14 +57,15 @@ namespace skyrim
 	struct reference
 	{
 		record bonnie;
-		reference(iterator &gw)
+		// iterate
+		reference(grup_high &high)
 		{
-			bonnie = gw.next_record();
+			bonnie = high.next_record();
 		}
 		template<typename deduced>
-		bool operator()(deduced &target)
+		bool operator()(deduced &closure)
 		{
-			Interior *interior = (Interior *)target.value;
+			Interior *interior = (Interior *)closure.pointer;
 			if (bonnie.is_type(REFR))
 			{
 				//printf("good");

@@ -16,7 +16,7 @@ namespace skyrim
 	const char *getEditorIdOnly(const RECORD);
 	
 	// used by classes as a typedef Record
-	struct record_wrapper
+	struct record_basic
 	{
 		crecord *r = nullptr;
 
@@ -25,14 +25,14 @@ namespace skyrim
 			r = rhs;
 			check();
 		}
-		record_wrapper()
+		record_basic()
 		{
 		}
-		record_wrapper(crecord *r)
+		record_basic(crecord *r)
 		{
 			(*this) = (r);
 		}
-		void set(record_wrapper r)
+		void set(record_basic r)
 		{
 			(*this) = (r.r);
 		}

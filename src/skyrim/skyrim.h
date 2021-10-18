@@ -17,13 +17,13 @@ namespace skyrim
 
 	template <typename, int>
 	struct grup;
-	struct grup_wrapper;
+	struct grup_basic;
 
 	struct record;
-	struct record_wrapper;
+	struct record_basic;
 
-	typedef record_wrapper Record;
-	typedef grup_wrapper Grup;
+	typedef record_basic Record;
+	typedef grup_basic Grup;
 
 	class Char;
 	class Monster;
