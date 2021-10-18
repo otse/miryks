@@ -21,7 +21,8 @@ namespace skyrim
 	{
 		Interior *interior = nullptr;
 		record_and_grup target(id);
-		grup<grup<grup<any, 3>, 2>, 0> constellation;
+		grup<grup<grup<any, 3>, 2>, 0>
+			constellation;
 		constellation |= "CELL";
 		target(constellation);
 		interior = new Interior(target);
