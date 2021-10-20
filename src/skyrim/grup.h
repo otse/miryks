@@ -85,11 +85,11 @@ namespace skyrim
 
 	struct any
 	{
-		grup_basic *const iterator;
-		any() : iterator(nullptr)
+		grup_high *const iterator = nullptr;
+		any()
 		{
 		}
-		any(grup_basic &high) : iterator(&high)
+		any(grup_high &high) : iterator(&high)
 		{
 		}
 		template <typename deduced>
@@ -103,7 +103,9 @@ namespace skyrim
 	struct closure : any
 	{
 		void *pointer = nullptr;
-
+		closure(void *pass) : pointer(pass)
+		{
+		}
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
@@ -112,6 +114,7 @@ namespace skyrim
 					return true;
 			return false;
 		}
+		using any::any;
 	};
 
 	template <typename next = any, int intended_group_type = -1>

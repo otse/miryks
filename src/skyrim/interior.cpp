@@ -20,7 +20,7 @@ namespace skyrim
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		record_and_grup target(id);
+		closure<record_and_grup> target((void *)id);
 		grup<grup<grup<any, 3>, 2>, 0>
 			constellation;
 		constellation |= "CELL";
