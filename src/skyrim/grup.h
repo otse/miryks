@@ -99,24 +99,6 @@ namespace skyrim
 		}
 	};
 
-	template <typename next>
-	struct closure : any
-	{
-		void *pointer = nullptr;
-		closure(void *pass) : pointer(pass)
-		{
-		}
-		template <typename deduced>
-		bool operator()(deduced &target)
-		{
-			while (iterator->under())
-				if (next(*iterator)(target))
-					return true;
-			return false;
-		}
-		using any::any;
-	};
-
 	template <typename next = any, int intended_group_type = -1>
 	struct grup : grup_basic
 	{
@@ -156,7 +138,6 @@ namespace skyrim
 		record()
 		{
 		}
-		// iterate
 		record(grup_high &high)
 		{
 			(*this) = high.next_record();
@@ -172,35 +153,55 @@ namespace skyrim
 		//}
 	};
 
-	struct record_and_grup
+	template <typename next>
+	struct closure : any
+	{
+		void *pointer = nullptr;
+		next last;
+		closure(void *pass) : pointer(pass)
+		{
+		}
+		template <typename deduced>
+		bool operator()(deduced &target)
+		{
+			while (iterator->under())
+				if (next(*iterator)(target))
+					return true;
+			return false;
+		}
+		using any::any;
+	};
+
+	struct record_and_grup : any
 	{
 		record bonnie;
 		grup<> clyde;
-		const char *id;
-		record_and_grup(const char *id)
+		void operator=(const record_and_grup &rhs)
 		{
-			this->id = id;
-		}
-		record_and_grup(grup_high &high)
-		{
-			bonnie = high.next_record();
-			clyde = high.next_grup();
+			// ugly manual copy
+			printf("manual copy");
+			bonnie = rhs.bonnie;
+			clyde = rhs.clyde;
 		}
 		template<typename deduce>
-		bool operator()(deduce &iterator)
+		bool operator()(deduce &begin)
 		{
-			return iterator(*this);
+			printf("target -> \n");
+			return begin(*this);
 		}
-		bool operator()(record_and_grup &target)
+		bool operator()(closure<record_and_grup> &use_case)
 		{
-			if (bonnie.editor_id(target.id))
+			bonnie = iterator->next_record();
+			clyde = iterator->next_grup();
+			if (bonnie.editor_id((const char *)use_case.pointer))
 			{
-				target.bonnie = bonnie;
-				target.clyde = clyde;
+				printf("bonnie is right");
+				use_case.last = *this;
 				return true;
 			}
 			return false;
 		}
+		using any::any;
 	};
 
 	enum GrupTypes

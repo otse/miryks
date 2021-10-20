@@ -21,11 +21,12 @@ namespace skyrim
 	{
 		Interior *interior = nullptr;
 		closure<record_and_grup> target((void *)id);
-		grup<grup<grup<any, 3>, 2>, 0>
-			constellation;
+		grup<grup<grup<any, 3>, 2>, 0> constellation;
 		constellation |= "CELL";
-		target(constellation);
-		interior = new Interior(target);
+		printf("target constellation\n");
+		constellation(target);
+		//target(constellation);
+		interior = new Interior(target.last);
 		return interior;
 	}
 
