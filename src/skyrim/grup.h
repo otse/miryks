@@ -20,6 +20,8 @@ namespace skyrim
 	typedef grup_basic grup_high;
 	typedef record_basic record_high;
 
+	typedef grup_high iterator;
+
 	typedef cgrup *grup_low;
 	typedef crecord *record_low;
 
@@ -83,32 +85,37 @@ namespace skyrim
 		}
 	};
 
+	namespace passthrough
+	{
+		// pt et in here
+	};
+
 	struct any
 	{
-		grup_high *const iterator = nullptr;
+		iterator *it = nullptr;
 		any()
 		{
 		}
-		any(grup_high &high) : iterator(&high)
+		any(iterator &i) : it(&i)
 		{
 		}
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
-			return deduced(*iterator)(target);
+			return deduced(*it)(target);
 		}
 	};
 
 	template <typename next = any, int intended_group_type = -1>
-	struct grup : grup_basic
+	struct grup : grup_basic // inherit any somehow
 	{
 		grup()
 		{
 		}
 		// iterate
-		grup(grup_high &high)
+		grup(iterator &i)
 		{
-			(*this) = high.next_grup();
+			(*this) = i.next_grup();
 		}
 		// dont ask
 		void operator|=(const char *top)
@@ -138,9 +145,9 @@ namespace skyrim
 		record()
 		{
 		}
-		record(grup_high &high)
+		record(iterator &i)
 		{
-			(*this) = high.next_record();
+			(*this) = i.next_record();
 		}
 		void operator=(const record_high &rhs)
 		{
@@ -164,8 +171,8 @@ namespace skyrim
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
-			while (iterator->under())
-				if (next(*iterator)(target))
+			while (it->under())
+				if (next(*it)(target))
 					return true;
 			return false;
 		}
@@ -174,14 +181,13 @@ namespace skyrim
 
 	struct record_and_grup : any
 	{
-		record bonnie;
-		grup<> clyde;
+		record one;
+		grup<> two;
 		void operator=(const record_and_grup &rhs)
 		{
 			// ugly manual copy
-			printf("manual copy");
-			bonnie = rhs.bonnie;
-			clyde = rhs.clyde;
+			one = rhs.one;
+			two = rhs.two;
 		}
 		template<typename deduce>
 		bool operator()(deduce &begin)
@@ -191,11 +197,10 @@ namespace skyrim
 		}
 		bool operator()(closure<record_and_grup> &use_case)
 		{
-			bonnie = iterator->next_record();
-			clyde = iterator->next_grup();
-			if (bonnie.editor_id((const char *)use_case.pointer))
+			one = it->next_record();
+			two = it->next_grup();
+			if (one.editor_id((const char *)use_case.pointer))
 			{
-				printf("bonnie is right");
 				use_case.last = *this;
 				return true;
 			}

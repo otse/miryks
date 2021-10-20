@@ -29,9 +29,9 @@ namespace skyrim
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(record_and_grup &capture) : Record(capture.bonnie)
+	WorldSpace::WorldSpace(record_and_grup &capture) : Record(capture.one)
 	{
-		childs = capture.clyde;
+		childs = capture.two;
 		assertc(childs.hed().group_type == WorldChildren);
 		sceneDef->ambient = vec3(127.f / 255.f);
 		printf("new WorldSpace: %s\n", data<const char *>("FULL"));
@@ -81,7 +81,7 @@ namespace skyrim
 		}
 	}
 
-	Exterior::Exterior(record_and_grup &capture) : Cell(capture.bonnie, capture.clyde)
+	Exterior::Exterior(record_and_grup &capture) : Cell(capture.one, capture.two)
 	{
 		worldSpace = nullptr;
 		land = nullptr;

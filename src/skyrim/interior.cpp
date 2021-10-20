@@ -30,7 +30,7 @@ namespace skyrim
 		return interior;
 	}
 
-	Interior::Interior(record_and_grup &rng) : Cell(rng.bonnie, rng.clyde)
+	Interior::Interior(record_and_grup &rng) : Cell(rng.one, rng.two)
 	{
 		printf("persistent n: %i\n", persistent.mixed().size);
 		printf("temporary n: %i\n", temporary.mixed().size);
