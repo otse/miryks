@@ -17,16 +17,26 @@ namespace skyrim
 {
 	Interior *dungeon = nullptr;
 
+	template <const char *T>
+	constexpr unsigned int bakechartouint()
+	{
+		return *(unsigned int *)"CELL";
+	}
+
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		closure<record_and_grup> target((void *)id);
-		grup<grup<grup<any, 3>, 2>, 0> constellation;
-		constellation |= "CELL";
-		printf("target constellation\n");
-		constellation(target);
-		//target(constellation);
-		interior = new Interior(target.last);
+		closure<record_and_grup>
+			find_cell;
+		find_cell.pointer = (void *)id;
+		grup<
+			grup<
+				grup<
+					any>>>
+			declaration;
+		declaration.top = "CELL";
+		declaration.at_any(find_cell);
+		interior = new Interior(find_cell.last);
 		return interior;
 	}
 
@@ -80,14 +90,15 @@ namespace skyrim
 			}
 			return false;
 		}
+		using record::record; // needed for template inheritance
 	};
 
 	void Interior::Sift(subgroup &subgroup, int group_type)
 	{
-		closure<visitor> me;
-		me.pointer = (void *)this;
+		closure<visitor> make_records;
+		make_records.pointer = (void *)this;
 		subgroup.rewind();
-		subgroup(me);
+		subgroup.at_any(make_records);
 	}
 
 	void Interior::PutCam()

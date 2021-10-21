@@ -16,7 +16,11 @@ namespace skyrim
 	struct grup_top;
 	struct record;
 	struct record_basic;
-	
+
+	template <typename>
+	struct closure;
+	struct record_and_grup;
+
 	typedef grup_basic grup_high;
 	typedef record_basic record_high;
 
@@ -85,20 +89,17 @@ namespace skyrim
 		}
 	};
 
-	namespace passthrough
-	{
-		// pt et in here
-	};
-
 	struct any
 	{
 		iterator *it = nullptr;
 		any()
 		{
 		}
-		any(iterator &i) : it(&i)
+		any(iterator &i)
 		{
+			it = &i;
 		}
+		// delegating passthrough
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
@@ -107,8 +108,9 @@ namespace skyrim
 	};
 
 	template <typename next = any, int intended_group_type = -1>
-	struct grup : grup_basic // inherit any somehow
+	struct grup : grup_basic
 	{
+		const char *top = 0;
 		grup()
 		{
 		}
@@ -130,13 +132,22 @@ namespace skyrim
 				intended_group_type == -1 ||
 				intended_group_type == group_type);
 		}
+		// general passthrough
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
+			if (top)
+				(*this) = grup_top(top);
 			while (this->under())
 				if (next(*this)(target))
 					return true;
 			return false;
+		}
+		template <typename deduced>
+		void at_any(deduced &temp)
+		{
+			// just calls the passthrough-operator()
+			(*this)(temp);
 		}
 	};
 
@@ -163,11 +174,12 @@ namespace skyrim
 	template <typename next>
 	struct closure : any
 	{
-		void *pointer = nullptr;
 		next last;
+		void *pointer = nullptr;
 		closure(void *pass) : pointer(pass)
 		{
 		}
+		// general passthrough
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
@@ -179,34 +191,33 @@ namespace skyrim
 		using any::any;
 	};
 
-	struct record_and_grup : any
+	struct record_and_grup
 	{
 		record one;
 		grup<> two;
+		record_and_grup()
+		{
+		}
+		record_and_grup(iterator &i)
+		{
+			one = i.next_record();
+			two = i.next_grup();
+		}
 		void operator=(const record_and_grup &rhs)
 		{
-			// ugly manual copy
 			one = rhs.one;
 			two = rhs.two;
 		}
-		template<typename deduce>
-		bool operator()(deduce &begin)
+		// single use-case passthrough
+		bool operator()(closure<record_and_grup> &arg)
 		{
-			printf("target -> \n");
-			return begin(*this);
-		}
-		bool operator()(closure<record_and_grup> &use_case)
-		{
-			one = it->next_record();
-			two = it->next_grup();
-			if (one.editor_id((const char *)use_case.pointer))
+			if (one.editor_id((const char *)arg.pointer))
 			{
-				use_case.last = *this;
+				arg.last = *this;
 				return true;
 			}
 			return false;
 		}
-		using any::any;
 	};
 
 	enum GrupTypes
