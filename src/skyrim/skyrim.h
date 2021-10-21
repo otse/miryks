@@ -15,7 +15,7 @@ namespace skyrim
 	struct any;
 	//struct constellation;
 
-	template <typename, int>
+	template <int, typename>
 	struct grup;
 	struct grup_basic;
 

@@ -17,26 +17,27 @@ namespace skyrim
 {
 	Interior *dungeon = nullptr;
 
-	template <const char *T>
-	constexpr unsigned int bakechartouint()
-	{
-		return *(unsigned int *)"CELL";
-	}
-
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		closure<record_and_grup>
+		closure<
+			record_and_grup
+			>
 			find_cell;
 		find_cell.pointer = (void *)id;
-		grup<
-			grup<
-				grup<
+
+		grup< 0 , 
+			grup< 2 , 
+				grup< 3 ,
 					any>>>
 			declaration;
+
 		declaration.top = "CELL";
+
 		declaration.at_any(find_cell);
+
 		interior = new Interior(find_cell.last);
+
 		return interior;
 	}
 

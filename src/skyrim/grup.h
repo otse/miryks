@@ -10,7 +10,10 @@
 
 namespace skyrim
 {
-	template <typename, int>
+	// passthru stuff
+	// its not difficult
+
+	template <int, typename>
 	struct grup;
 	struct grup_basic;
 	struct grup_top;
@@ -99,7 +102,7 @@ namespace skyrim
 		{
 			it = &i;
 		}
-		// delegating passthrough
+		// passthru
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
@@ -107,14 +110,17 @@ namespace skyrim
 		}
 	};
 
-	template <typename next = any, int intended_group_type = -1>
+	template <int intended_group_type = -1, typename next = any>
 	struct grup : grup_basic
 	{
 		const char *top = 0;
 		grup()
 		{
 		}
-		// iterate
+		grup(const char *id)
+		{
+			top = id;
+		}
 		grup(iterator &i)
 		{
 			(*this) = i.next_grup();
@@ -132,7 +138,7 @@ namespace skyrim
 				intended_group_type == -1 ||
 				intended_group_type == group_type);
 		}
-		// general passthrough
+		// passthru
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
@@ -179,7 +185,7 @@ namespace skyrim
 		closure(void *pass) : pointer(pass)
 		{
 		}
-		// general passthrough
+		// passthru
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
@@ -208,7 +214,7 @@ namespace skyrim
 			one = rhs.one;
 			two = rhs.two;
 		}
-		// single use-case passthrough
+		// passthru
 		bool operator()(closure<record_and_grup> &arg)
 		{
 			if (one.editor_id((const char *)arg.pointer))
