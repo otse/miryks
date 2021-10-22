@@ -11,7 +11,6 @@
 namespace skyrim
 {
 	// passthru stuff
-	// its not difficult
 
 	template <int, typename>
 	struct grup;
@@ -19,6 +18,7 @@ namespace skyrim
 	struct grup_top;
 	struct record;
 	struct record_basic;
+	struct record_check;
 
 	template <typename>
 	struct closure;
@@ -166,7 +166,6 @@ namespace skyrim
 	template <typename next>
 	struct closure : any
 	{
-		next last;
 		void *pointer = nullptr;
 		closure(void *pass) : pointer(pass)
 		{
@@ -204,6 +203,15 @@ namespace skyrim
 		using closure<next>::closure;
 	};
 
+	struct record_with_id : record
+	{
+		bool operator()(
+			capture<record_with_id> &capture)
+		{
+			return this->editor_id((const char *)capture.pointer);
+		}
+	};
+
 	struct record_and_grup
 	{
 		record one;
@@ -222,14 +230,9 @@ namespace skyrim
 			two = rhs.two;
 		}
 		// passthru
-		bool operator()(closure<record_and_grup> &arg)
+		bool operator()(capture<record_and_grup> &arg)
 		{
-			if (one.editor_id((const char *)arg.pointer))
-			{
-				arg.last = *this;
-				return true;
-			}
-			return false;
+			return one.editor_id((const char *)arg.pointer);
 		}
 	};
 

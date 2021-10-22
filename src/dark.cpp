@@ -129,7 +129,7 @@ int main()
 	//load_world_space();
 #if 1
 	load_interior();
-	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrfemale.nif");
+	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	someDraugr->Place("gloomgendraugr");
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");

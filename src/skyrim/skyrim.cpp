@@ -8,15 +8,6 @@ namespace skyrim {
 
 	char *editme;
 
-	struct check : record
-	{
-		bool operator()(
-			capture<check> &capture)
-		{
-			return this->editor_id((const char *)capture.pointer);
-		}
-	};
-
 	record get_race(const char *raceId)
 	{
 		grup< 0, any >
@@ -25,8 +16,10 @@ namespace skyrim {
 		declaration.plugin = 0;
 		declaration.top = "RACE";
 
-		capture<check>
-			find_race((void *)raceId);
+		capture<record_with_id>
+			find_race;
+
+		find_race.pointer = (void *)raceId;
 
 		declaration.at_any(find_race);
 

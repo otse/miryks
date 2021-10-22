@@ -21,7 +21,10 @@ namespace skyrim
 	{
 		Interior *interior = nullptr;
 		
-		closure<rng> find_cell((void *)id);
+		capture<record_and_grup>
+			find_cell;
+		
+		find_cell.pointer = (void *)id;
 
 		grup< 0 ,
 			grup< 2 ,
