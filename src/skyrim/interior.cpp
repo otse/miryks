@@ -20,18 +20,16 @@ namespace skyrim
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		closure<
-			record_and_grup
-			>
-			find_cell;
-		find_cell.pointer = (void *)id;
+		
+		closure<rng> find_cell((void *)id);
 
-		grup< 0 , 
-			grup< 2 , 
+		grup< 0 ,
+			grup< 2 ,
 				grup< 3 ,
 					any>>>
 			declaration;
-
+		
+		declaration.plugin = 5;
 		declaration.top = "CELL";
 
 		declaration.at_any(find_cell);
@@ -69,7 +67,7 @@ namespace skyrim
 
 	auto thingsWithLabels = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
 
-	struct visitor : record
+	struct creater : record
 	{
 		template <typename deduced>
 		bool operator()(deduced &closure)
@@ -96,7 +94,7 @@ namespace skyrim
 
 	void Interior::Sift(subgroup &subgroup, int group_type)
 	{
-		closure<visitor> make_records;
+		closure<creater> make_records;
 		make_records.pointer = (void *)this;
 		subgroup.rewind();
 		subgroup.at_any(make_records);

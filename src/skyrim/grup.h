@@ -86,7 +86,7 @@ namespace skyrim
 
 	struct grup_top : grup_basic
 	{
-		grup_top(const char *top) : grup_basic(esp_top(get_plugins()[5], top))
+		grup_top(int plugin, const char *top) : grup_basic(esp_top(get_plugins()[plugin], top))
 		{
 			printf("grup_top\n");
 		}
@@ -113,22 +113,14 @@ namespace skyrim
 	template <int intended_group_type = -1, typename next = any>
 	struct grup : grup_basic
 	{
+		int plugin = 0;
 		const char *top = 0;
 		grup()
 		{
 		}
-		grup(const char *id)
-		{
-			top = id;
-		}
 		grup(iterator &i)
 		{
 			(*this) = i.next_grup();
-		}
-		// dont ask
-		void operator|=(const char *top)
-		{
-			(*this) = grup_top(top);
 		}
 		void operator=(const grup_high &rhs)
 		{
@@ -138,12 +130,12 @@ namespace skyrim
 				intended_group_type == -1 ||
 				intended_group_type == group_type);
 		}
-		// passthru
+		// passthrough-operator()
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
 			if (top)
-				(*this) = grup_top(top);
+				(*this) = grup_top(plugin, top);
 			while (this->under())
 				if (next(*this)(target))
 					return true;
@@ -152,7 +144,6 @@ namespace skyrim
 		template <typename deduced>
 		void at_any(deduced &temp)
 		{
-			// just calls the passthrough-operator()
 			(*this)(temp);
 		}
 	};
@@ -170,11 +161,6 @@ namespace skyrim
 		{
 			this->set(rhs.r);
 		}
-		//bool operator()(record &target)
-		//{
-		//	// shouldnt compile
-		//	return true;
-		//}
 	};
 
 	template <typename next>
@@ -195,6 +181,27 @@ namespace skyrim
 			return false;
 		}
 		using any::any;
+	};
+
+	template <typename next>
+	struct capture : closure<next>
+	{
+		next last;
+		template <typename deduced>
+		bool operator()(deduced &target)
+		{
+			while (this->it->under())
+			{
+				next temp = next(*this->it);
+				if (temp(target))
+				{
+					target.last = temp;
+					return true;
+				}
+			}
+			return false;
+		}
+		using closure<next>::closure;
 	};
 
 	struct record_and_grup
@@ -225,6 +232,8 @@ namespace skyrim
 			return false;
 		}
 	};
+
+	typedef record_and_grup rng;
 
 	enum GrupTypes
 	{

@@ -15,7 +15,7 @@ namespace skyrim
 	{
 		anim = nullptr;
 		drawGroup = nullptr;
-		race = GetRace(raceId);
+		race = get_race(raceId);
 		skel = new Skel(race);
 		modelSkinned = new ModelSkinned(path);
 	}

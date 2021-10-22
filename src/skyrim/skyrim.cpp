@@ -8,25 +8,29 @@ namespace skyrim {
 
 	char *editme;
 
-	// Grup &Grup::end = Grup();
-
-	Record GetRace(const char *raceId)
+	struct check : record
 	{
-		Record race;
-		#if 0
-		Grup top = esp_top(get_plugins()[0], "RACE");
-		top.loop([&](any &temp) {
-			Record record = temp.u.r;
-			if (record.editor_id(raceId))
-			{
-				race = record;
-				return true;
-			}
-			return false;
-		}, Top);
-		assertc(race.valid());
-		#endif
-		return race;
+		bool operator()(
+			capture<check> &capture)
+		{
+			return this->editor_id((const char *)capture.pointer);
+		}
+	};
+
+	record get_race(const char *raceId)
+	{
+		grup< 0, any >
+			declaration;
+		
+		declaration.plugin = 0;
+		declaration.top = "RACE";
+
+		capture<check>
+			find_race((void *)raceId);
+
+		declaration.at_any(find_race);
+
+		return find_race.last;
 	}
 	
 }

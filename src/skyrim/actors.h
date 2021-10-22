@@ -17,13 +17,13 @@ namespace skyrim
 		void Place(const char *);
 		void SetAnim(const char *);
 		void Step();
-		Record race;
+		record race;
 	};
 
 	class Char
 	{
 	public:
-		Record race;
+		record race;
 		Skel *skel;
 		Anim *anim;
 		SkinnedMesh *hat, *head, *body, *hands, *feet;
