@@ -21,23 +21,18 @@ namespace skyrim
 	{
 		Interior *interior = nullptr;
 		
-		capture<record_and_grup>
-			find_cell;
-		
-		find_cell.pointer = (void *)id;
+		closure< record_and_grup > closure((void *)id);
+
+		/*using cells =
+			grup< 0 ,
+				grup< 2 ,
+					grup< 3 >>>;*/
 
 		grup< 0 ,
 			grup< 2 ,
-				grup< 3 ,
-					any>>>
-			declaration;
-		
-		declaration.plugin = 5;
-		declaration.top = "CELL";
+				grup< 3 >>> ( 5, "CELL" ) / closure;
 
-		declaration.at_any(find_cell);
-
-		interior = new Interior(find_cell.last);
+		interior = new Interior(closure.last);
 
 		return interior;
 	}
@@ -97,8 +92,7 @@ namespace skyrim
 
 	void Interior::Sift(subgroup &subgroup, int group_type)
 	{
-		closure<creater> make_records;
-		make_records.pointer = (void *)this;
+		closure<creater> make_records((void *)this);
 		subgroup.rewind();
 		subgroup.at_any(make_records);
 	}

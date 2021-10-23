@@ -10,20 +10,11 @@ namespace skyrim {
 
 	record get_race(const char *raceId)
 	{
-		grup< 0, any >
-			declaration;
-		
-		declaration.plugin = 0;
-		declaration.top = "RACE";
+		closure < record_with_id > closure((void *)raceId);
 
-		capture<record_with_id>
-			find_race;
+		grup< 0 > ( 0, "RACE" ) / closure;
 
-		find_race.pointer = (void *)raceId;
-
-		declaration.at_any(find_race);
-
-		return find_race.last;
+		return closure.last;
 	}
 	
 }

@@ -23,7 +23,6 @@ namespace skyrim
 	struct record_basic;
 
 	typedef record_basic Record;
-	typedef grup_basic Grup;
 
 	class Char;
 	class Monster;

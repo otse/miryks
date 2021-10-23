@@ -86,7 +86,8 @@ namespace skyrim
 
 	struct grup_top : grup_basic
 	{
-		grup_top(int plugin, const char *top) : grup_basic(esp_top(get_plugins()[plugin], top))
+		grup_top(int plugin, const char *top)
+			: grup_basic(esp_top(get_plugins()[plugin], top))
 		{
 			printf("grup_top\n");
 		}
@@ -113,14 +114,21 @@ namespace skyrim
 	template <int intended_group_type = -1, typename next = any>
 	struct grup : grup_basic
 	{
-		int plugin = 0;
-		const char *top = 0;
 		grup()
 		{
+		}
+		grup(int plugin, const char *top)
+		{
+			(*this) = grup_top(plugin, top);
 		}
 		grup(iterator &i)
 		{
 			(*this) = i.next_grup();
+		}
+		template <typename deduced>
+		void operator/(deduced &rhs)
+		{
+			at_any(rhs);
 		}
 		void operator=(const grup_high &rhs)
 		{
@@ -134,8 +142,6 @@ namespace skyrim
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
-			if (top)
-				(*this) = grup_top(plugin, top);
 			while (this->under())
 				if (next(*this)(target))
 					return true;
@@ -166,26 +172,11 @@ namespace skyrim
 	template <typename next>
 	struct closure : any
 	{
+		next last;
 		void *pointer = nullptr;
 		closure(void *pass) : pointer(pass)
 		{
 		}
-		// passthru
-		template <typename deduced>
-		bool operator()(deduced &target)
-		{
-			while (it->under())
-				if (next(*it)(target))
-					return true;
-			return false;
-		}
-		using any::any;
-	};
-
-	template <typename next>
-	struct capture : closure<next>
-	{
-		next last;
 		template <typename deduced>
 		bool operator()(deduced &target)
 		{
@@ -200,15 +191,15 @@ namespace skyrim
 			}
 			return false;
 		}
-		using closure<next>::closure;
+		using any::any;
 	};
 
 	struct record_with_id : record
 	{
 		bool operator()(
-			capture<record_with_id> &capture)
+			closure<record_with_id> &closure)
 		{
-			return this->editor_id((const char *)capture.pointer);
+			return this->editor_id((const char *)closure.pointer);
 		}
 	};
 
@@ -230,13 +221,17 @@ namespace skyrim
 			two = rhs.two;
 		}
 		// passthru
-		bool operator()(capture<record_and_grup> &arg)
+		bool operator()(
+			closure<record_and_grup> &target)
 		{
-			return one.editor_id((const char *)arg.pointer);
+			return one.editor_id((const char *)target.pointer);
 		}
 	};
 
-	typedef record_and_grup rng;
+	namespace passthrough
+	{
+
+	};
 
 	enum GrupTypes
 	{
