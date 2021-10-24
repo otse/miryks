@@ -21,9 +21,9 @@ namespace skyrim
 	{
 		Interior *interior = nullptr;
 		closure<record_and_grup> capture;
-		(grup< cells ,
+		grup< cells ,
 			grup< 2 ,
-				grup< 3 >>> ()) / (capture/id);
+				grup< 3 >>> ()(capture);
 		interior = new Interior(capture.last);
 		return interior;
 	}
