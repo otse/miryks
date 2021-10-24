@@ -10,9 +10,15 @@
 
 namespace skyrim
 {
-	// passthru stuff
+	constexpr static unsigned int cells = 1280066883;
+	constexpr static unsigned int races = 1162035538;
 
-	template <int, typename>
+	// grup passthru stuff
+
+	// it works
+	// but might seem pointless by an outsider
+
+	template <unsigned int, typename>
 	struct grup;
 	struct grup_basic;
 	struct grup_top;
@@ -86,6 +92,12 @@ namespace skyrim
 
 	struct grup_top : grup_basic
 	{
+		grup_top(int plugin, unsigned int top) :
+			grup_top(plugin, (const char *)&top)
+		{
+			printf("grup_top uint %u const char %.4s\n", top, (const char *)&top );
+
+		}
 		grup_top(int plugin, const char *top)
 			: grup_basic(esp_top(get_plugins()[plugin], top))
 		{
@@ -111,13 +123,15 @@ namespace skyrim
 		}
 	};
 
-	template <int intended_group_type = -1, typename next = any>
+	template <unsigned int intended_group_type = 100, typename next = any>
 	struct grup : grup_basic
 	{
-		grup()
+		grup(int plugin = 5)
 		{
+			if (intended_group_type > 100)
+				this->set(grup_top(plugin, intended_group_type).g);
 		}
-		grup(int plugin, const char *top)
+		grup(const char *top, int plugin)
 		{
 			(*this) = grup_top(plugin, top);
 		}
@@ -135,7 +149,7 @@ namespace skyrim
 			this->set(rhs.g);
 			int group_type = this->hed().group_type;
 			assertc(
-				intended_group_type == -1 ||
+				intended_group_type >= 100 ||
 				intended_group_type == group_type);
 		}
 		// passthrough-operator()
@@ -176,6 +190,11 @@ namespace skyrim
 		void *pointer = nullptr;
 		closure(void *pass) : pointer(pass)
 		{
+		}
+		closure<next> &operator/(const char *id)
+		{
+			pointer = (void *)id;
+			return *this;
 		}
 		template <typename deduced>
 		bool operator()(deduced &target)
@@ -244,6 +263,8 @@ namespace skyrim
 		CellChildren,
 		TopicChildren,
 		CellPersistentChildren,
-		CellTemporaryChildren
+		CellTemporaryChildren,
+
+		GrupTypeAnything = 100
 	};
 }

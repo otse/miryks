@@ -16,23 +16,18 @@
 namespace skyrim
 {
 	Interior *dungeon = nullptr;
-
+	
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		
-		closure< record_and_grup > closure((void *)id);
 
-		/*using cells =
-			grup< 0 ,
-				grup< 2 ,
-					grup< 3 >>>;*/
+		closure < record_and_grup > capture;
 
-		grup< 0 ,
+		grup< cells ,
 			grup< 2 ,
-				grup< 3 >>> ( 5, "CELL" ) / closure;
+				grup< 3 >>> (5) / (capture / id);
 
-		interior = new Interior(closure.last);
+		interior = new Interior(capture.last);
 
 		return interior;
 	}

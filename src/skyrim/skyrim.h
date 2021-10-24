@@ -13,9 +13,8 @@ namespace skyrim
 	extern char *editme;
 
 	struct any;
-	//struct constellation;
 
-	template <int, typename>
+	template <unsigned int, typename>
 	struct grup;
 	struct grup_basic;
 
