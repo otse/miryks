@@ -20,11 +20,12 @@ namespace skyrim
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		closure<record_and_grup> capture;
+		closure<record_and_grup> get;
+		get / id;
 		grup< cells ,
 			grup< 2 ,
-				grup< 3 >>> ()(capture);
-		interior = new Interior(capture.last);
+				grup< 3 >>> ()(get);
+		interior = new Interior(get.last);
 		return interior;
 	}
 
