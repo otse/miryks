@@ -20,12 +20,12 @@ namespace skyrim
 	Interior *get_interior(const char *id, int num)
 	{
 		Interior *interior = nullptr;
-		closure<record_and_grup> get;
-		get / id;
+		closure<record_and_grup> search;
+		search / id;
 		grup< cells ,
 			grup< 2 ,
-				grup< 3 >>> ()(get);
-		interior = new Interior(get.last);
+				grup< 3 >>> () / search;
+		interior = new Interior(search.match);
 		return interior;
 	}
 
@@ -57,12 +57,11 @@ namespace skyrim
 
 	auto thingsWithLabels = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
 
-	struct creater : record
+	struct maker : record
 	{
-		template <typename deduced>
-		bool operator()(deduced &closure)
+		bool operator()(closure<maker> &target)
 		{
-			Interior *interior = (Interior *)closure.pointer;
+			Interior *interior = (Interior *)target.pointer;
 			if (this->is_type(REFR))
 			{
 				Reference *reference = new Reference(*this);
@@ -82,9 +81,9 @@ namespace skyrim
 		using record::record; // needed for template inheritance
 	};
 
-	void Interior::Sift(subgroup &subgroup, int group_type)
+	void Interior::Sift(grup<> &subgroup, int group_type)
 	{
-		closure<creater> make_records((void *)this);
+		closure<maker> make_records((void *)this);
 		subgroup.rewind();
 		subgroup.at_any(make_records);
 	}

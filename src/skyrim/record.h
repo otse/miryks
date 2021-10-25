@@ -20,21 +20,22 @@ namespace skyrim
 	{
 		crecord *r = nullptr;
 
+		record_basic()
+		{
+		}
+		record_basic(
+			crecord *r)
+		{
+			operator=(r);
+		}
+		void set(record_basic r)
+		{
+			operator=(r.r);
+		}
 		void operator=(crecord *rhs)
 		{
 			r = rhs;
 			check();
-		}
-		record_basic()
-		{
-		}
-		record_basic(crecord *r)
-		{
-			(*this) = (r);
-		}
-		void set(record_basic r)
-		{
-			(*this) = (r.r);
 		}
 		void check()
 		{

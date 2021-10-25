@@ -30,10 +30,10 @@ namespace skyrim
 	struct closure;
 	struct record_and_grup;
 
-	typedef grup_basic grup_high;
-	typedef record_basic record_high;
+	typedef grup_basic grup_implicit_downcast;
+	typedef record_basic record_implicit_downcast;
 
-	typedef grup_high iterator;
+	typedef grup_basic iterator;
 
 	typedef cgrup *grup_low;
 	typedef crecord *record_low;
@@ -48,7 +48,8 @@ namespace skyrim
 		{
 			g = nullptr;
 		}
-		grup_basic(grup_low low)
+		grup_basic(
+			grup_low low)
 		{
 			set(low);
 		}
@@ -92,11 +93,11 @@ namespace skyrim
 
 	struct grup_top : grup_basic
 	{
-		grup_top(int plugin, unsigned int top) :
-			grup_top(plugin, (const char *)&top)
+		grup_top(
+			int plugin, unsigned int top)
+			: grup_top(plugin, (const char *)&top)
 		{
-			printf("grup_top uint %u const char %.4s\n", top, (const char *)&top );
-
+			printf("grup_top uint %u const char %.4s\n", top, (const char *)&top);
 		}
 		grup_top(int plugin, const char *top)
 			: grup_basic(esp_top(get_plugins()[plugin], top))
@@ -111,7 +112,8 @@ namespace skyrim
 		any()
 		{
 		}
-		any(iterator &i)
+		any(
+			iterator &i)
 		{
 			it = &i;
 		}
@@ -123,41 +125,52 @@ namespace skyrim
 		}
 	};
 
+	typedef any here;
+
 	template <unsigned int intended_group_type = 100, typename next = any>
 	struct grup : grup_basic
 	{
-		grup(int plugin = 5)
+		unsigned int N = intended_group_type;
+		typedef next T;
+		grup(
+			const grup &) = delete;
+		grup(
+			const char *top, int plugin)
 		{
-			if (intended_group_type > 100)
-				this->set(grup_top(plugin, intended_group_type).g);
+			operator=(grup_top(plugin, top));
 		}
-		grup(const char *top, int plugin)
+		grup(
+			iterator &i)
 		{
-			(*this) = grup_top(plugin, top);
+			operator=(i.next_grup());
 		}
-		grup(iterator &i)
+		grup(
+			int plugin = 5)
 		{
-			(*this) = i.next_grup();
+			if (N > 100)
+				operator=(grup_top(plugin, N).g);
 		}
 		template <typename deduced>
-		void operator/(deduced &rhs)
+		void operator/(
+			deduced &rhs)
 		{
 			at_any(rhs);
 		}
-		void operator=(const grup_high &rhs)
+		void operator=(
+			const grup_implicit_downcast &rhs)
 		{
 			this->set(rhs.g);
 			int group_type = this->hed().group_type;
 			assertc(
-				intended_group_type >= 100 ||
-				intended_group_type == group_type);
+				N >= 100 ||
+				N == group_type);
 		}
-		// passthrough-operator()
 		template <typename deduced>
-		bool operator()(deduced &target)
+		bool operator()(
+			deduced &target)
 		{
 			while (this->under())
-				if (next(*this)(target))
+				if (T(*this)(target))
 					return true;
 			return false;
 		}
@@ -173,11 +186,13 @@ namespace skyrim
 		record()
 		{
 		}
-		record(iterator &i)
+		record(
+			iterator &i)
 		{
 			(*this) = i.next_record();
 		}
-		void operator=(const record_high &rhs)
+		void operator=(
+			const record_implicit_downcast &rhs)
 		{
 			this->set(rhs.r);
 		}
@@ -186,25 +201,29 @@ namespace skyrim
 	template <typename next>
 	struct closure : any
 	{
-		next last;
+		typedef next T;
+		T match;
 		void *pointer = nullptr;
-		closure(void *pass) : pointer(pass)
+		closure(
+			void *pass) : pointer(pass)
 		{
 		}
-		closure<next> &operator/(const char *id)
+		auto &operator/(
+			const char *id)
 		{
 			pointer = (void *)id;
 			return *this;
 		}
 		template <typename deduced>
-		bool operator()(deduced &target)
+		bool operator()(
+			deduced &target)
 		{
 			while (this->it->under())
 			{
-				next temp = next(*this->it);
+				T temp = T(*this->it);
 				if (temp(target))
 				{
-					target.last = temp;
+					target.match = temp;
 					return true;
 				}
 			}
@@ -216,9 +235,9 @@ namespace skyrim
 	struct record_with_id : record
 	{
 		bool operator()(
-			closure<record_with_id> &closure)
+			closure<record_with_id> &target)
 		{
-			return this->editor_id((const char *)closure.pointer);
+			return this->editor_id((const char *)target.pointer);
 		}
 	};
 
@@ -229,14 +248,17 @@ namespace skyrim
 		record_and_grup()
 		{
 		}
-		record_and_grup(iterator &i)
+		record_and_grup(
+			iterator &i)
 		{
 			one = i.next_record();
 			two = i.next_grup();
 		}
-		void operator=(const record_and_grup &rhs)
+		void operator=(
+			const record_and_grup &rhs)
 		{
 			one = rhs.one;
+			printf("try downcast on me\n");
 			two = rhs.two;
 		}
 		// passthru

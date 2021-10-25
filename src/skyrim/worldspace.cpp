@@ -95,7 +95,7 @@ namespace skyrim
 		Subgroup(temporary, CellTemporaryChildren);
 	}
 	
-	void Exterior::Subgroup(grup<> subgroup, int group_type)
+	void Exterior::Subgroup(grup<> &subgroup, int group_type)
 	{
 		#if 0
 		if (!subgroup.valid()) {

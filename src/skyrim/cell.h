@@ -28,10 +28,9 @@ namespace skyrim
 	class Cell : public Record
 	{
 	public:
-		typedef grup<> subgroup;
-		subgroup persistent, temporary;
+		grup<> persistent, temporary;
 		uint16_t flags = 0;
-		Cell(record, grup<>);
+		Cell(record &, grup<> &);
 	};
 
 	class Interior : public Cell
@@ -43,7 +42,7 @@ namespace skyrim
 		Interior(record_and_grup &);
 		~Interior();
 		Interior *Init();
-		void Sift(subgroup &, int);
+		void Sift(grup<> &, int);
 		void Unload();
 		void PutCam();
 		void Update();
@@ -85,7 +84,7 @@ namespace skyrim
 		XCLC *xclc;
 		Exterior(record_and_grup &);
 		void Init();
-		void Subgroup(grup<>, int);
+		void Subgroup(grup<> &, int);
 	};
 
 	class Land : public Record

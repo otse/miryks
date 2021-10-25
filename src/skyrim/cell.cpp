@@ -1,6 +1,6 @@
 #include <skyrim/cell.h>
 
-Cell::Cell(record cell, grup<> g) : Record(cell)
+Cell::Cell(record &cell, grup<> &g) : Record(cell)
 {
     assertc(g.hed().group_type == CellChildren);
     printf("get nexts\n");
