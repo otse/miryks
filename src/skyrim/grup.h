@@ -103,15 +103,13 @@ namespace skyrim
 		any()
 		{
 		}
-		any(
-			iterator &i)
+		any(iterator &i)
 		{
 			it = &i;
 		}
 		// passthru
 		template <typename deduced>
-		bool operator<=(
-			deduced &rhs)
+		bool operator<=(deduced &rhs)
 		{
 			return deduced(*it)<=(rhs);
 		}
@@ -124,23 +122,19 @@ namespace skyrim
 	{
 		typedef grup_basic implicit_downcast; 
 		typedef next T;
-		grup(
-			const grup &) = delete;
+		grup(const grup &) = delete;
 		grup()
 		{
 		}
-		grup(
-			const char *top, int plugin = 5)
+		grup(const char *top, int plugin = 5)
 		{
 			operator=(grup_top(plugin, top));
 		}
-		grup(
-			iterator &i)
+		grup(iterator &i)
 		{
 			operator=(i.next_grup());
 		}
-		void operator=(
-			const implicit_downcast &rhs)
+		void operator=(const implicit_downcast &rhs)
 		{
 			this->set(rhs.g);
 			int group_type = this->hed().group_type;
@@ -149,8 +143,7 @@ namespace skyrim
 				intended_group_type == group_type);
 		}
 		template <typename deduced>
-		bool operator<=(
-			deduced &rhs)
+		bool operator<=(deduced &rhs)
 		{
 			while (this->under())
 				if (T(*this)<=(rhs))
@@ -165,13 +158,11 @@ namespace skyrim
 		record()
 		{
 		}
-		record(
-			iterator &i)
+		record(iterator &i)
 		{
 			(*this) = i.next_record();
 		}
-		void operator=(
-			const implicit_downcast &rhs)
+		void operator=(const implicit_downcast &rhs)
 		{
 			this->set(rhs.r);
 		}
@@ -183,19 +174,16 @@ namespace skyrim
 		typedef next T;
 		T match;
 		void *pointer = nullptr;
-		closure(
-			void *pass) : pointer(pass)
+		closure(void *pass) : pointer(pass)
 		{
 		}
-		auto &operator,(
-			const char *id)
+		auto &operator,(const char *id)
 		{
 			pointer = (void *)id;
 			return *this;
 		}
 		template <typename deduced>
-		bool operator<=(
-			deduced &rhs)
+		bool operator<=(deduced &rhs)
 		{
 			while (this->it->under())
 			{
@@ -213,8 +201,7 @@ namespace skyrim
 
 	struct record_with_id : record
 	{
-		bool operator<=(
-			closure<record_with_id> &rhs)
+		bool operator<=(closure<record_with_id> &rhs)
 		{
 			return this->editor_id((const char *)rhs.pointer);
 		}
@@ -227,22 +214,19 @@ namespace skyrim
 		record_and_grup()
 		{
 		}
-		record_and_grup(
-			iterator &i)
+		record_and_grup(iterator &i)
 		{
 			one = i.next_record();
 			two = i.next_grup();
 		}
-		void operator=(
-			const record_and_grup &rhs)
+		void operator=(const record_and_grup &rhs)
 		{
 			one = rhs.one;
 			printf("try downcast on me\n");
 			two = rhs.two;
 		}
 		// passthru
-		bool operator<=(
-			closure<record_and_grup> &rhs)
+		bool operator<=(closure<record_and_grup> &rhs)
 		{
 			return one.editor_id((const char *)rhs.pointer);
 		}
