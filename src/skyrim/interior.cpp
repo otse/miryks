@@ -55,9 +55,10 @@ namespace skyrim
 
 	struct maker : record
 	{
-		bool operator()(closure<maker> &target)
+		bool operator<=(
+			closure<maker> &rhs)
 		{
-			Interior *interior = (Interior *)target.pointer;
+			Interior *interior = (Interior *)rhs.pointer;
 			if (this->is_type(REFR))
 			{
 				Reference *reference = new Reference(*this);

@@ -10,10 +10,10 @@
 
 namespace skyrim
 {
-	constexpr static unsigned int cells = 1280066883;
-	constexpr static unsigned int races = 1162035538;
+	static const char *const cells = "CELL";
+	static const char *const races = "RACE";
 
-	// grup passthru stuff
+	// grup passthru stuff (with operator <=)
 
 	// it works
 	// but might seem pointless by an outsider
@@ -90,12 +90,6 @@ namespace skyrim
 
 	struct grup_top : grup_basic
 	{
-		grup_top(
-			int plugin, unsigned int top)
-			: grup_top(plugin, (const char *)&top)
-		{
-			printf("grup_top uint %u const char %.4s\n", top, (const char *)&top);
-		}
 		grup_top(int plugin, const char *top)
 			: grup_basic(esp_top(get_plugins()[plugin], top))
 		{
@@ -116,9 +110,10 @@ namespace skyrim
 		}
 		// passthru
 		template <typename deduced>
-		bool operator()(deduced &target)
+		bool operator<=(
+			deduced &rhs)
 		{
-			return deduced(*it)(target);
+			return deduced(*it)<=(rhs);
 		}
 	};
 
@@ -140,20 +135,9 @@ namespace skyrim
 			operator=(grup_top(plugin, top));
 		}
 		grup(
-			unsigned int top, int plugin = 5)
-		{
-			operator=(grup_top(plugin, top));
-		}
-		grup(
 			iterator &i)
 		{
 			operator=(i.next_grup());
-		}
-		template <typename deduced>
-		auto operator<=(
-			deduced &rhs)
-		{
-			operator()(rhs);
 		}
 		void operator=(
 			const implicit_downcast &rhs)
@@ -165,11 +149,11 @@ namespace skyrim
 				intended_group_type == group_type);
 		}
 		template <typename deduced>
-		bool operator()(
-			deduced &target)
+		bool operator<=(
+			deduced &rhs)
 		{
 			while (this->under())
-				if (T(*this)(target))
+				if (T(*this)<=(rhs))
 					return true;
 			return false;
 		}
@@ -210,15 +194,15 @@ namespace skyrim
 			return *this;
 		}
 		template <typename deduced>
-		bool operator()(
-			deduced &target)
+		bool operator<=(
+			deduced &rhs)
 		{
 			while (this->it->under())
 			{
 				T temp = T(*this->it);
-				if (temp(target))
+				if (temp<=(rhs))
 				{
-					target.match = temp;
+					rhs.match = temp;
 					return true;
 				}
 			}
@@ -229,10 +213,10 @@ namespace skyrim
 
 	struct record_with_id : record
 	{
-		bool operator()(
-			closure<record_with_id> &target)
+		bool operator<=(
+			closure<record_with_id> &rhs)
 		{
-			return this->editor_id((const char *)target.pointer);
+			return this->editor_id((const char *)rhs.pointer);
 		}
 	};
 
@@ -257,10 +241,10 @@ namespace skyrim
 			two = rhs.two;
 		}
 		// passthru
-		bool operator()(
-			closure<record_and_grup> &target)
+		bool operator<=(
+			closure<record_and_grup> &rhs)
 		{
-			return one.editor_id((const char *)target.pointer);
+			return one.editor_id((const char *)rhs.pointer);
 		}
 	};
 
