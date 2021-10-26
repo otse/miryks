@@ -18,7 +18,7 @@ namespace skyrim
 	// it works
 	// but might seem pointless by an outsider
 
-	template <unsigned int, typename>
+	template <typename, int>
 	struct grup;
 	struct grup_basic;
 	struct grup_top;
@@ -29,9 +29,6 @@ namespace skyrim
 	template <typename>
 	struct closure;
 	struct record_and_grup;
-
-	typedef grup_basic grup_implicit_downcast;
-	typedef record_basic record_implicit_downcast;
 
 	typedef grup_basic iterator;
 
@@ -127,15 +124,23 @@ namespace skyrim
 
 	typedef any here;
 
-	template <unsigned int intended_group_type = 100, typename next = any>
+	template <typename next = any, int intended_group_type = -1>
 	struct grup : grup_basic
 	{
-		unsigned int N = intended_group_type;
+		typedef grup_basic implicit_downcast; 
 		typedef next T;
 		grup(
 			const grup &) = delete;
+		grup()
+		{
+		}
 		grup(
-			const char *top, int plugin)
+			const char *top, int plugin = 5)
+		{
+			operator=(grup_top(plugin, top));
+		}
+		grup(
+			unsigned int top, int plugin = 5)
 		{
 			operator=(grup_top(plugin, top));
 		}
@@ -144,26 +149,20 @@ namespace skyrim
 		{
 			operator=(i.next_grup());
 		}
-		grup(
-			int plugin = 5)
-		{
-			if (N > 100)
-				operator=(grup_top(plugin, N).g);
-		}
 		template <typename deduced>
-		void operator/(
+		auto operator<=(
 			deduced &rhs)
 		{
-			at_any(rhs);
+			operator()(rhs);
 		}
 		void operator=(
-			const grup_implicit_downcast &rhs)
+			const implicit_downcast &rhs)
 		{
 			this->set(rhs.g);
 			int group_type = this->hed().group_type;
 			assertc(
-				N >= 100 ||
-				N == group_type);
+				intended_group_type == -1 ||
+				intended_group_type == group_type);
 		}
 		template <typename deduced>
 		bool operator()(
@@ -174,15 +173,11 @@ namespace skyrim
 					return true;
 			return false;
 		}
-		template <typename deduced>
-		void at_any(deduced &temp)
-		{
-			(*this)(temp);
-		}
 	};
 
 	struct record : record_basic
 	{
+		typedef record_basic implicit_downcast;
 		record()
 		{
 		}
@@ -192,7 +187,7 @@ namespace skyrim
 			(*this) = i.next_record();
 		}
 		void operator=(
-			const record_implicit_downcast &rhs)
+			const implicit_downcast &rhs)
 		{
 			this->set(rhs.r);
 		}
@@ -208,7 +203,7 @@ namespace skyrim
 			void *pass) : pointer(pass)
 		{
 		}
-		auto &operator/(
+		auto &operator,(
 			const char *id)
 		{
 			pointer = (void *)id;
@@ -285,8 +280,6 @@ namespace skyrim
 		CellChildren,
 		TopicChildren,
 		CellPersistentChildren,
-		CellTemporaryChildren,
-
-		GrupTypeAnything = 100
+		CellTemporaryChildren
 	};
 }

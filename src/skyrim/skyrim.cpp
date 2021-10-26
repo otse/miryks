@@ -10,10 +10,9 @@ namespace skyrim {
 
 	record get_race(const char *raceId)
 	{
-		closure < record_with_id > search;
-		search / raceId;
-		grup< races > (0) / search;
-		return search.match;
+		closure < record_with_id > closure;
+		(grup<>(races, 0)) <= (closure, raceId);
+		return closure.match;
 	}
 	
 }

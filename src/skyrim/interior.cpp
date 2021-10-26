@@ -16,17 +16,13 @@
 namespace skyrim
 {
 	Interior *dungeon = nullptr;
-	
+
 	Interior *get_interior(const char *id, int num)
 	{
-		Interior *interior = nullptr;
-		closure<record_and_grup> search;
-		search / id;
-		grup< cells ,
-			grup< 2 ,
-				grup< 3 >>> () / search;
-		interior = new Interior(search.match);
-		return interior;
+		closure<record_and_grup> target;
+		(grup<grup<grup<any,
+			3>,2>,0> (cells)) <= (target, id);
+		return new Interior(target.match);
 	}
 
 	Interior::Interior(record_and_grup &rng) : Cell(rng.one, rng.two)
@@ -85,7 +81,7 @@ namespace skyrim
 	{
 		closure<maker> make_records((void *)this);
 		subgroup.rewind();
-		subgroup.at_any(make_records);
+		subgroup <= make_records;
 	}
 
 	void Interior::PutCam()
