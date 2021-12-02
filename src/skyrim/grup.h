@@ -10,12 +10,13 @@
 
 namespace skyrim
 {
+
 	/*
 	experimental templated-grup-contracts,
 	read at your own risk
 	*/
 
-	#define passthru <=
+#define passthru <=
 
 	struct any;
 
@@ -109,6 +110,8 @@ namespace skyrim
 		template <typename deduced>
 		bool operator passthru(deduced &rhs)
 		{
+			if (std::is_same<any, deduced>::value)
+				printf("forever");
 			return deduced(*it) <= (rhs);
 		}
 	};
@@ -141,7 +144,7 @@ namespace skyrim
 				intended_group_type == group_type);
 		}
 		template <typename deduced>
-		bool operator passthru (deduced &rhs)
+		bool operator passthru(deduced &rhs)
 		{
 			while (this->under())
 				if (T(*this) <= rhs)
@@ -158,7 +161,7 @@ namespace skyrim
 		}
 		record(iterator &i)
 		{
-			(*this) = i.next_record();
+			operator=(i.next_record());
 		}
 		void operator=(const implicit_downcast &rhs)
 		{
@@ -197,7 +200,7 @@ namespace skyrim
 
 	struct record_with_id : record
 	{
-		bool operator passthru (closure<record_with_id> &rhs)
+		bool operator passthru(closure<record_with_id> &rhs)
 		{
 			return this->editor_id((const char *)rhs.pointer);
 		}
@@ -239,7 +242,7 @@ namespace skyrim
 
 	static const char *const cells = "CELL";
 	static const char *const races = "RACE";
-	
+
 	enum GrupTypes
 	{
 		Top = 0,

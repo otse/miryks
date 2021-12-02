@@ -4,9 +4,7 @@
 
 #include <skyrim/grup.h>
 
-// first attempt at templating the horrible grup.h code
-
-// leave this here, it is bad
+// first attempt at templating the old grup.h code
 
 #if 0
 namespace skyrim

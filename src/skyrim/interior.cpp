@@ -19,9 +19,8 @@ namespace skyrim
 
 	Interior *get_interior(const char *cellId, int num)
 	{
-		closure<record_and_grup> target(cellId);
-		grup<0, grup<2, grup<3, any>>> temp(cells);
-		temp <= target;
+		closure< record_and_grup > target(cellId);
+		(grup<0, grup<2, grup<3, any>>> (cells)) <= target;
 		return new Interior(target.match);
 	}
 
@@ -65,13 +64,13 @@ namespace skyrim
 				interior->refs.push_back(reference);
 				if (this->editor_id())
 					interior->edIds.emplace(this->editor_id(), reference);
-				/*if (reference->baseObject.valid())
+				if (reference->baseObject.valid())
 				{
 					if (reference->baseObject.is_types( thingsWithLabels ))
 						Refs::labelled.push_back(reference);
 					else if (reference->baseObject.is_type( MSTT ))
 						interior->mstts.push_back(reference);
-				}*/
+				}
 			}
 			return false;
 		}
@@ -80,7 +79,7 @@ namespace skyrim
 
 	void Interior::Sift(grup<> &subgroup, int group_type)
 	{
-		closure< maker > make_records((void *)this);
+		closure< maker > make_records(this);
 		subgroup.rewind();
 		subgroup <= make_records;
 	}

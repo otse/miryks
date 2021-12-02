@@ -19,30 +19,31 @@ GLFWwindow *window = nullptr;
 static bool cursorShowing = false;
 static bool hideOverlays = true;
 static bool f10 = false;
+static bool useFbo = true;
 
 void setupImgui();
 
 namespace dark
 {
-bool pressing_key(const char *id)
-{
-	return keys[id] == 1;
-}
+	bool pressing_key(const char *id)
+	{
+		return keys[id] == 1;
+	}
 
-bool holding_key(const char *id)
-{
-	return keys[id] >= 1;
-}
+	bool holding_key(const char *id)
+	{
+		return keys[id] >= 1;
+	}
 
-void now_you_see_me()
-{
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-}
+	void now_you_see_me()
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
 
-void now_you_dont()
-{
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-}
+	void now_you_dont()
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
 }
 
 static void toggle_cursor()
@@ -115,7 +116,6 @@ void dark::init()
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 }
-
 
 void imgui_calls()
 {
@@ -204,6 +204,11 @@ static void toggle_debug()
 		now_you_dont();
 }
 
+static void toggle_fbo()
+{
+	useFbo = !useFbo;
+}
+
 static void handle_esc()
 {
 	if (cameraCur == viewerCam)
@@ -279,7 +284,8 @@ void setupImgui()
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO &io = ImGui::GetIO(); (void)io;
+	ImGuiIO &io = ImGui::GetIO();
+	(void)io;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	ImFont *font1 = io.Fonts->AddFontDefault();
@@ -311,8 +317,8 @@ static void handle_my_keys()
 		yagrum_queue("", 5, true);
 	else if (pressing_key("f3"))
 		toggle_cursor();
-	//else if (pressing_key("f4"))
-	//	toggle_fbo();
+	else if (pressing_key("f4"))
+		toggle_fbo();
 	//else if (pressing("f5")) hotswap_plugin_and_dungeon();
 	//else if (pressing("f6")) reload_shaders();
 	//else if (pressing("f10")) toggle_render_stats();
@@ -326,12 +332,20 @@ static void handle_my_keys()
 
 void window_while_test()
 {
+	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
+	Quadt quad;
+
 	do
 	{
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		if (useFbo)
+			renderTargetDef->Bind();
+		else
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		Group::drawCalls = 0;
 
@@ -364,6 +378,11 @@ void window_while_test()
 
 		Material::Unuse(nullptr, nullptr);
 
+		if (useFbo) {
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			quad.Draw(renderTargetDef);
+		}
+		
 		imgui_calls();
 
 		ImGui::Render();
