@@ -14,7 +14,7 @@ namespace skyrim
 
 	struct any;
 
-	template <typename, int>
+	template <int, typename>
 	struct grup;
 	struct grup_basic;
 

@@ -106,6 +106,9 @@ namespace skyrim
 		{
 			return data<unsigned int *>("NAME");
 		}
+		inline bool is_reference() const {
+			return is_type("REFR");
+		}
 	};
 
 }

@@ -17,15 +17,15 @@ namespace skyrim
 {
 	Interior *dungeon = nullptr;
 
-	Interior *get_interior(const char *id, int num)
+	Interior *get_interior(const char *cellId, int num)
 	{
-		closure<record_and_grup> target;
-		(grup<grup<grup<any,
-			3>,2>,0> (cells)) <= (target, id);
+		closure<record_and_grup> target(cellId);
+		grup<0, grup<2, grup<3, any>>> temp(cells);
+		temp <= target;
 		return new Interior(target.match);
 	}
 
-	Interior::Interior(record_and_grup &rng) : Cell(rng.one, rng.two)
+	Interior::Interior(RecordAndGrup &rng) : Cell(rng.one, rng.two)
 	{
 		printf("persistent n: %i\n", persistent.mixed().size);
 		printf("temporary n: %i\n", temporary.mixed().size);
@@ -80,7 +80,7 @@ namespace skyrim
 
 	void Interior::Sift(grup<> &subgroup, int group_type)
 	{
-		closure<maker> make_records((void *)this);
+		closure< maker > make_records((void *)this);
 		subgroup.rewind();
 		subgroup <= make_records;
 	}

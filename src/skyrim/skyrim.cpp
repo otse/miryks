@@ -4,15 +4,15 @@
 #include <skyrim/record.h>
 #include <skyrim/cell.h>
 
-namespace skyrim {
-
+namespace skyrim
+{
 	char *editme;
 
 	record get_race(const char *raceId)
 	{
-		closure < record_with_id > closure;
-		(grup<>(races, 0)) <= (closure, raceId);
+		closure<record_with_id> closure(raceId);
+		(grup<>(races, 0)) <= closure;
 		return closure.match;
 	}
-	
+
 }

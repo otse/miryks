@@ -10,21 +10,21 @@
 
 namespace skyrim
 {
-	static const char *const cells = "CELL";
-	static const char *const races = "RACE";
+	/*
+	experimental templated-grup-contracts,
+	read at your own risk
+	*/
 
-	// grup passthru stuff (with operator <=)
+	#define passthru <=
 
-	// it works
-	// but might seem pointless by an outsider
+	struct any;
 
-	template <typename, int>
+	template <int, typename>
 	struct grup;
 	struct grup_basic;
 	struct grup_top;
 	struct record;
 	struct record_basic;
-	struct record_check;
 
 	template <typename>
 	struct closure;
@@ -32,11 +32,10 @@ namespace skyrim
 
 	typedef grup_basic iterator;
 
-	typedef cgrup *grup_low;
-	typedef crecord *record_low;
-
 	struct grup_basic
 	{
+		typedef cgrup *grup_low;
+		typedef crecord *record_low;
 		typedef esp_dud *low_any;
 
 		grup_low g;
@@ -107,20 +106,19 @@ namespace skyrim
 		{
 			it = &i;
 		}
-		// passthru
 		template <typename deduced>
-		bool operator<=(deduced &rhs)
+		bool operator passthru(deduced &rhs)
 		{
-			return deduced(*it)<=(rhs);
+			return deduced(*it) <= (rhs);
 		}
 	};
 
 	typedef any here;
 
-	template <typename next = any, int intended_group_type = -1>
+	template <int intended_group_type = -1, typename next = any>
 	struct grup : grup_basic
 	{
-		typedef grup_basic implicit_downcast; 
+		typedef grup_basic implicit_downcast;
 		typedef next T;
 		grup(const grup &) = delete;
 		grup()
@@ -143,10 +141,10 @@ namespace skyrim
 				intended_group_type == group_type);
 		}
 		template <typename deduced>
-		bool operator<=(deduced &rhs)
+		bool operator passthru (deduced &rhs)
 		{
 			while (this->under())
-				if (T(*this)<=(rhs))
+				if (T(*this) <= rhs)
 					return true;
 			return false;
 		}
@@ -177,18 +175,16 @@ namespace skyrim
 		closure(void *pass) : pointer(pass)
 		{
 		}
-		auto &operator,(const char *id)
+		closure(const char *pass) : pointer((void *)pass)
 		{
-			pointer = (void *)id;
-			return *this;
 		}
 		template <typename deduced>
-		bool operator<=(deduced &rhs)
+		bool operator passthru(deduced &rhs)
 		{
 			while (this->it->under())
 			{
 				T temp = T(*this->it);
-				if (temp<=(rhs))
+				if (temp <= rhs)
 				{
 					rhs.match = temp;
 					return true;
@@ -201,7 +197,7 @@ namespace skyrim
 
 	struct record_with_id : record
 	{
-		bool operator<=(closure<record_with_id> &rhs)
+		bool operator passthru (closure<record_with_id> &rhs)
 		{
 			return this->editor_id((const char *)rhs.pointer);
 		}
@@ -225,18 +221,25 @@ namespace skyrim
 			printf("try downcast on me\n");
 			two = rhs.two;
 		}
-		// passthru
-		bool operator<=(closure<record_and_grup> &rhs)
+		bool operator passthru(closure<record_and_grup> &rhs)
 		{
 			return one.editor_id((const char *)rhs.pointer);
 		}
 	};
 
-	namespace passthrough
-	{
+	template <int T, typename Y>
+	using Grup = grup<T, Y>;
+	template <typename T>
+	using Closure = closure<T>;
+	typedef any Any;
+	typedef grup_basic GrupBasic;
+	typedef grup_top GrupTop;
+	typedef record_basic RecordBasic;
+	typedef record_and_grup RecordAndGrup;
 
-	};
-
+	static const char *const cells = "CELL";
+	static const char *const races = "RACE";
+	
 	enum GrupTypes
 	{
 		Top = 0,
