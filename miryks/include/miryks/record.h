@@ -23,8 +23,7 @@ namespace miryks
 		record_basic()
 		{
 		}
-		record_basic(
-			crecord *r)
+		record_basic(crecord *r)
 		{
 			operator=(r);
 		}

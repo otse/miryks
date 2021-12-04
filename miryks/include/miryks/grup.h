@@ -17,7 +17,7 @@ namespace miryks
 
 #define passthru <=
 
-	struct any;
+	struct inflection;
 
 	template <int, typename>
 	struct grup;
@@ -38,14 +38,12 @@ namespace miryks
 		typedef crecord *c_record;
 		typedef esp_dud *c_dud;
 
-		c_grup g;
-		unsigned int index;
+		c_grup g = nullptr;
+		unsigned int index = 0;
 		grup_basic()
 		{
-			g = nullptr;
 		}
-		grup_basic(
-			c_grup low)
+		grup_basic(c_grup low)
 		{
 			set(low);
 		}
@@ -71,23 +69,27 @@ namespace miryks
 		{
 			return index < mixed().size;
 		}
-		void *get(int i) {
-			return mixed().elements[i];
-		}
-		c_dud get_next()
+		template <typename T>
+		T get(int i)
 		{
-			return static_cast<c_dud>(get(index++));
+			return reinterpret_cast<T>(mixed().elements[i]);
 		}
 		c_grup next_grup()
 		{
-			return reinterpret_cast<c_grup>(get_next());
+			return get<c_grup>(index++);
 		}
 		c_record next_record()
 		{
-			return reinterpret_cast<c_record>(get_next());
+			return get<c_record>(index++);
 		}
-		const cgrup_header &hed() { return *g->hed; }
-		const revised_array &mixed() { return *g->mixed; }
+		const cgrup_header &hed()
+		{
+			return *g->hed;
+		}
+		const revised_array &mixed()
+		{
+			return *g->mixed;
+		}
 	};
 
 	struct grup_top : grup_basic
@@ -95,35 +97,14 @@ namespace miryks
 		grup_top(int plugin, const char *top)
 			: grup_basic(esp_top(get_plugins()[plugin], top))
 		{
-			printf("grup_top\n");
+			printf("grup_top %.4s\n", top);
 		}
 	};
 
-	struct any
-	{
-		iterator *it = nullptr;
-		any()
-		{
-		}
-		any(iterator &i)
-		{
-			it = &i;
-		}
-		template <typename deduced>
-		bool operator passthru(deduced &rhs)
-		{
-			if (std::is_same<any, deduced>::value)
-				printf("forever");
-			return deduced(*it) <= (rhs);
-		}
-	};
-
-	typedef any here;
-
-	template <int intended_group_type = -1, typename next = any>
+	template <int intended_group_type = -1, typename next = inflection>
 	struct grup : grup_basic
 	{
-		typedef grup_basic implicit_downcast;
+		typedef grup_basic implicit_up_or_downcast;
 		typedef next T;
 		grup(const grup &) = delete;
 		grup()
@@ -137,7 +118,7 @@ namespace miryks
 		{
 			operator=(i.next_grup());
 		}
-		void operator=(const implicit_downcast &rhs)
+		void operator=(const implicit_up_or_downcast &rhs)
 		{
 			this->set(rhs.g);
 			int group_type = this->hed().group_type;
@@ -157,7 +138,7 @@ namespace miryks
 
 	struct record : record_basic
 	{
-		typedef record_basic implicit_downcast;
+		typedef record_basic implicit_up_or_downcast;
 		record()
 		{
 		}
@@ -165,18 +146,39 @@ namespace miryks
 		{
 			operator=(i.next_record());
 		}
-		void operator=(const implicit_downcast &rhs)
+		void operator=(const implicit_up_or_downcast &rhs)
 		{
 			this->set(rhs.r);
 		}
 	};
 
+	struct inflection
+	{
+		grup_basic *save;
+		inflection(iterator &i)
+		{
+			save = &i;
+		}
+		template <typename deduced>
+		bool operator passthru(deduced &rhs)
+		{
+			if (std::is_same<inflection, deduced>::value)
+				printf("forever");
+			return deduced(*save) <= rhs;
+		}
+	};
+
 	template <typename next>
-	struct closure : any
+	struct closure
 	{
 		typedef next T;
 		T match;
+		grup_basic *save;
 		void *pointer = nullptr;
+		closure(iterator &i)
+		{
+			save = &i;
+		}
 		closure(void *pass) : pointer(pass)
 		{
 		}
@@ -186,9 +188,9 @@ namespace miryks
 		template <typename deduced>
 		bool operator passthru(deduced &rhs)
 		{
-			while (this->it->under())
+			while (save->under())
 			{
-				T temp = T(*this->it);
+				T temp = T(*save);
 				if (temp <= rhs)
 				{
 					rhs.match = temp;
@@ -197,7 +199,6 @@ namespace miryks
 			}
 			return false;
 		}
-		using any::any;
 	};
 
 	struct record_with_id : record
@@ -231,7 +232,7 @@ namespace miryks
 			return one.editor_id((const char *)rhs.pointer);
 		}
 	};
-	
+
 	static const char *const cells = "CELL";
 	static const char *const races = "RACE";
 

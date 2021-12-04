@@ -37,7 +37,7 @@ int main()
 	miryks::init();
 	miryks::load_data_files();
 	nif_test();
-	init();
+	dark::init();
 	load_yagrum();
 	renderer_init();
 	view_bucket_in_place();

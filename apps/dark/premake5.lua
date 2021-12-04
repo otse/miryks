@@ -40,9 +40,9 @@ project "dark"
 
 	includedirs {
 		"src/",
-		"../dep",
-		"../dep/imgui-1.83",
-		"../miryks/include",
+		"../../dep",
+		"../../dep/imgui-1.83",
+		"../../miryks/include",
 		"C:/New folder/",
 		"C:/New folder/zlib-1.2.11",
 		"C:/New folder/lz4-1.9.3/lib",
@@ -53,7 +53,7 @@ project "dark"
 	}
 	
 	libdirs {
-		"../miryks/lib",
+		"../../miryks/lib",
 		"C:/New folder/glfw-3.3.4-32/src/Release",
 		"C:/New folder/zlib-1.2.11-32/Release",
 		"C:/New folder/lz4-1.9.3-32/Release",

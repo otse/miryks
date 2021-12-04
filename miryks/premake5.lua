@@ -29,9 +29,8 @@ project "miryks"
 	defines { "_CRT_SECURE_NO_WARNINGS" }
 	
 	files {
-		"dep/**",
+		"../dep/**",
 		"src/**",
-		"lib/**",
 		"include/**",
 	}
 
@@ -41,10 +40,10 @@ project "miryks"
 	}
 
 	includedirs {
-		"../dep",
-		"../dep/imgui-1.83",
 		"include",
 		"src",
+		"../dep",
+		"../dep/imgui-1.83",
 		"C:/New folder/",
 		"C:/New folder/zlib-1.2.11",
 		"C:/New folder/lz4-1.9.3/lib",
