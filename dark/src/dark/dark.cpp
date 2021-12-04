@@ -1,37 +1,31 @@
 #include <png.h>
 
-#include <window.h>
-
+#include <dark/window.h>
 #include <dark/dark.h>
-#include <dark/files.h>
 
-#include <dark/player.h>
-
+#include <miryks/player.h>
 #include <miryks/cell.h>
 #include <miryks/actors.h>
 
-#include <overlays/overlays.h>
+#include <panels.h>
+
+#include <files.h>
 
 using namespace dark;
 using namespace miryks;
 
-#define READ_WHOLE true
-
 namespace dark
 {
-Monster *someDraugr = nullptr, *meanSkelly = nullptr;
-Char *someHuman = nullptr;
-Player *player1 = nullptr;
-std::map<const char *, int> keys;
-}
 
-namespace dark
-{
 void darkassert(bool e)
 {
 	assertc(e);
 }
 
+void view_bucket_in_place()
+{
+	view_in_place(get_res("clutter\\bucket02a.nif"));
+}
 }
 
 #include <opengl/camera.h>
@@ -40,7 +34,8 @@ void darkassert(bool e)
 int main()
 {
 	editme = get_text_file(EDIT_ME);
-	load_data_files();
+	miryks::init();
+	miryks::load_data_files();
 	nif_test();
 	init();
 	load_yagrum();
@@ -50,7 +45,7 @@ int main()
 	refs_init();
 	//load_world_space();
 #if 1
-	load_interior();
+	miryks::load_interior("GloomGen");
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	someDraugr->Place("gloomgendraugr");
@@ -66,10 +61,3 @@ int main()
 	window_while_test();
 	return 1;
 }
-
-#include <miryks/model.h>
-
-#include <opengl/scene.h>
-#include <opengl/group.h>
-#include <opengl/drawgroup.h>
-

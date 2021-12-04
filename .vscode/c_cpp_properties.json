@@ -3,11 +3,11 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/src",
+                "${workspaceFolder}/dark/src",
+                "${workspaceFolder}/miryks/src",
+                "${workspaceFolder}/miryks/include",
                 "${workspaceFolder}/dep",
                 "${workspaceFolder}/dep/imgui-1.83",
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/lib",
                 "${workspaceFolder}/include",
                 "C:/New folder/",
                 "C:/New folder/zlib-1.2.11",
