@@ -29,6 +29,8 @@ namespace miryks
 	}
 	}
 
+	bool showCursor = false;
+
 	char *editme;
 
 	int init()
@@ -129,7 +131,7 @@ namespace miryks
 		drawGroup = new DrawGroup(
 			model->baseGroup, translate(mat4(1.0), personCam->pos));
 		sceneDef->bigGroup->Add(drawGroup);
-		//now_you_dont();
+		showCursor = false;
 		cameraCur = viewerCam;
 		viewerCam->pos = drawGroup->aabb.center();
 		//viewerCam->pos = personCam->pos;

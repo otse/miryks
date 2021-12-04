@@ -104,7 +104,7 @@ namespace miryks
 	template <int intended_group_type = -1, typename next = inflection>
 	struct grup : grup_basic
 	{
-		typedef grup_basic implicit_up_or_downcast;
+		typedef grup_basic up_or_downcast;
 		typedef next T;
 		grup(const grup &) = delete;
 		grup()
@@ -118,7 +118,7 @@ namespace miryks
 		{
 			operator=(i.next_grup());
 		}
-		void operator=(const implicit_up_or_downcast &rhs)
+		void operator=(const up_or_downcast &rhs)
 		{
 			this->set(rhs.g);
 			int group_type = this->hed().group_type;
@@ -138,7 +138,7 @@ namespace miryks
 
 	struct record : record_basic
 	{
-		typedef record_basic implicit_up_or_downcast;
+		typedef record_basic up_or_downcast;
 		record()
 		{
 		}
@@ -146,7 +146,7 @@ namespace miryks
 		{
 			operator=(i.next_record());
 		}
-		void operator=(const implicit_up_or_downcast &rhs)
+		void operator=(const up_or_downcast &rhs)
 		{
 			this->set(rhs.r);
 		}

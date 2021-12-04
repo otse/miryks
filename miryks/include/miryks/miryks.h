@@ -22,6 +22,8 @@ namespace miryks
 	bool pressing_key(const char *);
 	bool holding_key(const char *);
 	}
+	
+	extern bool showCursor;
 
 	int init();
 	void load_data_files();

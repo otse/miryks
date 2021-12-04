@@ -24,17 +24,7 @@ void setupImgui();
 
 static void toggle_cursor()
 {
-	//if (cursorShowing)
-	//	now_you_dont();
-	//else
-	//	now_you_see_me();
-}
-
-void now_you_see_me() {
-
-}
-void now_you_dont() {
-	
+	showCursor = ! showCursor;
 }
 
 static void errorCallback(int error, const char *description)
@@ -54,8 +44,9 @@ static void cursorPosCallback(GLFWwindow *window, double x, double y)
 
 void dark::init()
 {
-	miryks::hooks::some_behavior = [](int a) {return false; };
-	
+	miryks::hooks::some_behavior = [](int a)
+	{ return false; };
+
 	glfwSetErrorCallback(errorCallback);
 
 	if (!glfwInit())
@@ -184,9 +175,9 @@ static void toggle_debug()
 {
 	hideOverlays = !hideOverlays;
 	if (!hideOverlays)
-		now_you_see_me();
+		showCursor = true;
 	else
-		now_you_dont();
+		showCursor = false;
 }
 
 static void toggle_fbo()
@@ -199,7 +190,7 @@ static void handle_esc()
 	if (cameraCur == viewerCam)
 	{
 		cameraCur = personCam;
-		now_you_dont();
+		showCursor = false;
 	}
 	else if (Cont::cur)
 		Cont::Hide();
@@ -344,6 +335,8 @@ void window_while_test()
 
 		handle_my_keys();
 
+		glfwSetInputMode(window, GLFW_CURSOR, showCursor ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+
 		cameraCur->Update(delta);
 
 		if (player1)
@@ -363,11 +356,12 @@ void window_while_test()
 
 		Material::Unuse(nullptr, nullptr);
 
-		if (useFbo) {
+		if (useFbo)
+		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			quad.Draw(renderTargetDef);
 		}
-		
+
 		imgui_calls();
 
 		ImGui::Render();
