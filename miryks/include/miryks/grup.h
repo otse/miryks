@@ -12,12 +12,12 @@ namespace miryks
 {
 	/*
 	experimental templated-grup-contracts,
-	read at your own risk
+	read at your own risk!!
 	*/
 
-#define passthru <=
+#define fat_arrow operator <=
 
-	struct inflection;
+	struct destination;
 
 	template <int, typename>
 	struct grup;
@@ -27,8 +27,10 @@ namespace miryks
 	struct record_basic;
 
 	template <typename>
-	struct closure;
+	struct grup_closure;
+
 	struct record_and_grup;
+	struct record_with_id;
 
 	typedef grup_basic iterator;
 
@@ -101,11 +103,13 @@ namespace miryks
 		}
 	};
 
-	template <int intended_group_type = -1, typename next = inflection>
+	template <int intended_group_type = -1, typename next = destination>
 	struct grup : grup_basic
 	{
-		typedef grup_basic up_or_downcast;
+		typedef grup_basic basic_cast;
 		typedef next T;
+		T last;
+		void *some_value;
 		grup(const grup &) = delete;
 		grup()
 		{
@@ -118,7 +122,7 @@ namespace miryks
 		{
 			operator=(i.next_grup());
 		}
-		void operator=(const up_or_downcast &rhs)
+		void operator=(const basic_cast &rhs)
 		{
 			this->set(rhs.g);
 			int group_type = this->hed().group_type;
@@ -126,19 +130,34 @@ namespace miryks
 				intended_group_type == -1 ||
 				intended_group_type == group_type);
 		}
-		template <typename deduced>
-		bool operator passthru(deduced &rhs)
+		template <typename anything>
+		bool fat_arrow(anything &rhs)
 		{
 			while (this->under())
 				if (T(*this) <= rhs)
 					return true;
 			return false;
 		}
+		template <typename type>
+		type &perform(void *some_value)
+		{
+			grup_closure<type> capture(some_value);
+			*this <= capture;
+			return capture.match;
+		}
+		record_and_grup &find_combo(const char *id)
+		{
+			return perform<record_and_grup>((void*)id);
+		}
+		record &find_rid(const char *id)
+		{
+			return perform<record_with_id>((void *)id);
+		}
 	};
 
 	struct record : record_basic
 	{
-		typedef record_basic up_or_downcast;
+		typedef record_basic basic_cast;
 		record()
 		{
 		}
@@ -146,51 +165,48 @@ namespace miryks
 		{
 			operator=(i.next_record());
 		}
-		void operator=(const up_or_downcast &rhs)
+		void operator=(const basic_cast &rhs)
 		{
 			this->set(rhs.r);
 		}
 	};
 
-	struct inflection
+	struct destination
 	{
-		grup_basic *save;
-		inflection(iterator &i)
+		iterator *save;
+		destination() {}
+		destination(iterator &i)
 		{
 			save = &i;
 		}
-		template <typename deduced>
-		bool operator passthru(deduced &rhs)
+		template <typename do_whatever>
+		bool fat_arrow(do_whatever &rhs)
 		{
-			if (std::is_same<inflection, deduced>::value)
-				printf("forever");
-			return deduced(*save) <= rhs;
+			return do_whatever(*save) <= rhs;
 		}
 	};
 
 	template <typename next>
-	struct closure
+	struct grup_closure : destination
 	{
+		using destination::destination;
 		typedef next T;
 		T match;
-		grup_basic *save;
 		void *pointer = nullptr;
-		closure(iterator &i)
+		grup_closure(void *some_value)
 		{
-			save = &i;
+			pointer = some_value;
 		}
-		closure(void *pass) : pointer(pass)
+		grup_closure(const char *editorId)
 		{
+			pointer = (void *)editorId;
 		}
-		closure(const char *pass) : pointer((void *)pass)
+		template <typename anything>
+		bool fat_arrow(anything &rhs)
 		{
-		}
-		template <typename deduced>
-		bool operator passthru(deduced &rhs)
-		{
-			while (save->under())
+			while (this->save->under())
 			{
-				T temp = T(*save);
+				T temp = T(*this->save);
 				if (temp <= rhs)
 				{
 					rhs.match = temp;
@@ -203,12 +219,12 @@ namespace miryks
 
 	struct record_with_id : record
 	{
-		bool operator passthru(closure<record_with_id> &rhs)
+		bool fat_arrow(grup_closure<record_with_id> &rhs)
 		{
 			return this->editor_id((const char *)rhs.pointer);
 		}
 	};
-
+	
 	struct record_and_grup
 	{
 		record one;
@@ -221,20 +237,16 @@ namespace miryks
 			one = i.next_record();
 			two = i.next_grup();
 		}
-		void operator=(const record_and_grup &rhs)
+		record_and_grup(const record_and_grup &rhs)
 		{
 			one = rhs.one;
-			printf("try downcast on me\n");
 			two = rhs.two;
 		}
-		bool operator passthru(closure<record_and_grup> &rhs)
+		bool fat_arrow(grup_closure<record_and_grup> &rhs)
 		{
 			return one.editor_id((const char *)rhs.pointer);
 		}
 	};
-
-	static const char *const cells = "CELL";
-	static const char *const races = "RACE";
 
 	enum GrupTypes
 	{

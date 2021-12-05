@@ -9,6 +9,8 @@
 #include <opengl/camera.h>
 #include <opengl/drawgroup.h>
 
+const char *races = Races;
+
 namespace miryks
 {
 	namespace hooks
@@ -79,9 +81,7 @@ namespace miryks
 
 	record get_race(const char *raceId, int num)
 	{
-		closure<record_with_id> closure(raceId);
-		(grup<>(races, num)) <= closure;
-		return closure.match;
+		return (grup<>(races, num)).find_rid(raceId);
 	}
 
 	void load_interior(const char *name)

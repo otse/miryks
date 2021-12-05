@@ -5,8 +5,6 @@
 
 #include <miryks/libs.h>
 
-// several useful things in here
-
 namespace miryks
 {
 	typedef unsigned int *formId;
@@ -15,7 +13,6 @@ namespace miryks
 
 	const char *getEditorIdOnly(const RECORD);
 	
-	// used by classes as a typedef Record
 	struct record_basic
 	{
 		crecord *r = nullptr;

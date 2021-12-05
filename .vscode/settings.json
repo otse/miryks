@@ -92,6 +92,15 @@
       "span": "cpp",
       "common.h": "c",
       "bsa.h": "c",
-      "nif.h": "c"
+      "nif.h": "c",
+      "*.rh": "cpp",
+      "cholesky": "cpp",
+      "eigenvalues": "cpp",
+      "geometry": "cpp",
+      "householder": "cpp",
+      "jacobi": "cpp",
+      "lu": "cpp",
+      "qr": "cpp",
+      "svd": "cpp"
     }
 }

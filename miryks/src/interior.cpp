@@ -13,17 +13,19 @@
 #include <opengl/camera.h>
 #include <opengl/lights.h>
 
+const char *cells = Cells;
+
 namespace miryks
 {
 	Interior *dungeon = nullptr;
 
 	Interior *get_interior(const char *cellId, int num)
 	{
-		closure< record_and_grup > closure(cellId);
-		grup<0,
-		grup<interior_cell_block,
-		grup<interior_cell_subblock>>> (cells) <= closure;
-		return new Interior(closure.match);
+		auto match =
+		(grup<0,
+		grup<2,
+		grup<3>>> (cells)).find_combo(cellId);
+		return new Interior(match);
 	}
 
 	Interior::Interior(record_and_grup &rng) : Cell(rng.one, rng.two)
@@ -57,7 +59,7 @@ namespace miryks
 	struct maker : record
 	{
 		bool operator<=(
-			closure<maker> &rhs)
+			grup_closure<maker> &rhs)
 		{
 			Interior *interior = (Interior *)rhs.pointer;
 			if (this->is_type(REFR))
@@ -81,9 +83,10 @@ namespace miryks
 
 	void Interior::Sift(grup<> &subgroup, int group_type)
 	{
-		closure<maker> make_records(this);
+		//grup_closure<maker> make_records(this);
+
 		subgroup.rewind();
-		subgroup <= make_records;
+		subgroup.perform<maker>(this);
 	}
 
 	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }

@@ -48,6 +48,7 @@
 #define LAND STRINGIFY(LAND)
 #define CLAS STRINGIFY(CLAS)
 #define GMST STRINGIFY(GMST)
+#define RACE STRINGIFY(RACE)
 
 #define References REFR
 #define Statics STAT
@@ -67,6 +68,7 @@
 #define Cells CELL
 #define Classes CLAS
 #define GameSettings GMST
+#define Races RACE
 
 // used for bitmasking dn't ask
 #define Things { "0", STAT, DOOR, FURN, BOOK, CONT, ARMO, WEAP, AMMO, MISC, ALCH, INGR, LIGH, MSTT, TREE }
