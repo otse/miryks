@@ -81,7 +81,7 @@ namespace miryks
 
 	record get_race(const char *raceId, int num)
 	{
-		return (grup<>(races, num)).find_rid(raceId);
+		return (grup_top<>(races, num)).find_rid(raceId);
 	}
 
 	void load_interior(const char *name)

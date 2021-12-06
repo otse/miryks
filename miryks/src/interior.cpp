@@ -22,7 +22,7 @@ namespace miryks
 	Interior *get_interior(const char *cellId, int num)
 	{
 		auto match =
-		(grup<0,
+		(grup_top<
 		grup<2,
 		grup<3>>> (cells)).find_combo(cellId);
 		return new Interior(match);

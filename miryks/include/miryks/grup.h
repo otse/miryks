@@ -22,7 +22,9 @@ namespace miryks
 	template <int, typename>
 	struct grup;
 	struct grup_basic;
+	template <typename>
 	struct grup_top;
+
 	struct record;
 	struct record_basic;
 
@@ -94,12 +96,12 @@ namespace miryks
 		}
 	};
 
-	struct grup_top : grup_basic
+	template <typename next = destination>
+	struct grup_top : grup<0, next>
 	{
-		grup_top(int plugin, const char *top)
-			: grup_basic(esp_top(get_plugins()[plugin], top))
+		grup_top(const char *top, int plugin = 0)
 		{
-			printf("grup_top %.4s\n", top);
+			this->set(esp_top(get_plugins()[plugin], top));
 		}
 	};
 
@@ -113,10 +115,6 @@ namespace miryks
 		grup(const grup &) = delete;
 		grup()
 		{
-		}
-		grup(const char *top, int plugin = 5)
-		{
-			operator=(grup_top(plugin, top));
 		}
 		grup(iterator &i)
 		{
@@ -187,12 +185,16 @@ namespace miryks
 	};
 
 	template <typename next>
-	struct grup_closure : destination
+	struct grup_closure
 	{
-		using destination::destination;
 		typedef next T;
+		iterator *save;
 		T match;
 		void *pointer = nullptr;
+		grup_closure(iterator &i)
+		{
+			save = &i;
+		}
 		grup_closure(void *some_value)
 		{
 			pointer = some_value;
@@ -204,9 +206,9 @@ namespace miryks
 		template <typename anything>
 		bool fat_arrow(anything &rhs)
 		{
-			while (this->save->under())
+			while (save->under())
 			{
-				T temp = T(*this->save);
+				T temp = T(*save);
 				if (temp <= rhs)
 				{
 					rhs.match = temp;
