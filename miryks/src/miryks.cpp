@@ -16,20 +16,20 @@ namespace miryks
 {
 	namespace hooks
 	{
-	bool (*some_behavior)(int) = 0;
+		bool (*some_behavior)(int) = 0;
 	}
 
 	namespace input
 	{
-	std::map<const char *, int> keys;
-	bool pressing_key(const char *id)
-	{
-		return keys[id] == 1;
-	}
-	bool holding_key(const char *id)
-	{
-		return keys[id] >= 1;
-	}
+		std::map<const char *, int> keys;
+		bool pressing_key(const char *id)
+		{
+			return keys[id] == 1;
+		}
+		bool holding_key(const char *id)
+		{
+			return keys[id] >= 1;
+		}
 	}
 
 	bool showCursor = false;
@@ -43,12 +43,12 @@ namespace miryks
 
 	void load_data_files()
 	{
-		get_plugins()[0] = load_plugin(PLUGIN_0);
-		get_plugins()[1] = load_plugin(PLUGIN_1);
-		get_plugins()[2] = load_plugin(PLUGIN_2);
-		get_plugins()[3] = load_plugin(PLUGIN_3);
-		get_plugins()[4] = load_plugin(PLUGIN_4);
-		get_plugins()[5] = load_plugin(PLUGIN_5, true);
+		get_plugins()[0] = load_plugin(MASTER_0);
+		get_plugins()[1] = load_plugin(MASTER_1);
+		get_plugins()[2] = load_plugin(MASTER_2);
+		get_plugins()[3] = load_plugin(MASTER_3);
+		get_plugins()[4] = load_plugin(MASTER_4);
+		get_plugins()[5] = load_plugin(PLUGIN_0, true);
 		assertc(get_plugins()[0]);
 		assertc(get_plugins()[1]);
 		assertc(get_plugins()[2]);
@@ -80,13 +80,13 @@ namespace miryks
 		get_archives()[17] = load_archive(ARCHIVE_17);
 	}
 
-	record_with_id_and_grup get_interior_cell(const char *id, int num = 5)
+	record_with_id_and_grup get_interior_cell(const char *cellId, int num)
 	{
-		return
-		(grup_top<
+		return (
+		grup_top<
 		grup<2,
-		grup<3>>> (cells, num))
-		.find_record_with_id_and_grup(id);
+		grup<3>>>(cells, num))
+		.find_record_with_id_and_grup(cellId);
 	}
 
 	record get_race(const char *raceId, int num)
@@ -113,7 +113,7 @@ namespace miryks
 	void reload_plugin()
 	{
 		free_plugin(&get_plugins()[5]);
-		get_plugins()[5] = load_plugin(PLUGIN_5, true);
+		get_plugins()[5] = load_plugin(PLUGIN_0, true);
 	}
 
 	void reload_dungeon()

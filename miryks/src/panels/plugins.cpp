@@ -103,12 +103,12 @@ void overlay_plugins()
 	ImGui::Begin("Plugin", nullptr, flags);
 
 	static const char *items[] = {
-		PLUGIN_0,
-		PLUGIN_1,
-		PLUGIN_2,
-		PLUGIN_3,
-		PLUGIN_4,
-		PLUGIN_5
+		MASTER_0,
+		MASTER_1,
+		MASTER_2,
+		MASTER_3,
+		MASTER_4,
+		PLUGIN_0
 	};
 
 	static int current = 5;

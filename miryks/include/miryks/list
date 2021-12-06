@@ -1,11 +1,12 @@
 #define EDIT_ME    "editme.txt"
 
-#define PLUGIN_0   "Skyrim.esm"
-#define PLUGIN_1   "Update.esm"
-#define PLUGIN_2   "Dawnguard.esm"
-#define PLUGIN_3   "HearthFires.esm"
-#define PLUGIN_4   "Dragonborn.esm"
-#define PLUGIN_5   "Gloom.esp"
+#define MASTER_0   "Skyrim.esm"
+#define MASTER_1   "Update.esm"
+#define MASTER_2   "Dawnguard.esm"
+#define MASTER_3   "HearthFires.esm"
+#define MASTER_4   "Dragonborn.esm"
+
+#define PLUGIN_0   "Gloom.esp"
 
 #define ARCHIVE_0  "Skyrim - Misc.bsa"
 #define ARCHIVE_1  "Skyrim - Shaders.bsa"
