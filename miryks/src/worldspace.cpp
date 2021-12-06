@@ -29,7 +29,7 @@ namespace miryks
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(record_and_grup &capture) : Record(capture.one)
+	WorldSpace::WorldSpace(record_with_id_and_grup &capture) : Record(capture.one)
 	{
 		childs = capture.two;
 		assertc(childs.hed().group_type == world_children);
@@ -81,7 +81,7 @@ namespace miryks
 		}
 	}
 
-	Exterior::Exterior(record_and_grup &capture) : Cell(capture.one, capture.two)
+	Exterior::Exterior(record_with_id_and_grup &capture) : Cell(capture.one, capture.two)
 	{
 		worldSpace = nullptr;
 		land = nullptr;

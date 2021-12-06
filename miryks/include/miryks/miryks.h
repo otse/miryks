@@ -16,14 +16,6 @@ namespace miryks
 	{
 	extern bool (*some_behavior)(int);
 	}
-	namespace input
-	{
-	extern std::map<const char *, int> keys;
-	bool pressing_key(const char *);
-	bool holding_key(const char *);
-	}
-	
-	extern bool showCursor;
 
 	int init();
 	void load_data_files();
@@ -35,14 +27,14 @@ namespace miryks
 
 	extern char *editme;
 
-	struct any;
-
 	template <int, typename>
 	struct grup;
 	struct grup_basic;
 
 	struct record;
 	struct record_basic;
+	struct record_with_id;
+	struct record_with_id_and_grup;
 
 	typedef record_basic Record;
 
@@ -84,11 +76,23 @@ namespace miryks
 
 	Keyf *load_keyframes_from_disk(const char *);
 
-	record get_race(const char *, int = 0);
+	record get_race(const char *, int);
+	record_with_id_and_grup get_interior_cell(const char *, int);
 }
 
 namespace miryks
 {
+	Interior *get_interior(const char *, int);
+	WorldSpace *get_world_space(const char *, int);
+
+	namespace input
+	{
+	extern std::map<const char *, int> keys;
+	bool pressing_key(const char *);
+	bool holding_key(const char *);
+	}
+	
+	extern bool showCursor;
 	extern Player *player1;
 	extern Monster *someDraugr, *meanSkelly;
 	extern Char *someHuman;

@@ -9,6 +9,7 @@
 #include <opengl/camera.h>
 #include <opengl/drawgroup.h>
 
+const char *cells = Cells;
 const char *races = Races;
 
 namespace miryks
@@ -79,6 +80,15 @@ namespace miryks
 		get_archives()[17] = load_archive(ARCHIVE_17);
 	}
 
+	record_with_id_and_grup get_interior_cell(const char *id, int num = 5)
+	{
+		return
+		(grup_top<
+		grup<2,
+		grup<3>>> (cells, num))
+		.find_record_with_id_and_grup(id);
+	}
+
 	record get_race(const char *raceId, int num)
 	{
 		return (grup_top<>(races, num)).find_record_with_id(raceId);
@@ -91,7 +101,7 @@ namespace miryks
 
 	void load_world_space(const char *name)
 	{
-		worldSpace = get_world_space(name)->Init();
+		worldSpace = get_world_space(name, 5)->Init();
 	}
 
 	void third_person()

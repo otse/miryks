@@ -16,10 +16,6 @@ namespace miryks
 	class WorldSpace;
 	class Land;
 
-	Interior *get_interior(const char *, int = 5);
-
-	WorldSpace *get_world_space(const char *, int = 5);
-
 	extern Interior *dungeon;
 	extern WorldSpace *worldSpace;
 
@@ -37,7 +33,7 @@ namespace miryks
 		std::vector<Reference *> refs, labels, mstts;
 		std::map<std::string, Reference *> edIds;
 
-		Interior(record_and_grup &);
+		Interior(record_with_id_and_grup);
 		~Interior();
 		Interior *Init();
 		void Sift(grup<> &, int);
@@ -64,7 +60,7 @@ namespace miryks
 		grup<> childs;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
-		WorldSpace(record_and_grup &);
+		WorldSpace(record_with_id_and_grup &);
 		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);
@@ -80,7 +76,7 @@ namespace miryks
 		WorldSpace *worldSpace;
 		Land *land;
 		XCLC *xclc;
-		Exterior(record_and_grup &);
+		Exterior(record_with_id_and_grup &);
 		void Init();
 		void Subgroup(grup<> &, int);
 	};

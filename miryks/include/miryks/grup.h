@@ -31,8 +31,8 @@ namespace miryks
 	template <typename>
 	struct grup_closure;
 
-	struct record_and_grup;
 	struct record_with_id;
+	struct record_with_id_and_grup;
 
 	typedef grup_basic iterator;
 
@@ -143,9 +143,9 @@ namespace miryks
 			*this <= capture;
 			return capture.match;
 		}
-		record_and_grup &find_record_and_grup(const char *id)
+		record_with_id_and_grup &find_record_with_id_and_grup(const char *id)
 		{
-			return perform<record_and_grup>((void*)id);
+			return perform<record_with_id_and_grup>((void*)id);
 		}
 		record &find_record_with_id(const char *id)
 		{
@@ -184,6 +184,8 @@ namespace miryks
 		}
 	};
 
+	// todo goal is to refractor closure into destination
+	// but this is difficult
 	template <typename next>
 	struct grup_closure
 	{
@@ -227,24 +229,24 @@ namespace miryks
 		}
 	};
 	
-	struct record_and_grup
+	struct record_with_id_and_grup
 	{
 		record one;
 		grup<> two;
-		record_and_grup()
+		record_with_id_and_grup()
 		{
 		}
-		record_and_grup(iterator &i)
+		record_with_id_and_grup(iterator &i)
 		{
 			one = i.next_record();
 			two = i.next_grup();
 		}
-		record_and_grup(const record_and_grup &rhs)
+		record_with_id_and_grup(const record_with_id_and_grup &rhs)
 		{
 			one = rhs.one;
 			two = rhs.two;
 		}
-		bool fat_arrow(grup_closure<record_and_grup> &rhs)
+		bool fat_arrow(grup_closure<record_with_id_and_grup> &rhs)
 		{
 			return one.editor_id((const char *)rhs.pointer);
 		}

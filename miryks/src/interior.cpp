@@ -13,22 +13,16 @@
 #include <opengl/camera.h>
 #include <opengl/lights.h>
 
-const char *cells = Cells;
-
 namespace miryks
 {
 	Interior *dungeon = nullptr;
 
 	Interior *get_interior(const char *cellId, int num)
 	{
-		record_and_grup match =
-		(grup_top<
-		grup<2,
-		grup<3>>> (cells, num)).find_record_and_grup(cellId);
-		return new Interior(match);
+		return new Interior(get_interior_cell(cellId, num));
 	}
 
-	Interior::Interior(record_and_grup &rng) : Cell(rng.one, rng.two)
+	Interior::Interior(record_with_id_and_grup rng) : Cell(rng.one, rng.two)
 	{
 		printf("persistent n: %i\n", persistent.mixed().size);
 		printf("temporary n: %i\n", temporary.mixed().size);

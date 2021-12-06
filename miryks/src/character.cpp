@@ -9,7 +9,7 @@ namespace miryks {
     Char::Char(const char *raceId)
 	{
 		anim = nullptr;
-		race = get_race(raceId);
+		race = get_race(raceId, 0);
 		skel = new Skel(race);
 		hat = head = body = hands = feet = nullptr;
 		const bool beggar = true;

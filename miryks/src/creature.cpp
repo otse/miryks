@@ -13,7 +13,7 @@ namespace miryks
 	{
 		anim = nullptr;
 		drawGroup = nullptr;
-		race = get_race(raceId);
+		race = get_race(raceId, 0);
 		skel = new Skel(race);
 		modelSkinned = new ModelSkinned(path);
 	}
