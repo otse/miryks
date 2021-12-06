@@ -82,16 +82,19 @@ namespace miryks
 
 	record_with_id_and_grup get_interior_cell(const char *cellId, int num)
 	{
-		return (
-		grup_top<
+		return
+		find_record_with_id_and_grup(
+		(grup_top<
 		grup<2,
-		grup<3>>>(cells, num))
-		.find_record_with_id_and_grup(cellId);
+		grup<3>>>(cells, num)),
+		cellId);
 	}
 
 	record get_race(const char *raceId, int num)
 	{
-		return (grup_top<>(races, num)).find_record_with_id(raceId);
+		return find_record_with_id(
+		grup_top<>(races, num),
+		raceId);
 	}
 
 	void load_interior(const char *name)

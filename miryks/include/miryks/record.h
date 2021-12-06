@@ -44,7 +44,7 @@ namespace miryks
 		{
 			return !!r;
 		}
-		inline const crecord_header &hed() const
+		inline const crecord_header &rhed() const
 		{
 			return *r->hed;
 		}
@@ -58,7 +58,7 @@ namespace miryks
 		}
 		inline bool is_type(signature sgn) const
 		{
-			return *(unsigned int *)sgn == hed().sgn;
+			return *(unsigned int *)sgn == rhed().sgn;
 		}
 		inline bool is_types(const std::vector<const char *> &sgns) const
 		{

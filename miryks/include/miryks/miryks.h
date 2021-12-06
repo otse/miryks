@@ -27,12 +27,14 @@ namespace miryks
 
 	extern char *editme;
 
-	// grup stuffs:
 	template <int, typename>
 	struct grup;
 	struct grup_basic;
 	struct record;
 	struct record_basic;
+	template <typename>
+	struct grup_closure;
+
 	struct record_with_id;
 	struct record_with_id_and_grup;
 

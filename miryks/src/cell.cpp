@@ -2,17 +2,17 @@
 
 namespace miryks
 {
-    Cell::Cell(record &cell, grup<> &g) : Record(cell)
+    Cell::Cell(record_with_id_and_grup rng) : Record(rng)
     {
-        assertc(g.hed().group_type == cell_children);
+        assertc(rng.ghed().group_type == cell_children);
         printf("get nexts\n");
 
-        grup<> first, second;
+        grup_basic first, second;
 
-        first = g.next_grup();
-        second = g.next_grup();
+        first = rng.next_grup();
+        second = rng.next_grup();
 
-        if (first.hed().group_type == cell_persistent_children)
+        if (first.ghed().group_type == cell_persistent_children)
         {
             printf("set persistent and temporary\n");
             persistent = first;
@@ -20,6 +20,6 @@ namespace miryks
         }
         else
             temporary = first;
-        flags = *cell.data<uint16_t *>("DATA");
+        flags = *rng.data<uint16_t *>("DATA");
     }
 }

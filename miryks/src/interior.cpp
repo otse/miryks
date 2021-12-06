@@ -22,7 +22,7 @@ namespace miryks
 		return new Interior(get_interior_cell(cellId, num));
 	}
 
-	Interior::Interior(record_with_id_and_grup rng) : Cell(rng.one, rng.two)
+	Interior::Interior(record_with_id_and_grup rng) : Cell(rng)
 	{
 		printf("persistent n: %i\n", persistent.mixed().size);
 		printf("temporary n: %i\n", temporary.mixed().size);
@@ -46,6 +46,9 @@ namespace miryks
 	{
 		for (Reference *ref : refs)
 			delete ref;
+		refs.clear();
+		Refs::labelled.clear();
+		mstts.clear();
 	}
 
 	auto thingsWithLabels = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
@@ -55,8 +58,8 @@ namespace miryks
 		bool operator<=(
 			grup_closure<maker> &rhs)
 		{
-			Interior *interior = (Interior *)rhs.pointer;
-			if (this->is_type(REFR))
+			Interior *interior = (Interior *)rhs.some_value;
+			if (this->is_reference())
 			{
 				Reference *reference = new Reference(*this);
 				interior->refs.push_back(reference);
@@ -72,7 +75,7 @@ namespace miryks
 			}
 			return false;
 		}
-		using record::record; // needed for template inheritance
+		//using record::record; // needed for template inheritance
 	};
 
 	void Interior::Sift(grup<> &subgroup, int group_type)
@@ -80,7 +83,7 @@ namespace miryks
 		//grup_closure<maker> make_records(this);
 
 		subgroup.rewind();
-		subgroup.perform<maker>(this);
+		subgroup.set_user_data<maker>(this);
 	}
 
 	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
@@ -92,6 +95,7 @@ namespace miryks
 
 	void Interior::PutCam()
 	{
+		printf("putcam");
 		for (auto ref : refs | std::views::reverse)
 		{
 			if (*ref->base() == 0x00000032) // coc marker heading
@@ -132,9 +136,9 @@ namespace miryks
 
 	void Interior::Update()
 	{
-		Refs::Nearby();
+		//Refs::Nearby();
 
-		for (Reference *mstt : mstts)
-			mstt->model->Misty();
+		//for (Reference *mstt : mstts)
+		//	mstt->model->Misty();
 	}
 }

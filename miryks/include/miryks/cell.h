@@ -24,7 +24,7 @@ namespace miryks
 	public:
 		grup<> persistent, temporary;
 		uint16_t flags = 0;
-		Cell(record &, grup<> &);
+		Cell(record_with_id_and_grup);
 	};
 
 	class Interior : public Cell
@@ -76,7 +76,7 @@ namespace miryks
 		WorldSpace *worldSpace;
 		Land *land;
 		XCLC *xclc;
-		Exterior(record_with_id_and_grup &);
+		Exterior(record_with_id_and_grup);
 		void Init();
 		void Subgroup(grup<> &, int);
 	};

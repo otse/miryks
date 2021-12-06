@@ -29,10 +29,10 @@ namespace miryks
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(record_with_id_and_grup &capture) : Record(capture.one)
+	WorldSpace::WorldSpace(record_with_id_and_grup &capture) : Record(capture)
 	{
-		childs = capture.two;
-		assertc(childs.hed().group_type == world_children);
+		childs = capture;
+		assertc(childs.ghed().group_type == world_children);
 		sceneDef->ambient = vec3(127.f / 255.f);
 		printf("new WorldSpace: %s\n", data<const char *>("FULL"));
 		formId xlcn = data<formId>("XLCN");
@@ -81,7 +81,7 @@ namespace miryks
 		}
 	}
 
-	Exterior::Exterior(record_with_id_and_grup &capture) : Cell(capture.one, capture.two)
+	Exterior::Exterior(record_with_id_and_grup rng) : Cell(rng)
 	{
 		worldSpace = nullptr;
 		land = nullptr;

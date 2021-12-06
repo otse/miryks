@@ -233,7 +233,7 @@ namespace miryks
 		{
 			auto edId = baseObject.editor_id();
 			
-			printf("ref.cpp cant become %.4s edid %s\n", (char *)&baseObject.hed().sgn, edId);
+			printf("ref.cpp cant become %.4s edid %s\n", (char *)&baseObject.rhed().sgn, edId);
 			
 			baseObject = nullptr; // invalidate
 		}
@@ -248,7 +248,7 @@ namespace miryks
 				int i = 0;
 				for (auto thing : Things)
 				{
-					if (*(unsigned int *)thing == baseObject.hed().sgn) {
+					if (*(unsigned int *)thing == baseObject.rhed().sgn) {
 						drawGroup->mask = 1 << i;
 						break;
 					}

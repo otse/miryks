@@ -17,7 +17,7 @@ namespace miryks
 
 #define fat_arrow operator <=
 
-	struct destination;
+	struct grup_destination;
 
 	template <int, typename>
 	struct grup;
@@ -35,6 +35,9 @@ namespace miryks
 	struct record_with_id_and_grup;
 
 	typedef grup_basic iterator;
+
+	record &find_record_with_id(const char *);
+	record_with_id_and_grup &find_record_with_id_and_grup(const char *);
 
 	struct grup_basic
 	{
@@ -86,7 +89,7 @@ namespace miryks
 		{
 			return get<c_record>(index++);
 		}
-		const cgrup_header &hed()
+		const cgrup_header &ghed()
 		{
 			return *g->hed;
 		}
@@ -96,7 +99,7 @@ namespace miryks
 		}
 	};
 
-	template <typename next = destination>
+	template <typename next = grup_destination>
 	struct grup_top : grup<0, next>
 	{
 		grup_top(const char *top, int plugin)
@@ -105,13 +108,11 @@ namespace miryks
 		}
 	};
 
-	template <int intended_group_type = -1, typename next = destination>
+	template <int intended_group_type = -1, typename next = grup_destination>
 	struct grup : grup_basic
 	{
 		typedef grup_basic basic_cast;
 		typedef next T;
-		T last;
-		void *some_value;
 		grup(const grup &) = delete;
 		grup()
 		{
@@ -123,7 +124,7 @@ namespace miryks
 		void operator=(const basic_cast &rhs)
 		{
 			this->set(rhs.g);
-			int group_type = this->hed().group_type;
+			int group_type = this->ghed().group_type;
 			assertc(
 				intended_group_type == -1 ||
 				intended_group_type == group_type);
@@ -137,19 +138,11 @@ namespace miryks
 			return false;
 		}
 		template <typename type>
-		type &perform(void *some_value)
+		inline type &set_user_data(void *some_value)
 		{
 			grup_closure<type> capture(some_value);
 			*this <= capture;
 			return capture.match;
-		}
-		record_with_id_and_grup &find_record_with_id_and_grup(const char *id)
-		{
-			return perform<record_with_id_and_grup>((void*)id);
-		}
-		record &find_record_with_id(const char *id)
-		{
-			return perform<record_with_id>((void *)id);
 		}
 	};
 
@@ -169,11 +162,10 @@ namespace miryks
 		}
 	};
 
-	struct destination
+	struct grup_destination
 	{
 		iterator *save;
-		destination() {}
-		destination(iterator &i)
+		grup_destination(iterator &i)
 		{
 			save = &i;
 		}
@@ -184,26 +176,19 @@ namespace miryks
 		}
 	};
 
-	// todo goal is to refractor closure into destination
-	// but this is difficult
 	template <typename next>
 	struct grup_closure
 	{
 		typedef next T;
 		iterator *save;
 		T match;
-		void *pointer = nullptr;
+		void *some_value = nullptr;
 		grup_closure(iterator &i)
 		{
 			save = &i;
 		}
-		grup_closure(void *some_value)
+		grup_closure(void *some_value) : some_value(some_value)
 		{
-			pointer = some_value;
-		}
-		grup_closure(const char *editorId)
-		{
-			pointer = (void *)editorId;
 		}
 		template <typename anything>
 		bool fat_arrow(anything &rhs)
@@ -220,37 +205,45 @@ namespace miryks
 			return false;
 		}
 	};
-
+	
 	struct record_with_id : record
 	{
 		bool fat_arrow(grup_closure<record_with_id> &rhs)
 		{
-			return this->editor_id((const char *)rhs.pointer);
+			return this->editor_id((const char *)rhs.some_value);
 		}
 	};
-	
-	struct record_with_id_and_grup
+
+	struct record_with_id_and_grup : record, grup<>
 	{
-		record one;
-		grup<> two;
 		record_with_id_and_grup()
 		{
 		}
-		record_with_id_and_grup(iterator &i)
+		record_with_id_and_grup(iterator &i) : record(i), grup<>(i)
 		{
-			one = i.next_record();
-			two = i.next_grup();
 		}
 		record_with_id_and_grup(const record_with_id_and_grup &rhs)
 		{
-			one = rhs.one;
-			two = rhs.two;
+			record::operator=(rhs);
+			grup<>::operator=(rhs);
 		}
 		bool fat_arrow(grup_closure<record_with_id_and_grup> &rhs)
 		{
-			return one.editor_id((const char *)rhs.pointer);
+			return this->editor_id((const char *)rhs.some_value);
 		}
 	};
+
+	template <typename deduced>
+	record_with_id_and_grup &find_record_with_id_and_grup(deduced g, const char *id)
+	{
+		return g.set_user_data<record_with_id_and_grup>((void*)id);
+	}
+
+	template <typename deduced>
+	record &find_record_with_id(deduced g, const char *id)
+	{
+		return g.set_user_data<record_with_id>((void *)id);
+	}
 
 	enum GrupTypes
 	{
