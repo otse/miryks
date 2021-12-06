@@ -99,7 +99,7 @@ namespace miryks
 	template <typename next = destination>
 	struct grup_top : grup<0, next>
 	{
-		grup_top(const char *top, int plugin = 0)
+		grup_top(const char *top, int plugin)
 		{
 			this->set(esp_top(get_plugins()[plugin], top));
 		}
@@ -143,11 +143,11 @@ namespace miryks
 			*this <= capture;
 			return capture.match;
 		}
-		record_and_grup &find_combo(const char *id)
+		record_and_grup &find_record_and_grup(const char *id)
 		{
 			return perform<record_and_grup>((void*)id);
 		}
-		record &find_rid(const char *id)
+		record &find_record_with_id(const char *id)
 		{
 			return perform<record_with_id>((void *)id);
 		}

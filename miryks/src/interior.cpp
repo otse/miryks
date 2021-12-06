@@ -21,10 +21,10 @@ namespace miryks
 
 	Interior *get_interior(const char *cellId, int num)
 	{
-		auto match =
+		record_and_grup match =
 		(grup_top<
 		grup<2,
-		grup<3>>> (cells)).find_combo(cellId);
+		grup<3>>> (cells, num)).find_record_and_grup(cellId);
 		return new Interior(match);
 	}
 
