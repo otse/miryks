@@ -35,13 +35,14 @@ namespace miryks
 	struct record_with_id;
 	struct record_with_id_and_grup;
 
-	typedef grup_basic iterator;
-
 	struct grup_basic
 	{
-		bool valid() { return g != nullptr; }
 		cgrup *g = nullptr;
 		unsigned int index = 0;
+		bool valid()
+		{
+			return g != nullptr;
+		}
 		grup_basic()
 		{
 		}
@@ -101,13 +102,13 @@ namespace miryks
 		grup()
 		{
 		}
-		grup(const grup &other)
+		//grup(const grup &other)
+		//{
+		//	g = other.g;
+		//}
+		grup(grup_basic &iterator)
 		{
-			g = other.g;
-		}
-		grup(iterator &i)
-		{
-			operator=(i.next_grup());
+			operator=(iterator.next_grup());
 		}
 		void operator=(const grup_basic &rhs)
 		{
@@ -127,41 +128,37 @@ namespace miryks
 		}
 	};
 
-	struct record : record_basic
-	{
-		typedef record_basic basic_cast;
-		record()
-		{
-		}
-		record(iterator &i)
-		{
-			operator=(i.next_record());
-		}
-		void operator=(const basic_cast &rhs)
-		{
-			this->set(rhs.r);
-		}
-	};
-
 	struct grup_cap
 	{
-		iterator *save;
-		grup_cap()
+		grup_basic *iterator;
+		grup_cap(grup_basic &iterator) : iterator(&iterator)
 		{
-		}
-		grup_cap(iterator &i)
-		{
-			save = &i;
 		}
 		template <typename T>
 		bool fat_arrow(T &target)
 		{
-			T temp(*save);
-			if (temp <= target) {
+			T temp(*iterator);
+			if (temp <= target)
+			{
 				target = temp;
 				return true;
 			}
 			return false;
+		}
+	};
+
+	struct record : record_basic
+	{
+		record()
+		{
+		}
+		record(grup_basic &iterator)
+		{
+			operator=(iterator.next_record());
+		}
+		void operator=(const record_basic &rhs)
+		{
+			this->set(rhs.r);
 		}
 	};
 
@@ -170,7 +167,7 @@ namespace miryks
 		record_and_grup()
 		{
 		}
-		record_and_grup(iterator &iterator) : record(iterator), grup<>(iterator)
+		record_and_grup(grup_basic &iterator) : record(iterator), grup<>(iterator)
 		{
 		}
 		record_and_grup(const record_and_grup &rhs)
@@ -206,21 +203,21 @@ namespace miryks
 		}
 	};
 
-	template <typename T>
-	record_and_grup find_record_with_id_and_grup(const char *id, T g)
+	template <typename G>
+	record_and_grup find_record_with_id_and_grup(const char *id, G grup)
 	{
 		record_with_id_and_grup target;
 		target.search = id;
-		g <= target;
+		grup <= target;
 		return target;
 	}
 
-	template <typename T>
-	record find_record_with_id(const char *id, T g)
+	template <typename G>
+	record find_record_with_id(const char *id, G grup)
 	{
 		record_with_id target;
 		target.search = id;
-		g <= target;
+		grup <= target;
 		return target;
 	}
 

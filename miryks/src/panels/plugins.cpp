@@ -47,8 +47,7 @@ void im_grup(cgrup *grp, int top_grup = -1)
 void im_record(RCD rcd)
 {
 	char *edid = nullptr;
-	miryks::record record;
-	record = rcd; // reads partials
+	miryks::record_basic record(rcd);
 	SUB first = (SUB)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{

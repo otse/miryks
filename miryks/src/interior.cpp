@@ -22,12 +22,13 @@ namespace miryks
 		Interior *interior = nullptr;
 		bool operator<=(maker &target)
 		{
+			interior = target.interior;
 			if (this->is_reference())
 			{
 				Reference *reference = new Reference(*this);
-				target.interior->refs.push_back(reference);
+				interior->refs.push_back(reference);
 				if (this->editor_id())
-					target.interior->edIds.emplace(this->editor_id(), reference);
+					interior->edIds.emplace(this->editor_id(), reference);
 				/*if (reference->baseObject.valid())
 				{
 					if (reference->baseObject.is_types(thingsWithLabels))
@@ -64,6 +65,7 @@ namespace miryks
 		maker target;
 		target.interior = this;
 		temporary <= target;
+		persistent <= target;
 		PutCam();
 		return this;
 	}
