@@ -21,7 +21,7 @@ namespace miryks
 	{
 		bool operator<=(grup_closure<maker> &target)
 		{
-			Interior *interior = (Interior *)target.some_value;
+			Interior *interior = (Interior *)target.user_data;
 			if (this->is_reference())
 			{
 				Reference *reference = new Reference(*this);

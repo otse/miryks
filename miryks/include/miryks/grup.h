@@ -20,7 +20,7 @@ namespace miryks
 
 #define fat_arrow operator<=
 
-	struct grup_target;
+	struct grup_cap;
 
 	template <int, typename>
 	struct grup;
@@ -89,7 +89,7 @@ namespace miryks
 		}
 	};
 
-	template <typename next = grup_target>
+	template <typename next = grup_cap>
 	struct grup_top : grup<0, next>
 	{
 		grup_top(const char *top, int plugin)
@@ -98,11 +98,9 @@ namespace miryks
 		}
 	};
 
-	template <int intended_group_type = -1, typename next = grup_target>
+	template <int intended_group_type = -1, typename next = grup_cap>
 	struct grup : grup_basic
 	{
-		typedef grup_basic basic_cast;
-		typedef next T;
 		grup()
 		{
 		}
@@ -114,7 +112,7 @@ namespace miryks
 		{
 			operator=(i.next_grup());
 		}
-		void operator=(const basic_cast &rhs)
+		void operator=(const grup_basic &rhs)
 		{
 			this->set(rhs.g);
 			int group_type = this->ghed().group_type;
@@ -122,20 +120,20 @@ namespace miryks
 				intended_group_type == -1 ||
 				intended_group_type == group_type);
 		}
-		template <typename anything>
-		bool fat_arrow(anything &target)
+		template <typename T>
+		bool fat_arrow(T &target)
 		{
 			while (this->under())
-				if (T(*this) <= target)
+				if (next(*this) <= target)
 					return true;
 			return false;
 		}
-		template <typename type>
-		inline type set_user_data(void *some_value)
+		template <typename T>
+		inline T set_user_data(void *user_data)
 		{
-			grup_closure<type> capture(some_value);
-			*this <= capture;
-			return capture.good_return;
+			grup_closure<T> target(user_data);
+			*this <= target;
+			return target.hit;
 		}
 	};
 
@@ -155,44 +153,44 @@ namespace miryks
 		}
 	};
 
-	struct grup_target
+	struct grup_cap
 	{
 		iterator *save;
-		grup_target(iterator &i)
+		grup_cap()
+		{
+		}
+		grup_cap(iterator &i)
 		{
 			save = &i;
 		}
-		template <typename do_whatever>
-		bool fat_arrow(do_whatever &target)
+		template <typename T>
+		bool fat_arrow(T &target)
 		{
-			return do_whatever(*save) <= target;
+			return T(*save) <= target;
 		}
 	};
-
-	// a capturing grup-target with a user pointer
+	
 	template <typename next>
 	struct grup_closure
 	{
-		typedef next T;
-		iterator *save;
-		T good_return;
-		void *some_value = nullptr;
-		grup_closure(iterator &i)
-		{
-			save = &i;
-		}
-		grup_closure(void *some_value) : some_value(some_value)
+		next hit;
+		void *user_data = nullptr;
+		iterator *const save = nullptr;
+		grup_closure(void *user_data) : user_data(user_data)
 		{
 		}
-		template <typename anything>
-		bool fat_arrow(anything &target)
+		grup_closure(iterator &i) : save(&i)
+		{
+		}
+		template <typename T>
+		bool fat_arrow(T &target)
 		{
 			while (save->under())
 			{
-				T temp = T(*save);
+				next temp(*save);
 				if (temp <= target)
 				{
-					target.good_return = temp;
+					target.hit = temp;
 					return true;
 				}
 			}
@@ -200,22 +198,12 @@ namespace miryks
 		}
 	};
 
-	/*struct destination
-	{
-		void *some_value = nullptr;
-		template <typename do_whatever>
-		bool fat_arrow(do_whatever &target)
-		{
-			return do_whatever(*save) <= target;
-		}
-	};*/
-
 	struct record_and_grup : record, grup<>
 	{
 		record_and_grup()
 		{
 		}
-		record_and_grup(iterator &i) : record(i), grup<>(i)
+		record_and_grup(iterator &iterator) : record(iterator), grup<>(iterator)
 		{
 		}
 		record_and_grup(const record_and_grup &rhs)
@@ -237,7 +225,7 @@ namespace miryks
 	{
 		bool fat_arrow(grup_closure<record_with_id> &target)
 		{
-			return this->editor_id((const char *)target.some_value);
+			return this->editor_id((const char *)target.user_data);
 		}
 	};
 
@@ -245,24 +233,24 @@ namespace miryks
 	{
 		bool fat_arrow(grup_closure<record_with_id_and_grup> &target)
 		{
-			return this->editor_id((const char *)target.some_value);
+			return this->editor_id((const char *)target.user_data);
 		}
 	};
 
-	template<typename runner, typename deduced>
-	runner run_struct_on_grup(deduced &g, void *some_value)
+	template<typename runner, typename T>
+	runner run_struct_on_grup(T &g, void *user_data)
 	{
-		return g.set_user_data<runner>(some_value);
+		return g.set_user_data<runner>(user_data);
 	}
 
-	template <typename deduced>
-	record_and_grup find_record_with_id_and_grup(const char *id, deduced g)
+	template <typename T>
+	record_and_grup find_record_with_id_and_grup(const char *id, T g)
 	{
 		return run_struct_on_grup<record_with_id_and_grup>(g, (void *)id);
 	}
 
-	template <typename deduced>
-	record find_record_with_id(const char *id, deduced g)
+	template <typename T>
+	record find_record_with_id(const char *id, T g)
 	{
 		return run_struct_on_grup<record_with_id>(g, (void *)id);
 	}
