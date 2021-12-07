@@ -22,7 +22,7 @@ namespace miryks
 		return new Interior(get_interior_cell(cellId, num));
 	}
 
-	Interior::Interior(record_with_id_and_grup rng) : Cell(rng)
+	Interior::Interior(record_and_grup rng) : Cell(rng)
 	{
 		printf("persistent n: %i\n", persistent.mixed().size);
 		printf("temporary n: %i\n", temporary.mixed().size);
@@ -80,9 +80,7 @@ namespace miryks
 
 	void Interior::Sift(grup<> &subgroup, int group_type)
 	{
-		//grup_closure<maker> make_records(this);
-
-		subgroup.rewind();
+		subgroup.index = 0;
 		subgroup.set_user_data<maker>(this);
 	}
 

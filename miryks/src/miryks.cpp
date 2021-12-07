@@ -21,15 +21,15 @@ namespace miryks
 
 	namespace input
 	{
-		std::map<const char *, int> keys;
-		bool pressing_key(const char *id)
-		{
-			return keys[id] == 1;
-		}
-		bool holding_key(const char *id)
-		{
-			return keys[id] >= 1;
-		}
+	std::map<const char *, int> keys;
+	bool pressing_key(const char *id)
+	{
+		return keys[id] == 1;
+	}
+	bool holding_key(const char *id)
+	{
+		return keys[id] >= 1;
+	}
 	}
 
 	bool showCursor = false;
@@ -80,21 +80,23 @@ namespace miryks
 		get_archives()[17] = load_archive(ARCHIVE_17);
 	}
 
-	record_with_id_and_grup get_interior_cell(const char *cellId, int num)
+	record_and_grup get_interior_cell(const char *cellId, int plugin)
 	{
 		return
 		find_record_with_id_and_grup(
+		cellId,
 		(grup_top<
 		grup<2,
-		grup<3>>>(cells, num)),
-		cellId);
+		grup<3>>>(cells, plugin))
+		);
 	}
 
-	record get_race(const char *raceId, int num)
+	record get_race(const char *raceId, int plugin)
 	{
 		return find_record_with_id(
-		grup_top<>(races, num),
-		raceId);
+		raceId,
+		grup_top<>(races, plugin)
+		);
 	}
 
 	void load_interior(const char *name)

@@ -35,8 +35,12 @@ namespace miryks
 	template <typename>
 	struct grup_closure;
 
+	struct record_and_grup;
 	struct record_with_id;
 	struct record_with_id_and_grup;
+
+	typedef record_basic record_copy;
+	typedef grup_basic grup_copy;
 
 	typedef record_basic Record;
 
@@ -79,7 +83,7 @@ namespace miryks
 	Keyf *load_keyframes_from_disk(const char *);
 
 	record get_race(const char *, int);
-	record_with_id_and_grup get_interior_cell(const char *, int);
+	record_and_grup get_interior_cell(const char *, int);
 }
 
 namespace miryks

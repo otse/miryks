@@ -24,7 +24,7 @@ namespace miryks
 	public:
 		grup<> persistent, temporary;
 		uint16_t flags = 0;
-		Cell(record_with_id_and_grup);
+		Cell(record_and_grup);
 	};
 
 	class Interior : public Cell
@@ -33,7 +33,7 @@ namespace miryks
 		std::vector<Reference *> refs, labels, mstts;
 		std::map<std::string, Reference *> edIds;
 
-		Interior(record_with_id_and_grup);
+		Interior(record_and_grup);
 		~Interior();
 		Interior *Init();
 		void Sift(grup<> &, int);
@@ -60,7 +60,7 @@ namespace miryks
 		grup<> childs;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
-		WorldSpace(record_with_id_and_grup &);
+		WorldSpace(record_and_grup);
 		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);
@@ -76,7 +76,7 @@ namespace miryks
 		WorldSpace *worldSpace;
 		Land *land;
 		XCLC *xclc;
-		Exterior(record_with_id_and_grup);
+		Exterior(record_and_grup);
 		void Init();
 		void Subgroup(grup<> &, int);
 	};

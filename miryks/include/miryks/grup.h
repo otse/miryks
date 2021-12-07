@@ -1,5 +1,7 @@
 #pragma once
 
+/// perhaps grups.h
+
 #include <cstdarg>
 
 #include <miryks/record.h>
@@ -11,13 +13,14 @@
 namespace miryks
 {
 	/*
-	experimental templated-grup-contracts,
-	read at your own risk!!
+	experimental template-grups
+
+	read at your own risk
 	*/
 
-#define fat_arrow operator <=
+#define fat_arrow operator<=
 
-	struct grup_destination;
+	struct grup_target;
 
 	template <int, typename>
 	struct grup;
@@ -31,63 +34,23 @@ namespace miryks
 	template <typename>
 	struct grup_closure;
 
+	struct record_and_grup;
 	struct record_with_id;
 	struct record_with_id_and_grup;
 
 	typedef grup_basic iterator;
 
-	record &find_record_with_id(const char *);
-	record_with_id_and_grup &find_record_with_id_and_grup(const char *);
-
 	struct grup_basic
 	{
-		typedef cgrup *c_grup;
-		typedef crecord *c_record;
-		typedef esp_dud *c_dud;
-
-		c_grup g = nullptr;
+		cgrup *g = nullptr;
+		bool valid() { return g != nullptr; }
 		unsigned int index = 0;
 		grup_basic()
 		{
 		}
-		grup_basic(c_grup low)
+		grup_basic(cgrup *low)
 		{
 			set(low);
-		}
-		void set(c_grup low)
-		{
-			g = low;
-			if (g)
-			{
-				assertc(g->g == 'g');
-				esp_check_grup(g);
-				rewind();
-			}
-		}
-		bool valid()
-		{
-			return g;
-		}
-		void rewind()
-		{
-			index = 0;
-		}
-		bool under()
-		{
-			return index < mixed().size;
-		}
-		template <typename T>
-		T get(int i)
-		{
-			return reinterpret_cast<T>(mixed().elements[i]);
-		}
-		c_grup next_grup()
-		{
-			return get<c_grup>(index++);
-		}
-		c_record next_record()
-		{
-			return get<c_record>(index++);
 		}
 		const cgrup_header &ghed()
 		{
@@ -97,9 +60,36 @@ namespace miryks
 		{
 			return *g->mixed;
 		}
+		void set(cgrup *low)
+		{
+			g = low;
+			if (g)
+			{
+				assertc(g->g == 'g');
+				esp_check_grup(g);
+				index = 0;
+			}
+		}
+		bool under()
+		{
+			return index < mixed().size;
+		}
+		template <typename T>
+		T child(int i)
+		{
+			return reinterpret_cast<T>(mixed().elements[i]);
+		}
+		cgrup *next_grup()
+		{
+			return child<cgrup *>(index++);
+		}
+		crecord *next_record()
+		{
+			return child<crecord *>(index++);
+		}
 	};
 
-	template <typename next = grup_destination>
+	template <typename next = grup_target>
 	struct grup_top : grup<0, next>
 	{
 		grup_top(const char *top, int plugin)
@@ -108,7 +98,7 @@ namespace miryks
 		}
 	};
 
-	template <int intended_group_type = -1, typename next = grup_destination>
+	template <int intended_group_type = -1, typename next = grup_target>
 	struct grup : grup_basic
 	{
 		typedef grup_basic basic_cast;
@@ -132,17 +122,19 @@ namespace miryks
 		template <typename anything>
 		bool fat_arrow(anything &rhs)
 		{
+			// make our nested type with us as iterator,
+			// then fat arrow our custom target into it
 			while (this->under())
 				if (T(*this) <= rhs)
 					return true;
 			return false;
 		}
 		template <typename type>
-		inline type &set_user_data(void *some_value)
+		inline type set_user_data(void *some_value)
 		{
 			grup_closure<type> capture(some_value);
 			*this <= capture;
-			return capture.match;
+			return capture.good_return;
 		}
 	};
 
@@ -162,10 +154,10 @@ namespace miryks
 		}
 	};
 
-	struct grup_destination
+	struct grup_target
 	{
 		iterator *save;
-		grup_destination(iterator &i)
+		grup_target(iterator &i)
 		{
 			save = &i;
 		}
@@ -176,12 +168,13 @@ namespace miryks
 		}
 	};
 
+	// a capturing grup-target with a user pointer
 	template <typename next>
 	struct grup_closure
 	{
 		typedef next T;
 		iterator *save;
-		T match;
+		T good_return;
 		void *some_value = nullptr;
 		grup_closure(iterator &i)
 		{
@@ -198,14 +191,29 @@ namespace miryks
 				T temp = T(*save);
 				if (temp <= rhs)
 				{
-					rhs.match = temp;
+					rhs.good_return = temp;
 					return true;
 				}
 			}
 			return false;
 		}
 	};
-	
+
+	struct record_and_grup : record, grup<>
+	{
+		record_and_grup()
+		{
+		}
+		record_and_grup(iterator &i) : record(i), grup<>(i)
+		{
+		}
+		record_and_grup(const record_and_grup &rhs)
+		{
+			r = rhs.r;
+			g = rhs.g;
+		}
+	};
+
 	struct record_with_id : record
 	{
 		bool fat_arrow(grup_closure<record_with_id> &rhs)
@@ -214,19 +222,8 @@ namespace miryks
 		}
 	};
 
-	struct record_with_id_and_grup : record, grup<>
+	struct record_with_id_and_grup : record_and_grup
 	{
-		record_with_id_and_grup()
-		{
-		}
-		record_with_id_and_grup(iterator &i) : record(i), grup<>(i)
-		{
-		}
-		record_with_id_and_grup(const record_with_id_and_grup &rhs)
-		{
-			record::operator=(rhs);
-			grup<>::operator=(rhs);
-		}
 		bool fat_arrow(grup_closure<record_with_id_and_grup> &rhs)
 		{
 			return this->editor_id((const char *)rhs.some_value);
@@ -234,13 +231,13 @@ namespace miryks
 	};
 
 	template <typename deduced>
-	record_with_id_and_grup &find_record_with_id_and_grup(deduced g, const char *id)
+	record_and_grup find_record_with_id_and_grup(const char *id, deduced g)
 	{
-		return g.set_user_data<record_with_id_and_grup>((void*)id);
+		return g.set_user_data<record_with_id_and_grup>((void *)id);
 	}
 
 	template <typename deduced>
-	record &find_record_with_id(deduced g, const char *id)
+	record find_record_with_id(const char *id, deduced g)
 	{
 		return g.set_user_data<record_with_id>((void *)id);
 	}

@@ -39,7 +39,7 @@ void overlay_archives()
 		ARCHIVE_17
 	};
 
-	static int current = 0;
+	static int current = 4;
 	static int old = -1;
 
 	ImGui::Combo("archives", &current, items, IM_ARRAYSIZE(items));

@@ -3,7 +3,9 @@
 // based on Ortham/libespm
 
 // has some bugs
-// will probably not load
+// will probably crash in some situations
+// could do with some rewrite
+// read at your own risk
 
 #include <lib/common.h>
 
