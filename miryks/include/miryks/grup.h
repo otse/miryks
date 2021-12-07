@@ -31,9 +31,6 @@ namespace miryks
 	struct record;
 	struct record_basic;
 
-	template <typename>
-	struct grup_closure;
-
 	struct record_and_grup;
 	struct record_with_id;
 	struct record_with_id_and_grup;
@@ -128,13 +125,6 @@ namespace miryks
 					return true;
 			return false;
 		}
-		template <typename T>
-		inline T set_user_data(void *user_data)
-		{
-			grup_closure<T> target(user_data);
-			*this <= target;
-			return target.hit;
-		}
 	};
 
 	struct record : record_basic
@@ -166,33 +156,10 @@ namespace miryks
 		template <typename T>
 		bool fat_arrow(T &target)
 		{
-			return T(*save) <= target;
-		}
-	};
-	
-	template <typename next>
-	struct grup_closure
-	{
-		next hit;
-		void *user_data = nullptr;
-		iterator *const save = nullptr;
-		grup_closure(void *user_data) : user_data(user_data)
-		{
-		}
-		grup_closure(iterator &i) : save(&i)
-		{
-		}
-		template <typename T>
-		bool fat_arrow(T &target)
-		{
-			while (save->under())
-			{
-				next temp(*save);
-				if (temp <= target)
-				{
-					target.hit = temp;
-					return true;
-				}
+			T temp(*save);
+			if (temp <= target) {
+				target = temp;
+				return true;
 			}
 			return false;
 		}
@@ -215,7 +182,7 @@ namespace miryks
 
 	struct record_pass : record
 	{
-		bool fat_arrow(grup_closure<record_pass> &target)
+		bool fat_arrow(record_pass &target)
 		{
 			return false;
 		}
@@ -223,36 +190,38 @@ namespace miryks
 
 	struct record_with_id : record
 	{
-		bool fat_arrow(grup_closure<record_with_id> &target)
+		const char *search = nullptr;
+		bool fat_arrow(record_with_id &target)
 		{
-			return this->editor_id((const char *)target.user_data);
+			return this->editor_id(target.search);
 		}
 	};
 
 	struct record_with_id_and_grup : record_and_grup
 	{
-		bool fat_arrow(grup_closure<record_with_id_and_grup> &target)
+		const char *search = nullptr;
+		bool fat_arrow(record_with_id_and_grup &target)
 		{
-			return this->editor_id((const char *)target.user_data);
+			return this->editor_id(target.search);
 		}
 	};
-
-	template<typename runner, typename T>
-	runner run_struct_on_grup(T &g, void *user_data)
-	{
-		return g.set_user_data<runner>(user_data);
-	}
 
 	template <typename T>
 	record_and_grup find_record_with_id_and_grup(const char *id, T g)
 	{
-		return run_struct_on_grup<record_with_id_and_grup>(g, (void *)id);
+		record_with_id_and_grup target;
+		target.search = id;
+		g <= target;
+		return target;
 	}
 
 	template <typename T>
 	record find_record_with_id(const char *id, T g)
 	{
-		return run_struct_on_grup<record_with_id>(g, (void *)id);
+		record_with_id target;
+		target.search = id;
+		g <= target;
+		return target;
 	}
 
 	enum GrupTypes

@@ -19,15 +19,15 @@ namespace miryks
 
 	struct maker : record
 	{
-		bool operator<=(grup_closure<maker> &target)
+		Interior *interior = nullptr;
+		bool operator<=(maker &target)
 		{
-			Interior *interior = (Interior *)target.user_data;
 			if (this->is_reference())
 			{
 				Reference *reference = new Reference(*this);
-				interior->refs.push_back(reference);
+				target.interior->refs.push_back(reference);
 				if (this->editor_id())
-					interior->edIds.emplace(this->editor_id(), reference);
+					target.interior->edIds.emplace(this->editor_id(), reference);
 				/*if (reference->baseObject.valid())
 				{
 					if (reference->baseObject.is_types(thingsWithLabels))
@@ -61,7 +61,9 @@ namespace miryks
 
 	Interior *Interior::Init()
 	{
-		run_struct_on_grup<maker>(temporary, (void *)this);
+		maker target;
+		target.interior = this;
+		temporary <= target;
 		PutCam();
 		return this;
 	}

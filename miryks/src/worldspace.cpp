@@ -91,8 +91,9 @@ namespace miryks
 
 	void Exterior::Init()
 	{
-		run_struct_on_grup<record_pass>(persistent, nullptr);
-		run_struct_on_grup<record_pass>(temporary, nullptr);
+		record_pass target;
+		persistent <= target;
+		temporary <= target;
 	}
 	
 	#if 0
