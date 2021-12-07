@@ -16,6 +16,29 @@
 namespace miryks
 {
 	struct maker;
+
+	struct maker : record
+	{
+		bool operator<=(grup_closure<maker> &target)
+		{
+			Interior *interior = (Interior *)target.some_value;
+			if (this->is_reference())
+			{
+				Reference *reference = new Reference(*this);
+				interior->refs.push_back(reference);
+				if (this->editor_id())
+					interior->edIds.emplace(this->editor_id(), reference);
+				/*if (reference->baseObject.valid())
+				{
+					if (reference->baseObject.is_types(thingsWithLabels))
+						Refs::labelled.push_back(reference);
+					else if (reference->baseObject.is_type(MSTT))
+						interior->mstts.push_back(reference);
+				}*/
+			}
+			return false;
+		}
+	};
 	
 	Interior *dungeon = nullptr;
 
@@ -53,33 +76,6 @@ namespace miryks
 	}
 
 	auto thingsWithLabels = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
-
-	struct maker : record
-	{
-		bool operator<=(
-			grup_closure<maker> &rhs)
-		{
-			Interior *interior = (Interior *)rhs.some_value;
-			if (this->is_reference())
-			{
-				Reference *reference = new Reference(*this);
-				interior->refs.push_back(reference);
-				if (this->editor_id())
-					interior->edIds.emplace(this->editor_id(), reference);
-				/*if (reference->baseObject.valid())
-				{
-					if (reference->baseObject.is_types(thingsWithLabels))
-						Refs::labelled.push_back(reference);
-					else if (reference->baseObject.is_type(MSTT))
-						interior->mstts.push_back(reference);
-				}*/
-			}
-			return false;
-		}
-		//using record::record; // needed for template inheritance
-	};
-
-	
 
 	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
 	inline vec3 cast_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }

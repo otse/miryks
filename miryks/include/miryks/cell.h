@@ -22,13 +22,10 @@ namespace miryks
 	class Cell : public Record
 	{
 	public:
+		uint16_t flags = 0;
 		grup<8> persistent;
 		grup<9> temporary;
-		uint16_t flags = 0;
 		Cell(record_and_grup);
-
-		template<typename runner, typename grup>
-		void Cellular(grup &, void *some_value);
 	};
 
 	class Interior : public Cell

@@ -103,12 +103,12 @@ namespace miryks
 	{
 		typedef grup_basic basic_cast;
 		typedef next T;
+		grup()
+		{
+		}
 		grup(const grup &other)
 		{
 			g = other.g;
-		}
-		grup()
-		{
 		}
 		grup(iterator &i)
 		{
@@ -123,12 +123,10 @@ namespace miryks
 				intended_group_type == group_type);
 		}
 		template <typename anything>
-		bool fat_arrow(anything &rhs)
+		bool fat_arrow(anything &target)
 		{
-			// make our nested type with us as iterator,
-			// then fat arrow our custom target into it
 			while (this->under())
-				if (T(*this) <= rhs)
+				if (T(*this) <= target)
 					return true;
 			return false;
 		}
@@ -165,9 +163,9 @@ namespace miryks
 			save = &i;
 		}
 		template <typename do_whatever>
-		bool fat_arrow(do_whatever &rhs)
+		bool fat_arrow(do_whatever &target)
 		{
-			return do_whatever(*save) <= rhs;
+			return do_whatever(*save) <= target;
 		}
 	};
 
@@ -187,20 +185,30 @@ namespace miryks
 		{
 		}
 		template <typename anything>
-		bool fat_arrow(anything &rhs)
+		bool fat_arrow(anything &target)
 		{
 			while (save->under())
 			{
 				T temp = T(*save);
-				if (temp <= rhs)
+				if (temp <= target)
 				{
-					rhs.good_return = temp;
+					target.good_return = temp;
 					return true;
 				}
 			}
 			return false;
 		}
 	};
+
+	/*struct destination
+	{
+		void *some_value = nullptr;
+		template <typename do_whatever>
+		bool fat_arrow(do_whatever &target)
+		{
+			return do_whatever(*save) <= target;
+		}
+	};*/
 
 	struct record_and_grup : record, grup<>
 	{
@@ -219,7 +227,7 @@ namespace miryks
 
 	struct record_pass : record
 	{
-		bool fat_arrow(grup_closure<record_pass> &rhs)
+		bool fat_arrow(grup_closure<record_pass> &target)
 		{
 			return false;
 		}
@@ -227,24 +235,24 @@ namespace miryks
 
 	struct record_with_id : record
 	{
-		bool fat_arrow(grup_closure<record_with_id> &rhs)
+		bool fat_arrow(grup_closure<record_with_id> &target)
 		{
-			return this->editor_id((const char *)rhs.some_value);
+			return this->editor_id((const char *)target.some_value);
 		}
 	};
 
 	struct record_with_id_and_grup : record_and_grup
 	{
-		bool fat_arrow(grup_closure<record_with_id_and_grup> &rhs)
+		bool fat_arrow(grup_closure<record_with_id_and_grup> &target)
 		{
-			return this->editor_id((const char *)rhs.some_value);
+			return this->editor_id((const char *)target.some_value);
 		}
 	};
 
 	template<typename runner, typename deduced>
-	void run_struct_on_grup(deduced &g, void *some_value)
+	runner run_struct_on_grup(deduced &g, void *some_value)
 	{
-		g.set_user_data<runner>(some_value);
+		return g.set_user_data<runner>(some_value);
 	}
 
 	template <typename deduced>
@@ -258,8 +266,6 @@ namespace miryks
 	{
 		return run_struct_on_grup<record_with_id>(g, (void *)id);
 	}
-
-	
 
 	enum GrupTypes
 	{
