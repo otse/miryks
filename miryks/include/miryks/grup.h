@@ -42,8 +42,8 @@ namespace miryks
 
 	struct grup_basic
 	{
-		cgrup *g = nullptr;
 		bool valid() { return g != nullptr; }
+		cgrup *g = nullptr;
 		unsigned int index = 0;
 		grup_basic()
 		{
@@ -103,7 +103,10 @@ namespace miryks
 	{
 		typedef grup_basic basic_cast;
 		typedef next T;
-		grup(const grup &) = delete;
+		grup(const grup &other)
+		{
+			g = other.g;
+		}
 		grup()
 		{
 		}
@@ -214,6 +217,14 @@ namespace miryks
 		}
 	};
 
+	struct record_pass : record
+	{
+		bool fat_arrow(grup_closure<record_pass> &rhs)
+		{
+			return false;
+		}
+	};
+
 	struct record_with_id : record
 	{
 		bool fat_arrow(grup_closure<record_with_id> &rhs)
@@ -230,17 +241,25 @@ namespace miryks
 		}
 	};
 
+	template<typename runner, typename deduced>
+	void run_struct_on_grup(deduced &g, void *some_value)
+	{
+		g.set_user_data<runner>(some_value);
+	}
+
 	template <typename deduced>
 	record_and_grup find_record_with_id_and_grup(const char *id, deduced g)
 	{
-		return g.set_user_data<record_with_id_and_grup>((void *)id);
+		return run_struct_on_grup<record_with_id_and_grup>(g, (void *)id);
 	}
 
 	template <typename deduced>
 	record find_record_with_id(const char *id, deduced g)
 	{
-		return g.set_user_data<record_with_id>((void *)id);
+		return run_struct_on_grup<record_with_id>(g, (void *)id);
 	}
+
+	
 
 	enum GrupTypes
 	{

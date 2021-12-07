@@ -15,6 +15,8 @@
 
 namespace miryks
 {
+	struct maker;
+	
 	Interior *dungeon = nullptr;
 
 	Interior *get_interior(const char *cellId, int num)
@@ -36,8 +38,7 @@ namespace miryks
 
 	Interior *Interior::Init()
 	{
-		//Sift(persistent, CellPersistentChildren);
-		Sift(temporary, cell_temporary_children);
+		run_struct_on_grup<maker>(temporary, (void *)this);
 		PutCam();
 		return this;
 	}
@@ -65,24 +66,20 @@ namespace miryks
 				interior->refs.push_back(reference);
 				if (this->editor_id())
 					interior->edIds.emplace(this->editor_id(), reference);
-				if (reference->baseObject.valid())
+				/*if (reference->baseObject.valid())
 				{
 					if (reference->baseObject.is_types(thingsWithLabels))
 						Refs::labelled.push_back(reference);
 					else if (reference->baseObject.is_type(MSTT))
 						interior->mstts.push_back(reference);
-				}
+				}*/
 			}
 			return false;
 		}
 		//using record::record; // needed for template inheritance
 	};
 
-	void Interior::Sift(grup<> &subgroup, int group_type)
-	{
-		subgroup.index = 0;
-		subgroup.set_user_data<maker>(this);
-	}
+	
 
 	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
 	inline vec3 cast_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }

@@ -91,13 +91,13 @@ namespace miryks
 
 	void Exterior::Init()
 	{
-		Subgroup(persistent, cell_persistent_children);
-		Subgroup(temporary, cell_temporary_children);
+		run_struct_on_grup<record_pass>(persistent, nullptr);
+		run_struct_on_grup<record_pass>(temporary, nullptr);
 	}
 	
-	void Exterior::Subgroup(grup<> &subgroup, int group_type)
+	#if 0
+	old_function
 	{
-		#if 0
 		if (!subgroup.valid()) {
 			return;
 		}
@@ -125,7 +125,7 @@ namespace miryks
 			}
 			return false;
 		}, group_type);
-		#endif
 	}
+	#endif
 
 }

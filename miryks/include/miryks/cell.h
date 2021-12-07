@@ -22,9 +22,13 @@ namespace miryks
 	class Cell : public Record
 	{
 	public:
-		grup<> persistent, temporary;
+		grup<8> persistent;
+		grup<9> temporary;
 		uint16_t flags = 0;
 		Cell(record_and_grup);
+
+		template<typename runner, typename grup>
+		void Cellular(grup &, void *some_value);
 	};
 
 	class Interior : public Cell
@@ -36,7 +40,6 @@ namespace miryks
 		Interior(record_and_grup);
 		~Interior();
 		Interior *Init();
-		void Sift(grup<> &, int);
 		void Unload();
 		void PutCam();
 		void Update();
@@ -78,7 +81,6 @@ namespace miryks
 		XCLC *xclc;
 		Exterior(record_and_grup);
 		void Init();
-		void Subgroup(grup<> &, int);
 	};
 
 	class Land : public Record
