@@ -16,32 +16,32 @@ namespace miryks
 	experimental template-grups
 
 	read at your own risk
+	pt = passthru
 	*/
 
 #define fat_arrow operator<=
 
-	struct grup_cap;
-
-	template <int, typename>
-	struct grup;
-	struct grup_basic;
-	template <typename>
-	struct grup_top;
-	
-	struct record;
 	struct record_basic;
-
-	struct record_and_grup_copy;
-	struct record_with_id;
-	struct record_with_id_and_grup;
+	struct grup_basic;
 
 	typedef record_basic record_copy;
 	typedef grup_basic grup_copy;
 
 	typedef record_basic Record;
 
+	template <int, typename>
+	struct grup_pt;
+	template <typename>
+	struct grup_pt_top;
+	struct grup_cap;
+	struct record_pt;
+	struct record_and_grup;
+	struct record_with_id;
+	struct record_with_id_and_grup;
+
 	struct grup_basic
 	{
+		int maybe_intended_group_type = -1;
 		cgrup *g = nullptr;
 		unsigned int index = 0;
 		bool valid()
@@ -92,30 +92,25 @@ namespace miryks
 		}
 	};
 
-	template <typename next = grup_cap>
-	struct grup_top : grup<0, next>
-	{
-		grup_top(const char *top, int plugin)
-		{
-			this->set(esp_top(get_plugins()[plugin], top));
-		}
-	};
-
 	template <int intended_group_type = -1, typename next = grup_cap>
-	struct grup : grup_basic
+	struct grup_pt : grup_basic
 	{
-		grup()
+		grup_pt()
 		{
 		}
-		//grup(const grup &other)
-		//{
-		//	g = other.g;
-		//}
-		grup(grup_basic &iterator)
+		grup_pt(const char *top, int plugin)
+		{
+			operator=(esp_top(get_plugins()[plugin], top));
+		}
+		grup_pt(grup_basic &iterator)
 		{
 			operator=(iterator.next_grup());
 		}
 		void operator=(const grup_basic &rhs)
+		{
+			adopt(rhs);
+		}
+		void adopt(const grup_basic &rhs)
 		{
 			this->set(rhs.g);
 			int group_type = this->ghed().group_type;
@@ -152,39 +147,39 @@ namespace miryks
 		}
 	};
 
-	struct record : record_basic
+	struct record_pt : record_basic
 	{
-		record()
+		record_pt()
 		{
 		}
-		record(grup_basic &iterator)
+		record_pt(grup_basic &iterator)
 		{
 			operator=(iterator.next_record());
 		}
-		// not copy-constructor
+		// not a copy-constructor
 		void operator=(const record_basic &rhs)
 		{
 			this->set(rhs.r);
 		}
 	};
 
-	struct record_and_grup_copy : record, grup<>
+	struct record_and_grup : record_pt, grup_pt<>
 	{
-		record_and_grup_copy()
+		record_and_grup()
 		{
 		}
-		record_and_grup_copy(grup_basic &iterator) : record(iterator), grup<>(iterator)
+		record_and_grup(grup_basic &iterator) : record_pt(iterator), grup_pt<>(iterator)
 		{
 		}
 		// copy-constructor
-		record_and_grup_copy(const record_and_grup_copy &rhs)
+		record_and_grup(const record_and_grup &rhs)
 		{
 			r = rhs.r;
 			g = rhs.g;
 		}
 	};
 
-	struct record_pass : record
+	struct record_pass : record_pt
 	{
 		bool fat_arrow(record_pass &target)
 		{
@@ -192,7 +187,7 @@ namespace miryks
 		}
 	};
 
-	struct record_with_id : record
+	struct record_with_id : record_pt
 	{
 		const char *search = nullptr;
 		bool fat_arrow(record_with_id &target)
@@ -201,7 +196,7 @@ namespace miryks
 		}
 	};
 
-	struct record_with_id_and_grup : record_and_grup_copy
+	struct record_with_id_and_grup : record_and_grup
 	{
 		const char *search = nullptr;
 		bool fat_arrow(record_with_id_and_grup &target)
@@ -211,7 +206,7 @@ namespace miryks
 	};
 
 	template <typename G>
-	record_and_grup_copy find_record_with_id_and_grup(const char *id, G grup)
+	record_and_grup find_record_with_id_and_grup(const char *id, G grup)
 	{
 		record_with_id_and_grup target;
 		target.search = id;

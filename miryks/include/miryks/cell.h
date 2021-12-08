@@ -22,9 +22,9 @@ namespace miryks
 	{
 	public:
 		uint16_t flags = 0;
-		grup<8> persistent;
-		grup<9> temporary;
-		Cell(record_and_grup_copy rng) : Record(rng)
+		grup_pt<8> persistent;
+		grup_pt<9> temporary;
+		Cell(record_and_grup rng) : Record(rng)
 		{
 			assertc(rng.ghed().group_type == cell_children);
 			grup_copy first, second;
@@ -47,7 +47,7 @@ namespace miryks
 		std::vector<Reference *> refs, labels, mstts;
 		std::map<std::string, Reference *> edIds;
 
-		Interior(record_and_grup_copy);
+		Interior(record_and_grup);
 		~Interior();
 		Interior *Init();
 		void Unload();
@@ -61,10 +61,10 @@ namespace miryks
 	class WorldSpace : public Record
 	{
 	public:
-		grup<> childs;
+		grup_basic childs;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
-		WorldSpace(record_and_grup_copy);
+		WorldSpace(record_and_grup);
 		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);
@@ -80,7 +80,7 @@ namespace miryks
 		WorldSpace *worldSpace;
 		Land *land;
 		XCLC *xclc;
-		Exterior(record_and_grup_copy);
+		Exterior(record_and_grup);
 		void Init();
 	};
 

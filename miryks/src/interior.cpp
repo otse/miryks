@@ -17,7 +17,7 @@ namespace miryks
 {
 	struct maker;
 
-	struct maker : record
+	struct maker : record_pt
 	{
 		Interior *interior = nullptr;
 		bool operator<=(maker &target)
@@ -40,7 +40,7 @@ namespace miryks
 			return false;
 		}
 	};
-	
+
 	Interior *dungeon = nullptr;
 
 	Interior *get_interior(const char *cellId, int num)
@@ -48,7 +48,7 @@ namespace miryks
 		return new Interior(get_interior_cell(cellId, num));
 	}
 
-	Interior::Interior(record_and_grup_copy rng) : Cell(rng)
+	Interior::Interior(record_and_grup rng) : Cell(rng)
 	{
 		printf("persistent n: %i\n", persistent.mixed().size);
 		printf("temporary n: %i\n", temporary.mixed().size);
