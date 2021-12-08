@@ -7,6 +7,9 @@
 
 namespace miryks
 {
+	struct record_basic;
+	typedef record_basic Record;
+
 	typedef unsigned int *formId;
 	typedef const char *editorId;
 	typedef const char signature[5];

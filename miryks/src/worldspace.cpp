@@ -29,7 +29,7 @@ namespace miryks
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(record_and_grup_copy rng) : Record(rng)
+	WorldSpace::WorldSpace(record_and_grup rng) : Record(rng)
 	{
 		childs = rng;
 		assertc(childs.ghed().group_type == world_children);
@@ -81,7 +81,7 @@ namespace miryks
 		}
 	}
 
-	Exterior::Exterior(record_and_grup_copy rng) : Cell(rng)
+	Exterior::Exterior(record_and_grup rng) : Cell(rng)
 	{
 		worldSpace = nullptr;
 		land = nullptr;
@@ -91,9 +91,9 @@ namespace miryks
 
 	void Exterior::Init()
 	{
-		pt_ignore target;
-		persistent <= target;
-		temporary <= target;
+		//pt_ignore target;
+		//persistent <= target;
+		//temporary <= target;
 	}
 	
 	#if 0
