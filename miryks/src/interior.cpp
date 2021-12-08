@@ -15,12 +15,12 @@
 
 namespace miryks
 {
-	struct maker;
+	struct pt_maker;
 
-	struct maker : record_pt
+	struct pt_maker : pt_record
 	{
 		Interior *interior = nullptr;
-		bool operator<=(maker &target)
+		bool operator<=(pt_maker &target)
 		{
 			interior = target.interior;
 			if (this->is_reference())
@@ -48,7 +48,7 @@ namespace miryks
 		return new Interior(get_interior_cell(cellId, num));
 	}
 
-	Interior::Interior(record_and_grup rng) : Cell(rng)
+	Interior::Interior(record_and_grup_copy rng) : Cell(rng)
 	{
 		printf("persistent n: %i\n", persistent.mixed().size);
 		printf("temporary n: %i\n", temporary.mixed().size);
@@ -62,7 +62,7 @@ namespace miryks
 
 	Interior *Interior::Init()
 	{
-		maker target;
+		pt_maker target;
 		target.interior = this;
 		temporary <= target;
 		persistent <= target;

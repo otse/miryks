@@ -67,7 +67,7 @@ namespace miryks
 	Keyf *load_keyframes_from_disk(const char *);
 
 	record_copy get_race(const char *, int);
-	record_and_grup get_interior_cell(const char *, int);
+	record_and_grup_copy get_interior_cell(const char *, int);
 }
 
 namespace miryks

@@ -28,16 +28,15 @@ namespace miryks
 	typedef grup_basic grup_copy;
 
 	typedef record_basic Record;
+	
+	struct record_and_grup_copy;
 
 	template <int, typename>
-	struct grup_pt;
-	template <typename>
-	struct grup_pt_top;
-	struct grup_cap;
-	struct record_pt;
-	struct record_and_grup;
-	struct record_with_id;
-	struct record_with_id_and_grup;
+	struct pt_grup;
+	struct pt_cap;
+	struct pt_record;
+	struct pt_record_with_id;
+	struct pt_record_with_id_and_grup;
 
 	struct grup_basic
 	{
@@ -92,17 +91,17 @@ namespace miryks
 		}
 	};
 
-	template <int intended_group_type = -1, typename next = grup_cap>
-	struct grup_pt : grup_basic
+	template <int intended_group_type = -1, typename next = pt_cap>
+	struct pt_grup : grup_basic
 	{
-		grup_pt()
+		pt_grup()
 		{
 		}
-		grup_pt(const char *top, int plugin)
+		pt_grup(const char *top, int plugin)
 		{
 			operator=(esp_top(get_plugins()[plugin], top));
 		}
-		grup_pt(grup_basic &iterator)
+		pt_grup(grup_basic &iterator)
 		{
 			operator=(iterator.next_grup());
 		}
@@ -128,10 +127,10 @@ namespace miryks
 		}
 	};
 
-	struct grup_cap
+	struct pt_cap
 	{
 		grup_basic *iterator;
-		grup_cap(grup_basic &iterator) : iterator(&iterator)
+		pt_cap(grup_basic &iterator) : iterator(&iterator)
 		{
 		}
 		template <typename T>
@@ -147,12 +146,12 @@ namespace miryks
 		}
 	};
 
-	struct record_pt : record_basic
+	struct pt_record : record_basic
 	{
-		record_pt()
+		pt_record()
 		{
 		}
-		record_pt(grup_basic &iterator)
+		pt_record(grup_basic &iterator)
 		{
 			operator=(iterator.next_record());
 		}
@@ -163,52 +162,52 @@ namespace miryks
 		}
 	};
 
-	struct record_and_grup : record_pt, grup_pt<>
+	struct record_and_grup_copy : pt_record, pt_grup<>
 	{
-		record_and_grup()
+		record_and_grup_copy()
 		{
 		}
-		record_and_grup(grup_basic &iterator) : record_pt(iterator), grup_pt<>(iterator)
+		record_and_grup_copy(grup_basic &iterator) : pt_record(iterator), pt_grup<>(iterator)
 		{
 		}
 		// copy-constructor
-		record_and_grup(const record_and_grup &rhs)
+		record_and_grup_copy(const record_and_grup_copy &rhs)
 		{
 			r = rhs.r;
 			g = rhs.g;
 		}
 	};
 
-	struct record_pass : record_pt
+	struct pt_ignore : pt_record
 	{
-		bool fat_arrow(record_pass &target)
+		bool fat_arrow(pt_ignore &target)
 		{
 			return false;
 		}
 	};
 
-	struct record_with_id : record_pt
+	struct pt_record_with_id : pt_record
 	{
 		const char *search = nullptr;
-		bool fat_arrow(record_with_id &target)
+		bool fat_arrow(pt_record_with_id &target)
 		{
 			return this->editor_id(target.search);
 		}
 	};
 
-	struct record_with_id_and_grup : record_and_grup
+	struct pt_record_with_id_and_grup : record_and_grup_copy
 	{
 		const char *search = nullptr;
-		bool fat_arrow(record_with_id_and_grup &target)
+		bool fat_arrow(pt_record_with_id_and_grup &target)
 		{
 			return this->editor_id(target.search);
 		}
 	};
 
 	template <typename G>
-	record_and_grup find_record_with_id_and_grup(const char *id, G grup)
+	record_and_grup_copy find_record_with_id_and_grup(const char *id, G grup)
 	{
-		record_with_id_and_grup target;
+		pt_record_with_id_and_grup target;
 		target.search = id;
 		grup <= target;
 		return target;
@@ -217,7 +216,7 @@ namespace miryks
 	template <typename G>
 	record_copy find_record_with_id(const char *id, G grup)
 	{
-		record_with_id target;
+		pt_record_with_id target;
 		target.search = id;
 		grup <= target;
 		return target;
