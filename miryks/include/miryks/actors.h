@@ -8,6 +8,7 @@ namespace miryks
 	class Monster
 	{
 	public:
+		record_copy race;
 		ModelSkinned *modelSkinned;
 		SkinnedMesh *skinnedMesh;
 		Skel *skel;
@@ -17,13 +18,12 @@ namespace miryks
 		void Place(const char *);
 		void SetAnim(const char *);
 		void Step();
-		record race;
 	};
 
 	class Char
 	{
 	public:
-		record race;
+		record_copy race;
 		Skel *skel;
 		Anim *anim;
 		SkinnedMesh *hat, *head, *body, *hands, *feet;

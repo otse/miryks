@@ -7,7 +7,6 @@
 
 #include <opengl/renderer.h>
 
-
 namespace miryks
 {
 	class Cell;
@@ -25,7 +24,21 @@ namespace miryks
 		uint16_t flags = 0;
 		grup<8> persistent;
 		grup<9> temporary;
-		Cell(record_and_grup);
+		Cell(record_and_grup_copy rng) : Record(rng)
+		{
+			assertc(rng.ghed().group_type == cell_children);
+			grup_copy first, second;
+			first = rng.next_grup();
+			second = rng.next_grup();
+			if (first.ghed().group_type == cell_persistent_children)
+			{
+				persistent = first;
+				temporary = second;
+			}
+			else
+				temporary = first;
+			flags = *rng.data<uint16_t *>("DATA");
+		}
 	};
 
 	class Interior : public Cell
@@ -34,7 +47,7 @@ namespace miryks
 		std::vector<Reference *> refs, labels, mstts;
 		std::map<std::string, Reference *> edIds;
 
-		Interior(record_and_grup);
+		Interior(record_and_grup_copy);
 		~Interior();
 		Interior *Init();
 		void Unload();
@@ -45,22 +58,13 @@ namespace miryks
 		bool dontTeleport = false;
 	};
 
-	struct base
-	{
-		const char *word;
-		record record;
-		base(const char *word) : word(word)
-		{
-		}
-	};
-
 	class WorldSpace : public Record
 	{
 	public:
 		grup<> childs;
 		std::vector<Exterior *> exteriors;
 		std::vector<Reference *> references;
-		WorldSpace(record_and_grup);
+		WorldSpace(record_and_grup_copy);
 		WorldSpace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);
@@ -76,7 +80,7 @@ namespace miryks
 		WorldSpace *worldSpace;
 		Land *land;
 		XCLC *xclc;
-		Exterior(record_and_grup);
+		Exterior(record_and_grup_copy);
 		void Init();
 	};
 

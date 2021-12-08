@@ -80,7 +80,7 @@ namespace miryks
 		get_archives()[17] = load_archive(ARCHIVE_17);
 	}
 
-	record_and_grup get_interior_cell(const char *cellId, int plugin)
+	record_and_grup_copy get_interior_cell(const char *cellId, int plugin)
 	{
 		return
 		find_record_with_id_and_grup(
@@ -91,7 +91,7 @@ namespace miryks
 		);
 	}
 
-	record get_race(const char *raceId, int plugin)
+	record_copy get_race(const char *raceId, int plugin)
 	{
 		return find_record_with_id(
 		raceId,

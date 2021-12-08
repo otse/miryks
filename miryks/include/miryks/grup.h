@@ -27,13 +27,18 @@ namespace miryks
 	struct grup_basic;
 	template <typename>
 	struct grup_top;
-
+	
 	struct record;
 	struct record_basic;
 
-	struct record_and_grup;
+	struct record_and_grup_copy;
 	struct record_with_id;
 	struct record_with_id_and_grup;
+
+	typedef record_basic record_copy;
+	typedef grup_basic grup_copy;
+
+	typedef record_basic Record;
 
 	struct grup_basic
 	{
@@ -156,21 +161,23 @@ namespace miryks
 		{
 			operator=(iterator.next_record());
 		}
+		// not copy-constructor
 		void operator=(const record_basic &rhs)
 		{
 			this->set(rhs.r);
 		}
 	};
 
-	struct record_and_grup : record, grup<>
+	struct record_and_grup_copy : record, grup<>
 	{
-		record_and_grup()
+		record_and_grup_copy()
 		{
 		}
-		record_and_grup(grup_basic &iterator) : record(iterator), grup<>(iterator)
+		record_and_grup_copy(grup_basic &iterator) : record(iterator), grup<>(iterator)
 		{
 		}
-		record_and_grup(const record_and_grup &rhs)
+		// copy-constructor
+		record_and_grup_copy(const record_and_grup_copy &rhs)
 		{
 			r = rhs.r;
 			g = rhs.g;
@@ -194,7 +201,7 @@ namespace miryks
 		}
 	};
 
-	struct record_with_id_and_grup : record_and_grup
+	struct record_with_id_and_grup : record_and_grup_copy
 	{
 		const char *search = nullptr;
 		bool fat_arrow(record_with_id_and_grup &target)
@@ -204,7 +211,7 @@ namespace miryks
 	};
 
 	template <typename G>
-	record_and_grup find_record_with_id_and_grup(const char *id, G grup)
+	record_and_grup_copy find_record_with_id_and_grup(const char *id, G grup)
 	{
 		record_with_id_and_grup target;
 		target.search = id;
@@ -213,7 +220,7 @@ namespace miryks
 	}
 
 	template <typename G>
-	record find_record_with_id(const char *id, G grup)
+	record_copy find_record_with_id(const char *id, G grup)
 	{
 		record_with_id target;
 		target.search = id;

@@ -29,9 +29,9 @@ namespace miryks
 		return worldSpace;
 	}
 
-	WorldSpace::WorldSpace(record_and_grup capture) : Record(capture)
+	WorldSpace::WorldSpace(record_and_grup_copy rng) : Record(rng)
 	{
-		childs = capture;
+		childs = rng;
 		assertc(childs.ghed().group_type == world_children);
 		sceneDef->ambient = vec3(127.f / 255.f);
 		printf("new WorldSpace: %s\n", data<const char *>("FULL"));
@@ -81,7 +81,7 @@ namespace miryks
 		}
 	}
 
-	Exterior::Exterior(record_and_grup rng) : Cell(rng)
+	Exterior::Exterior(record_and_grup_copy rng) : Cell(rng)
 	{
 		worldSpace = nullptr;
 		land = nullptr;
