@@ -25,7 +25,7 @@
 
 namespace miryks
 {
-	Reference::Reference(Record refr) : Record(refr)
+	reference::reference(record_copy refr) : record_copy(refr)
 	{
 		model = nullptr;
 		drawGroup = nullptr;
@@ -34,7 +34,7 @@ namespace miryks
 		Go();
 	}
 
-	Reference::~Reference()
+	reference::~reference()
 	{
 		if (drawGroup && drawGroup->parent)
 			drawGroup->parent->Remove(drawGroup);
@@ -45,7 +45,7 @@ namespace miryks
 		delete spotLight;
 	}
 
-	void Reference::Step()
+	void reference::Step()
 	{
 		if (baseObject.is_type("MSTT"))
 		{
@@ -54,7 +54,7 @@ namespace miryks
 		}
 	}
 
-	void Reference::Go()
+	void reference::Go()
 	{
 		matrix = mat4(1.0);
 
@@ -73,7 +73,7 @@ namespace miryks
 	}
 
 	// bad
-	void Reference::ForLocationalData(float *locationalData)
+	void reference::ForLocationalData(float *locationalData)
 	{
 		if (!locationalData)
 			return;
@@ -91,19 +91,19 @@ namespace miryks
 	}
 
 	// bad
-	Model *create_simple_model_from_modl(const char *modl)
+	nifmodel *create_simple_model_from_modl(const char *modl)
 	{
-		static std::map<const char *, Model *> map;
+		static std::map<const char *, nifmodel *> map;
 		auto has = map.find(modl);
 		if (has != map.end())
 			return has->second;
-		Model *model = new Model(get_res(modl));
+		nifmodel *model = new nifmodel(get_res(modl));
 		map.emplace(modl, model);
 		return model;
 	}
 
 	// for boo baba
-	void Reference::ForBaseId(formId baseId)
+	void reference::ForBaseId(formId baseId)
 	{
 		if (!baseId)
 			return;
@@ -126,6 +126,7 @@ namespace miryks
 		std::vector<const char *> things = {
 			Statics,
 			Plants,
+			Flora,
 			Doors,
 			Furniture,
 			Books,
@@ -205,7 +206,7 @@ namespace miryks
 
 			if (data->flags & 0x0400)
 			{
-				light = spotLight = new SpotLight;
+				light = spotLight = new spotlight;
 				//printf("data fov %f\n", data->FOV);
 				spotLight->angle = radians(data->FOV);
 				sceneDef->spotLights.Add(spotLight);
@@ -213,7 +214,7 @@ namespace miryks
 			}
 			else
 			{
-				light = pointLight = new PointLight;
+				light = pointLight = new pointlight;
 				sceneDef->pointLights.Add(pointLight);
 				if (data->flags & 0x1)
 					0; // pointLight->shadow->enabled = true;
@@ -258,7 +259,7 @@ namespace miryks
 		}
 	}
 
-	float Reference::GetDistance() const
+	float reference::GetDistance() const
 	{
 		if (drawGroup == nullptr)
 			return 0;
@@ -282,44 +283,12 @@ namespace miryks
 
 	// Todo, Omg !
 
-	bool myfunction(Reference *l, Reference *r)
+	bool myfunction(reference *l, reference *r)
 	{
 		return l->GetDistance() < r->GetDistance();
 	}
 
-	// very bad namespace
-	namespace Refs {
-		Reference *handRef = nullptr;
-		std::vector<Reference *> labelled;
-		bool labelingEnabled = true;
-		vec3 projected;
-		void Init()
-		{
-		}
-		void Nearby()
-		{
-			if (!labelingEnabled)
-				return;
-				
-			std::sort(labelled.begin(), labelled.end(), [](const Reference *l, const Reference *r) -> bool {
-				return l->GetDistance() < r->GetDistance();
-			});
-
-			handRef = nullptr;
-
-			for (Reference *ref : labelled)
-				if (ref->DisplayAsItem())
-					return;
-		}
-
-		void Activate() {
-			if (handRef)
-				handRef->Use();
-		}
-	};
-
-
-	bool Reference::Use() {
+	bool reference::Use() {
 		printf("Use %s\n", baseObject.editor_id());
 		if (baseObject.is_type(CONT) && container)
 			container->Activate();
@@ -327,7 +296,7 @@ namespace miryks
 	}
 
 	// horrible imgui vomit
-	bool Reference::DisplayAsItem()
+	bool reference::DisplayAsItem()
 	{
 		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;
 
@@ -338,7 +307,7 @@ namespace miryks
 			return false;
 
 
-		Refs::handRef = this;
+		itemfinder::handRef = this;
 
 		auto EDID = baseObject.data<char *>("EDID");
 		auto FULL = baseObject.data<char *>("FULL");
@@ -357,7 +326,7 @@ namespace miryks
 		vec4 viewport(0.0f, 0.0f, width, height);
 
 		vec3 projected = glm::project(original, model, projection, viewport);
-		Refs::projected = projected;
+		itemfinder::projected = projected;
 		//vec3 unprojected = glm::unProject(projected, model, projection, viewport);
 
 		ImGui::SetNextWindowPos(ImVec2(width - projected.x, projected.y));

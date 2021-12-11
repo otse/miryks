@@ -7,13 +7,13 @@
 
 struct Bound
 {
-	Bound(Group *);
+	Bound(group_type *);
 	~Bound();
 	
 	void Update();
 	void Draw(const mat4 &);
 
-	Group * const group;
+	group_type * const group;
 
 	Aabb aabb, obb;
 };

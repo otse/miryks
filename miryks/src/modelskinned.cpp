@@ -13,7 +13,7 @@ extern "C"
 
 namespace miryks
 {
-	ModelSkinned::ModelSkinned(const char *modl) : Model()
+	ModelSkinned::ModelSkinned(const char *modl) : nifmodel()
 	{
 		model = get_nif(modl);
 		assertc(model);
@@ -25,8 +25,8 @@ namespace miryks
 		// theres too many hint nodes in a skinned mesh that we dont care about
 		if (rd->current != 0)
 			return;
-		Model *mesh = (Model *)rd->data;
-		Group *group = mesh->MakeNewGroup(rd);
+		nifmodel *mesh = (nifmodel *)rd->data;
+		group_type *group = mesh->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 	}
 
@@ -55,7 +55,7 @@ namespace miryks
 
 		for (NiRef ref : shapes__)
 		{
-			//Group *group = mesh->groups[index];
+			//group_type *group = mesh->groups[index];
 			auto shape = (BSTriShape *)nif_get_block(model, ref);
 			auto nsi = (NiSkinInstance *)nif_get_block(model, shape->refs->skin);
 			auto nsp = (NiSkinPartition *)nif_get_block(model, nsi->A->skin_partition);
@@ -63,7 +63,7 @@ namespace miryks
 			for (unsigned int k = 0; k < nsp->A->num_partitions; k++)
 			{
 				SkinPartition *partition = nsp->partitions[k];
-				Group *group = groups[ref]->childGroups[k];
+				group_type *group = groups[ref]->childGroups[k];
 				Material *material = group->geometry->material;
 				material->boneMatrices.clear();
 				material->boneMatrices.reserve(partition->nums->bones);
@@ -82,7 +82,7 @@ namespace miryks
 					Bone *bone = has->second;
 					material->boneMatrices.push_back(bone->matrixWorld * inverse(bone->rest));
 					
-					//Group *node_group = groups[nsi->bones[partition->bones[i]]];
+					//group_type *node_group = groups[nsi->bones[partition->bones[i]]];
 					//node_group->matrixWorld = bone->group->matrixWorld;
 				}
 			}
@@ -142,7 +142,7 @@ namespace miryks
 				break;
 			if (!*partition->has_faces)
 				break;
-			Group *group = new Group;
+			group_type *group = new group_type;
 			Geometry *geometry = new Geometry();
 			group->geometry = geometry;
 			geometry->skinning = true;

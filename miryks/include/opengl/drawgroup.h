@@ -7,14 +7,14 @@
 #include <opengl/group.h>
 #include <opengl/aabb.h>
 
-struct DrawGroup : Group
+struct drawgroup : group_type
 {
 	static int num, masks;
 	int mask;
-	Group *const target;
+	group_type *const target;
 	AABB aabb, obb;
-	DrawGroup(Group *, mat4);
-	virtual ~DrawGroup();
+	drawgroup(group_type *, mat4);
+	virtual ~drawgroup();
 	virtual void Draw(const mat4 &) override;
 	bool Invisible();
 	void DrawBounds();
@@ -22,14 +22,14 @@ struct DrawGroup : Group
 	virtual void Reset();
 };
 
-struct DrawGroupFlatSorted : DrawGroup
+struct DrawGroupFlatSorted : drawgroup
 {
 	bool hasTransparency = false;
-	DrawGroupFlatSorted(Group *, mat4);
+	DrawGroupFlatSorted(group_type *, mat4);
 	virtual ~DrawGroupFlatSorted(){};
 	virtual void Draw(const mat4 &) override;
 	virtual void Reset() override;
-	void SortWith(std::function<bool(const Group *, const Group *)>);
+	void SortWith(std::function<bool(const group_type *, const group_type *)>);
 	void SortTransparency();
 };
 

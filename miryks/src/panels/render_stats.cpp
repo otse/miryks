@@ -28,7 +28,7 @@ void overlay_rstats(bool *open)
 	ImGui::Text("window %.0f x %.0f", io.DisplaySize.x, io.DisplaySize.y);
 	ImGui::Text("fps %u", fps);
 	ImGui::Text("delta %.5f", delta);
-	ImGui::Text("drawCalls %i", Group::drawCalls);
+	ImGui::Text("drawCalls %i", group_type::drawCalls);
 
 	//ImGui::Separator();
 	ImGui::End();

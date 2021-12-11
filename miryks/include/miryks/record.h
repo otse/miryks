@@ -5,10 +5,13 @@
 
 #include <miryks/libs.h>
 
+// simple imperative access to subrecords and basic info
+// for complicated mess look at grup.h
+
 namespace miryks
 {
-	struct record_basic;
-	typedef record_basic Record;
+	struct record_copy;
+	typedef record_copy record_copy;
 
 	typedef unsigned int *formId;
 	typedef const char *editorId;
@@ -16,65 +19,55 @@ namespace miryks
 
 	const char *getEditorIdOnly(const RECORD);
 	
-	struct record_basic
+	struct record_copy
 	{
+		typedef csubrecord *subrecord_type;
 		crecord *r = nullptr;
 
-		record_basic()
+		record_copy()
 		{
 		}
-		record_basic(crecord *r)
+		record_copy(crecord *r)
 		{
-			operator=(r);
+			setr(r);
 		}
-		void set(record_basic r)
+		void setr(crecord *p)
 		{
-			operator=(r.r);
-		}
-		void operator=(crecord *rhs)
-		{
-			r = rhs;
-			check();
-		}
-		void check()
-		{
-			if (!r)
-				return;
-			assertc(r->r == 'r');
+			r = p;
 			esp_check_rcd(r);
 		}
-		inline bool valid() const
+		inline bool valid()
 		{
 			return !!r;
 		}
-		inline const crecord_header &rhed() const
+		const crecord_header &rhed()
 		{
 			return *r->hed;
 		}
-		inline const revised_array &subrecords() const
+		const revised_array &subrecords()
 		{
 			return *r->rcdbs;
 		}
-		inline const SUBRECORD get(unsigned int i) const
+		subrecord_type get(unsigned int i)
 		{
-			return (const SUBRECORD)subrecords().elements[i];
+			return (subrecord_type)subrecords().elements[i];
 		}
-		inline bool is_type(signature sgn) const
+		bool is_type(signature sgn)
 		{
 			return *(unsigned int *)sgn == rhed().sgn;
 		}
-		inline bool is_types(const std::vector<const char *> &sgns) const
+		bool is_types(const std::vector<const char *> &sgns)
 		{
 			for (const char *sgn : sgns)
 				if (is_type(sgn))
 					return true;
 			return false;
 		}
-		const SUBRECORD find(signature sgn, int skip = 0) const
+		subrecord_type find(signature sgn, int skip = 0)
 		{
 			for (unsigned int i = 0; i < subrecords().size; i++)
 			{
-				const SUBRECORD sub = get(i);
+				subrecord_type sub = get(i);
 				if (*(unsigned int *)sgn == sub->hed->sgn)
 					if (skip-- < 1)
 						return sub;
@@ -82,30 +75,27 @@ namespace miryks
 			return nullptr;
 		}
 		template <typename T = void *>
-		T data(signature sig, int skip = 0) const
+		T data(signature sig, int skip = 0)
 		{
-			const SUBRECORD sub = find(sig, skip);
-			if (sub)
-				return (T)sub->data;
-			else
-				return nullptr;
+			subrecord_type sub = find(sig, skip);
+			return sub ? (T)sub->data : nullptr;
 		}
 
 		// << useful: >>
 
-		inline editorId editor_id() const
+		editorId editor_id()
 		{
 			return data<const char *>("EDID");
 		}
-		inline bool editor_id(const char *name) const
+		bool editor_id(const char *name)
 		{
 			return editor_id() ? 0 == strcmp(name, editor_id()) : false;
 		}
-		inline const formId base() const
+		const formId base()
 		{
 			return data<unsigned int *>("NAME");
 		}
-		inline bool is_reference() const {
+		bool is_reference() {
 			return is_type("REFR");
 		}
 	};

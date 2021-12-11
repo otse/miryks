@@ -11,14 +11,14 @@ extern "C"
 
 namespace miryks
 {
-	Model::Model()
+	nifmodel::nifmodel()
 	{
 		baseGroup = new GroupBounded();
 		groups[-1] = baseGroup;
 		lastGroup = baseGroup;
 	}
 	
-	Model::Model(Res *res) : Model()
+	nifmodel::nifmodel(Res *res) : nifmodel()
 	{
 		if (!res)
 			return;
@@ -26,11 +26,11 @@ namespace miryks
 		Construct();
 	}
 
-	Model::~Model()
+	nifmodel::~nifmodel()
 	{
 	}
 
-	void Model::Construct()
+	void nifmodel::Construct()
 	{
 		Rd *rd = calloc_nifprd();
 		rd->nif = model;
@@ -46,21 +46,21 @@ namespace miryks
 		baseGroup->Update();
 	}
 
-	void Model::Step()
+	void nifmodel::Step()
 	{
 		
 	}
 
-	Group *Model::MakeNewGroup(Rd *rd)
+	group_type *nifmodel::MakeNewGroup(Rd *rd)
 	{
-		Group *group = new GroupBounded();
+		group_type *group = new GroupBounded();
 		groups[rd->current] = group;
 		groups[rd->parent]->Add(group);
 		lastGroup = group;
 		return group;
 	}
 
-	void matrix_from_common(Group *group, ni_common_layout_t *common)
+	void matrix_from_common(group_type *group, ni_common_layout_t *common)
 	{
 		// todo doesnt fit two columns on laptop
 		group->matrix = translate(group->matrix, cast_vec3(&common->A->translation));
@@ -71,8 +71,8 @@ namespace miryks
 	void ni_node_callback(RD rd, NiNode *block)
 	{
 		// printf("ni node callback\n");
-		Model *model = (Model *)rd->data;
-		Group *group = model->MakeNewGroup(rd);
+		nifmodel *model = (nifmodel *)rd->data;
+		group_type *group = model->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 	}
 
@@ -97,9 +97,9 @@ namespace miryks
 	{
 		//if (dynamic_cast<MeshSkinned *>(model))
 		// printf("model.cpp bs tri shape callback !!! ");
-		Model *model = (Model *)rd->data;
+		nifmodel *model = (nifmodel *)rd->data;
 		model->shapes__.push_back(rd->current);
-		Group *group = model->MakeNewGroup(rd);
+		group_type *group = model->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 		Geometry *geometry = new Geometry();
 		group->geometry = geometry;
@@ -154,7 +154,7 @@ namespace miryks
 	void bs_lighting_shader_property_callback(RD rd, BSLightingShaderProperty *block)
 	{
 		// printf("bs lighting shader property callback\n");
-		Model *model = (Model *)rd->data;
+		nifmodel *model = (nifmodel *)rd->data;
 		Geometry *geometry = model->lastGroup->geometry;
 		if (geometry)
 		{
@@ -190,7 +190,7 @@ namespace miryks
 
 	void bs_effect_shader_property_callback(RD rd, BSEffectShaderProperty *block)
 	{
-		Model *model = (Model *)rd->data;
+		nifmodel *model = (nifmodel *)rd->data;
 		Geometry *geometry = model->lastGroup->geometry;
 		if (geometry)
 		{
@@ -216,8 +216,8 @@ namespace miryks
 	void bs_shader_texture_set_callback(RD rd, BSShaderTextureSet *block)
 	{
 		// printf("bs shader texture set callback\n");
-		Model *model = (Model *)rd->data;
-		Group *group = model->lastGroup;
+		nifmodel *model = (nifmodel *)rd->data;
+		group_type *group = model->lastGroup;
 		Geometry *geometry = group->geometry;
 		if (geometry)
 		{
@@ -243,8 +243,8 @@ namespace miryks
 
 	void ni_alpha_property_callback(RD rd, NiAlphaProperty *block)
 	{
-		Model *model = (Model *)rd->data;
-		Group *group = model->lastGroup;
+		nifmodel *model = (nifmodel *)rd->data;
+		group_type *group = model->lastGroup;
 		Geometry *geometry = group->geometry;
 		if (geometry)
 		{
@@ -284,14 +284,14 @@ namespace miryks
 		return t < 0.5 ? 2 * t * t : t * (4 - 2 * t) - 1;
 	}
 
-	void Model::Misty()
+	void nifmodel::Misty()
 	{
 		// mists
 		auto callback = [](RD rd, BSEffectShaderPropertyFloatController *block) {
-			Model *model = (Model *)rd->data;
+			nifmodel *model = (nifmodel *)rd->data;
 			auto target = (BSEffectShaderProperty *)nif_get_block(rd->nif, block->A->target);
 			//auto shape = (bs_tri_shape *)nif_get_block(rd->nif, target->meta.parent);
-			Group *group = nullptr;
+			group_type *group = nullptr;
 			auto next_controller = block;
 			while(next_controller)
 			{

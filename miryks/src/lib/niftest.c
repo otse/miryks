@@ -14,7 +14,7 @@ void nif_test()
 	RES res = bsa_find_more("meshes\\clutter\\bucket02a.nif", 0x1);
 	// or
 	// struct bsa *meshes = get_archives()[0];
-	// struct RES rc = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
+	// struct RES res = bsa_find(meshes, "meshes\\clutter\\bucket02a.nif");
 	assertm(res, "mh no bucket02a");
 	bsa_read(res);
 	// setup

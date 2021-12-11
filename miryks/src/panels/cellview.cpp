@@ -14,7 +14,7 @@ void overlay_cellview()
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
 	ImGui::SetNextWindowPos(ImVec2(450 * 4, 0));
 
-	ImGui::Begin("Cell View", nullptr, flags);
+	ImGui::Begin(" View", nullptr, flags);
 
 	ImGui::Separator();
 

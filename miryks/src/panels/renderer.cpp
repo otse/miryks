@@ -27,7 +27,7 @@ void overlay_renderer()
 
 	ImGui::Begin("Render", nullptr, flags);
 
-	ImGui::Text("groups: %i", Group::num);
+	ImGui::Text("groups: %i", group_type::num);
 	ImGui::Text("geometries: %i", Geometry::num);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
@@ -50,23 +50,24 @@ void overlay_renderer()
 			{ Ingredients, STRINGIFY(Ingredients) },
 			{ Lights, STRINGIFY(Lights) },
 			{ Mists, STRINGIFY(Mists) },
-			{ Plants, STRINGIFY(Plants) }
+			{ Plants, STRINGIFY(Plants) },
+			{ Flora, STRINGIFY(Flora) },
 		};
 		if (ImGui::BeginTabItem("objects"))
 		{
-			bool b = DrawGroup::masks == 0;
+			bool b = drawgroup::masks == 0;
 			if (ImGui::Checkbox("0", &b))
-				DrawGroup::masks = 0;
-			bool b2 = DrawGroup::masks == ~0;
+				drawgroup::masks = 0;
+			bool b2 = drawgroup::masks == ~0;
 			if (ImGui::Checkbox("~0", &b2))
-				DrawGroup::masks = ~0;
+				drawgroup::masks = ~0;
 			ImGui::Separator();
 			int i = 0;
 			for(auto word : Things) {
 				int bit = 1 << i;
-				bool test = (DrawGroup::masks & bit) == bit;
+				bool test = (drawgroup::masks & bit) == bit;
 				if (ImGui::Checkbox(map[word], &test))
-					DrawGroup::masks ^= bit;
+					drawgroup::masks ^= bit;
 				i++;
 			}
 			ImGui::EndTabItem();

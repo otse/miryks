@@ -43,7 +43,7 @@ namespace miryks
 		char vertex_color[1089][3];
 	};
 
-	Land::Land(Record land) : Record(land)
+	land::land(record_copy land) : record_copy(land)
 	{
 		exterior = nullptr;
 		

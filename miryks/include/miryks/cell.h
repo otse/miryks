@@ -9,27 +9,27 @@
 
 namespace miryks
 {
-	class Cell;
-	class Interior;
-	class Exterior;
-	class WorldSpace;
-	class Land;
+	class cell;
+	class interior;
+	class mir_exterior;
+	class mir_worldspace;
+	class land;
 
-	extern Interior *dungeon;
-	extern WorldSpace *worldSpace;
+	extern interior *dungeon;
+	extern mir_worldspace *worldSpace;
 
-	class Cell : public Record
+	class cell : public record_copy
 	{
 	public:
-		uint16_t flags = 0;
-		pt_grup<8> persistent;
-		pt_grup<9> temporary;
-		Cell(record_and_grup rng) : Record(rng)
+		uint16_t flags;
+		grup_copy persistent, temporary;
+		cell(rgrup_copy rg) : record_copy(rg)
 		{
-			assertc(rng.ghed().group_type == cell_children);
+			flags = 0;
+			assertc(rg.ghed().group_type == cell_children);
 			grup_copy first, second;
-			first = rng.next_grup();
-			second = rng.next_grup();
+			first = rg.next_grup();
+			second = rg.next_grup();
 			if (first.ghed().group_type == cell_persistent_children)
 			{
 				persistent = first;
@@ -37,19 +37,19 @@ namespace miryks
 			}
 			else
 				temporary = first;
-			flags = *rng.data<uint16_t *>("DATA");
+			flags = *rg.data<uint16_t *>("DATA");
 		}
 	};
 
-	class Interior : public Cell
+	class interior : public cell
 	{
 	public:
-		std::vector<Reference *> refs, labels, mstts;
-		std::map<std::string, Reference *> edIds;
+		std::vector<reference *> refs, labels, mstts;
+		std::map<std::string, reference *> edIds;
 
-		Interior(record_and_grup);
-		~Interior();
-		Interior *Init();
+		interior(rgrup_copy);
+		~interior();
+		interior *Init();
 		void Unload();
 		void PutCam();
 		void Update();
@@ -58,14 +58,14 @@ namespace miryks
 		bool dontTeleport = false;
 	};
 
-	class WorldSpace : public Record
+	class mir_worldspace : public record_copy
 	{
 	public:
-		grup_basic childs;
-		std::vector<Exterior *> exteriors;
-		std::vector<Reference *> references;
-		WorldSpace(record_and_grup);
-		WorldSpace *Init();
+		grup_copy childs;
+		std::vector<mir_exterior *> exteriors;
+		std::vector<reference *> references;
+		mir_worldspace(rgrup_copy);
+		mir_worldspace *Init();
 		void DiscoverAllCells();
 		void LoadExterior(int, int);
 	};
@@ -74,23 +74,23 @@ namespace miryks
 	{
 		int32_t x, y, flags;
 	};
-	class Exterior : public Cell
+	class mir_exterior : public cell
 	{
 	public:
-		WorldSpace *worldSpace;
-		Land *land;
+		mir_worldspace *worldSpace;
+		land *land;
 		XCLC *xclc;
-		Exterior(record_and_grup);
+		mir_exterior(rgrup_copy);
 		void Init();
 	};
 
-	class Land : public Record
+	class land : public record_copy
 	{
 	public:
-		Exterior *exterior;
-		Group *group;
-		DrawGroup *drawGroup;
-		Land(Record land);
+		mir_exterior *exterior;
+		group_type *group;
+		drawgroup *drawGroup;
+		land(record_copy land);
 	};
 
 }

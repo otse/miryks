@@ -11,17 +11,17 @@
 
 #include <algorithm>
 
-static PointLight *bpoint;
-static SpotLight *bspot;
+static pointlight *bpoint;
+static spotlight *bspot;
 
 Scene::Scene()
 {
-	bigGroup = new DrawGroupFlatSorted(new Group, mat4(1.0));
+	bigGroup = new DrawGroupFlatSorted(new group_type, mat4(1.0));
 
-	bpoint = new PointLight;
+	bpoint = new pointlight;
 	bpoint->color = vec3(0.f);
 
-	bspot = new SpotLight;
+	bspot = new spotlight;
 	bspot->color = vec3(0.f);
 
 	ambient = vec3(50.f / 255.f);
@@ -45,7 +45,7 @@ void Scene::DrawItems()
 	//CalcLights();
 	SortLights();
 
-	auto EarlyZKills = [](const Group *a, const Group *b) -> bool {
+	auto EarlyZKills = [](const group_type *a, const group_type *b) -> bool {
 		if (a->GetZ(a->matrixWorld) < b->GetZ(b->matrixWorld))
 			return true;
 		return false;
@@ -54,7 +54,7 @@ void Scene::DrawItems()
 	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), EarlyZKills);
 
 #if 1
-	auto TransparencyLast = [](const Group *a, const Group *b) -> bool {
+	auto TransparencyLast = [](const group_type *a, const group_type *b) -> bool {
 		const DrawGroupFlatSorted *dgs = dynamic_cast<const DrawGroupFlatSorted *>(a);
 		if (dgs && dgs->hasTransparency)
 			return false;
@@ -68,7 +68,7 @@ void Scene::DrawItems()
 
 void Scene::CalcLights()
 {
-	//for (PointLight *pl : pointLights.ts)
+	//for (pointlight *pl : pointLights.ts)
 		//pl->Calc();
 }
 
@@ -90,7 +90,7 @@ void Scene::BindLights(Shader *shader)
 
 	for (unsigned int i = 0; i < 6; i++)
 	{
-		PointLight *l = bpoint;
+		pointlight *l = bpoint;
 
 		if (i < pointLights.ts.size())
 			l = pointLights.ts[i];
@@ -114,7 +114,7 @@ void Scene::BindLights(Shader *shader)
 
 	for (unsigned int i = 0; i < 2; i++)
 	{
-		SpotLight *sl = bspot;
+		spotlight *sl = bspot;
 
 		if (i < spotLights.ts.size())
 			sl = spotLights.ts[i];

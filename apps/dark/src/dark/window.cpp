@@ -6,6 +6,7 @@
 #include <opengl/rendertarget.h>
 #include <opengl/group.h>
 #include <opengl/drawgroup.h>
+#include <opengl/shader.h>
 
 #include <miryks/trash.h>
 #include <miryks/cell.h>
@@ -278,7 +279,22 @@ static void handle_use_key()
 {
 	if (ImGui::IsAnyItemActive())
 		return;
-	miryks::Refs::Activate();
+	miryks::itemfinder::activate();
+}
+
+static void hotswap_plugin_and_dungeon()
+{
+	reload_plugin();
+	reload_dungeon();
+}
+
+static void reload_shaders()
+{
+	// warning glitchy
+	printf(" reload shaders ! \n");
+	SetShaderSources();
+	for (auto &pair : Shader::shaders)
+		pair.second->Compile();
 }
 
 static void handle_my_keys()
@@ -295,8 +311,8 @@ static void handle_my_keys()
 		toggle_cursor();
 	else if (pressing_key("f4"))
 		toggle_fbo();
-	//else if (pressing("f5")) hotswap_plugin_and_dungeon();
-	//else if (pressing("f6")) reload_shaders();
+	else if (pressing_key("f5")) hotswap_plugin_and_dungeon();
+	else if (pressing_key("f6")) reload_shaders();
 	//else if (pressing("f10")) toggle_render_stats();
 	else if (pressing_key("e"))
 		handle_use_key();
@@ -323,7 +339,7 @@ void window_while_test()
 
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		Group::drawCalls = 0;
+		group_type::drawCalls = 0;
 
 		delta = 0.016f;
 
@@ -400,7 +416,7 @@ void window_while()
 	sceneDef->bigGroup->Add(personCam->drawGroup);
 
 #if 0
-	PointLight *myself = new PointLight;
+	pointlight *myself = new pointlight;
 	myself->color = vec3(1.f);
 	myself->distance = 500.0f;
 
@@ -422,7 +438,7 @@ void window_while()
 		}
 		frames++;
 
-		Group::drawCalls = 0;
+		group_type::drawCalls = 0;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, width, height);

@@ -5,6 +5,7 @@
 #include <miryks/cell.h>
 #include <miryks/model.h>
 #include <miryks/player.h>
+#include <miryks/reference.h>
 
 #include <opengl/camera.h>
 #include <opengl/drawgroup.h>
@@ -21,15 +22,15 @@ namespace miryks
 
 	namespace input
 	{
-	std::map<const char *, int> keys;
-	bool pressing_key(const char *id)
-	{
-		return keys[id] == 1;
-	}
-	bool holding_key(const char *id)
-	{
-		return keys[id] >= 1;
-	}
+		std::map<const char *, int> keys;
+		bool pressing_key(const char *id)
+		{
+			return keys[id] == 1;
+		}
+		bool holding_key(const char *id)
+		{
+			return keys[id] >= 1;
+		}
 	}
 
 	bool showCursor = false;
@@ -38,6 +39,7 @@ namespace miryks
 
 	int init()
 	{
+		itemfinder::init();
 		return 0;
 	}
 
@@ -80,23 +82,20 @@ namespace miryks
 		get_archives()[17] = load_archive(ARCHIVE_17);
 	}
 
-	record_and_grup get_interior_cell(const char *cellId, int plugin)
+	rgrup_copy get_interior_cell(const char *cellId, int plugin)
 	{
-		return
-		find_record_with_id_and_grup(
+		return find_record_with_id_and_grup(
 		cellId,
-		pt_grup<0,
-		pt_grup<2,
-		pt_grup<3>>>(cells, plugin)
-		);
+		grup<0,
+		grup<2,
+		grup<3>>>(cells, plugin));
 	}
 
 	record_copy get_race(const char *raceId, int plugin)
 	{
 		return find_record_with_id(
 		raceId,
-		pt_grup<0>(races, plugin)
-		);
+		grup<0>(races, plugin));
 	}
 
 	void load_interior(const char *name)
@@ -134,17 +133,17 @@ namespace miryks
 
 	void view_in_place(Res *res)
 	{
-		static Model *model = nullptr;
-		static DrawGroup *drawGroup = nullptr;
+		static nifmodel *model = nullptr;
+		static drawgroup *drawGroup = nullptr;
 		if (model)
 		{
 			drawGroup->parent->Remove(drawGroup);
 			delete model;
 			delete drawGroup;
 		}
-		model = new Model(res);
-		drawGroup = new DrawGroup(
-			model->baseGroup, translate(mat4(1.0), personCam->pos));
+		model = new nifmodel(res);
+		drawGroup = new drawgroup(
+				model->baseGroup, translate(mat4(1.0), personCam->pos));
 		sceneDef->bigGroup->Add(drawGroup);
 		showCursor = false;
 		cameraCur = viewerCam;

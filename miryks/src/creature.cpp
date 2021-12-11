@@ -30,10 +30,10 @@ namespace miryks
 		auto ref = dungeon->edIds.find(q);
 		if (ref != dungeon->edIds.end())
 		{
-			drawGroup = new DrawGroup(
+			drawGroup = new drawgroup(
 				modelSkinned->baseGroup, ref->second->matrix);
 			//drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
-			//drawGroup->Add(new DrawGroup(skeleton->baseBone->group, mat4(1.0));
+			//drawGroup->Add(new drawgroup(skeleton->baseBone->group, mat4(1.0));
 			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else

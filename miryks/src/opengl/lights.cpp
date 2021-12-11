@@ -12,13 +12,13 @@ Light::Light()
 	intensity = 1.f;
 }
 
-PointLight::PointLight()
+pointlight::pointlight()
 {
 	distance = 0.f;
 	decay = 1.f;
 }
 
-SpotLight::SpotLight()
+spotlight::spotlight()
 {
 	distance = 0.f;
 	penumbra = 0.f;

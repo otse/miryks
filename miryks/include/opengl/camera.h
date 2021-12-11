@@ -14,8 +14,8 @@ public:
 	float yaw, pitch, fov;
 	vec3 pos;
 	mat4 view, projection;
-	Group *group;
-	DrawGroup *drawGroup;
+	group_type *group;
+	drawgroup *drawGroup;
 	Camera();
 	virtual void Mouse(float, float){};
 	virtual void Update(float){};
@@ -26,7 +26,7 @@ public:
 
 struct FirstPersonCamera : public Camera
 {
-	Group *hands;
+	group_type *hands;
 
 	vec3 eye;
 

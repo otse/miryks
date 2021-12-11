@@ -24,7 +24,7 @@ namespace miryks
 		Bone *baseBone, *root;
 		Anim *anim;
 		Skel();
-		Skel(Record);
+		Skel(record_copy);
 		void Load(const char *);
 		void Construct();
 		void Step();
@@ -32,13 +32,13 @@ namespace miryks
 	protected:
 	};
 
-	class Bone : public Group
+	class Bone : public group_type
 	{
 	public:
 		const char *name;
 		NiNode *block;
 		mat4 rest, mod, diff;
-		Bone() : Group()
+		Bone() : group_type()
 		{
 			name = 0;
 			block = 0;

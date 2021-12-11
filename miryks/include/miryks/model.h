@@ -27,18 +27,18 @@ namespace miryks
 	callback(ni_skin_partition);
 	callback(bs_tri_shape);
 
-	void matrix_from_common(Group *, ni_common_layout_t *);
+	void matrix_from_common(group_type *, ni_common_layout_t *);
 
-	class Model
+	class nifmodel
 	{
 	public:
-		Model();
-		Model(Res *);
-		~Model();
+		nifmodel();
+		nifmodel(Res *);
+		~nifmodel();
 		Nif *model = nullptr;
-		std::map<int, Group *> groups;
-		Group *baseGroup, *lastGroup;
-		Group *MakeNewGroup(Rd *);
+		std::map<int, group_type *> groups;
+		group_type *baseGroup, *lastGroup;
+		group_type *MakeNewGroup(Rd *);
 		void Construct();
 		void Step();
 		void Misty();
@@ -47,7 +47,7 @@ namespace miryks
 		std::vector<NiRef> shapes__;
 	};
 
-	class ModelSkinned : public Model
+	class ModelSkinned : public nifmodel
 	{
 	public:
 		NiRef lastShape;
@@ -63,7 +63,7 @@ namespace miryks
 		ModelSkinned *modelSkinned;
 		Skel *skel;
 		Anim *animation;
-		DrawGroup *drawGroup;
+		drawgroup *drawGroup;
 		SkinnedMesh(const char *);
 		~SkinnedMesh();
 		void Step();

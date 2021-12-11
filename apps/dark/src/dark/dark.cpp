@@ -42,7 +42,7 @@ int main()
 	renderer_init();
 	view_bucket_in_place();
 	yagrum_queue("", 10, true);
-	refs_init();
+	//refs_init();
 	//load_world_space();
 #if 1
 	miryks::load_interior("GloomGen");

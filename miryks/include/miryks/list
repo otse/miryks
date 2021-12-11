@@ -44,6 +44,7 @@
 #define LIGH STRINGIFY(LIGH)
 #define MSTT STRINGIFY(MSTT)
 #define TREE STRINGIFY(TREE)
+#define FLOR STRINGIFY(FLOR)
 #define WRLD STRINGIFY(WRLD)
 #define CELL STRINGIFY(CELL)
 #define LAND STRINGIFY(LAND)
@@ -66,10 +67,11 @@
 #define Lights LIGH
 #define Mists MSTT
 #define Plants TREE
+#define Flora FLOR
 #define Cells CELL
 #define Classes CLAS
 #define GameSettings GMST
 #define Races RACE
 
 // used for bitmasking dn't ask
-#define Things { "0", STAT, DOOR, FURN, BOOK, CONT, ARMO, WEAP, AMMO, MISC, ALCH, INGR, LIGH, MSTT, TREE }
+#define Things { "0", STAT, DOOR, FURN, BOOK, CONT, ARMO, WEAP, AMMO, MISC, ALCH, INGR, LIGH, MSTT, TREE, FLOR }

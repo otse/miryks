@@ -4,10 +4,10 @@
 #include <opengl/group.h>
 #include <opengl/geometry.h>
 
-int Group::num = 0;
-int Group::drawCalls = 0;
+int group_type::num = 0;
+int group_type::drawCalls = 0;
 
-Group::Group()
+group_type::group_type()
 {
 	visible = true;
 	parent = nullptr;
@@ -17,34 +17,34 @@ Group::Group()
 	num++;
 }
 
-Group::~Group()
+group_type::~group_type()
 {
 	num--;
 }
 
-void Group::Add(Group *group)
+void group_type::Add(group_type *group)
 {
 	group->parent = this;
-	vector_safe_add<Group *>(group, childGroups);
+	vector_safe_add<group_type *>(group, childGroups);
 }
 
-void Group::Remove(Group *group)
+void group_type::Remove(group_type *group)
 {
 	group->parent = nullptr;
-	vector_safe_remove<Group *>(group, childGroups);
+	vector_safe_remove<group_type *>(group, childGroups);
 }
 
-void Group::Update()
+void group_type::Update()
 {
 	if (parent == nullptr)
 		matrixWorld = matrix;
 	else
 		matrixWorld = parent->matrixWorld * matrix;
-	for (Group *child : childGroups)
+	for (group_type *child : childGroups)
 		child->Update();
 }
 
-void Group::Draw(const mat4 &left)
+void group_type::Draw(const mat4 &left)
 {
 	drawCalls++;
 	mat4 place = left * matrixWorld;
@@ -57,26 +57,26 @@ void Group::Draw(const mat4 &left)
 		axis->Draw(place);
 }
 
-void Group::DrawChilds(const mat4 &left)
+void group_type::DrawChilds(const mat4 &left)
 {
 	if (!visible)
 		return;
 	Draw(left);
-	for (Group *child : childGroups)
+	for (group_type *child : childGroups)
 		child->DrawChilds(left);
 }
 
-void Group::Flatten(Group *root)
+void group_type::Flatten(group_type *root)
 {
 	// Put all childs into root.flat
 	if (this == root)
 		flat.clear();
 	root->flat.push_back(this);
-	for (Group *child : childGroups)
+	for (group_type *child : childGroups)
 		child->Flatten(root);
 }
 
-float Group::GetZ(const mat4 &left) const
+float group_type::GetZ(const mat4 &left) const
 {
 	return glm::distance(cameraCur->group->matrixWorld[3], left[3]);
 }

@@ -21,13 +21,13 @@ struct Light
 	
 	vec3 target;
 };
-struct PointLight : Light
+struct pointlight : Light
 {
-	PointLight();
+	pointlight();
 };
-struct SpotLight : Light
+struct spotlight : Light
 {
-	SpotLight();
+	spotlight();
 	float angle, penumbra;
 	vec3 target;
 };

@@ -30,7 +30,7 @@ namespace miryks {
 			//body = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greyboardrobe_0.nif");
 			//feet = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardboots_0.nif");
 		*/
-		drawGroup = new DrawGroup(nullptr, mat4(1.0));
+		drawGroup = new drawgroup(nullptr, mat4(1.0));
 		if (hat)
 			drawGroup->Add(hat->drawGroup);
 		if (head)
@@ -56,7 +56,7 @@ namespace miryks {
 		drawGroup->Update();
 		sceneDef->bigGroup->Add(drawGroup);
 		// Create an offsetted mirror of Man
-		/*DrawGroup *mirror = new DrawGroup(group, mat4());
+		/*drawgroup *mirror = new drawgroup(group, mat4());
 		mirror->matrix = drawGroup->matrix;
 		mirror->matrix = glm::translate(mirror->matrix, vec3(50, 0, 0));*/
 		//sceneDef->Add(mirror);

@@ -22,7 +22,8 @@ void im_subrecord(SUB);
 
 void im_grup(cgrup *grp, int top_grup = -1)
 {
-	miryks::grup_basic check = grp;
+	using namespace miryks;
+	grup_copy check = grp;
 	char t[100];
 	snprintf(t, 100, "GRP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))
@@ -46,8 +47,9 @@ void im_grup(cgrup *grp, int top_grup = -1)
 
 void im_record(RCD rcd)
 {
+	using namespace miryks;
 	char *edid = nullptr;
-	miryks::record_basic record(rcd);
+	record_copy record(rcd);
 	SUB first = (SUB)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{

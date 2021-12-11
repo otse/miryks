@@ -13,7 +13,7 @@ struct RenderItem;
 
 struct Renderable
 {
-	Group *const group;
+	group_type *const group;
 
 	Aabb aabb;
 
@@ -21,7 +21,7 @@ struct Renderable
 
 	std::vector<RenderItem> objects;
 
-	Renderable(mat4, Group *);
+	Renderable(mat4, group_type *);
 	~Renderable();
 
 	void Separate();
@@ -39,12 +39,12 @@ struct RenderItem
 	friend Renderable;
 
 protected:
-	RenderItem(Group *, Renderable *);
+	RenderItem(group_type *, Renderable *);
 
 public:
 	Aabb aabb, obb;
 
-	Group *group;
+	group_type *group;
 	Renderable *renderable;
 
 	mat4 matrix, modelview;

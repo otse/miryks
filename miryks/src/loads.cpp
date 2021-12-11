@@ -82,7 +82,6 @@ namespace miryks
 		return new Keyf(model);
 	}
 
-	
 	ESP load_plugin(const char *filename, bool whole)
 	{
 		//printf("Load Plugin %s\n", filename);
@@ -153,6 +152,7 @@ namespace miryks
 			Ingredients,
 			Mists,
 			Plants,
+			Flora,
 		};
 		for (const char *word : things)
 			esp_check_grup(esp_top(plugin, word));

@@ -15,18 +15,18 @@ namespace miryks
 
 	//extern ItemRenderer *itemRenderer;
 
-	class SKItem : public Record {
+	class SKItem : public record_copy {
 	public:
 		RenderTarget *myRt;
-		SKItem(Record rcd) : Record(rcd) {
+		SKItem(record_copy rcd) : record_copy(rcd) {
 			
 		}
 	};
 
-	class Container : public Record {
+	class Container : public record_copy {
 	public:
 		static Cont *cur;
-		Container(Record rcd) : Record(rcd)
+		Container(record_copy rcd) : record_copy(rcd)
 		{
 			Init();
 		};
@@ -36,12 +36,12 @@ namespace miryks
 		void Render();
 		void Activate() {
 			//now_you_see_me();
-			Refs::labelingEnabled = false;
+			itemfinder::detect = false;
 			cur = this;
 		}
 		static void Hide() {
 			//now_you_dont();
-			Refs::labelingEnabled = true;
+			itemfinder::detect = true;
 			cur = nullptr;
 		}
 		static void Step() {

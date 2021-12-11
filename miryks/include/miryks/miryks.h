@@ -36,14 +36,16 @@ namespace miryks
 	class Keyf;
 	class Anim;
 
-	class Model;
+	class nifmodel;
 	class ModelSkinned;
 	class SkinnedMesh;
 
-	class Cell;
-	class Interior;
-	class WorldSpace;
-	class Exterior;
+	class cell;
+	class reference;
+	class cell;
+	class interior;
+	class mir_exterior;
+	class mir_worldspace;
 
 	class Container;
 
@@ -67,13 +69,13 @@ namespace miryks
 	Keyf *load_keyframes_from_disk(const char *);
 
 	record_copy get_race(const char *, int);
-	record_and_grup get_interior_cell(const char *, int);
+	rgrup_copy get_interior_cell(const char *, int);
 }
 
 namespace miryks
 {
-	Interior *get_interior(const char *, int);
-	WorldSpace *get_world_space(const char *, int);
+	interior *get_interior(const char *, int);
+	mir_worldspace *get_world_space(const char *, int);
 
 	namespace input
 	{

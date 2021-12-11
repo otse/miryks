@@ -28,15 +28,15 @@ struct Light;
 struct LightShadow;
 struct DirectionalLight;
 struct DirectionalLightShadow;
-struct PointLight;
+struct pointlight;
 struct PointLightShadow;
-struct SpotLight;
+struct spotlight;
 struct SpotLightShadow;
 
 struct List;
-struct Group;
+struct group_type;
 struct GroupBounded;
-struct DrawGroup;
+struct drawgroup;
 struct DrawGroupFlatSorted;
 
 struct Texture;
@@ -51,6 +51,16 @@ struct Scene;
 struct Camera;
 struct FirstPersonCamera;
 struct ViewerCamera;
+
+typedef drawgroup gl_drawgroup;
+typedef group_type gl_group;
+typedef Shader gl_shader;
+typedef Material gl_material;
+typedef Geometry gl_geometry;
+typedef Program gl_program;
+typedef Scene gl_scene;
+typedef Camera gl_camera;
+typedef FirstPersonCamera gl_first_person_camera;
 
 extern Camera *cameraCur;
 extern Scene *sceneCur, *sceneDef;

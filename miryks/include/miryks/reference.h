@@ -8,38 +8,34 @@
 
 namespace miryks
 {
-	class Reference;
+	class reference;
 
-	namespace Refs
+	namespace itemfinder
 	{
-		extern Reference *handRef;
-		extern std::vector<Reference *> labelled;
-		extern bool labelingEnabled;
-		extern vec3 projected;
-		void Init();
-		void Nearby();
-		void Activate();
-	};
+	extern bool detect;
+	extern reference *handRef;
+	extern std::vector<reference *> pool;
+	extern vec3 projected;
+	void init();
+	void consider();
+	void activate();
+	}
 
-	static void refs_init() { Refs::Init(); }
-	
-	// horrible superweight class
-	class Reference : public Record
+	class reference : public record_copy
 	{
 	public:
-		Cell *cell = nullptr;
-		Container *container = nullptr;
+		cell *cell = nullptr;
+		mat4 matrix, translation, rotation, scale;
 
-		Reference(Record);
-		~Reference();
-		Record baseObject;
-		Model *model;
-		mat4 matrix;
-		mat4 translation, rotation, scale;
-		Group *refGroup;
-		DrawGroup *drawGroup = nullptr;
-		PointLight *pointLight;
-		SpotLight *spotLight;
+		reference(record_copy);
+		~reference();
+		Container *container = nullptr;
+		record_copy baseObject;
+		nifmodel *model;
+		group_type *refGroup;
+		drawgroup *drawGroup = nullptr;
+		pointlight *pointLight;
+		spotlight *spotLight;
 		void Go();
 		void ForScale(float *);
 		void ForLocationalData(float *);
@@ -48,5 +44,15 @@ namespace miryks
 		bool DisplayAsItem();
 		void Step();
 		bool Use();
+	};
+
+	class light : reference
+	{
+	public:
+	light(record_copy rc) : reference(rc)
+	{
+	}
+	pointlight *pointLight;
+	spotlight *spotLight;
 	};
 } // namespace dark

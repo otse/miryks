@@ -272,12 +272,16 @@ api void esp_check_grup(GRUP grp)
 {
 	if (grp==NULL)
 		return;
+	assertc(grp->g == 'g');
 	if (!grp->looped)
 		loop_grup(grp->esp, grp);
 }
 
 api void esp_check_rcd(RCD rcd)
 {
+	if (!rcd)
+		return;
+	assertc(rcd->r == 'r');
 	if (rcd->partial)
 	{
 		//printf("checked partial rcd\n");

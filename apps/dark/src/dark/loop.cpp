@@ -30,20 +30,7 @@ using namespace glm;
 ImFont *font2;
 ImFont *font3;
 
-static void hotswap_plugin_and_dungeon()
-{
-	reload_plugin();
-	reload_dungeon();
-}
 
-static void reload_shaders()
-{
-	// warning glitchy
-	printf(" reload shaders ! \n");
-	SetShaderSources();
-	for (auto &pair : Shader::shaders)
-		pair.second->Compile();
-}
 
 static void toggle_third_person()
 {

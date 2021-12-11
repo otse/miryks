@@ -15,71 +15,70 @@
 
 namespace miryks
 {
-	struct pt_maker;
-
-	struct pt_maker : pt_record
+	auto thingsWithLabels = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
+	
+	struct reference_maker : record
 	{
-		Interior *interior = nullptr;
-		bool operator<=(pt_maker &target)
+		interior *interior = nullptr;
+		bool operator<=(reference_maker &target)
 		{
 			interior = target.interior;
 			if (this->is_reference())
 			{
-				Reference *reference = new Reference(*this);
-				interior->refs.push_back(reference);
+				reference *refer = new reference(*this);
+				interior->refs.push_back(refer);
 				if (this->editor_id())
-					interior->edIds.emplace(this->editor_id(), reference);
-				/*if (reference->baseObject.valid())
+					interior->edIds.emplace(this->editor_id(), refer);
+				if (refer->baseObject.valid())
 				{
-					if (reference->baseObject.is_types(thingsWithLabels))
-						Refs::labelled.push_back(reference);
-					else if (reference->baseObject.is_type(MSTT))
-						interior->mstts.push_back(reference);
-				}*/
+					if (refer->baseObject.is_types(thingsWithLabels))
+						itemfinder::pool.push_back(refer);
+					//else if (reference->baseObject.is_type(MSTT))
+					//	interior->mstts.push_back(reference);
+				}
 			}
 			return false;
 		}
 	};
 
-	Interior *dungeon = nullptr;
+	interior *dungeon = nullptr;
 
-	Interior *get_interior(const char *cellId, int num)
+	interior *get_interior(const char *cellId, int num)
 	{
-		return new Interior(get_interior_cell(cellId, num));
+		return new interior(get_interior_cell(cellId, num));
 	}
 
-	Interior::Interior(record_and_grup rng) : Cell(rng)
+	interior::interior(rgrup_copy rg) : cell(rg)
 	{
 		printf("persistent n: %i\n", persistent.mixed().size);
 		printf("temporary n: %i\n", temporary.mixed().size);
 		sceneDef->ambient = vec3(50.f / 255.f);
 	}
 
-	Interior::~Interior()
+	interior::~interior()
 	{
 		Unload();
 	}
 
-	Interior *Interior::Init()
+	interior *interior::Init()
 	{
-		pt_maker target;
+		reference_maker target;
 		target.interior = this;
-		temporary <= target;
-		persistent <= target;
+		printf("wrapping cell subgorups");
+		grup_upcast(temporary) <= target;
+		grup_upcast(persistent) <= target;
 		PutCam();
 		return this;
 	}
 
-	void Interior::Unload()
+	void interior::Unload()
 	{
-		for (Reference *ref : refs)
+		for (reference *ref : refs)
 			delete ref;
 		refs.clear();
-		Refs::labelled.clear();
+		itemfinder::pool.clear();
 		mstts.clear();
 	}
-
-	auto thingsWithLabels = {Doors, Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients};
 
 	inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
 	inline vec3 cast_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }
@@ -88,7 +87,7 @@ namespace miryks
 	inline mat3 cast_mat3(void *f) { return *reinterpret_cast<mat3 *>(f); }
 	inline mat4 cast_mat4(void *f) { return *reinterpret_cast<mat4 *>(f); }
 
-	void Interior::PutCam()
+	void interior::PutCam()
 	{
 		printf("putcam");
 		for (auto ref : refs | std::views::reverse)
@@ -113,7 +112,7 @@ namespace miryks
 		subgroup.rewind();
 		subgroup(me);
 		persistent.loop([&](any &temp) {
-			Record record = temp.u.r;
+			record_copy record = temp.u.r;
 			if (*(record.base()) == 0x0000003B)
 			{
 				// printf("found random xmarker for camera\n");
@@ -129,11 +128,11 @@ namespace miryks
 #endif
 	}
 
-	void Interior::Update()
+	void interior::Update()
 	{
-		//Refs::Nearby();
+		itemfinder::consider();
 
-		//for (Reference *mstt : mstts)
+		//for (reference *mstt : mstts)
 		//	mstt->model->Misty();
 	}
 }
