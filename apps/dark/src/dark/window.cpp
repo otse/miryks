@@ -309,8 +309,8 @@ static void handle_my_keys()
 	//else if (pressing("f10")) toggle_render_stats();
 	else if (pressing_key("e"))
 		handle_use_key();
-	else if (pressing_key("v"))
-		third_person();
+	//else if (pressing_key("v"))
+		//third_person();
 	else if (holding_key("lalt") && pressing_key("enter"))
 		toggle_windowed();
 }

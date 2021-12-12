@@ -16,11 +16,72 @@
 #include <functional>
 #include <algorithm>
 
+constexpr float ONE_CENTIMETER_IN_SKYRIM_UNITS = 1 / 1.428f;
+
+#define EYE_HEIGHT 160 * ONE_CENTIMETER_IN_SKYRIM_UNITS
+
 namespace miryks
 {
+	namespace input
+	{
+	extern std::map<const char *, int> keys;
+	bool pressing_key(const char *);
+	bool holding_key(const char *);
+	}
+
+	extern char *editme;
 	extern std::map<const char *, nif *> nis;
 
-	static inline const std::map<const char *, nif *> &get_nis()
+	BSA load_archive(const char *);
+	ESP load_plugin(const char *, bool = false);
+	void load_these_definitions(ESP);
+	class keyframes;
+	keyframes *load_keyframes_from_disk(const char *);
+
+	static inline void init()
+	{
+		printf("miryks init\n");
+	}
+
+	static inline void init_data_files()
+	{
+		get_plugins()[0] = load_plugin(MASTER_0);
+		get_plugins()[1] = load_plugin(MASTER_1);
+		get_plugins()[2] = load_plugin(MASTER_2);
+		get_plugins()[3] = load_plugin(MASTER_3);
+		get_plugins()[4] = load_plugin(MASTER_4);
+		get_plugins()[5] = load_plugin(PLUGIN_0, true);
+		assertc(get_plugins()[0]);
+		assertc(get_plugins()[1]);
+		assertc(get_plugins()[2]);
+		assertc(get_plugins()[3]);
+		assertc(get_plugins()[4]);
+		assertc(get_plugins()[5]);
+	}
+
+	static inline void init_archives()
+	{
+		get_archives()[0] = load_archive(ARCHIVE_0);
+		//get_archives()[1] = load_archive(ARCHIVE_1);
+		//get_archives()[2] = load_archive(ARCHIVE_2);
+		get_archives()[3] = load_archive(ARCHIVE_3);
+		get_archives()[4] = load_archive(ARCHIVE_4);
+		get_archives()[5] = load_archive(ARCHIVE_5);
+		//get_archives()[6] = load_archive(ARCHIVE_6);
+		//get_archives()[7] = load_archive(ARCHIVE_7);
+		get_archives()[8] = load_archive(ARCHIVE_8);
+		get_archives()[9] = load_archive(ARCHIVE_9);
+		get_archives()[10] = load_archive(ARCHIVE_10);
+		get_archives()[11] = load_archive(ARCHIVE_11);
+		get_archives()[12] = load_archive(ARCHIVE_12);
+		get_archives()[13] = load_archive(ARCHIVE_13);
+		get_archives()[14] = load_archive(ARCHIVE_14);
+		get_archives()[15] = load_archive(ARCHIVE_15);
+		get_archives()[16] = load_archive(ARCHIVE_16);
+		get_archives()[17] = load_archive(ARCHIVE_17);
+	}
+
+	static inline const std::map<const char *, nif *> &access_nis()
 	{
 		return nis;
 	}
@@ -46,7 +107,10 @@ namespace miryks
 		std::string str = prepend;
 		str += path;
 		std::transform(str.begin(), str.end(), str.begin(),
-			[](unsigned char c) { return std::tolower(c); });
+		[](unsigned char c)
+		{
+			return std::tolower(c);
+		});
 		const char *s = str.c_str();
 		resource *res = bsa_find_more(s, flags);
 		if (!res)
@@ -70,6 +134,9 @@ namespace miryks
 		save_ni(res->path, model);
 		return model;
 	}
+
+	void view_in_place(resource *);
+
 
 	/*static inline nif *get_ni(const char *modl)
 	{
@@ -496,21 +563,6 @@ namespace miryks
 		{
 			//itemfinder::consider();
 		}
-		/*void putcam()
-		{
-			for (auto refer : refers)
-			{
-				if (*refer->base() == 0x00000032) // coc marker heading
-				{
-					float *locationalData = refer->data<float *>("DATA");
-					personCam->pos = cast_vec3(locationalData);
-					personCam->pos.z += EYE_HEIGHT;
-					personCam->yaw = cast_vec3(locationalData + 3).z;
-					dontTeleport = true;
-					break;
-				}
-			}
-		}*/
 	};
 
 	class worldspace : public recordgrup

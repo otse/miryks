@@ -13,7 +13,7 @@ void overlay_models()
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
-	for (const auto &[key, value] : miryks::get_nis())
+	for (const auto &[key, value] : miryks::access_nis())
 	{
 		NIF ni = value;
 

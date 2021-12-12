@@ -7,6 +7,9 @@
 #include <miryks/player.h>
 #include <miryks/actors.h>
 
+#include <opengl/camera.h>
+#include <opengl/rendertarget.h>
+
 #include <panels.h>
 
 #include <files.h>
@@ -17,25 +20,38 @@ using namespace miryks;
 namespace dark
 {
 
-void darkassert(bool e)
-{
-	assertc(e);
-}
+	void darkassert(bool e)
+	{
+		assertc(e);
+	}
 
-void view_bucket_in_place()
-{
-	view_in_place(get_res("clutter\\bucket02a.nif"));
-}
-}
+	void view_bucket_in_place()
+	{
+		view_in_place(get_res("clutter\\bucket02a.nif"));
+	}
 
-#include <opengl/camera.h>
-#include <opengl/rendertarget.h>
+	void putcam()
+	{
+		for (auto refer : ginterior->refers)
+		{
+			if (*refer->base() == 0x00000032) // coc marker heading
+			{
+				float *data = refer->data<float *>("DATA");
+				personCam->pos = cast_vec3(data);
+				personCam->pos.z += EYE_HEIGHT;
+				personCam->yaw = cast_vec3(data + 3).z;
+				break;
+			}
+		}
+	}
+}
 
 int main()
 {
 	editme = get_text_file(EDIT_ME);
 	miryks::init();
 	miryks::init_data_files();
+	miryks::init_archives();
 	nif_test();
 	dark::init();
 	load_yagrum();
@@ -47,6 +63,7 @@ int main()
 #if 1
 	ginterior = try_create_interior_instance("GloomGen");
 	ginterior->iter<my_reference>();
+	putcam();
 	//someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	//someDraugr->Place("gloomgendraugr");
