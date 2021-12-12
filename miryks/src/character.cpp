@@ -1,5 +1,5 @@
+#include <miryks/miryks.hpp>
 #include <miryks/actors.h>
-#include <miryks/cell.h>
 
 #include <opengl/drawgroup.h>
 
@@ -9,8 +9,8 @@ namespace miryks {
     Char::Char(const char *raceId)
 	{
 		anim = nullptr;
-		race = get_race(raceId, 0);
-		skel = new Skel(race);
+		race = dig_race(raceId, 0);
+		skel = new skeleton(race.data<char *>("ANAM"));
 		hat = head = body = hands = feet = nullptr;
 		const bool beggar = true;
 		if (beggar)
@@ -30,7 +30,7 @@ namespace miryks {
 			//body = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greyboardrobe_0.nif");
 			//feet = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardboots_0.nif");
 		*/
-		drawGroup = new drawgroup(nullptr, mat4(1.0));
+		drawGroup = new DrawGroup(nullptr, mat4(1.0));
 		if (hat)
 			drawGroup->Add(hat->drawGroup);
 		if (head)
@@ -46,17 +46,17 @@ namespace miryks {
 
 	void Char::Place(const char *q)
 	{
-		if (!dungeon)
+		if (!ginterior)
 			return;
-		auto ref = dungeon->edIds.find(q);
-		if (ref == dungeon->edIds.end())
+		auto ref = ginterior->edIds.find(q);
+		if (ref == ginterior->edIds.end())
 			return;
 		printf("place at %s\n", q);
 		drawGroup->matrix = ref->second->matrix;
 		drawGroup->Update();
 		sceneDef->bigGroup->Add(drawGroup);
 		// Create an offsetted mirror of Man
-		/*drawgroup *mirror = new drawgroup(group, mat4());
+		/*DrawGroup *mirror = new DrawGroup(group, mat4());
 		mirror->matrix = drawGroup->matrix;
 		mirror->matrix = glm::translate(mirror->matrix, vec3(50, 0, 0));*/
 		//sceneDef->Add(mirror);
@@ -64,7 +64,7 @@ namespace miryks {
 
 	void Char::SetAnim(const char *path)
 	{
-		anim = new Anim(get_keyframes(path));
+		anim = new animation(get_keyframes(path));
 		anim->skel = skel;
 		skel->anim = anim;
 	}

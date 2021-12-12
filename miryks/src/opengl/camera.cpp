@@ -15,8 +15,8 @@ Camera::Camera()
 	view = mat4(1);
 	pos = vec3(0);
 	disabled = false;
-	group = new group_type;
-	drawGroup = new drawgroup(group, mat4(1.0));
+	group = new Group;
+	drawGroup = new DrawGroup(group, mat4(1.0));
 }
 
 void Camera::SetProjection() {

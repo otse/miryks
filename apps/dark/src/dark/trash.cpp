@@ -1,10 +1,11 @@
+#if 0
 extern "C"
 {	
 #include <half.h>
 }
 
-#include <miryks/trash.h>
 #include <miryks/model.h>
+#include <dark/trash.h>
 
 #include <imgui.h>
 
@@ -43,8 +44,8 @@ namespace miryks
 				unsigned int item, count;
 			};
 			Cnto *cnto = data<Cnto *>("CNTO", i);
-			record_copy record = esp_get_form_id(cnto->item);
-			if (record.valid())
+			record record = esp_get_form_id(cnto->item);
+			if (record.rvalid())
 			{
 				for (unsigned int j = 0; j < cnto->count; j++)
 				{
@@ -117,7 +118,7 @@ void ItemRenderer::View(Item *item) {
 	NIF nif = get_nif(rc->path);
 
 	static Mesh *mesh = nullptr;
-	static drawgroup *drawGroup = nullptr;
+	static DrawGroup *drawGroup = nullptr;
 	if (mesh)
 	{
 		myScene->drawGroups.Remove(drawGroup);
@@ -125,7 +126,7 @@ void ItemRenderer::View(Item *item) {
 		delete drawGroup;
 	}
 	mesh = new Mesh(nif);
-	drawGroup = new drawgroup(mesh->baseGroup, mat4(1.0));
+	drawGroup = new DrawGroup(mesh->baseGroup, mat4(1.0));
 	myScene->drawGroups.Add(drawGroup);
 	hideCursor();
 	cameraCur = viewerCam;
@@ -134,3 +135,4 @@ void ItemRenderer::View(Item *item) {
 	viewerCam->radius = drawGroup->aabb.radius2() * 2;
 }
 */
+#endif

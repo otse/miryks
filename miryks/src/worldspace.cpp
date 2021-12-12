@@ -1,6 +1,6 @@
+#if 0
 #include <miryks/miryks.h>
-#include <miryks/cell.h>
-#include <miryks/grup.h>
+#include <miryks/miryks.hpp>
 
 #include <algorithm>
 #include <cctype>
@@ -29,10 +29,10 @@ namespace miryks
 		return worldSpace;
 	}
 
-	mir_worldspace::mir_worldspace(rgrup_copy rg) : record_copy(rg)
+	worldspace::worldspace(recordgrup rg) : record(rg)
 	{
 		childs = rg;
-		assertc(childs.ghed().group_type == world_children);
+		assertc(childs.ghed().Group == world_children);
 		sceneDef->ambient = vec3(127.f / 255.f);
 		printf("new mir_worldspace: %s\n", data<const char *>("FULL"));
 		formId xlcn = data<formId>("XLCN");
@@ -103,7 +103,7 @@ namespace miryks
 			return;
 		}
 		subgroup.loop([&](any &temp) {
-			record_copy refr = temp.u.r;
+			record refr = temp.u.r;
 			if (refr.is_type(REFR))
 			{
 				reference *reference = new reference(refr);
@@ -125,8 +125,9 @@ namespace miryks
 				land->exterior = this;
 			}
 			return false;
-		}, group_type);
+		}, Group);
 	}
 	#endif
 
 }
+#endif

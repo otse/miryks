@@ -8,10 +8,10 @@
 
 #include <algorithm>
 
-int drawgroup::num = 0;
-int drawgroup::masks = ~0;
+int DrawGroup::num = 0;
+int DrawGroup::masks = ~0;
 
-drawgroup::drawgroup(group_type *group, mat4 matrix)
+DrawGroup::DrawGroup(Group *group, mat4 matrix)
 	: target(group)
 {
 	this->matrix = matrix;
@@ -22,38 +22,38 @@ drawgroup::drawgroup(group_type *group, mat4 matrix)
 	Update();
 }
 
-drawgroup::~drawgroup()
+DrawGroup::~DrawGroup()
 {
 	num--;
 }
 
-void drawgroup::Reset()
+void DrawGroup::Reset()
 {
 	Cubify();
 }
 
-bool drawgroup::Invisible()
+bool DrawGroup::Invisible()
 {
-	if (visible && (drawgroup::masks & mask) == mask)
+	if (visible && (DrawGroup::masks & mask) == mask)
 		return false;
 	return true;
 }
 
-void drawgroup::Draw(const mat4 &left)
+void DrawGroup::Draw(const mat4 &left)
 {
 	if (Invisible())
 		return;
 	mat4 right = left * matrixWorld;
 	if (childGroups.size())
-		for (group_type *child : childGroups)
-			if (dynamic_cast<drawgroup *>(child))
+		for (Group *child : childGroups)
+			if (dynamic_cast<DrawGroup *>(child))
 				child->Draw(right);
 	if (target)
 		target->DrawChilds(right);
 	DrawBounds();
 }
 
-void drawgroup::Cubify()
+void DrawGroup::Cubify()
 {
 	GroupBounded *bounded = dynamic_cast<GroupBounded *>(target);
 	if (bounded)
@@ -65,7 +65,7 @@ void drawgroup::Cubify()
 	}
 }
 
-void drawgroup::DrawBounds()
+void DrawGroup::DrawBounds()
 {
 	if (!target)
 		return;

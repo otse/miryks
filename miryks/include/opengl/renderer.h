@@ -34,9 +34,9 @@ struct spotlight;
 struct SpotLightShadow;
 
 struct List;
-struct group_type;
+struct Group;
 struct GroupBounded;
-struct drawgroup;
+struct DrawGroup;
 struct DrawGroupFlatSorted;
 
 struct Texture;
@@ -52,8 +52,8 @@ struct Camera;
 struct FirstPersonCamera;
 struct ViewerCamera;
 
-typedef drawgroup gl_drawgroup;
-typedef group_type gl_group;
+typedef DrawGroup gl_drawgroup;
+typedef Group gl_group;
 typedef Shader gl_shader;
 typedef Material gl_material;
 typedef Geometry gl_geometry;

@@ -9,6 +9,9 @@
 
 #include <windows.h>
 
+ImFont *font2;
+ImFont *font3;
+
 namespace yagrum
 {
 	miryks::Image *image = nullptr;

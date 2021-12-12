@@ -1,7 +1,5 @@
-#include <miryks/miryks.h>
-#include <miryks/cell.h>
+#include <miryks/miryks.hpp>
 #include <miryks/model.h>
-#include <miryks/grup.h>
 
 #include <algorithm>
 #include <cctype>
@@ -26,14 +24,14 @@ namespace miryks
 	};
 
 	struct ATXT {
-		formId formid;
+		unsigned int formid;
 		uint8_t quadrant;
 		char unknown;
 		uint16_t layers;
 	};
 
 	struct BTXT {
-		formId formid;
+		unsigned int formid;
 		uint8_t quadrant;
 		char unknown;
 		uint16_t layers;
@@ -43,7 +41,7 @@ namespace miryks
 		char vertex_color[1089][3];
 	};
 
-	land::land(record_copy land) : record_copy(land)
+	land::land(record land) : record(land)
 	{
 		exterior = nullptr;
 		

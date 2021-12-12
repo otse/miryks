@@ -1,10 +1,10 @@
 #include <png.h>
 
-#include <dark/window.h>
 #include <dark/dark.h>
+#include <dark/window.h>
+#include <dark/reference.h>
 
 #include <miryks/player.h>
-#include <miryks/cell.h>
 #include <miryks/actors.h>
 
 #include <panels.h>
@@ -45,10 +45,11 @@ int main()
 	//refs_init();
 	//load_world_space();
 #if 1
-	miryks::load_interior("GloomGen");
-	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
-	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
-	someDraugr->Place("gloomgendraugr");
+	ginterior = try_create_interior_instance("GloomGen");
+	ginterior->iter<my_reference>();
+	//someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
+	//someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
+	//someDraugr->Place("gloomgendraugr");
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
@@ -57,7 +58,7 @@ int main()
 	//someHuman->Place("gloomgenman");
 #endif
 	//someHuman->SetAnim("anims/character/1hm_idle.kf");
-	player1 = new Player();
+	//player1 = new Player();
 	window_while_test();
 	return 1;
 }

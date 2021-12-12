@@ -1,5 +1,6 @@
 #include <dark/dark.h>
 #include <dark/window.h>
+#include <dark/trash.h>
 
 #include <opengl/camera.h>
 #include <opengl/scene.h>
@@ -8,8 +9,6 @@
 #include <opengl/drawgroup.h>
 #include <opengl/shader.h>
 
-#include <miryks/trash.h>
-#include <miryks/cell.h>
 #include <miryks/player.h>
 
 #include <panels.h>
@@ -25,7 +24,7 @@ void setupImgui();
 
 static void toggle_cursor()
 {
-	showCursor = ! showCursor;
+	cursorShowing = ! cursorShowing;
 }
 
 static void errorCallback(int error, const char *description)
@@ -176,9 +175,9 @@ static void toggle_debug()
 {
 	hideOverlays = !hideOverlays;
 	if (!hideOverlays)
-		showCursor = true;
+		cursorShowing = true;
 	else
-		showCursor = false;
+		cursorShowing = false;
 }
 
 static void toggle_fbo()
@@ -191,10 +190,10 @@ static void handle_esc()
 	if (cameraCur == viewerCam)
 	{
 		cameraCur = personCam;
-		showCursor = false;
+		cursorShowing = false;
 	}
-	else if (Cont::cur)
-		Cont::Hide();
+	//else if (Cont::cur)
+	//	Cont::Hide();
 	else
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
@@ -279,13 +278,7 @@ static void handle_use_key()
 {
 	if (ImGui::IsAnyItemActive())
 		return;
-	miryks::itemfinder::activate();
-}
-
-static void hotswap_plugin_and_dungeon()
-{
-	reload_plugin();
-	reload_dungeon();
+	//miryks::itemfinder::activate();
 }
 
 static void reload_shaders()
@@ -311,7 +304,7 @@ static void handle_my_keys()
 		toggle_cursor();
 	else if (pressing_key("f4"))
 		toggle_fbo();
-	else if (pressing_key("f5")) hotswap_plugin_and_dungeon();
+	//else if (pressing_key("f5")) hotswap_plugin_and_dungeon();
 	else if (pressing_key("f6")) reload_shaders();
 	//else if (pressing("f10")) toggle_render_stats();
 	else if (pressing_key("e"))
@@ -339,7 +332,7 @@ void window_while_test()
 
 		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		group_type::drawCalls = 0;
+		Group::drawCalls = 0;
 
 		delta = 0.016f;
 
@@ -351,22 +344,22 @@ void window_while_test()
 
 		handle_my_keys();
 
-		glfwSetInputMode(window, GLFW_CURSOR, showCursor ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+		glfwSetInputMode(window, GLFW_CURSOR, cursorShowing ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 
 		cameraCur->Update(delta);
 
-		if (player1)
+		/*if (player1)
 			player1->Step();
 		if (someDraugr)
 			someDraugr->Step();
 		if (meanSkelly)
 			meanSkelly->Step();
 		if (someHuman)
-			someHuman->Step();
-		if (dungeon)
-			dungeon->Update();
-		if (player1)
-			player1->Step();
+			someHuman->Step();*/
+		if (ginterior)
+			ginterior->update();
+		//if (player1)
+		//	player1->Step();
 
 		sceneDef->DrawItems();
 
@@ -438,7 +431,7 @@ void window_while()
 		}
 		frames++;
 
-		group_type::drawCalls = 0;
+		Group::drawCalls = 0;
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, width, height);

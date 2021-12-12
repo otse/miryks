@@ -8,7 +8,7 @@
 #include <opengl/shader.h>
 
 // we use drawgroups now
-Renderable::Renderable(mat4 mat, group_type *group) : matrix(mat), group(group)
+Renderable::Renderable(mat4 mat, Group *group) : matrix(mat), group(group)
 {
 	Separate();
 
@@ -27,7 +27,7 @@ void Renderable::Separate()
 
 	group->Flatten(group);
 
-	for (group_type *group : group->flat)
+	for (Group *group : group->flat)
 	{
 		//if (!group->geometry)
 		//continue;
@@ -50,7 +50,7 @@ void Renderable::BeginDraws()
 	}
 }
 
-RenderItem::RenderItem(group_type *group, Renderable *renderable) : group(group), renderable(renderable)
+RenderItem::RenderItem(Group *group, Renderable *renderable) : group(group), renderable(renderable)
 {
 	SetInfo();
 

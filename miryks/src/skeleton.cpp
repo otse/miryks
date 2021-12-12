@@ -1,5 +1,4 @@
 #include <miryks/skeleton.h>
-#include <miryks/record.h>
 
 #include <opengl/group.h>
 #include <opengl/renderer.h>
@@ -12,26 +11,26 @@ namespace miryks
 {
 	static void ni_node_callback(RD, NiNode *);
 
-	Keyf *get_keyframes(const char *path)
+	keyframes *get_keyframes(const char *path)
 	{
 		return load_keyframes_from_disk(path);
 	}
 
-	Skel::Skel()
+	skeleton::skeleton()
 	{
 		anim = nullptr;
 		model = nullptr;
-		bones[-1] = new Bone();
+		bones[-1] = new bone();
 	}
 
-	Skel::Skel(record_copy race) : Skel()
+	skeleton::skeleton(char *race) : skeleton()
 	{
-		printf("skeleton anam %s\n", race.data<char *>("ANAM"));
-		model = get_nif(race.data<char *>("ANAM"));
+		printf("skeleton anam %s\n", race);
+		model = get_nif(race);
 		Construct();
 	}
 
-	void Skel::Construct()
+	void skeleton::Construct()
 	{
 		RD rd = calloc_nifprd();
 		rd->nif = model;
@@ -43,7 +42,7 @@ namespace miryks
 		root->Update();
 	}
 
-	void matrix_from_common(Bone *bone, ni_common_layout_t *common)
+	void matrix_from_common(bone *bone, ni_common_layout_t *common)
 	{
 		bone->matrix = translate(bone->matrix, cast_vec3(&common->A->translation));
 		bone->matrix *= inverse(mat4(cast_mat3(&common->A->rotation)));
@@ -52,35 +51,35 @@ namespace miryks
 		bone->rest = bone->matrixWorld;
 	}
 
-	Bone *Skel::MakeBoneHere(RD rd, NiNode *block)
+	bone *skeleton::MakeBoneHere(RD rd, NiNode *block)
 	{
 		//printf("bone name is %s\n", bone->name);
-		Bone *bone = new Bone();
-		bone->block = block;
-		bone->name = nif_get_string(rd->nif, block->common->F->name);
-		bones[rd->current] = bone;
-		bones[rd->parent]->Add(bone);
-		bonesNamed[bone->name] = bone;
-		matrix_from_common(bone, block->common);
-		if (strstr(bone->name, "[Root]")) {
-			root = bone;
+		auto *bon = new bone();
+		bon->block = block;
+		bon->name = nif_get_string(rd->nif, block->common->F->name);
+		bones[rd->current] = bon;
+		bones[rd->parent]->Add(bon);
+		bonesNamed[bon->name] = bon;
+		matrix_from_common(bon, block->common);
+		if (strstr(bon->name, "[Root]")) {
+			root = bon;
 		}
-		return bone;
+		return bon;
 	}
 
 	void ni_node_callback(RD rd, NiNode *block)
 	{
-		Skel *skel = (Skel *)rd->data;
-		Bone *bone = skel->MakeBoneHere(rd, block);
+		skeleton *skel = (skeleton *)rd->data;
+		bone *bone = skel->MakeBoneHere(rd, block);
 	}
 
-	void Skel::Step()
+	void skeleton::Step()
 	{
 		if (anim)
 			anim->Step();
 	}
 
-	Keyf::Keyf(NIF nif) : nif(nif)
+	keyframes::keyframes(NIF nif) : nif(nif)
 	{
 		loop = true;
 		controllerSequence = nullptr;
@@ -90,7 +89,7 @@ namespace miryks
 		controllerSequence = (NiControllerSequence *)nif->blocks[0];
 	}
 
-	Anim::Anim(Keyf *keyf) : keyf(keyf)
+	animation::animation(keyframes *keyf) : keyf(keyf)
 	{
 		skel = nullptr;
 		time = 0;
@@ -99,7 +98,7 @@ namespace miryks
 			play = false;
 	}
 
-	void Anim::Step()
+	void animation::Step()
 	{
 		if (!play)
 			return;
@@ -110,7 +109,7 @@ namespace miryks
 		skel->root->Update();
 	}
 
-	void Anim::SimpleNonInterpolated()
+	void animation::SimpleNonInterpolated()
 	{
 		Nif *model = keyf->nif;
 		struct controlled_block_t *cbp;
@@ -127,7 +126,7 @@ namespace miryks
 				continue;
 			}
 
-			Bone *bone = has->second;
+			bone *bone = has->second;
 			auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);
 			auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)

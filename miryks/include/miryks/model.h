@@ -1,6 +1,8 @@
 #pragma once
 
 #include <miryks/miryks.h>
+#include <miryks/miryks.hpp>
+#include <miryks/skeleton.h>
 
 #include <opengl/renderer.h>
 #include <opengl/scene.h>
@@ -8,7 +10,6 @@
 #include <opengl/geometry.h>
 #include <opengl/material.h>
 
-#include "skeleton.h"
 
 #define callback(x) void (x ## _callback) (RD, x ## _t *)
 
@@ -27,18 +28,21 @@ namespace miryks
 	callback(ni_skin_partition);
 	callback(bs_tri_shape);
 
-	void matrix_from_common(group_type *, ni_common_layout_t *);
+	void matrix_from_common(Group *, ni_common_layout_t *);
 
-	class nifmodel
+	class animation;
+	class skeleton;
+
+	class Model
 	{
 	public:
-		nifmodel();
-		nifmodel(Res *);
-		~nifmodel();
+		Model();
+		Model(Res *);
+		~Model();
 		Nif *model = nullptr;
-		std::map<int, group_type *> groups;
-		group_type *baseGroup, *lastGroup;
-		group_type *MakeNewGroup(Rd *);
+		std::map<int, Group *> groups;
+		Group *baseGroup, *lastGroup;
+		Group *MakeNewGroup(Rd *);
 		void Construct();
 		void Step();
 		void Misty();
@@ -47,23 +51,23 @@ namespace miryks
 		std::vector<NiRef> shapes__;
 	};
 
-	class ModelSkinned : public nifmodel
+	class ModelSkinned : public Model
 	{
 	public:
 		NiRef lastShape;
 		ModelSkinned(const char *);
 		void Construct();
-		void Step(Skel *);
-		void Initial(Skel *);
+		void Step(skeleton *);
+		void Initial(skeleton *);
 	};
 
 	class SkinnedMesh
 	{
 	public:
 		ModelSkinned *modelSkinned;
-		Skel *skel;
-		Anim *animation;
-		drawgroup *drawGroup;
+		skeleton *skel;
+		animation *anim;
+		DrawGroup *drawGroup;
 		SkinnedMesh(const char *);
 		~SkinnedMesh();
 		void Step();

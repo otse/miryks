@@ -1,11 +1,8 @@
 #include <miryks/miryks.h>
+#include <miryks/miryks.hpp>
 
-#include <miryks/grup.h>
-#include <miryks/record.h>
-#include <miryks/cell.h>
 #include <miryks/model.h>
 #include <miryks/player.h>
-#include <miryks/reference.h>
 
 #include <opengl/camera.h>
 #include <opengl/drawgroup.h>
@@ -15,6 +12,9 @@ const char *races = Races;
 
 namespace miryks
 {
+	interior *ginterior = nullptr;
+	worldspace *gworldspace = nullptr;
+	
 	namespace hooks
 	{
 		bool (*some_behavior)(int) = 0;
@@ -39,7 +39,7 @@ namespace miryks
 
 	int init()
 	{
-		itemfinder::init();
+		//itemfinder::init();
 		return 0;
 	}
 
@@ -82,36 +82,10 @@ namespace miryks
 		get_archives()[17] = load_archive(ARCHIVE_17);
 	}
 
-	rgrup_copy get_interior_cell(const char *cellId, int plugin)
-	{
-		return find_record_with_id_and_grup(
-		cellId,
-		grup<0,
-		grup<2,
-		grup<3>>>(cells, plugin));
-	}
-
-	record_copy get_race(const char *raceId, int plugin)
-	{
-		return find_record_with_id(
-		raceId,
-		grup<0>(races, plugin));
-	}
-
-	void load_interior(const char *name)
-	{
-		dungeon = get_interior(name, 5)->Init();
-	}
-
-	void load_world_space(const char *name)
-	{
-		worldSpace = get_world_space(name, 5)->Init();
-	}
-
 	void third_person()
 	{
-		if (player1)
-			player1->toggleView();
+		//if (player1)
+		//	player1->toggleView();
 	}
 
 	void reload_plugin()
@@ -120,29 +94,18 @@ namespace miryks
 		get_plugins()[5] = load_plugin(PLUGIN_0, true);
 	}
 
-	void reload_dungeon()
-	{
-		if (!dungeon)
-			return;
-		const char *edId = dungeon->edId;
-		delete dungeon;
-		dungeon = get_interior(edId, 5);
-		dungeon->dontTeleport = true;
-		dungeon->Init();
-	}
-
 	void view_in_place(Res *res)
 	{
-		static nifmodel *model = nullptr;
-		static drawgroup *drawGroup = nullptr;
+		static Model *model = nullptr;
+		static DrawGroup *drawGroup = nullptr;
 		if (model)
 		{
 			drawGroup->parent->Remove(drawGroup);
 			delete model;
 			delete drawGroup;
 		}
-		model = new nifmodel(res);
-		drawGroup = new drawgroup(
+		model = new Model(res);
+		drawGroup = new DrawGroup(
 				model->baseGroup, translate(mat4(1.0), personCam->pos));
 		sceneDef->bigGroup->Add(drawGroup);
 		showCursor = false;

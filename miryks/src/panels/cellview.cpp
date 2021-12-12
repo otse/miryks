@@ -1,6 +1,4 @@
-#include <miryks/miryks.h>
-#include <miryks/grup.h>
-#include <miryks/cell.h>
+#include <miryks/miryks.hpp>
 
 #include <files.h>
 #include <imgui.h>
@@ -35,13 +33,13 @@ void overlay_cellview()
 
 			ImGui::Separator();
 
-			if (!dungeon || dungeon && dungeon->editor_id(items[current]) == false)
+			if (!ginterior || ginterior && ginterior->editor_id(items[current]) == false)
 			{
 				if (ImGui::Button("Load"))
 				{
-					if (dungeon)
-						delete dungeon;
-					load_interior(items[current]);
+					if (ginterior)
+						delete ginterior;
+					///load_interior(items[current]);
 				}
 			}
 			//if (items[current] == ginterior->loadedCell)
@@ -52,19 +50,19 @@ void overlay_cellview()
 		}
 		if (ImGui::BeginTabItem("world space"))
 		{
-			if (worldSpace) {
-				ImGui::Text("num total exterior cells: %i", worldSpace->exteriors.size());
+			if (gworldspace) {
+				ImGui::Text("num total exterior cells: %i", gworldspace->exteriors.size());
 			}
 			if (ImGui::Button("Go outdoors?"))
 			{
-				if (dungeon)
+				if (ginterior)
 				{
-					delete dungeon;
-					dungeon = nullptr;
+					delete ginterior;
+					ginterior = nullptr;
 				}
-				if (!worldSpace)
+				if (!gworldspace)
 				{
-					load_world_space("DarkWorld");
+					///load_world_space("DarkWorld");
 				}
 			}
 			ImGui::EndTabItem();

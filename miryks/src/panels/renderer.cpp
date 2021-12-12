@@ -5,7 +5,6 @@
 #include <opengl/camera.h>
 #include <opengl/shader.h>
 
-#include <miryks/reference.h>
 #include <miryks/actors.h>
 
 //#include <glm/gtx/string_cast.hpp>
@@ -27,7 +26,7 @@ void overlay_renderer()
 
 	ImGui::Begin("Render", nullptr, flags);
 
-	ImGui::Text("groups: %i", group_type::num);
+	ImGui::Text("groups: %i", Group::num);
 	ImGui::Text("geometries: %i", Geometry::num);
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
@@ -55,19 +54,19 @@ void overlay_renderer()
 		};
 		if (ImGui::BeginTabItem("objects"))
 		{
-			bool b = drawgroup::masks == 0;
+			bool b = DrawGroup::masks == 0;
 			if (ImGui::Checkbox("0", &b))
-				drawgroup::masks = 0;
-			bool b2 = drawgroup::masks == ~0;
+				DrawGroup::masks = 0;
+			bool b2 = DrawGroup::masks == ~0;
 			if (ImGui::Checkbox("~0", &b2))
-				drawgroup::masks = ~0;
+				DrawGroup::masks = ~0;
 			ImGui::Separator();
 			int i = 0;
 			for(auto word : Things) {
 				int bit = 1 << i;
-				bool test = (drawgroup::masks & bit) == bit;
+				bool test = (DrawGroup::masks & bit) == bit;
 				if (ImGui::Checkbox(map[word], &test))
-					drawgroup::masks ^= bit;
+					DrawGroup::masks ^= bit;
 				i++;
 			}
 			ImGui::EndTabItem();

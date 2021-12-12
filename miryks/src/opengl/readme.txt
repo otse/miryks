@@ -6,7 +6,7 @@ groupbounded - its polymorphic with group, but you should only use groupbounded 
 material - it basically canonically sets hints and the shader for any given instance that is rendering  
 geometry - as it says  
 shader - code that i stole  
-drawgroup - this is an instance of a group. yes.  
+DrawGroup - this is an instance of a group. yes.  
 drawgroupflatsorted - just use depth sorting  
 renderable - old code  
 rendertarget - lets you render without disturbing the main screen  

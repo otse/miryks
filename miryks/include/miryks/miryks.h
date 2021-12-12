@@ -1,8 +1,9 @@
 #pragma once
 
-#include <miryks/list>
+#include <miryks/constants.h>
 #include <miryks/libs.h>
-#include <miryks/grup.h>
+
+#include <miryks/miryks.hpp>
 
 #include <map>
 
@@ -21,33 +22,10 @@ namespace miryks
 	int init();
 	void load_data_files();
 	void load_archives();
-	void load_interior(const char *);
-	void load_world_space(const char *);
 
 	void view_in_place(Res *);
 
 	extern char *editme;
-
-	class Char;
-	class Player;
-	class Monster;
-	class Skel;
-	class Bone;
-	class Keyf;
-	class Anim;
-
-	class nifmodel;
-	class ModelSkinned;
-	class SkinnedMesh;
-
-	class cell;
-	class reference;
-	class cell;
-	class interior;
-	class mir_exterior;
-	class mir_worldspace;
-
-	class Container;
 
 	void save_nif(const char *, Nif *);
 	Nif *saved_nif(const char *);
@@ -66,28 +44,18 @@ namespace miryks
 
 	void load_these_definitions(ESP);
 
-	Keyf *load_keyframes_from_disk(const char *);
-
-	record_copy get_race(const char *, int);
-	rgrup_copy get_interior_cell(const char *, int);
+	class keyframes;
+	keyframes *load_keyframes_from_disk(const char *);
 }
 
 namespace miryks
 {
-	interior *get_interior(const char *, int);
-	mir_worldspace *get_world_space(const char *, int);
-
 	namespace input
 	{
 	extern std::map<const char *, int> keys;
 	bool pressing_key(const char *);
 	bool holding_key(const char *);
 	}
-	
-	extern bool showCursor;
-	extern Player *player1;
-	extern Monster *someDraugr, *meanSkelly;
-	extern Char *someHuman;
 
 	void reload_plugin();
 	void reload_dungeon();

@@ -1,6 +1,6 @@
 #include <files.h>
 
-#include <miryks/grup.h>
+#include <miryks/miryks.hpp>
 #include <miryks/model.h>
 
 #include <opengl/group.h>
@@ -70,16 +70,16 @@ namespace miryks
 		return model;
 	}
 
-	Keyf *load_keyframes_from_disk(const char *path)
+	keyframes *load_keyframes_from_disk(const char *path)
 	{
 		if (Nif *saved = saved_nif(path))
-			return new Keyf(saved);
+			return new keyframes(saved);
 		Nif *model = calloc_nifp();
 		model->path = path;
 		int len = fbuf(path, &model->buf, false);
 		nif_read(model);
 		save_nif(path, model);
-		return new Keyf(model);
+		return new keyframes(model);
 	}
 
 	ESP load_plugin(const char *filename, bool whole)

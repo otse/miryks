@@ -1,58 +1,64 @@
 #pragma once
 
+#include <dark/dark.h>
+#include <dark/trash.h>
+
 #include <miryks/miryks.h>
-#include <miryks/record.h>
+#include <miryks/miryks.hpp>
+
+#include <miryks/model.h>
 
 #include <opengl/renderer.h>
 #include <opengl/aabb.h>
 
-namespace miryks
+using namespace miryks;
+
+namespace dark
 {
-	class reference;
+	class my_reference;
 
 	namespace itemfinder
 	{
 	extern bool detect;
-	extern reference *handRef;
-	extern std::vector<reference *> pool;
+	extern my_reference *handRef;
+	extern std::vector<my_reference *> pool;
 	extern vec3 projected;
 	void init();
 	void consider();
 	void activate();
 	}
 
-	class reference : public record_copy
+	class my_reference : public reference
 	{
 	public:
+		my_reference(record);
+		~my_reference();
+		record baseObject;
+		Model *model;
 		cell *cell = nullptr;
 		mat4 matrix, translation, rotation, scale;
 
-		reference(record_copy);
-		~reference();
-		Container *container = nullptr;
-		record_copy baseObject;
-		nifmodel *model;
-		group_type *refGroup;
-		drawgroup *drawGroup = nullptr;
+		//Container *container = nullptr;
+		DrawGroup *drawGroup = nullptr;
 		pointlight *pointLight;
 		spotlight *spotLight;
 		void Go();
 		void ForScale(float *);
 		void ForLocationalData(float *);
-		void ForBaseId(formId);
+		void ForBaseId(const unsigned int *);
 		float GetDistance() const;
 		bool DisplayAsItem();
 		void Step();
-		bool Use();
+		bool use();
 	};
 
-	class light : reference
+	/*class light : reference
 	{
 	public:
-	light(record_copy rc) : reference(rc)
+	light(record rc) : reference(rc)
 	{
 	}
 	pointlight *pointLight;
 	spotlight *spotLight;
-	};
+	};*/
 } // namespace dark

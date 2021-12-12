@@ -4,26 +4,26 @@
 #include <opengl/renderer.h>
 #include <opengl/aabb.h>
 
-struct group_type
+struct Group
 {
 	static int num, drawCalls;
 	bool visible;
-	group_type *parent;
+	Group *parent;
 	Geometry *geometry, *axis;
 	mat4 matrix, matrixWorld;
-	std::vector<group_type *> childGroups, flat;
-	group_type();
-	virtual ~group_type();
-	void Add(group_type *);
-	void Remove(group_type *);
-	void Flatten(group_type *);
+	std::vector<Group *> childGroups, flat;
+	Group();
+	virtual ~Group();
+	void Add(Group *);
+	void Remove(Group *);
+	void Flatten(Group *);
 	void DrawChilds(const mat4 &);
 	virtual void Draw(const mat4 &);
 	virtual void Update();
 	float GetZ(const mat4 &) const;
 };
 
-struct GroupBounded : group_type
+struct GroupBounded : Group
 {
 	AABB aabb, obb;
 	GroupBounded();

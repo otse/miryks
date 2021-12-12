@@ -1,11 +1,13 @@
+#if 0
 #pragma once
 
-#include <miryks/reference.h>
-#include <miryks/record.h>
+#include <miryks/miryks.hpp>
+
+#include <dark/reference.h>
 
 #include <opengl/renderer.h>
 
-namespace miryks
+namespace dark
 {
 	class SKItem;
 	class Container;
@@ -15,18 +17,18 @@ namespace miryks
 
 	//extern ItemRenderer *itemRenderer;
 
-	class SKItem : public record_copy {
+	class SKItem : public record {
 	public:
 		RenderTarget *myRt;
-		SKItem(record_copy rcd) : record_copy(rcd) {
+		SKItem(record rcd) : record(rcd) {
 			
 		}
 	};
 
-	class Container : public record_copy {
+	class Container : public record {
 	public:
 		static Cont *cur;
-		Container(record_copy rcd) : record_copy(rcd)
+		Container(record rcd) : record(rcd)
 		{
 			Init();
 		};
@@ -65,3 +67,4 @@ namespace miryks
 	*/
     
 }
+#endif

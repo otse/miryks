@@ -2,12 +2,11 @@
 
 // needs a big cleanup sometime
 
-#include <miryks/reference.h>
-
-#include <miryks/record.h>
-#include <miryks/grup.h>
+#include <miryks/miryks.hpp>
 #include <miryks/model.h>
-#include <miryks/trash.h>
+
+#include <dark/trash.h>
+#include <dark/reference.h>
 
 #include <algorithm>
 #include <cctype>
@@ -23,10 +22,13 @@
 #include <imgui.h>
 #include <panels.h>
 
-namespace miryks
+using namespace miryks;
+
+namespace dark
 {
-	reference::reference(record_copy refr) : record_copy(refr)
+	my_reference::my_reference(record refr) : reference(refr)
 	{
+		printf("my reference");
 		model = nullptr;
 		drawGroup = nullptr;
 		pointLight = nullptr;
@@ -34,7 +36,7 @@ namespace miryks
 		Go();
 	}
 
-	reference::~reference()
+	my_reference::~my_reference()
 	{
 		if (drawGroup && drawGroup->parent)
 			drawGroup->parent->Remove(drawGroup);
@@ -45,7 +47,7 @@ namespace miryks
 		delete spotLight;
 	}
 
-	void reference::Step()
+	void my_reference::Step()
 	{
 		if (baseObject.is_type("MSTT"))
 		{
@@ -54,13 +56,13 @@ namespace miryks
 		}
 	}
 
-	void reference::Go()
+	void my_reference::Go()
 	{
 		matrix = mat4(1.0);
 
 		translation = rotation = scale = mat4(1.0);
 
-		formId baseId = base();
+		const unsigned int *baseId = base();
 
 		auto XSCL = data<float *>("XSCL");
 		auto locationalData = data<float *>("DATA");
@@ -73,7 +75,7 @@ namespace miryks
 	}
 
 	// bad
-	void reference::ForLocationalData(float *locationalData)
+	void my_reference::ForLocationalData(float *locationalData)
 	{
 		if (!locationalData)
 			return;
@@ -91,19 +93,19 @@ namespace miryks
 	}
 
 	// bad
-	nifmodel *create_simple_model_from_modl(const char *modl)
+	Model *create_simple_model_from_modl(const char *modl)
 	{
-		static std::map<const char *, nifmodel *> map;
+		static std::map<const char *, Model *> map;
 		auto has = map.find(modl);
 		if (has != map.end())
 			return has->second;
-		nifmodel *model = new nifmodel(get_res(modl));
+		Model *model = new Model(get_res(modl));
 		map.emplace(modl, model);
 		return model;
 	}
 
 	// for boo baba
-	void reference::ForBaseId(formId baseId)
+	void my_reference::ForBaseId(const unsigned int *baseId)
 	{
 		if (!baseId)
 			return;
@@ -115,7 +117,7 @@ namespace miryks
 
 		baseObject = esp_get_form_id(id);
 
-		if (!baseObject.valid())
+		if (!baseObject.rvalid())
 		{
 			char hex[10];
 			snprintf(hex, 10, "%08X", id);
@@ -153,7 +155,7 @@ namespace miryks
 			}
 			if (baseObject.is_type(CONT))
 			{
-				container = new Container(baseObject);
+				//container = new Container(baseObject);
 			}
 		}
 		else if (baseObject.is_type(MSTT))
@@ -259,7 +261,7 @@ namespace miryks
 		}
 	}
 
-	float reference::GetDistance() const
+	float my_reference::GetDistance() const
 	{
 		if (drawGroup == nullptr)
 			return 0;
@@ -283,20 +285,22 @@ namespace miryks
 
 	// Todo, Omg !
 
-	bool myfunction(reference *l, reference *r)
+	bool myfunction(my_reference *l, my_reference *r)
 	{
 		return l->GetDistance() < r->GetDistance();
 	}
 
-	bool reference::Use() {
-		printf("Use %s\n", baseObject.editor_id());
-		if (baseObject.is_type(CONT) && container)
-			container->Activate();
+	bool my_reference::use() {
+		printf(" use %s\n", baseObject.editor_id());
+
+		/*if (baseObject.is_type(CONT) && container)
+			container->Activate();*/
 		return true;
 	}
 
+	#if 0
 	// horrible imgui vomit
-	bool reference::DisplayAsItem()
+	bool my_reference::DisplayAsItem()
 	{
 		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;
 
@@ -347,6 +351,7 @@ namespace miryks
 
 		return true;
 	}
+	#endif
 
 	/*
 	Matrix m = _refr->_matrix;

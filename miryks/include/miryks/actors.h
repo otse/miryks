@@ -1,19 +1,19 @@
 #pragma once
 
+#include <miryks/miryks.hpp>
 #include <miryks/model.h>
-#include <miryks/grup.h>
 
 namespace miryks
 {
 	class Monster
 	{
 	public:
-		record_copy race;
+		record race;
 		ModelSkinned *modelSkinned;
 		SkinnedMesh *skinnedMesh;
-		Skel *skel;
-		Anim *anim;
-		drawgroup *drawGroup;
+		skeleton *skel;
+		animation *anim;
+		DrawGroup *drawGroup;
 		Monster(const char *, const char *);
 		void Place(const char *);
 		void SetAnim(const char *);
@@ -23,11 +23,11 @@ namespace miryks
 	class Char
 	{
 	public:
-		record_copy race;
-		Skel *skel;
-		Anim *anim;
+		record race;
+		skeleton *skel;
+		animation *anim;
 		SkinnedMesh *hat, *head, *body, *hands, *feet;
-		drawgroup *drawGroup;
+		DrawGroup *drawGroup;
 		Char(const char * = "ImperialRace");
 		void SetAnim(const char *);
 		void Step();

@@ -1,7 +1,7 @@
 #include <opengl/group.h>
 #include <opengl/geometry.h>
 
-GroupBounded::GroupBounded() : group_type()
+GroupBounded::GroupBounded() : Group()
 {
 	aabb = obb = Aabb();
 	axis = new Geometry;
@@ -11,7 +11,7 @@ GroupBounded::GroupBounded() : group_type()
 void GroupBounded::Update()
 {
 	aabb = Aabb();
-	group_type::Update();
+	Group::Update();
 	// Once everything is updated,
 	// Run back to front
 	if (geometry)

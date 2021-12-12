@@ -7,9 +7,9 @@ namespace miryks
 	SkinnedMesh::SkinnedMesh(const char *path)
 	{
 		skel = nullptr;
-		animation = nullptr;
+		anim = nullptr;
 		modelSkinned = new ModelSkinned(path);
-		drawGroup = new drawgroup(
+		drawGroup = new DrawGroup(
 			modelSkinned->baseGroup, mat4(1.0));
 	}
 

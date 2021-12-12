@@ -13,7 +13,7 @@ extern "C"
 
 namespace miryks
 {
-	ModelSkinned::ModelSkinned(const char *modl) : nifmodel()
+	ModelSkinned::ModelSkinned(const char *modl) : Model()
 	{
 		model = get_nif(modl);
 		assertc(model);
@@ -25,8 +25,8 @@ namespace miryks
 		// theres too many hint nodes in a skinned mesh that we dont care about
 		if (rd->current != 0)
 			return;
-		nifmodel *mesh = (nifmodel *)rd->data;
-		group_type *group = mesh->MakeNewGroup(rd);
+		Model *mesh = (Model *)rd->data;
+		Group *group = mesh->MakeNewGroup(rd);
 		matrix_from_common(group, block->common);
 	}
 
@@ -49,13 +49,13 @@ namespace miryks
 		baseGroup->Update();
 	}
 	
-	void ModelSkinned::Initial(Skel *skeleton)
+	void ModelSkinned::Initial(skeleton *skeleton)
 	{
 		// "unoptimised" :)
 
 		for (NiRef ref : shapes__)
 		{
-			//group_type *group = mesh->groups[index];
+			//Group *group = mesh->groups[index];
 			auto shape = (BSTriShape *)nif_get_block(model, ref);
 			auto nsi = (NiSkinInstance *)nif_get_block(model, shape->refs->skin);
 			auto nsp = (NiSkinPartition *)nif_get_block(model, nsi->A->skin_partition);
@@ -63,7 +63,7 @@ namespace miryks
 			for (unsigned int k = 0; k < nsp->A->num_partitions; k++)
 			{
 				SkinPartition *partition = nsp->partitions[k];
-				group_type *group = groups[ref]->childGroups[k];
+				Group *group = groups[ref]->childGroups[k];
 				Material *material = group->geometry->material;
 				material->boneMatrices.clear();
 				material->boneMatrices.reserve(partition->nums->bones);
@@ -79,17 +79,17 @@ namespace miryks
 						material->boneMatrices.push_back(mat4(1.0));
 						continue;
 					}
-					Bone *bone = has->second;
+					bone *bone = has->second;
 					material->boneMatrices.push_back(bone->matrixWorld * inverse(bone->rest));
 					
-					//group_type *node_group = groups[nsi->bones[partition->bones[i]]];
+					//Group *node_group = groups[nsi->bones[partition->bones[i]]];
 					//node_group->matrixWorld = bone->group->matrixWorld;
 				}
 			}
 		}
 	}
 
-	void ModelSkinned::Step(Skel *skeleton)
+	void ModelSkinned::Step(skeleton *skeleton)
 	{
 		Initial(skeleton);
 	}
@@ -142,7 +142,7 @@ namespace miryks
 				break;
 			if (!*partition->has_faces)
 				break;
-			group_type *group = new group_type;
+			Group *group = new Group;
 			Geometry *geometry = new Geometry();
 			group->geometry = geometry;
 			geometry->skinning = true;

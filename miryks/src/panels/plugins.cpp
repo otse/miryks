@@ -4,9 +4,7 @@ extern "C"
 #include <lib/esp.h>
 }
 
-#include <miryks/miryks.h>
-#include <miryks/grup.h>
-#include <miryks/record.h>
+#include <miryks/miryks.hpp>
 
 #include <sstream>
 #include <files.h>
@@ -23,7 +21,7 @@ void im_subrecord(SUB);
 void im_grup(cgrup *grp, int top_grup = -1)
 {
 	using namespace miryks;
-	grup_copy check = grp;
+	grup check = grp;
 	char t[100];
 	snprintf(t, 100, "GRP %i %.4s", grp->id, (char *)&grp->hed->label);
 	if (ImGui::TreeNode(t))
@@ -49,7 +47,7 @@ void im_record(RCD rcd)
 {
 	using namespace miryks;
 	char *edid = nullptr;
-	record_copy record(rcd);
+	record record(rcd);
 	SUB first = (SUB)rcd->rcdbs->elements[0];
 	if (first->hed->sgn == *(unsigned int *) "EDID")
 	{

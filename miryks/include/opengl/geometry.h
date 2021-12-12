@@ -26,7 +26,7 @@ struct Geometry
 	bool skinning = false;
 	GLuint vao = 0, vbo = 0, ebo = 0;
 	Aabb aabb;
-	group_type *parent = nullptr;
+	Group *parent = nullptr;
 	Material *material = nullptr;
 	//std::vector<texture_t> textures;
 	std::vector<Vertex> vertices;
