@@ -12,73 +12,15 @@
 
 namespace miryks
 {
-	std::map<const char *, Nif *> nifs;
-
-	std::map<const char *, Nif *> &get_nifs()
-	{
-		return nifs;
-	}
-
-	void save_nif(const char *key, Nif *nif)
-	{
-		nifs.emplace(key, nif);
-	}
-
-	Nif *saved_nif(const char *key)
-	{
-		auto has = nifs.find(key);
-		if (has != nifs.end())
-			*has->second;
-		return nullptr;
-	}
-
-	Res *get_res(
-		const char *path, const char *prepend, unsigned long flags)
-	{
-		std::string str = prepend;
-		str += path;
-		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c)
-					   { return std::tolower(c); });
-		const char *s = str.c_str();
-		Res *res = bsa_find_more(s, flags);
-		if (res == NULL)
-			printf("no res at %s\n", s);
-		bsa_read(res);
-		return res;
-	}
-
-	Nif *get_nif(const char *modl)
-	{
-		if (!modl)
-			return nullptr;
-		return get_nif(get_res(modl));
-	}
-
-	Nif *get_nif(Res *res)
-	{
-		if (!res)
-			return nullptr;
-		Nif *saved = saved_nif(res->path);
-		if (saved)
-			return saved;
-		bsa_read(res);
-		Nif *model = calloc_nifp();
-		model->path = res->path;
-		model->buf = res->buf;
-		nif_read(model);
-		save_nif(res->path, model);
-		return model;
-	}
-
 	keyframes *load_keyframes_from_disk(const char *path)
 	{
-		if (Nif *saved = saved_nif(path))
+		if (nif *saved = got_ni(path))
 			return new keyframes(saved);
-		Nif *model = calloc_nifp();
+		nif *model = calloc_ni();
 		model->path = path;
 		int len = fbuf(path, &model->buf, false);
 		nif_read(model);
-		save_nif(path, model);
+		save_ni(path, model);
 		return new keyframes(model);
 	}
 

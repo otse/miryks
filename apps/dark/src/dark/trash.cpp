@@ -115,7 +115,7 @@ void ItemRenderer::View(Item *item) {
 	printf("itemRenderer view %s", item->data<unsigned char *>("FULL"));
 
 	RES rc = bsa_find_more(modl, 0x1);
-	NIF nif = get_nif(rc->path);
+	NIF ni = get_ni(rc->path);
 
 	static Mesh *mesh = nullptr;
 	static DrawGroup *drawGroup = nullptr;
@@ -125,7 +125,7 @@ void ItemRenderer::View(Item *item) {
 		delete mesh;
 		delete drawGroup;
 	}
-	mesh = new Mesh(nif);
+	mesh = new Mesh(ni);
 	drawGroup = new DrawGroup(mesh->baseGroup, mat4(1.0));
 	myScene->drawGroups.Add(drawGroup);
 	hideCursor();

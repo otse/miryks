@@ -20,7 +20,7 @@ namespace miryks
 	public:
 		std::map<NiRef, bone *> bones;
 		std::map<const std::string, bone *> bonesNamed;
-		Nif *model;
+		nif *model;
 		bone *baseBone, *root;
 		animation *anim;
 		skeleton();
@@ -48,8 +48,8 @@ namespace miryks
 	class keyframes
 	{
 	public:
-		keyframes(Nif *);
-		Nif *nif;
+		keyframes(nif *);
+		nif *ni;
 		bool loop;
 		NiControllerSequence *controllerSequence;
 	};

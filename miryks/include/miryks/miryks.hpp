@@ -14,9 +14,70 @@
 #include <map>
 #include <array>
 #include <functional>
+#include <algorithm>
 
 namespace miryks
 {
+	extern std::map<const char *, nif *> nis;
+
+	static inline const std::map<const char *, nif *> &get_nis()
+	{
+		return nis;
+	}
+
+	static inline void save_ni(const char *key, nif *ni)
+	{
+		nis.emplace(key, ni);
+	}
+
+	static inline nif *got_ni(const char *key)
+	{
+		auto has = nis.find(key);
+		if (has != nis.end())
+			*has->second;
+		return nullptr;
+	}
+
+	static inline resource *get_res(
+		const char *path,
+		const char *prepend = "meshes\\",
+		unsigned long flags = 0x1)
+	{
+		std::string str = prepend;
+		str += path;
+		std::transform(str.begin(), str.end(), str.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+		const char *s = str.c_str();
+		resource *res = bsa_find_more(s, flags);
+		if (!res)
+		printf("get_res fail: %s \n", s);
+		bsa_read(res);
+		return res;
+	}
+
+	static inline nif *get_ni(resource *res)
+	{
+		if (!res)
+			return nullptr;
+		nif *saved = got_ni(res->path);
+		if (saved)
+			return saved;
+		bsa_read(res);
+		nif *model = calloc_ni();
+		model->path = res->path;
+		model->buf = res->buf;
+		nif_read(model);
+		save_ni(res->path, model);
+		return model;
+	}
+
+	/*static inline nif *get_ni(const char *modl)
+	{
+		if (!modl)
+			return nullptr;
+		return get_ni(get_res(modl));
+	}*/
+
 	struct record
 	{
 		typedef const char signature[5];
@@ -462,9 +523,9 @@ namespace miryks
 		{
 			printf("worldspace name %s", this->editor_id());
 		}
-		worldspace *Init();
-		void DiscoverAllCells();
-		void LoadExterior(int, int);
+		worldspace *init();
+		void dig_all_cells();
+		void load_ext_loc(int, int);
 	};
 
 	static inline interior *try_create_interior_instance(const char *name, int plugin = 5)
@@ -502,7 +563,7 @@ namespace miryks
 		land *land;
 		XCLC *xclc;
 		exterior(recordgrup);
-		void Init();
+		void init();
 	};
 
 	class land : public record

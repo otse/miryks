@@ -10,10 +10,10 @@
 #define BSA_MAX_SEARCHES 60
 
 #define BSA Bsa * 
-#define RES Res *
+#define RES resource *
 
 struct Bsa;
-struct Res;
+struct resource;
 
 struct bsa_hedr
 {
@@ -37,7 +37,7 @@ struct bsa_file
 	unsigned long size, offset;
 };
 
-typedef struct Res
+typedef struct resource
 {
 	struct BSA bsa;
 	int i, j, r;
@@ -45,7 +45,7 @@ typedef struct Res
 	const char *name;
 	char *buf;
 	char path[260];
-} Res;
+} resource;
 
 typedef struct Bsa
 {

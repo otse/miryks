@@ -3,10 +3,10 @@
 #include <lib/nif.h>
 #include <lib/niftypes.h>
 
-#define Hedr   nif->hdr
-#define Blocks nif->blocks
+#define Hedr   ni->hdr
+#define Blocks ni->blocks
 
-api void nif_print_hedr(NIF nif, char *s)
+api void nif_print_hedr(NIF ni, char *s)
 {
 	snprintf(
 		s, 600,
@@ -101,7 +101,7 @@ static char *print_mat_4p(char *s, float *v)
 	return s;
 }
 
-static char *print_ni_common_layout(NIF nif, char s[600], struct ni_common_layout_t *block)
+static char *print_ni_common_layout(NIF ni, char s[600], struct ni_common_layout_t *block)
 {
 	char x[200], y[200];
 	snprintf(
@@ -117,7 +117,7 @@ name: %s [%i]\
 \nscale: %f\
 \ncollision_object: %i\
 ",
-		nif_get_string(nif, block->F->name),
+		nif_get_string(ni, block->F->name),
 		block->F->name,
 		block->F->num_extra_data_list,
 		block->A->controller,
@@ -129,7 +129,7 @@ name: %s [%i]\
 	return s;
 }
 
-static void print_ni_node(NIF nif, int n, char s[1000])
+static void print_ni_node(NIF ni, int n, char s[1000])
 {
 	char x[600];
 	struct ni_node_t *block = Blocks[n];
@@ -142,14 +142,14 @@ static void print_ni_node(NIF nif, int n, char s[1000])
 \nchildren\
 \nnum_effects: %u\
 ",
-		print_ni_common_layout(nif, x, block->common),
+		print_ni_common_layout(ni, x, block->common),
 		block->A->num_children,
 		block->B->num_effects);
 }
 
 #ifdef SLE
 
-static void print_ni_tri_shape(NIF nif, int n, char s[1000])
+static void print_ni_tri_shape(NIF ni, int n, char s[1000])
 {
 	char x[600];
 	struct ni_tri_shape_t *block = Blocks[n];
@@ -164,14 +164,14 @@ static void print_ni_tri_shape(NIF nif, int n, char s[1000])
 \nshader_property: %i\
 \nalpha_property: %i\
 ",
-		print_ni_common_layout(nif, x, block->common),
+		print_ni_common_layout(ni, x, block->common),
 		block->A->data,
 		block->A->skin_instance,
 		block->B->shader_property,
 		block->B->alpha_property);
 }
 
-static void print_ni_tri_shape_data(NIF nif, int n, char s[1000])
+static void print_ni_tri_shape_data(NIF ni, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200], e[200], f[200], g[200], h[200], i[200], j[200], k[200], l[200], m[200], o[200], p[200];
 	struct ni_tri_shape_data_t *block = Blocks[n];
@@ -260,7 +260,7 @@ group_id: %i\
 
 #endif
 
-static void print_bs_lighting_shader_property(NIF nif, int n, char s[1000])
+static void print_bs_lighting_shader_property(NIF ni, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
 	BSLightingShaderProperty *block = Blocks[n];
@@ -289,7 +289,7 @@ skyrim_shader_type: %u\
 \nlighting_effect_2: %f\
 ",
 		block->A->skyrim_shader_type,
-		nif_get_string(nif, block->A->name),
+		nif_get_string(ni, block->A->name),
 		block->A->name,
 		block->A->num_extra_data_list,
 		block->B->controller,
@@ -310,7 +310,7 @@ skyrim_shader_type: %u\
 		block->B->lighting_effect_2);
 }
 
-static void print_bs_shader_texture_set(NIF nif, int n, char s[1000])
+static void print_bs_shader_texture_set(NIF ni, int n, char s[1000])
 {
 	BSShaderTextureSet *block = Blocks[n];
 	snprintf(
@@ -339,7 +339,7 @@ num_textures: %i\
 		block->textures[8]);
 }
 
-static void print_bs_effect_shader_property(NIF nif, int n, char s[1000])
+static void print_bs_effect_shader_property(NIF ni, int n, char s[1000])
 {
 	char a[200], b[200], c[200], d[200];
 	BSEffectShaderProperty *block = Blocks[n];
@@ -369,7 +369,7 @@ effect shader property\
 \ngreyscale_texture: %s\
 ",
 block->A->name,
-nif_get_string(nif, block->A->name),
+nif_get_string(ni, block->A->name),
 block->A->num_extra_data_list,
 block->B->controller,
 block->B->shader_flags_1,
@@ -397,7 +397,7 @@ block->greyscale_texture
 );
 }
 
-static void print_ni_controller_sequence(NIF nif, int n, char s[1000])
+static void print_ni_controller_sequence(NIF ni, int n, char s[1000])
 {
 	NiControllerSequence *block = Blocks[n];
 	snprintf(
@@ -431,7 +431,7 @@ name: %i\
 		block->C->num_anim_note_arrays);
 }
 
-static void print_ni_transform_interpolator(NIF nif, int n, char s[1000])
+static void print_ni_transform_interpolator(NIF ni, int n, char s[1000])
 {
 	char a[200], b[200];//, c[200], d[200];
 	struct ni_transform_interpolator_t *block = Blocks[n];
@@ -450,7 +450,7 @@ transform:\
 		block->B->data);
 }
 
-static void print_ni_transform_data(NIF nif, int n, char s[1000])
+static void print_ni_transform_data(NIF ni, int n, char s[1000])
 {
 	NiTransformData *block = Blocks[n];
 	snprintf(
@@ -474,7 +474,7 @@ num_rotation_keys: %u\
 		block->scales->num_keys);
 }
 
-static void print_ni_skin_instance(NIF nif, int n, char s[1000])
+static void print_ni_skin_instance(NIF ni, int n, char s[1000])
 {
 	NiSkinInstance *block = Blocks[n];
 	snprintf(
@@ -495,7 +495,7 @@ data: %i\
 		block->B->num_partitions);
 }
 
-static void print_ni_skin_data(NIF nif, int n, char s[1000])
+static void print_ni_skin_data(NIF ni, int n, char s[1000])
 {
 	char a[200], b[200];//, c[200], d[200];
 	NiSkinData *block = Blocks[n];
@@ -519,7 +519,7 @@ skin_transform:\
 
 static char *print_skin_partition(char *, struct skin_partition_t *);
 
-static void print_ni_skin_partition(NIF nif, int n, char s[1000])
+static void print_ni_skin_partition(NIF ni, int n, char s[1000])
 {
 	//return s;
 	/*
@@ -568,7 +568,7 @@ static char *print_skin_partition(char *s, struct skin_partition_t *skin_partiti
 	return s;
 }
 
-static void print_ni_alpha_property(NIF nif, int n, char s[1000])
+static void print_ni_alpha_property(NIF ni, int n, char s[1000])
 {
 	const char *blendModes[] = {
 		"One",
@@ -613,7 +613,7 @@ name: %s [%i]\
 \nalpha test function: %s\
 \nalpha test threshold: %u\
 ",
-		nif_get_string(nif, block->A->name),
+		nif_get_string(ni, block->A->name),
 		block->A->name,
 		block->A->num_extra_data_list,
 		block->C->controller,
@@ -629,24 +629,24 @@ name: %s [%i]\
 	);
 }
 
-api void nif_print_block(NIF nif, int n, char s[1000])
+api void nif_print_block(NIF ni, int n, char s[1000])
 {
 	s[0] = '\0';
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	if (0);
-	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) ) print_ni_node(nif, n, s);
+	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) ) print_ni_node(ni, n, s);
 	#ifdef SLE
-	else if ( nif_type(NiTriShapeS) ) print_ni_tri_shape(nif, n, s);
-	else if ( nif_type(NiTriShapeData) ) print_ni_tri_shape_data(nif, n, s);
+	else if ( nif_type(NiTriShapeS) ) print_ni_tri_shape(ni, n, s);
+	else if ( nif_type(NiTriShapeData) ) print_ni_tri_shape_data(ni, n, s);
 	#endif
-	else if ( nif_type(BSLightingShaderPropertyS) ) print_bs_lighting_shader_property(nif, n, s);
-	else if ( nif_type(BSEffectShaderPropertyS) ) print_bs_effect_shader_property(nif, n, s);
-	else if ( nif_type(BSShaderTextureSetS) ) print_bs_shader_texture_set(nif, n, s);
-	else if ( nif_type(NiControllerSequenceS) ) print_ni_controller_sequence(nif, n, s);
-	else if ( nif_type(NiTransformInterpolatorS) ) print_ni_transform_interpolator(nif, n, s);
-	else if ( nif_type(NiTransformDataS) ) print_ni_transform_data(nif, n, s);
-	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, NULL) ) print_ni_skin_instance(nif, n, s);
-	else if ( nif_type(NiSkinDataS) ) print_ni_skin_data(nif, n, s);
-	else if ( nif_type(NiSkinPartitionS) ) print_ni_skin_partition(nif, n, s);
-	else if ( nif_type(NiAlphaPropertyS) ) print_ni_alpha_property(nif, n, s);
+	else if ( nif_type(BSLightingShaderPropertyS) ) print_bs_lighting_shader_property(ni, n, s);
+	else if ( nif_type(BSEffectShaderPropertyS) ) print_bs_effect_shader_property(ni, n, s);
+	else if ( nif_type(BSShaderTextureSetS) ) print_bs_shader_texture_set(ni, n, s);
+	else if ( nif_type(NiControllerSequenceS) ) print_ni_controller_sequence(ni, n, s);
+	else if ( nif_type(NiTransformInterpolatorS) ) print_ni_transform_interpolator(ni, n, s);
+	else if ( nif_type(NiTransformDataS) ) print_ni_transform_data(ni, n, s);
+	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, NULL) ) print_ni_skin_instance(ni, n, s);
+	else if ( nif_type(NiSkinDataS) ) print_ni_skin_data(ni, n, s);
+	else if ( nif_type(NiSkinPartitionS) ) print_ni_skin_partition(ni, n, s);
+	else if ( nif_type(NiAlphaPropertyS) ) print_ni_alpha_property(ni, n, s);
 }

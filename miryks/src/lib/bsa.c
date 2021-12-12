@@ -125,8 +125,8 @@ void resources(BSA bsa)
 	bsa->r[i] = r;
 	for (unsigned int j = 0; j < bsa->fld[i].num; j++)
 	{
-	bsa->res[r] = calloc(1, sizeof(Res));
-	*bsa->res[r] = (Res){bsa, i, j, r, 0L, bsa->cb[r], NULL, ""};
+	bsa->res[r] = calloc(1, sizeof(resource));
+	*bsa->res[r] = (resource){bsa, i, j, r, 0L, bsa->cb[r], NULL, ""};
 	bsa_rc_path(bsa, i, r);
 	r++;
 	}

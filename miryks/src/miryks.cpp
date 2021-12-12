@@ -12,6 +12,8 @@ const char *races = Races;
 
 namespace miryks
 {
+	std::map<const char *, nif *> nis;
+
 	interior *ginterior = nullptr;
 	worldspace *gworldspace = nullptr;
 	
@@ -43,7 +45,7 @@ namespace miryks
 		return 0;
 	}
 
-	void load_data_files()
+	void init_data_files()
 	{
 		get_plugins()[0] = load_plugin(MASTER_0);
 		get_plugins()[1] = load_plugin(MASTER_1);
@@ -57,10 +59,10 @@ namespace miryks
 		assertc(get_plugins()[3]);
 		assertc(get_plugins()[4]);
 		assertc(get_plugins()[5]);
-		load_archives();
+		init_archives();
 	}
 
-	void load_archives()
+	void init_archives()
 	{
 		get_archives()[0] = load_archive(ARCHIVE_0);
 		//get_archives()[1] = load_archive(ARCHIVE_1);
@@ -94,7 +96,7 @@ namespace miryks
 		get_plugins()[5] = load_plugin(PLUGIN_0, true);
 	}
 
-	void view_in_place(Res *res)
+	void view_in_place(resource *res)
 	{
 		static Model *model = nullptr;
 		static DrawGroup *drawGroup = nullptr;

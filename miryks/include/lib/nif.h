@@ -19,16 +19,16 @@
 
 struct NifHeader;
 
-#define NIF Nif *
-#define RD Rd *
+#define NIF nif *
+#define RD rundown *
 
-struct Nif;
-struct Rd;
+struct nif;
+struct rundown;
 
-typedef struct Nif Nif;
-typedef struct Rd Rd;
+typedef struct nif nif;
+typedef struct rundown rundown;
 
-struct Nif
+struct nif
 {
 	int num;
 	const char *path;
@@ -40,11 +40,11 @@ struct Nif
 
 #define callback(x) void (*x ## _callback) (RD , struct x ## _t *);
 
-struct Rd
+struct rundown
 {
 	int x;
 	char *skips;
-	NIF nif;
+	nif *ni;
 	void *data;
 	int parent, current;
 	void (*other) (RD, void *block);
@@ -72,11 +72,11 @@ void nif_test();
 void nif_read_header(NIF);
 void nif_read_blocks(NIF);
 
-api NIF calloc_nifp();
-api RD  calloc_nifprd();
+api NIF calloc_ni();
+api RD  calloc_rd();
 
-api void free_nifp  (NIF *);
-api void free_nifprd(RD *);
+api void free_ni  (NIF *);
+api void free_rd(RD *);
 
 api void nif_rd(RD);
 

@@ -20,24 +20,12 @@ namespace miryks
 	}
 
 	int init();
-	void load_data_files();
-	void load_archives();
+	void init_data_files();
+	void init_archives();
 
-	void view_in_place(Res *);
+	void view_in_place(resource *);
 
 	extern char *editme;
-
-	void save_nif(const char *, Nif *);
-	Nif *saved_nif(const char *);
-	std::map<const char *, Nif *> &get_nifs();
-
-	Res *get_res(
-		const char *,
-		const char * = "meshes\\",
-		unsigned long = 0x1);
-
-	Nif *get_nif(Res *);
-	Nif *get_nif(const char *);
 
 	ESP load_plugin(const char *, bool = false);
 	BSA load_archive(const char *);

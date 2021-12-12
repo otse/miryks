@@ -4,18 +4,18 @@
 #include <lib/nif.h>
 #include <lib/niftypes.h>
 
-#define Hedr   nif->hdr
-#define Blocks nif->blocks
+#define Hedr   ni->hdr
+#define Blocks ni->blocks
 #define Skips  rd->skips
 
 void visit (RD, int, int);
 
-api RD calloc_nifprd() {
-	RD rd = calloc(1, sizeof(Rd));
+api RD calloc_rd() {
+	RD rd = calloc(1, sizeof(rundown));
 	return rd;
 }
 
-api void free_nifprd(RD *p) {
+api void free_rd(RD *p) {
 	RD rd = *p;
 	free(rd->skips);
 	free(rd);
@@ -24,8 +24,8 @@ api void free_nifprd(RD *p) {
 
 api void nif_rd(RD rd) {
 	// printf("nif rd\n");
-	NIF nif = rd->nif;
-	assertm(rd->nif!=NULL, "nifrd nif not set");
+	NIF ni = rd->ni;
+	assertm(rd->ni!=NULL, "nifrd ni not set");
 	rd->skips = calloc(Hedr->num_blocks, sizeof(char));
 	//rd->nif = nif;
 	for (int n = 0; n < Hedr->num_blocks; n++)
@@ -39,7 +39,7 @@ api void nif_rd(RD rd) {
 
 static void visit(RD rd, int parent, int current)
 {
-	NIF nif = rd->nif;
+	NIF ni = rd->ni;
 	if (-1 == current || rd->skips[current])
 	return;
 	rd->parent = parent; rd->current = current;

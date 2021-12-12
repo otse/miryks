@@ -15,7 +15,7 @@ namespace miryks
 {
 	ModelSkinned::ModelSkinned(const char *modl) : Model()
 	{
-		model = get_nif(modl);
+		model = get_ni(get_res(modl));
 		assertc(model);
 		Construct();
 	}
@@ -32,8 +32,8 @@ namespace miryks
 
 	void ModelSkinned::Construct()
 	{
-		RD rd = calloc_nifprd();
-		rd->nif = model;
+		rundown *rd = calloc_rd();
+		rd->ni = model;
 		rd->data = this;
 		rd->ni_node_callback = ni_node_omit_callback;
 		rd->bs_tri_shape_callback = bs_tri_shape_callback;
@@ -45,7 +45,7 @@ namespace miryks
 		rd->bs_shader_texture_set_callback = bs_shader_texture_set_callback;
 		rd->ni_alpha_property_callback = ni_alpha_property_callback;
 		nif_rd(rd);
-		free_nifprd(&rd);
+		free_rd(&rd);
 		baseGroup->Update();
 	}
 	

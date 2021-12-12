@@ -26,18 +26,18 @@ namespace miryks
 	skeleton::skeleton(char *race) : skeleton()
 	{
 		printf("skeleton anam %s\n", race);
-		model = get_nif(race);
+		model = get_ni(get_res(race));
 		Construct();
 	}
 
 	void skeleton::Construct()
 	{
-		RD rd = calloc_nifprd();
-		rd->nif = model;
+		rundown *rd = calloc_rd();
+		rd->ni = model;
 		rd->data = this;
 		rd->ni_node_callback = ni_node_callback;
 		nif_rd(rd);
-		free_nifprd(&rd);
+		free_rd(&rd);
 		assertc(root);
 		root->Update();
 	}
@@ -56,7 +56,7 @@ namespace miryks
 		//printf("bone name is %s\n", bone->name);
 		auto *bon = new bone();
 		bon->block = block;
-		bon->name = nif_get_string(rd->nif, block->common->F->name);
+		bon->name = nif_get_string(rd->ni, block->common->F->name);
 		bones[rd->current] = bon;
 		bones[rd->parent]->Add(bon);
 		bonesNamed[bon->name] = bon;
@@ -79,14 +79,14 @@ namespace miryks
 			anim->Step();
 	}
 
-	keyframes::keyframes(NIF nif) : nif(nif)
+	keyframes::keyframes(nif *ni) : ni(ni)
 	{
 		loop = true;
 		controllerSequence = nullptr;
-		if (nif == nullptr)
+		if (ni == nullptr)
 			return;
-		assertc(strcmp(nif->hdr->block_types[0], NiControllerSequenceS) == 0);
-		controllerSequence = (NiControllerSequence *)nif->blocks[0];
+		assertc(strcmp(ni->hdr->block_types[0], NiControllerSequenceS) == 0);
+		controllerSequence = (NiControllerSequence *)ni->blocks[0];
 	}
 
 	animation::animation(keyframes *keyf) : keyf(keyf)
@@ -111,7 +111,7 @@ namespace miryks
 
 	void animation::SimpleNonInterpolated()
 	{
-		Nif *model = keyf->nif;
+		nif *model = keyf->ni;
 		struct controlled_block_t *cbp;
 		for (unsigned int i = 0; i < keyf->controllerSequence->A->num_controlled_blocks; i++)
 		{

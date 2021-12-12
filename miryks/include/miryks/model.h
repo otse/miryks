@@ -37,12 +37,12 @@ namespace miryks
 	{
 	public:
 		Model();
-		Model(Res *);
+		Model(resource *);
 		~Model();
-		Nif *model = nullptr;
+		nif *model = nullptr;
 		std::map<int, Group *> groups;
 		Group *baseGroup, *lastGroup;
-		Group *MakeNewGroup(Rd *);
+		Group *MakeNewGroup(rundown *);
 		void Construct();
 		void Step();
 		void Misty();

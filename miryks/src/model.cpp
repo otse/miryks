@@ -18,11 +18,11 @@ namespace miryks
 		lastGroup = baseGroup;
 	}
 	
-	Model::Model(Res *res) : Model()
+	Model::Model(resource *res) : Model()
 	{
 		if (!res)
 			return;
-		model = get_nif(res);
+		model = get_ni(res);
 		Construct();
 	}
 
@@ -32,8 +32,8 @@ namespace miryks
 
 	void Model::Construct()
 	{
-		Rd *rd = calloc_nifprd();
-		rd->nif = model;
+		rundown *rd = calloc_rd();
+		rd->ni = model;
 		rd->data = this;
 		rd->ni_node_callback = ni_node_callback;
 		rd->bs_tri_shape_callback = bs_tri_shape_callback;
@@ -42,7 +42,7 @@ namespace miryks
 		rd->bs_shader_texture_set_callback = bs_shader_texture_set_callback;
 		rd->ni_alpha_property_callback = ni_alpha_property_callback;
 		nif_rd(rd);
-		free_nifprd(&rd);
+		free_rd(&rd);
 		baseGroup->Update();
 	}
 
@@ -51,7 +51,7 @@ namespace miryks
 		
 	}
 
-	Group *Model::MakeNewGroup(Rd *rd)
+	Group *Model::MakeNewGroup(rundown *rd)
 	{
 		Group *group = new GroupBounded();
 		groups[rd->current] = group;
@@ -104,7 +104,7 @@ namespace miryks
 		Geometry *geometry = new Geometry();
 		group->geometry = geometry;
 		geometry->material->src = &simple;
-		const char *name = nif_get_string(rd->nif, block->common->F->name);
+		const char *name = nif_get_string(rd->ni, block->common->F->name);
 		if (strstr(name, "Marker"))
 			return;
 		if (!block->infos->num_vertices)
@@ -289,7 +289,7 @@ namespace miryks
 		// mists
 		auto callback = [](RD rd, BSEffectShaderPropertyFloatController *block) {
 			Model *model = (Model *)rd->data;
-			auto target = (BSEffectShaderProperty *)nif_get_block(rd->nif, block->A->target);
+			auto target = (BSEffectShaderProperty *)nif_get_block(rd->ni, block->A->target);
 			//auto shape = (bs_tri_shape *)nif_get_block(rd->nif, target->meta.parent);
 			Group *group = nullptr;
 			auto next_controller = block;
@@ -298,7 +298,7 @@ namespace miryks
 				auto controller = next_controller;
 				next_controller = nullptr;
 				if (controller->A->next_controller > -1)
-					next_controller = (BSEffectShaderPropertyFloatController *)nif_get_block(rd->nif, controller->A->next_controller);
+					next_controller = (BSEffectShaderPropertyFloatController *)nif_get_block(rd->ni, controller->A->next_controller);
 				if (target)
 					group = model->groups[target->meta.parent];
 				if (!group || !group->geometry)
@@ -311,12 +311,12 @@ namespace miryks
 					uv = &target->meta.u;
 				else if (controller->A->controlled_variable == 8)
 					uv = &target->meta.v;
-				auto interpolator = (NiFloatInterpolator *)nif_get_block(rd->nif, controller->A->interpolator);
+				auto interpolator = (NiFloatInterpolator *)nif_get_block(rd->ni, controller->A->interpolator);
 				if (controller->A->interpolator)
 				{
 					if (interpolator->A->data)
 					{
-						auto data = (NiFloatData *)nif_get_block(rd->nif, interpolator->A->data);
+						auto data = (NiFloatData *)nif_get_block(rd->ni, interpolator->A->data);
 						for (unsigned int i = data->A->num_keys; i-- > 0;)
 						{
 							int j = (i + 1 >= data->A->num_keys) ? 0 : i + 1;
@@ -366,11 +366,11 @@ namespace miryks
 				material->setUvTransformDirectly(u, v, s, t, 0, 0, 0);
 			}
 		};
-		Rd *rd = calloc_nifprd();
-		rd->nif = model;
+		rundown *rd = calloc_rd();
+		rd->ni = model;
 		rd->data = this;
 		rd->bs_effect_shader_property_float_controller_callback = callback;
 		nif_rd(rd);
-		free_nifprd(&rd);
+		free_rd(&rd);
 	}
 }

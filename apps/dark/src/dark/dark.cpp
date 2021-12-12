@@ -35,7 +35,7 @@ int main()
 {
 	editme = get_text_file(EDIT_ME);
 	miryks::init();
-	miryks::load_data_files();
+	miryks::init_data_files();
 	nif_test();
 	dark::init();
 	load_yagrum();

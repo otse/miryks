@@ -28,7 +28,6 @@ namespace dark
 {
 	my_reference::my_reference(record refr) : reference(refr)
 	{
-		printf("my reference");
 		model = nullptr;
 		drawGroup = nullptr;
 		pointLight = nullptr;

@@ -13,57 +13,57 @@ void overlay_models()
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 
-	for (const auto &[key, value] : miryks::get_nifs())
+	for (const auto &[key, value] : miryks::get_nis())
 	{
-		NIF nif = value;
+		NIF ni = value;
 
-		//if (!nif->path)
+		//if (!ni->path)
 		//continue;
 
-		if (ImGui::TreeNode(nif->path))
+		if (ImGui::TreeNode(ni->path))
 		{
 			ImGui::Text("key # %i", key);
 			ImGui::Separator();
 			if (ImGui::TreeNode("Header"))
 			{
 				char s[500];
-				nif_print_hedr(nif, s);
+				nif_print_hedr(ni, s);
 				ImGui::TextWrapped(s);
 				if (ImGui::TreeNode("Block Types"))
 				{
-					const int n = nif->hdr->num_block_types;
+					const int n = ni->hdr->num_block_types;
 					for (int i = 0; i < n; i++)
 					{
-						ImGui::Text("%i %s", i, nif->hdr->block_types[i]);
+						ImGui::Text("%i %s", i, ni->hdr->block_types[i]);
 					}
 					ImGui::TreePop();
 				}
 				if (ImGui::TreeNode("Block Type Index"))
 				{
-					const int n = nif->hdr->num_blocks;
+					const int n = ni->hdr->num_blocks;
 					for (int i = 0; i < n; i++)
 					{
-						unsigned short h = nif->hdr->block_type_index[i];
-						char *s = nif->hdr->block_types[h];
+						unsigned short h = ni->hdr->block_type_index[i];
+						char *s = ni->hdr->block_types[h];
 						ImGui::Text("%s [%hu]", s, h);
 					}
 					ImGui::TreePop();
 				}
 				if (ImGui::TreeNode("Block Sizes"))
 				{
-					const int n = nif->hdr->num_blocks;
+					const int n = ni->hdr->num_blocks;
 					for (int i = 0; i < n; i++)
 					{
-						ImGui::Text("%u", nif->hdr->block_sizes[i]);
+						ImGui::Text("%u", ni->hdr->block_sizes[i]);
 					}
 					ImGui::TreePop();
 				}
 				if (ImGui::TreeNode("Strings"))
 				{
-					const int n = nif->hdr->num_strings;
+					const int n = ni->hdr->num_strings;
 					for (int i = 0; i < n; i++)
 					{
-						ImGui::Text("%s", nif->hdr->strings[i]);
+						ImGui::Text("%s", ni->hdr->strings[i]);
 					}
 					ImGui::TreePop();
 				}
@@ -72,18 +72,18 @@ void overlay_models()
 			}
 			if (ImGui::TreeNode("Blocks"))
 			{
-				const int n = nif->hdr->num_blocks;
+				const int n = ni->hdr->num_blocks;
 				for (int i = 0; i < n; i++)
 				{
-					//ni_block_t *block = &nif->blocks[i];
-					const char *block_type = nif->hdr->block_types[nif->hdr->block_type_index[i]];
+					//ni_block_t *block = &ni->blocks[i];
+					const char *block_type = ni->hdr->block_types[ni->hdr->block_type_index[i]];
 					const char *fmt = std::to_string(i).c_str();
 					char buf[100];
 					sprintf(buf, "%i %s", i, block_type);
 					if (ImGui::TreeNode(buf))
 					{
 						char s[1500];
-						nif_print_block(nif, i, s);
+						nif_print_block(ni, i, s);
 						if (s[0] != '\0')
 							ImGui::TextWrapped(s);
 						else
@@ -98,7 +98,7 @@ void overlay_models()
 
 			if (ImGui::Button("View"))
 			{
-				miryks::view_in_place(miryks::get_res(nif->path, ""));
+				miryks::view_in_place(miryks::get_res(ni->path, ""));
 			}
 
 			ImGui::TreePop();
