@@ -44,8 +44,7 @@ static void cursorPosCallback(GLFWwindow *window, double x, double y)
 
 void dark::init()
 {
-	miryks::hooks::some_behavior = [](int a)
-	{ return false; };
+	miryks::hooks::some_behavior = [](int a) { return false; };
 
 	glfwSetErrorCallback(errorCallback);
 
@@ -220,7 +219,7 @@ static void capture_keys()
 
 	auto handler = [](int k, const char *n) -> void
 	{
-		int *p = &miryks::input::keys[n];
+		int *p = &keys[n];
 		int c = glfwGetKey(window, k);
 		if (*p && c)
 			*p = 2;
@@ -292,7 +291,7 @@ static void reload_shaders()
 
 static void handle_my_keys()
 {
-	using namespace miryks::input;
+	using namespace miryks;
 	capture_keys();
 	if (pressing_key("esc"))
 		handle_esc();

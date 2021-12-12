@@ -3,7 +3,7 @@
 #include <opengl/drawgroup.h>
 #include <opengl/scene.h>
 
-#include <miryks/miryks.h>
+#include <miryks/miryks.hpp>
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -40,7 +40,7 @@ void Camera::Wasd(float delta)
 	};
 	float speed = 500.f * delta;
 
-	using namespace miryks::input;
+	using namespace miryks;
 
 	if (!holding_key("lshift"))
 		speed /= 10;

@@ -3,7 +3,6 @@
 #include <dark/dark.h>
 #include <dark/trash.h>
 
-#include <miryks/miryks.h>
 #include <miryks/miryks.hpp>
 
 #include <miryks/model.h>

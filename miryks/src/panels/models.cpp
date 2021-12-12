@@ -1,4 +1,4 @@
-#include <miryks/miryks.h>
+#include <miryks/miryks.hpp>
 
 #include <files.h>
 

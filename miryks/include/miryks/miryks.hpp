@@ -3,7 +3,6 @@
 
 #include <miryks/libs.h>
 #include <miryks/constants.h>
-#include <miryks/miryks.h>
 
 #include <opengl/group.h>
 #include <opengl/drawgroup.h>
@@ -20,22 +19,27 @@ constexpr float ONE_CENTIMETER_IN_SKYRIM_UNITS = 1 / 1.428f;
 
 #define EYE_HEIGHT 160 * ONE_CENTIMETER_IN_SKYRIM_UNITS
 
+extern bool showCursor;
+bool pressing_key(const char *);
+bool holding_key(const char *);
+
 namespace miryks
 {
-	namespace input
+	namespace hooks
 	{
-	extern std::map<const char *, int> keys;
-	bool pressing_key(const char *);
-	bool holding_key(const char *);
+		extern bool (*some_behavior)(int);
 	}
 
 	extern char *editme;
+
 	extern std::map<const char *, nif *> nis;
 
 	BSA load_archive(const char *);
 	ESP load_plugin(const char *, bool = false);
 	void load_these_definitions(ESP);
+
 	class keyframes;
+
 	keyframes *load_keyframes_from_disk(const char *);
 
 	static inline void init()
@@ -137,6 +141,11 @@ namespace miryks
 
 	void view_in_place(resource *);
 
+	static inline void reload_plugin_0_to_memory()
+	{
+		free_plugin(&get_plugins()[5]);
+		get_plugins()[5] = load_plugin(PLUGIN_0, true);
+	}
 
 	/*static inline nif *get_ni(const char *modl)
 	{

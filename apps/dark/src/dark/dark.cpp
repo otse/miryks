@@ -17,8 +17,21 @@
 using namespace dark;
 using namespace miryks;
 
+std::map<const char *, int> keys;
+
+bool pressing_key(const char *id)
+{
+	return keys[id] == 1;
+}
+
+bool holding_key(const char *id)
+{
+	return keys[id] >= 1;
+}
+
 namespace dark
 {
+	std::map<const char *, int> keys;
 
 	void darkassert(bool e)
 	{
@@ -78,4 +91,25 @@ int main()
 	//player1 = new Player();
 	window_while_test();
 	return 1;
+}
+
+void miryks::view_in_place(resource *res)
+{
+	static Model *model = nullptr;
+	static DrawGroup *drawGroup = nullptr;
+	if (model)
+	{
+		drawGroup->parent->Remove(drawGroup);
+		delete model;
+		delete drawGroup;
+	}
+	model = new Model(res);
+	drawGroup = new DrawGroup(
+			model->baseGroup, translate(mat4(1.0), personCam->pos));
+	sceneDef->bigGroup->Add(drawGroup);
+	showCursor = false;
+	cameraCur = viewerCam;
+	viewerCam->pos = drawGroup->aabb.center();
+	//viewerCam->pos = personCam->pos;
+	viewerCam->radius = drawGroup->aabb.radius2() * 2;
 }

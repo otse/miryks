@@ -1,6 +1,5 @@
 #pragma once
 
-#include <miryks/miryks.h>
 #include <miryks/miryks.hpp>
 
 #include <opengl/renderer.h>
