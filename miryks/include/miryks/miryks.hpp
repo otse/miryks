@@ -1,7 +1,15 @@
 #ifndef MIRYKS_HPP
 #define MIRYKS_HPP
 
-#include <miryks/libs.h>
+extern "C"
+{
+#include <lib/common.h>
+#include <lib/bsa.h>
+#include <lib/esp.h>
+#include <lib/nif.h>
+#include <lib/niftypes.h>
+}
+
 #include <miryks/constants.h>
 
 #include <opengl/group.h>
@@ -32,8 +40,6 @@ namespace miryks
 
 	extern char *editme;
 
-	extern std::map<const char *, nif *> nis;
-
 	BSA load_archive(const char *);
 	ESP load_plugin(const char *, bool = false);
 	void load_these_definitions(ESP);
@@ -44,7 +50,6 @@ namespace miryks
 
 	static inline void init()
 	{
-		printf("miryks init\n");
 	}
 
 	static inline void init_data_files()
@@ -85,6 +90,8 @@ namespace miryks
 		get_archives()[17] = load_archive(ARCHIVE_17);
 	}
 
+	extern std::map<const char *, nif *> nis;
+
 	static inline const std::map<const char *, nif *> &access_nis()
 	{
 		return nis;
@@ -110,11 +117,7 @@ namespace miryks
 	{
 		std::string str = prepend;
 		str += path;
-		std::transform(str.begin(), str.end(), str.begin(),
-		[](unsigned char c)
-		{
-			return std::tolower(c);
-		});
+		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
 		const char *s = str.c_str();
 		resource *res = bsa_find_more(s, flags);
 		if (!res)
@@ -131,28 +134,21 @@ namespace miryks
 		if (saved)
 			return saved;
 		bsa_read(res);
-		nif *model = calloc_ni();
-		model->path = res->path;
-		model->buf = res->buf;
-		nif_read(model);
-		save_ni(res->path, model);
-		return model;
+		nif *ni = calloc_ni();
+		ni->path = res->path;
+		ni->buf = res->buf;
+		nif_read(ni);
+		save_ni(res->path, ni);
+		return ni;
 	}
 
 	void view_in_place(resource *);
 
-	static inline void reload_plugin_0_to_memory()
-	{
-		free_plugin(&get_plugins()[5]);
-		get_plugins()[5] = load_plugin(PLUGIN_0, true);
-	}
-
-	/*static inline nif *get_ni(const char *modl)
-	{
-		if (!modl)
-			return nullptr;
-		return get_ni(get_res(modl));
-	}*/
+	//static inline void reload_plugin_0()
+	//{
+	//	free_plugin(&get_plugins()[5]);
+	//	get_plugins()[5] = load_plugin(PLUGIN_0, true);
+	//}
 
 	struct record
 	{
@@ -464,9 +460,6 @@ namespace miryks
 		);
 	}
 
-	class reference;
-	class cell;
-
 	class reference : public record
 	{
 	public:
@@ -480,6 +473,7 @@ namespace miryks
 		}
 	};
 
+	class cell;
 	class worldspace;
 	class interior;
 	class exterior;

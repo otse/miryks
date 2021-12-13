@@ -24,7 +24,7 @@ namespace miryks
 		return new keyframes(model);
 	}
 
-	ESP load_plugin(const char *filename, bool whole)
+	ESP load_plugin(const char *filename, bool loadInMemory)
 	{
 		//printf("Load Plugin %s\n", filename);
 		if (strlen(filename) < 1)
@@ -35,13 +35,13 @@ namespace miryks
 		ESP plugin;
 		if (exists(path.c_str()))
 		{
-			plugin = plugin_load(path.c_str(), whole);
+			plugin = plugin_load(path.c_str(), loadInMemory);
 			//if (strstr(filename, ".esp"))
 			//	printf("loading .esp from /Data\n");
 		}
 		else if (exists(filename))
 		{
-			plugin = plugin_load(filename, whole);
+			plugin = plugin_load(filename, loadInMemory);
 		}
 		else
 		{
@@ -77,8 +77,6 @@ namespace miryks
 
 	void load_these_definitions(ESP plugin)
 	{
-		// we only discovered top grups at this point,
-		// we need to build the objects within by "checking" them
 		static const auto things = {
 			Statics,
 			Lights,

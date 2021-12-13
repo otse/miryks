@@ -1,5 +1,5 @@
-#include <miryks/constants.h>
-#include <miryks/libs.h>
+#include <miryks/miryks.hpp>
+
 #include <files.h>
 
 #include <imgui.h>

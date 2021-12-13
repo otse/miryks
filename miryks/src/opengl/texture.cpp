@@ -3,7 +3,8 @@ extern "C"
 #include <dds.h>
 }
 
-#include <miryks/libs.h>
+#include <miryks/miryks.hpp>
+
 #include <opengl/texture.h>
 
 #include <algorithm>
