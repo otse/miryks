@@ -57,6 +57,8 @@ namespace dark
 			}
 		}
 	}
+
+	Monster *someDraugr = nullptr;
 }
 
 int main()
@@ -75,11 +77,13 @@ int main()
 	//load_world_space();
 #if 1
 	ginterior = try_create_interior_instance("GloomGen");
-	ginterior->iter<my_reference>();
+	reference_factory_iter<my_reference> factory;
+	factory.cell = ginterior;
+	ginterior->iter_subgroups(factory);
 	putcam();
-	//someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
-	//someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
-	//someDraugr->Place("gloomgendraugr");
+	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");	
+	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
+	someDraugr->Place("gloomgendraugr");
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");

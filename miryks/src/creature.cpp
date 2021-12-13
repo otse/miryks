@@ -27,8 +27,10 @@ namespace miryks
 
 	void Monster::Place(const char *q)
 	{
-		auto refer = ginterior->edIds.find(q);
-		if (refer != ginterior->edIds.end())
+		for (auto bluh : ginterior->ids)
+			printf("bluh %s", bluh.first);
+		auto refer = ginterior->ids.find(q);
+		if (refer != ginterior->ids.end())
 		{
 			drawGroup = new DrawGroup(
 				modelSkinned->baseGroup, refer->second->matrix);
@@ -37,7 +39,7 @@ namespace miryks
 			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else
-			printf("cant place creature %s\n", q);
+			printf("!! cant place creature %s\n", q);
 	}
 
 	void Monster::Step()

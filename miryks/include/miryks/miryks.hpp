@@ -481,15 +481,15 @@ namespace miryks
 	extern interior *ginterior;
 	extern worldspace *gworldspace;
 
-	template<typename reference_derived>
-	struct subgroup_iter : record_iter
+	template<typename T>
+	struct reference_factory_iter : record_iter
 	{
 		cell *cell = nullptr;
-		bool operator<=(subgroup_iter &target)
+		bool operator<=(reference_factory_iter &target)
 		{
 			if (this->is_reference())
 			{
-				reference_derived *refer = new reference_derived(*this);
+				T *refer = new T(*this);
 				target.cell->add(refer);
 			}
 			return false;
@@ -524,14 +524,13 @@ namespace miryks
 		{
 			refers.push_back(refer);
 			ids.emplace(refer->editor_id(), refer);
+			//printf("refer id %s\n", refer->editor_id());
 		}
-		template <typename T = reference>
-		void iter()
+		template <typename T>
+		void iter_subgroups(T &t)
 		{
-			subgroup_iter<T> maker;
-			maker.cell = this;
-			upcast_grup( temporary )  <= maker;
-			upcast_grup( persistent ) <= maker;
+			upcast_grup(temporary) <= t;
+			upcast_grup(persistent) <= t;
 		}
 		virtual void unload()
 		{
@@ -550,7 +549,6 @@ namespace miryks
 	public:
 		const char *id = nullptr;
 		bool dontTeleport = false;
-		std::map<std::string, reference *> edIds;
 		virtual ~interior()
 		{
 		}
@@ -601,7 +599,6 @@ namespace miryks
 		delete ginterior;
 		ginterior = try_create_interior_instance(id, plugin);
 		ginterior->dontTeleport = true;
-		ginterior->iter();
 	}
 
 	class land;

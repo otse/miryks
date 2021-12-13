@@ -316,6 +316,8 @@ static void handle_my_keys()
 
 void window_while_test()
 {
+	using namespace dark;
+	
 	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
@@ -347,14 +349,14 @@ void window_while_test()
 
 		cameraCur->Update(delta);
 
-		/*if (player1)
-			player1->Step();
+		//if (player1)
+		//	player1->Step();
 		if (someDraugr)
 			someDraugr->Step();
-		if (meanSkelly)
-			meanSkelly->Step();
-		if (someHuman)
-			someHuman->Step();*/
+		//if (meanSkelly)
+		//	meanSkelly->Step();
+		//if (someHuman)
+		//	someHuman->Step();
 		if (ginterior)
 			ginterior->update();
 		//if (player1)

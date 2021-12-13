@@ -48,8 +48,8 @@ namespace miryks {
 	{
 		if (!ginterior)
 			return;
-		auto ref = ginterior->edIds.find(q);
-		if (ref == ginterior->edIds.end())
+		auto ref = ginterior->ids.find(q);
+		if (ref == ginterior->ids.end())
 			return;
 		printf("place at %s\n", q);
 		drawGroup->matrix = ref->second->matrix;

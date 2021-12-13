@@ -18,8 +18,4 @@ namespace miryks
 
 	interior *ginterior = nullptr;
 	worldspace *gworldspace = nullptr;
-
-	Player *player1;
-	Monster *someDraugr, *meanSkelly;
-	Char *someHuman;
 }

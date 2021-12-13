@@ -2,6 +2,8 @@
 
 #include <miryks/miryks.hpp>
 
+#include <miryks/actors.h>
+
 #include <opengl/renderer.h>
 
 using namespace miryks;
@@ -23,15 +25,7 @@ namespace dark
 	void init();
 	void loop();
 
-	static inline bool pressing_key(const char *id)
-	{
-		return keys[id] == 1;
-	}
-	
-	static inline bool holding_key(const char *id)
-	{
-		return keys[id] >= 1;
-	}
+	extern Monster *someDraugr;
 }
 
 void hero_menu();
