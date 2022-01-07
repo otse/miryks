@@ -1,6 +1,7 @@
 press esc to exit the (bucket) viewer camera
 
 wasd = move
+v = third person
 rf = up down
 f1 = debug
 f3 = show mouse
