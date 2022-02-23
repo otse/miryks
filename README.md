@@ -1,4 +1,4 @@
-# Gloom
+# (preceded by otse/miryks-ae)
 
 A mod and renderer for skyrim, it uses the three.js scene graph and shaders.
 
