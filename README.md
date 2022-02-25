@@ -1,4 +1,4 @@
-# (preceded by otse/miryks-ae)
+# Miryks (Skyrim Engine)
 
 A mod and renderer for skyrim, it uses the three.js scene graph and shaders.
 
