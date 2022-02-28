@@ -117,11 +117,16 @@ namespace miryks
 	{
 		std::string str = prepend;
 		str += path;
-		std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
+		std::transform(
+			str.begin(),
+			str.end(),
+			str.begin(),
+			[](unsigned char c) { return std::tolower(c); });
 		const char *s = str.c_str();
-		resource *res = bsa_find_more(s, flags);
+		resource *res;
+		res = bsa_find_more(s, flags);
 		if (!res)
-		printf("get_res fail: %s \n", s);
+			printf("get_res fail: %s \n", s);
 		bsa_read(res);
 		return res;
 	}
@@ -130,13 +135,14 @@ namespace miryks
 	{
 		if (!res)
 			return nullptr;
-		nif *saved = got_ni(res->path);
-		if (saved)
-			return saved;
+		nif *ni;
+		ni = got_ni(res->path);
+		if (ni)
+			return ni;
 		bsa_read(res);
-		nif *ni = calloc_ni();
+		ni = calloc_ni();
 		ni->path = res->path;
-		ni->buf = res->buf;
+		ni->buf  = res->buf;
 		nif_read(ni);
 		save_ni(res->path, ni);
 		return ni;
@@ -152,21 +158,23 @@ namespace miryks
 
 	struct record
 	{
-		typedef const char signature[5];
 		typedef csubrecord *subrecord_type;
+		typedef crecord *record_type;
+		typedef const char signature[5];
+
 		crecord *r = nullptr;
 
 		record()
 		{
 		}
-		record(crecord *r)
+		record(record_type p)
 		{
-			setr(r);
+			setr(p);
 		}
-		void setr(crecord *p)
+		void setr(record_type p)
 		{
 			r = p;
-			esp_check_rcd(r);
+			esp_check_rcd(p);
 		}
 		inline bool rvalid()
 		{
@@ -234,13 +242,15 @@ namespace miryks
 
 #define fat_arrow operator<=
 
+#define go_sideways fat_arrow
+
 	template <int, typename>
 	struct grup_iter;
 
 	struct passthrough;
 
 	struct recordgrup;
-	typedef recordgrup recordgrup;
+	struct recordgrup_iter;
 
 	struct record_with_id;
 	struct record_with_id_and_grup;
@@ -327,9 +337,9 @@ namespace miryks
 		}
 	};
 
-	static grup_iter<> upcast_grup(grup &other)
+	static inline grup_iter<> upcast_grup(grup &other)
 	{
-		grup_iter g;
+		grup_iter<> g;
 		g = other;
 		return g;
 	}
@@ -376,6 +386,7 @@ namespace miryks
 		{
 			operator=(iter.next_record());
 		}
+
 		void operator=(const record &rhs)
 		{
 			this->setr(rhs.r);
@@ -387,6 +398,16 @@ namespace miryks
 		}
 	};
 
+	/*struct recordgrup : record, grup {
+		recordgrup()
+		{
+		}
+		recordgrup(const recordgrup &rhs) {
+			r = rhs.r;
+			g = rhs.g;
+		}
+	};*/
+
 	struct recordgrup : record_iter, grup_iter<>
 	{
 		recordgrup()
@@ -397,23 +418,18 @@ namespace miryks
 		}
 		recordgrup(const recordgrup &rhs)
 		{
-			r = rhs.r;
-			g = rhs.g;
+			record::r = rhs.record::r;
+			  grup::g = rhs.grup::g;
 		}
 		const char *id = nullptr;
 		bool fat_arrow(recordgrup &rhs)
 		{
-			return this->editor_id(rhs.id);
+			return this->record::editor_id(rhs.id);
 		}
 	};
-
-	/*struct recordgrup : recordgrup_iter
-	{
-		recordgrup()
-		{
-		}
-	};*/
-
+	
+	
+	
 	template <typename T>
 	static inline record find_record_by_id(const char *id, T t)
 	{
@@ -485,7 +501,7 @@ namespace miryks
 	struct reference_factory_iter : record_iter
 	{
 		cell *cell = nullptr;
-		bool operator<=(reference_factory_iter &target)
+		bool go_sideways(reference_factory_iter &target)
 		{
 			if (this->is_reference())
 			{
@@ -527,7 +543,7 @@ namespace miryks
 			//printf("refer id %s\n", refer->editor_id());
 		}
 		template <typename T>
-		void iter_subgroups(T &t)
+		void iter_both_subgroups(T &t)
 		{
 			upcast_grup(temporary) <= t;
 			upcast_grup(persistent) <= t;

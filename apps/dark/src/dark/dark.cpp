@@ -14,9 +14,6 @@
 
 #include <files.h>
 
-using namespace dark;
-using namespace miryks;
-
 std::map<const char *, int> keys;
 
 bool pressing_key(const char *id)
@@ -64,26 +61,32 @@ namespace dark
 int main()
 {
 	editme = get_text_file(EDIT_ME);
-	miryks::init();
-	miryks::init_data_files();
-	miryks::init_archives();
+	{
+	using namespace miryks;
+	init();
+	init_data_files();
+	init_archives();
+	}
 	nif_test();
 	dark::init();
 	load_yagrum();
 	renderer_init();
-	view_bucket_in_place();
+	dark::view_bucket_in_place();
 	yagrum_queue("", 10, true);
 	//refs_init();
 	//load_world_space();
 #if 1
 	ginterior = try_create_interior_instance("GloomGen");
+	{
+	using namespace dark;
 	reference_factory_iter<my_reference> factory;
 	factory.cell = ginterior;
-	ginterior->iter_subgroups(factory);
+	ginterior->iter_both_subgroups(factory);
 	putcam();
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");	
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
-	someDraugr->Place("gloomgendraugr");
+	someDraugr->Place("gloomgenskeleton");
+	}
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");

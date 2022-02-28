@@ -3,17 +3,17 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/dark/src",
+                "${workspaceFolder}/apps/dark/src",
                 "${workspaceFolder}/miryks/src",
                 "${workspaceFolder}/miryks/include",
                 "${workspaceFolder}/dep",
                 "${workspaceFolder}/dep/imgui-1.83",
-                "${workspaceFolder}/include",
                 "C:/New folder/",
                 "C:/New folder/zlib-1.2.11",
-                "C:/New folder/libpng-1.6.35",
+                "C:/New folder/lpng1637",
                 "C:/New folder/glm-0.9.9.8",
-                "C:/New folder/glfw-3.3.4/include",
+                "C:/New folder/glfw-3.3.6/include",
+                
                 "C:/New folder/bullet3-3.17/src"
 
             ],
