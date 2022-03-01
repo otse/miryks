@@ -93,7 +93,7 @@ int main()
 
 	view_bucket_in_place();
 
-	yagrum_queue("", 10, true);
+	yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
 	//refs_init();
 	//load_world_space();
 #if 1

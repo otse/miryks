@@ -190,6 +190,9 @@ static void handle_esc()
 	{
 		cameraCur = personCam;
 		cursorShowing = false;
+		yagrum_pop();
+		yagrum_queue("", 5, true);
+
 	}
 	//else if (Cont::cur)
 	//	Cont::Hide();
@@ -346,7 +349,6 @@ void window_while_test()
 		handle_my_keys();
 
 		glfwSetInputMode(window, GLFW_CURSOR, cursorShowing ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
-
 
 		if (player1)
 			player1->Step();

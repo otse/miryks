@@ -99,7 +99,7 @@ void yagrum_drawer()
 	io.DisplaySize.x;
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoDecoration;
-	ImGui::SetNextWindowSize(ImVec2(500, 100));
+	ImGui::SetNextWindowSize(ImVec2(600, 300));
 	ImGui::SetNextWindowPos(ImVec2(300, 300));
 
 	ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
@@ -124,9 +124,7 @@ void yagrum_drawer()
 		if (fade <= 0.f)
 			current->faded = true;
 	}
-
-	ImGui::TextWrapped(current->quote.c_str());
-	ImGui::SameLine();
+	
 	if (current->no_image == false)
 	{
 		if (current->rotate)
@@ -140,6 +138,9 @@ void yagrum_drawer()
 			ImGui::Image((void *)(intptr_t)image->texture, ImVec2(50, 50));
 		}
 	}
+	ImGui::SameLine();
+	ImGui::TextWrapped(current->quote.c_str());
+
 	ImGui::PopFont();
 
 	if (should_be_fading)
