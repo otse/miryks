@@ -11,6 +11,7 @@ extern "C"
 }
 
 #include <miryks/constants.h>
+#include <files.h>
 
 #include <opengl/group.h>
 #include <opengl/drawgroup.h>
@@ -33,23 +34,26 @@ bool holding_key(const char *);
 
 namespace miryks
 {
+	extern char *editme;
+
 	namespace hooks
 	{
-		extern bool (*some_behavior)(int);
+		extern bool (*hooks_some_behavior)(int);
+		extern void (*hooks_load_interior)(const char *);
 	}
-
-	extern char *editme;
 
 	BSA load_archive(const char *);
 	ESP load_plugin(const char *, bool = false);
+
 	void load_these_definitions(ESP);
 
 	class keyframes;
 
 	keyframes *load_keyframes_from_disk(const char *);
 
-	static inline void init()
+	static inline void init_miryks()
 	{
+		editme = get_text_file(EDIT_ME);
 	}
 
 	static inline void init_data_files()
@@ -71,13 +75,13 @@ namespace miryks
 	static inline void init_archives()
 	{
 		get_archives()[0] = load_archive(ARCHIVE_0);
-		//get_archives()[1] = load_archive(ARCHIVE_1);
-		//get_archives()[2] = load_archive(ARCHIVE_2);
+		// get_archives()[1] = load_archive(ARCHIVE_1);
+		// get_archives()[2] = load_archive(ARCHIVE_2);
 		get_archives()[3] = load_archive(ARCHIVE_3);
 		get_archives()[4] = load_archive(ARCHIVE_4);
 		get_archives()[5] = load_archive(ARCHIVE_5);
-		//get_archives()[6] = load_archive(ARCHIVE_6);
-		//get_archives()[7] = load_archive(ARCHIVE_7);
+		// get_archives()[6] = load_archive(ARCHIVE_6);
+		// get_archives()[7] = load_archive(ARCHIVE_7);
 		get_archives()[8] = load_archive(ARCHIVE_8);
 		get_archives()[9] = load_archive(ARCHIVE_9);
 		get_archives()[10] = load_archive(ARCHIVE_10);
@@ -121,7 +125,8 @@ namespace miryks
 			str.begin(),
 			str.end(),
 			str.begin(),
-			[](unsigned char c) { return std::tolower(c); });
+			[](unsigned char c)
+			{ return std::tolower(c); });
 		const char *s = str.c_str();
 		resource *res;
 		res = bsa_find_more(s, flags);
@@ -142,7 +147,7 @@ namespace miryks
 		bsa_read(res);
 		ni = calloc_ni();
 		ni->path = res->path;
-		ni->buf  = res->buf;
+		ni->buf = res->buf;
 		nif_read(ni);
 		save_ni(res->path, ni);
 		return ni;
@@ -150,11 +155,11 @@ namespace miryks
 
 	void view_in_place(resource *);
 
-	//static inline void reload_plugin_0()
+	// static inline void reload_plugin_0()
 	//{
 	//	free_plugin(&get_plugins()[5]);
 	//	get_plugins()[5] = load_plugin(PLUGIN_0, true);
-	//}
+	// }
 
 	struct record
 	{
@@ -419,7 +424,7 @@ namespace miryks
 		recordgrup(const recordgrup &rhs)
 		{
 			record::r = rhs.record::r;
-			  grup::g = rhs.grup::g;
+			grup::g = rhs.grup::g;
 		}
 		const char *id = nullptr;
 		bool fat_arrow(recordgrup &rhs)
@@ -427,9 +432,7 @@ namespace miryks
 			return this->record::editor_id(rhs.id);
 		}
 	};
-	
-	
-	
+
 	template <typename T>
 	static inline record find_record_by_id(const char *id, T t)
 	{
@@ -453,33 +456,39 @@ namespace miryks
 	static inline record dig_race(const char *raceId, int plugin)
 	{
 		return find_record_by_id(
-		raceId,
-		grup_iter<0>("RACE", plugin)
-		);
+			raceId,
+			grup_iter<0>("RACE", plugin));
 	}
 
 	static inline recordgrup dig_interior_cell(const char *cellId, int plugin)
 	{
 		return find_recordgrup_by_id(
-		cellId,
-		grup_iter<0,
-		grup_iter<2,
-		grup_iter<3>>>("CELL", plugin)
-		);
+			cellId,
+			grup_iter<0,
+					  grup_iter<2,
+								grup_iter<3>>>("CELL", plugin));
 	}
 
 	static inline recordgrup dig_worldspace(const char *id, int plugin)
 	{
 		return find_recordgrup_by_id(
-		id,
-		grup_iter<0>("WRLD", plugin)
-		);
+			id,
+			grup_iter<0>("WRLD", plugin));
 	}
+	
+
+	class cell;
+	class reference;
+	class worldspace;
+	class interior;
+	class exterior;
 
 	class reference : public record
 	{
 	public:
-		mat4 matrix;
+		mat4 matrix, translation, rotation, scale;
+		record baseObject;
+		cell *cell = nullptr;
 		reference(record rc) : record(rc)
 		{
 			matrix = mat4(1.0);
@@ -489,15 +498,10 @@ namespace miryks
 		}
 	};
 
-	class cell;
-	class worldspace;
-	class interior;
-	class exterior;
-
 	extern interior *ginterior;
 	extern worldspace *gworldspace;
 
-	template<typename T>
+	template <typename T>
 	struct reference_factory_iter : record_iter
 	{
 		cell *cell = nullptr;
@@ -518,7 +522,7 @@ namespace miryks
 		unsigned short flags;
 		grup persistent, temporary;
 		std::vector<reference *> refers;
-		std::map<const char *, reference *> ids;
+		std::map<std::string, reference *> ids;
 		cell(recordgrup rg) : recordgrup(rg)
 		{
 			flags = 0;
@@ -529,18 +533,20 @@ namespace miryks
 			second = next_grup();
 			if (first.ghed().group_type == 8)
 			{
-			persistent = first;
-			temporary = second;
+				persistent = first;
+				temporary = second;
 			}
 			else
-			temporary = first;
+				temporary = first;
 			flags = *data<uint16_t *>("DATA");
 		}
-		virtual void add(reference *refer)
+		virtual void add(reference *refe)
 		{
-			refers.push_back(refer);
-			ids.emplace(refer->editor_id(), refer);
-			//printf("refer id %s\n", refer->editor_id());
+			refers.push_back(refe);
+			if (refe->editor_id())
+			{
+				ids.emplace(refe->editor_id(), refe);
+			}
 		}
 		template <typename T>
 		void iter_both_subgroups(T &t)
@@ -551,7 +557,7 @@ namespace miryks
 		virtual void unload()
 		{
 			for (reference *refer : refers)
-			delete refer;
+				delete refer;
 			refers.clear();
 		}
 		virtual ~cell()
@@ -559,7 +565,7 @@ namespace miryks
 			unload();
 		}
 	};
-	
+
 	class interior : public cell
 	{
 	public:
@@ -578,7 +584,7 @@ namespace miryks
 		}
 		virtual void update()
 		{
-			//itemfinder::consider();
+			// itemfinder::consider();
 		}
 	};
 
@@ -597,12 +603,12 @@ namespace miryks
 		void load_ext_loc(int, int);
 	};
 
-	static inline interior *try_create_interior_instance(const char *name, int plugin = 5)
+	static inline interior *mir_dig_create_interior(const char *name, int plugin = 5)
 	{
 		return new interior(dig_interior_cell(name, plugin));
 	}
 
-	static inline worldspace *try_create_worldspace_instace(const char *name, int plugin = 5)
+	static inline worldspace *mir_dig_create_worldspace(const char *name, int plugin = 5)
 	{
 		return new worldspace(dig_worldspace(name, plugin));
 	}
@@ -613,7 +619,7 @@ namespace miryks
 			return;
 		const char *id = ginterior->id;
 		delete ginterior;
-		ginterior = try_create_interior_instance(id, plugin);
+		ginterior = mir_dig_create_interior(id, plugin);
 		ginterior->dontTeleport = true;
 	}
 

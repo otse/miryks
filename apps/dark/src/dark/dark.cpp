@@ -40,6 +40,21 @@ namespace dark
 		view_in_place(get_res("clutter\\bucket02a.nif"));
 	}
 
+	void load_interior(const char *name) {
+		printf("(hook) load interior");
+		
+		if (ginterior)
+			delete ginterior;
+
+		ginterior = mir_dig_create_interior(name);
+
+		reference_factory_iter<
+			my_reference> factory;
+		factory.cell = ginterior;
+
+		ginterior->iter_both_subgroups(factory);
+	}
+
 	void putcam()
 	{
 		for (auto refer : ginterior->refers)
@@ -60,33 +75,35 @@ namespace dark
 
 int main()
 {
-	editme = get_text_file(EDIT_ME);
-	{
+	using namespace dark;
 	using namespace miryks;
-	init();
+
+	init_miryks();
 	init_data_files();
 	init_archives();
-	}
+
+	hooks::hooks_load_interior = load_interior;
+	
 	nif_test();
-	dark::init();
+	init_dark();
+
 	load_yagrum();
+
 	renderer_init();
-	dark::view_bucket_in_place();
+
+	view_bucket_in_place();
+
 	yagrum_queue("", 10, true);
 	//refs_init();
 	//load_world_space();
 #if 1
-	ginterior = try_create_interior_instance("GloomGen");
-	{
-	using namespace dark;
-	reference_factory_iter<my_reference> factory;
-	factory.cell = ginterior;
-	ginterior->iter_both_subgroups(factory);
+	load_interior("GloomGen");
+
 	putcam();
-	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");	
+	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
-	someDraugr->Place("gloomgenskeleton");
-	}
+	someDraugr->Place("gloomgendraugr");
+	
 	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	//meanSkelly->PutDown("gloomgenskeleton");
@@ -97,7 +114,6 @@ int main()
 	//someHuman->SetAnim("anims/character/1hm_idle.kf");
 	//player1 = new Player();
 	window_while_test();
-	return 1;
 }
 
 void miryks::view_in_place(resource *res)

@@ -6,7 +6,7 @@
 #define MASTER_3   "HearthFires.esm"
 #define MASTER_4   "Dragonborn.esm"
 
-#define PLUGIN_0   "Gloom.esp"
+#define PLUGIN_0   "Gloom - Copy.esp"
 
 #define ARCHIVE_0  "Skyrim - Misc.bsa"
 #define ARCHIVE_1  "Skyrim - Shaders.bsa"

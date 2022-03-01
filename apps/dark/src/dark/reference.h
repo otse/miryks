@@ -32,10 +32,10 @@ namespace dark
 	public:
 		my_reference(record);
 		~my_reference();
-		record baseObject;
+		
 		Model *model;
-		cell *cell = nullptr;
-		mat4 matrix, translation, rotation, scale;
+		
+		// mat4 matrix, translation, rotation, scale; // mir has
 
 		//Container *container = nullptr;
 		DrawGroup *drawGroup = nullptr;

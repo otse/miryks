@@ -21,8 +21,9 @@ namespace dark
 	void darkassert(bool);
 	
 	void view_bucket_in_place();
+	void load_interior(const char *);
 
-	void init();
+	void init_dark();
 	void loop();
 
 	extern Monster *someDraugr;

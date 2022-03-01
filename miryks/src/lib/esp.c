@@ -351,6 +351,7 @@ api RCD esp_get_form_id(unsigned int formId)
 	struct form_id form_id;
 	form_id = build_form_id(formId);
 	ESP esp = get_plugins()[form_id.modIndex];
+	// printf("get modIndex %u\n", form_id.modIndex);
 	if (esp == NULL)
 	return NULL;
 	for (unsigned int j = 0; j < esp->records->size; j++)

@@ -25,21 +25,21 @@ namespace miryks
 		skel->anim = anim;
 	}
 
-	void Monster::Place(const char *q)
+	void Monster::Place(const char *name)
 	{
-		for (auto bluh : ginterior->ids)
-			printf("bluh %s", bluh.first);
-		auto refer = ginterior->ids.find(q);
-		if (refer != ginterior->ids.end())
+		std::string str(name);
+		auto refe = ginterior->ids.find(name);
+		if (refe != ginterior->ids.end())
 		{
 			drawGroup = new DrawGroup(
-				modelSkinned->baseGroup, refer->second->matrix);
-			//drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
-			//drawGroup->Add(new DrawGroup(skeleton->baseBone->group, mat4(1.0));
+				modelSkinned->baseGroup, refe->second->matrix);
+			//drawGroup->Update();
+			// drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
+			// drawGroup->Add(new DrawGroup(skeleton->baseBone->group, mat4(1.0));
 			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else
-			printf("!! cant place creature %s\n", q);
+			printf("!! cant place creature %s\n", name);
 	}
 
 	void Monster::Step()

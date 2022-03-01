@@ -42,9 +42,9 @@ static void cursorPosCallback(GLFWwindow *window, double x, double y)
 	y2 = y;
 }
 
-void dark::init()
+void dark::init_dark()
 {
-	miryks::hooks::some_behavior = [](int a) { return false; };
+	//miryks::hooks::some_behavior = [](int a) { return false; };
 
 	glfwSetErrorCallback(errorCallback);
 
@@ -337,11 +337,11 @@ void window_while_test()
 
 		delta = 0.016f;
 
+		glfwPollEvents();
+
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		glfwPollEvents();
 
 		handle_my_keys();
 
