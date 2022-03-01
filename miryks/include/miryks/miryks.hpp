@@ -34,6 +34,9 @@ bool holding_key(const char *);
 
 namespace miryks
 {
+	class Player;
+	extern Player *player1;
+	
 	extern char *editme;
 
 	namespace hooks

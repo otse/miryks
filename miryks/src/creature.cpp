@@ -33,7 +33,6 @@ namespace miryks
 		{
 			drawGroup = new DrawGroup(
 				modelSkinned->baseGroup, refe->second->matrix);
-			//drawGroup->Update();
 			// drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
 			// drawGroup->Add(new DrawGroup(skeleton->baseBone->group, mat4(1.0));
 			sceneDef->bigGroup->Add(drawGroup);

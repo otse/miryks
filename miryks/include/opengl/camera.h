@@ -16,7 +16,9 @@ public:
 	mat4 view, projection;
 	Group *group;
 	DrawGroup *drawGroup;
+	
 	Camera();
+
 	virtual void Mouse(float, float){};
 	virtual void Update(float){};
 

@@ -347,10 +347,12 @@ void window_while_test()
 
 		glfwSetInputMode(window, GLFW_CURSOR, cursorShowing ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 
-		cameraCur->Update(delta);
 
-		//if (player1)
-		//	player1->Step();
+		if (player1)
+			player1->Step();
+
+		cameraCur->Update(delta);
+		
 		if (someDraugr)
 			someDraugr->Step();
 		//if (meanSkelly)

@@ -19,6 +19,11 @@ namespace miryks
 	{
 		Move();
 		Char::Step();
+		if (pressing_key("v"))
+		{
+			toggleView();
+		}
+
 		if (pressing_key("w"))
 		{
 			SetAnim("anims/character/1hm_walkforward.kf");

@@ -19,4 +19,6 @@ namespace miryks
 
 	interior *ginterior = nullptr;
 	worldspace *gworldspace = nullptr;
+
+	Player *player1 = nullptr;
 }

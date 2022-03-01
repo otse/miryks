@@ -112,7 +112,7 @@ int main()
 	//someHuman->Place("gloomgenman");
 #endif
 	//someHuman->SetAnim("anims/character/1hm_idle.kf");
-	//player1 = new Player();
+	player1 = new Player();
 	window_while_test();
 }
 

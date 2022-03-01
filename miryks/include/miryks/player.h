@@ -7,10 +7,10 @@ namespace miryks
     class Player : public Char
 	{
 	public:
-		ViewerCamera *thirdPersonCamera;
-		float yaw;
-		bool thirdPerson;
 		Player();
+		ViewerCamera *thirdPersonCamera;
+		bool thirdPerson;
+		float yaw;
 		void toggleView();
 		void Step();
 		void Move();
