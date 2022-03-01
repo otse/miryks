@@ -42,6 +42,11 @@ namespace miryks
 		root->Update();
 	}
 
+	DrawGroup *skeleton::ShowBones()
+	{
+		return new DrawGroup(this->baseBone, mat4(1.0));
+	}
+
 	void matrix_from_common(bone *bone, ni_common_layout_t *common)
 	{
 		bone->matrix = translate(bone->matrix, cast_vec3(&common->A->translation));

@@ -55,8 +55,8 @@ void Scene::DrawItems()
 
 #if 1
 	auto TransparencyLast = [](const Group *a, const Group *b) -> bool {
-		const DrawGroupFlatSorted *dgs = dynamic_cast<const DrawGroupFlatSorted *>(a);
-		if (dgs && dgs->hasTransparency)
+		const DrawGroupFlatSorted *dgfs = dynamic_cast<const DrawGroupFlatSorted *>(a);
+		if (dgfs && dgfs->hasTransparency)
 			return false;
 		return true;
 	};

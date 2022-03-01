@@ -13,6 +13,8 @@ Group::Group()
 	parent = nullptr;
 	geometry = nullptr;
 	axis = nullptr;
+	axis = new Geometry;
+	axis->SetupMesh();
 	matrix = matrixWorld = mat4(1.0f);
 	num++;
 }

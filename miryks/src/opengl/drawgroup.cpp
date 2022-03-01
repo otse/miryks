@@ -39,6 +39,9 @@ bool DrawGroup::Invisible()
 	return true;
 }
 
+/*
+	only draw the childs when its a drawgroup
+*/
 void DrawGroup::Draw(const mat4 &left)
 {
 	if (Invisible())

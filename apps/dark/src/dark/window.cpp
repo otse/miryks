@@ -18,13 +18,13 @@ GLFWwindow *window = nullptr;
 static bool cursorShowing = false;
 static bool hideOverlays = true;
 static bool f10 = false;
-static bool useFbo = true;
+static bool useFbo = false;
 
 void setupImgui();
 
 static void toggle_cursor()
 {
-	cursorShowing = ! cursorShowing;
+	cursorShowing = !cursorShowing;
 }
 
 static void errorCallback(int error, const char *description)
@@ -44,7 +44,7 @@ static void cursorPosCallback(GLFWwindow *window, double x, double y)
 
 void dark::init_dark()
 {
-	//miryks::hooks::some_behavior = [](int a) { return false; };
+	// miryks::hooks::some_behavior = [](int a) { return false; };
 
 	glfwSetErrorCallback(errorCallback);
 
@@ -192,9 +192,8 @@ static void handle_esc()
 		cursorShowing = false;
 		yagrum_pop();
 		yagrum_queue("", 5, true);
-
 	}
-	//else if (Cont::cur)
+	// else if (Cont::cur)
 	//	Cont::Hide();
 	else
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -202,13 +201,13 @@ static void handle_esc()
 
 static void toggle_windowed()
 {
-	static bool fs = true;
-	fs = !fs;
-	if (fs)
-	{
-		borderless();
-	}
-	else
+	//static bool fs = true;
+	//fs = !fs;
+	//if (fs)
+	//{
+	//	borderless();
+	//}
+	//else
 	{
 		width = 1024;
 		height = 768;
@@ -218,8 +217,7 @@ static void toggle_windowed()
 
 static void capture_keys()
 {
-	// horribleness / shouldnt
-
+	// horribleness
 	auto handler = [](int k, const char *n) -> void
 	{
 		int *p = &keys[n];
@@ -264,8 +262,8 @@ void setupImgui()
 	ImGui::CreateContext();
 	ImGuiIO &io = ImGui::GetIO();
 	(void)io;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	// io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 	ImFont *font1 = io.Fonts->AddFontDefault();
 	font2 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 45.0f);
 	font3 = io.Fonts->AddFontFromFileTTF("CrimsonText-Regular.ttf", 55.0f);
@@ -280,7 +278,7 @@ static void handle_use_key()
 {
 	if (ImGui::IsAnyItemActive())
 		return;
-	//miryks::itemfinder::activate();
+	// miryks::itemfinder::activate();
 }
 
 static void reload_shaders()
@@ -306,21 +304,25 @@ static void handle_my_keys()
 		toggle_cursor();
 	else if (pressing_key("f4"))
 		toggle_fbo();
-	//else if (pressing_key("f5")) hotswap_plugin_and_dungeon();
-	else if (pressing_key("f6")) reload_shaders();
-	//else if (pressing("f10")) toggle_render_stats();
+	// else if (pressing_key("f5")) hotswap_plugin_and_dungeon();
+	else if (pressing_key("f6"))
+		reload_shaders();
+	// else if (pressing("f10")) toggle_render_stats();
 	else if (pressing_key("e"))
 		handle_use_key();
-	//else if (pressing_key("v"))
-		//third_person();
+	// else if (pressing_key("v"))
+	// third_person();
 	else if (holding_key("lalt") && pressing_key("enter"))
+	{
+		printf("going windowed\n");
 		toggle_windowed();
+	}
 }
 
 void window_while_test()
 {
 	using namespace dark;
-	
+
 	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
@@ -334,7 +336,7 @@ void window_while_test()
 		else
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		//glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		// glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		Group::drawCalls = 0;
 
@@ -354,16 +356,16 @@ void window_while_test()
 			player1->Step();
 
 		cameraCur->Update(delta);
-		
+
 		if (someDraugr)
 			someDraugr->Step();
-		//if (meanSkelly)
+		// if (meanSkelly)
 		//	meanSkelly->Step();
-		//if (someHuman)
+		// if (someHuman)
 		//	someHuman->Step();
 		if (ginterior)
 			ginterior->update();
-		//if (player1)
+		// if (player1)
 		//	player1->Step();
 
 		sceneDef->DrawItems();

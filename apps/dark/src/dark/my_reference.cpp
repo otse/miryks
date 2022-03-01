@@ -6,7 +6,7 @@
 #include <miryks/model.h>
 
 #include <dark/trash.h>
-#include <dark/reference.h>
+#include <dark/my_reference.h>
 
 #include <algorithm>
 #include <cctype>

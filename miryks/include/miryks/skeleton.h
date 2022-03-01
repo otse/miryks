@@ -24,6 +24,7 @@ namespace miryks
 		animation *anim;
 		skeleton();
 		skeleton(char *);
+		DrawGroup *ShowBones();
 		void Load(const char *);
 		void Construct();
 		void Step();

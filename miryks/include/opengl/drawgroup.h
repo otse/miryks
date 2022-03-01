@@ -7,6 +7,8 @@
 #include <opengl/group.h>
 #include <opengl/aabb.h>
 
+// special group that shouldnt trigger parenting
+
 struct DrawGroup : Group
 {
 	static int num, masks;

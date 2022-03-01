@@ -2,7 +2,7 @@
 
 #include <dark/dark.h>
 #include <dark/window.h>
-#include <dark/reference.h>
+#include <dark/my_reference.h>
 
 #include <miryks/player.h>
 #include <miryks/actors.h>
@@ -40,16 +40,18 @@ namespace dark
 		view_in_place(get_res("clutter\\bucket02a.nif"));
 	}
 
-	void load_interior(const char *name) {
+	void load_interior(const char *name)
+	{
 		printf("(hook) load interior");
-		
+
 		if (ginterior)
 			delete ginterior;
 
 		ginterior = mir_dig_create_interior(name);
 
 		reference_factory_iter<
-			my_reference> factory;
+			my_reference>
+			factory;
 		factory.cell = ginterior;
 
 		ginterior->iter_both_subgroups(factory);
@@ -83,7 +85,7 @@ int main()
 	init_archives();
 
 	hooks::hooks_load_interior = load_interior;
-	
+
 	nif_test();
 	init_dark();
 
@@ -94,8 +96,8 @@ int main()
 	view_bucket_in_place();
 
 	yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
-	//refs_init();
-	//load_world_space();
+	// refs_init();
+	// load_world_space();
 #if 1
 	load_interior("GloomGen");
 
@@ -103,15 +105,15 @@ int main()
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	someDraugr->Place("gloomgendraugr");
-	
-	//someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
-	//meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
-	//meanSkelly->PutDown("gloomgenskeleton");
-	//someHuman = new Char();
-	//someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
-	//someHuman->Place("gloomgenman");
+
+	// someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
+	// meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
+	// meanSkelly->PutDown("gloomgenskeleton");
+	// someHuman = new Char();
+	// someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
+	// someHuman->Place("gloomgenman");
 #endif
-	//someHuman->SetAnim("anims/character/1hm_idle.kf");
+	// someHuman->SetAnim("anims/character/1hm_idle.kf");
 	player1 = new Player();
 	window_while_test();
 }
@@ -128,11 +130,11 @@ void miryks::view_in_place(resource *res)
 	}
 	model = new Model(res);
 	drawGroup = new DrawGroup(
-			model->baseGroup, translate(mat4(1.0), personCam->pos));
+		model->baseGroup, translate(mat4(1.0), personCam->pos));
 	sceneDef->bigGroup->Add(drawGroup);
 	showCursor = false;
 	cameraCur = viewerCam;
 	viewerCam->pos = drawGroup->aabb.center();
-	//viewerCam->pos = personCam->pos;
+	// viewerCam->pos = personCam->pos;
 	viewerCam->radius = drawGroup->aabb.radius2() * 2;
 }

@@ -34,9 +34,7 @@ namespace miryks
 			drawGroup = new DrawGroup(
 				modelSkinned->baseGroup, refe->second->matrix);
 			// drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
-			drawGroup->Add(
-				new DrawGroup(
-					skel->baseBone, mat4(1.0)));
+			drawGroup->Add(new DrawGroupFlatSorted(skel->baseBone, mat4(1.0)));
 			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else
@@ -49,9 +47,9 @@ namespace miryks
 			skel->Step();
 		if (modelSkinned)
 			modelSkinned->Step(skel);
-		//const float merry = 0.002;
-		//if (drawGroup)
-		//drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
+		// const float merry = 0.002;
+		// if (drawGroup)
+		// drawGroup->matrix = glm::rotate(drawGroup->matrix, merry, vec3(0, 0, 1));
 	}
 
 } // namespace dark
