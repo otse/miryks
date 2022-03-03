@@ -139,6 +139,8 @@ void yagrum_drawer()
 		}
 	}
 	ImGui::SameLine();
+	ImGui::TextWrapped(" ");
+	ImGui::SameLine();
 	ImGui::TextWrapped(current->quote.c_str());
 
 	ImGui::PopFont();

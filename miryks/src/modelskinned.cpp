@@ -46,7 +46,7 @@ namespace miryks
 		rd->ni_alpha_property_callback = ni_alpha_property_callback;
 		nif_rd(rd);
 		free_rd(&rd);
-		baseGroup->Update();
+		baseGroup->UpdateSideways();
 	}
 	
 	void ModelSkinned::Initial(skeleton *skeleton)
@@ -197,7 +197,7 @@ namespace miryks
 			}
 			geometry->SetupMesh();
 			modelSkinned->lastGroup->Add(group);
-			modelSkinned->lastGroup->Update();
+			modelSkinned->lastGroup->UpdateSideways();
 		}
 	}
 

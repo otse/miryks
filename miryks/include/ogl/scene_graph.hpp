@@ -55,14 +55,14 @@ struct Group
 	/*
 	Recalculates the scene graph 
 	*/
-	virtual void Update()
+	virtual void UpdateSideways()
 	{
 		if (parent == nullptr)
 			matrixWorld = matrix;
 		else
 			matrixWorld = parent->matrixWorld * matrix;
 		for (Group *child : childGroups)
-			child->Update();
+			child->UpdateSideways();
 	}
 
 	virtual void Draw(const mat4 &left)
@@ -74,7 +74,7 @@ struct Group
 		//	return;
 		if (geometry)
 			geometry->Draw(place);
-		if (axis /*&& renderSettings.axes*/)
+		if (axis && renderSettings.axes)
 			axis->Draw(place);
 	}
 
@@ -117,12 +117,13 @@ struct GroupBounded : Group
 	{
 	}
 
-	virtual void Update() override
+	virtual void UpdateSideways() override
 	{
 		aabb = Aabb();
-		Group::Update();
+		Group::UpdateSideways();
 		// Once everything is updated,
-		// Run back to front
+		// run back to front:
+
 		if (geometry)
 			aabb.extend(geometry->aabb);
 		aabb = Aabb::mult(aabb, matrix);
@@ -151,7 +152,7 @@ struct DrawGroup : Group
 		parent = nullptr;
 		num++;
 		Reset();
-		Update();
+		UpdateSideways();
 	}
 
 	virtual ~DrawGroup()

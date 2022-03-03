@@ -39,7 +39,7 @@ namespace miryks
 		nif_rd(rd);
 		free_rd(&rd);
 		assertc(root);
-		root->Update();
+		root->UpdateSideways();
 	}
 
 	DrawGroup *skeleton::ShowBones()
@@ -52,7 +52,7 @@ namespace miryks
 		bone->matrix = translate(bone->matrix, cast_vec3(&common->A->translation));
 		bone->matrix *= inverse(mat4(cast_mat3(&common->A->rotation)));
 		bone->matrix = scale(bone->matrix, vec3(common->A->scale));
-		bone->Update();
+		bone->UpdateSideways();
 		bone->rest = bone->matrixWorld;
 	}
 
@@ -111,7 +111,7 @@ namespace miryks
 		if (time >= keyf->controllerSequence->C->stop_time)
 			time -= keyf->controllerSequence->C->stop_time;
 		SimpleNonInterpolated();
-		skel->root->Update();
+		skel->root->UpdateSideways();
 	}
 
 	void animation::SimpleNonInterpolated()
@@ -181,7 +181,7 @@ namespace miryks
 			bone->mod = matrix;
 			bone->matrix = matrix;
 			bone->diff = inverse(matrix) * bone->rest;
-			bone->Update();
+			bone->UpdateSideways();
 		}
 	}
 

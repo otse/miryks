@@ -47,7 +47,7 @@ namespace miryks
 		vec3 down = vec3(0, 0, -EYE_HEIGHT);
 		drawGroup->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
 		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCur->yaw, vec3(0, 0, 1));
-		drawGroup->Update();
+		drawGroup->UpdateSideways();
 		drawGroup->Reset();
 	}
 

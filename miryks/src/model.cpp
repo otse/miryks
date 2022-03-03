@@ -43,7 +43,7 @@ namespace miryks
 		rd->ni_alpha_property_callback = ni_alpha_property_callback;
 		nif_rd(rd);
 		free_rd(&rd);
-		baseGroup->Update();
+		baseGroup->UpdateSideways();
 	}
 
 	void Model::Step()

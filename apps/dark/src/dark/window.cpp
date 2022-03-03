@@ -191,7 +191,7 @@ static void handle_esc()
 		cameraCur = personCam;
 		cursorShowing = false;
 		yagrum_pop();
-		yagrum_queue("", 5, true);
+		yagrum_queue("", 2, true);
 	}
 	// else if (Cont::cur)
 	//	Cont::Hide();
@@ -299,7 +299,7 @@ static void handle_my_keys()
 	else if (pressing_key("f1"))
 		toggle_debug();
 	else if (pressing_key("f2"))
-		yagrum_queue("", 5, true);
+		yagrum_queue("", 2, true);
 	else if (pressing_key("f3"))
 		toggle_cursor();
 	else if (pressing_key("f4"))

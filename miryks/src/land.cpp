@@ -139,9 +139,9 @@ namespace miryks
 		geometry->SetupMesh();
 		printf("adding land geometry to bigGroup\n");
 
-		group->Update();
+		group->UpdateSideways();
 		drawGroup = new DrawGroupFlatSorted(group, mat4(1.0));
-		drawGroup->Update();
+		drawGroup->UpdateSideways();
 		sceneDef->bigGroup->Add(drawGroup);
 	}
 }

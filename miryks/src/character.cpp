@@ -41,7 +41,7 @@ namespace miryks {
 			drawGroup->Add(hands->drawGroup);
 		if (feet)
 			drawGroup->Add(feet->drawGroup);
-		drawGroup->Update();
+		drawGroup->UpdateSideways();
 	};
 
 	void Char::Place(const char *q)
@@ -53,7 +53,7 @@ namespace miryks {
 			return;
 		printf("place at %s\n", q);
 		drawGroup->matrix = ref->second->matrix;
-		drawGroup->Update();
+		drawGroup->UpdateSideways();
 		sceneDef->bigGroup->Add(drawGroup);
 		// Create an offsetted mirror of Man
 		/*DrawGroup *mirror = new DrawGroup(group, mat4());
