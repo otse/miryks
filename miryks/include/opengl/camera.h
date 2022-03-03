@@ -15,7 +15,7 @@ public:
 	vec3 pos;
 	mat4 view, projection;
 	Group *group;
-	DrawGroup *drawGroup;
+	GroupDrawer *groupDrawer;
 	
 	Camera();
 

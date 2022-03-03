@@ -30,18 +30,18 @@ namespace miryks {
 			//body = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greyboardrobe_0.nif");
 			//feet = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardboots_0.nif");
 		*/
-		drawGroup = new DrawGroup(nullptr, mat4(1.0));
+		groupDrawer = new GroupDrawer(nullptr, mat4(1.0));
 		if (hat)
-			drawGroup->Add(hat->drawGroup);
+			groupDrawer->Add(hat->groupDrawer);
 		if (head)
-			drawGroup->Add(head->drawGroup);
+			groupDrawer->Add(head->groupDrawer);
 		if (body)
-			drawGroup->Add(body->drawGroup);
+			groupDrawer->Add(body->groupDrawer);
 		if (hands)
-			drawGroup->Add(hands->drawGroup);
+			groupDrawer->Add(hands->groupDrawer);
 		if (feet)
-			drawGroup->Add(feet->drawGroup);
-		drawGroup->UpdateSideways();
+			groupDrawer->Add(feet->groupDrawer);
+		groupDrawer->UpdateSideways();
 	};
 
 	void Char::Place(const char *q)
@@ -52,12 +52,12 @@ namespace miryks {
 		if (ref == ginterior->ids.end())
 			return;
 		printf("place at %s\n", q);
-		drawGroup->matrix = ref->second->matrix;
-		drawGroup->UpdateSideways();
-		sceneDef->bigGroup->Add(drawGroup);
+		groupDrawer->matrix = ref->second->matrix;
+		groupDrawer->UpdateSideways();
+		sceneDef->bigGroup->Add(groupDrawer);
 		// Create an offsetted mirror of Man
-		/*DrawGroup *mirror = new DrawGroup(group, mat4());
-		mirror->matrix = drawGroup->matrix;
+		/*GroupDrawer *mirror = new GroupDrawer(group, mat4());
+		mirror->matrix = groupDrawer->matrix;
 		mirror->matrix = glm::translate(mirror->matrix, vec3(50, 0, 0));*/
 		//sceneDef->Add(mirror);
 	}
@@ -85,9 +85,9 @@ namespace miryks {
 			feet->Step();
 		//if (csphere)
 		//{
-			//drawGroup->matrix = translate(drawGroup->matrix, csphere->GetWorldTransform());
-			//drawGroup->matrix = translate(mat4(1.0), csphere->GetWorldTransform());
-			//drawGroup->Reset();
+			//groupDrawer->matrix = translate(groupDrawer->matrix, csphere->GetWorldTransform());
+			//groupDrawer->matrix = translate(mat4(1.0), csphere->GetWorldTransform());
+			//groupDrawer->Reset();
 		//}
 	}
 }

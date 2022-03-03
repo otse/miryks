@@ -42,9 +42,9 @@ namespace miryks
 		root->UpdateSideways();
 	}
 
-	DrawGroup *skeleton::ShowBones()
+	GroupDrawer *skeleton::ShowBones()
 	{
-		return new DrawGroup(this->baseBone, mat4(1.0));
+		return new GroupDrawer(this->baseBone, mat4(1.0));
 	}
 
 	void matrix_from_common(bone *bone, ni_common_layout_t *common)

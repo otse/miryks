@@ -92,9 +92,14 @@ void dark::init_dark()
 	glFrontFace(GL_CCW);
 }
 
+static bool show_hero_menu = false;
+
 void imgui_calls()
 {
 	overlay_rstats(&f10);
+
+	if (show_hero_menu)
+		hero_menu();
 
 	yagrum_checker();
 
@@ -201,13 +206,13 @@ static void handle_esc()
 
 static void toggle_windowed()
 {
-	//static bool fs = true;
-	//fs = !fs;
-	//if (fs)
+	// static bool fs = true;
+	// fs = !fs;
+	// if (fs)
 	//{
 	//	borderless();
-	//}
-	//else
+	// }
+	// else
 	{
 		width = 1024;
 		height = 768;
@@ -250,6 +255,7 @@ static void capture_keys()
 		  {GLFW_KEY_F, "f"},
 		  {GLFW_KEY_V, "v"},
 		  {GLFW_KEY_E, "e"},
+		  {GLFW_KEY_H, "h"},
 		  {GLFW_KEY_LEFT_CONTROL, "lctrl"},
 		  {GLFW_KEY_LEFT_SHIFT, "lshift"},
 		  {GLFW_KEY_LEFT_ALT, "lalt"},
@@ -310,6 +316,11 @@ static void handle_my_keys()
 	// else if (pressing("f10")) toggle_render_stats();
 	else if (pressing_key("e"))
 		handle_use_key();
+	else if (pressing_key("h"))
+	{
+		printf("show_hero_menu\n");
+		show_hero_menu = !show_hero_menu;
+	}
 	// else if (pressing_key("v"))
 	// third_person();
 	else if (holding_key("lalt") && pressing_key("enter"))
@@ -352,10 +363,10 @@ void window_while_test()
 
 		glfwSetInputMode(window, GLFW_CURSOR, cursorShowing ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 
+		cameraCur->Update(delta);
+
 		if (player1)
 			player1->Step();
-
-		cameraCur->Update(delta);
 
 		if (someDraugr)
 			someDraugr->Step();
@@ -413,7 +424,7 @@ void window_while()
 	frames = 0;
 	prevTime = glfwGetTime();
 
-	sceneDef->bigGroup->Add(personCam->drawGroup);
+	sceneDef->bigGroup->Add(personCam->groupDrawer);
 
 #if 0
 	pointlight *myself = new pointlight;

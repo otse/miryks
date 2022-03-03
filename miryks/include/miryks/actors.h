@@ -13,7 +13,7 @@ namespace miryks
 		SkinnedMesh *skinnedMesh;
 		skeleton *skel;
 		animation *anim;
-		DrawGroup *drawGroup;
+		GroupDrawer *groupDrawer;
 		Monster(const char *, const char *);
 		void Place(const char *);
 		void SetAnim(const char *);
@@ -27,7 +27,7 @@ namespace miryks
 		skeleton *skel;
 		animation *anim;
 		SkinnedMesh *hat, *head, *body, *hands, *feet;
-		DrawGroup *drawGroup;
+		GroupDrawer *groupDrawer;
 		Char(const char * = "ImperialRace");
 		void SetAnim(const char *);
 		void Step();

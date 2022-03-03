@@ -14,8 +14,8 @@
 
 int Group::num = 0;
 int Group::drawCalls = 0;
-int DrawGroup::num = 0;
-int DrawGroup::masks = ~0;
+int GroupDrawer::num = 0;
+int GroupDrawer::masks = ~0;
 
 int width = 1920;
 int height = 1080;
@@ -64,7 +64,7 @@ void renderer_init()
 
 	cameraCur = personCam;
 
-	sceneDef->bigGroup->Add(personCam->drawGroup);
+	sceneDef->bigGroup->Add(personCam->groupDrawer);
 
 	//renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_UNSIGNED_BYTE);
 

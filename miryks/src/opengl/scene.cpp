@@ -16,7 +16,7 @@ static spotlight *bspot;
 
 Scene::Scene()
 {
-	bigGroup = new DrawGroupFlatSorted(new Group, mat4(1.0));
+	bigGroup = new GroupDrawerFlat(new Group, mat4(1.0));
 
 	bpoint = new pointlight;
 	bpoint->color = vec3(0.f);
@@ -53,9 +53,9 @@ void Scene::DrawItems()
 
 	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), EarlyZKills);
 
-#if 0
+#if 1
 	auto TransparencyLast = [](const Group *a, const Group *b) -> bool {
-		const DrawGroupFlatSorted *dgfs = dynamic_cast<const DrawGroupFlatSorted *>(a);
+		const GroupDrawerFlat *dgfs = dynamic_cast<const GroupDrawerFlat *>(a);
 		if (dgfs && dgfs->hasTransparency)
 			return false;
 		return true;

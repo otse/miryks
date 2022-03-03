@@ -16,7 +16,7 @@ Camera::Camera()
 	pos = vec3(0);
 	disabled = false;
 	group = new Group;
-	drawGroup = new DrawGroup(group, mat4(1.0));
+	groupDrawer = new GroupDrawer(group, mat4(1.0));
 }
 
 void Camera::SetProjection() {
@@ -102,7 +102,7 @@ void FirstPersonCamera::Update(float time)
 	group->matrix = glm::inverse(view);
 	group->UpdateSideways(); // Important
 	
-	drawGroup->Reset();
+	groupDrawer->Reset();
 
 	// printf("hands matrix world %s\n", glm::to_string(vec3(hands->matrixWorld[3])));
 

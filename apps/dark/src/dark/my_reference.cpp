@@ -29,7 +29,7 @@ namespace dark
 	my_reference::my_reference(record refr) : reference(refr)
 	{
 		model = nullptr;
-		drawGroup = nullptr;
+		groupDrawer = nullptr;
 		pointLight = nullptr;
 		spotLight = nullptr;
 		Go();
@@ -37,11 +37,11 @@ namespace dark
 
 	my_reference::~my_reference()
 	{
-		if (drawGroup && drawGroup->parent)
-			drawGroup->parent->Remove(drawGroup);
+		if (groupDrawer && groupDrawer->parent)
+			groupDrawer->parent->Remove(groupDrawer);
 		sceneDef->pointLights.Remove(pointLight);
 		sceneDef->spotLights.Remove(spotLight);
-		delete drawGroup;
+		delete groupDrawer;
 		delete pointLight;
 		delete spotLight;
 	}
@@ -245,13 +245,13 @@ namespace dark
 			// bad
 			if (baseObject.r->hed->formId != 0x32)
 			{
-				drawGroup = new DrawGroupFlatSorted(model->baseGroup, matrix);
-				sceneDef->bigGroup->Add(drawGroup);
+				groupDrawer = new GroupDrawerFlat(model->baseGroup, matrix);
+				sceneDef->bigGroup->Add(groupDrawer);
 				int i = 0;
 				for (auto thing : Things)
 				{
 					if (*(unsigned int *)thing == baseObject.rhed().sgn) {
-						drawGroup->mask = 1 << i;
+						groupDrawer->mask = 1 << i;
 						break;
 					}
 					i ++;
@@ -262,9 +262,9 @@ namespace dark
 
 	float my_reference::GetDistance() const
 	{
-		if (drawGroup == nullptr)
+		if (groupDrawer == nullptr)
 			return 0;
-		float distance = glm::length(drawGroup->aabb.center() - vec3(personCam->hands->matrixWorld[3]));
+		float distance = glm::length(groupDrawer->aabb.center() - vec3(personCam->hands->matrixWorld[3]));
 
 		return distance;
 	}
@@ -306,7 +306,7 @@ namespace dark
 		if (dist > 40)
 			return false;
 
-		if (drawGroup == nullptr)
+		if (groupDrawer == nullptr)
 			return false;
 
 
@@ -322,7 +322,7 @@ namespace dark
 
 		vec3 original = vec3(0);
 
-		mat4 mate = glm::translate(mat4(1), drawGroup->aabb.center());
+		mat4 mate = glm::translate(mat4(1), groupDrawer->aabb.center());
 
 		mat4 model = cameraCur->projection * cameraCur->view * mate;
 		mat4 projection = glm::frustum(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);

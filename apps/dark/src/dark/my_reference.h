@@ -38,7 +38,7 @@ namespace dark
 		// mat4 matrix, translation, rotation, scale; // mir has
 
 		//Container *container = nullptr;
-		DrawGroup *drawGroup = nullptr;
+		GroupDrawer *groupDrawer = nullptr;
 		pointlight *pointLight;
 		spotlight *spotLight;
 		void Go();

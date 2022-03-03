@@ -647,7 +647,7 @@ namespace miryks
 	public:
 		exterior *exterior;
 		Group *group;
-		DrawGroup *drawGroup;
+		GroupDrawer *groupDrawer;
 		land(record land);
 	};
 }

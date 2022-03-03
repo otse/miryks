@@ -121,20 +121,20 @@ int main()
 void miryks::view_in_place(resource *res)
 {
 	static Model *model = nullptr;
-	static DrawGroup *drawGroup = nullptr;
+	static GroupDrawer *groupDrawer = nullptr;
 	if (model)
 	{
-		drawGroup->parent->Remove(drawGroup);
+		groupDrawer->parent->Remove(groupDrawer);
 		delete model;
-		delete drawGroup;
+		delete groupDrawer;
 	}
 	model = new Model(res);
-	drawGroup = new DrawGroup(
+	groupDrawer = new GroupDrawer(
 		model->baseGroup, translate(mat4(1.0), personCam->pos));
-	sceneDef->bigGroup->Add(drawGroup);
+	sceneDef->bigGroup->Add(groupDrawer);
 	showCursor = false;
 	cameraCur = viewerCam;
-	viewerCam->pos = drawGroup->aabb.center();
+	viewerCam->pos = groupDrawer->aabb.center();
 	// viewerCam->pos = personCam->pos;
-	viewerCam->radius = drawGroup->aabb.radius2() * 2;
+	viewerCam->radius = groupDrawer->aabb.radius2() * 2;
 }

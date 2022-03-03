@@ -10,7 +10,7 @@ namespace miryks
 	{
 		yaw = 0;
 		thirdPerson = false;
-		drawGroup->visible = false;
+		groupDrawer->visible = false;
 		Place("gloomgenman");
 		thirdPersonCamera = new ViewerCamera;
 	}
@@ -45,10 +45,10 @@ namespace miryks
 			SetAnim("anims/character/1hm_idle.kf");
 		}
 		vec3 down = vec3(0, 0, -EYE_HEIGHT);
-		drawGroup->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
-		drawGroup->matrix = rotate(drawGroup->matrix, -cameraCur->yaw, vec3(0, 0, 1));
-		drawGroup->UpdateSideways();
-		drawGroup->Reset();
+		groupDrawer->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
+		groupDrawer->matrix = rotate(groupDrawer->matrix, -cameraCur->yaw, vec3(0, 0, 1));
+		groupDrawer->UpdateSideways();
+		groupDrawer->Reset();
 	}
 
 	void Player::toggleView()
@@ -57,7 +57,7 @@ namespace miryks
 
 		if (thirdPerson)
 		{
-			drawGroup->visible = true;
+			groupDrawer->visible = true;
 			thirdPersonCamera->pos = cameraCur->pos;
 			thirdPersonCamera->yaw = personCam->yaw;
 			thirdPersonCamera->pitch = personCam->pitch;
@@ -66,7 +66,7 @@ namespace miryks
 		}
 		else
 		{
-			drawGroup->visible = false;
+			groupDrawer->visible = false;
 			personCam->pos = cameraCur->pos;
 			personCam->yaw = thirdPersonCamera->yaw;
 			personCam->pitch = thirdPersonCamera->pitch;

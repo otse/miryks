@@ -118,21 +118,21 @@ void ItemRenderer::View(Item *item) {
 	NIF ni = get_ni(rc->path);
 
 	static Mesh *mesh = nullptr;
-	static DrawGroup *drawGroup = nullptr;
+	static GroupDrawer *groupDrawer = nullptr;
 	if (mesh)
 	{
-		myScene->drawGroups.Remove(drawGroup);
+		myScene->drawGroups.Remove(groupDrawer);
 		delete mesh;
-		delete drawGroup;
+		delete groupDrawer;
 	}
 	mesh = new Mesh(ni);
-	drawGroup = new DrawGroup(mesh->baseGroup, mat4(1.0));
-	myScene->drawGroups.Add(drawGroup);
+	groupDrawer = new GroupDrawer(mesh->baseGroup, mat4(1.0));
+	myScene->drawGroups.Add(groupDrawer);
 	hideCursor();
 	cameraCur = viewerCam;
-	viewerCam->pos = drawGroup->aabb.center();
+	viewerCam->pos = groupDrawer->aabb.center();
 	//viewerCam->pos = personCam->pos;
-	viewerCam->radius = drawGroup->aabb.radius2() * 2;
+	viewerCam->radius = groupDrawer->aabb.radius2() * 2;
 }
 */
 #endif

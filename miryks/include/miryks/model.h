@@ -66,7 +66,7 @@ namespace miryks
 		ModelSkinned *modelSkinned;
 		skeleton *skel;
 		animation *anim;
-		DrawGroup *drawGroup;
+		GroupDrawer *groupDrawer;
 		SkinnedMesh(const char *);
 		~SkinnedMesh();
 		void Step();

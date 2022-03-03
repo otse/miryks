@@ -9,7 +9,7 @@ namespace miryks
 		skel = nullptr;
 		anim = nullptr;
 		modelSkinned = new ModelSkinned(path);
-		drawGroup = new DrawGroup(
+		groupDrawer = new GroupDrawer(
 			modelSkinned->baseGroup, mat4(1.0));
 	}
 

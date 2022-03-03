@@ -54,19 +54,19 @@ void overlay_renderer()
 		};
 		if (ImGui::BeginTabItem("objects"))
 		{
-			bool b = DrawGroup::masks == 0;
+			bool b = GroupDrawer::masks == 0;
 			if (ImGui::Checkbox("0", &b))
-				DrawGroup::masks = 0;
-			bool b2 = DrawGroup::masks == ~0;
+				GroupDrawer::masks = 0;
+			bool b2 = GroupDrawer::masks == ~0;
 			if (ImGui::Checkbox("~0", &b2))
-				DrawGroup::masks = ~0;
+				GroupDrawer::masks = ~0;
 			ImGui::Separator();
 			int i = 0;
 			for(auto word : Things) {
 				int bit = 1 << i;
-				bool test = (DrawGroup::masks & bit) == bit;
+				bool test = (GroupDrawer::masks & bit) == bit;
 				if (ImGui::Checkbox(map[word], &test))
-					DrawGroup::masks ^= bit;
+					GroupDrawer::masks ^= bit;
 				i++;
 			}
 			ImGui::EndTabItem();

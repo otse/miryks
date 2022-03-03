@@ -29,8 +29,8 @@ struct Group
 	{
 		parent = nullptr;
 		geometry = axis = nullptr;
-		axis = new Geometry;
-		axis->SetupMesh();
+		//axis = new Geometry;
+		//axis->SetupMesh();
 		matrix = matrixWorld = mat4(1.0f);
 		num++;
 	}
@@ -53,7 +53,9 @@ struct Group
 	}
 
 	/*
-	Recalculates the scene graph 
+	Recalculates world matrices
+
+	Axis-Aligned GroupBounded overrides this
 	*/
 	virtual void UpdateSideways()
 	{
@@ -74,8 +76,8 @@ struct Group
 		//	return;
 		if (geometry)
 			geometry->Draw(place);
-		if (axis && renderSettings.axes)
-			axis->Draw(place);
+		//if (axis && renderSettings.axes)
+		//	axis->Draw(place);
 	}
 
 	void DrawChilds(const mat4 &left)
@@ -138,13 +140,13 @@ struct GroupBounded : Group
 
 // special group that shouldnt trigger parenting
 
-struct DrawGroup : Group
+struct GroupDrawer : Group
 {
 	static int num, masks;
 	int mask;
 	AABB aabb, obb;
 	Group *const target;
-	DrawGroup(Group *group, mat4 matrix)
+	GroupDrawer(Group *group, mat4 matrix)
 		: target(group)
 	{
 		this->matrix = matrix;
@@ -155,7 +157,7 @@ struct DrawGroup : Group
 		UpdateSideways();
 	}
 
-	virtual ~DrawGroup()
+	virtual ~GroupDrawer()
 	{
 		num--;
 	}
@@ -172,7 +174,7 @@ struct DrawGroup : Group
 		mat4 right = left * matrixWorld;
 		if (childGroups.size())
 			for (Group *child : childGroups)
-				if (dynamic_cast<DrawGroup *>(child))
+				if (dynamic_cast<GroupDrawer *>(child))
 					child->Draw(right);
 		if (target)
 			target->DrawChilds(right);
@@ -181,7 +183,7 @@ struct DrawGroup : Group
 
 	bool Invisible()
 	{
-		if (visible && (DrawGroup::masks & mask) == mask)
+		if (visible && (GroupDrawer::masks & mask) == mask)
 			return false;
 		return true;
 	}
@@ -211,17 +213,17 @@ struct DrawGroup : Group
 	}
 };
 
-struct DrawGroupFlatSorted : DrawGroup
+struct GroupDrawerFlat : GroupDrawer
 {
 	bool hasTransparency = false;
-	DrawGroupFlatSorted(Group *group, mat4 matrix)
-		: DrawGroup(group, matrix)
+	GroupDrawerFlat(Group *group, mat4 matrix)
+		: GroupDrawer(group, matrix)
 	{
 		Reset();
 		SortTransparency();
 	}
 
-	virtual ~DrawGroupFlatSorted()
+	virtual ~GroupDrawerFlat()
 	{
 	}
 
@@ -239,7 +241,7 @@ struct DrawGroupFlatSorted : DrawGroup
 
 	virtual void Reset() override
 	{
-		DrawGroup::Reset();
+		GroupDrawer::Reset();
 		if (target)
 		{
 			target->Flatten(target);

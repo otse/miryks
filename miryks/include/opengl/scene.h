@@ -23,12 +23,12 @@ struct Bluh
 struct Scene
 {
 public:
-	DrawGroup *bigGroup;
+	GroupDrawer *bigGroup;
 	
 	Bluh<pointlight> pointLights;
 	Bluh<spotlight> spotLights;
 	
-	//std::vector<DrawGroup *> drawGroups;
+	//std::vector<GroupDrawer *> drawGroups;
 	//std::vector<pointlight *> pointLights;
 
 	vec3 ambient;
@@ -37,9 +37,9 @@ public:
 	~Scene();
 
 	void Clear();
-	//void Add(DrawGroup *);
+	//void Add(GroupDrawer *);
 	//void Add(pointlight *);
-	//void Remove(DrawGroup *);
+	//void Remove(GroupDrawer *);
 	//void Remove(pointlight *);
 
 	void DrawItems();
