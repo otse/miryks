@@ -4,7 +4,7 @@
           "path": "C:\\WINDOWS\\System32\\cmd.exe",
           "args": [
             "/K",
-            "D:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\Common7\\Tools\\VsDevCmd.bat"
+            "C:/Program Files/Microsoft Visual Studio/2022/Community/Common7/Tools/VsDevCmd.bat"
           ]
         }
       },
@@ -87,6 +87,20 @@
       "xtr1common": "cpp",
       "xutility": "cpp",
       "core": "cpp",
-      "skyrim_units": "cpp"
+      "skyrim_units": "cpp",
+      "ranges": "cpp",
+      "span": "cpp",
+      "common.h": "c",
+      "bsa.h": "c",
+      "nif.h": "c",
+      "*.rh": "cpp",
+      "cholesky": "cpp",
+      "eigenvalues": "cpp",
+      "geometry": "cpp",
+      "householder": "cpp",
+      "jacobi": "cpp",
+      "lu": "cpp",
+      "qr": "cpp",
+      "svd": "cpp"
     }
 }

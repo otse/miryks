@@ -1,0 +1,47 @@
+#include <opengl/lights.h>
+
+// https://community.khronos.org/t/uniform-buffer-objects-dynamic-sized-arrays-and-lights/70415
+
+const float PI = glm::pi<float>();
+const float PI2 = glm::pi<float>() * 2.f;
+
+Light::Light()
+{
+	matrix = mat4(1.0f);
+	color = vec3(1);
+	intensity = 1.f;
+}
+
+pointlight::pointlight()
+{
+	distance = 0.f;
+	decay = 1.f;
+}
+
+spotlight::spotlight()
+{
+	distance = 0.f;
+	penumbra = 0.f;
+	angle = pif / 3.f;
+	decay = 1.f;
+	target = vec3(0);
+}
+
+DirectionalLight::DirectionalLight()
+{
+	target = vec3(0);
+}
+
+float Light::CalcDist() const
+{
+	return glm::distance(vec3(matrix[3]), cameraCur->pos);
+}
+
+void Light::Calc() // Unused
+{
+	vec3 position, color;
+
+	position = vec3(matrix[3]) * mat3(inverse(cameraCur->view));
+	position += vec3(cameraCur->view[3]);
+	color = color * intensity;
+}
