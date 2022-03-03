@@ -1,6 +1,6 @@
 
-#include <opengl/group.h>
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
+#include <ogl/scene_graph.hpp>
 #include <opengl/geometry.h>
 #include <opengl/camera.h>
 #include <opengl/shader.h>

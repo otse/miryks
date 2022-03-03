@@ -1,4 +1,4 @@
-#include <opengl/group.h>
+#include <ogl/scene_graph.hpp>
 
 #include <panels.h>
 

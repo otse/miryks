@@ -11,8 +11,8 @@ extern "C"
 
 #include <panels.h>
 
-#include <opengl/group.h>
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
+#include <ogl/scene_graph.hpp>
 #include <opengl/scene.h>
 #include <opengl/shader.h>
 #include <opengl/texture.h>

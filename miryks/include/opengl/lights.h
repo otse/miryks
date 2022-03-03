@@ -6,7 +6,7 @@
 #include <opengl/renderer.h>
 
 #include <opengl/camera.h>
-#include <opengl/group.h>
+#include <ogl/scene_graph.hpp>
 
 struct Light
 {

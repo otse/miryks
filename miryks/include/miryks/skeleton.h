@@ -3,7 +3,7 @@
 #include <miryks/miryks.hpp>
 
 #include <opengl/renderer.h>
-#include <opengl/group.h>
+#include <ogl/scene_graph.hpp>
 #include <opengl/geometry.h>
 
 namespace miryks
@@ -42,6 +42,7 @@ namespace miryks
 		{
 			name = 0;
 			block = 0;
+			printf("bone : group\n");
 		};
 	};
 

@@ -5,8 +5,8 @@
 #include <opengl/camera.h>
 #include <opengl/scene.h>
 #include <opengl/rendertarget.h>
-#include <opengl/group.h>
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
+#include <ogl/scene_graph.hpp>
 #include <opengl/shader.h>
 
 #include <miryks/player.h>

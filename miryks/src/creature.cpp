@@ -3,7 +3,7 @@
 #include <miryks/actors.h>
 #include <miryks/model.h>
 
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
 
 using namespace miryks;
 
@@ -33,8 +33,7 @@ namespace miryks
 		{
 			drawGroup = new DrawGroup(
 				modelSkinned->baseGroup, refe->second->matrix);
-			// drawGroup->matrix = scale(drawGroup->matrix, vec3(1, 1, .5));
-			drawGroup->Add(new DrawGroupFlatSorted(skel->baseBone, mat4(1.0)));
+			drawGroup->Add(new DrawGroup(skel->root, mat4(1.0)));
 			sceneDef->bigGroup->Add(drawGroup);
 		}
 		else

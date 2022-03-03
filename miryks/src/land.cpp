@@ -11,7 +11,7 @@
 #include <opengl/shader.h>
 #include <opengl/camera.h>
 #include <opengl/lights.h>
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
 
 namespace miryks
 {

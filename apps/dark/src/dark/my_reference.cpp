@@ -15,8 +15,8 @@
 #include <opengl/texture.h>
 #include <opengl/camera.h>
 #include <opengl/lights.h>
-#include <opengl/group.h>
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
+#include <ogl/scene_graph.hpp>
 #include <opengl/renderer.h>
 
 #include <imgui.h>

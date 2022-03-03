@@ -2,7 +2,7 @@
 
 #include <opengl/shader.h>
 
-#include <opengl/group.h>
+#include <ogl/scene_graph.hpp>
 #include <opengl/geometry.h>
 #include <opengl/material.h>
 #include <opengl/shader.h>

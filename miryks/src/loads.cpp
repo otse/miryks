@@ -3,8 +3,8 @@
 #include <miryks/miryks.hpp>
 #include <miryks/model.h>
 
-#include <opengl/group.h>
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
+#include <ogl/scene_graph.hpp>
 #include <opengl/camera.h>
 #include <opengl/scene.h>
 

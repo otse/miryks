@@ -7,10 +7,15 @@
 #include <opengl/scene.h>
 #include <opengl/shader.h>
 #include <opengl/rendertarget.h>
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
 
 #include <opengl/material.h>
 #include <opengl/texture.h>
+
+int Group::num = 0;
+int Group::drawCalls = 0;
+int DrawGroup::num = 0;
+int DrawGroup::masks = ~0;
 
 int width = 1920;
 int height = 1080;

@@ -3,8 +3,8 @@
 #include <opengl/scene.h>
 
 #include <opengl/aabb.h>
-#include <opengl/group.h>
-#include <opengl/drawgroup.h>
+#include <ogl/scene_graph.hpp>
+#include <ogl/scene_graph.hpp>
 #include <opengl/material.h>
 #include <opengl/shader.h>
 #include <opengl/lights.h>
@@ -53,7 +53,7 @@ void Scene::DrawItems()
 
 	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), EarlyZKills);
 
-#if 1
+#if 0
 	auto TransparencyLast = [](const Group *a, const Group *b) -> bool {
 		const DrawGroupFlatSorted *dgfs = dynamic_cast<const DrawGroupFlatSorted *>(a);
 		if (dgfs && dgfs->hasTransparency)
