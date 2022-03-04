@@ -370,14 +370,14 @@ void window_while_test()
 
 		if (someDraugr)
 			someDraugr->Step();
+
 		// if (meanSkelly)
 		//	meanSkelly->Step();
 		// if (someHuman)
 		//	someHuman->Step();
+		
 		if (ginterior)
 			ginterior->update();
-		// if (player1)
-		//	player1->Step();
 
 		sceneDef->DrawItems();
 

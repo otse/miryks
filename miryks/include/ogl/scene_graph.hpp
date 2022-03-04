@@ -28,9 +28,10 @@ struct Group
 	Group()
 	{
 		parent = nullptr;
-		geometry = axis = nullptr;
-		//axis = new Geometry;
-		//axis->SetupMesh();
+		geometry = nullptr;
+		axis = nullptr;
+		axis = new Geometry;
+		axis->SetupMesh();
 		matrix = matrixWorld = mat4(1.0f);
 		num++;
 	}
@@ -76,8 +77,8 @@ struct Group
 		//	return;
 		if (geometry)
 			geometry->Draw(place);
-		//if (axis && renderSettings.axes)
-		//	axis->Draw(place);
+		if (axis && renderSettings.axes)
+			axis->Draw(place);
 	}
 
 	void DrawChilds(const mat4 &left)

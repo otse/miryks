@@ -51,9 +51,9 @@ void Scene::DrawItems()
 		return false;
 	};
 
-	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), EarlyZKills);
+	//std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), EarlyZKills);
 
-#if 1
+#if 0
 	auto TransparencyLast = [](const Group *a, const Group *b) -> bool {
 		const GroupDrawerFlat *dgfs = dynamic_cast<const GroupDrawerFlat *>(a);
 		if (dgfs && dgfs->hasTransparency)

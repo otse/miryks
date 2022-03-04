@@ -5,6 +5,8 @@
 #include <opengl/shader.h>
 #include <opengl/scene.h>
 
+#define SKINNING_RANDOM_COLOR_X
+
 Material *Material::active = nullptr;
 
 Material::Material()
@@ -13,7 +15,7 @@ Material::Material()
 
 	shader = nullptr;
 	src = &basic;
-	
+
 	map = normalMap = glowMap = nullptr;
 
 	transparent = doubleSided = blending = zwrite = testing = decal = tangents = skinning = false;
@@ -38,6 +40,7 @@ Material::Material()
 	composeUvTransform();
 
 	color = vec3(1, 1, 1);
+
 	specular = vec3(17.0f / 255.0f);
 	emissive = vec3(0);
 
@@ -64,6 +67,14 @@ void Material::Ready()
 	{
 		dust = false;
 		glowMap = nullptr;
+
+#ifdef SKINNING_RANDOM_COLOR
+		if (skinning)
+			color = vec3(
+				(float)rand() / RAND_MAX,
+				(float)rand() / RAND_MAX,
+				(float)rand() / RAND_MAX);
+#endif
 	}
 
 	if (!map)
@@ -81,20 +92,19 @@ void Material::Ready()
 	if (!skinning)
 		header += "#define DONT_USE_SKINNING\n";
 
-
 	if (Shader::shaders.count(header))
 	{
 		shader = Shader::shaders[header];
 	}
 	else
 	{
-		//printf("new shader instance of type %s, header %s\n", (*src)[0], header);
+		// printf("new shader instance of type %s, header %s\n", (*src)[0], header);
 		shader = new Shader(src);
 		shader->header = header;
 		shader->Compile();
 		Shader::shaders.emplace(header, shader);
 	}
-	//shader = basicShader;
+	// shader = basicShader;
 }
 
 void Material::composeUvTransform()
@@ -137,9 +147,9 @@ void Material::Use()
 		prepared = true;
 	}
 
-	if (this == active)
-		return;
-		
+	// if (this == active)
+	//	return;
+
 	Unuse(active, this);
 
 	shader->Use();
@@ -157,7 +167,7 @@ void Material::Use()
 	{
 		shader->SetMat4("bindMatrix", bindMatrix);
 		shader->SetMat4("bindMatrixInverse", glm::inverse(bindMatrix));
-		for (unsigned int u = 0; u < (unsigned)bones; u ++)
+		for (unsigned int u = 0; u < (unsigned)bones; u++)
 		{
 			char s[100];
 			snprintf(s, 100, "boneMatrices[%u]", u);
@@ -168,10 +178,10 @@ void Material::Use()
 		}
 	}
 
-	//glDisable(GL_DEPTH_TEST)
+	// glDisable(GL_DEPTH_TEST)
 
-	//glDepthFunc(GL_ALWAYS​);
-	//glDepthMask(GL_FALSE);
+	// glDepthFunc(GL_ALWAYS​);
+	// glDepthMask(GL_FALSE);
 
 	if (map)
 	{
@@ -200,7 +210,7 @@ void Material::Use()
 		glEnable(GL_POLYGON_OFFSET_FILL);
 		glPolygonOffset(-1.f, -1.f);
 		glDepthFunc(GL_LEQUAL);
-		//glDisable(GL_DEPTH_TEST);
+		// glDisable(GL_DEPTH_TEST);
 	}
 	if (blending)
 	{
@@ -210,7 +220,7 @@ void Material::Use()
 	if (transparent)
 	{
 		glDepthMask(GL_FALSE);
-		//glDepthFunc(GL_LESS);
+		// glDepthFunc(GL_LESS);
 	}
 	if (doubleSided)
 		glDisable(GL_CULL_FACE);
@@ -241,16 +251,16 @@ void Material::Unuse(Material *a, Material *b)
 	if (!a || a->decal && !b->decal)
 	{
 		glDisable(GL_POLYGON_OFFSET_FILL);
-		//glPolygonOffset(0, 0);
+		// glPolygonOffset(0, 0);
 		glDepthFunc(GL_LESS);
-		//glEnable(GL_DEPTH_TEST);
+		// glEnable(GL_DEPTH_TEST);
 	}
 	if (!a || a->blending && !b->blending)
 		glDisable(GL_BLEND);
 	if (!a || a->transparent && !b->transparent)
 	{
 		glDepthMask(GL_TRUE);
-		//glDepthFunc(GL_LESS);
+		// glDepthFunc(GL_LESS);
 	}
 	if (!a || a->doubleSided && !b->doubleSided)
 		glEnable(GL_CULL_FACE);
