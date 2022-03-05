@@ -78,6 +78,7 @@ void OGLReloadShaderSource();
 
 struct RenderSettings
 {
+	bool slowAnimation = false;
 	bool diffuseMaps = true;
 	bool normalMaps = true;
 	bool specularMaps = true;
@@ -96,11 +97,11 @@ extern int width, height;
 extern int fps;
 extern float delta;
 
-inline vec2 cast_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
-inline vec3 cast_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }
-inline vec4 cast_vec4(void *f) { return *reinterpret_cast<vec4 *>(f); }
-inline bvec4 cast_bvec4(void *u) { return *reinterpret_cast<bvec4 *>(u); }
-inline mat3 cast_mat3(void *f) { return *reinterpret_cast<mat3 *>(f); }
-inline mat4 cast_mat4(void *f) { return *reinterpret_cast<mat4 *>(f); }
+inline vec2 reinterpret_vec2(void *f) { return *reinterpret_cast<vec2 *>(f); }
+inline vec3 reinterpret_vec3(void *f) { return *reinterpret_cast<vec3 *>(f); }
+inline vec4 reinterpret_vec4(void *f) { return *reinterpret_cast<vec4 *>(f); }
+inline bvec4 reinterpret_bvec4(void *u) { return *reinterpret_cast<bvec4 *>(u); }
+inline mat3 reinterpret_mat3(void *f) { return *reinterpret_cast<mat3 *>(f); }
+inline mat4 reinterpret_mat4(void *f) { return *reinterpret_cast<mat4 *>(f); }
 
 #endif

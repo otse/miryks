@@ -73,6 +73,7 @@ void overlay_renderer()
 		}
 		if (ImGui::BeginTabItem("settings"))
 		{
+			ImGui::Checkbox("slow animation", &renderSettings.slowAnimation);
 			bool a = ImGui::Checkbox("diffuse maps", &renderSettings.diffuseMaps);
 			bool b = ImGui::Checkbox("normal maps", &renderSettings.normalMaps);
 			bool c = ImGui::Checkbox("specular maps", &renderSettings.specularMaps);

@@ -49,8 +49,8 @@ namespace miryks
 
 	void matrix_from_common(bone *bone, ni_common_layout_t *common)
 	{
-		bone->matrix = translate(bone->matrix, cast_vec3(&common->A->translation));
-		bone->matrix *= inverse(mat4(cast_mat3(&common->A->rotation)));
+		bone->matrix = translate(bone->matrix, reinterpret_vec3(&common->A->translation));
+		bone->matrix *= inverse(mat4(reinterpret_mat3(&common->A->rotation)));
 		bone->matrix = scale(bone->matrix, vec3(common->A->scale));
 		bone->UpdateSideways();
 		bone->rest = bone->matrixWorld;
@@ -58,7 +58,7 @@ namespace miryks
 
 	bone *skeleton::MakeBoneHere(RD rd, NiNode *block)
 	{
-		//printf("bone name is %s\n", bone->name);
+		// printf("bone name is %s\n", bone->name);
 		auto *bon = new bone();
 		bon->block = block;
 		bon->name = nif_get_string(rd->ni, block->common->F->name);
@@ -66,7 +66,8 @@ namespace miryks
 		bones[rd->parent]->Add(bon);
 		bonesNamed[bon->name] = bon;
 		matrix_from_common(bon, block->common);
-		if (strstr(bon->name, "[Root]")) {
+		if (strstr(bon->name, "[Root]"))
+		{
 			root = bon;
 		}
 		return bon;
@@ -87,6 +88,7 @@ namespace miryks
 	keyframes::keyframes(nif *ni) : ni(ni)
 	{
 		loop = true;
+		repeats = true;
 		controllerSequence = nullptr;
 		if (ni == nullptr)
 			return;
@@ -107,14 +109,19 @@ namespace miryks
 	{
 		if (!play)
 			return;
-		time += delta;
+
+		if (renderSettings.slowAnimation)
+			time += delta / 4;
+		else
+			time += delta;
+
 		if (time >= keyf->controllerSequence->C->stop_time)
 			time -= keyf->controllerSequence->C->stop_time;
-		SimpleNonInterpolated();
+		SimpleInterpolated();
 		skel->root->UpdateSideways();
 	}
 
-	void animation::SimpleNonInterpolated()
+	void animation::SimpleInterpolated()
 	{
 		nif *model = keyf->ni;
 		struct controlled_block_t *cbp;
@@ -126,28 +133,46 @@ namespace miryks
 			auto has = skel->bonesNamed.find(name);
 			if (has == skel->bonesNamed.end())
 			{
-				//printf("cant find bone %s\n", name);
-				// cant find shield, weapon, quiver
+				// printf("cant find bone %s\n", name);
+				//  cant find shield, weapon, quiver
 				continue;
 			}
+			const bool interpolate = true;
 
 			bone *bone = has->second;
 			auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);
 			auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
 			if (tip == NULL || tdp == NULL)
 				continue;
-			vec4 ro = cast_vec4(&tip->transform->rotation);
+			vec4 ro = reinterpret_vec4(&tip->transform->rotation);
+			quat qro;
 			int num = tdp->A->num_rotation_keys;
 			if (num)
 			{
 				for (int i = num - 1; i >= 0; i--)
 				{
 					auto key = &tdp->quaternion_keys[i];
-					//printf("qk %i time %f\n", i, key->time);
-					if (key->time <= time || num == 1)
+					// printf("qk %i time %f\n", i, key->time);
+					if (key->time <= time)
 					{
-						ro = cast_vec4(&key->value);
-						//printf("ro.x%f\n", ro.x);
+						ro = reinterpret_vec4(&key->value);
+						qro = quat(ro[0], ro[1], ro[2], ro[3]);
+
+						if (interpolate)
+						{
+							int j = i + 1;
+							if (j >= num)
+								break;
+							auto key2 = &tdp->quaternion_keys[j];
+							vec4 ro2 = reinterpret_vec4(&key2->value);
+
+							float span = key2->time - key->time;
+							float ratio = (time - key->time) / span;
+							quat quat1 = quat(ro[0], ro[1], ro[2], ro[3]);
+							quat quat2 = quat(ro2[0], ro2[1], ro2[2], ro2[3]);
+
+							qro = slerp(quat1, quat2, ratio);
+						}
 						break;
 					}
 				}
@@ -155,27 +180,38 @@ namespace miryks
 			// else if (num == 1)
 			// 	ro = *cast_vec_4((float *)(&tdp->quaternion_keys[0].value));
 
-			vec3 tr = cast_vec3(&tip->transform->translation);
+			vec3 tr = reinterpret_vec3(&tip->transform->translation);
 			num = tdp->translations->num_keys;
 			if (num)
 			{
 				for (int i = num - 1; i >= 0; i--)
 				{
 					auto key = &tdp->translation_keys[i];
-					if (key->time <= time || num == 1)
+					if (key->time <= time)
 					{
-						//printf("tr time %f\n", key->time);
-						tr = cast_vec3(&key->value);
+						// printf("tr time %f\n", key->time);
+						tr = reinterpret_vec3(&key->value);
+
+						if (interpolate)
+						{
+							int j = i + 1;
+							if (j >= num)
+								break;
+							auto key2 = &tdp->translation_keys[j];
+							vec3 tr2 = reinterpret_vec4(&key2->value);
+
+							float span = key2->time - key->time;
+							float ratio = (time - key->time) / span;
+							tr = mix(tr, tr2, ratio);
+						}
 						break;
 					}
 				}
 			}
-			// else if (num == 1)
-			// 	tr = gloomVec3(tdp->translation_keys[0].value);
+			//quat qu = quat(ro[0], ro[1], ro[2], ro[3]);
 
-			quat qu = quat(ro[0], ro[1], ro[2], ro[3]);
+			mat4 matrix = mat4_cast(qro);
 
-			mat4 matrix = mat4_cast(qu);
 			matrix[3] = vec4(tr, 1);
 
 			bone->mod = matrix;
@@ -185,5 +221,4 @@ namespace miryks
 		}
 	}
 
-	
 } // namespace dark

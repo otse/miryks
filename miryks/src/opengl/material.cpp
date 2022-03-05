@@ -5,7 +5,7 @@
 #include <opengl/shader.h>
 #include <opengl/scene.h>
 
-#define SKINNING_RANDOM_COLOR_X
+const bool skinningRandomColor = true;
 
 Material *Material::active = nullptr;
 
@@ -68,13 +68,8 @@ void Material::Ready()
 		dust = false;
 		glowMap = nullptr;
 
-#ifdef SKINNING_RANDOM_COLOR
-		if (skinning)
-			color = vec3(
-				(float)rand() / RAND_MAX,
-				(float)rand() / RAND_MAX,
-				(float)rand() / RAND_MAX);
-#endif
+		if (skinningRandomColor && skinning)
+			RandomColor();
 	}
 
 	if (!map)

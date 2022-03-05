@@ -160,32 +160,32 @@ namespace miryks
 				if (vertices && uvs && normals && tangents && colors && skinned)
 				{
 					auto data = &((vertex_data_t *)block->vertex_data)[j];
-					vertex.position = cast_vec3(&data->vertex);
+					vertex.position = reinterpret_vec3(&data->vertex);
 					vertex.uv = halftexcoord(&data->uv);
 					vertex.normal = bytestofloat(&data->normal);
 					vertex.tangent = bytestofloat(&data->tangent);
-					vertex.color = vec4(cast_bvec4(&data->colors)) / 255.f;
-					vertex.skin_index = cast_bvec4(&partition->bone_indices[i]);
-					vertex.skin_weight = cast_vec4(&partition->vertex_weights[i]);
+					vertex.color = vec4(reinterpret_bvec4(&data->colors)) / 255.f;
+					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
 				}
 				else if (vertices && uvs && normals && tangents && !colors && skinned)
 				{
 					auto data = &((vertex_data_2_t *)block->vertex_data)[j];
-					vertex.position = cast_vec3(&data->vertex);
+					vertex.position = reinterpret_vec3(&data->vertex);
 					vertex.uv = halftexcoord(&data->uv);
 					vertex.normal = bytestofloat(&data->normal);
 					vertex.tangent = bytestofloat(&data->tangent);
-					vertex.skin_index = cast_bvec4(&partition->bone_indices[i]);
-					vertex.skin_weight = cast_vec4(&partition->vertex_weights[i]);
+					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
 				}
 				else if (vertices && uvs && !normals && !tangents && colors && skinned)
 				{
 					auto data = &((vertex_data_3_t *)block->vertex_data)[j];
-					vertex.position = cast_vec3(&data->vertex);
+					vertex.position = reinterpret_vec3(&data->vertex);
 					vertex.uv = halftexcoord(&data->uv);
-					vertex.color = vec4(cast_bvec4(&data->colors)) / 255.f;
-					vertex.skin_index = cast_bvec4(&partition->bone_indices[i]);
-					vertex.skin_weight = cast_vec4(&partition->vertex_weights[i]);
+					vertex.color = vec4(reinterpret_bvec4(&data->colors)) / 255.f;
+					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
 				}
 				geometry->vertices[i] = vertex;
 			}

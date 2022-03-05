@@ -42,7 +42,7 @@ namespace miryks
 		{
 			name = 0;
 			block = 0;
-			printf("bone : group\n");
+			// printf("bone : group\n");
 		};
 	};
 
@@ -51,7 +51,7 @@ namespace miryks
 	public:
 		keyframes(nif *);
 		nif *ni;
-		bool loop;
+		bool loop, repeats;
 		NiControllerSequence *controllerSequence;
 	};
 
@@ -64,7 +64,7 @@ namespace miryks
 		keyframes *keyf;
 		animation(keyframes *);
 		void Step();
-		void SimpleNonInterpolated();
+		void SimpleInterpolated();
 	};
 
 }

@@ -28,6 +28,8 @@ bool holding_key(const char *id)
 
 namespace dark
 {
+	void place_at_level_start();
+
 	std::map<const char *, int> keys;
 
 	void darkassert(bool e)
@@ -55,19 +57,25 @@ namespace dark
 		factory.cell = ginterior;
 
 		ginterior->iter_both_subgroups(factory);
+
+		place_at_level_start();
 	}
 
-	void putcam()
+	void place_at_level_start()
 	{
 		for (auto refer : ginterior->refers)
 		{
 			if (*refer->base() == 0x00000032) // coc marker heading
 			{
-				float *data = refer->data<float *>("DATA");
-				personCam->pos = cast_vec3(data);
-				personCam->pos.z += EYE_HEIGHT;
-				personCam->yaw = cast_vec3(data + 3).z;
-				break;
+				if (refer->editor_id() &&
+					strstr(refer->editor_id(), "spawn"))
+				{
+					float *data = refer->data<float *>("DATA");
+					personCam->pos = reinterpret_vec3(data);
+					personCam->pos.z += EYE_HEIGHT;
+					personCam->yaw = reinterpret_vec3(data + 3).z;
+					break;
+				}
 			}
 		}
 	}
@@ -101,9 +109,11 @@ int main()
 #if 1
 	load_interior("GloomGen");
 
-	putcam();
+	place_at_level_start();
+
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
+	someDraugr->anim->keyf->repeats = false;
 	someDraugr->Place("gloomgendraugr");
 
 	// someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");

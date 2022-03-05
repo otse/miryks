@@ -111,9 +111,9 @@ namespace miryks
 				if (refr.editor_id("darkworldheading"))
 				{
 					float *loc = refr.data<float *>("DATA");
-					personCam->pos = cast_vec3(loc);
+					personCam->pos = reinterpret_vec3(loc);
 					personCam->pos.z += EYE_HEIGHT;
-					personCam->yaw = cast_vec3(loc + 3).z;
+					personCam->yaw = reinterpret_vec3(loc + 3).z;
 					cameraCur = personCam;
 				}
 			}
