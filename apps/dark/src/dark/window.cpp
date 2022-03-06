@@ -371,6 +371,9 @@ void window_while_test()
 		if (someDraugr)
 			someDraugr->Step();
 
+		for (auto mist : mists)
+			mist->Misty();
+
 		// if (meanSkelly)
 		//	meanSkelly->Step();
 		// if (someHuman)

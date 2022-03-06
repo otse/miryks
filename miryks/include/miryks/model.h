@@ -12,8 +12,12 @@
 
 #define callback(x) void (x ## _callback) (RD, x ## _t *)
 
+
 namespace miryks
 {
+	class Model;
+	extern std::vector<Model *> mists;
+
 	callback(ni_node);
 	callback(bs_lighting_shader_property);
 	callback(bs_effect_shader_property);

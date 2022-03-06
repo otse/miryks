@@ -137,7 +137,7 @@ namespace miryks
 				//  cant find shield, weapon, quiver
 				continue;
 			}
-			const bool interpolate = true;
+			const bool interpolate = true; // in case of trouble
 
 			bone *bone = has->second;
 			auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);

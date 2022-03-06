@@ -5,7 +5,7 @@
 #include <opengl/shader.h>
 #include <opengl/scene.h>
 
-const bool skinningRandomColor = true;
+const bool skinningRandomColor = false;
 
 Material *Material::active = nullptr;
 

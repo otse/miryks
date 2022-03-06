@@ -11,6 +11,8 @@ extern "C"
 
 namespace miryks
 {
+	std::vector<Model *> mists;
+
 	Model::Model()
 	{
 		baseGroup = new GroupBounded();
@@ -48,7 +50,7 @@ namespace miryks
 
 	void Model::Step()
 	{
-		
+		Misty();
 	}
 
 	Group *Model::MakeNewGroup(rundown *rd)
@@ -192,6 +194,7 @@ namespace miryks
 
 	void bs_effect_shader_property_callback(RD rd, BSEffectShaderProperty *block)
 	{
+		printf("we have a bsesp\n");
 		Model *model = (Model *)rd->data;
 		Geometry *geometry = model->lastGroup->geometry;
 		if (geometry)
@@ -213,6 +216,7 @@ namespace miryks
 			if (block->B->shader_flags_2 & 0x00000010)
 				material->doubleSided = true;
 		}
+		mists.push_back(model);
 	}
 
 	void bs_shader_texture_set_callback(RD rd, BSShaderTextureSet *block)
@@ -238,7 +242,7 @@ namespace miryks
 				if (i == 1)
 					material->normalMap = GetProduceTexture(path.c_str());
 				if (i == 2)
-					material->glowMap = GetProduceTexture(path.c_str());
+					material->glowMap = GetProduceTexture(path.c_str()); 
 			}
 		}
 	}
