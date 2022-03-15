@@ -7,6 +7,7 @@ namespace miryks
     class Player : public Char
 	{
 	public:
+		bool idle = false;
 		Player();
 		ViewerCamera *thirdPersonCamera;
 		bool thirdPerson;

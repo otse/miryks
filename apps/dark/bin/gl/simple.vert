@@ -32,6 +32,13 @@ out mat4 modelView;
 
 out float fogDepth;
 
+// <morphtarget_pars_vertex>
+
+
+
+
+// <skinning_pars_vertex>
+
 #define MAX_BONES 60
 
 #ifndef DONT_USE_SKINNING
@@ -77,6 +84,8 @@ void main()
 
 	#endif
 
+	// <skinbase_vertex>
+
 	#ifndef DONT_USE_SKINNING
 
 		mat4 boneMatX = getBoneMatrix( SkinIndex.x );
@@ -86,6 +95,7 @@ void main()
 
 	#endif
 
+	// <skinnormal_vertex>
 
 	#ifndef DONT_USE_SKINNING
 

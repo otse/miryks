@@ -132,7 +132,7 @@ void Scene::BindLights(Shader *shader)
 		dir = normalize(dir);
 
 		direction = dir * mat3(inverse(cameraCur->view));
-		//printf("sldir %s\n", glm::to_string(direction));
+		//printf("sldir %s\n", glm::to_string(direction));i
 
 		//direction = glm::normalize(glm::vec3(glm::inverse(mat3(sl->matrix * mat3(cameraCur->view))[2]));
 		color = sl->color * sl->intensity;

@@ -24,25 +24,34 @@ namespace miryks
 			toggleView();
 		}
 
+		// memory leak somewhere
 		if (pressing_key("w"))
 		{
+			idle = false;
 			SetAnim("anims/character/1hm_walkforward.kf");
 		}
 		else if (pressing_key("s"))
 		{
+			idle = false;
 			SetAnim("anims/character/1hm_walkbackward.kf");
 		}
 		else if (pressing_key("a"))
 		{
+			idle = false;
 			SetAnim("anims/character/1hm_walkleft.kf");
 		}
 		else if (pressing_key("d"))
 		{
+			idle = false;
 			SetAnim("anims/character/1hm_walkright.kf");
 		}
 		else if (!holding_key("w") && !holding_key("s") && !holding_key("a") && !holding_key("d"))
 		{
-			SetAnim("anims/character/1hm_idle.kf");
+			if (!idle)
+			{
+				idle = true;
+				SetAnim("anims/character/1hm_idle.kf");
+			}
 		}
 		vec3 down = vec3(0, 0, -EYE_HEIGHT);
 		groupDrawer->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);

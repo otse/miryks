@@ -467,8 +467,8 @@ namespace miryks
 		return find_recordgrup_by_id(
 			cellId,
 			grup_iter<0,
-					  grup_iter<2,
-								grup_iter<3>>>("CELL", plugin));
+			grup_iter<2,
+			grup_iter<3>>>("CELL", plugin));
 	}
 
 	static inline recordgrup dig_worldspace(const char *id, int plugin)

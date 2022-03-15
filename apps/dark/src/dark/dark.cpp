@@ -111,6 +111,7 @@ int main()
 
 	place_at_level_start();
 
+
 	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	someDraugr->anim->keyf->repeats = false;

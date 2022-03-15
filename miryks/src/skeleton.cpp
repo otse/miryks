@@ -96,6 +96,11 @@ namespace miryks
 		controllerSequence = (NiControllerSequence *)ni->blocks[0];
 	}
 
+	animation::~animation()
+	{
+
+	}
+	
 	animation::animation(keyframes *keyf) : keyf(keyf)
 	{
 		skel = nullptr;
