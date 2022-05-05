@@ -5,9 +5,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "dark", "build\dark.vcxproj"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
 		Release|Win32 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2791957C-13C8-960D-BCB4-7C10A8CA120F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2791957C-13C8-960D-BCB4-7C10A8CA120F}.Debug|Win32.Build.0 = Debug|Win32
 		{2791957C-13C8-960D-BCB4-7C10A8CA120F}.Release|Win32.ActiveCfg = Release|Win32
 		{2791957C-13C8-960D-BCB4-7C10A8CA120F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection

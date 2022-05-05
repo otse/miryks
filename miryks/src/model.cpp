@@ -194,7 +194,7 @@ namespace miryks
 
 	void bs_effect_shader_property_callback(RD rd, BSEffectShaderProperty *block)
 	{
-		printf("we have a bsesp\n");
+		// printf("we have a bsesp\n");
 		Model *model = (Model *)rd->data;
 		Geometry *geometry = model->lastGroup->geometry;
 		if (geometry)

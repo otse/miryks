@@ -368,6 +368,9 @@ void window_while_test()
 		if (player1)
 			player1->Step();
 
+		if (someDraugr)
+			someDraugr->Step();
+			
 		//if (someDraugr)
 		//	someDraugr->Step();
 

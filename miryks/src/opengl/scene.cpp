@@ -51,6 +51,10 @@ void Scene::DrawItems()
 		return false;
 	};
 
+	// this gives modelview corruption
+	// something with the comparator being malformed
+	// apparently you cant polymorphism so easily within a comparator
+	
 	//std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), EarlyZKills);
 
 #if 0

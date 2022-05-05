@@ -1,1 +1,1 @@
-msbuild
+msbuild -t:build /p:Configuration=Release

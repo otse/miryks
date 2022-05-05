@@ -65,7 +65,8 @@ void yagrum_set_rotate_speed(float n)
 
 void yagrum_pop()
 {
-	vector.pop_front();
+	if (!vector.empty())
+		vector.pop_front();
 	current = nullptr;
 }
 
@@ -124,7 +125,7 @@ void yagrum_drawer()
 		if (fade <= 0.f)
 			current->faded = true;
 	}
-	
+
 	if (current->no_image == false)
 	{
 		if (current->rotate)

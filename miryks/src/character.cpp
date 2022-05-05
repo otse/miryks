@@ -64,10 +64,10 @@ namespace miryks {
 
 	void Char::SetAnim(const char *path)
 	{
-		if (anim)
-			delete anim;
-		anim = new animation(get_keyframes(path));
+		//if (anim)
+		//	delete anim;
 		anim->skel = skel;
+		anim = new animation(get_keyframes(path));
 		skel->anim = anim;
 	}
 

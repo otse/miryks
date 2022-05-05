@@ -1,6 +1,6 @@
 -- premake5.lua
 workspace "dark"
-	configurations { "Release" } -- "Debug",
+	configurations { "Release", "Debug" } -- "Debug",
 
 project "dark"
 	kind "ConsoleApp"

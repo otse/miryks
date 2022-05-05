@@ -63,7 +63,7 @@ namespace miryks
 		skeleton *skel;
 		keyframes *keyf;
 		animation(keyframes *);
-		~animation();
+		//~animation();
 		void Step();
 		void SimpleInterpolated();
 	};

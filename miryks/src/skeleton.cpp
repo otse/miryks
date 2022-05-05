@@ -96,10 +96,10 @@ namespace miryks
 		controllerSequence = (NiControllerSequence *)ni->blocks[0];
 	}
 
-	animation::~animation()
-	{
+	//animation::~animation()
+	//{
 
-	}
+	//}
 	
 	animation::animation(keyframes *keyf) : keyf(keyf)
 	{
@@ -144,6 +144,8 @@ namespace miryks
 			}
 			const bool interpolate = true; // in case of trouble
 
+			// interpolate causes invisible mesh
+
 			bone *bone = has->second;
 			auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);
 			auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
@@ -176,7 +178,10 @@ namespace miryks
 							quat quat1 = quat(ro[0], ro[1], ro[2], ro[3]);
 							quat quat2 = quat(ro2[0], ro2[1], ro2[2], ro2[3]);
 
-							qro = slerp(quat1, quat2, ratio);
+							//printf("r ratio %.2f\n", ratio);
+							//assertc(ratio >= 0 || ratio <= 1);
+
+							qro = glm::slerp(quat1, quat2, ratio);
 						}
 						break;
 					}
@@ -203,11 +208,16 @@ namespace miryks
 							if (j >= num)
 								break;
 							auto key2 = &tdp->translation_keys[j];
-							vec3 tr2 = reinterpret_vec4(&key2->value);
+							vec3 tr2 = reinterpret_vec3(&key2->value);
 
 							float span = key2->time - key->time;
 							float ratio = (time - key->time) / span;
-							tr = mix(tr, tr2, ratio);
+
+							//assertc(ratio >= 0 || ratio <= 1);
+
+							//ratio = (ratio > 1)? 1 : (ratio < 0)? 0 : ratio;
+							//printf("t ratio %.2f time %.2f\n ", ratio, key->time);
+							tr = glm::mix(tr, tr2, ratio);
 						}
 						break;
 					}

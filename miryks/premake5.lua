@@ -1,6 +1,6 @@
 -- premake5.lua
 workspace "miryks"
-	configurations { "Release" } -- "Debug",
+	configurations { "Release", "Debug" } -- "Debug",
 
 project "miryks"
 	kind "StaticLib"

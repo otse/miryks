@@ -57,10 +57,13 @@ void overlay_renderer()
 			bool b = GroupDrawer::masks == 0;
 			if (ImGui::Checkbox("0", &b))
 				GroupDrawer::masks = 0;
+
 			bool b2 = GroupDrawer::masks == ~0;
 			if (ImGui::Checkbox("~0", &b2))
 				GroupDrawer::masks = ~0;
+
 			ImGui::Separator();
+			
 			int i = 0;
 			for(auto word : Things) {
 				int bit = 1 << i;

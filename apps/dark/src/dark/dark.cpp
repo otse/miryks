@@ -101,7 +101,7 @@ int main()
 
 	renderer_init();
 
-	view_bucket_in_place();
+	// view_bucket_in_place();
 
 	yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
 	// refs_init();
@@ -111,10 +111,13 @@ int main()
 
 	place_at_level_start();
 
-
-	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
+	/*
+	draugrskeleton
+	draugrmale01 - 07
+	*/
+	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale07.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
-	someDraugr->anim->keyf->repeats = false;
+	// someDraugr->anim->keyf->repeats = false;
 	someDraugr->Place("gloomgendraugr");
 
 	// someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
@@ -125,7 +128,7 @@ int main()
 	// someHuman->Place("gloomgenman");
 #endif
 	// someHuman->SetAnim("anims/character/1hm_idle.kf");
-	player1 = new Player();
+	// player1 = new Player();
 	window_while_test();
 }
 

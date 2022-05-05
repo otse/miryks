@@ -29,8 +29,8 @@ namespace miryks
 		SkinnedMesh *hat, *head, *body, *hands, *feet;
 		GroupDrawer *groupDrawer;
 		Char(const char * = "ImperialRace");
+		void Place(const char *);
 		void SetAnim(const char *);
 		void Step();
-		void Place(const char *);
 	};
 }
