@@ -586,7 +586,6 @@ namespace miryks
 		}
 		virtual void update()
 		{
-			// itemfinder::consider();
 		}
 	};
 

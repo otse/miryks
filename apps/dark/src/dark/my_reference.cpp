@@ -33,6 +33,7 @@ namespace dark
 		pointLight = nullptr;
 		spotLight = nullptr;
 		Go();
+		itemfinder::pool.push_back(this);
 	}
 
 	my_reference::~my_reference()
@@ -297,18 +298,20 @@ namespace dark
 		return true;
 	}
 
-	#if 0
+	#if 1
 	// horrible imgui vomit
 	bool my_reference::DisplayAsItem()
 	{
-		float dist = GetDistance() * CM_TO_SKYRIM_UNITS;
+		float dist = GetDistance() * ONE_CENTIMETER_IN_SKYRIM_UNITS;
 
 		if (dist > 40)
 			return false;
 
 		if (groupDrawer == nullptr)
 			return false;
-
+		
+		if (!baseObject.is_types({Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients, Flora}))
+			return false;
 
 		itemfinder::handRef = this;
 

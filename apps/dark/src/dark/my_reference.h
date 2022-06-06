@@ -18,13 +18,13 @@ namespace dark
 
 	namespace itemfinder
 	{
-	extern bool detect;
-	extern my_reference *handRef;
-	extern std::vector<my_reference *> pool;
-	extern vec3 projected;
-	void init();
-	void consider();
-	void activate();
+		extern bool detect;
+		extern my_reference *handRef;
+		extern std::vector<my_reference *> pool;
+		extern vec3 projected;
+		void init();
+		void consider();
+		void activate();
 	}
 
 	class my_reference : public reference
@@ -32,12 +32,12 @@ namespace dark
 	public:
 		my_reference(record);
 		~my_reference();
-		
+
 		Model *model;
-		
+
 		// mat4 matrix, translation, rotation, scale; // mir has
 
-		//Container *container = nullptr;
+		// Container *container = nullptr;
 		GroupDrawer *groupDrawer = nullptr;
 		pointlight *pointLight;
 		spotlight *spotLight;

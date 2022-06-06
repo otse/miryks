@@ -18,7 +18,7 @@ namespace miryks
 			return new keyframes(saved);
 		nif *model = calloc_ni();
 		model->path = path;
-		int len = fbuf(path, &model->buf, false);
+		model->buf = get_binary_file(path);
 		nif_read(model);
 		save_ni(path, model);
 		return new keyframes(model);

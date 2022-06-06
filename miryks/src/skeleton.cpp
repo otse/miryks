@@ -171,12 +171,12 @@ namespace miryks
 							if (j >= num)
 								break;
 							auto key2 = &tdp->quaternion_keys[j];
-							vec4 ro2 = reinterpret_vec4(&key2->value);
+							vec4 rn = reinterpret_vec4(&key2->value);
 
 							float span = key2->time - key->time;
 							float ratio = (time - key->time) / span;
 							quat quat1 = quat(ro[0], ro[1], ro[2], ro[3]);
-							quat quat2 = quat(ro2[0], ro2[1], ro2[2], ro2[3]);
+							quat quat2 = quat(rn[0], rn[1], rn[2], rn[3]);
 
 							//printf("r ratio %.2f\n", ratio);
 							//assertc(ratio >= 0 || ratio <= 1);

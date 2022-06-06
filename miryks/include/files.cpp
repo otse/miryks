@@ -18,6 +18,12 @@ char *get_text_file(const char *name) {
     return x;
 }
 
+char *get_binary_file(const char *name) {
+	char *x;
+	fbuf(name, &x, false);
+	return x;
+}
+
 int fbuf(const char *path, char **dest, bool cap)
 {
 	// printf("fbuf path %s\n", path);
@@ -26,7 +32,8 @@ int fbuf(const char *path, char **dest, bool cap)
 	if (is)
 	{
 		unsigned int end = is.tellg();
-		*dest = (char *)malloc(end + (cap ? 1 : 0));
+		int len = end + (cap ? 1 : 0);
+		*dest = (char *)malloc(len);
 		is.seekg(0, is.beg);
 		is.read((char *)*dest, end);
 		if (cap)

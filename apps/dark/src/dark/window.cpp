@@ -1,12 +1,13 @@
 #include <dark/dark.h>
 #include <dark/window.h>
 #include <dark/trash.h>
+#include <dark/my_reference.h>
 
 #include <opengl/camera.h>
 #include <opengl/scene.h>
 #include <opengl/rendertarget.h>
 #include <ogl/scene_graph.hpp>
-#include <ogl/scene_graph.hpp>
+
 #include <opengl/shader.h>
 
 #include <miryks/player.h>
@@ -284,7 +285,7 @@ static void handle_use_key()
 {
 	if (ImGui::IsAnyItemActive())
 		return;
-	// miryks::itemfinder::activate();
+	dark::itemfinder::activate();
 }
 
 static void reload_shaders()
@@ -384,6 +385,9 @@ void window_while_test()
 		
 		if (ginterior)
 			ginterior->update();
+
+		itemfinder::consider();
+
 
 		sceneDef->DrawItems();
 
