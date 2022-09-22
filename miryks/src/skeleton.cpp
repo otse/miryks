@@ -13,6 +13,7 @@ namespace miryks
 
 	keyframes *get_keyframes(const char *path)
 	{
+		printf("load keyframes from disk %s\n", path);
 		return load_keyframes_from_disk(path);
 	}
 
@@ -129,12 +130,16 @@ namespace miryks
 	void animation::SimpleInterpolated()
 	{
 		nif *model = keyf->ni;
+		// controlled block pointer
 		struct controlled_block_t *cbp;
 		for (unsigned int i = 0; i < keyf->controllerSequence->A->num_controlled_blocks; i++)
 		{
+			//if (i > 10)
+			//	return;
 			// Match node_name to a skeleton bone
 			cbp = &keyf->controllerSequence->controlled_blocks[i];
 			char *name = nif_get_string(model, cbp->node_name);
+			//printf("name %s\n", name);
 			auto has = skel->bonesNamed.find(name);
 			if (has == skel->bonesNamed.end())
 			{
@@ -152,7 +157,7 @@ namespace miryks
 			if (tip == NULL || tdp == NULL)
 				continue;
 			vec4 ro = reinterpret_vec4(&tip->transform->rotation);
-			quat qro;
+			quat qro = quat(0, 0, 0, 0); // uninitializing this meant hard to debug invisibility bugs
 			int num = tdp->A->num_rotation_keys;
 			if (num)
 			{
@@ -232,7 +237,8 @@ namespace miryks
 			bone->mod = matrix;
 			bone->matrix = matrix;
 			bone->diff = inverse(matrix) * bone->rest;
-			bone->UpdateSideways();
+			//if (i < 0)
+			//	bone->UpdateSideways();
 		}
 	}
 

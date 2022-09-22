@@ -281,6 +281,7 @@ if ( block->A->num_rotation_keys > 0 )
 	else
 		return NULL;
 }
+// why do we return null
 SINK ( ni, block, translations )
 SAIL ( ni, block, translation_keys, translations, num_keys )
 SINK ( ni, block, scales )

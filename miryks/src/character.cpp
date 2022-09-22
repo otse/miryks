@@ -11,7 +11,11 @@ namespace miryks {
 		anim = nullptr;
 		race = dig_race(raceId, 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
-		hat = head = body = hands = feet = nullptr;
+		hat = nullptr;
+		head = nullptr;
+		body = nullptr;
+		hands = nullptr;
+		feet = nullptr;
 		const bool beggar = true;
 		if (beggar)
 		{
@@ -54,6 +58,8 @@ namespace miryks {
 		printf("place at %s\n", q);
 		groupDrawer->matrix = ref->second->matrix;
 		groupDrawer->UpdateSideways();
+		groupDrawer->Add(new GroupDrawer(skel->root, mat4(1.0)));
+
 		sceneDef->bigGroup->Add(groupDrawer);
 		// Create an offsetted mirror of Man
 		/*GroupDrawer *mirror = new GroupDrawer(group, mat4());
@@ -64,10 +70,11 @@ namespace miryks {
 
 	void Char::SetAnim(const char *path)
 	{
-		//if (anim)
-		//	delete anim;
+		if (anim)
+			delete anim;
+		keyframes *keyf = get_keyframes(path);
+		anim = new animation(keyf);
 		anim->skel = skel;
-		anim = new animation(get_keyframes(path));
 		skel->anim = anim;
 	}
 

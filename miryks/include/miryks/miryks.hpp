@@ -93,7 +93,7 @@ namespace miryks
 		get_archives()[14] = load_archive(ARCHIVE_14);
 		get_archives()[15] = load_archive(ARCHIVE_15);
 		get_archives()[16] = load_archive(ARCHIVE_16);
-		get_archives()[17] = load_archive(ARCHIVE_17);
+		// get_archives()[17] = load_archive(ARCHIVE_17);
 	}
 
 	extern std::map<const char *, nif *> nis;

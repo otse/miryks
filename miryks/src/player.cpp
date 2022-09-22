@@ -19,8 +19,10 @@ namespace miryks
 	{
 		Move();
 		Char::Step();
+
 		if (pressing_key("v"))
 		{
+			printf("Toggle");
 			toggleView();
 		}
 
@@ -28,6 +30,7 @@ namespace miryks
 		if (pressing_key("w"))
 		{
 			idle = false;
+			printf("set anim\n");
 			SetAnim("anims/character/1hm_walkforward.kf");
 		}
 		else if (pressing_key("s"))
