@@ -13,7 +13,6 @@ namespace miryks
 
 	keyframes *get_keyframes(const char *path)
 	{
-		printf("load keyframes from disk %s\n", path);
 		return load_keyframes_from_disk(path);
 	}
 

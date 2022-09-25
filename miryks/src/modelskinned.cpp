@@ -1,5 +1,5 @@
 extern "C"
-{	
+{
 #include <half.h>
 }
 
@@ -15,6 +15,7 @@ namespace miryks
 {
 	ModelSkinned::ModelSkinned(const char *modl) : Model()
 	{
+		first = true;
 		model = get_ni(get_res(modl));
 		assertc(model);
 		Construct();
@@ -48,18 +49,19 @@ namespace miryks
 		free_rd(&rd);
 		baseGroup->UpdateSideways();
 	}
-	
-	void ModelSkinned::Initial(skeleton *skeleton)
+
+	void ModelSkinned::Update(skeleton *skeleton)
 	{
 		// "unoptimised" :)
 
+		int cache = 0;
 		for (NiRef ref : shapes__)
 		{
-			//Group *group = mesh->groups[index];
+			// Group *group = mesh->groups[index];
 			auto shape = (BSTriShape *)nif_get_block(model, ref);
 			auto nsi = (NiSkinInstance *)nif_get_block(model, shape->refs->skin);
 			auto nsp = (NiSkinPartition *)nif_get_block(model, nsi->A->skin_partition);
-			
+
 			for (unsigned int k = 0; k < nsp->A->num_partitions; k++)
 			{
 				SkinPartition *partition = nsp->partitions[k];
@@ -70,28 +72,41 @@ namespace miryks
 				material->bindMatrix = group->matrixWorld;
 				for (unsigned short i = 0; i < partition->nums->bones; i++)
 				{
-					unsigned short j = partition->bones[i];
-					NiNode *node = (NiNode *)nif_get_block(model, nsi->bones[j]);
-					char *name = nif_get_string(model, node->common->F->name);
-					auto has = skeleton->bonesNamed.find(name);
-					if (has == skeleton->bonesNamed.end())
+					if (first)
 					{
-						material->boneMatrices.push_back(mat4(1.0));
-						continue;
+						unsigned short j = partition->bones[i];
+						NiNode *node = (NiNode *)nif_get_block(model, nsi->bones[j]);
+						char *name = nif_get_string(model, node->common->F->name);
+						auto has = skeleton->bonesNamed.find(name);
+						if (has == skeleton->bonesNamed.end())
+						{
+							bonesCached.push_back(nullptr);
+							continue;
+						}
+						bone *bon = has->second;
+						bonesCached.push_back(bon);
 					}
-					bone *bone = has->second;
-					material->boneMatrices.push_back(bone->matrixWorld * inverse(bone->rest));
-					
-					//Group *node_group = groups[nsi->bones[partition->bones[i]]];
-					//node_group->matrixWorld = bone->group->matrixWorld;
+					else
+					{
+						bone *bon = bonesCached[cache++];
+						if (bon == nullptr)
+							material->boneMatrices.push_back(mat4(1.0));
+						else
+							material->boneMatrices.push_back(bon->matrixWorld * inverse(bon->rest));
+					}
+					// Group *node_group = groups[nsi->bones[partition->bones[i]]];
+					// node_group->matrixWorld = bone->group->matrixWorld;
 				}
 			}
 		}
+		first = false;
 	}
 
 	void ModelSkinned::Step(skeleton *skeleton)
 	{
-		Initial(skeleton);
+		if (first)
+			Update(skeleton);
+		Update(skeleton);
 	}
 
 	void ni_skin_instance_callback(RD rd, NiSkinInstance *block)
@@ -105,16 +120,20 @@ namespace miryks
 	{
 		float xf, yf, zf;
 		unsigned char *vec = (unsigned char *)in;
-		xf = (float)((double( vec[0] ) / 255.0) * 2.0 - 1.0);
-		yf = (float)((double( vec[1] ) / 255.0) * 2.0 - 1.0);
-		zf = (float)((double( vec[2] ) / 255.0) * 2.0 - 1.0);
+		xf = (float)((double(vec[0]) / 255.0) * 2.0 - 1.0);
+		yf = (float)((double(vec[1]) / 255.0) * 2.0 - 1.0);
+		zf = (float)((double(vec[2]) / 255.0) * 2.0 - 1.0);
 		return vec3(xf, yf, zf);
 	}
 
 	static vec2 halftexcoord(void *in)
 	{
 		unsigned short *uv = (unsigned short *)in;
-		union { float f; uint32_t i; } u, v;
+		union
+		{
+			float f;
+			uint32_t i;
+		} u, v;
 		u.i = half_to_float(uv[0]);
 		v.i = half_to_float(uv[1]);
 		return vec2(u.f, v.f);
@@ -134,7 +153,7 @@ namespace miryks
 
 		int vertices, uvs, normals, tangents, colors, skinned;
 		nif_bs_vertex_desc(block->A->vertex_desc, &vertices, &uvs, &normals, &tangents, &colors, &skinned);
-		
+
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
 			SkinPartition *partition = block->partitions[k];
@@ -193,7 +212,7 @@ namespace miryks
 			{
 				auto triangle = partition->triangles[i];
 				geometry->elements.insert(geometry->elements.end(),
-					{remap[triangle.a], remap[triangle.b], remap[triangle.c]} );
+										  {remap[triangle.a], remap[triangle.b], remap[triangle.c]});
 			}
 			geometry->SetupMesh();
 			modelSkinned->lastGroup->Add(group);

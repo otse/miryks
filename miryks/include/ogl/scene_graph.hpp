@@ -270,7 +270,8 @@ struct GroupDrawerFlat : GroupDrawer
 				return false;
 			return true;
 		}
-		return false; });
+		return false;
+		});
 	}
 };
 

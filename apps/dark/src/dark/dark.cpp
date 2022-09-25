@@ -115,7 +115,7 @@ int main()
 	draugrskeleton
 	draugrmale01 - 07
 	*/
-	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale07.nif");
+	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale01.nif");
 	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	// someDraugr->anim->keyf->repeats = false;
 	someDraugr->Place("gloomgendraugr");

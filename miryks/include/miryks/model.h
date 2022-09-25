@@ -57,11 +57,13 @@ namespace miryks
 	class ModelSkinned : public Model
 	{
 	public:
+		bool first;
+		std::vector<bone *> bonesCached;
 		NiRef lastShape;
 		ModelSkinned(const char *);
 		void Construct();
 		void Step(skeleton *);
-		void Initial(skeleton *);
+		void Update(skeleton *);
 	};
 
 	class SkinnedMesh
