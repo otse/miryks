@@ -33,6 +33,7 @@ namespace miryks
 		{
 			groupDrawer = new GroupDrawer(
 				modelSkinned->baseGroup, refe->second->matrix);
+				
 			groupDrawer->Add(new GroupDrawer(skel->root, mat4(1.0)));
 			sceneDef->bigGroup->Add(groupDrawer);
 		}

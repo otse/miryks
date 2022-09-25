@@ -21,6 +21,7 @@ struct Group
 {
 	static int num, drawCalls;
 	bool visible = true;
+	std::string name;
 	Group *parent;
 	Geometry *geometry, *axis;
 	mat4 matrix, matrixWorld;
@@ -168,19 +169,28 @@ struct GroupDrawer : Group
 		Cubify();
 	}
 
+	#define DRAW_DYNAMIC 0
+
 	virtual void Draw(const mat4 &left) override
 	{
 		if (Invisible())
 			return;
 		mat4 right = left * matrixWorld;
+		// wonky dynamic childGroups code
+#		if DRAW_DYNAMIC
 		if (childGroups.size())
 			for (Group *child : childGroups)
 				if (dynamic_cast<GroupDrawer *>(child))
 					child->Draw(right);
+#		endif
 		if (target)
 			target->DrawChilds(right);
 		DrawBounds();
 	}
+
+	/*virtual void DrawChilds() {
+		
+	}*/
 
 	bool Invisible()
 	{
@@ -246,7 +256,7 @@ struct GroupDrawerFlat : GroupDrawer
 		if (target)
 		{
 			target->Flatten(target);
-			flat = target->flat;
+			flat = target->flat; // copy
 		}
 	}
 

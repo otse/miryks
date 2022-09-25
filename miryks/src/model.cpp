@@ -77,6 +77,7 @@ namespace miryks
 		// printf("ni node callback\n");
 		Model *model = (Model *)rd->data;
 		Group *group = model->MakeNewGroup(rd);
+		group->name = "NiNode";
 		matrix_from_common(group, block->common);
 	}
 
@@ -104,6 +105,7 @@ namespace miryks
 		Model *model = (Model *)rd->data;
 		model->shapes__.push_back(rd->current);
 		Group *group = model->MakeNewGroup(rd);
+		group->name = "BSTriShape";
 		matrix_from_common(group, block->common);
 		Geometry *geometry = new Geometry();
 		group->geometry = geometry;

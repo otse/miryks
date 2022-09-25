@@ -1,24 +1,85 @@
 #include <miryks/miryks.hpp>
 
+#include <opengl/scene.h>
+
 #include <files.h>
 #include <imgui.h>
 #include <sstream>
+
+void layout_group(Group *, int &);
+
+void layout_gdf(Group *child, int &num)
+{
+	GroupDrawerFlat *cast = dynamic_cast<GroupDrawerFlat *>(child);
+	char hex[50];
+	snprintf(hex, 50, "GroupDrawerFlat #%i %s", num++, child->name.c_str());
+	if (ImGui::TreeNode(hex))
+	{
+		ImGui::Text("target baseGroup:");
+		if (dynamic_cast<GroupDrawer *>(child))
+		{
+			layout_group(cast->target, num);
+		}
+		ImGui::TreePop();
+	}
+}
+
+void layout_group(Group *child, int &num)
+{
+	char hex[50];
+	snprintf(hex, 50, "group #%i (childs - %i) %s", num++, child->childGroups.size(), child->name.c_str());
+	if (ImGui::TreeNode(hex))
+	{
+		for (auto inner : child->childGroups)
+		{
+			layout_group(inner, num);
+		}
+		ImGui::TreePop();
+	}
+};
 
 void overlay_cellview()
 {
 	using namespace miryks;
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize; // | ImGuiWindowFlags_NoSavedSettings;
-	ImGui::SetNextWindowSize(ImVec2(450, 300));
+	ImGui::SetNextWindowSize(ImVec2(450, 500));
 	ImGui::SetNextWindowPos(ImVec2(450 * 4, 0));
 
-	ImGui::Begin(" View", nullptr, flags);
+	ImGui::Begin("View", nullptr, flags);
 
 	ImGui::Separator();
 
 	ImGuiTabBarFlags tabBarFlags = ImGuiTabBarFlags_None;
 	if (ImGui::BeginTabBar("CellViewTabs", tabBarFlags))
 	{
+		if (ImGui::BeginTabItem("scene graph"))
+		{
+			ImGui::Text("showing descending scene bigGroup");
+
+			auto vec = ImVec2(0, ImGui::GetContentRegionAvail().y);
+			const ImGuiWindowFlags child_flags = 0;
+			const bool child_is_visible = ImGui::BeginChild("scenegraph", vec, true, child_flags);
+
+			int num = 0;
+			for (auto child : sceneDef->bigGroup->childGroups)
+			{
+				if (dynamic_cast<GroupDrawerFlat *>(child))
+				{
+					layout_gdf(child, num);
+				}
+				/*else if (dynamic_cast<GroupDrawer *>(child))
+				{
+					layout_gd(child, num);
+				}
+				else {
+					layout_group(child, num);
+				}*/
+			}
+			ImGui::EndChild();
+
+			ImGui::EndTabItem();
+		}
 		if (ImGui::BeginTabItem("references"))
 		{
 
@@ -26,7 +87,7 @@ void overlay_cellview()
 
 			ImGui::Separator();
 
-			//auto vec = ImVec2(0, ImGui::GetContentRegionAvail().y);
+			// auto vec = ImVec2(0, ImGui::GetContentRegionAvail().y);
 			auto vec = ImVec2(0, ImGui::GetContentRegionAvail().y);
 
 			const ImGuiWindowFlags child_flags = 0;

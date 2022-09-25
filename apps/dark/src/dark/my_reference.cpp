@@ -243,10 +243,15 @@ namespace dark
 
 		if (model)
 		{
-			// bad
+			// bad 
 			if (baseObject.r->hed->formId != 0x32)
 			{
+				char type[50];
+				snprintf(type, 50, "%.4s", (char *)&baseObject.rhed().sgn);
+				
 				groupDrawer = new GroupDrawerFlat(model->baseGroup, matrix);
+				groupDrawer->name = "(REFR)";
+				groupDrawer->name += type;
 				sceneDef->bigGroup->Add(groupDrawer);
 				int i = 0;
 				for (auto thing : Things)
