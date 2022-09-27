@@ -140,7 +140,7 @@ namespace miryks
 		printf("adding land geometry to bigGroup\n");
 
 		group->UpdateSideways();
-		groupDrawer = new GroupDrawerFlat(group, mat4(1.0));
+		groupDrawer = new GroupDrawer(group, mat4(1.0));
 		groupDrawer->UpdateSideways();
 		sceneDef->bigGroup->Add(groupDrawer);
 	}

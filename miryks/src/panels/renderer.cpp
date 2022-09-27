@@ -77,12 +77,12 @@ void overlay_renderer()
 		if (ImGui::BeginTabItem("settings"))
 		{
 			ImGui::Checkbox("slow animation", &renderSettings.slowAnimation);
+			ImGui::Checkbox("center axes", &renderSettings.axes);
 			bool a = ImGui::Checkbox("diffuse maps", &renderSettings.diffuseMaps);
 			bool b = ImGui::Checkbox("normal maps", &renderSettings.normalMaps);
 			bool c = ImGui::Checkbox("specular maps", &renderSettings.specularMaps);
 			bool d = ImGui::Checkbox("glow maps", &renderSettings.glowMaps);
 			bool e = ImGui::Checkbox("dust", &renderSettings.dust);
-			ImGui::Checkbox("center axes", &renderSettings.axes);
 			ImGui::Checkbox("axis-aligned bounding boxes", &renderSettings.AABBS);
 			ImGui::Checkbox("oriented bounding boxes", &renderSettings.OBBS);
 			ImGui::SliderFloat("drawDistance", &renderSettings.drawDistance, 0.0f, 10000.0f, "%.1f");
