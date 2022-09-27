@@ -125,7 +125,7 @@ void overlay_cellview()
 			{
 				if (ImGui::Button("Load"))
 				{
-					hooks::hooks_load_interior(items[current]);
+					hooks::hooks_load_interior(items[current], true);
 				}
 			}
 			// if (items[current] == ginterior->loadedCell)

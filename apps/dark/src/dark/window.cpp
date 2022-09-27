@@ -297,6 +297,15 @@ static void reload_shaders()
 		pair.second->Compile();
 }
 
+static void hotswap_plugin_and_dungeon()
+{
+	printf("hotswap plugin and dungeon\n");
+	free_plugin(&get_plugins()[5]);
+	get_plugins()[5] = load_plugin(PLUGIN_0, true);
+	const char *id = ginterior->id;
+	hooks::hooks_load_interior(id, false);
+}
+
 static void handle_my_keys()
 {
 	using namespace miryks;
@@ -311,7 +320,8 @@ static void handle_my_keys()
 		toggle_cursor();
 	else if (pressing_key("f4"))
 		toggle_fbo();
-	// else if (pressing_key("f5")) hotswap_plugin_and_dungeon();
+	else if (pressing_key("f5"))
+		hotswap_plugin_and_dungeon();
 	else if (pressing_key("f6"))
 		reload_shaders();
 	else if (pressing_key("f10"))
@@ -347,7 +357,7 @@ void window_while_test()
 		double currentTime = glfwGetTime();
 		delta = currentTime - lastFrame;
 		lastFrame = currentTime;
-		
+
 		frameCount++;
 		// If a second has passed.
 		if (currentTime - previousTime >= 1.0)

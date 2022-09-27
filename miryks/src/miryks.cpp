@@ -10,7 +10,7 @@ namespace miryks
 	namespace hooks
 	{
 		bool (*hooks_some_behavior)(int) = 0;
-		void (*hooks_load_interior)(const char *) = 0;
+		void (*hooks_load_interior)(const char *, bool) = 0;
 	}
 	
 	char *editme;

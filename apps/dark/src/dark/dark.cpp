@@ -42,7 +42,7 @@ namespace dark
 		view_in_place(get_res("clutter\\bucket02a.nif"));
 	}
 
-	void load_interior(const char *name)
+	void load_interior(const char *name, bool place)
 	{
 		printf("(hook) load interior\n");
 
@@ -60,7 +60,8 @@ namespace dark
 
 		ginterior->iter_both_subgroups(factory);
 
-		place_at_level_start();
+		if (place)
+			place_at_level_start();
 	}
 
 	void place_at_level_start()
@@ -109,7 +110,7 @@ int main()
 	// refs_init();
 	// load_world_space();
 #if 1
-	load_interior("GloomGen");
+	load_interior("GloomGen", true);
 
 	place_at_level_start();
 

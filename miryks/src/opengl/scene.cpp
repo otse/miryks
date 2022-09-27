@@ -59,14 +59,8 @@ void Scene::DrawItems()
 	//CalcLights();
 	SortLights();
 
-	// the following sort will corrupt the modelview
-	// something with the comparator being malformed
-	// apparently you cant polymorphism so easily within a comparator
 	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), cmp1);
-
-#if 1
 	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), cmp2);
-#endif
 
 	bigGroup->DrawSelfAndChilds(mat4(1.0));
 }
