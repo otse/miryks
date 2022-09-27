@@ -22,3 +22,24 @@ namespace miryks
 
 	Player *player1 = nullptr;
 }
+
+void miryks::view_in_place(resource *res)
+{
+	static Model *model = nullptr;
+	static GroupDrawer *groupDrawer = nullptr;
+	if (model)
+	{
+		groupDrawer->parent->Remove(groupDrawer);
+		delete model;
+		delete groupDrawer;
+	}
+	model = new Model(res);
+	groupDrawer = new GroupDrawer(
+		model->baseGroup, translate(mat4(1.0), personCam->pos));
+	sceneDef->bigGroup->Add(groupDrawer);
+	showCursor = false;
+	cameraCur = viewerCam;
+	viewerCam->pos = groupDrawer->aabb.center();
+	// viewerCam->pos = personCam->pos;
+	viewerCam->radius = groupDrawer->aabb.radius2() * 2;
+}

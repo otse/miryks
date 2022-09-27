@@ -96,7 +96,7 @@ void overlay_archives()
 			if (ImGui::Button("View"))
 			{
 				// todo move view in place
-				//view_in_place(res);
+				miryks::view_in_place(res);
 			}
 		}
 
@@ -258,7 +258,7 @@ void overlay_archives()
 								if (ImGui::Button("View"))
 								{
 									// move view in palce
-									//view_in_place(res);
+									miryks::view_in_place(res);
 								}
 							}
 							ImGui::Separator();

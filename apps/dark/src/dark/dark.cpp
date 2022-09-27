@@ -103,7 +103,7 @@ int main()
 
 	renderer_init();
 
-	// view_bucket_in_place();
+	view_bucket_in_place();
 
 	yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
 	// refs_init();
@@ -132,25 +132,4 @@ int main()
 	// someHuman->SetAnim("anims/character/1hm_idle.kf");
 	player1 = new Player();
 	window_while_test();
-}
-
-void miryks::view_in_place(resource *res)
-{
-	static Model *model = nullptr;
-	static GroupDrawer *groupDrawer = nullptr;
-	if (model)
-	{
-		groupDrawer->parent->Remove(groupDrawer);
-		delete model;
-		delete groupDrawer;
-	}
-	model = new Model(res);
-	groupDrawer = new GroupDrawer(
-		model->baseGroup, translate(mat4(1.0), personCam->pos));
-	sceneDef->bigGroup->Add(groupDrawer);
-	showCursor = false;
-	cameraCur = viewerCam;
-	viewerCam->pos = groupDrawer->aabb.center();
-	// viewerCam->pos = personCam->pos;
-	viewerCam->radius = groupDrawer->aabb.radius2() * 2;
 }
