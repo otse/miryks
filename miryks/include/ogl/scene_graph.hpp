@@ -19,270 +19,71 @@
 
 struct Group
 {
-	static int num, drawCalls;
+	static int ids, num, drawCalls;
+	int id = 0;
 	bool visible = true;
 	std::string name;
 	Group *parent;
 	Geometry *geometry, *axis;
 	mat4 matrix, matrixWorld;
 	std::vector<Group *> childGroups, flat;
-	Group()
-	{
-		parent = nullptr;
-		geometry = nullptr;
-		axis = nullptr;
-		axis = new Geometry;
-		axis->SetupMesh();
-		matrix = matrixWorld = mat4(1.0f);
-		num++;
-	}
-	
-	virtual ~Group()
-	{
-		num--;
-	}
 
-	void Add(Group *group)
-	{
-		group->parent = this;
-		vector_safe_add<Group *>(group, childGroups);
-	}
+	Group();
+	virtual ~Group();
 
-	void Remove(Group *group)
-	{
-		group->parent = nullptr;
-		vector_safe_remove<Group *>(group, childGroups);
-	}
+	void Add(Group *group);
+	void Remove(Group *group);
 
-	/*
-	Recalculates world matrices
-
-	Axis-Aligned GroupBounded overrides this
-	*/
-	virtual void UpdateSideways()
-	{
-		if (parent == nullptr)
-			matrixWorld = matrix;
-		else
-			matrixWorld = parent->matrixWorld * matrix;
-		for (Group *child : childGroups)
-			child->UpdateSideways();
-	}
-
-	virtual void Draw(const mat4 &left)
-	{
-		drawCalls++;
-		mat4 place = left * matrixWorld;
-		// out-comment
-		// if (GetZ(place) > renderSettings.drawDistance)
-		//	return;
-		if (geometry)
-			geometry->Draw(place);
-		if (axis && renderSettings.axes)
-			axis->Draw(place);
-	}
-
-	void DrawChilds(const mat4 &left)
-	{
-		if (!visible)
-			return;
-		Draw(left);
-		for (Group *child : childGroups)
-			child->DrawChilds(left);
-	}
-
-	void Flatten(Group *root)
-	{
-		// Put all childs into root.flat
-		if (this == root)
-			flat.clear();
-		root->flat.push_back(this);
-		for (Group *child : childGroups)
-			child->Flatten(root);
-	}
-
-	float GetZ(const mat4 &left) const
-	{
-		return glm::distance(cameraCur->group->matrixWorld[3], left[3]);
-	}
+	virtual void UpdateSideways();
+	virtual void Draw(const mat4 &left);
+	virtual void DrawSelfAndChilds(const mat4 &left) final;
+	void Flatten(Group *root);
+	float GetZ(const mat4 &left) const;
 };
 
 struct GroupBounded : Group
 {
 	AABB aabb, obb;
-	GroupBounded() : Group()
-	{
-		aabb = obb = Aabb();
-		axis = new Geometry;
-		axis->SetupMesh();
-	}
+	GroupBounded();
+	virtual ~GroupBounded();
 
-	virtual ~GroupBounded()
-	{
-	}
-
-	virtual void UpdateSideways() override
-	{
-		aabb = Aabb();
-		Group::UpdateSideways();
-		// Once everything is updated,
-		// run back to front:
-
-		if (geometry)
-			aabb.extend(geometry->aabb);
-		aabb = Aabb::mult(aabb, matrix);
-		if (parent)
-		{
-			GroupBounded *bounded = dynamic_cast<GroupBounded *>(parent);
-			if (bounded)
-				bounded->aabb.extend(aabb);
-		}
-	}
+	virtual void UpdateSideways() override;
 };
 
 // special group that shouldnt trigger parenting
 
 struct GroupDrawer : Group
 {
+	bool hasTransparency = false;
+
 	static int num, masks;
 	int mask;
 	AABB aabb, obb;
 	Group *const target;
-	GroupDrawer(Group *group, mat4 matrix)
-		: target(group)
-	{
-		this->matrix = matrix;
-		mask = 1 << 0;
-		parent = nullptr;
-		num++;
-		Reset();
-		UpdateSideways();
-	}
 
-	virtual ~GroupDrawer()
-	{
-		num--;
-	}
+	GroupDrawer(Group *group, mat4 matrix);
+	virtual ~GroupDrawer();
 
-	virtual void Reset()
-	{
-		Cubify();
-	}
-
-	#define DRAW_DYNAMIC 0
-
-	virtual void Draw(const mat4 &left) override
-	{
-		if (Invisible())
-			return;
-		mat4 right = left * matrixWorld;
-		// wonky dynamic childGroups code
-#		if DRAW_DYNAMIC
-		if (childGroups.size())
-			for (Group *child : childGroups)
-				if (dynamic_cast<GroupDrawer *>(child))
-					child->Draw(right);
-#		endif
-		if (target)
-			target->DrawChilds(right);
-		DrawBounds();
-	}
-
-	/*virtual void DrawChilds() {
-		
-	}*/
-
-	bool Invisible()
-	{
-		if (visible && (GroupDrawer::masks & mask) == mask)
-			return false;
-		return true;
-	}
-
-	void Cubify()
-	{
-		GroupBounded *bounded = dynamic_cast<GroupBounded *>(target);
-		if (bounded)
-		{
-			obb = aabb = bounded->aabb;
-			aabb = Aabb::mult(aabb, matrix);
-			obb.geometrize();
-			aabb.geometrize();
-		}
-	}
-
-	void DrawBounds()
-	{
-		if (!target)
-			return;
-		mat4 place = matrix * target->matrix;
-		bool notTooLarge = aabb.volume() <= renderSettings.maximumBoundingVolume;
-		if (renderSettings.AABBS && aabb.geometry && notTooLarge)
-			aabb.geometry->Draw(mat4(1.0));
-		if (renderSettings.OBBS && obb.geometry && notTooLarge)
-			obb.geometry->Draw(place);
-	}
+	virtual void Reset();
+	virtual void Draw(const mat4 &left) override;
+	bool Invisible();
+	void Cubify();
+	static bool HasTransparency(Group *);
+	void TestTransparency(Group *);
+	void DrawBounds();
 };
 
 struct GroupDrawerFlat : GroupDrawer
 {
 	bool hasTransparency = false;
-	GroupDrawerFlat(Group *group, mat4 matrix)
-		: GroupDrawer(group, matrix)
-	{
-		Reset();
-		SortTransparency();
-	}
+	
+	GroupDrawerFlat(Group *group, mat4 matrix);
+	virtual ~GroupDrawerFlat();
 
-	virtual ~GroupDrawerFlat()
-	{
-	}
-
-	virtual void Draw(const mat4 &left) override
-	{
-		if (target == nullptr)
-			return;
-		if (Invisible())
-			return;
-		mat4 place = matrix * target->matrix;
-		for (Group *group : target->flat)
-			group->Draw(place);
-		DrawBounds();
-	}
-
-	virtual void Reset() override
-	{
-		GroupDrawer::Reset();
-		if (target)
-		{
-			target->Flatten(target);
-			flat = target->flat; // copy
-		}
-	}
-
-	void SortWith(std::function<bool(const Group *, const Group *)> f)
-	{
-		std::sort(flat.begin(), flat.end(), f);
-	}
-
-	void SortTransparency()
-	{
-		// This kind of works but nobody knows
-		SortWith([&](const Group *a, const Group *b) -> bool
-				 {
-		if (a->geometry && a->geometry->material && a->geometry->material->transparent)
-			this->hasTransparency = true;
-		if (a->geometry && b->geometry)
-		{
-			if (a->geometry->material->blending && !b->geometry->material->blending)
-				return false;
-			if (a->geometry->material->testing && !b->geometry->material->testing)
-				return false;
-			return true;
-		}
-		return false;
-		});
-	}
+	virtual void Draw(const mat4 &left) override;
+	virtual void Reset() override;
+	void SortWith(std::function<bool(const Group *, const Group *)> f);
+	void SortTransparency();
 };
 
 #endif

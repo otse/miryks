@@ -15,6 +15,9 @@ namespace dark
 		my_reference *handRef = nullptr;
 		std::vector<my_reference *> pool;
 		vec3 projected;
+		void clear() {
+			pool.clear();
+		}
 		void init()
 		{
 		}

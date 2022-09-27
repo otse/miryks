@@ -212,7 +212,7 @@ namespace miryks
 			if (block->B->shader_flags_2 & 0x00000020)
 				material->vertexColors = true;
 			if (block->B->shader_flags_1 & 0x80000000)
-				material->testing = true;
+				material->ztest = true;
 			if (block->B->shader_flags_2 & 0x00000001)
 				material->zwrite = true;
 			if (block->B->shader_flags_2 & 0x00000010)
@@ -280,7 +280,7 @@ namespace miryks
 				GL_NEVER};
 			unsigned short flags = block->C->flags;
 			material->blending = (bool)(flags & 1);
-			material->testing = (bool)(flags & (1 << 9));
+			material->ztest = (bool)(flags & (1 << 9));
 			int src = blendModes[flags >> 1 & 0x0f];
 			int dst = blendModes[flags >> 5 & 0x0f];
 			material->blendFunc = {src, dst};

@@ -10,16 +10,16 @@ void layout_group(Group *, int &);
 
 void layout_gdf(Group *child, int &num)
 {
-	GroupDrawerFlat *cast = dynamic_cast<GroupDrawerFlat *>(child);
+	auto cast = dynamic_cast<GroupDrawer *>(child);
 	char hex[50];
-	snprintf(hex, 50, "GroupDrawerFlat #%i %s", num++, child->name.c_str());
+	snprintf(hex, 50, "GroupDrawerFlat #%i %s", child->id, child->name.c_str());
 	if (ImGui::TreeNode(hex))
 	{
-		ImGui::Text("target baseGroup:");
-		if (dynamic_cast<GroupDrawer *>(child))
-		{
-			layout_group(cast->target, num);
-		}
+		ImGui::Text("target:");
+		// if (dynamic_cast<GroupDrawer *>(child))
+
+		layout_group(cast->target, num);
+
 		ImGui::TreePop();
 	}
 }
@@ -27,13 +27,12 @@ void layout_gdf(Group *child, int &num)
 void layout_group(Group *child, int &num)
 {
 	char hex[50];
-	snprintf(hex, 50, "group #%i (childs - %i) %s", num++, child->childGroups.size(), child->name.c_str());
+	snprintf(hex, 50, "group #%i (childs - %i) %s", child->id, child->childGroups.size(), child->name.c_str());
+
 	if (ImGui::TreeNode(hex))
 	{
 		for (auto inner : child->childGroups)
-		{
 			layout_group(inner, num);
-		}
 		ImGui::TreePop();
 	}
 };
@@ -64,7 +63,7 @@ void overlay_cellview()
 			int num = 0;
 			for (auto child : sceneDef->bigGroup->childGroups)
 			{
-				if (dynamic_cast<GroupDrawerFlat *>(child))
+				if (dynamic_cast<GroupDrawer *>(child))
 				{
 					layout_gdf(child, num);
 				}

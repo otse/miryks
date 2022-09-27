@@ -12,11 +12,6 @@
 #include <opengl/material.h>
 #include <opengl/texture.h>
 
-int Group::num = 0;
-int Group::drawCalls = 0;
-int GroupDrawer::num = 0;
-int GroupDrawer::masks = ~0;
-
 int width = 1920;
 int height = 1080;
 int fps = 0;

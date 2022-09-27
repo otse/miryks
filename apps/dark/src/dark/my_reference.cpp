@@ -249,7 +249,7 @@ namespace dark
 				char type[50];
 				snprintf(type, 50, "%.4s", (char *)&baseObject.rhed().sgn);
 				
-				groupDrawer = new GroupDrawerFlat(model->baseGroup, matrix);
+				groupDrawer = new GroupDrawer(model->baseGroup, matrix);
 				groupDrawer->name = "(REFR)";
 				groupDrawer->name += type;
 				sceneDef->bigGroup->Add(groupDrawer);

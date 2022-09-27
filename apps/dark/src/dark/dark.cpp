@@ -56,6 +56,8 @@ namespace dark
 			factory;
 		factory.cell = ginterior;
 
+		itemfinder::clear();
+
 		ginterior->iter_both_subgroups(factory);
 
 		place_at_level_start();

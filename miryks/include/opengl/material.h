@@ -17,9 +17,10 @@ struct Material
 	Texture *map, *normalMap, *glowMap;
 
 	// todo what is testing
+	// testing is ZBuffer_Test
 	// it uses lequal but messes up decals when set to true by default
 
-	bool transparent, doubleSided, blending, testing, zwrite, decal, tangents, skinning;
+	bool transparent, doubleSided, blending, ztest, zwrite, decal, tangents, skinning;
 	bool dust, modelSpaceNormals, vertexColors;
 
 	int testFunc;

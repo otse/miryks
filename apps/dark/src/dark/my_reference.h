@@ -22,6 +22,7 @@ namespace dark
 		extern my_reference *handRef;
 		extern std::vector<my_reference *> pool;
 		extern vec3 projected;
+		void clear();
 		void init();
 		void consider();
 		void activate();

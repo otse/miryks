@@ -16,7 +16,7 @@ static spotlight *bspot;
 
 Scene::Scene()
 {
-	bigGroup = new GroupDrawerFlat(new Group, mat4(1.0));
+	bigGroup = new GroupDrawer(new Group, mat4(1.0));
 
 	bpoint = new pointlight;
 	bpoint->color = vec3(0.f);
@@ -40,34 +40,35 @@ void Scene::Order()
 {
 }
 
+bool cmp1 (const Group *a, const Group *b) {
+	if (a->GetZ(a->matrixWorld) < b->GetZ(b->matrixWorld))
+		return true;
+	return false;
+};
+
+bool cmp2 (const Group *a, const Group *b) {
+	const GroupDrawer *dga = dynamic_cast<const GroupDrawer *>(a);
+	const GroupDrawer *dgb = dynamic_cast<const GroupDrawer *>(b);
+	if (dga && dga->hasTransparency && dgb && !dgb->hasTransparency)
+		return false;
+	return true;
+};
+
 void Scene::DrawItems()
 {
 	//CalcLights();
 	SortLights();
 
-	auto EarlyZKills = [](const Group *a, const Group *b) -> bool {
-		if (a->GetZ(a->matrixWorld) < b->GetZ(b->matrixWorld))
-			return true;
-		return false;
-	};
-
-	// this gives modelview corruption
+	// the following sort will corrupt the modelview
 	// something with the comparator being malformed
 	// apparently you cant polymorphism so easily within a comparator
-	
-	//std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), EarlyZKills);
+	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), cmp1);
 
-#if 0
-	auto TransparencyLast = [](const Group *a, const Group *b) -> bool {
-		const GroupDrawerFlat *dgfs = dynamic_cast<const GroupDrawerFlat *>(a);
-		if (dgfs && dgfs->hasTransparency)
-			return false;
-		return true;
-	};
-	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), TransparencyLast);
+#if 1
+	std::sort(bigGroup->childGroups.begin(), bigGroup->childGroups.end(), cmp2);
 #endif
 
-	bigGroup->DrawChilds(mat4(1.0));
+	bigGroup->DrawSelfAndChilds(mat4(1.0));
 }
 
 void Scene::CalcLights()

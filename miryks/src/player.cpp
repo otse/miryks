@@ -30,7 +30,7 @@ namespace miryks
 		if (pressing_key("w"))
 		{
 			idle = false;
-			printf("set anim\n");
+			//printf("set anim\n");
 			SetAnim("anims/character/1hm_walkforward.kf");
 		}
 		else if (pressing_key("s"))

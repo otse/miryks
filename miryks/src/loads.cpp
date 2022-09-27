@@ -36,8 +36,8 @@ namespace miryks
 		if (exists(path.c_str()))
 		{
 			plugin = plugin_load(path.c_str(), loadInMemory);
-			//if (strstr(filename, ".esp"))
-			//	printf("loading .esp from /Data\n");
+			if (strstr(filename, ".esp"))
+				printf("loading .esp from /Data\n");
 		}
 		else if (exists(filename))
 		{

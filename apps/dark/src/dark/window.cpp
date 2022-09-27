@@ -314,7 +314,8 @@ static void handle_my_keys()
 	// else if (pressing_key("f5")) hotswap_plugin_and_dungeon();
 	else if (pressing_key("f6"))
 		reload_shaders();
-	// else if (pressing("f10")) toggle_render_stats();
+	else if (pressing_key("f10"))
+		f10 = !f10;
 	else if (pressing_key("e"))
 		handle_use_key();
 	else if (pressing_key("h"))
@@ -338,8 +339,26 @@ void window_while_test()
 	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
 	Quadt quad;
 
+	double previousTime = glfwGetTime();
+	double lastFrame = 0.0f;
+	int frameCount = 0;
 	do
 	{
+		double currentTime = glfwGetTime();
+		delta = currentTime - lastFrame;
+		lastFrame = currentTime;
+		
+		frameCount++;
+		// If a second has passed.
+		if (currentTime - previousTime >= 1.0)
+		{
+			// Display the frame count here any way you want.
+			fps = frameCount;
+
+			frameCount = 0;
+			previousTime = currentTime;
+		}
+
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -351,8 +370,6 @@ void window_while_test()
 		// glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 		Group::drawCalls = 0;
-
-		delta = 0.016f;
 
 		glfwPollEvents();
 
@@ -371,8 +388,8 @@ void window_while_test()
 
 		if (someDraugr)
 			someDraugr->Step();
-			
-		//if (someDraugr)
+
+		// if (someDraugr)
 		//	someDraugr->Step();
 
 		for (auto mist : mists)
@@ -382,12 +399,11 @@ void window_while_test()
 		//	meanSkelly->Step();
 		// if (someHuman)
 		//	someHuman->Step();
-		
+
 		if (ginterior)
 			ginterior->update();
 
 		itemfinder::consider();
-
 
 		sceneDef->DrawItems();
 
