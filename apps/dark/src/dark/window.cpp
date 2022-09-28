@@ -303,7 +303,7 @@ static void hotswap_plugin_and_dungeon()
 	free_plugin(&get_plugins()[5]);
 	get_plugins()[5] = load_plugin(PLUGIN_0, true);
 	const char *id = ginterior->id;
-	hooks::hooks_load_interior(id, false);
+	hooks::load_interior(id, false);
 }
 
 static void handle_my_keys()

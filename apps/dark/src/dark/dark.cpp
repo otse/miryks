@@ -45,23 +45,28 @@ namespace dark
 	void load_interior(const char *name, bool place)
 	{
 		printf("(hook) load interior\n");
-
 		if (ginterior)
 			delete ginterior;
-
-		ginterior = mir_dig_create_interior(name);
-
-		reference_factory_iter<
-			my_reference>
-			factory;
+		ginterior = dig_interior(name);
+		reference_factory_iter<my_reference> factory;
 		factory.cell = ginterior;
-
 		itemfinder::clear();
-
 		ginterior->iter_both_subgroups(factory);
-
 		if (place)
 			place_at_level_start();
+	}
+
+	void load_world_space(const char *name, bool place)
+	{
+		if (ginterior)
+			delete ginterior;
+		itemfinder::clear();
+		gworldspace = dig_world_space("DarkWorld");
+
+		/*reference_factory_iter<
+			my_reference>
+			factory;*/
+		// factory.cell = gworldspace;
 	}
 
 	void place_at_level_start()
@@ -95,7 +100,8 @@ int main()
 	init_data_files();
 	init_archives();
 
-	hooks::hooks_load_interior = load_interior;
+	hooks::load_interior = load_interior;
+	hooks::load_world_space = load_world_space;
 
 	nif_test();
 	init_dark();

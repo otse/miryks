@@ -23,6 +23,11 @@ extern "C"
 #include <functional>
 #include <algorithm>
 
+/*
+don't try to understand the grup templates
+it is hot garbage that took too long to write because it's insane
+*/
+
 constexpr float ONE_CENTIMETER_IN_SKYRIM_UNITS = 1 / 1.428f;
 
 #define EYE_HEIGHT 160 * ONE_CENTIMETER_IN_SKYRIM_UNITS
@@ -40,8 +45,9 @@ namespace miryks
 
 	namespace hooks
 	{
-		extern bool (*hooks_some_behavior)(int);
-		extern void (*hooks_load_interior)(const char *, bool);
+	extern bool (*hooks_some_behavior)(int);
+	extern void (*load_interior)(const char *, bool);
+	extern void (*load_world_space)(const char *, bool);
 	}
 
 	BSA load_archive(const char *);
@@ -344,6 +350,8 @@ namespace miryks
 		}
 	};
 
+	/* lets you use an ordinary grup as a template grup
+	*/
 	static inline grup_iter<> upcast_grup(grup &other)
 	{
 		grup_iter<> g;
@@ -461,24 +469,7 @@ namespace miryks
 			raceId,
 			grup_iter<0>("RACE", plugin));
 	}
-
-	static inline recordgrup dig_interior_cell(const char *cellId, int plugin)
-	{
-		return find_recordgrup_by_id(
-			cellId,
-			grup_iter<0,
-			grup_iter<2,
-			grup_iter<3>>>("CELL", plugin));
-	}
-
-	static inline recordgrup dig_worldspace(const char *id, int plugin)
-	{
-		return find_recordgrup_by_id(
-			id,
-			grup_iter<0>("WRLD", plugin));
-	}
 	
-
 	class cell;
 	class reference;
 	class worldspace;
@@ -597,30 +588,42 @@ namespace miryks
 		std::vector<reference *> references;
 		worldspace(recordgrup rg) : recordgrup(rg)
 		{
-			printf("worldspace name %s", this->editor_id());
+			printf("world space: %s\n", this->editor_id());
+			childs = rg;
+			assertc(ghed().group_type == world_children);
+			init();
 		}
-		worldspace *init();
+		void init();
 		void dig_all_cells();
 		void load_ext_loc(int, int);
 	};
 
-	static inline interior *mir_dig_create_interior(const char *name, int plugin = 5)
+	static inline interior *dig_interior(const char *name, int plugin = 5)
 	{
-		return new interior(dig_interior_cell(name, plugin));
+		recordgrup rg = find_recordgrup_by_id(
+			name,
+			grup_iter<0,
+			grup_iter<2,
+			grup_iter<3>>>("CELL", plugin));
+		return new interior(rg);
 	}
 
-	static inline worldspace *mir_dig_create_worldspace(const char *name, int plugin = 5)
+	static inline worldspace *dig_world_space(const char *name, int plugin = 5)
 	{
-		return new worldspace(dig_worldspace(name, plugin));
+		recordgrup rg = find_recordgrup_by_id(
+			name,
+			grup_iter<0>("WRLD", plugin));
+		return new worldspace(rg);
 	}
 
+	// unused convenience method
 	static inline void reload_ginterior(int plugin = 5)
 	{
 		if (!ginterior)
 			return;
 		const char *id = ginterior->id;
 		delete ginterior;
-		ginterior = mir_dig_create_interior(id, plugin);
+		ginterior = dig_interior(id, plugin);
 		ginterior->dontTeleport = true;
 	}
 
@@ -637,7 +640,11 @@ namespace miryks
 		worldspace *worldSpace;
 		land *land;
 		XCLC *xclc;
-		exterior(recordgrup);
+		exterior(recordgrup rg) : cell(rg) {
+			printf("exterior id %i\n", this->r->id);
+			land = nullptr;
+			xclc = data<XCLC *>("XCLC");
+		}
 		void init();
 	};
 

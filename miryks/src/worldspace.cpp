@@ -1,4 +1,3 @@
-#if 0
 #include <miryks/miryks.hpp>
 
 #include <algorithm>
@@ -11,22 +10,49 @@
 
 namespace miryks
 {
-	mir_worldspace *worldSpace = nullptr;
-	
+	struct exterior_factory_iter : recordgrup
+	{
+		worldspace *ws;
+		bool go_sideways(exterior_factory_iter &target)
+		{
+			exterior *cell = new exterior(*this);
+			target.ws->exteriors.push_back(cell);
+			return false;
+		}
+	};
+
+	void worldspace::init()
+	{
+		auto type =
+			grup_iter<world_children,
+			grup_iter<exterior_cell_block,
+			grup_iter<exterior_cell_subblock>>>();
+		type = childs;
+		exterior_factory_iter factory;
+		factory.ws = this;
+		type <= factory;
+	}
+}
+
+#if 0
+namespace miryks
+{
+#if 0
 	mir_worldspace *get_world_space(const char *id, int num)
 	{
 		printf("get_world_space\n");
 		mir_worldspace *worldSpace = nullptr;
-		#if 0
+#if 0
 		constellation copy;
 		bool ok = constellation::iter(WRLD).loop([&](constellation &temp) {
 			return (copy=temp).self.editor_id(id);
 		}, 0);
 		if (ok)
 			worldSpace = new mir_worldspace(copy);
-		#endif
+#endif
 		return worldSpace;
 	}
+#endif
 
 	worldspace::worldspace(recordgrup rg) : record(rg)
 	{
@@ -51,7 +77,7 @@ namespace miryks
 
 	void mir_worldspace::DiscoverAllCells()
 	{
-		#if 0
+#if 0
 		printf("DiscoverAllCells\n");
 		childs.index = 2;
 		constellation temp;
@@ -65,7 +91,7 @@ namespace miryks
 			ExteriorCellBlock,
 			ExteriorCellSubBlock
 		});
-		#endif
+#endif
 	}
 
 	void mir_worldspace::LoadExterior(int x, int y)
@@ -94,8 +120,8 @@ namespace miryks
 		//persistent <= target;
 		//temporary <= target;
 	}
-	
-	#if 0
+
+#if 0
 	old_function
 	{
 		if (!subgroup.valid()) {
@@ -126,7 +152,7 @@ namespace miryks
 			return false;
 		}, Group);
 	}
-	#endif
+#endif
 
 }
 #endif
