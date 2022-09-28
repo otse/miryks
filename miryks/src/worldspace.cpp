@@ -24,13 +24,16 @@ namespace miryks
 	void worldspace::init()
 	{
 		auto type =
-			grup_iter<world_children,
-			grup_iter<exterior_cell_block,
-			grup_iter<exterior_cell_subblock>>>();
+		grup_iter<1,
+		grup_iter<4,
+		grup_iter<5>>>();
 		type = childs;
 		exterior_factory_iter factory;
 		factory.ws = this;
 		type <= factory;
+
+		sceneDef->ambient = vec3(127.f / 255.f);
+		//make();
 	}
 }
 

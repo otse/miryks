@@ -42,12 +42,18 @@ namespace dark
 		view_in_place(get_res("clutter\\bucket02a.nif"));
 	}
 
+	
 	void load_interior(const char *name, bool place)
 	{
-		printf("(hook) load interior\n");
+		using top =
+		grup_iter<0,
+		grup_iter<2,
+		grup_iter<3>>>;
+		printf("load interior %s\n", name);
+		recordgrup rg = find_recordgrup_by_id(name, top("CELL", 5));
 		if (ginterior)
 			delete ginterior;
-		ginterior = dig_interior(name);
+		ginterior = new interior(rg);
 		reference_factory_iter<my_reference> factory;
 		factory.cell = ginterior;
 		itemfinder::clear();
@@ -61,8 +67,10 @@ namespace dark
 		if (ginterior)
 			delete ginterior;
 		itemfinder::clear();
-		gworldspace = dig_world_space("DarkWorld");
-
+		recordgrup rg = find_recordgrup_by_id(name, grup_iter<0>("WRLD", 5));
+		gworldspace = new worldspace(rg);
+		reference_factory_iter<my_reference> factory;
+		gworldspace->make(factory);
 		/*reference_factory_iter<
 			my_reference>
 			factory;*/

@@ -24,8 +24,8 @@ extern "C"
 #include <algorithm>
 
 /*
-don't try to understand the grup templates
-it is hot garbage that took too long to write because it's insane
+the templated grup code is hard
+it's insane but works very well, use tad
 */
 
 constexpr float ONE_CENTIMETER_IN_SKYRIM_UNITS = 1 / 1.428f;
@@ -40,14 +40,14 @@ namespace miryks
 {
 	class Player;
 	extern Player *player1;
-	
+
 	extern char *editme;
 
 	namespace hooks
 	{
-	extern bool (*hooks_some_behavior)(int);
-	extern void (*load_interior)(const char *, bool);
-	extern void (*load_world_space)(const char *, bool);
+		extern bool (*hooks_some_behavior)(int);
+		extern void (*load_interior)(const char *, bool);
+		extern void (*load_world_space)(const char *, bool);
 	}
 
 	BSA load_archive(const char *);
@@ -351,7 +351,7 @@ namespace miryks
 	};
 
 	/* lets you use an ordinary grup as a template grup
-	*/
+	 */
 	static inline grup_iter<> upcast_grup(grup &other)
 	{
 		grup_iter<> g;
@@ -469,7 +469,7 @@ namespace miryks
 			raceId,
 			grup_iter<0>("RACE", plugin));
 	}
-	
+
 	class cell;
 	class reference;
 	class worldspace;
@@ -544,8 +544,10 @@ namespace miryks
 		template <typename T>
 		void iter_both_subgroups(T &t)
 		{
-			upcast_grup(temporary) <= t;
-			upcast_grup(persistent) <= t;
+			if (temporary.gvalid())
+				upcast_grup(temporary) <= t;
+			if (persistent.gvalid())
+				upcast_grup(persistent) <= t;
 		}
 		virtual void unload()
 		{
@@ -594,10 +596,18 @@ namespace miryks
 			init();
 		}
 		void init();
-		void dig_all_cells();
+		template <typename T>
+		void make(T factory)
+		{
+			for (auto exterior : exteriors)
+			{
+				exterior->make(factory);
+			}
+		}
 		void load_ext_loc(int, int);
 	};
 
+	/*
 	static inline interior *dig_interior(const char *name, int plugin = 5)
 	{
 		recordgrup rg = find_recordgrup_by_id(
@@ -615,17 +625,20 @@ namespace miryks
 			grup_iter<0>("WRLD", plugin));
 		return new worldspace(rg);
 	}
+	*/
 
 	// unused convenience method
+	/*
 	static inline void reload_ginterior(int plugin = 5)
 	{
 		if (!ginterior)
 			return;
 		const char *id = ginterior->id;
 		delete ginterior;
-		ginterior = dig_interior(id, plugin);
-		ginterior->dontTeleport = true;
+		//ginterior = dig_interior(id, plugin);
+		//ginterior->dontTeleport = true;
 	}
+	*/
 
 	class land;
 
@@ -640,12 +653,19 @@ namespace miryks
 		worldspace *worldSpace;
 		land *land;
 		XCLC *xclc;
-		exterior(recordgrup rg) : cell(rg) {
+		exterior(recordgrup rg) : cell(rg)
+		{
 			printf("exterior id %i\n", this->r->id);
 			land = nullptr;
 			xclc = data<XCLC *>("XCLC");
 		}
 		void init();
+		template <typename T>
+		void make(T factory)
+		{
+			factory.cell = this;
+			iter_both_subgroups(factory);
+		}
 	};
 
 	class land : public record
