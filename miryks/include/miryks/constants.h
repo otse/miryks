@@ -30,6 +30,7 @@
 #define STRINGIFY(x) #x
 
 #define REFR STRINGIFY(REFR)
+#define ACTI STRINGIFY(ACTI)
 #define STAT STRINGIFY(STAT)
 #define DOOR STRINGIFY(DOOR)
 #define FURN STRINGIFY(FURN)
@@ -53,6 +54,7 @@
 #define RACE STRINGIFY(RACE)
 
 #define References REFR
+#define Activators ACTI
 #define Statics STAT
 #define Doors DOOR
 #define Furniture FURN

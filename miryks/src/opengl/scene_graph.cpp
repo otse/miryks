@@ -145,7 +145,7 @@ void GroupDrawer::Draw(const mat4 &left)
 {
 	if (Invisible())
 		return;
-	mat4 place = left * matrixWorld;
+	mat4 place = matrixWorld;
 	if (target)
 		target->DrawSelfAndChilds(place);
 	DrawBounds();
@@ -198,7 +198,7 @@ void GroupDrawer::DrawBounds()
 		obb.geometry->Draw(place);
 }
 
-#if 0
+#if 1
 GroupDrawerFlat::GroupDrawerFlat(Group *group, mat4 matrix)
 	: GroupDrawer(group, matrix)
 {
@@ -216,8 +216,8 @@ void GroupDrawerFlat::Draw(const mat4 &left)
 		return;
 	if (Invisible())
 		return;
-	mat4 place = matrix * target->matrix;
-	for (Group *group : flat)
+	mat4 place = matrixWorld;//matrix * target->matrix;
+	for (Group *group : target->flat)
 		group->Draw(place);
 	DrawBounds();
 }
@@ -229,13 +229,13 @@ void GroupDrawerFlat::Reset()
 	{
 		target->Flatten(target);
 		// this vector copy possibly caused widespread mayhem
-		flat = target->flat; // copy?
+		//flat = target->flat; // copy?
 	}
 }
 
 void GroupDrawerFlat::SortWith(std::function<bool(const Group *, const Group *)> f)
 {
-	// std::sort(flat.begin(), flat.end(), f);
+	std::sort(flat.begin(), flat.end(), f);
 }
 
 void GroupDrawerFlat::SortTransparency()

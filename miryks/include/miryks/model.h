@@ -20,6 +20,7 @@ namespace miryks
 
 	callback(ni_node);
 	callback(bs_lighting_shader_property);
+	callback(bs_water_shader_property);
 	callback(bs_effect_shader_property);
 	callback(bs_effect_shader_property_float_controller);
 	callback(ni_float_interpolator);

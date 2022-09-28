@@ -310,6 +310,38 @@ skyrim_shader_type: %u\
 		block->B->lighting_effect_2);
 }
 
+static void print_bs_water_shader_property(NIF ni, int n, char s[1000])
+{
+	char a[200], b[200], c[200], d[200];
+	BSWaterShaderProperty *block = Blocks[n];
+	snprintf(
+		s, 1000,
+		"\
+name: %s [%i]\
+\nnum_extra_data_list: %u\
+\nextra_data_list: -\
+\ncontroller: %i\
+\nshader_flags_1: %u\
+\nshader_flags_2: %u\
+\nuv_offset: %s\
+\nuv_scale: %s\
+\nwater_shader_flags: %u\
+\nwater_direction: %u\
+\nunknown short 3: %hu\
+",
+		nif_get_string(ni, block->A->name),
+		block->A->name,
+		block->A->num_extra_data_list,
+		block->B->controller,
+		block->B->shader_flags_1,
+		block->B->shader_flags_2,
+		print_vec_2p(a, (float *)&block->B->uv_offset),
+		print_vec_2p(b, (float *)&block->B->uv_scale),
+		block->B->water_shader_flags,
+		block->B->water_direction,
+		block->B->unknown_short_3);
+}
+
 static void print_bs_shader_texture_set(NIF ni, int n, char s[1000])
 {
 	BSShaderTextureSet *block = Blocks[n];
@@ -634,18 +666,19 @@ api void nif_print_block(NIF ni, int n, char s[1000])
 	s[0] = '\0';
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[n]];
 	if (0);
-	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) ) print_ni_node(ni, n, s);
+	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS, BSMultiBoundNodeS) ) print_ni_node(ni, n, s);
 	#ifdef SLE
 	else if ( nif_type(NiTriShapeS) ) print_ni_tri_shape(ni, n, s);
 	else if ( nif_type(NiTriShapeData) ) print_ni_tri_shape_data(ni, n, s);
 	#endif
 	else if ( nif_type(BSLightingShaderPropertyS) ) print_bs_lighting_shader_property(ni, n, s);
+	else if ( nif_type(BSWaterShaderPropertyS) ) print_bs_water_shader_property(ni, n, s);
 	else if ( nif_type(BSEffectShaderPropertyS) ) print_bs_effect_shader_property(ni, n, s);
 	else if ( nif_type(BSShaderTextureSetS) ) print_bs_shader_texture_set(ni, n, s);
 	else if ( nif_type(NiControllerSequenceS) ) print_ni_controller_sequence(ni, n, s);
 	else if ( nif_type(NiTransformInterpolatorS) ) print_ni_transform_interpolator(ni, n, s);
 	else if ( nif_type(NiTransformDataS) ) print_ni_transform_data(ni, n, s);
-	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, NULL) ) print_ni_skin_instance(ni, n, s);
+	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, NULL, NULL) ) print_ni_skin_instance(ni, n, s);
 	else if ( nif_type(NiSkinDataS) ) print_ni_skin_data(ni, n, s);
 	else if ( nif_type(NiSkinPartitionS) ) print_ni_skin_partition(ni, n, s);
 	else if ( nif_type(NiAlphaPropertyS) ) print_ni_alpha_property(ni, n, s);

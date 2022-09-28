@@ -12,7 +12,7 @@ void layout_gdf(Group *child, int &num)
 {
 	auto cast = dynamic_cast<GroupDrawer *>(child);
 	char hex[50];
-	snprintf(hex, 50, "GroupDrawerFlat #%i %s", child->id, child->name.c_str());
+	snprintf(hex, 50, "GroupDrawer #%i %s", child->id, child->name.c_str());
 	if (ImGui::TreeNode(hex))
 	{
 		ImGui::Text("target:");

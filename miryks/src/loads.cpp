@@ -78,6 +78,7 @@ namespace miryks
 	void load_these_definitions(ESP plugin)
 	{
 		static const auto things = {
+			Activators,
 			Statics,
 			Lights,
 			Doors,

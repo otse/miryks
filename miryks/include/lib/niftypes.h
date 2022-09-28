@@ -1,4 +1,5 @@
 #define NiNodeS                                "NiNode"
+#define BSMultiBoundNodeS                      "BSMultiBoundNode"
 #define BSLeafAnimNodeS                        "BSLeafAnimNode"
 #define BSFadeNodeS                            "BSFadeNode"
 #define NiSkinInstanceS                        "NiSkinInstance"
@@ -13,6 +14,7 @@
 #define NiAlphaPropertyS                       "NiAlphaProperty"
 #define BSShaderTextureSetS                    "BSShaderTextureSet"
 #define BSLightingShaderPropertyS              "BSLightingShaderProperty"
+#define BSWaterShaderPropertyS                 "BSWaterShaderProperty"
 #define BSEffectShaderPropertyS                "BSEffectShaderProperty"
 #define BSEffectShaderPropertyFloatControllerS "BSEffectShaderPropertyFloatController"
 #define NiFloatInterpolatorS                   "NiFloatInterpolator"
@@ -26,10 +28,11 @@
 
 
 #define nif_type(x) 0 == strcmp(block_type, x)
-#define nif_types(x, y, z) (nif_type(x)) || (y ? nif_type(y) : 0) || (z ? nif_type(z) : 0)
+#define nif_types(x, y, z, w) (nif_type(x)) || (y ? nif_type(y) : 0) || (z ? nif_type(z) : 0) || (w ? nif_type(w) : 0)
 
 #define NiNode                                struct ni_node_t
 #define BSLightingShaderProperty              struct bs_lighting_shader_property_t
+#define BSWaterShaderProperty                 struct bs_water_shader_property_t
 #define BSEffectShaderProperty                struct bs_effect_shader_property_t
 #define BSEffectShaderPropertyFloatController struct bs_effect_shader_property_float_controller_t
 #define NiFloatInterpolator                   struct ni_float_interpolator_t

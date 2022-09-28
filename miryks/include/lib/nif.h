@@ -49,6 +49,7 @@ struct rundown
 	int parent, current;
 	void (*other) (RD, void *block);
 	callback(ni_node)
+	callback(bs_multi_bound_node)
 	callback(ni_tri_shape)
 	callback(ni_tri_shape_data)
 	callback(bs_tri_shape) special_edition
@@ -59,6 +60,7 @@ struct rundown
 	callback(ni_skin_data)
 	callback(ni_skin_partition)
 	callback(bs_lighting_shader_property)
+	callback(bs_water_shader_property)
 	callback(bs_effect_shader_property)
 	callback(bs_effect_shader_property_float_controller)
 	callback(ni_float_interpolator)
@@ -386,6 +388,25 @@ BSLightingShaderProperty
 		float alpha, refraction_strength, glossiness;
 		Vec3 specular_color;
 		float specular_strength, lighting_effect_1, lighting_effect_2;
+	} * B;
+};
+
+BSWaterShaderProperty
+{
+	struct
+	{
+		int name;
+		unsigned int num_extra_data_list;
+	} * A;
+	NiRef *extra_data_list;
+	struct
+	{
+		NiRef controller;
+		unsigned int shader_flags_1, shader_flags_2;
+		Vec2 uv_offset, uv_scale;
+		unsigned char water_shader_flags;
+		unsigned char water_direction;
+		unsigned short unknown_short_3;
 	} * B;
 };
 

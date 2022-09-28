@@ -87,7 +87,7 @@ void Scene::BindLights(Shader *shader)
 {
 	shader->SetVec3("ambientLightColor", ambient);
 
-	for (unsigned int i = 0; i < 6; i++)
+	for (unsigned int i = 0; i < 8; i++)
 	{
 		pointlight *l = bpoint;
 

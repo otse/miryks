@@ -47,7 +47,7 @@ static void visit(RD rd, int parent, int current)
 	const char *block_type = Hedr->block_types[Hedr->block_type_index[current]];
 	if (0) ;
 
-	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS) )
+	else if ( nif_types(NiNodeS, BSLeafAnimNodeS, BSFadeNodeS, BSMultiBoundNodeS) )
 	{
 		traverse_once
 		NiNode *block = Blocks[current];
@@ -60,6 +60,7 @@ static void visit(RD rd, int parent, int current)
 		}
 	}
 
+	// old legendary edition
 	#ifdef SLE
 	else if ( nif_types(NiTriShapeS, BSLODTriShapeS, NULL) )
 	{
@@ -101,6 +102,15 @@ static void visit(RD rd, int parent, int current)
 		if (rd->bs_lighting_shader_property_callback)
 			rd->bs_lighting_shader_property_callback(rd, Blocks[current]);
 		visit(rd, current, block->B->texture_set);
+	}
+
+	else if ( nif_type(BSWaterShaderPropertyS) )
+	{
+		needs_parent
+		BSWaterShaderProperty *block = Blocks[current];
+		if (rd->bs_water_shader_property_callback)
+			rd->bs_water_shader_property_callback(rd, Blocks[current]);
+		//visit(rd, current, block->B->texture_set);
 	}
 
 	else if ( nif_type(BSEffectShaderPropertyS) )
@@ -149,7 +159,7 @@ static void visit(RD rd, int parent, int current)
 			rd->ni_alpha_property_callback(rd, Blocks[current]);
 	}
 
-	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, NULL) )
+	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, NULL, NULL) )
 	{
 		needs_parent
 		NiSkinInstance *block = Blocks[current];

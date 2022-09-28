@@ -40,6 +40,7 @@ namespace miryks
 		rd->ni_node_callback = ni_node_callback;
 		rd->bs_tri_shape_callback = bs_tri_shape_callback;
 		rd->bs_lighting_shader_property_callback = bs_lighting_shader_property_callback;
+		rd->bs_water_shader_property_callback = bs_water_shader_property_callback;
 		rd->bs_effect_shader_property_callback = bs_effect_shader_property_callback;
 		rd->bs_shader_texture_set_callback = bs_shader_texture_set_callback;
 		rd->ni_alpha_property_callback = ni_alpha_property_callback;
@@ -181,6 +182,8 @@ namespace miryks
 				material->decal = true;
 			if (block->B->shader_flags_1 & 0x08000000) // dynamic
 				material->decal = true;
+			if (block->B->shader_flags_1 & 0x80000000)
+				material->ztest = true;
 			if (block->B->shader_flags_2 & 0x00000001)
 				material->zwrite = true;
 			if (block->B->shader_flags_2 & 0x00000020)
@@ -191,6 +194,26 @@ namespace miryks
 				material->defines += "#define VERTEX_ALPHA\n";
 			if (block->B->shader_flags_2 & 0x20000000)
 				material->defines += "#define TREE_ANIM\n";
+		}
+	}
+
+	void bs_water_shader_property_callback(RD rd, BSWaterShaderProperty *block)
+	{
+		printf("water shader\n");
+		// printf("bs lighting shader property callback\n");
+		Model *model = (Model *)rd->data;
+		Geometry *geometry = model->lastGroup->geometry;
+		if (geometry)
+		{
+			Material *material = geometry->material;
+			material->name += "WaterShader";
+			material->color = vec3(1.0);
+			material->zwrite = false;
+			material->transparent = true;
+			material->opacity = 0.5;
+			material->map = GetProduceTexture("textures\\effects\\fxwatercolor01.dds");
+			material->normalMap = GetProduceTexture("textures\\water\\defaultwater.dds");
+
 		}
 	}
 
