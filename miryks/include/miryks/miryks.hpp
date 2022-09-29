@@ -24,8 +24,8 @@ extern "C"
 #include <algorithm>
 
 /*
-the templated grup code is hard
-it's insane but works very well, use tad
+the templated grup code is hard to read
+it uses template argument deduction
 */
 
 constexpr float ONE_CENTIMETER_IN_SKYRIM_UNITS = 1 / 1.428f;
@@ -352,9 +352,10 @@ namespace miryks
 
 	/* lets you use an ordinary grup as a template grup
 	 */
-	static inline grup_iter<> upcast_grup(grup &other)
+	template<int Y>
+	static inline grup_iter<Y> upcast_grup(grup &other)
 	{
-		grup_iter<> g;
+		grup_iter<Y> g;
 		g = other;
 		return g;
 	}
@@ -545,9 +546,9 @@ namespace miryks
 		void iter_both_subgroups(T &t)
 		{
 			if (temporary.gvalid())
-				upcast_grup(temporary) <= t;
+				upcast_grup<9>(temporary) <= t;
 			if (persistent.gvalid())
-				upcast_grup(persistent) <= t;
+				upcast_grup<8>(persistent) <= t;
 		}
 		virtual void unload()
 		{
@@ -660,9 +661,11 @@ namespace miryks
 			xclc = data<XCLC *>("XCLC");
 		}
 		void init();
+		void make_land();
 		template <typename T>
 		void make(T factory)
 		{
+			make_land();
 			factory.cell = this;
 			iter_both_subgroups(factory);
 		}

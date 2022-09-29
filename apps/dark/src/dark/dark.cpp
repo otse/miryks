@@ -107,19 +107,13 @@ int main()
 	init_miryks();
 	init_data_files();
 	init_archives();
-
 	hooks::load_interior = load_interior;
 	hooks::load_world_space = load_world_space;
-
 	nif_test();
 	init_dark();
-
 	load_yagrum();
-
 	renderer_init();
-
 	view_bucket_in_place();
-
 	yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
 	// refs_init();
 	// load_world_space();

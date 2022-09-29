@@ -10,13 +10,27 @@
 
 namespace miryks
 {
-	struct exterior_factory_iter : recordgrup
+	struct exterior_iter : recordgrup
 	{
 		worldspace *ws;
-		bool go_sideways(exterior_factory_iter &target)
+		bool go_sideways(exterior_iter &target)
 		{
 			exterior *cell = new exterior(*this);
 			target.ws->exteriors.push_back(cell);
+			return false;
+		}
+	};
+
+	struct land_iter : record_iter
+	{
+		exterior *cell = nullptr;
+		bool go_sideways(land_iter &rhs)
+		{
+			if (!this->is_type("LAND"))
+				return false;
+			printf("land iter\n");
+			land *lan = new land(*this);
+			//lan->exterior = rhs.cell;
 			return false;
 		}
 	};
@@ -28,12 +42,23 @@ namespace miryks
 		grup_iter<4,
 		grup_iter<5>>>();
 		type = childs;
-		exterior_factory_iter factory;
+		exterior_iter factory;
 		factory.ws = this;
 		type <= factory;
-
 		sceneDef->ambient = vec3(127.f / 255.f);
+		personCam->pos = vec3(0, 0, -2048.0);
+
 		//make();
+	}
+
+	//void exterior::make() {
+	//}
+
+	void exterior::make_land()
+	{
+		land_iter factory;
+		factory.cell = this;
+		iter_both_subgroups(factory);
 	}
 }
 

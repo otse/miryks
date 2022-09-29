@@ -241,7 +241,8 @@ namespace miryks
 			if (block->B->shader_flags_2 & 0x00000010)
 				material->doubleSided = true;
 		}
-		mists.push_back(model);
+		vector_safe_add<Model *>(model, mists);
+		//mists.push_back(model);
 	}
 
 	void bs_shader_texture_set_callback(RD rd, BSShaderTextureSet *block)
