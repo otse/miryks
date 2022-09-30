@@ -160,7 +160,6 @@ namespace miryks
 
 	void ni_skin_partition_callback(RD rd, NiSkinPartition *block)
 	{
-		printf("ni skin partition callback\n");
 		ModelSkinned *modelSkinned = (ModelSkinned *)rd->data;
 		if (!block->vertex_data)
 			return;
@@ -224,9 +223,17 @@ namespace miryks
 					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
 					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
 				}
-				else
+				else if (!vertices && uvs && !normals && !tangents && colors && skinned && fullprec)
 				{
-					printf("none of thoes\n");
+					auto dynamic_shape = (BSDynamicTriShape *)nif_get_block(modelSkinned->model, modelSkinned->shapes__.back());
+
+					printf("were a head with shape %i\n", modelSkinned->shapes__.back());
+					auto data = &((vertex_data_4_t *)block->vertex_data)[j];
+					vertex.position = reinterpret_vec3(&dynamic_shape->vertices[j]);
+					vertex.uv = halftexcoord(&data->uv);
+					vertex.color = vec4(reinterpret_bvec4(&data->colors)) / 255.f;
+					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
 				}
 				// malehead.nif
 				/*else if (!vertices && uvs && !normals && !tangents && colors && skinned && fullprec)
@@ -250,7 +257,6 @@ namespace miryks
 			modelSkinned->lastGroup->Add(group);
 			modelSkinned->lastGroup->UpdateSideways();
 		}
-		printf("ni skin partition callback end\n");
 
 	}
 
