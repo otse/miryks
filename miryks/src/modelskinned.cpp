@@ -38,6 +38,7 @@ namespace miryks
 		rd->data = this;
 		rd->ni_node_callback = ni_node_omit_callback;
 		rd->bs_tri_shape_callback = bs_tri_shape_callback;
+		rd->bs_dynamic_tri_shape_callback = bs_dynamic_tri_shape_callback;
 		rd->ni_skin_instance_callback = ni_skin_instance_callback;
 		rd->ni_skin_data_callback = ni_skin_data_callback;
 		rd->ni_skin_partition_callback = ni_skin_partition_callback;
@@ -52,15 +53,28 @@ namespace miryks
 
 	void ModelSkinned::Update(skeleton *skeleton)
 	{
-		// "unoptimised" :)
-
 		int cache = 0;
 		for (NiRef ref : shapes__)
 		{
 			// Group *group = mesh->groups[index];
-			auto shape = (BSTriShape *)nif_get_block(model, ref);
-			auto nsi = (NiSkinInstance *)nif_get_block(model, shape->refs->skin);
-			auto nsp = (NiSkinPartition *)nif_get_block(model, nsi->A->skin_partition);
+			// todo: support dynamic tri shapes
+			BSTriShape *shape;
+			BSDynamicTriShape *dynamic_shape;
+			NiSkinInstance *nsi;
+			NiSkinPartition *nsp;
+
+			if(0 == strcmp(nif_get_block_type(model, ref), BSTriShapeS))
+			{
+				shape = (BSTriShape *)nif_get_block(model, ref);
+				nsi = (NiSkinInstance *)nif_get_block(model, shape->refs->skin);
+				nsp = (NiSkinPartition *)nif_get_block(model, nsi->A->skin_partition);
+			}
+			else if (0 == strcmp(nif_get_block_type(model, ref), BSDynamicTriShapeS))
+			{
+				dynamic_shape = (BSDynamicTriShape *)nif_get_block(model, ref);
+				nsi = (NiSkinInstance *)nif_get_block(model, dynamic_shape->bs_tri_shape->refs->skin);
+				nsp = (NiSkinPartition *)nif_get_block(model, nsi->A->skin_partition);
+			}
 
 			for (unsigned int k = 0; k < nsp->A->num_partitions; k++)
 			{
@@ -112,8 +126,8 @@ namespace miryks
 	void ni_skin_instance_callback(RD rd, NiSkinInstance *block)
 	{
 		ModelSkinned *modelSkinned = (ModelSkinned *)rd->data;
-		assertc(0 == strcmp(nif_get_block_type(modelSkinned->model, rd->parent), BSTriShapeS));
-		modelSkinned->lastShape = rd->parent;
+		//assertc(0 == strcmp(nif_get_block_type(modelSkinned->model, rd->parent), BSTriShapeS));
+		//modelSkinned->lastShape = rd->parent;
 	}
 
 	static vec3 bytestofloat(void *in)
@@ -146,13 +160,15 @@ namespace miryks
 
 	void ni_skin_partition_callback(RD rd, NiSkinPartition *block)
 	{
+		printf("ni skin partition callback\n");
 		ModelSkinned *modelSkinned = (ModelSkinned *)rd->data;
 		if (!block->vertex_data)
 			return;
 		unsigned int num_vertices = block->A->data_size / block->A->vertex_size;
 
-		int vertices, uvs, normals, tangents, colors, skinned;
-		nif_bs_vertex_desc(block->A->vertex_desc, &vertices, &uvs, &normals, &tangents, &colors, &skinned);
+		int vertices, uvs, normals, tangents, colors, skinned, eyedata, fullprec;
+		nif_bs_vertex_desc(
+			block->A->vertex_desc, &vertices, &uvs, &normals, &tangents, &colors, &skinned, &eyedata, &fullprec);
 
 		for (unsigned int k = 0; k < block->A->num_partitions; k++)
 		{
@@ -165,6 +181,8 @@ namespace miryks
 			Geometry *geometry = new Geometry();
 			group->geometry = geometry;
 			geometry->skinning = true;
+			// adapt material from previous bstrishape
+			printf("lastgroup %i %i\n", modelSkinned->lastGroup, modelSkinned->lastGroup->geometry);
 			geometry->material = new Material(*modelSkinned->lastGroup->geometry->material);
 			geometry->material->tangents = tangents;
 			geometry->material->bones = partition->nums->bones;
@@ -206,6 +224,20 @@ namespace miryks
 					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
 					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
 				}
+				else
+				{
+					printf("none of thoes\n");
+				}
+				// malehead.nif
+				/*else if (!vertices && uvs && !normals && !tangents && colors && skinned && fullprec)
+				{
+					auto data = &((vertex_data_3_t *)block->vertex_data)[j];
+					vertex.position = reinterpret_vec3(&data->vertex);
+					vertex.uv = halftexcoord(&data->uv);
+					vertex.color = vec4(reinterpret_bvec4(&data->colors)) / 255.f;
+					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
+				}*/
 				geometry->vertices[i] = vertex;
 			}
 			for (unsigned short i = 0; i < partition->nums->triangles; i++)
@@ -218,6 +250,8 @@ namespace miryks
 			modelSkinned->lastGroup->Add(group);
 			modelSkinned->lastGroup->UpdateSideways();
 		}
+		printf("ni skin partition callback end\n");
+
 	}
 
 }

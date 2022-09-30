@@ -20,12 +20,13 @@ namespace miryks {
 		if (beggar)
 		{
 			//hat = new SkinnedMesh("clothes\\beggarclothes\\hatm_0.nif");
-			//head = new BodyPart("actors\\character\\character assets\\malehead.nif");
+			head = new SkinnedMesh("actors\\character\\character assets\\malehead.nif");
 			body = new SkinnedMesh("clothes\\prisoner\\prisonerclothes_0.nif");
 			hands = new SkinnedMesh("clothes\\prisoner\\prisonercuffs_0.nif");
 			feet = new SkinnedMesh("clothes\\prisoner\\prisonershoes_0.nif");
 		}
 		//hat->skel = skel;
+		head->skel = skel;
 		body->skel = skel;
 		hands->skel = skel;
 		feet->skel = skel;

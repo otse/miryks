@@ -39,6 +39,7 @@ namespace miryks
 		rd->data = this;
 		rd->ni_node_callback = ni_node_callback;
 		rd->bs_tri_shape_callback = bs_tri_shape_callback;
+		rd->bs_dynamic_tri_shape_callback = bs_dynamic_tri_shape_callback;
 		rd->bs_lighting_shader_property_callback = bs_lighting_shader_property_callback;
 		rd->bs_water_shader_property_callback = bs_water_shader_property_callback;
 		rd->bs_effect_shader_property_callback = bs_effect_shader_property_callback;
@@ -99,6 +100,19 @@ namespace miryks
 		return vec2(u.f, v.f);
 	}
 	
+	void bs_dynamic_tri_shape_callback(RD rd, BSDynamicTriShape *block)
+	{
+		printf("bs_dynamic_tri_shape_callback\n");
+		Model *model = (Model *)rd->data;
+		model->shapes__.push_back(rd->current);
+		Group *group = model->MakeNewGroup(rd);
+		group->name = "BSDynamicTriShape";
+		matrix_from_common(group, block->bs_tri_shape->common);
+		Geometry *geometry = new Geometry();
+		group->geometry = geometry;
+		geometry->material->src = &simple;
+	}
+
 	void bs_tri_shape_callback(RD rd, BSTriShape *block)
 	{
 		//if (dynamic_cast<MeshSkinned *>(model))
@@ -241,7 +255,7 @@ namespace miryks
 			if (block->B->shader_flags_2 & 0x00000010)
 				material->doubleSided = true;
 		}
-		vector_safe_add<Model *>(model, mists);
+		vector_safe_add(model, mists);
 		//mists.push_back(model);
 	}
 

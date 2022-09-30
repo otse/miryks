@@ -95,6 +95,20 @@ static void visit(RD rd, int parent, int current)
 		visit(rd, current, block->refs->skin);
 	}
 
+	else if ( nif_type(BSDynamicTriShapeS) )
+	{
+		printf("nif_type(BSDynamicTriShapeS)\n");
+		needs_parent
+		traverse_once
+		BSDynamicTriShape *block = Blocks[current];
+		if (rd->bs_dynamic_tri_shape_callback)
+			rd->bs_dynamic_tri_shape_callback(rd, Blocks[current]);
+		//printf("shader property %i\n", block->bs_tri_shape->refs->shader_property);
+		visit(rd, current, block->bs_tri_shape->refs->shader_property);
+		visit(rd, current, block->bs_tri_shape->refs->alpha_property);
+		visit(rd, current, block->bs_tri_shape->refs->skin);
+	}
+
 	else if ( nif_type(BSLightingShaderPropertyS) )
 	{
 		needs_parent

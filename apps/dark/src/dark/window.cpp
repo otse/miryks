@@ -398,6 +398,9 @@ void window_while_test()
 
 		if (someDraugr)
 			someDraugr->Step();
+		
+		if (meanSkelly)
+			meanSkelly->Step();
 
 		// if (someDraugr)
 		//	someDraugr->Step();

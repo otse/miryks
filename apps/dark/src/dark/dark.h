@@ -27,6 +27,7 @@ namespace dark
 	void loop();
 
 	extern Monster *someDraugr;
+	extern Monster *meanSkelly;
 }
 
 void hero_menu();

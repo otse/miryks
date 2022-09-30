@@ -97,6 +97,7 @@ namespace dark
 	}
 
 	Monster *someDraugr = nullptr;
+	Monster *meanSkelly = nullptr;
 }
 
 int main()
@@ -132,8 +133,9 @@ int main()
 	someDraugr->Place("gloomgendraugr");
 
 	// someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
-	// meanSkelly = new BodyPart("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
-	// meanSkelly->PutDown("gloomgenskeleton");
+	meanSkelly = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
+	meanSkelly->SetAnim("anims/draugr/alcove_wake.kf");
+	meanSkelly->Place("gloomgenskeleton");
 	// someHuman = new Char();
 	// someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
 	// someHuman->Place("gloomgenman");

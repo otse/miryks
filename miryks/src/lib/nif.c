@@ -120,6 +120,7 @@ DECLARE( ni_skin_instance )
 DECLARE( ni_skin_data )
 DECLARE( ni_skin_partition )
 DECLARE( bs_tri_shape )
+DECLARE( bs_dynamic_tri_shape )
 DECLARE( bs_lighting_shader_property )
 DECLARE( bs_water_shader_property )
 DECLARE( bs_effect_shader_property )
@@ -158,9 +159,9 @@ void big_block_reader(NIF ni, int n)
 	else if ( nif_types(NiSkinInstanceS, BSDismemberSkinInstanceS, 0, 0) )          READ( ni_skin_instance )
 	else if ( nif_type(NiSkinDataS) )                                               READ( ni_skin_data )
 	else if ( nif_type(NiSkinPartitionS) )                                          READ( ni_skin_partition )
-	else if ( nif_type(BSDynamicTriShapeS) ) ;
 	else if ( nif_type(NiAlphaPropertyS) )                                          READ( ni_alpha_property )
 	else if ( nif_type(BSTriShapeS) )                                               READ( bs_tri_shape )
+	else if ( nif_type(BSDynamicTriShapeS) )                                        READ( bs_dynamic_tri_shape )
 	else if ( nif_type(BSLightingShaderPropertyS) )                                 READ( bs_lighting_shader_property )
 	else if ( nif_type(BSWaterShaderPropertyS) )                     	            READ( bs_water_shader_property )
 	else if ( nif_type(BSEffectShaderPropertyS) )                                   READ( bs_effect_shader_property )
@@ -351,8 +352,9 @@ block->common = read_ni_common_layout( ni, n );
 SINK ( ni, block, bounding_sphere )
 SINK ( ni, block, refs )
 SINK ( ni, block, infos )
-int vertex, uvs, normals, tangents, colors, skinned;
-nif_bs_vertex_desc(block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned);
+int vertex, uvs, normals, tangents, colors, skinned, eyedata, fullprec;
+nif_bs_vertex_desc(
+	block->infos->vertex_desc, &vertex, &uvs, &normals, &tangents, &colors, &skinned, &eyedata, &fullprec);
 // all models use these two variants it seems
 if ( vertex && uvs && normals && tangents && colors )
 	SAIL ( ni, block, vertex_data_all, infos, num_vertices)
@@ -363,9 +365,18 @@ else {
 	// xmarkerx
 	// marker_prison
 	// marker cocheading
-	// printf("\nsse for %s has %i %i %i %i %i %i\n", ni->path, vertex, uvs, normals, tangents, colors);
+	//printf("\nbs tri shape vertex data %s (num: %i) has %i %i %i %i %i %i\n", ni->path, n, vertex, uvs, normals, tangents, colors);
 	SKIP ( block->infos->data_size )
 }
 SAIL ( ni, block, triangles, infos, num_triangles )
 SINK ( ni, block, particle_data_size )
+BLOCKED ()
+
+BLOCK ( bs_dynamic_tri_shape )
+printf("read bs dynamic tri shape\n");
+block->bs_tri_shape = read_bs_tri_shape( ni, n );
+SINK ( ni, block, A )
+SAIL ( ni, block, vertices, bs_tri_shape->infos, num_vertices )
+printf("sail block vertices bs tri shape infos num vertices\n");
+//SINK ( ni, block, particle_data_size )
 BLOCKED ()

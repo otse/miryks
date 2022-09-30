@@ -31,6 +31,7 @@ namespace miryks
 	callback(ni_skin_data);
 	callback(ni_skin_partition);
 	callback(bs_tri_shape);
+	callback(bs_dynamic_tri_shape);
 
 	void matrix_from_common(Group *, ni_common_layout_t *);
 

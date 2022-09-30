@@ -7,10 +7,10 @@
 #define NiSkinDataS                            "NiSkinData"
 #define NiSkinPartitionS                       "NiSkinPartition"
 #define BSTriShapeS                            "BSTriShape"
+#define BSDynamicTriShapeS                     "BSDynamicTriShape"
 #define NiTriShapeS                            "NiTriShape"
 #define NiTriShapeDataS                        "NiTriShapeData"
 #define BSLODTriShapeS                         "BSLODTriShape"
-#define BSDynamicTriShapeS                     "BSDynamicTriShape"
 #define NiAlphaPropertyS                       "NiAlphaProperty"
 #define BSShaderTextureSetS                    "BSShaderTextureSet"
 #define BSLightingShaderPropertyS              "BSLightingShaderProperty"
@@ -48,3 +48,4 @@
 #define NiSkinData                            struct ni_skin_data_t
 #define NiSkinPartition                       struct ni_skin_partition_t
 #define BSTriShape                            struct bs_tri_shape_t
+#define BSDynamicTriShape                     struct bs_dynamic_tri_shape_t

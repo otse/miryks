@@ -53,6 +53,7 @@ struct rundown
 	callback(ni_tri_shape)
 	callback(ni_tri_shape_data)
 	callback(bs_tri_shape) special_edition
+	callback(bs_dynamic_tri_shape) special_edition
 	callback(bs_shader_texture_set)
 	callback(ni_alpha_property)
 	callback(ni_controller_sequence)
@@ -600,7 +601,7 @@ struct ni_text_key_extra_data_t
 
 inline void api nif_bs_vertex_desc(
 	unsigned long long vertex_desc,
-	int *vertex, int *uvs, int *normals, int *tangents, int *colors, int *skinned)
+	int *vertex, int *uvs, int *normals, int *tangents, int *colors, int *skinned, int *eyedata, int *fullprec)
 {
 	unsigned short flags = offset_bs_vertex_desc(vertex_desc);
 	*vertex = flags & 1 << 0x0;
@@ -609,6 +610,8 @@ inline void api nif_bs_vertex_desc(
 	*tangents = flags & 1 << 0x4;
 	*colors = flags & 1 << 0x5;
 	*skinned = flags & 1 << 0x6;
+	*eyedata = flags & 1 << 0x8;
+	*fullprec = flags & 0x400;
 }
 
 struct bs_vertex_data_sse_all
@@ -653,6 +656,15 @@ BSTriShape
 	struct bs_vertex_data_sse_no_clr *vertex_data_no_clr;
 	struct { unsigned short a, b, c; } *triangles;
 	unsigned int *particle_data_size;
+};
+
+BSDynamicTriShape
+{
+	struct bs_tri_shape_t *bs_tri_shape;
+	struct {
+		unsigned int vertex_data_size;
+	} *A;
+	Vec4 *vertices;
 };
 
 #pragma pack(pop)
