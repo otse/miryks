@@ -97,16 +97,16 @@ namespace miryks
 							bonesCached.push_back(nullptr);
 							continue;
 						}
-						bone *bon = has->second;
-						bonesCached.push_back(bon);
+						bone *bone = has->second;
+						bonesCached.push_back(bone);
 					}
 					else
 					{
-						bone *bon = bonesCached[cache++];
-						if (bon == nullptr)
+						bone *bone = bonesCached[cache++];
+						if (bone == nullptr)
 							material->boneMatrices.push_back(mat4(1.0));
 						else
-							material->boneMatrices.push_back(bon->matrixWorld * inverse(bon->rest));
+							material->boneMatrices.push_back(bone->matrixWorld * inverse(bone->rest));
 					}
 					// Group *node_group = groups[nsi->bones[partition->bones[i]]];
 					// node_group->matrixWorld = bone->group->matrixWorld;
@@ -160,6 +160,7 @@ namespace miryks
 
 	void ni_skin_partition_callback(RD rd, NiSkinPartition *block)
 	{
+		bool recomputeTangents = false;
 		ModelSkinned *modelSkinned = (ModelSkinned *)rd->data;
 		if (!block->vertex_data)
 			return;
@@ -181,7 +182,6 @@ namespace miryks
 			group->geometry = geometry;
 			geometry->skinning = true;
 			// adapt material from previous bstrishape
-			printf("lastgroup %i %i\n", modelSkinned->lastGroup, modelSkinned->lastGroup->geometry);
 			geometry->material = new Material(*modelSkinned->lastGroup->geometry->material);
 			geometry->material->tangents = tangents;
 			geometry->material->bones = partition->nums->bones;
@@ -193,6 +193,7 @@ namespace miryks
 				unsigned short j = partition->vertex_map[i];
 				remap.emplace(j, i);
 				Vertex vertex;
+				//vertex.bitangent = vec3(rand(), rand(), rand());
 				if (vertices && uvs && normals && tangents && colors && skinned)
 				{
 					auto data = &((vertex_data_t *)block->vertex_data)[j];
@@ -226,11 +227,24 @@ namespace miryks
 				else if (!vertices && uvs && !normals && !tangents && colors && skinned && fullprec)
 				{
 					auto dynamic_shape = (BSDynamicTriShape *)nif_get_block(modelSkinned->model, modelSkinned->shapes__.back());
-
-					printf("were a head with shape %i\n", modelSkinned->shapes__.back());
+					//printf("were a head with shape %i\n", modelSkinned->shapes__.back());
+					recomputeTangents = true;
 					auto data = &((vertex_data_4_t *)block->vertex_data)[j];
 					vertex.position = reinterpret_vec3(&dynamic_shape->vertices[j]);
 					vertex.uv = halftexcoord(&data->uv);
+					vertex.color = vec4(reinterpret_bvec4(&data->colors)) / 255.f;
+					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
+					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
+				}
+				else if (!vertices && uvs && normals && tangents && colors && skinned && fullprec)
+				{
+					auto dynamic_shape = (BSDynamicTriShape *)nif_get_block(modelSkinned->model, modelSkinned->shapes__.back());
+					//printf("were a hairline with shape %i\n", modelSkinned->shapes__.back());
+					auto data = &((vertex_data_5_t *)block->vertex_data)[j];
+					vertex.position = reinterpret_vec3(&dynamic_shape->vertices[j]);
+					vertex.uv = halftexcoord(&data->uv);
+					vertex.normal = bytestofloat(&data->normal);
+					vertex.tangent = bytestofloat(&data->tangent);
 					vertex.color = vec4(reinterpret_bvec4(&data->colors)) / 255.f;
 					vertex.skin_index = reinterpret_bvec4(&partition->bone_indices[i]);
 					vertex.skin_weight = reinterpret_vec4(&partition->vertex_weights[i]);
@@ -252,6 +266,9 @@ namespace miryks
 				auto triangle = partition->triangles[i];
 				geometry->elements.insert(geometry->elements.end(),
 										  {remap[triangle.a], remap[triangle.b], remap[triangle.c]});
+			}
+			if (recomputeTangents) {
+				geometry->recomputeTangents();
 			}
 			geometry->SetupMesh();
 			modelSkinned->lastGroup->Add(group);

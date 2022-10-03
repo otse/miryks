@@ -19,15 +19,20 @@ namespace miryks
 	skeleton::skeleton()
 	{
 		anim = nullptr;
+		mixer = nullptr;
 		model = nullptr;
 		bones[-1] = new bone();
 	}
 
-	skeleton::skeleton(char *race) : skeleton()
+	skeleton::skeleton(const char *race) : skeleton()
 	{
 		printf("skeleton anam %s\n", race);
 		model = get_ni(get_res(race));
 		Construct();
+	}
+
+	skeleton::~skeleton()
+	{
 	}
 
 	void skeleton::Construct()
@@ -54,21 +59,23 @@ namespace miryks
 		bone->matrix = scale(bone->matrix, vec3(common->A->scale));
 		bone->UpdateSideways();
 		bone->rest = bone->matrixWorld;
+		bone->Cur();
 	}
 
 	bone *skeleton::MakeBoneHere(RD rd, NiNode *block)
 	{
 		// printf("bone name is %s\n", bone->name);
-		auto *bon = new bone();
-		bon->block = block;
-		bon->name = nif_get_string(rd->ni, block->common->F->name);
-		bones[rd->current] = bon;
-		bones[rd->parent]->Add(bon);
-		bonesNamed[bon->name] = bon;
-		matrix_from_common(bon, block->common);
-		if (strstr(bon->name, "[Root]"))
+		bone *bon = new bone;
+		bone *bone = bon;
+		bone->block = block;
+		bone->name = nif_get_string(rd->ni, block->common->F->name);
+		bones[rd->current] = bone;
+		bones[rd->parent]->Add(bone);
+		bonesNamed[bone->name] = bone;
+		matrix_from_common(bone, block->common);
+		if (strstr(bone->name, "[Root]"))
 		{
-			root = bon;
+			root = bone;
 		}
 		return bon;
 	}
@@ -81,9 +88,17 @@ namespace miryks
 
 	void skeleton::Step()
 	{
+		// if (mixer)
+		//	mixer->Step();
 		if (anim)
 			anim->Step();
 	}
+
+	/*skeleton *skeleton::Copy()
+	{
+		skeleton *copy = new skeleton;
+		return copy;
+	}*/
 
 	keyframes::keyframes(nif *ni) : ni(ni)
 	{
@@ -96,16 +111,19 @@ namespace miryks
 		controllerSequence = (NiControllerSequence *)ni->blocks[0];
 	}
 
-	//animation::~animation()
-	//{
+	animation::~animation()
+	{
+	}
 
-	//}
-	
 	animation::animation(keyframes *keyf) : keyf(keyf)
 	{
 		skel = nullptr;
+		next = nullptr;
 		time = 0;
+		ratio = 0;
+		first = true;
 		play = true;
+		loop = false;
 		if (keyf == nullptr)
 			play = false;
 	}
@@ -121,123 +139,150 @@ namespace miryks
 			time += delta;
 
 		if (time >= keyf->controllerSequence->C->stop_time)
-			time -= keyf->controllerSequence->C->stop_time;
+			if (loop)
+				time -= keyf->controllerSequence->C->stop_time;
+			else if (next)
+			{
+				skel->anim = next;
+				skel->SetFreeze();
+				// delete this;
+				// return;
+			}
+
+		if (first)
+			SimpleInterpolated();
+		first = false;
 		SimpleInterpolated();
 		skel->root->UpdateSideways();
 	}
 
+	void skeleton::SetFreeze()
+	{
+		for (auto pair : bones)
+		{
+			bone *bone = pair.second;
+			bone->Cur();
+			bone->frozenQ = bone->curQ;
+			bone->frozenV = bone->curV;
+		}
+	}
+
 	void animation::SimpleInterpolated()
 	{
+		int cache = 0;
 		nif *model = keyf->ni;
 		// controlled block pointer
 		struct controlled_block_t *cbp;
 		for (unsigned int i = 0; i < keyf->controllerSequence->A->num_controlled_blocks; i++)
 		{
-			//if (i > 10)
-			//	return;
-			// Match node_name to a skeleton bone
 			cbp = &keyf->controllerSequence->controlled_blocks[i];
-			char *name = nif_get_string(model, cbp->node_name);
-			//printf("name %s\n", name);
-			auto has = skel->bonesNamed.find(name);
-			if (has == skel->bonesNamed.end())
+			if (first)
 			{
-				// printf("cant find bone %s\n", name);
-				//  cant find shield, weapon, quiver
-				continue;
-			}
-			const bool interpolate = true; // in case of trouble
-
-			// interpolate causes invisible mesh
-
-			bone *bone = has->second;
-			auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);
-			auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
-			if (tip == NULL || tdp == NULL)
-				continue;
-			vec4 ro = reinterpret_vec4(&tip->transform->rotation);
-			quat qro = quat(0, 0, 0, 0); // uninitializing this meant hard to debug invisibility bugs
-			int num = tdp->A->num_rotation_keys;
-			if (num)
-			{
-				for (int i = num - 1; i >= 0; i--)
+				char *name = nif_get_string(model, cbp->node_name);
+				// printf("name %s\n", name);
+				auto has = skel->bonesNamed.find(name);
+				if (has == skel->bonesNamed.end())
 				{
-					auto key = &tdp->quaternion_keys[i];
-					// printf("qk %i time %f\n", i, key->time);
-					if (key->time <= time)
+					// printf("cant find bone %s\n", name);
+					//  cant find shield, weapon, quiver
+					boneCache.push_back(nullptr);
+					continue;
+				}
+				bone *bone = has->second;
+				boneCache.push_back(bone);
+			}
+			else
+			{
+				const bool interpolate = true;
+				bone *bone = boneCache[cache++];
+				if (bone == nullptr)
+					continue;
+				auto tip = (NiTransformInterpolator *)nif_get_block(model, cbp->interpolator);
+				auto tdp = (NiTransformData *)nif_get_block(model, tip->B->data);
+				if (tip == NULL || tdp == NULL)
+					continue;
+				vec4 ro = reinterpret_vec4(&tip->transform->rotation);
+				quat qro = quat(0, 0, 0, 0); // uninitializing this meant hard to debug invisibility bugs
+				int num = tdp->A->num_rotation_keys;
+				if (num)
+				{
+					for (int i = num - 1; i >= 0; i--)
 					{
-						ro = reinterpret_vec4(&key->value);
-						qro = quat(ro[0], ro[1], ro[2], ro[3]);
-
-						if (interpolate)
+						auto key = &tdp->quaternion_keys[i];
+						// printf("qk %i time %f\n", i, key->time);
+						if (key->time <= time)
 						{
-							int j = i + 1;
-							if (j >= num)
-								break;
-							auto key2 = &tdp->quaternion_keys[j];
-							vec4 rn = reinterpret_vec4(&key2->value);
+							ro = reinterpret_vec4(&key->value);
+							qro = quat(ro[0], ro[1], ro[2], ro[3]);
 
-							float span = key2->time - key->time;
-							float ratio = (time - key->time) / span;
-							quat quat1 = quat(ro[0], ro[1], ro[2], ro[3]);
-							quat quat2 = quat(rn[0], rn[1], rn[2], rn[3]);
+							if (interpolate)
+							{
+								int j = i + 1;
+								if (j >= num)
+									break;
+								auto key2 = &tdp->quaternion_keys[j];
+								vec4 rn = reinterpret_vec4(&key2->value);
 
-							//printf("r ratio %.2f\n", ratio);
-							//assertc(ratio >= 0 || ratio <= 1);
+								float span = key2->time - key->time;
+								float ratio = (time - key->time) / span;
+								quat quat1 = quat(ro[0], ro[1], ro[2], ro[3]);
+								quat quat2 = quat(rn[0], rn[1], rn[2], rn[3]);
 
-							qro = glm::slerp(quat1, quat2, ratio);
+								// printf("r ratio %.2f\n", ratio);
+								// assertc(ratio >= 0 || ratio <= 1);
+
+								qro = glm::slerp(quat1, quat2, ratio);
+							}
+							break;
 						}
-						break;
 					}
 				}
-			}
-			// else if (num == 1)
-			// 	ro = *cast_vec_4((float *)(&tdp->quaternion_keys[0].value));
+				// else if (num == 1)
+				// 	ro = *cast_vec_4((float *)(&tdp->quaternion_keys[0].value));
 
-			vec3 tr = reinterpret_vec3(&tip->transform->translation);
-			num = tdp->translations->num_keys;
-			if (num)
-			{
-				for (int i = num - 1; i >= 0; i--)
+				vec3 tr = reinterpret_vec3(&tip->transform->translation);
+				num = tdp->translations->num_keys;
+				if (num)
 				{
-					auto key = &tdp->translation_keys[i];
-					if (key->time <= time)
+					for (int i = num - 1; i >= 0; i--)
 					{
-						// printf("tr time %f\n", key->time);
-						tr = reinterpret_vec3(&key->value);
-
-						if (interpolate)
+						auto key = &tdp->translation_keys[i];
+						if (key->time <= time)
 						{
-							int j = i + 1;
-							if (j >= num)
-								break;
-							auto key2 = &tdp->translation_keys[j];
-							vec3 tr2 = reinterpret_vec3(&key2->value);
+							// printf("tr time %f\n", key->time);
+							tr = reinterpret_vec3(&key->value);
 
-							float span = key2->time - key->time;
-							float ratio = (time - key->time) / span;
+							if (interpolate)
+							{
+								int j = i + 1;
+								if (j >= num)
+									break;
+								auto key2 = &tdp->translation_keys[j];
+								vec3 tr2 = reinterpret_vec3(&key2->value);
 
-							//assertc(ratio >= 0 || ratio <= 1);
+								float span = key2->time - key->time;
+								float ratio = (time - key->time) / span;
 
-							//ratio = (ratio > 1)? 1 : (ratio < 0)? 0 : ratio;
-							//printf("t ratio %.2f time %.2f\n ", ratio, key->time);
-							tr = glm::mix(tr, tr2, ratio);
+								// assertc(ratio >= 0 || ratio <= 1);
+
+								// ratio = (ratio > 1)? 1 : (ratio < 0)? 0 : ratio;
+								// printf("t ratio %.2f time %.2f\n ", ratio, key->time);
+								tr = glm::mix(tr, tr2, ratio);
+							}
+							break;
 						}
-						break;
 					}
 				}
+
+				ratio += delta / 20;
+				ratio = ratio <= 0 ? 0 : ratio >= 1 ? 1
+													: ratio;
+				quat q = slerp(bone->frozenQ, qro, ratio);
+				vec4 v = mix(bone->frozenV, vec4(tr, 1), ratio);
+				mat4 matrix = mat4_cast(q);
+				matrix[3] = v;
+				bone->matrix = matrix;
 			}
-			//quat qu = quat(ro[0], ro[1], ro[2], ro[3]);
-
-			mat4 matrix = mat4_cast(qro);
-
-			matrix[3] = vec4(tr, 1);
-
-			bone->mod = matrix;
-			bone->matrix = matrix;
-			bone->diff = inverse(matrix) * bone->rest;
-			//if (i < 0)
-			//	bone->UpdateSideways();
 		}
 	}
 

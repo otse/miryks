@@ -315,6 +315,22 @@ struct vertex_data_4_t
 	} bone_indices;
 };
 
+struct vertex_data_5_t
+{
+	struct { unsigned short u, v; } uv;
+	Vec3b normal;
+	unsigned char bitangent_y;
+	Vec3b tangent;
+	unsigned char bitangent_z;
+	Vec4b colors;
+	struct {
+		unsigned short a, b, c, d;
+	} bone_weights;
+	struct {
+		unsigned char a, b, c, d;
+	} bone_indices;
+};
+
 #define SkinPartition struct skin_partition_t
 struct skin_partition_t
 {

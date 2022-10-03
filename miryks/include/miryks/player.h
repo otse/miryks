@@ -4,16 +4,25 @@
 
 namespace miryks
 {
-    class Player : public Char
+    class Player
 	{
 	public:
-		bool idle = false;
-		Player();
-		ViewerCamera *thirdPersonCamera;
+		record race;
+		skeleton *skel;
+		animation *anim;
+		Group *head;
+		GroupDrawer *groupDrawer;
+		SkinnedMesh *body, *body2, *hands;
 		bool thirdPerson;
+		bool idle;
 		float yaw;
-		void toggleView();
+		Player();
 		void Step();
 		void Move();
+		void SetAnim(const char *);
+		void Place(const char *);
+		void Toggle();
+
+		ViewerCamera *thirdPersonCamera;
 	};
 }

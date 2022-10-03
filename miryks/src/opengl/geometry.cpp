@@ -4,6 +4,8 @@
 #include <opengl/camera.h>
 #include <opengl/material.h>
 
+#include <glm/gtx/normal.hpp>
+
 int Geometry::num = 0;
 
 // useful for aabbs and cubic axes
@@ -65,8 +67,9 @@ void Geometry::Clear(int num_vertices, int num_elements)
 
 void Geometry::Draw(const mat4 &model)
 {
-	if (!created) {
-		//printf("geometry draw but not setup properly\n");
+	if (!created)
+	{
+		// printf("geometry draw but not setup properly\n");
 		return;
 	}
 
@@ -111,7 +114,8 @@ void Geometry::SetupMesh()
 	glBindVertexArray(vao);
 
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	if (vertices.size()) {
+	if (vertices.size())
+	{
 		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), &vertices[0], GL_STATIC_DRAW);
 	}
 
@@ -152,4 +156,17 @@ void Geometry::SetupMesh()
 	glBindVertexArray(0);
 
 	created = true;
+}
+
+void Geometry::recomputeTangents()
+{
+	for (int i = 0; i < elements.size(); i += 3)
+	{
+		auto &v0 = vertices[elements[i]];
+		auto &v1 = vertices[elements[i + 1]];
+		auto &v2 = vertices[elements[i + 2]];
+		v0.normal = glm::triangleNormal(v0.position, v1.position, v2.position);
+		v1.normal = glm::triangleNormal(v0.position, v1.position, v2.position);
+		v2.normal = glm::triangleNormal(v0.position, v1.position, v2.position);
+	}
 }

@@ -153,6 +153,10 @@ namespace miryks
 			geometry->vertices[i].normal = bytestofloat((unsigned char *)&vertex_data->normal);
 			geometry->material->tangents = true;
 			geometry->vertices[i].tangent = bytestofloat((unsigned char *)&vertex_data->tangent);
+			geometry->vertices[i].bitangent = vec3(
+				vertex_data->bitangent_x,
+				vertex_data->bitangent_y,
+				vertex_data->bitangent_z);
 			auto c = vertex_data->vertex_colors;
 			geometry->vertices[i].color = vec4(c.x / 255.f, c.y / 255.f, c.z / 255.f, c.w / 255.f);
 		}
@@ -167,6 +171,10 @@ namespace miryks
 			geometry->vertices[i].normal = bytestofloat((unsigned char *)&vertex_data->normal);
 			geometry->material->tangents = true;
 			geometry->vertices[i].tangent = bytestofloat((unsigned char *)&vertex_data->tangent);
+			geometry->vertices[i].bitangent = vec3(
+				vertex_data->bitangent_x,
+				vertex_data->bitangent_y,
+				vertex_data->bitangent_z);
 		}
 		}
 		geometry->SetupMesh();

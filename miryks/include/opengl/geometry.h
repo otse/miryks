@@ -12,8 +12,8 @@ struct Vertex
 	vec2 uv;
 	vec3 normal;
 	vec4 color = vec4(1, 1, 1, 1);
-	vec3 tangent;
-	vec3 bitangent;
+	vec3 tangent = vec3(1, 1, 1);
+	vec3 bitangent = vec3(1, 1, 1);
 	vec4 skin_index;
 	vec4 skin_weight;
 };
@@ -29,6 +29,7 @@ struct Geometry
 	Group *parent = nullptr;
 	Material *material = nullptr;
 	//std::vector<texture_t> textures;
+	void recomputeTangents();
 	std::vector<Vertex> vertices;
 	std::vector<GLuint> elements;
 	Geometry();

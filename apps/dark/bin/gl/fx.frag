@@ -224,7 +224,7 @@ void main()
 
 		//vec3 fade_normal = normalize(vec3(fade_x, 0, 0) + vec3(0, fade_y, 0));
 
-		float dist = clamp(vViewPosition.z / 300.0, 0.0, 1.0);
+		float dist = clamp(vViewPosition.z / 100.0, 0.0, 1.0);
 
 		fades *= dist;
 		

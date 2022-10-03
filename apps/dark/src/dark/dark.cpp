@@ -96,7 +96,7 @@ namespace dark
 		}
 	}
 
-	Monster *someDraugr = nullptr;
+	Draugr *someDraugr = nullptr;
 	Monster *meanSkelly = nullptr;
 }
 
@@ -114,27 +114,26 @@ int main()
 	init_dark();
 	load_yagrum();
 	renderer_init();
-	view_bucket_in_place();
+	//view_bucket_in_place();
 	yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
 	// refs_init();
 	// load_world_space();
 #if 1
 	load_interior("GloomGen", true);
-
 	place_at_level_start();
-
 	/*
 	draugrskeleton
 	draugrmale01 - 07
 	*/
-	someDraugr = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrmale01.nif");
-	someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
+	someDraugr = new Draugr("actors\\draugr\\character assets\\draugrmale01.nif");
+	//someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	// someDraugr->anim->keyf->repeats = false;
+	someDraugr->wearHelmet = true;
+	someDraugr->Setup();
 	someDraugr->Place("gloomgendraugr");
-
 	// someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	meanSkelly = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
-	meanSkelly->SetAnim("anims/draugr/alcove_wake.kf");
+	//meanSkelly->SetAnim("anims/draugr/alcove_wake.kf");
 	meanSkelly->Place("gloomgenskeleton");
 	// someHuman = new Char();
 	// someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");

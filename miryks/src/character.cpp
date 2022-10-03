@@ -12,6 +12,7 @@ namespace miryks {
 		race = dig_race(raceId, 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
 		hat = nullptr;
+		hair = nullptr;
 		head = nullptr;
 		body = nullptr;
 		hands = nullptr;
@@ -20,12 +21,14 @@ namespace miryks {
 		if (beggar)
 		{
 			//hat = new SkinnedMesh("clothes\\beggarclothes\\hatm_0.nif");
+			//hair = new SkinnedMesh("actors\\character\\character assets\\hair\\male\\hairline07.nif");
 			head = new SkinnedMesh("actors\\character\\character assets\\malehead.nif");
 			body = new SkinnedMesh("clothes\\prisoner\\prisonerclothes_0.nif");
 			hands = new SkinnedMesh("clothes\\prisoner\\prisonercuffs_0.nif");
 			feet = new SkinnedMesh("clothes\\prisoner\\prisonershoes_0.nif");
 		}
 		//hat->skel = skel;
+		//hair->skel = skel;
 		head->skel = skel;
 		body->skel = skel;
 		hands->skel = skel;
@@ -35,9 +38,15 @@ namespace miryks {
 			//body = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greyboardrobe_0.nif");
 			//feet = new BodyPart("ImperialRace", "clothes\\graybeardrobe\\greybeardboots_0.nif");
 		*/
+		//head->groupDrawer->matrix = glm::scale(head->groupDrawer->matrix, vec3(1, 1, 1));
+		head->groupDrawer->matrix = glm::translate(head->groupDrawer->matrix, vec3(0, 0, -2));
+		head->groupDrawer->UpdateSideways();
+
 		groupDrawer = new GroupDrawer(nullptr, mat4(1.0));
 		if (hat)
 			groupDrawer->Add(hat->groupDrawer);
+		if (hair)
+			groupDrawer->Add(hair->groupDrawer);
 		if (head)
 			groupDrawer->Add(head->groupDrawer);
 		if (body)
@@ -85,6 +94,8 @@ namespace miryks {
 			skel->Step();
 		if (hat)
 			hat->Step();
+		if (hair)
+			hair->Step();
 		if (head)
 			head->Step();
 		if (body)
