@@ -129,6 +129,7 @@ int main()
 	//someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
 	// someDraugr->anim->keyf->repeats = false;
 	someDraugr->wearHelmet = true;
+	someDraugr->alcove = true;
 	someDraugr->Setup();
 	someDraugr->Place("gloomgendraugr");
 	// someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");

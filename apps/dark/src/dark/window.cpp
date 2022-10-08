@@ -20,6 +20,7 @@ static bool cursorShowing = false;
 static bool hideOverlays = true;
 static bool f10 = false;
 static bool useFbo = false;
+static bool wireframe = false;
 
 void setupImgui();
 
@@ -247,6 +248,7 @@ static void capture_keys()
 		  {GLFW_KEY_F4, "f4"},
 		  {GLFW_KEY_F5, "f5"},
 		  {GLFW_KEY_F6, "f6"},
+		  {GLFW_KEY_F7, "f7"},
 		  {GLFW_KEY_F10, "f10"},
 		  {GLFW_KEY_W, "w"},
 		  {GLFW_KEY_A, "a"},
@@ -324,6 +326,18 @@ static void handle_my_keys()
 		hotswap_plugin_and_dungeon();
 	else if (pressing_key("f6"))
 		reload_shaders();
+	else if (pressing_key("f7"))
+	{
+		wireframe = !wireframe;
+		if (wireframe)
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		}
+		else
+		{
+			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+	}
 	else if (pressing_key("f10"))
 		f10 = !f10;
 	else if (pressing_key("e"))
@@ -398,7 +412,7 @@ void window_while_test()
 
 		if (someDraugr)
 			someDraugr->Step();
-		
+
 		if (meanSkelly)
 			meanSkelly->Step();
 

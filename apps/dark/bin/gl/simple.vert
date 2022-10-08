@@ -123,6 +123,9 @@ void main()
 
 	vec3 transformed = vec3( Position );
 
+	// yay this fixes messed up skinned normals
+	transformedNormal = normalMatrix * objectNormal;
+	vNormal = transformedNormal;
 
 	#ifndef DONT_USE_SKINNING
 

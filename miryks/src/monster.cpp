@@ -49,7 +49,7 @@ namespace miryks
 	{
 		if (skel)
 			skel->Step();
-		//if (helmet2)
+		// if (helmet2)
 		//	helmet2->Step();
 		if (modelSkinned)
 			modelSkinned->Step(skel);
@@ -61,16 +61,42 @@ namespace miryks
 	Draugr::Draugr(const char *path) : Monster("DraugrRace", path)
 	{
 		helmet = nullptr;
+		alcove = false;
+		wake = false;
+		sleeping = 0;
 		wearHelmet = false;
 	}
 
 	void Draugr::Setup()
 	{
-		SetAnim("anims/draugr/alcove_wake.kf");
-		animation *idle = new animation(get_keyframes("anims/draugr/_h2hidle.kf"));
-		idle->loop = true;
-		idle->skel = skel;
-		anim->next = idle;
+		keyframes *keyf;
+		if (alcove)
+		{
+			keyf = get_keyframes("anims/draugr/alcove_idle.kf");
+			alcove_idle = new animation(keyf);
+			alcove_idle->skel = skel;
+			alcove_idle->loop = true;
+			skel->anim = alcove_idle;
+			keyf = get_keyframes("anims/draugr/alcove_wake.kf");
+			animation *alcove_wake = new animation(keyf);
+			alcove_wake->skel = skel;
+			alcove_wake->ratio = 1;
+			alcove_wake->loop = false;
+			alcove_idle->next = alcove_wake;
+			keyf = get_keyframes("anims/draugr/idle.kf");
+			animation *idle = new animation(keyf);
+			idle->skel = skel;
+			idle->loop = true;
+			alcove_wake->next = idle;
+		}
+		else
+		{
+			keyf = get_keyframes("anims/draugr/_h2hidle.kf");
+			animation *idle = new animation(keyf);
+			idle->skel = skel;
+			idle->loop = true;
+			skel->anim = idle;
+		}
 		if (wearHelmet)
 		{
 			helmet = new SkinnedMesh("actors\\draugr\\character assets\\helmet03.nif");
@@ -84,6 +110,18 @@ namespace miryks
 		Monster::Step();
 		if (helmet)
 			helmet->Step();
+		if (alcove)
+		{
+			if (sleeping < 1)
+			{
+				sleeping += delta / 5;
+			}
+			else if (!wake)
+			{
+				alcove_idle->loop = false;
+				wake = true;
+			}
+		}
 	}
 
 } // namespace dark

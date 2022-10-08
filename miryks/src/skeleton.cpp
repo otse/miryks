@@ -139,15 +139,17 @@ namespace miryks
 			time += delta;
 
 		if (time >= keyf->controllerSequence->C->stop_time)
+		{
 			if (loop)
 				time -= keyf->controllerSequence->C->stop_time;
 			else if (next)
 			{
 				skel->anim = next;
 				skel->SetFreeze();
-				// delete this;
-				// return;
+				delete this;
+				return;
 			}
+		}
 
 		if (first)
 			SimpleInterpolated();
@@ -169,6 +171,8 @@ namespace miryks
 
 	void animation::SimpleInterpolated()
 	{
+		ratio += delta * 3; // one third of a second
+		ratio = ratio <= 0 ? 0 : ratio >= 1 ? 1 : ratio;
 		int cache = 0;
 		nif *model = keyf->ni;
 		// controlled block pointer
@@ -274,9 +278,6 @@ namespace miryks
 					}
 				}
 
-				ratio += delta / 20;
-				ratio = ratio <= 0 ? 0 : ratio >= 1 ? 1
-													: ratio;
 				quat q = slerp(bone->frozenQ, qro, ratio);
 				vec4 v = mix(bone->frozenV, vec4(tr, 1), ratio);
 				mat4 matrix = mat4_cast(q);

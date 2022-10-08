@@ -24,7 +24,11 @@ namespace miryks
 	class Draugr : public Monster
 	{
 	public:
+		animation *alcove_idle;
 		SkinnedMesh *helmet;
+		float sleeping;
+		bool alcove;
+		bool wake;
 		bool wearHelmet;
 		Draugr(const char *);
 		void Setup();
