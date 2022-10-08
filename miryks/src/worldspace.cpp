@@ -29,7 +29,7 @@ namespace miryks
 			if (!this->is_type("LAND"))
 				return false;
 			printf("land iter\n");
-			land *lan = new land(*this);
+			land *lan = new land(*this, rhs.cell);
 			//lan->exterior = rhs.cell;
 			return false;
 		}
@@ -45,9 +45,9 @@ namespace miryks
 		exterior_iter factory;
 		factory.ws = this;
 		type <= factory;
+
 		sceneDef->ambient = vec3(127.f / 255.f);
 		personCam->pos = vec3(0, 0, -2048.0);
-
 		//make();
 	}
 

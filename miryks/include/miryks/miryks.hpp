@@ -674,10 +674,10 @@ namespace miryks
 	class land : public record
 	{
 	public:
-		exterior *exterior;
+		exterior *exte;
 		Group *group;
 		GroupDrawer *groupDrawer;
-		land(record land);
+		land(record land, exterior *exte);
 	};
 }
 

@@ -17,7 +17,7 @@ namespace miryks
 {
 	struct VHGT
 	{
-		int32_t offset;
+		float offset;
 		char bytes[1089];
 		char unknown[3];
 		int end[];
@@ -44,10 +44,14 @@ namespace miryks
 		char vertex_color[1089][3];
 	};
 
-	land::land(record land) : record(land)
+	struct DATA
 	{
-		exterior = nullptr;
+		float x;
+	};
 
+	land::land(record land, exterior *exte) : record(land), exte(exte)
+	{
+		auto datah = data<DATA *>("DATA");
 		auto vhgt = data<VHGT *>("VHGT");
 		auto atxt = data<ATXT *>("ATXT");
 		auto btxt = data<BTXT *>("BTXT");
@@ -79,7 +83,7 @@ namespace miryks
 		geometry->Clear(grid * grid, 1);
 
 		float heightmap[33][33] = {{0}};
-		float offset = ((float *)vhgt->bytes)[0] * 8;
+		float offset = vhgt->offset * 8;
 		printf("land offset %f\n", offset);
 		float row_offset = 0;
 
@@ -99,8 +103,6 @@ namespace miryks
 			heightmap[column][row] = offset + row_offset;
 		}
 
-		constexpr float breadth = 4096.f;
-		constexpr float div = breadth / fgrid;
 		const float center = 0;
 
 		const float trepeat = 33 / 2;
@@ -132,95 +134,112 @@ namespace miryks
 
 		// create 8 piece triangle inward pointing land square
 		float square[8][3][2] = {{{0}}};
-		square[0][0][0] = 0; // lt
-		square[0][0][1] = 0; // lt
-		square[0][1][0] = 1; // rt
-		square[0][1][1] = 0; // rt
-		square[0][2][0] = 1; // br
-		square[0][2][1] = 1; // br
+		square[0][0][0] = 0;
+		square[0][0][1] = 0;
+		square[0][1][0] = 1;
+		square[0][1][1] = 0;
+		square[0][2][0] = 1;
+		square[0][2][1] = 1;
 
-		square[1][0][0] = 0; // lt
-		square[1][0][1] = 0; // lt
-		square[1][1][0] = 1; // lb
-		square[1][1][1] = 1; // lb
-		square[1][2][0] = 0; // br
-		square[1][2][1] = 1; // br
+		square[1][0][0] = 0;
+		square[1][0][1] = 0;
+		square[1][1][0] = 1;
+		square[1][1][1] = 1;
+		square[1][2][0] = 0;
+		square[1][2][1] = 1;
 
-		square[2][0][0] = 0; // lt
-		square[2][0][1] = 1; // lt
-		square[2][1][0] = 1; // rt
-		square[2][1][1] = 1; // rt
-		square[2][2][0] = 0; // bl
-		square[2][2][1] = 2; // bl
+		square[2][0][0] = 0;
+		square[2][0][1] = 1;
+		square[2][1][0] = 1;
+		square[2][1][1] = 1;
+		square[2][2][0] = 0;
+		square[2][2][1] = 2;
 
-		square[3][0][0] = 0; // rt
-		square[3][0][1] = 2; // rt
-		square[3][1][0] = 1; // lb
-		square[3][1][1] = 1; // lb
-		square[3][2][0] = 1; // br
-		square[3][2][1] = 2; // br
+		square[3][0][0] = 0;
+		square[3][0][1] = 2;
+		square[3][1][0] = 1;
+		square[3][1][1] = 1;
+		square[3][2][0] = 1;
+		square[3][2][1] = 2;
 
-		square[4][0][0] = 1; // lt
-		square[4][0][1] = 2; // lt
-		square[4][1][0] = 1; // lb
-		square[4][1][1] = 1; // lb
-		square[4][2][0] = 2; // rb
-		square[4][2][1] = 2; // rb
+		square[4][0][0] = 1;
+		square[4][0][1] = 2;
+		square[4][1][0] = 1;
+		square[4][1][1] = 1;
+		square[4][2][0] = 2;
+		square[4][2][1] = 2;
 
-		square[5][0][0] = 1; // lt
-		square[5][0][1] = 1; // lt
-		square[5][1][0] = 2; // rt
-		square[5][1][1] = 1; // rt
-		square[5][2][0] = 2; // rb
-		square[5][2][1] = 2; // rb
+		square[5][0][0] = 1;
+		square[5][0][1] = 1;
+		square[5][1][0] = 2;
+		square[5][1][1] = 1;
+		square[5][2][0] = 2;
+		square[5][2][1] = 2;
 
-		square[6][0][0] = 2; // rt
-		square[6][0][1] = 1; // rt
-		square[6][1][0] = 1; // lb
-		square[6][1][1] = 1; // lb
-		square[6][2][0] = 2; // rb
-		square[6][2][1] = 0; // rb
+		square[6][0][0] = 2;
+		square[6][0][1] = 1;
+		square[6][1][0] = 1;
+		square[6][1][1] = 1;
+		square[6][2][0] = 2;
+		square[6][2][1] = 0;
 
-		square[7][0][0] = 1; // lt
-		square[7][0][1] = 0; // lt
-		square[7][1][0] = 2; // rt
-		square[7][1][1] = 0; // rt
-		square[7][2][0] = 1; // lb
-		square[7][2][1] = 1; // lb
+		square[7][0][0] = 1;
+		square[7][0][1] = 0;
+		square[7][1][0] = 2;
+		square[7][1][1] = 0;
+		square[7][2][0] = 1;
+		square[7][2][1] = 1;
 
 		float colors[8][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}};
 
-		printf(" heightmap 0 = %f\n", heightmap[0][0] - 2048.0);
-		geometry->Clear(8 * 3, 8 * 3);
+		//printf(" heightmap 0 = %f\n", heightmap[0][0] - 2048.0);
+		float gridsize = 32 * 32;
+		geometry->Clear(8 * 3 * gridsize, 8 * 3 * gridsize);
+
+		constexpr float breadth = 4096.f;
+		constexpr float div = breadth / 32.0F;
+
+		printf(" exte %i\n", exte);
+		float X = breadth * exte->xclc->x;
+		float Y = breadth * exte->xclc->y;
+		printf(" X Y %f %f\n", X, Y);
 
 		int vertex = 0;
-		for (int triangle = 0; triangle < 8; triangle++)
+		for (int y = 0; y < 32; y+=2)
 		{
-			printf("triangle %i\n", triangle);
-			Vertex &a = geometry->vertices[vertex + 0];
-			Vertex &b = geometry->vertices[vertex + 1];
-			Vertex &c = geometry->vertices[vertex + 2];
-			float x1 = square[triangle][0][0] * div;
-			float y1 = square[triangle][0][1] * div;
-			float x2 = square[triangle][1][0] * div;
-			float y2 = square[triangle][1][1] * div;
-			float x3 = square[triangle][2][0] * div;
-			float y3 = square[triangle][2][1] * div;
-			a.position = vec3(x1, y1, -2048);
-			b.position = vec3(x2, y2, -2048);
-			c.position = vec3(x3, y3, -2048);
-			a.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
-			b.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
-			c.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
-			a.uv = vec2(x1, y1);
-			b.uv = vec2(x2, y2);
-			c.uv = vec2(x3, y3);
-			geometry->elements.insert(
-				geometry->elements.end(),
-				{(unsigned int)vertex + 0,
-				 (unsigned int)vertex + 1,
-				 (unsigned int)vertex + 2});
-			vertex += 3;
+			for (int x = 0; x < 32; x+=2)
+			{
+				for (int triangle = 0; triangle < 8; triangle++)
+				{
+					float x_ = x;
+					float y_ = y;
+					//printf("triangle %i\n", triangle);
+					Vertex &a = geometry->vertices[vertex + 0];
+					Vertex &b = geometry->vertices[vertex + 1];
+					Vertex &c = geometry->vertices[vertex + 2];
+					float x1 = square[triangle][0][0];
+					float y1 = square[triangle][0][1];
+					float x2 = square[triangle][1][0];
+					float y2 = square[triangle][1][1];
+					float x3 = square[triangle][2][0];
+					float y3 = square[triangle][2][1];
+					a.position = vec3((x1 + x) * div + X, (y1 + y) * div + Y, heightmap[(int)x1+x][(int)y1+y]);
+					b.position = vec3((x2 + x) * div + X, (y2 + y) * div + Y, heightmap[(int)x2+x][(int)y2+y]);
+					c.position = vec3((x3 + x) * div + X, (y3 + y) * div + Y, heightmap[(int)x3+x][(int)y3+y]);
+					// a.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
+					// b.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
+					// c.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
+					a.uv = vec2(x1, y1);
+					b.uv = vec2(x2, y2);
+					c.uv = vec2(x3, y3);
+					geometry->elements.insert(
+						geometry->elements.end(),
+						{(unsigned int)vertex + 0,
+						 (unsigned int)vertex + 1,
+						 (unsigned int)vertex + 2});
+					vertex += 3;
+				}
+			}
 		}
 
 #if 0
