@@ -23,6 +23,16 @@ namespace miryks
 		int end[];
 	};
 
+	struct VNML
+	{
+		char bytes[3267];
+	};
+
+	struct VCLR
+	{
+		char bytes[1089];
+	};
+
 	struct ATXT
 	{
 		unsigned int formid;
@@ -39,11 +49,6 @@ namespace miryks
 		uint16_t layers;
 	};
 
-	struct VCLR
-	{
-		char vertex_color[1089][3];
-	};
-
 	struct DATA
 	{
 		float x;
@@ -53,6 +58,7 @@ namespace miryks
 	{
 		auto datah = data<DATA *>("DATA");
 		auto vhgt = data<VHGT *>("VHGT");
+		auto vnml = data<VNML *>("VNML");
 		auto atxt = data<ATXT *>("ATXT");
 		auto btxt = data<BTXT *>("BTXT");
 		auto vclr = data<VCLR *>("VCLR");
@@ -83,9 +89,39 @@ namespace miryks
 		geometry->Clear(grid * grid, 1);
 
 		float heightmap[33][33] = {{0}};
+		vec3 normals[33][33] = {{vec3(0.f)}};
+		vec3 colors[33][33] = {{vec3(0.f)}};
 		float offset = vhgt->offset * 8;
 		printf("land offset %f\n", offset);
 		float row_offset = 0;
+
+		if (vnml)
+		{
+			for (int i = 0; i < 1089; i++)
+			{
+				int row = i / 33;
+				int column = i % 33;
+				int j = i * 3;
+				float a = vnml->bytes[j];
+				float b = vnml->bytes[j + 1];
+				float c = vnml->bytes[j + 2];
+				normals[column][row] = vec3(a, b, c);
+			}
+		}
+
+		if (vclr)
+		{
+			for (int i = 0; i < 1089; i++)
+			{
+				int row = i / 33;
+				int column = i % 33;
+				int j = i * 3;
+				float a = vclr->bytes[j];
+				float b = vclr->bytes[j + 1];
+				float c = vclr->bytes[j + 2];
+				colors[column][row] = vec3(a, b, c);
+			}
+		}
 
 		for (int i = 0; i < 1089; i++)
 		{
@@ -190,9 +226,9 @@ namespace miryks
 		square[7][2][0] = 1;
 		square[7][2][1] = 1;
 
-		float colors[8][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}};
+		float colors2[8][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}, {0, 0, 1}, {1, 0, 0}, {0, 1, 0}};
 
-		//printf(" heightmap 0 = %f\n", heightmap[0][0] - 2048.0);
+		// printf(" heightmap 0 = %f\n", heightmap[0][0] - 2048.0);
 		float gridsize = 32 * 32;
 		geometry->Clear(8 * 3 * gridsize, 8 * 3 * gridsize);
 
@@ -205,15 +241,15 @@ namespace miryks
 		printf(" X Y %f %f\n", X, Y);
 
 		int vertex = 0;
-		for (int y = 0; y < 32; y+=2)
+		for (int y = 0; y < 32; y += 2)
 		{
-			for (int x = 0; x < 32; x+=2)
+			for (int x = 0; x < 32; x += 2)
 			{
 				for (int triangle = 0; triangle < 8; triangle++)
 				{
 					float x_ = x;
 					float y_ = y;
-					//printf("triangle %i\n", triangle);
+					// printf("triangle %i\n", triangle);
 					Vertex &a = geometry->vertices[vertex + 0];
 					Vertex &b = geometry->vertices[vertex + 1];
 					Vertex &c = geometry->vertices[vertex + 2];
@@ -223,15 +259,25 @@ namespace miryks
 					float y2 = square[triangle][1][1];
 					float x3 = square[triangle][2][0];
 					float y3 = square[triangle][2][1];
-					a.position = vec3((x1 + x) * div + X, (y1 + y) * div + Y, heightmap[(int)x1+x][(int)y1+y]);
-					b.position = vec3((x2 + x) * div + X, (y2 + y) * div + Y, heightmap[(int)x2+x][(int)y2+y]);
-					c.position = vec3((x3 + x) * div + X, (y3 + y) * div + Y, heightmap[(int)x3+x][(int)y3+y]);
-					// a.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
-					// b.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
-					// c.color = vec4(colors[triangle][0], colors[triangle][1], colors[triangle][2], 1);
+					a.position = vec3((x1 + x) * div + X, (y1 + y) * div + Y, heightmap[(int)x1 + x][(int)y1 + y]);
+					b.position = vec3((x2 + x) * div + X, (y2 + y) * div + Y, heightmap[(int)x2 + x][(int)y2 + y]);
+					c.position = vec3((x3 + x) * div + X, (y3 + y) * div + Y, heightmap[(int)x3 + x][(int)y3 + y]);
 					a.uv = vec2(x1, y1);
 					b.uv = vec2(x2, y2);
 					c.uv = vec2(x3, y3);
+					if (vclr)
+					{
+						a.color = vec4(colors[(int)x1 + x][(int)y1 + y], 1.f);
+						b.color = vec4(colors[(int)x2 + x][(int)y2 + y], 1.f);
+						c.color = vec4(colors[(int)x3 + x][(int)y3 + y], 1.f);
+					}
+					if (vnml)
+					{
+						a.normal = normals[(int)x1 + x][(int)y1 + y];
+						b.normal = normals[(int)x2 + x][(int)y2 + y];
+						c.normal = normals[(int)x3 + x][(int)y3 + y];
+					}
+					//printf("normal\n %f\n %f\n %f\n", a.normal, b.normal, c.normal);
 					geometry->elements.insert(
 						geometry->elements.end(),
 						{(unsigned int)vertex + 0,

@@ -21,6 +21,35 @@ namespace miryks
 		}
 	};
 
+	struct careful_wrld_parser : unknown_iter
+	{
+		record last_cell;
+		worldspace *ws;
+		bool go_sideways(careful_wrld_parser &rhs)
+		{
+			if (is_record())
+			{
+				record r = as_record();
+				rhs.last_cell = r;
+				//printf("this must be a CELL %.4s\n", (char *)&r.rhed().sgn);
+			}
+			if (is_grup())
+			{
+				grup g = as_grup();
+				if (g.ghed().group_type == cell_children)
+				{
+					recordgrup rg;
+					rg.r = rhs.last_cell.r;
+					rg.g = g.g;
+					exterior *cell = new exterior(rg);
+					rhs.ws->exteriors.push_back(cell);
+				}
+				//printf("this is a grup of type %i\n", g.ghed().group_type);
+			}
+			return false;
+		}
+	};
+
 	struct land_iter : record_iter
 	{
 		exterior *cell = nullptr;
@@ -30,7 +59,7 @@ namespace miryks
 				return false;
 			printf("land iter\n");
 			land *lan = new land(*this, rhs.cell);
-			//lan->exterior = rhs.cell;
+			// lan->exterior = rhs.cell;
 			return false;
 		}
 	};
@@ -42,19 +71,21 @@ namespace miryks
 		grup_iter<4,
 		grup_iter<5>>>();
 		type = childs;
-		exterior_iter factory;
+		// exterior_iter factory;
+		careful_wrld_parser factory;
 		factory.ws = this;
+		printf("going to iter for wrld exteriors\n");
 		type <= factory;
 
 		sceneDef->ambient = vec3(127.f / 255.f);
 		personCam->pos = vec3(0, 0, -2048.0);
-		//make();
+		// make();
 	}
 
-	//void exterior::make() {
-	//}
+	// void exterior::make() {
+	// }
 
-	void exterior::make_land()
+	void exterior::first_make_land()
 	{
 		land_iter factory;
 		factory.cell = this;

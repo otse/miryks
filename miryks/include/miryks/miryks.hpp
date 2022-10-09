@@ -153,6 +153,8 @@ namespace miryks
 		if (ni)
 			return ni;
 		bsa_read(res);
+		if (!res->buf)
+			printf("res buf is 0\n");
 		ni = calloc_ni();
 		ni->path = res->path;
 		ni->buf = res->buf;
@@ -316,6 +318,10 @@ namespace miryks
 		{
 			return child<crecord *>(index++);
 		}
+		esp_dud *next_unknown()
+		{
+			return child<esp_dud *>(index++);
+		}
 	};
 
 	template <int intended_group_type = -1, typename next = passthrough>
@@ -335,6 +341,7 @@ namespace miryks
 		void operator=(const grup &rhs)
 		{
 			this->setg(rhs.g);
+			this->index = rhs.index;
 			int group_type = this->ghed().group_type;
 			assertc(
 				intended_group_type == -1 ||
@@ -352,7 +359,7 @@ namespace miryks
 
 	/* lets you use an ordinary grup as a template grup
 	 */
-	template<int Y>
+	template <int Y>
 	static inline grup_iter<Y> upcast_grup(grup &other)
 	{
 		grup_iter<Y> g;
@@ -441,6 +448,53 @@ namespace miryks
 		bool fat_arrow(recordgrup &rhs)
 		{
 			return this->record::editor_id(rhs.id);
+		}
+	};
+
+	struct unknown
+	{
+		typedef const esp_dud *dud_type;
+		dud_type rhs = nullptr;
+		unknown()
+		{
+		}
+		unknown(dud_type d)
+		{
+			set_dud(d);
+		}
+		void set_dud(dud_type d) {
+			this->rhs = d;
+		}
+		bool is_record() {
+			return this->rhs->x == 'r';
+		}
+		bool is_grup() {
+			return this->rhs->x == 'g';
+		}
+		record as_record() {
+			return record((crecord *)rhs);
+		}
+		grup as_grup() {
+			return grup((cgrup *)rhs);
+		}
+	};
+
+	struct unknown_iter : unknown
+	{
+		//const esp_dud *rhs;
+		unknown_iter()
+		{
+		}
+		unknown_iter(grup &iter) {
+			operator=(iter.next_unknown());
+		}
+		void operator=(const esp_dud *rhs)
+		{
+			this->set_dud(rhs);
+		}
+		bool fat_arrow(recordgrup &rhs)
+		{
+			return false;
 		}
 	};
 
@@ -594,6 +648,8 @@ namespace miryks
 			printf("world space: %s\n", this->editor_id());
 			childs = rg;
 			assertc(ghed().group_type == world_children);
+			unknown cell = childs.next_unknown();
+			cell.is_record() ? childs.index++ : childs.index--;
 			init();
 		}
 		void init();
@@ -661,11 +717,11 @@ namespace miryks
 			xclc = data<XCLC *>("XCLC");
 		}
 		void init();
-		void make_land();
+		void first_make_land();
 		template <typename T>
 		void make(T factory)
 		{
-			make_land();
+			first_make_land();
 			factory.cell = this;
 			iter_both_subgroups(factory);
 		}

@@ -272,6 +272,9 @@ api void esp_check_grup(GRUP grp)
 {
 	if (grp==NULL)
 		return;
+	if (grp->g == 'r') {
+		printf("not a g but an r!\n");
+	}
 	assertc(grp->g == 'g');
 	if (!grp->looped)
 		loop_grup(grp->esp, grp);
