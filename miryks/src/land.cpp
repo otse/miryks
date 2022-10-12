@@ -324,10 +324,10 @@ namespace miryks
 		// 0 = bottom left. 1 = bottom right. 2 = upper-left. 3 = upper-right
 
 		ivec2 quadrant_offsets[4] = {
-			{0, 1},
-			{1, 1},
 			{0, 0},
+			{0, 1},
 			{1, 0},
+			{1, 1},
 		};
 
 		for (int w = 0; w < 4; w++)
@@ -418,7 +418,7 @@ namespace miryks
 						b.position = vec3((tx2 + x) * div + X + half.x, (ty2 + y) * div + Y + half.y, heightmap[x2_][y2_]);
 						c.position = vec3((tx3 + x) * div + X + half.x, (ty3 + y) * div + Y + half.y, heightmap[x3_][y3_]);
 						auto get_vertex_numeral = [](int x, int y) {
-							return 289 - (y * 17) + x;
+							return 289 - (17 - (y+1) * 17) + (x);
 						};
 						;
 						set_eight_opacities(a, get_vertex_numeral(tx1 + x, ty1 + y));
