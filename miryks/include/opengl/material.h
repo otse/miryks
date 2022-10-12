@@ -46,8 +46,8 @@ struct Material
 
 	bool prepared = false;
 	void RandomColor();
-	void Ready();
-	void Use();
+	virtual void Ready();
+	virtual void Use();
 	static void Unuse(Material *, Material *);
 
 	void composeUvTransform();
@@ -57,6 +57,20 @@ struct Material
 	{
 		int sfactor, dfactor;
 	} blendFunc;
+};
+
+struct MaterialLand : Material {
+	MaterialLand();
+
+	vec2 landOffset;
+
+	vec3 ointments[1089];
+
+	Texture *map2, *map3, *map4, *map5, *map6, *map7, *map8;
+	virtual void Use();
+	static void Unuse(Material *, Material *);
+	virtual void Ready();
+
 };
 
 #endif

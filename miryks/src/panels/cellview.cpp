@@ -149,7 +149,7 @@ void overlay_cellview()
 				}
 				if (!gworldspace)
 				{
-					hooks::load_world_space("DarkWorld", true);
+					hooks::load_world_space("DarkWorld", true); // Blackreach
 				}
 			}
 			ImGui::EndTabItem();

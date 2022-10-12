@@ -421,6 +421,16 @@ namespace miryks
 		}
 	};
 
+	// unused, just use esp_get_form_id
+	struct record_formid_iter : record_iter
+	{
+		unsigned int formId;
+		bool fat_arrow(record_formid_iter &rhs)
+		{
+			return rhs.formId == this->rhed().formId;
+		}
+	};
+
 	/*struct recordgrup : record, grup {
 		recordgrup()
 		{
@@ -648,8 +658,8 @@ namespace miryks
 			printf("world space: %s\n", this->editor_id());
 			childs = rg;
 			assertc(ghed().group_type == world_children);
-			unknown cell = childs.next_unknown();
-			cell.is_record() ? childs.index++ : childs.index--;
+			unknown cell_record_or_exterior_block = childs.next_unknown();
+			cell_record_or_exterior_block.is_record() ? childs.index++ : childs.index--;
 			init();
 		}
 		void init();
@@ -699,10 +709,12 @@ namespace miryks
 
 	class land;
 
+	#pragma pack(push, 1)
 	struct XCLC
 	{
 		int32_t x, y, flags;
 	};
+	#pragma pack(pop)
 
 	class exterior : public cell
 	{
@@ -721,9 +733,12 @@ namespace miryks
 		template <typename T>
 		void make(T factory)
 		{
-			first_make_land();
-			factory.cell = this;
-			iter_both_subgroups(factory);
+			//if (xclc->x == 0 && xclc->y == 0)
+			{
+				first_make_land();
+				factory.cell = this;
+				iter_both_subgroups(factory);
+			}
 		}
 	};
 
@@ -731,7 +746,7 @@ namespace miryks
 	{
 	public:
 		exterior *exte;
-		Group *group;
+		Group *group[4];
 		GroupDrawer *groupDrawer;
 		land(record land, exterior *exte);
 	};

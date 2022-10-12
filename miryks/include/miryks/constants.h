@@ -50,8 +50,11 @@
 #define CELL STRINGIFY(CELL)
 #define LAND STRINGIFY(LAND)
 #define CLAS STRINGIFY(CLAS)
-#define GMST STRINGIFY(GMST)
 #define RACE STRINGIFY(RACE)
+
+#define GMST STRINGIFY(GMST)
+#define LTEX STRINGIFY(LTEX)
+#define TXST STRINGIFY(TXST)
 
 #define References REFR
 #define Activators ACTI
@@ -72,8 +75,11 @@
 #define Flora FLOR
 #define Cells CELL
 #define Classes CLAS
-#define GameSettings GMST
 #define Races RACE
+
+#define GameSettings GMST
+#define LandTextures LTEX
+#define TextureSets TXST
 
 // used for bitmasking dn't ask
 #define Things { "0", STAT, DOOR, FURN, BOOK, CONT, ARMO, WEAP, AMMO, MISC, ALCH, INGR, LIGH, MSTT, TREE, FLOR }

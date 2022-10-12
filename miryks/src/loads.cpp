@@ -94,6 +94,8 @@ namespace miryks
 			Mists,
 			Plants,
 			Flora,
+			LandTextures,
+			TextureSets
 		};
 		for (const char *word : things)
 			esp_check_grup(esp_top(plugin, word));

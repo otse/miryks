@@ -153,6 +153,11 @@ void Geometry::SetupMesh()
 		glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, skin_weight));
 	}
 
+	if (landscape)
+	{
+		
+	}
+
 	glBindVertexArray(0);
 
 	created = true;

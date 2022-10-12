@@ -249,6 +249,8 @@ static void capture_keys()
 		  {GLFW_KEY_F5, "f5"},
 		  {GLFW_KEY_F6, "f6"},
 		  {GLFW_KEY_F7, "f7"},
+		  {GLFW_KEY_F8, "f8"},
+		  {GLFW_KEY_F9, "f9"},
 		  {GLFW_KEY_F10, "f10"},
 		  {GLFW_KEY_W, "w"},
 		  {GLFW_KEY_A, "a"},
@@ -336,6 +338,17 @@ static void handle_my_keys()
 		else
 		{
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		}
+	}
+	else if (pressing_key("f8")) {
+		if (ginterior)
+		{
+			delete ginterior;
+			ginterior = nullptr;
+		}
+		if (!gworldspace)
+		{
+			hooks::load_world_space("DarkWorld", true); // Blackreach
 		}
 	}
 	else if (pressing_key("f10"))

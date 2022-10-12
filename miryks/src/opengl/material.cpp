@@ -93,7 +93,7 @@ void Material::Ready()
 	}
 	else
 	{
-		// printf("new shader instance of type %s, header %s\n", (*src)[0], header);
+		printf("new shader instance of type %s, header\n", (*src)[0]);
 		shader = new Shader(src);
 		shader->header = header;
 		shader->Compile();
@@ -261,4 +261,76 @@ void Material::Unuse(Material *a, Material *b)
 		glEnable(GL_CULL_FACE);
 
 	active = b;
+}
+
+MaterialLand::MaterialLand() : Material()
+{
+	map2 = map3 = map4 = map5 = map6 = map7 = map8 = nullptr;
+}
+
+void MaterialLand::Use()
+{
+	if (!prepared)
+	{
+		Ready();
+		prepared = true;
+	}
+
+	Unuse(active, this);
+
+	shader->Use();
+	shader->SetVec3("color", color);
+	shader->SetVec3("specular", specular);
+	shader->SetMat3("uvTransform", uvTransform);
+	shader->SetFloat("shininess", shininess);
+	shader->SetFloat("glossiness", glossiness);
+	//shader->SetVec3("ointments", ointments);
+
+	shader->SetVec2("landOffset", landOffset);
+
+	if (map)
+	{
+		glActiveTexture(GL_TEXTURE0 + 0);
+		glBindTexture(GL_TEXTURE_2D, map->tid);
+		shader->SetInt("map", 0);
+	}
+	if (map2)
+	{
+		glActiveTexture(GL_TEXTURE0 + 1);
+		glBindTexture(GL_TEXTURE_2D, map2->tid);
+		shader->SetInt("map2", 1);
+	}
+	if (map3)
+	{
+		glActiveTexture(GL_TEXTURE0 + 2);
+		glBindTexture(GL_TEXTURE_2D, map3->tid);
+		shader->SetInt("map3", 2);
+	}
+}
+
+void MaterialLand::Unuse(Material *a, Material *b)
+{
+	for (int i = 0; i < 5; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+}
+
+void MaterialLand::Ready()
+{
+	printf("materialLand ready ()\n");
+	
+	header = "#version 330 core\n";
+	header += "// LAND SHADER";
+	if (Shader::shaders.count(header))
+		shader = Shader::shaders[header];
+	else
+	{
+		printf("new land shader instance of type %s, header\n", (*src)[0]);
+		shader = new Shader(src);
+		shader->header = header;
+		shader->Compile();
+		Shader::shaders.emplace(header, shader);
+	}
 }
