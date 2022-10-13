@@ -268,17 +268,16 @@ void main()
 	vec3 totalEmissiveRadiance = emissive;
 
 	diffuseColor *= texture2D(map, vUv);
+	
+	diffuseColor = mix(diffuseColor, texture2D(map2, vUv), vLandscape0123[0]);
+	diffuseColor = mix(diffuseColor, texture2D(map3, vUv), vLandscape0123[1]);
+	diffuseColor = mix(diffuseColor, texture2D(map4, vUv), vLandscape0123[2]);
+	diffuseColor = mix(diffuseColor, texture2D(map5, vUv), vLandscape0123[3]);
 
-	diffuseColor += texture2D(map3, vUv) * vLandscape0123[0];
-	diffuseColor += texture2D(map4, vUv) * vLandscape0123[1];
-	diffuseColor += texture2D(map5, vUv) * vLandscape0123[2];
-	diffuseColor += texture2D(map5, vUv) * vLandscape0123[3];
-
-	diffuseColor += texture2D(map6, vUv) * vLandscape4567[0];
-	diffuseColor += texture2D(map7, vUv) * vLandscape4567[1];
-	//diffuseColor += texture2D(map8, vUv) * vLandscape4567[2];
-
-	//diffuseColor *= texture2D(map2, vUv) * vLandscape0123[0];
+	diffuseColor = mix(diffuseColor, texture2D(map6, vUv), vLandscape4567[0]);
+	diffuseColor = mix(diffuseColor, texture2D(map7, vUv), vLandscape4567[1]);
+	//diffuseColor = mix(diffuseColor, texture2D(map8, vUv), vLandscape4567[2]);
+	//diffuseColor = mix(diffuseColor, texture2D(map6, vUv), vLandscape4567[3]);
 
 	//#ifndef VERTEX_ALPHA
 	//vColor.a = 1.0;
@@ -303,6 +302,7 @@ void main()
 
 	float specularStrength = 0;//glossiness / 999;
 
+	#define DONT_USE_SPECULAR_MAP
 	#ifndef DONT_USE_SPECULAR_MAP
 
 		vec4 texelSpecular = texture2D( normalMap, vUv );

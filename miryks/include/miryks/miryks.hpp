@@ -724,7 +724,7 @@ namespace miryks
 		XCLC *xclc;
 		exterior(recordgrup rg) : cell(rg)
 		{
-			printf("exterior id %i\n", this->r->id);
+			//printf("exterior id %i\n", this->r->id);
 			land = nullptr;
 			xclc = data<XCLC *>("XCLC");
 		}

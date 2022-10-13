@@ -123,7 +123,6 @@ void Shader::SetVec4(const char *name, const vec4 &value) const { glUniform4fv(g
 void Shader::SetMat2(const char *name, const mat2 &mat) const { glUniformMatrix2fv(glGetUniformLocation(id, name), 1, GL_FALSE, &mat[0][0]); }
 void Shader::SetMat3(const char *name, const mat3 &mat) const { glUniformMatrix3fv(glGetUniformLocation(id, name), 1, GL_FALSE, &mat[0][0]); }
 void Shader::SetMat4(const char *name, const mat4 &mat) const { glUniformMatrix4fv(glGetUniformLocation(id, name), 1, GL_FALSE, &mat[0][0]); }
-void Shader::SetLayerAlpha(const char *name, float *value) const { glUniform1fv(glGetUniformLocation(id, name), 10, value); }
 
 void Shader::checkCompileErrors(GLuint shader, std::string type)
 {

@@ -30,6 +30,7 @@ namespace miryks
 		// SetAnim("anims/character/1hm_walkforward.kf");
 
 		groupDrawer = new GroupDrawer(nullptr, mat4(1.0));
+		groupDrawer->name = "Player";
 		// body2 = new SkinnedMesh("clothes\\prisoner\\prisonerclothes_0.nif");
 		body = new SkinnedMesh("actors\\character\\character assets\\1stpersonmalebody_0.nif");
 		hands = new SkinnedMesh("actors\\character\\character assets\\1stpersonmalehands_0.nif");

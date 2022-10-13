@@ -26,6 +26,7 @@ out vec4 vColor;
 out vec3 vNormal;
 out vec3 vTangent;
 out vec3 vBitangent;
+
 out vec4 vLandscape0123;
 out vec4 vLandscape4567;
 

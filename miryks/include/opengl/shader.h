@@ -48,7 +48,6 @@ struct Shader
 	void SetMat2(const char *, const mat2 &) const;
 	void SetMat3(const char *, const mat3 &) const;
 	void SetMat4(const char *, const mat4 &) const;
-	void SetLayerAlpha(const char *, float *) const;
 
 private:
 	void checkCompileErrors(GLuint, std::string);

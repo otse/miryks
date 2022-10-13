@@ -15,9 +15,11 @@
 #include <ogl/scene_graph.hpp>
 
 /*
-this is a messy source file
+landscape works
+but this is a messy source file
 good luck
-may not deserve a cleanup
+to explain it shortly, set vertex attributes
+for each of the seven possibilities of texture and glsl mix them
 */
 
 namespace miryks
@@ -80,7 +82,7 @@ namespace miryks
 	struct alpha_layer
 	{
 		ATXT *header;
-		csubrecord *subrecord;
+		csubrecord *vtxt;
 		int num_sub_structs;
 		const char *tx00;
 	};
@@ -105,6 +107,10 @@ namespace miryks
 
 		if (!vhgt)
 			return;
+
+		bool debug = false;
+		if (exte->xclc->x == -1 && exte->xclc->y == 0)
+			debug = true;
 
 		/*group = new GroupBounded;
 
@@ -141,9 +147,12 @@ namespace miryks
 				auto tx00 = txst.data<const char *>("TX00");
 
 				current.base_layers.push_back({btxt, ltex, txst, tx00});
-				printf("found base layer header #%i\n");
-				printf("found base layer, txst edid is %s\n", txst.editor_id());
-				printf("found base layer, txst tx00 is %s\n", tx00);
+				/*if (debug)
+				{
+					printf("found base layer header #%i\n");
+					printf("found base layer, txst edid is %s\n", txst.editor_id());
+					printf("found base layer, txst tx00 is %s\n", tx00);
+				}*/
 			}
 			if (!btxt)
 				break;
@@ -151,67 +160,34 @@ namespace miryks
 
 		for (int i = 0; i < 30; i++)
 		{
-			auto alpha_layer_header = data<ATXT *>("ATXT", i);
+			auto header = data<ATXT *>("ATXT", i);
 
 			// auto alpha_layer_data = data<VTXT *>("VTXT", i);
-			auto subrecord = find("VTXT", i);
-			if (alpha_layer_header && subrecord)
+			auto vtxt = find("VTXT", i);
+			if (header && vtxt)
 			{
-				const int num_sub_structs = subrecord->hed->size / sizeof(VTXT_);
+				const int num_sub_structs = vtxt->hed->size / sizeof(VTXT_);
 
-				quadrant &current = quadrants[alpha_layer_header->quadrant];
-				// printf("alpha texture form id %i\n", alpha_layer_header->formid);
+				quadrant &current = quadrants[header->quadrant];
+				// printf("alpha texture form id %i\n", header->formid);
 				//  grup_iter<0> landscape_textures("LTEX", 0);
-				record ltex = esp_get_form_id(alpha_layer_header->formid);
+				record ltex = esp_get_form_id(header->formid);
 				const char *tx00 = "landscape\\dirt02.dds";
 				if (ltex.rvalid())
 				{
 					auto tnam = ltex.data<unsigned int *>("TNAM");
 					record txst = esp_get_form_id(*tnam);
 					tx00 = txst.data<const char *>("TX00");
-					printf("\nlayer %i tx00 is %s\n\n", alpha_layer_header->layer, tx00);
+					//if (debug)
+					//	printf("quadrant %i layer %i tx00 is %s\n", header->quadrant, header->layer, tx00);
 				}
-				current.alpha_layers.push_back({alpha_layer_header, subrecord, num_sub_structs, tx00});
+				current.alpha_layers.push_back({header, vtxt, num_sub_structs, tx00});
 
 				// printf("landscape texture name %s\n", landscape_texture.editor_id());
 				//  printf("amount sub structs in vtxt: %i\n", num_sub_structs);
 			}
-			if (!alpha_layer_header)
+			if (!header)
 				break;
-		}
-
-		int j = 0;
-		for (auto layer : quadrants[0].alpha_layers)
-		{
-			j++;
-			if (j == 0)
-			{
-				// material->map2 = GetProduceTexture("textures\\landscape\\dirt02.dds");
-			}
-			// auto header = layer.header;
-			// auto data = layer.subrecord->data;
-
-			for (int i = 0; i < layer.num_sub_structs; i++)
-			{
-				VTXT_ &substruct = ((VTXT_ *)layer.subrecord->data)[i];
-				void *pointer1 = &((VTXT_ *)layer.subrecord->data)[i];
-				void *pointer2 = &((VTXT_ *)layer.subrecord->data)[i + 1];
-				// printf("pointer1 + pointer2 distance: %i, %i dist: %i\n", pointer1, pointer2, (int)pointer1 - (int)pointer2);
-				// printf("substruct #%i is pos %i opacity %f\n", i, substruct.pos, substruct.opacity);
-			}
-			for (int y = 0; y < 33; y++)
-			{
-				for (int x = 0; x < 33; x++)
-				{
-					// int row = i / 33;
-					// int column = i % 33;
-					// cell_ *cast = (cell_ *) data->bytes[y * 33 + x];
-					// float ointment = data->bytes[y * 33 + x] / 255.f;
-					// printf("alpha layer data pos %i is %f\n", cast->pos, cast->opacity);
-					// material->ointments[y*33+x] = layer.data[y*33+x];
-				}
-			}
-			break;
 		}
 
 		const int grid = 33;
@@ -221,7 +197,8 @@ namespace miryks
 		vec3 normals[33][33] = {{vec3(0.f)}};
 		vec3 colors[33][33] = {{vec3(0.f)}};
 		float offset = vhgt->offset * 8;
-		printf("land offset %f\n", offset);
+		//if (debug)
+		//	printf("land offset %f\n", offset);
 		float row_offset = 0;
 
 		if (vnml)
@@ -253,7 +230,8 @@ namespace miryks
 				float a = vclr->bytes[j] / 255.0f;
 				float b = vclr->bytes[j + 1] / 255.0f;
 				float c = vclr->bytes[j + 2] / 255.0f;
-				printf("vcolor\n %f\n %f\n %f\n", a, b, c);
+				//if (debug)
+				//	printf("vcolor\n %f\n %f\n %f\n", a, b, c);
 				colors[column][row] = vec3(a, b, c);
 			}
 		}
@@ -341,10 +319,12 @@ namespace miryks
 		constexpr float breadth = 4096.f;
 		constexpr float div = breadth / 32.0F;
 
-		printf(" exte %i\n", exte);
+		//if (debug)
+		//	printf(" exte %i\n", exte);
 		float X = breadth * exte->xclc->x;
 		float Y = breadth * exte->xclc->y;
-		printf(" X Y %f %f\n", X, Y);
+		//if (debug)
+		//	printf(" X Y %f %f\n", X, Y);
 
 		// 0 = bottom left. 1 = bottom right. 2 = upper-left. 3 = upper-right
 
@@ -363,8 +343,10 @@ namespace miryks
 			ivec2 offset = quadrant_offsets[w] * 16;
 
 			group[w] = new GroupBounded;
+			group[w]->name = "Quadrant";
 			Geometry *geometry = new Geometry();
-			geometry->Clear(8 * 3 * gridsize, 8 * 3 * gridsize);
+			const int seventeen = 17 * 17;
+			geometry->Clear(8 * 3 * seventeen, 8 * 3 * seventeen);
 			geometry->skinning = true; // our skinning attribs double as landscape-weights
 			group[w]->geometry = geometry;
 			MaterialLand *material = new MaterialLand;
@@ -377,7 +359,7 @@ namespace miryks
 			geometry->material = material;
 
 			float textures[7] = {0};
-			float layers[8][17 * 17] = {{0}};
+			float layers[8][17 * 17] = {{1}};
 
 			material->map2 = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
 			material->map3 = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
@@ -387,41 +369,51 @@ namespace miryks
 			material->map7 = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
 			material->map8 = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
 
-			for (auto alpha_layer : current.alpha_layers)
+			for (auto &alpha_layer : current.alpha_layers)
 			{
 				switch (alpha_layer.header->layer)
 				{
 				case 0:
-					printf("layer 0\n");
+					if (debug)
+						printf("layer 0 is %s\n", alpha_layer.tx00);
 					material->map2 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
 					break;
 				case 1:
-					printf("layer 1\n");
+					if (debug)
+						printf("layer 1 is %s\n", alpha_layer.tx00);
 					material->map3 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
 					break;
 				case 2:
-					printf("layer 2\n");
+					if (debug)
+						printf("layer 2 is %s\n", alpha_layer.tx00);
 					material->map4 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
 					break;
 				case 3:
-					printf("layer 3\n");
+					if (debug)
+						printf("layer 3 is %s\n", alpha_layer.tx00);
 					material->map5 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
 					break;
 				case 4:
-					printf("layer 4\n");
+					if (debug)
+						printf("layer 4 is %s\n", alpha_layer.tx00);
 					material->map6 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
 					break;
 				}
 				for (int i = 0; i < alpha_layer.num_sub_structs; i++)
 				{
-					VTXT_ &substruct = ((VTXT_ *)alpha_layer.subrecord->data)[i];
+					VTXT_ &substruct = ((VTXT_ *)alpha_layer.vtxt->data)[i];
+					//if (debug)
+					//	printf("set layer %i pos %i to %f\n", alpha_layer.header->layer, substruct.pos, substruct.opacity);
 					layers[alpha_layer.header->layer][substruct.pos] = substruct.opacity;
+
+					//printf("([%i][%i] = %f)\n", alpha_layer.header->layer, substruct.pos, substruct.opacity);
 				}
 			}
 
 			if (current.base_layers.size())
 			{
-				printf("We Have A Base Layer\n");
+				if (debug)
+					printf("We Have A Base Layer\n");
 				base_layer &base = current.base_layers[0];
 				material->map = GetProduceTexture((std::string("textures\\") + base.tx00).c_str());
 			}
@@ -432,27 +424,33 @@ namespace miryks
 				{
 					for (int triangle = 0; triangle < 8; triangle++)
 					{
-						auto set_eight_opacities = [&](Vertex &v, int vertex)
+						auto set_eight_opacities = [&](Vertex &v, int vertex2)
 						{
-							v.skin_index[0] = layers[0][vertex];
-							v.skin_index[1] = layers[1][vertex];
-							v.skin_index[2] = layers[2][vertex];
-							v.skin_index[3] = layers[3][vertex];
-							v.skin_weight[0] = layers[4][vertex];
-							v.skin_weight[1] = layers[5][vertex];
-							v.skin_weight[2] = layers[6][vertex];
+							v.skin_index.x = layers[0][vertex2];
+							// if (debug)
+							//	printf("s_e_o [%i][%i] = %f\n", 0, vertex2, layers[0][vertex2]);
+							//  if (debug && v.skin_index.x)
+							//	printf("v.skin_index.x = %f\n", layers[0][vertex2]);
+							v.skin_index.y = layers[1][vertex2];
+							v.skin_index.z = layers[2][vertex2];
+							v.skin_index.w = layers[3][vertex2];
+
+							v.skin_weight.x = layers[4][vertex2];
+							v.skin_weight.y = layers[5][vertex2];
+							v.skin_weight.z = layers[6][vertex2];
+							v.skin_weight.w = layers[7][vertex2];
 						};
 
 						// printf("triangle %i\n", triangle);
 						Vertex &a = geometry->vertices[vertex + 0];
 						Vertex &b = geometry->vertices[vertex + 1];
 						Vertex &c = geometry->vertices[vertex + 2];
-						float tx1 = square[triangle][0][0];
-						float ty1 = square[triangle][0][1];
-						float tx2 = square[triangle][1][0];
-						float ty2 = square[triangle][1][1];
-						float tx3 = square[triangle][2][0];
-						float ty3 = square[triangle][2][1];
+						int tx1 = square[triangle][0][0];
+						int ty1 = square[triangle][0][1];
+						int tx2 = square[triangle][1][0];
+						int ty2 = square[triangle][1][1];
+						int tx3 = square[triangle][2][0];
+						int ty3 = square[triangle][2][1];
 						int x1_ = tx1 + x + offset.x;
 						int x2_ = tx2 + x + offset.x;
 						int x3_ = tx3 + x + offset.x;
@@ -462,17 +460,20 @@ namespace miryks
 						a.position = vec3((tx1 + x) * div + X + half.x, (ty1 + y) * div + Y + half.y, heightmap[x1_][y1_]);
 						b.position = vec3((tx2 + x) * div + X + half.x, (ty2 + y) * div + Y + half.y, heightmap[x2_][y2_]);
 						c.position = vec3((tx3 + x) * div + X + half.x, (ty3 + y) * div + Y + half.y, heightmap[x3_][y3_]);
-						auto get_vertex_numeral = [](int x, int y)
+						auto get_vertex_numeral = [](int x_, int y_)
 						{
-							return 289 - (17 - (y + 1) * 17) + (x);
+							//return 289 - (17 - (y_ + 1) * 17) + (x_); // this caused two days of payne
+							return (y_ * 17) + x_;
 						};
-						;
+						//if (debug)
+						//	printf("get vertex numeral tx1 %i x %i = %i\n", tx1, x, get_vertex_numeral(tx1 + x, ty1 + y));
+						// printf("tx1 + x (tx + x, ty + y) = %i \n", get_vertex_numeral(tx1 + x, ty1 + y));
 						set_eight_opacities(a, get_vertex_numeral(tx1 + x, ty1 + y));
 						set_eight_opacities(b, get_vertex_numeral(tx2 + x, ty2 + y));
 						set_eight_opacities(c, get_vertex_numeral(tx3 + x, ty3 + y));
-						a.uv = vec2(tx1, ty1) / 1.5f;
-						b.uv = vec2(tx2, ty2) / 1.5f;
-						c.uv = vec2(tx3, ty3) / 1.5f;
+						a.uv = vec2(tx1, ty1) / 2.f;
+						b.uv = vec2(tx2, ty2) / 2.f;
+						c.uv = vec2(tx3, ty3) / 2.f;
 						if (vclr)
 						{
 							a.color = vec4(colors[x1_][y1_], 1.f);
@@ -494,21 +495,18 @@ namespace miryks
 					}
 				}
 			}
-			printf("num vertices: %i\n", vertex);
+			// if (debug)
+			//	printf("num vertices: %i\n", vertex);
+			if (debug)
+				printf("end of quadrant\n");
 			geometry->SetupMesh();
 			group[w]->UpdateSideways();
-
-			for (int i = 0; i < 17 * 17; i++)
-			{
-				auto &vertex = geometry->vertices[i];
-				// vertex.position
-				// geometry->vertices[i].skin_weight[3] = i;
-			}
 		}
-
-		printf("adding land geometry to bigGroup\n");
+		if (debug)
+			printf("adding land geometry to bigGroup\n");
 
 		groupDrawer = new GroupDrawer(nullptr, mat4(1.0));
+		groupDrawer->name = "Land";
 		groupDrawer->Add(group[0]);
 		groupDrawer->Add(group[1]);
 		groupDrawer->Add(group[2]);
