@@ -17,7 +17,10 @@ namespace miryks
 		skel = new skeleton(race.data<char *>("ANAM"));
 		modelSkinned = new ModelSkinned(path);
 		groupDrawer = new GroupDrawer(modelSkinned->baseGroup, mat4(1.0));
-		groupDrawer->Add(new GroupDrawer(skel->root, mat4(1.0)));
+		groupDrawer->name = "Monster";
+		GroupDrawer *bones = new GroupDrawer(skel->root, mat4(1.0));
+		bones->name = "Bones";
+		groupDrawer->Add(bones);
 		/*helmet2 = new SkinnedMesh("actors\\draugr\\character assets\\helmet03.nif");
 		helmet2->skel = skel;
 		groupDrawer->Add(helmet2->groupDrawer);*/

@@ -11,6 +11,8 @@ void layout_group(Group *, int &);
 void layout_gdf(Group *child, int &num)
 {
 	auto cast = dynamic_cast<GroupDrawer *>(child);
+	if (!cast)
+		return;
 	char hex[50];
 	snprintf(hex, 50, "GroupDrawer #%i %s", child->id, child->name.c_str());
 	if (ImGui::TreeNode(hex))
@@ -20,20 +22,32 @@ void layout_gdf(Group *child, int &num)
 
 		layout_group(cast->target, num);
 
+		ImGui::Separator();
+
+		for (auto inner : child->childGroups)
+			layout_gdf(inner, num);
+
 		ImGui::TreePop();
 	}
 }
 
 void layout_group(Group *child, int &num)
 {
-	char hex[50];
-	snprintf(hex, 50, "group #%i (childs - %i) %s", child->id, child->childGroups.size(), child->name.c_str());
-
-	if (ImGui::TreeNode(hex))
+	if (!child)
 	{
-		for (auto inner : child->childGroups)
-			layout_group(inner, num);
-		ImGui::TreePop();
+		ImGui::TextDisabled("group is nullptr");
+	}
+	else
+	{
+		char hex[50];
+		snprintf(hex, 50, "group #%i (childs - %i) %s", child->id, child->childGroups.size(), child->name.c_str());
+
+		if (ImGui::TreeNode(hex))
+		{
+			for (auto inner : child->childGroups)
+				layout_group(inner, num);
+			ImGui::TreePop();
+		}
 	}
 };
 

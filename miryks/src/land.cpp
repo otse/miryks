@@ -16,7 +16,8 @@
 
 /*
 this is a messy source file
-may not deserve eventual cleanup
+good luck
+may not deserve a cleanup
 */
 
 namespace miryks

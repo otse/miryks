@@ -198,8 +198,9 @@ void Material::Use()
 	}
 	if (ztest)
 		glDepthFunc(GL_LEQUAL);
-	if (!zwrite)
-		glDepthMask(GL_FALSE);
+	// todo zwrite causes render glitches
+	//if (!zwrite)
+	//	glDepthMask(GL_FALSE);
 	if (decal)
 	{
 		glEnable(GL_POLYGON_OFFSET_FILL);
@@ -243,6 +244,9 @@ void Material::Unuse(Material *a, Material *b)
 	}
 	if (!a || a->ztest && !b->ztest)
 		glDepthFunc(GL_LESS);
+	// todo zwrite causes geometry invisibility errors
+	//if (!a || !a->zwrite && b->zwrite)
+	//	glDepthMask(GL_TRUE);
 	if (!a || a->decal && !b->decal)
 	{
 		glDisable(GL_POLYGON_OFFSET_FILL);
