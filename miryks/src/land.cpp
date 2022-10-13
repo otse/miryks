@@ -52,6 +52,7 @@ namespace miryks
 		float x;
 	};
 
+#pragma pack(push, 1)
 	struct BTXT
 	{
 		unsigned int formid;
@@ -60,7 +61,6 @@ namespace miryks
 		uint16_t layer;
 	};
 
-#pragma pack(push, 1)
 	struct ATXT
 	{
 		unsigned int formid;
@@ -81,12 +81,15 @@ namespace miryks
 		ATXT *header;
 		csubrecord *subrecord;
 		int num_sub_structs;
-		record landscape_texture;
+		const char *tx00;
 	};
 
 	struct base_layer
 	{
-		ATXT *header;
+		BTXT *header;
+		record ltex;
+		record txst;
+		const char *tx00;
 	};
 #pragma pack(pop)
 
@@ -121,6 +124,7 @@ namespace miryks
 		// 0 = bottom left. 1 = bottom right. 2 = upper-left. 3 = upper-right.
 		struct quadrant
 		{
+			std::vector<base_layer> base_layers;
 			std::vector<alpha_layer> alpha_layers;
 		} quadrants[4];
 
@@ -128,7 +132,18 @@ namespace miryks
 		{
 			auto btxt = data<BTXT *>("BTXT", i);
 			if (btxt)
-				printf("found base layer header #%i\n", i);
+			{
+				quadrant &current = quadrants[btxt->quadrant];
+				record ltex = esp_get_form_id(btxt->formid);
+				auto tnam = ltex.data<unsigned int *>("TNAM");
+				record txst = esp_get_form_id(*tnam);
+				auto tx00 = txst.data<const char *>("TX00");
+
+				current.base_layers.push_back({btxt, ltex, txst, tx00});
+				printf("found base layer header #%i\n");
+				printf("found base layer, txst edid is %s\n", txst.editor_id());
+				printf("found base layer, txst tx00 is %s\n", tx00);
+			}
 			if (!btxt)
 				break;
 		}
@@ -141,15 +156,24 @@ namespace miryks
 			auto subrecord = find("VTXT", i);
 			if (alpha_layer_header && subrecord)
 			{
-				printf("found alpha layer header with data #%i\n", i);
+				const int num_sub_structs = subrecord->hed->size / sizeof(VTXT_);
+
 				quadrant &current = quadrants[alpha_layer_header->quadrant];
 				// printf("alpha texture form id %i\n", alpha_layer_header->formid);
 				//  grup_iter<0> landscape_textures("LTEX", 0);
-				record landscape_texture = esp_get_form_id(alpha_layer_header->formid);
-				const int num_sub_structs = subrecord->hed->size / sizeof(VTXT_);
-				current.alpha_layers.push_back({alpha_layer_header, subrecord, num_sub_structs, landscape_texture});
-				//printf("landscape texture name %s\n", landscape_texture.editor_id());
-				// printf("amount sub structs in vtxt: %i\n", num_sub_structs);
+				record ltex = esp_get_form_id(alpha_layer_header->formid);
+				const char *tx00 = "landscape\\dirt02.dds";
+				if (ltex.rvalid())
+				{
+					auto tnam = ltex.data<unsigned int *>("TNAM");
+					record txst = esp_get_form_id(*tnam);
+					tx00 = txst.data<const char *>("TX00");
+					printf("\nlayer %i tx00 is %s\n\n", alpha_layer_header->layer, tx00);
+				}
+				current.alpha_layers.push_back({alpha_layer_header, subrecord, num_sub_structs, tx00});
+
+				// printf("landscape texture name %s\n", landscape_texture.editor_id());
+				//  printf("amount sub structs in vtxt: %i\n", num_sub_structs);
 			}
 			if (!alpha_layer_header)
 				break;
@@ -163,8 +187,8 @@ namespace miryks
 			{
 				// material->map2 = GetProduceTexture("textures\\landscape\\dirt02.dds");
 			}
-			//auto header = layer.header;
-			//auto data = layer.subrecord->data;
+			// auto header = layer.header;
+			// auto data = layer.subrecord->data;
 
 			for (int i = 0; i < layer.num_sub_structs; i++)
 			{
@@ -172,7 +196,7 @@ namespace miryks
 				void *pointer1 = &((VTXT_ *)layer.subrecord->data)[i];
 				void *pointer2 = &((VTXT_ *)layer.subrecord->data)[i + 1];
 				// printf("pointer1 + pointer2 distance: %i, %i dist: %i\n", pointer1, pointer2, (int)pointer1 - (int)pointer2);
-				printf("substruct #%i is pos %i opacity %f\n", i, substruct.pos, substruct.opacity);
+				// printf("substruct #%i is pos %i opacity %f\n", i, substruct.pos, substruct.opacity);
 			}
 			for (int y = 0; y < 33; y++)
 			{
@@ -325,8 +349,8 @@ namespace miryks
 
 		ivec2 quadrant_offsets[4] = {
 			{0, 0},
-			{0, 1},
 			{1, 0},
+			{0, 1},
 			{1, 1},
 		};
 
@@ -352,7 +376,7 @@ namespace miryks
 			geometry->material = material;
 
 			float textures[7] = {0};
-			float layers[7][17*17] = {{0}};
+			float layers[8][17 * 17] = {{0}};
 
 			material->map2 = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
 			material->map3 = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
@@ -364,22 +388,41 @@ namespace miryks
 
 			for (auto alpha_layer : current.alpha_layers)
 			{
-				switch(alpha_layer.header->layer) {
-					case 0:
-						printf("layer 0\n");
-						material->map2 = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
-						break;
-					case 1:
-						printf("layer 0\n");
-						material->map3 = GetProduceTexture("textures\\landscape\\dirt02_n.dds");
-						break;
+				switch (alpha_layer.header->layer)
+				{
+				case 0:
+					printf("layer 0\n");
+					material->map2 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
+					break;
+				case 1:
+					printf("layer 1\n");
+					material->map3 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
+					break;
+				case 2:
+					printf("layer 2\n");
+					material->map4 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
+					break;
+				case 3:
+					printf("layer 3\n");
+					material->map5 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
+					break;
+				case 4:
+					printf("layer 4\n");
+					material->map6 = GetProduceTexture((std::string("textures\\") + alpha_layer.tx00).c_str());
+					break;
 				}
 				for (int i = 0; i < alpha_layer.num_sub_structs; i++)
 				{
 					VTXT_ &substruct = ((VTXT_ *)alpha_layer.subrecord->data)[i];
 					layers[alpha_layer.header->layer][substruct.pos] = substruct.opacity;
 				}
+			}
 
+			if (current.base_layers.size())
+			{
+				printf("We Have A Base Layer\n");
+				base_layer &base = current.base_layers[0];
+				material->map = GetProduceTexture((std::string("textures\\") + base.tx00).c_str());
 			}
 
 			for (int y = 0; y < 16; y += 2)
@@ -388,7 +431,8 @@ namespace miryks
 				{
 					for (int triangle = 0; triangle < 8; triangle++)
 					{
-						auto set_eight_opacities = [&](Vertex &v, int vertex) {
+						auto set_eight_opacities = [&](Vertex &v, int vertex)
+						{
 							v.skin_index[0] = layers[0][vertex];
 							v.skin_index[1] = layers[1][vertex];
 							v.skin_index[2] = layers[2][vertex];
@@ -397,7 +441,7 @@ namespace miryks
 							v.skin_weight[1] = layers[5][vertex];
 							v.skin_weight[2] = layers[6][vertex];
 						};
-						
+
 						// printf("triangle %i\n", triangle);
 						Vertex &a = geometry->vertices[vertex + 0];
 						Vertex &b = geometry->vertices[vertex + 1];
@@ -417,16 +461,17 @@ namespace miryks
 						a.position = vec3((tx1 + x) * div + X + half.x, (ty1 + y) * div + Y + half.y, heightmap[x1_][y1_]);
 						b.position = vec3((tx2 + x) * div + X + half.x, (ty2 + y) * div + Y + half.y, heightmap[x2_][y2_]);
 						c.position = vec3((tx3 + x) * div + X + half.x, (ty3 + y) * div + Y + half.y, heightmap[x3_][y3_]);
-						auto get_vertex_numeral = [](int x, int y) {
-							return 289 - (17 - (y+1) * 17) + (x);
+						auto get_vertex_numeral = [](int x, int y)
+						{
+							return 289 - (17 - (y + 1) * 17) + (x);
 						};
 						;
 						set_eight_opacities(a, get_vertex_numeral(tx1 + x, ty1 + y));
 						set_eight_opacities(b, get_vertex_numeral(tx2 + x, ty2 + y));
 						set_eight_opacities(c, get_vertex_numeral(tx3 + x, ty3 + y));
-						a.uv = vec2(tx1, ty1);
-						b.uv = vec2(tx2, ty2);
-						c.uv = vec2(tx3, ty3);
+						a.uv = vec2(tx1, ty1) / 1.5f;
+						b.uv = vec2(tx2, ty2) / 1.5f;
+						c.uv = vec2(tx3, ty3) / 1.5f;
 						if (vclr)
 						{
 							a.color = vec4(colors[x1_][y1_], 1.f);
@@ -452,13 +497,13 @@ namespace miryks
 			geometry->SetupMesh();
 			group[w]->UpdateSideways();
 
-			for (int i = 0; i < 17*17; i++) {
+			for (int i = 0; i < 17 * 17; i++)
+			{
 				auto &vertex = geometry->vertices[i];
-				//vertex.position
-				//geometry->vertices[i].skin_weight[3] = i;
+				// vertex.position
+				// geometry->vertices[i].skin_weight[3] = i;
 			}
 		}
-
 
 		printf("adding land geometry to bigGroup\n");
 
@@ -469,6 +514,5 @@ namespace miryks
 		groupDrawer->Add(group[3]);
 		groupDrawer->UpdateSideways();
 		sceneDef->bigGroup->Add(groupDrawer);
-	
 	}
 }

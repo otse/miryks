@@ -39,10 +39,8 @@
 *.ipch
 *.opendb
 *.db
-.vs/Dark2/v16/.suo
 *.log
 *.ipch
-bin/error.txt
 *.db-shm
 *.db-wal
 *.recipe

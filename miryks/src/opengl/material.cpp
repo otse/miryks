@@ -306,6 +306,30 @@ void MaterialLand::Use()
 		glBindTexture(GL_TEXTURE_2D, map3->tid);
 		shader->SetInt("map3", 2);
 	}
+	if (map4)
+	{
+		glActiveTexture(GL_TEXTURE0 + 3);
+		glBindTexture(GL_TEXTURE_2D, map4->tid);
+		shader->SetInt("map4", 3);
+	}
+	if (map5)
+	{
+		glActiveTexture(GL_TEXTURE0 + 4);
+		glBindTexture(GL_TEXTURE_2D, map5->tid);
+		shader->SetInt("map5", 4);
+	}
+	if (map6)
+	{
+		glActiveTexture(GL_TEXTURE0 + 5);
+		glBindTexture(GL_TEXTURE_2D, map6->tid);
+		shader->SetInt("map6", 5);
+	}
+	if (map7)
+	{
+		glActiveTexture(GL_TEXTURE0 + 6);
+		glBindTexture(GL_TEXTURE_2D, map7->tid);
+		shader->SetInt("map7", 6);
+	}
 }
 
 void MaterialLand::Unuse(Material *a, Material *b)

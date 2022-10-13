@@ -269,14 +269,14 @@ void main()
 
 	diffuseColor *= texture2D(map, vUv);
 
-	diffuseColor += texture2D(map2, vUv) * vLandscape0123[0];
-	diffuseColor += texture2D(map2, vUv) * vLandscape0123[1];
-	diffuseColor += texture2D(map2, vUv) * vLandscape0123[2];
-	diffuseColor += texture2D(map2, vUv) * vLandscape0123[3];
+	diffuseColor += texture2D(map3, vUv) * vLandscape0123[0];
+	diffuseColor += texture2D(map4, vUv) * vLandscape0123[1];
+	diffuseColor += texture2D(map5, vUv) * vLandscape0123[2];
+	diffuseColor += texture2D(map5, vUv) * vLandscape0123[3];
 
-	diffuseColor += texture2D(map2, vUv) * vLandscape4567[0];
-	diffuseColor += texture2D(map2, vUv) * vLandscape4567[1];
-	//diffuseColor += texture2D(map2, vUv) * vLandscape4567[2];
+	diffuseColor += texture2D(map6, vUv) * vLandscape4567[0];
+	diffuseColor += texture2D(map7, vUv) * vLandscape4567[1];
+	//diffuseColor += texture2D(map8, vUv) * vLandscape4567[2];
 
 	//diffuseColor *= texture2D(map2, vUv) * vLandscape0123[0];
 
