@@ -26,7 +26,7 @@ namespace miryks
 
 			dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-			dynamicsWorld->setGravity(btVector3(0, 0, -10));
+			dynamicsWorld->setGravity(btVector3(0, 0, -50));
 
 			btCollisionShape *groundShape = new btBoxShape(btVector3(btScalar(5000.), btScalar(5000.), btScalar(25.)));
 
@@ -102,25 +102,33 @@ namespace miryks
 
 		void start_visit(triangle_collector &collector, GroupDrawer *drawer)
 		{
-			visit_group_geometry(collector, drawer->target, drawer->matrixWorld);
+			if (!drawer->target)
+				return;
+			visit_group_geometry(collector, drawer->target, drawer->matrix);
 		}
 
 		void visit_group_geometry(triangle_collector &collector, Group *group, mat4 left)
 		{
-			mat4 place = left * group->matrixWorld;
 			if (group->geometry)
 			{
-				for (int i = 0; i < group->geometry->vertices.size(); i += 3)
+				mat4 place = left * group->matrixWorld;
+				quat q = quat(place);
+				for (int i = 0; i < group->geometry->elements.size(); i += 3)
 				{
-					auto a = place * vec4(group->geometry->vertices[i + 0].position, 1);
-					auto b = place * vec4(group->geometry->vertices[i + 1].position, 1);
-					auto c = place * vec4(group->geometry->vertices[i + 2].position, 1);
-					collector.triangles.push_back({vec3(a), vec3(b), vec3(c)});
-					printf("t");
+					auto a = group->geometry->vertices[group->geometry->elements[i + 0]];
+					auto b = group->geometry->vertices[group->geometry->elements[i + 1]];
+					auto c = group->geometry->vertices[group->geometry->elements[i + 2]];
+					
+					auto d = place * vec4(a.position, 1);
+					auto e = place * vec4(b.position, 1);
+					auto f = place * vec4(c.position, 1);
+					//printf("%f %f %f\n", a.x, b.x, c.x);
+					collector.triangles.push_back({vec3(f), vec3(e), vec3(d)});
+					//printf("t");
 				}
 			}
 			for (Group *child : group->childGroups)
-				visit_group_geometry(collector, child, place);
+				visit_group_geometry(collector, child, left);
 		}
 
 		solid::solid(GroupDrawer *drawer)
@@ -132,7 +140,6 @@ namespace miryks
 
 			for (auto &t : collector.triangles)
 			{
-				//printf("add triangle\n");
 				triangleMesh->addTriangle(
 					glm_to_bt(t.a),
 					glm_to_bt(t.b),
@@ -140,13 +147,15 @@ namespace miryks
 			}
 
 			collisionShape = new btBvhTriangleMeshShape(triangleMesh, true);
-			
+
+			btScalar mass(0.);
+
 			btTransform startTransform;
 			startTransform.setIdentity();
 
 			btDefaultMotionState *motionState = new btDefaultMotionState(startTransform);
 
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(0.0f, motionState, collisionShape, btVector3(0, 0, 0));
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, collisionShape, btVector3(0, 0, 0));
 			rigidBody = new btRigidBody(rbInfo);
 			rigidBody->setFriction(btScalar(0.95));
 
@@ -177,7 +186,7 @@ namespace miryks
 			// create a dynamic rigidbody
 
 			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			this->colShape = new btSphereShape(btScalar(1.));
+			this->colShape = new btSphereShape(btScalar(10.));
 			collisionShapes.push_back(colShape);
 
 			/// Create Dynamic Objects
@@ -201,7 +210,7 @@ namespace miryks
 			btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform);
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 			this->rigidBody = new btRigidBody(rbInfo);
-			rigidBody->setFriction(btScalar(0.5));
+			rigidBody->setFriction(btScalar(1.0));
 
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
