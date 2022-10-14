@@ -1,4 +1,4 @@
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 int Group::ids = 0;
 int Group::num = 0;
@@ -198,7 +198,7 @@ void GroupDrawer::DrawBounds()
 		obb.geometry->Draw(place);
 }
 
-#if 1
+#if 0
 GroupDrawerFlat::GroupDrawerFlat(Group *group, mat4 matrix)
 	: GroupDrawer(group, matrix)
 {

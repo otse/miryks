@@ -4,6 +4,7 @@
 #include <dark/trash.h>
 
 #include <miryks/miryks.hpp>
+#include <miryks/collision_forwards.h>
 
 #include <miryks/model.h>
 
@@ -35,6 +36,7 @@ namespace dark
 		~my_reference();
 
 		Model *model;
+		collision::solid *solid = nullptr;
 
 		// mat4 matrix, translation, rotation, scale; // mir has
 

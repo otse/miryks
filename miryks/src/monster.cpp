@@ -3,7 +3,7 @@
 #include <miryks/actors.h>
 #include <miryks/model.h>
 
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 using namespace miryks;
 

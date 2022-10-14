@@ -12,7 +12,7 @@
 #include <opengl/shader.h>
 #include <opengl/camera.h>
 #include <opengl/lights.h>
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 /*
 landscape works

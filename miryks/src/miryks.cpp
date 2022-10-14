@@ -62,11 +62,11 @@ void miryks::init_miryks()
 
 	// D:\Steam\steamapps\common\Skyrim Special Edition\
 
-	std::wstring strValueOfBinDir;
-	LONG error = GetStringRegKey(hKey, L"installed path", strValueOfBinDir, L"bad");
+	std::wstring strValueOfInstalledPath;
+	LONG error = GetStringRegKey(hKey, L"installed path", strValueOfInstalledPath, L"bad");
 	
 	if (error == ERROR_SUCCESS) {
-		installed_path = WStringToString(strValueOfBinDir);
+		installed_path = WStringToString(strValueOfInstalledPath);
 		printf("skyrim registry installed path is %s\n", installed_path.c_str());
 	}
 	else if (exists("editme.txt"))

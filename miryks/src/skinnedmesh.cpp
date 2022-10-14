@@ -1,6 +1,6 @@
 #include <miryks/model.h>
 
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 namespace miryks
 {

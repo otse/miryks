@@ -1,6 +1,6 @@
 #include <miryks/skeleton.h>
 
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 #include <opengl/renderer.h>
 
 #include <files.h>

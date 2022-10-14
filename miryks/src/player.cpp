@@ -1,8 +1,9 @@
 #include <miryks/player.h>
+#include <miryks/collision.h>
 
 #include <opengl/renderer.h>
 #include <opengl/camera.h>
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 namespace miryks
 {
@@ -13,7 +14,8 @@ namespace miryks
 		idle = false;
 		race = dig_race("ImperialRace", 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
-		//skel->mixer = new animation_mixer(skel);
+		orb = nullptr;
+		// skel->mixer = new animation_mixer(skel);
 		printf("player skel anam %s\n", race.data<char *>("ANAM"));
 		// skel = new skeleton("actors\\character\\_1stperson\\skeleton.nif");
 		// thirdPerson = false;
@@ -26,8 +28,8 @@ namespace miryks
 		hands = nullptr;
 		thirdPersonCamera = new ViewerCamera;
 
-		//SetAnim("anims/character/1hm_1stp_run.kf");
-		// SetAnim("anims/character/1hm_walkforward.kf");
+		// SetAnim("anims/character/1hm_1stp_run.kf");
+		//  SetAnim("anims/character/1hm_walkforward.kf");
 
 		groupDrawer = new GroupDrawer(nullptr, mat4(1.0));
 		groupDrawer->name = "Player";
@@ -57,7 +59,7 @@ namespace miryks
 			return;
 		printf("place at %s\n", q);
 		groupDrawer->matrix = ref->second->matrix;
-		//groupDrawer->matrix = glm::translate(groupDrawer->matrix, vec3(50, 0, 0));
+		// groupDrawer->matrix = glm::translate(groupDrawer->matrix, vec3(50, 0, 0));
 		groupDrawer->UpdateSideways();
 		sceneDef->bigGroup->Add(groupDrawer);
 		// Create an offsetted mirror of Man
@@ -69,14 +71,14 @@ namespace miryks
 
 	void Player::SetAnim(const char *path)
 	{
-		//if (anim)
+		// if (anim)
 		//	delete anim;
 		keyframes *keyf = get_keyframes(path);
 		skel->SetFreeze();
 		anim = new animation(keyf);
 		anim->skel = skel;
 		skel->anim = anim;
-		//skel->mixer->SetFront(anim);
+		// skel->mixer->SetFront(anim);
 	}
 
 	void Player::Step()
@@ -124,9 +126,50 @@ namespace miryks
 				SetAnim("anims/character/1st/h2h_idle.kf");
 			}
 		}
+
+		if (holding_key("w"))
+		{
+			if (orb)
+			{
+				btVector3 dir = btVector3(0, -5, 0);
+				orb->rigidBody->applyCentralImpulse(dir);
+			}
+		}
+		if (holding_key("s"))
+		{
+			if (orb)
+			{
+				btVector3 dir = btVector3(0, 5, 0);
+				orb->rigidBody->applyCentralImpulse(dir);
+			}
+		}
+		if (holding_key("d"))
+		{
+			if (orb)
+			{
+				btVector3 dir = btVector3(-5, 0, 0);
+				orb->rigidBody->applyCentralImpulse(dir);
+			}
+		}
+		if (holding_key("a"))
+		{
+			if (orb)
+			{
+				btVector3 dir = btVector3(5, 0, 0);
+				orb->rigidBody->applyCentralImpulse(dir);
+			}
+		}
 		vec3 down = vec3(0, 0, -60);
 		groupDrawer->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
-		//groupDrawer->matrix = glm::translate(groupDrawer->matrix, forward);
+		if (!orb)
+			orb = new collision::orb(groupDrawer);
+		else
+		{
+			cameraCur->pos = collision::bt_to_glm(orb->get_world_transform().getOrigin());
+			groupDrawer->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
+		}
+		// groupDrawer->matrix[3] = vec4(collision::bt_to_glm(orb->get_world_transform().getOrigin()), 1);
+		// groupDrawer->matrix = glm::translate(groupDrawer->matrix, forward);
 		groupDrawer->matrix = rotate(groupDrawer->matrix, -cameraCur->yaw, vec3(0, 0, 1));
 		groupDrawer->UpdateSideways();
 		/*groupDrawer->matrix = glm::translate(mat4(1.0), cameraCur->pos);

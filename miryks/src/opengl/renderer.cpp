@@ -7,7 +7,7 @@
 #include <opengl/scene.h>
 #include <opengl/shader.h>
 #include <opengl/rendertarget.h>
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 #include <opengl/material.h>
 #include <opengl/texture.h>

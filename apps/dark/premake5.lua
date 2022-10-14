@@ -51,7 +51,7 @@ project "dark"
 		"C:/New folder/lpng1637",
 		"C:/New folder/glm-0.9.9.8",
 		"C:/New folder/glfw-3.3.6/include",
-		"C:/New folder/bullet3-3.17/src"
+		"C:/New folder/bullet3-3.24/src"
 	}
 	
 	libdirs {
@@ -59,17 +59,16 @@ project "dark"
 		"C:/New folder/glfw-3.3.6-32/src/Release",
 		"C:/New folder/zlib-1.2.11-32/Release",
 		"C:/New folder/lz4-1.9.3-32/Release",
-
 		"C:/New folder/lpng1637-32/Release",
-		"C:/New folder/bullet3-3.17-32/lib/Release",
+		"C:/New folder/bullet3-3.24-32/lib/Release",
 	}
 
 	links {
 		"miryks",
-		"glfw3",
-		"zlibstatic",
+		--"glfw3",
+		--"zlibstatic",
 		--"lz4",
-		"libpng16_static"
+		--"libpng16_static"
         --"BulletDynamics","BulletCollision", "LinearMath", "Bullet3Common"
-	--	"zlibstatic"
+		--"zlibstatic"
 	}

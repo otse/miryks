@@ -3,8 +3,7 @@
 #include <opengl/scene.h>
 
 #include <opengl/aabb.h>
-#include <ogl/scene_graph.hpp>
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 #include <opengl/material.h>
 #include <opengl/shader.h>
 #include <opengl/lights.h>

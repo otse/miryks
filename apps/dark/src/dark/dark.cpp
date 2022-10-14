@@ -6,6 +6,7 @@
 
 #include <miryks/player.h>
 #include <miryks/actors.h>
+#include <miryks/collision.h>
 
 #include <opengl/camera.h>
 #include <opengl/rendertarget.h>
@@ -112,6 +113,7 @@ int main()
 	init_archives();
 	hooks::load_interior = load_interior;
 	hooks::load_world_space = load_world_space;
+	collision::init();
 	nif_test();
 	init_dark();
 	load_yagrum();

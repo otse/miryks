@@ -3,7 +3,7 @@
 #include <miryks/miryks.hpp>
 
 #include <opengl/renderer.h>
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 #include <opengl/geometry.h>
 
 namespace miryks

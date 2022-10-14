@@ -1,7 +1,7 @@
 #include <miryks/miryks.hpp>
 #include <miryks/actors.h>
 
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 #include <opengl/camera.h>
 

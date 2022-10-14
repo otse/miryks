@@ -6,11 +6,12 @@
 #include <opengl/camera.h>
 #include <opengl/scene.h>
 #include <opengl/rendertarget.h>
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 #include <opengl/shader.h>
 
 #include <miryks/player.h>
+#include <miryks/collision.h>
 
 #include <panels.h>
 
@@ -428,6 +429,8 @@ void window_while_test()
 
 		if (meanSkelly)
 			meanSkelly->Step();
+
+		collision::simulate();
 
 		// if (someDraugr)
 		//	someDraugr->Step();

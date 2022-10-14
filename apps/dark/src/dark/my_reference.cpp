@@ -4,6 +4,7 @@
 
 #include <miryks/miryks.hpp>
 #include <miryks/model.h>
+#include <miryks/collision.h>
 
 #include <dark/trash.h>
 #include <dark/my_reference.h>
@@ -15,8 +16,7 @@
 #include <opengl/texture.h>
 #include <opengl/camera.h>
 #include <opengl/lights.h>
-#include <ogl/scene_graph.hpp>
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 #include <opengl/renderer.h>
 
 #include <imgui.h>
@@ -254,6 +254,7 @@ namespace dark
 				groupDrawer->name = "(REFR)";
 				groupDrawer->name += type;
 				sceneDef->bigGroup->Add(groupDrawer);
+				solid = new miryks::collision::solid(groupDrawer);
 				int i = 0;
 				for (auto thing : Things)
 				{

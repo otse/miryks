@@ -13,7 +13,7 @@ extern "C"
 #include <miryks/constants.h>
 #include <files.h>
 
-#include <ogl/scene_graph.hpp>
+#include <opengl/scene_graph.hpp>
 
 #include <cstdarg>
 

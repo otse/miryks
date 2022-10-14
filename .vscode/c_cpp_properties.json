@@ -13,8 +13,7 @@
                 "C:/New folder/lpng1637",
                 "C:/New folder/glm-0.9.9.8",
                 "C:/New folder/glfw-3.3.6/include",
-                
-                "C:/New folder/bullet3-3.17/src"
+		        "C:/New folder/bullet3-3.24/src",
 
             ],
             "defines": [
