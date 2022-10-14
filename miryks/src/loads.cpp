@@ -29,7 +29,7 @@ namespace miryks
 		//printf("Load Plugin %s\n", filename);
 		if (strlen(filename) < 1)
 			return NULL;
-		std::string path = std::string(editme) + "/Data/" + filename;
+		std::string path = installed_path + "/Data/" + filename;
 		if (ESP has = has_plugin(filename))
 			return has;
 		ESP plugin;
@@ -59,7 +59,7 @@ namespace miryks
 		BSA bsa = bsa_get(filename);
 		if (bsa)
 			return bsa;
-		std::string path = std::string(editme) + "/Data/" + filename;
+		std::string path = installed_path + "/Data/" + filename;
 		if (exists(path.c_str()))
 		{
 			return bsa_load(path.c_str());

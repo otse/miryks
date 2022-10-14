@@ -72,10 +72,10 @@ std::vector<unsigned char> *readbin(const std::string &a)
 
 void fwrite(const std::string &a, const std::string &b)
 {
-	std::ofstream os;
-	os.open(a.c_str());
-	os << b.c_str();
-	os.close();
+	std::ofstream of;
+	of.open(a.c_str());
+	of << b.c_str();
+	of.close();
 }
 
 bool exists_test3(const std::string &name)

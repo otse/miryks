@@ -106,6 +106,8 @@ int main()
 	using namespace miryks;
 
 	init_miryks();
+	if (installed_path.size() == 0)
+		return 1;
 	init_data_files();
 	init_archives();
 	hooks::load_interior = load_interior;
@@ -115,7 +117,7 @@ int main()
 	load_yagrum();
 	renderer_init();
 	//view_bucket_in_place();
-	yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
+	//yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
 	// refs_init();
 	// load_world_space();
 #if 1

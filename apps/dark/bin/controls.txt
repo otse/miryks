@@ -7,5 +7,6 @@ f1 = debug
 f3 = show mouse
 f4 = uchimura post
 f5 = reload cell
-f6 = reload shader
-
+f6 = reload shaders
+f7 = wireframe
+f8 = load worldspace

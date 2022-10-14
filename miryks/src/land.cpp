@@ -18,8 +18,10 @@
 landscape works
 but this is a messy source file
 good luck
-to explain it shortly, set vertex attributes
-for each of the seven possibilities of texture and glsl mix them
+to explain it shortly, landscaping uses vertex attributes
+then texture splats with glsl mix
+it uses a single, optional base layer and multiple alpha layers
+its not difficult once you get it
 */
 
 namespace miryks
@@ -109,8 +111,8 @@ namespace miryks
 			return;
 
 		bool debug = false;
-		if (exte->xclc->x == -1 && exte->xclc->y == 0)
-			debug = true;
+		//if (exte->xclc->x == -1 && exte->xclc->y == 0)
+		//	debug = true;
 
 		/*group = new GroupBounded;
 
@@ -147,12 +149,11 @@ namespace miryks
 				auto tx00 = txst.data<const char *>("TX00");
 
 				current.base_layers.push_back({btxt, ltex, txst, tx00});
-				/*if (debug)
-				{
-					printf("found base layer header #%i\n");
-					printf("found base layer, txst edid is %s\n", txst.editor_id());
-					printf("found base layer, txst tx00 is %s\n", tx00);
-				}*/
+				
+				printf("found base layer header #%i\n");
+				printf("found base layer, txst edid is %s\n", txst.editor_id());
+				printf("found base layer, txst tx00 is %s\n", tx00);
+			
 			}
 			if (!btxt)
 				break;
@@ -195,7 +196,8 @@ namespace miryks
 
 		float heightmap[33][33] = {{0}};
 		vec3 normals[33][33] = {{vec3(0.f)}};
-		vec3 colors[33][33] = {{vec3(0.f)}};
+		vec3 colors[33][33] = {{vec3(1.f)}};
+
 		float offset = vhgt->offset * 8;
 		//if (debug)
 		//	printf("land offset %f\n", offset);
@@ -203,16 +205,12 @@ namespace miryks
 
 		if (vnml)
 		{
-			unsigned int x;
-			std::stringstream ss;
-			ss << std::hex << "fffefffe";
-			ss >> x;
 			for (int i = 0; i < 1089; i++)
 			{
 				int row = i / 33;
 				int column = i % 33;
 				int j = i * 3;
-				float a = vnml->bytes[j] / 255.0f;
+				float a = vnml->bytes[j + 0] / 255.0f;
 				float b = vnml->bytes[j + 1] / 255.0f;
 				float c = vnml->bytes[j + 2] / 255.0f;
 				// printf("normal\n %f\n %f\n %f\n", a, b, c);
@@ -227,7 +225,7 @@ namespace miryks
 				int row = i / 33;
 				int column = i % 33;
 				int j = i * 3;
-				float a = vclr->bytes[j] / 255.0f;
+				float a = vclr->bytes[j + 0] / 255.0f;
 				float b = vclr->bytes[j + 1] / 255.0f;
 				float c = vclr->bytes[j + 2] / 255.0f;
 				//if (debug)
@@ -412,8 +410,7 @@ namespace miryks
 
 			if (current.base_layers.size())
 			{
-				if (debug)
-					printf("We Have A Base Layer\n");
+				printf("We Have A Base Layer\n");
 				base_layer &base = current.base_layers[0];
 				material->map = GetProduceTexture((std::string("textures\\") + base.tx00).c_str());
 			}
@@ -497,8 +494,8 @@ namespace miryks
 			}
 			// if (debug)
 			//	printf("num vertices: %i\n", vertex);
-			if (debug)
-				printf("end of quadrant\n");
+			//if (debug)
+			//	printf("end of quadrant\n");
 			geometry->SetupMesh();
 			group[w]->UpdateSideways();
 		}

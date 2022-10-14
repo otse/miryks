@@ -41,7 +41,7 @@ namespace miryks
 	class Player;
 	extern Player *player1;
 
-	extern char *editme;
+	extern std::string installed_path;
 
 	namespace hooks
 	{
@@ -59,10 +59,7 @@ namespace miryks
 
 	keyframes *load_keyframes_from_disk(const char *);
 
-	static inline void init_miryks()
-	{
-		editme = get_text_file(EDIT_ME);
-	}
+	void init_miryks();
 
 	static inline void init_data_files()
 	{
