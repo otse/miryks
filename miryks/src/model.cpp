@@ -66,6 +66,12 @@ namespace miryks
 
 	void matrix_from_common(Group *group, ni_common_layout_t *common)
 	{
+		/*bool collision_object = common->A->collision_object > -1;
+		bool parent_has_collision = group->parent->collision;
+		group->collision = collision_object || parent_has_collision;
+		// printf("collision %i %i\n", group->collision, parent_has_collision);
+		*/
+
 		vec3 here = reinterpret_vec3(&common->A->translation);
 		mat3 turn = reinterpret_mat3(&common->A->rotation);
 
@@ -81,6 +87,8 @@ namespace miryks
 		Group *group = model->MakeNewGroup(rd);
 		group->name = "NiNode";
 		matrix_from_common(group, block->common);
+		
+		//printf("collision %i\n", group->collision);
 	}
 
 	vec3 bytestofloat(unsigned char *vec)
@@ -299,6 +307,7 @@ namespace miryks
 	{
 		Model *model = (Model *)rd->data;
 		Group *group = model->lastGroup;
+		group->collision = false;
 		Geometry *geometry = group->geometry;
 		if (geometry)
 		{

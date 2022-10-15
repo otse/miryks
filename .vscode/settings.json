@@ -102,6 +102,7 @@
       "lu": "cpp",
       "qr": "cpp",
       "svd": "cpp",
-      "niftypes.h": "c"
+      "niftypes.h": "c",
+      "random": "cpp"
     }
 }

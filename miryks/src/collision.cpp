@@ -26,7 +26,7 @@ namespace miryks
 
 			dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-			dynamicsWorld->setGravity(btVector3(0, 0, -50));
+			dynamicsWorld->setGravity(btVector3(0, 0, -300));
 
 			btCollisionShape *groundShape = new btBoxShape(btVector3(btScalar(5000.), btScalar(5000.), btScalar(25.)));
 
@@ -54,9 +54,9 @@ namespace miryks
 			// new orb();
 		}
 
-		void simulate()
+		void simulate(float delta)
 		{
-			dynamicsWorld->stepSimulation(1.f / 60.f, 10);
+			dynamicsWorld->stepSimulation(delta, 10);
 
 			for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
 			{
@@ -104,11 +104,16 @@ namespace miryks
 		{
 			if (!drawer->target)
 				return;
-			visit_group_geometry(collector, drawer->target, drawer->matrix);
+			//if (drawer->target->collision)
+				visit_group_geometry(collector, drawer->target, drawer->matrix);
 		}
 
 		void visit_group_geometry(triangle_collector &collector, Group *group, mat4 left)
 		{
+			if (!group->collision) {
+				//printf("group %s has no collision\n", group->name.c_str());
+				return;
+			}
 			if (group->geometry)
 			{
 				mat4 place = left * group->matrixWorld;
@@ -118,13 +123,10 @@ namespace miryks
 					auto a = group->geometry->vertices[group->geometry->elements[i + 0]];
 					auto b = group->geometry->vertices[group->geometry->elements[i + 1]];
 					auto c = group->geometry->vertices[group->geometry->elements[i + 2]];
-					
 					auto d = place * vec4(a.position, 1);
 					auto e = place * vec4(b.position, 1);
 					auto f = place * vec4(c.position, 1);
-					//printf("%f %f %f\n", a.x, b.x, c.x);
 					collector.triangles.push_back({vec3(f), vec3(e), vec3(d)});
-					//printf("t");
 				}
 			}
 			for (Group *child : group->childGroups)
@@ -136,7 +138,11 @@ namespace miryks
 			triangleMesh = new btTriangleMesh();
 
 			triangle_collector collector;
+
 			start_visit(collector, drawer);
+
+			if (!collector.triangles.size())
+				return;
 
 			for (auto &t : collector.triangles)
 			{
@@ -145,6 +151,9 @@ namespace miryks
 					glm_to_bt(t.b),
 					glm_to_bt(t.c));
 			}
+
+			// add empty triangle or crash
+			//triangleMesh->addTriangle(btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f));
 
 			collisionShape = new btBvhTriangleMeshShape(triangleMesh, true);
 
@@ -186,7 +195,7 @@ namespace miryks
 			// create a dynamic rigidbody
 
 			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			this->colShape = new btSphereShape(btScalar(10.));
+			this->colShape = new btSphereShape(btScalar(20.));
 			collisionShapes.push_back(colShape);
 
 			/// Create Dynamic Objects
@@ -211,6 +220,42 @@ namespace miryks
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 			this->rigidBody = new btRigidBody(rbInfo);
 			rigidBody->setFriction(btScalar(1.0));
+
+			dynamicsWorld->addRigidBody(rigidBody);
+		}
+
+		capsule::capsule(GroupDrawer *drawer)
+		{
+			printf("new capsule \n");
+			// create a dynamic rigidbody
+
+			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
+			colShape = new btCapsuleShape(20, 60);
+			collisionShapes.push_back(colShape);
+
+			/// Create Dynamic Objects
+			btTransform startTransform;
+			startTransform.setIdentity();
+
+			btScalar mass(1.f);
+
+			// rigidbody is dynamic if and only if mass is non zero, otherwise static
+			bool isDynamic = (mass != 0.f);
+
+			btVector3 localInertia(0, 0, 0);
+			if (isDynamic)
+				colShape->calculateLocalInertia(mass, localInertia);
+
+			vec3 vec = vec3(drawer->matrix[3]);
+			startTransform.setOrigin(glm_to_bt(vec));
+
+			// using motionstate is recommended, it provides interpolation capabilities,
+			// and only synchronizes 'active' objects
+			btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform);
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+			rigidBody = new btRigidBody(rbInfo);
+			rigidBody->setFriction(btScalar(1.0));
+			rigidBody->setDamping(btScalar(0.95f), btScalar(0.95f));
 
 			dynamicsWorld->addRigidBody(rigidBody);
 		}

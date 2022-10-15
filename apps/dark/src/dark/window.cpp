@@ -253,6 +253,7 @@ static void capture_keys()
 		  {GLFW_KEY_F8, "f8"},
 		  {GLFW_KEY_F9, "f9"},
 		  {GLFW_KEY_F10, "f10"},
+		  {GLFW_KEY_SPACE, "space"},
 		  {GLFW_KEY_W, "w"},
 		  {GLFW_KEY_A, "a"},
 		  {GLFW_KEY_S, "s"},
@@ -430,7 +431,7 @@ void window_while_test()
 		if (meanSkelly)
 			meanSkelly->Step();
 
-		collision::simulate();
+		collision::simulate(delta);
 
 		// if (someDraugr)
 		//	someDraugr->Step();

@@ -14,7 +14,8 @@ namespace miryks
 		idle = false;
 		race = dig_race("ImperialRace", 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
-		orb = nullptr;
+		capsule = nullptr;
+		capsule = nullptr;
 		// skel->mixer = new animation_mixer(skel);
 		printf("player skel anam %s\n", race.data<char *>("ANAM"));
 		// skel = new skeleton("actors\\character\\_1stperson\\skeleton.nif");
@@ -127,48 +128,68 @@ namespace miryks
 			}
 		}
 
+		float force = 10;
+
 		if (holding_key("w"))
 		{
-			if (orb)
+			if (capsule)
 			{
-				btVector3 dir = btVector3(0, -5, 0);
-				orb->rigidBody->applyCentralImpulse(dir);
+				//float x = cos(cameraCur->yaw) * 5;
+				//float y = sin(cameraCur->yaw) * 5;
+				btVector3 dir = btVector3(sin(cameraCur->yaw) * force, cos(cameraCur->yaw) * force, 0);
+				capsule->rigidBody->applyCentralImpulse(dir);
+				
 			}
+			/*if (capsule)
+			{
+				capsule->controller->setWalkDirection(btVector3(0.0f, 0.0f, 0.5f) * 1.0f);
+			}*/
 		}
 		if (holding_key("s"))
 		{
-			if (orb)
+			if (capsule)
 			{
-				btVector3 dir = btVector3(0, 5, 0);
-				orb->rigidBody->applyCentralImpulse(dir);
+				btVector3 dir = btVector3(sin(cameraCur->yaw) * -force, cos(cameraCur->yaw) * -force, 0);
+				capsule->rigidBody->applyCentralImpulse(dir);
 			}
 		}
 		if (holding_key("d"))
 		{
-			if (orb)
+			if (capsule)
 			{
-				btVector3 dir = btVector3(-5, 0, 0);
-				orb->rigidBody->applyCentralImpulse(dir);
+				btVector3 dir = btVector3(cos(cameraCur->yaw) * force, sin(cameraCur->yaw) * -force, 0);
+				capsule->rigidBody->applyCentralImpulse(dir);
 			}
 		}
 		if (holding_key("a"))
 		{
-			if (orb)
+			if (capsule)
 			{
-				btVector3 dir = btVector3(5, 0, 0);
-				orb->rigidBody->applyCentralImpulse(dir);
+				btVector3 dir = btVector3(cos(cameraCur->yaw) * -force, sin(cameraCur->yaw) * force, 0);
+				capsule->rigidBody->applyCentralImpulse(dir);
 			}
 		}
-		vec3 down = vec3(0, 0, -60);
+		if (pressing_key("space"))
+		{
+			if (capsule)
+			{
+				printf("\njump\n");
+				btVector3 dir = btVector3(0, 0, 200);
+				capsule->rigidBody->applyCentralImpulse(dir);
+			}
+		}
+		vec3 down = vec3(0, 0, 120 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
 		groupDrawer->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
-		if (!orb)
-			orb = new collision::orb(groupDrawer);
+		if (!capsule)
+			capsule = new collision::capsule(groupDrawer);
 		else
 		{
-			cameraCur->pos = collision::bt_to_glm(orb->get_world_transform().getOrigin());
-			groupDrawer->matrix = glm::translate(mat4(1.0), down + cameraCur->pos);
+			vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
+			origin += down;
+			groupDrawer->matrix = glm::translate(mat4(1.0), origin);
+			cameraCur->pos = origin;
 		}
-		// groupDrawer->matrix[3] = vec4(collision::bt_to_glm(orb->get_world_transform().getOrigin()), 1);
+		// groupDrawer->matrix[3] = vec4(collision::bt_to_glm(capsule->get_world_transform().getOrigin()), 1);
 		// groupDrawer->matrix = glm::translate(groupDrawer->matrix, forward);
 		groupDrawer->matrix = rotate(groupDrawer->matrix, -cameraCur->yaw, vec3(0, 0, 1));
 		groupDrawer->UpdateSideways();

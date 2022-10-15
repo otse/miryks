@@ -4,6 +4,7 @@ namespace miryks
 	{
         class base;
         class orb;
+        class capsule;
         class solid;
     }
 }

@@ -4,6 +4,11 @@
 
 #include "btBulletDynamicsCommon.h"
 
+#if 0
+#include "BulletCollision/CollisionDispatch/btGhostObject.h"
+#include "BulletDynamics/Character/btKinematicCharacterController.h"
+#endif
+
 namespace miryks
 {
 	namespace collision
@@ -21,6 +26,12 @@ namespace miryks
 			btCollisionShape *colShape;
 			orb(GroupDrawer *);
 		};
+		class capsule : public base
+		{
+		public:
+			btCollisionShape *colShape;
+			capsule(GroupDrawer *);
+		};
 		class solid : public base
 		{
 		public:
@@ -34,7 +45,7 @@ namespace miryks
 		extern btDiscreteDynamicsWorld *dynamicsWorld;
 		extern btAlignedObjectArray<btCollisionShape *> collisionShapes;
 		void init();
-		void simulate();
+		void simulate(float);
 		btVector3 glm_to_bt(vec3 &);
 		vec3 bt_to_glm(btVector3 &);
 	}

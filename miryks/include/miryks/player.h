@@ -11,7 +11,7 @@ namespace miryks
 		record race;
 		skeleton *skel;
 		animation *anim;
-		collision::orb *orb;
+		collision::capsule *capsule;
 		Group *head;
 		GroupDrawer *groupDrawer;
 		SkinnedMesh *body, *body2, *hands;

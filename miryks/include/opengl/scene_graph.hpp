@@ -22,6 +22,7 @@ struct Group
 	static int ids, num, drawCalls;
 	int id = 0;
 	bool visible = true;
+	bool collision = true;
 	std::string name;
 	Group *parent;
 	Geometry *geometry, *axis;
