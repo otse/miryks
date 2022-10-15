@@ -31,6 +31,8 @@ namespace miryks
 		public:
 			btCollisionShape *colShape;
 			capsule(GroupDrawer *);
+			void step();
+			void gravitate();
 		};
 		class solid : public base
 		{

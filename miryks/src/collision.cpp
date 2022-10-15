@@ -26,7 +26,7 @@ namespace miryks
 
 			dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-			dynamicsWorld->setGravity(btVector3(0, 0, -600));
+			dynamicsWorld->setGravity(btVector3(0, 0, -1000));
 
 			btCollisionShape *groundShape = new btBoxShape(btVector3(btScalar(5000.), btScalar(5000.), btScalar(25.)));
 
@@ -166,7 +166,7 @@ namespace miryks
 
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, collisionShape, btVector3(0, 0, 0));
 			rigidBody = new btRigidBody(rbInfo);
-			rigidBody->setFriction(btScalar(0.95));
+			rigidBody->setFriction(btScalar(1.0f));
 
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
@@ -195,7 +195,7 @@ namespace miryks
 			// create a dynamic rigidbody
 
 			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			this->colShape = new btSphereShape(btScalar(20.));
+			colShape = new btSphereShape(btScalar(30.));
 			collisionShapes.push_back(colShape);
 
 			/// Create Dynamic Objects
@@ -230,12 +230,17 @@ namespace miryks
 			// create a dynamic rigidbody
 
 			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			colShape = new btCapsuleShape(25, 100);
+			//colShape = new btCapsuleShape(25, 100);
+			colShape = new btSphereShape(btScalar(20.));
+			//colShape = new btBoxShape(btVector3(30., 30, 30));
+
 			collisionShapes.push_back(colShape);
 
 			/// Create Dynamic Objects
 			btTransform startTransform;
 			startTransform.setIdentity();
+			btQuaternion q = startTransform.getRotation();
+			printf("capsule start quaternion is %f %f %f %f\n", q.x(), q.y(), q.z(), q.w());
 
 			btScalar mass(1.f);
 
@@ -252,12 +257,55 @@ namespace miryks
 			// using motionstate is recommended, it provides interpolation capabilities,
 			// and only synchronizes 'active' objects
 			btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform);
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, colShape, localInertia);
+			rbInfo.m_startWorldTransform = startTransform;
 			rigidBody = new btRigidBody(rbInfo);
 			rigidBody->setFriction(btScalar(0.5f));
-			rigidBody->setDamping(btScalar(0.95f), btScalar(0.95f));
+			rigidBody->setDamping(btScalar(0.99f), btScalar(0.99f));
 
 			dynamicsWorld->addRigidBody(rigidBody);
+		}
+
+		void capsule::gravitate() {
+			btVector3 down = btVector3(0, 0, -100);
+			rigidBody->applyCentralImpulse(down);
+		}
+
+		void capsule::step() {
+			btTransform trans;
+			trans = rigidBody->getWorldTransform();
+			btVector3 position = trans.getOrigin();
+			trans.setRotation(btQuaternion(0.f, 0.f, 0.f, 1.f));
+			rigidBody->setWorldTransform(trans);
+			rigidBody->setGravity(btVector3(0, 0, 0));
+
+			//printf("capsule is %f %f %f\n", position.x(), position.y(), position.z());
+
+
+			/*if (rigidBody->getMotionState())
+			{
+				rigidBody->getMotionState()->getWorldTransform(trans);
+				trans.setRotation(btQuaternion(0.f, 0.f, 0.f, 1.f));
+				rigidBody->getMotionState()->setWorldTransform(trans);
+			}*/
+
+			btVector3 Start = position, End = (position - btVector3(0, 0, 25));
+
+			btCollisionWorld::ClosestRayResultCallback RayCallback(Start, End);
+			//RayCallback.m_collisionFilterMask = FILTER_CAMERA;
+
+			// Perform raycast
+			dynamicsWorld->rayTest(Start, End, RayCallback);
+			if(RayCallback.hasHit()) {
+				printf("hit");
+				End = RayCallback.m_hitPointWorld;
+				//Normal = RayCallback.m_hitNormalWorld;
+			}
+			else
+			{
+				btVector3 dir = btVector3(0, 0, -10);
+				rigidBody->applyCentralImpulse(dir);
+			}
 		}
 	}
 }

@@ -132,47 +132,92 @@ namespace miryks
 
 		float force = 10;
 
+		
 		if (holding_key("w"))
 		{
 			// float x = cos(cameraCur->yaw) * 5;
 			// float y = sin(cameraCur->yaw) * 5;
 			btVector3 dir = btVector3(sin(cameraCur->yaw), cos(cameraCur->yaw), 0);
 			capsule->rigidBody->setLinearVelocity(dir * 200.f);
-			
+			capsule->gravitate();
 			//capsule->rigidBody->applyCentralImpulse(dir);
 			capsule->rigidBody->activate();
 		}
 		if (holding_key("s"))
 		{
 			btVector3 dir = btVector3(sin(cameraCur->yaw), cos(cameraCur->yaw), 0);
+			btVector3 lin_vel = capsule->rigidBody->getLinearVelocity();
+			//dir.setY(-1000);
 			capsule->rigidBody->setLinearVelocity(dir * -200.f);
+			capsule->gravitate();
 			capsule->rigidBody->activate();
 		}
 		if (holding_key("d"))
 		{
 			btVector3 dir = btVector3(cos(cameraCur->yaw), sin(-cameraCur->yaw), 0);
 			capsule->rigidBody->setLinearVelocity(dir * 200.f);
+			capsule->gravitate();
 			capsule->rigidBody->activate();
 		}
 		if (holding_key("a"))
 		{
 			btVector3 dir = btVector3(cos(cameraCur->yaw), sin(-cameraCur->yaw), 0);
 			capsule->rigidBody->setLinearVelocity(dir * -200.f);
+			capsule->gravitate();
 			capsule->rigidBody->activate();
 		}
 		if (pressing_key("space"))
 		{
-			btVector3 dir = btVector3(0, 0, 200);
+			btVector3 dir = btVector3(0, 0, 500);
 			//capsule->rigidBody->setLinearVelocity(dir);
-			//capsule->rigidBody->applyCentralImpulse(dir);
+			capsule->rigidBody->applyCentralImpulse(dir);
 			capsule->rigidBody->activate();
 		}
 
+		//btVector3 dir = btVector3(0, 0, -10);
+		//capsule->rigidBody->applyCentralImpulse(dir);
+
+		capsule->step();
+/*
+		if (holding_key("w"))
+		{
+			// float x = cos(cameraCur->yaw) * 5;
+			// float y = sin(cameraCur->yaw) * 5;
+			btVector3 dir = btVector3(sin(cameraCur->yaw) * force, cos(cameraCur->yaw) * force, 0);
+			capsule->rigidBody->applyCentralImpulse(dir);
+			capsule->rigidBody->activate();
+		}
+		if (holding_key("s"))
+		{
+			btVector3 dir = btVector3(sin(cameraCur->yaw) * -force, cos(cameraCur->yaw) * -force, 0);
+			capsule->rigidBody->applyCentralImpulse(dir);
+			capsule->rigidBody->activate();
+		}
+		if (holding_key("d"))
+		{
+			btVector3 dir = btVector3(cos(cameraCur->yaw) * force, sin(cameraCur->yaw) * -force, 0);
+			capsule->rigidBody->applyCentralImpulse(dir);
+			capsule->rigidBody->activate();
+		}
+		if (holding_key("a"))
+		{
+			btVector3 dir = btVector3(cos(cameraCur->yaw) * -force, sin(cameraCur->yaw) * force, 0);
+			capsule->rigidBody->applyCentralImpulse(dir);
+			capsule->rigidBody->activate();
+		}
+		if (pressing_key("space"))
+		{
+			btVector3 dir = btVector3(0, 0, 500);
+			//capsule->rigidBody->setLinearVelocity(dir);
+			capsule->rigidBody->applyCentralImpulse(dir);
+			capsule->rigidBody->activate();
+		}
+*/
 		//capsule->rigidBody->
 
-		vec3 down = vec3(0, 0, 120 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
+		vec3 up = vec3(0, 0, 120 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
 		vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
-		origin += down;
+		origin += up;
 		groupDrawer->matrix = glm::translate(mat4(1.0), origin);
 		cameraCur->pos = origin;
 
