@@ -26,7 +26,7 @@ namespace miryks
 
 			dynamicsWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-			dynamicsWorld->setGravity(btVector3(0, 0, -300));
+			dynamicsWorld->setGravity(btVector3(0, 0, -600));
 
 			btCollisionShape *groundShape = new btBoxShape(btVector3(btScalar(5000.), btScalar(5000.), btScalar(25.)));
 
@@ -34,7 +34,7 @@ namespace miryks
 
 			btTransform groundTransform;
 			groundTransform.setIdentity();
-			groundTransform.setOrigin(btVector3(0, 0, 0));
+			groundTransform.setOrigin(btVector3(0, 0, -50));
 
 			btScalar mass(0.);
 			bool isDynamic = (mass != 0.f);
@@ -230,7 +230,7 @@ namespace miryks
 			// create a dynamic rigidbody
 
 			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			colShape = new btCapsuleShape(20, 60);
+			colShape = new btCapsuleShape(25, 100);
 			collisionShapes.push_back(colShape);
 
 			/// Create Dynamic Objects
@@ -254,7 +254,7 @@ namespace miryks
 			btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform);
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
 			rigidBody = new btRigidBody(rbInfo);
-			rigidBody->setFriction(btScalar(1.0));
+			rigidBody->setFriction(btScalar(0.5f));
 			rigidBody->setDamping(btScalar(0.95f), btScalar(0.95f));
 
 			dynamicsWorld->addRigidBody(rigidBody);

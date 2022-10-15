@@ -82,10 +82,11 @@ namespace dark
 	{
 		for (auto refer : ginterior->refers)
 		{
+			record marker = esp_get_form_id(*refer->base());
+			// if (marker.editor_id("COCMarkerHeading"))
 			if (*refer->base() == 0x00000032) // coc marker heading
 			{
-				if (refer->editor_id() &&
-					strstr(refer->editor_id(), "spawn"))
+				if (refer->editor_id() && strstr(refer->editor_id(), "spawn"))
 				{
 					float *data = refer->data<float *>("DATA");
 					personCam->pos = reinterpret_vec3(data);
