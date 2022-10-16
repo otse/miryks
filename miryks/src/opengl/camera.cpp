@@ -29,6 +29,8 @@ void Camera::Wasd(float delta)
 {
 	if (disabled)
 		return;
+	
+	return;
 		
 	auto forward = [&](float n) {
 		pos.x += n * sin(yaw);

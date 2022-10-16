@@ -48,6 +48,8 @@ namespace miryks
 			groupDrawer->Add(body->groupDrawer);
 		if (hands)
 			groupDrawer->Add(hands->groupDrawer);
+		hands->groupDrawer->matrix = glm::translate(mat4(1.0), vec3(0, 0, -50));
+		body->groupDrawer->matrix = glm::translate(mat4(1.0), vec3(0, 0, -50));
 		groupDrawer->Add(new GroupDrawer(skel->root, mat4(1.0)));
 		groupDrawer->UpdateSideways();
 		Place("gloomgenman");

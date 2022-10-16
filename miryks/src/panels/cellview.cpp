@@ -139,7 +139,7 @@ void overlay_cellview()
 			{
 				if (ImGui::Button("Load"))
 				{
-					hooks::load_interior(items[current], true);
+					hooks::load_interior(items[current], 5, true);
 				}
 			}
 			// if (items[current] == ginterior->loadedCell)
@@ -163,7 +163,7 @@ void overlay_cellview()
 				}
 				if (!gworldspace)
 				{
-					hooks::load_world_space("DarkWorld", true); // Blackreach
+					hooks::load_world_space("DarkWorld", 5, true); // Blackreach
 				}
 			}
 			ImGui::EndTabItem();

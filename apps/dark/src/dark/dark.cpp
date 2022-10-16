@@ -44,14 +44,14 @@ namespace dark
 	}
 
 	
-	void load_interior(const char *name, bool place)
+	void load_interior(const char *name, int plugin, bool place)
 	{
 		using top =
 		grup_iter<0,
 		grup_iter<2,
 		grup_iter<3>>>;
 		printf("load interior %s\n", name);
-		recordgrup rg = find_recordgrup_by_id(name, top("CELL", 5));
+		recordgrup rg = find_recordgrup_by_id(name, top("CELL", plugin));
 		if (ginterior)
 			delete ginterior;
 		ginterior = new interior(rg);
@@ -63,12 +63,12 @@ namespace dark
 			place_at_level_start();
 	}
 
-	void load_world_space(const char *name, bool place)
+	void load_world_space(const char *name, int plugin, bool place)
 	{
 		if (ginterior)
 			delete ginterior;
 		itemfinder::clear();
-		recordgrup rg = find_recordgrup_by_id(name, grup_iter<0>("WRLD", 5));
+		recordgrup rg = find_recordgrup_by_id(name, grup_iter<0>("WRLD", plugin));
 		gworldspace = new worldspace(rg);
 		reference_factory_iter<my_reference> factory;
 		gworldspace->make(factory);
@@ -124,8 +124,9 @@ int main()
 	// refs_init();
 	// load_world_space();
 #if 1
-	load_interior("GloomGen", true);
-	place_at_level_start();
+	load_interior("GloomGen", 5, true);
+	//load_interior("HighHrothgar", 0, true);
+	//place_at_level_start();
 	/*
 	draugrskeleton
 	draugrmale01 - 07

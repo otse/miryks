@@ -309,7 +309,7 @@ static void hotswap_plugin_and_dungeon()
 	free_plugin(&get_plugins()[5]);
 	get_plugins()[5] = load_plugin(PLUGIN_0, true);
 	const char *id = ginterior->id;
-	hooks::load_interior(id, false);
+	hooks::load_interior(id, 5, false);
 }
 
 static void handle_my_keys()
@@ -350,7 +350,7 @@ static void handle_my_keys()
 		}
 		if (!gworldspace)
 		{
-			hooks::load_world_space("DarkWorld", true); // Blackreach
+			hooks::load_world_space("DarkWorld", 5, true); // Blackreach
 		}
 	}
 	else if (pressing_key("f10"))
@@ -420,10 +420,12 @@ void window_while_test()
 
 		glfwSetInputMode(window, GLFW_CURSOR, cursorShowing ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
 
-		cameraCur->Update(delta);
+		collision::simulate(delta);
 
 		if (player1)
 			player1->Step();
+			
+		cameraCur->Update(delta);
 
 		if (someDraugr)
 			someDraugr->Step();
@@ -431,7 +433,6 @@ void window_while_test()
 		if (meanSkelly)
 			meanSkelly->Step();
 
-		collision::simulate(delta);
 
 		// if (someDraugr)
 		//	someDraugr->Step();

@@ -49,7 +49,7 @@ namespace miryks
 			btRigidBody *body = new btRigidBody(rbInfo);
 
 			// add the body to the dynamics world
-			dynamicsWorld->addRigidBody(body);
+			//dynamicsWorld->addRigidBody(body);
 
 			// new orb();
 		}
@@ -231,7 +231,7 @@ namespace miryks
 
 			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
 			//colShape = new btCapsuleShape(25, 100);
-			colShape = new btSphereShape(btScalar(20.));
+			colShape = new btSphereShape(btScalar(20));
 			//colShape = new btBoxShape(btVector3(30., 30, 30));
 
 			collisionShapes.push_back(colShape);
@@ -268,15 +268,34 @@ namespace miryks
 
 		void capsule::gravitate() {
 			btVector3 down = btVector3(0, 0, -100);
-			rigidBody->applyCentralImpulse(down);
+			//rigidBody->applyCentralImpulse(down);
+
+			btTransform trans;
+			trans = rigidBody->getWorldTransform();
+			btVector3 position = trans.getOrigin();
+
+			btVector3 Start = position, End = (position - btVector3(0, 0, 21));
+
+			btCollisionWorld::ClosestRayResultCallback RayCallback(Start, End);
+			//RayCallback.m_collisionFilterMask = FILTER_CAMERA;
+
+			// Perform raycast
+			dynamicsWorld->rayTest(Start, End, RayCallback);
+			if(RayCallback.hasHit()) {
+				End = RayCallback.m_hitPointWorld;
+			}
+			else
+			{
+				rigidBody->applyCentralImpulse(down);
+			}
 		}
 
 		void capsule::step() {
 			btTransform trans;
 			trans = rigidBody->getWorldTransform();
 			btVector3 position = trans.getOrigin();
-			trans.setRotation(btQuaternion(0.f, 0.f, 0.f, 1.f));
-			rigidBody->setWorldTransform(trans);
+			//trans.setRotation(btQuaternion(0.f, 0.f, 0.f, 1.f));
+			//rigidBody->setWorldTransform(trans);
 			rigidBody->setGravity(btVector3(0, 0, 0));
 
 			//printf("capsule is %f %f %f\n", position.x(), position.y(), position.z());
@@ -289,7 +308,7 @@ namespace miryks
 				rigidBody->getMotionState()->setWorldTransform(trans);
 			}*/
 
-			btVector3 Start = position, End = (position - btVector3(0, 0, 25));
+			btVector3 Start = position, End = (position - btVector3(0, 0, 21));
 
 			btCollisionWorld::ClosestRayResultCallback RayCallback(Start, End);
 			//RayCallback.m_collisionFilterMask = FILTER_CAMERA;
@@ -297,14 +316,16 @@ namespace miryks
 			// Perform raycast
 			dynamicsWorld->rayTest(Start, End, RayCallback);
 			if(RayCallback.hasHit()) {
-				printf("hit");
+				// printf("hit");
 				End = RayCallback.m_hitPointWorld;
+				rigidBody->setGravity(btVector3(0, 0, 0));
 				//Normal = RayCallback.m_hitNormalWorld;
 			}
 			else
 			{
-				btVector3 dir = btVector3(0, 0, -10);
-				rigidBody->applyCentralImpulse(dir);
+				rigidBody->setGravity(btVector3(0, 0, -1000));
+				//btVector3 dir = btVector3(0, 0, -10);
+				//rigidBody->applyCentralImpulse(dir);
 			}
 		}
 	}

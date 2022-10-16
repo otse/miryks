@@ -13,8 +13,8 @@ namespace miryks
 	namespace hooks
 	{
 		bool (*hooks_some_behavior)(int) = 0;
-		void (*load_interior)(const char *, bool) = 0;
-		void (*load_world_space)(const char *, bool) = 0;
+		void (*load_interior)(const char *, int, bool) = 0;
+		void (*load_world_space)(const char *, int, bool) = 0;
 	}
 
 	std::string installed_path;
