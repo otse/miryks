@@ -19,6 +19,7 @@ namespace miryks
 			btRigidBody *rigidBody;
 			base() {}
 			btTransform get_world_transform();
+			void set_position(btVector3);
 		};
 		class orb : public base
 		{

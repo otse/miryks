@@ -217,7 +217,7 @@ namespace miryks
 */
 		//capsule->rigidBody->
 
-		vec3 up = vec3(0, 0, 120 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
+		vec3 up = vec3(0, 0, 140 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
 		vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
 		origin += up;
 		groupDrawer->matrix = glm::translate(mat4(1.0), origin);
@@ -226,10 +226,16 @@ namespace miryks
 		// groupDrawer->matrix[3] = vec4(collision::bt_to_glm(capsule->get_world_transform().getOrigin()), 1);
 		// groupDrawer->matrix = glm::translate(groupDrawer->matrix, forward);
 		groupDrawer->matrix = rotate(groupDrawer->matrix, -cameraCur->yaw, vec3(0, 0, 1));
+		groupDrawer->matrix = rotate(groupDrawer->matrix, -(cameraCur->pitch + (pif / 2)), vec3(1, 0, 0));
 		groupDrawer->UpdateSideways();
 		/*groupDrawer->matrix = glm::translate(mat4(1.0), cameraCur->pos);
 		groupDrawer->UpdateSideways();*/
 		// groupDrawer->Reset();
+	}
+
+	void Player::Teleport()
+	{
+		capsule->set_position(collision::glm_to_bt(cameraCur->pos));
 	}
 
 	void Player::Move()

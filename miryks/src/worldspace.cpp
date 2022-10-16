@@ -10,10 +10,10 @@
 
 namespace miryks
 {
-	struct exterior_iter : recordgrup
+	struct exterior_iter : record_with_grup_iter
 	{
 		worldspace *ws;
-		bool go_sideways(exterior_iter &target)
+		bool fat_arrow(exterior_iter &target)
 		{
 			exterior *cell = new exterior(*this);
 			target.ws->exteriors.push_back(cell);
@@ -25,7 +25,7 @@ namespace miryks
 	{
 		record last_cell;
 		worldspace *ws;
-		bool go_sideways(careful_wrld_parser &rhs)
+		bool fat_arrow(careful_wrld_parser &rhs)
 		{
 			if (is_record())
 			{
@@ -38,7 +38,7 @@ namespace miryks
 				grup g = as_grup();
 				if (g.ghed().group_type == cell_children)
 				{
-					recordgrup rg;
+					record_with_grup rg;
 					rg.r = rhs.last_cell.r;
 					rg.g = g.g;
 					exterior *cell = new exterior(rg);
@@ -53,7 +53,7 @@ namespace miryks
 	struct land_iter : record_iter
 	{
 		exterior *cell = nullptr;
-		bool go_sideways(land_iter &rhs)
+		bool fat_arrow(land_iter &rhs)
 		{
 			if (!this->is_type("LAND"))
 				return false;
@@ -113,7 +113,7 @@ namespace miryks
 	}
 #endif
 
-	worldspace::worldspace(recordgrup rg) : record(rg)
+	worldspace::worldspace(record_with_grup_iter rg) : record(rg)
 	{
 		childs = rg;
 		assertc(childs.ghed().Group == world_children);

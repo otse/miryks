@@ -23,6 +23,7 @@ namespace miryks
 		void Move();
 		void SetAnim(const char *);
 		void Place(const char *);
+		void Teleport();
 		void Toggle();
 
 		ViewerCamera *thirdPersonCamera;

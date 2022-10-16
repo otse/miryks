@@ -261,12 +261,6 @@ namespace miryks
 
 	struct passthrough;
 
-	struct recordgrup;
-	struct recordgrup_iter;
-
-	struct record_with_id;
-	struct record_with_id_and_grup;
-
 	struct grup
 	{
 		cgrup *g = nullptr;
@@ -428,33 +422,51 @@ namespace miryks
 		}
 	};
 
-	/*struct recordgrup : record, grup {
-		recordgrup()
+	/*struct record_with_grup_iter : record, grup {
+		record_with_grup_iter()
 		{
 		}
-		recordgrup(const recordgrup &rhs) {
+		record_with_grup_iter(const record_with_grup_iter &rhs) {
 			r = rhs.r;
 			g = rhs.g;
 		}
 	};*/
 
-	struct recordgrup : record_iter, grup_iter<>
+	/*struct record_with_grup_iter 
 	{
-		recordgrup()
+
+	};*/
+	
+	struct record_with_grup_iter : record_iter, grup_iter<>
+	{
+		record_with_grup_iter()
 		{
 		}
-		recordgrup(grup &iter) : record_iter(iter), grup_iter<>(iter)
+		record_with_grup_iter(grup &iter) : record_iter(iter), grup_iter<>(iter)
 		{
 		}
-		recordgrup(const recordgrup &rhs)
+		void operator=(const record_with_grup_iter &rhs)
 		{
-			record::r = rhs.record::r;
-			grup::g = rhs.grup::g;
+			r = rhs.r;
+			g = rhs.g;
+			//grup::g = rhs.grup::g;
 		}
 		const char *id = nullptr;
-		bool fat_arrow(recordgrup &rhs)
+		bool fat_arrow(record_with_grup_iter &rhs)
 		{
-			return this->record::editor_id(rhs.id);
+			return editor_id(rhs.id);
+		}
+	};
+
+	struct record_with_grup : record, grup
+	{
+		record_with_grup()
+		{
+		}
+		record_with_grup(const record_with_grup_iter &rhs)
+		{
+			r = rhs.r;
+			g = rhs.g;
 		}
 	};
 
@@ -499,7 +511,7 @@ namespace miryks
 		{
 			this->set_dud(rhs);
 		}
-		bool fat_arrow(recordgrup &rhs)
+		bool fat_arrow(record_with_grup_iter &rhs)
 		{
 			return false;
 		}
@@ -515,9 +527,9 @@ namespace miryks
 	}
 
 	template <typename T>
-	static inline recordgrup find_recordgrup_by_id(const char *id, T t)
+	static inline record_with_grup find_record_with_grup_by_id(const char *id, T t)
 	{
-		recordgrup target;
+		record_with_grup_iter target;
 		target.id = id;
 		t <= target;
 		return target;
@@ -560,7 +572,7 @@ namespace miryks
 	struct reference_factory_iter : record_iter
 	{
 		cell *cell = nullptr;
-		bool go_sideways(reference_factory_iter &target)
+		bool fat_arrow(reference_factory_iter &target)
 		{
 			if (this->is_reference())
 			{
@@ -571,14 +583,14 @@ namespace miryks
 		}
 	};
 
-	class cell : public recordgrup
+	class cell : public record_with_grup
 	{
 	public:
 		unsigned short flags;
 		grup persistent, temporary;
-		std::vector<reference *> refers;
+		std::vector<reference *> references;
 		std::map<std::string, reference *> ids;
-		cell(recordgrup rg) : recordgrup(rg)
+		cell(record_with_grup rg) : record_with_grup(rg)
 		{
 			flags = 0;
 			assertc(rg.rvalid() && rg.gvalid());
@@ -597,7 +609,7 @@ namespace miryks
 		}
 		virtual void add(reference *refe)
 		{
-			refers.push_back(refe);
+			references.push_back(refe);
 			if (refe->editor_id())
 			{
 				ids.emplace(refe->editor_id(), refe);
@@ -613,9 +625,9 @@ namespace miryks
 		}
 		virtual void unload()
 		{
-			for (reference *refer : refers)
+			for (reference *refer : references)
 				delete refer;
-			refers.clear();
+			references.clear();
 		}
 		virtual ~cell()
 		{
@@ -631,9 +643,9 @@ namespace miryks
 		virtual ~interior()
 		{
 		}
-		interior(recordgrup rg) : cell(rg)
+		interior(record_with_grup rg) : cell(rg)
 		{
-			id = editor_id();
+			id = strdup(editor_id());
 		}
 		virtual void unload()
 		{
@@ -644,13 +656,13 @@ namespace miryks
 		}
 	};
 
-	class worldspace : public recordgrup
+	class worldspace : public record_with_grup
 	{
 	public:
 		grup childs;
 		std::vector<exterior *> exteriors;
 		std::vector<reference *> references;
-		worldspace(recordgrup rg) : recordgrup(rg)
+		worldspace(record_with_grup rg) : record_with_grup(rg)
 		{
 			printf("world space: %s\n", this->editor_id());
 			childs = rg;
@@ -661,7 +673,7 @@ namespace miryks
 		}
 		void init();
 		template <typename T>
-		void make(T factory)
+		void build_exteriors(T factory)
 		{
 			for (auto exterior : exteriors)
 			{
@@ -674,7 +686,7 @@ namespace miryks
 	/*
 	static inline interior *dig_interior(const char *name, int plugin = 5)
 	{
-		recordgrup rg = find_recordgrup_by_id(
+		record_with_grup_iter rg = find_record_with_grup_by_id(
 			name,
 			grup_iter<0,
 			grup_iter<2,
@@ -684,7 +696,7 @@ namespace miryks
 
 	static inline worldspace *dig_world_space(const char *name, int plugin = 5)
 	{
-		recordgrup rg = find_recordgrup_by_id(
+		record_with_grup_iter rg = find_record_with_grup_by_id(
 			name,
 			grup_iter<0>("WRLD", plugin));
 		return new worldspace(rg);
@@ -719,7 +731,7 @@ namespace miryks
 		worldspace *worldSpace;
 		land *land;
 		XCLC *xclc;
-		exterior(recordgrup rg) : cell(rg)
+		exterior(record_with_grup_iter rg) : cell(rg)
 		{
 			//printf("exterior id %i\n", this->r->id);
 			land = nullptr;

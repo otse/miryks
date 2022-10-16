@@ -29,8 +29,6 @@ bool holding_key(const char *id)
 
 namespace dark
 {
-	void place_at_level_start();
-
 	std::map<const char *, int> keys;
 
 	void darkassert(bool e)
@@ -51,7 +49,7 @@ namespace dark
 		grup_iter<2,
 		grup_iter<3>>>;
 		printf("load interior %s\n", name);
-		recordgrup rg = find_recordgrup_by_id(name, top("CELL", plugin));
+		record_with_grup rg = find_record_with_grup_by_id(name, top("CELL", plugin));
 		if (ginterior)
 			delete ginterior;
 		ginterior = new interior(rg);
@@ -68,19 +66,15 @@ namespace dark
 		if (ginterior)
 			delete ginterior;
 		itemfinder::clear();
-		recordgrup rg = find_recordgrup_by_id(name, grup_iter<0>("WRLD", plugin));
+		record_with_grup rg = find_record_with_grup_by_id(name, grup_iter<0>("WRLD", plugin));
 		gworldspace = new worldspace(rg);
 		reference_factory_iter<my_reference> factory;
-		gworldspace->make(factory);
-		/*reference_factory_iter<
-			my_reference>
-			factory;*/
-		// factory.cell = gworldspace;
+		gworldspace->build_exteriors(factory);
 	}
 
 	void place_at_level_start()
 	{
-		for (auto refer : ginterior->refers)
+		for (auto refer : ginterior->references)
 		{
 			record marker = esp_get_form_id(*refer->base());
 			// if (marker.editor_id("COCMarkerHeading"))
@@ -90,8 +84,9 @@ namespace dark
 				{
 					float *data = refer->data<float *>("DATA");
 					personCam->pos = reinterpret_vec3(data);
-					personCam->pos.z += EYE_HEIGHT;
 					personCam->yaw = reinterpret_vec3(data + 3).z;
+					if (player1)
+						player1->Teleport();
 					break;
 				}
 			}

@@ -21,6 +21,7 @@ namespace dark
 	void darkassert(bool);
 	
 	void view_bucket_in_place();
+	void place_at_level_start();
 	void load_interior(const char *, bool);
 
 	void init_dark();

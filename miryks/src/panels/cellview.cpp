@@ -107,7 +107,7 @@ void overlay_cellview()
 			const bool child_is_visible = ImGui::BeginChild("all references", vec, true, child_flags);
 
 			int num = 0;
-			for (auto ref : ginterior->refers)
+			for (auto ref : ginterior->references)
 			{
 				num++;
 				char hex[40];

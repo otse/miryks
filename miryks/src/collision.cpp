@@ -189,6 +189,14 @@ namespace miryks
 			return vec;
 		}
 
+		void base::set_position(btVector3 vec)
+		{
+			btTransform trans;
+			trans = rigidBody->getWorldTransform();
+			trans.setOrigin(vec);
+			rigidBody->setWorldTransform(trans);
+		}
+
 		orb::orb(GroupDrawer *drawer)
 		{
 			printf("new orb \n");

@@ -424,7 +424,7 @@ void window_while_test()
 
 		if (player1)
 			player1->Step();
-			
+
 		cameraCur->Update(delta);
 
 		if (someDraugr)
@@ -432,7 +432,6 @@ void window_while_test()
 
 		if (meanSkelly)
 			meanSkelly->Step();
-
 
 		// if (someDraugr)
 		//	someDraugr->Step();
