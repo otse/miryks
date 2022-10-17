@@ -421,21 +421,6 @@ namespace miryks
 			return rhs.formId == this->rhed().formId;
 		}
 	};
-
-	/*struct record_with_grup_iter : record, grup {
-		record_with_grup_iter()
-		{
-		}
-		record_with_grup_iter(const record_with_grup_iter &rhs) {
-			r = rhs.r;
-			g = rhs.g;
-		}
-	};*/
-
-	/*struct record_with_grup_iter 
-	{
-
-	};*/
 	
 	struct record_with_grup_iter : record_iter, grup_iter<>
 	{
@@ -512,7 +497,7 @@ namespace miryks
 		{
 			this->set_dud(rhs);
 		}
-		bool fat_arrow(record_with_grup_iter &rhs)
+		bool fat_arrow(unknown_iter &rhs)
 		{
 			return false;
 		}
@@ -528,7 +513,7 @@ namespace miryks
 	}
 
 	template <typename T>
-	static inline record_with_grup_iter find_record_with_grup_by_id(const char *id, T t)
+	static inline record_with_grup find_record_with_grup_by_id(const char *id, T t)
 	{
 		record_with_grup_iter target;
 		target.id = id;
@@ -584,14 +569,14 @@ namespace miryks
 		}
 	};
 
-	class cell : public record_with_grup_iter
+	class cell : public record_with_grup
 	{
 	public:
 		unsigned short flags;
 		grup persistent, temporary;
 		std::vector<reference *> references;
 		std::map<std::string, reference *> ids;
-		cell(record_with_grup_iter rg) : record_with_grup_iter(rg)
+		cell(record_with_grup rg) : record_with_grup(rg)
 		{
 			flags = 0;
 			assertc(rg.rvalid() && rg.gvalid());
@@ -644,7 +629,7 @@ namespace miryks
 		virtual ~interior()
 		{
 		}
-		interior(record_with_grup_iter rg) : cell(rg)
+		interior(record_with_grup rg) : cell(rg)
 		{
 			id = _strdup(editor_id());
 		}
@@ -657,16 +642,17 @@ namespace miryks
 		}
 	};
 
-	class worldspace : public record_with_grup_iter
+	class worldspace : public record_with_grup
 	{
 	public:
 		grup childs;
 		std::vector<exterior *> exteriors;
 		std::vector<reference *> references;
-		worldspace(record_with_grup_iter rg) : record_with_grup_iter(rg)
+		worldspace(record_with_grup rg) : record_with_grup(rg)
 		{
 			printf("world space: %s\n", this->editor_id());
 			childs = rg;
+			// If our first child is a cell record, skip past it
 			assertc(ghed().group_type == world_children);
 			unknown cell_record_or_exterior_block = childs.next_unknown();
 			cell_record_or_exterior_block.is_record() ? childs.index++ : childs.index--;
@@ -732,7 +718,7 @@ namespace miryks
 		worldspace *worldSpace;
 		land *land;
 		XCLC *xclc;
-		exterior(record_with_grup_iter rg) : cell(rg)
+		exterior(record_with_grup rg) : cell(rg)
 		{
 			//printf("exterior id %i\n", this->r->id);
 			land = nullptr;

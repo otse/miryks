@@ -38,7 +38,7 @@ namespace miryks
 				grup g = as_grup();
 				if (g.ghed().group_type == cell_children)
 				{
-					record_with_grup_iter rg;
+					record_with_grup rg;
 					rg.r = rhs.last_cell.r;
 					rg.g = g.g;
 					exterior *cell = new exterior(rg);
@@ -57,7 +57,7 @@ namespace miryks
 		{
 			if (!this->is_type("LAND"))
 				return false;
-			printf("land iter\n");
+			printf(" land iter \n");
 			land *lan = new land(*this, rhs.cell);
 			// lan->exterior = rhs.cell;
 			return false;
@@ -70,11 +70,11 @@ namespace miryks
 		grup_iter<1,
 		grup_iter<4,
 		grup_iter<5>>>();
+		// In this assignment we also adopt the index that we skipped
 		type = childs;
-		// exterior_iter factory;
 		careful_wrld_parser factory;
 		factory.ws = this;
-		printf("going to iter for wrld exteriors\n");
+		printf(" going to iter for wrld exteriors \n");
 		type <= factory;
 
 		sceneDef->ambient = vec3(127.f / 255.f);
@@ -197,8 +197,8 @@ namespace miryks
 				{
 					float *loc = refr.data<float *>("DATA");
 					personCam->pos = reinterpret_vec3(loc);
-					personCam->pos.z += EYE_HEIGHT;
 					personCam->yaw = reinterpret_vec3(loc + 3).z;
+					personCam->pos.z += EYE_HEIGHT;
 					cameraCur = personCam;
 				}
 			}

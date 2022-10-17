@@ -49,7 +49,7 @@ namespace dark
 		grup_iter<2,
 		grup_iter<3>>>;
 		printf("load interior %s\n", name);
-		record_with_grup_iter rg = find_record_with_grup_by_id(name, top("CELL", plugin));
+		record_with_grup rg = find_record_with_grup_by_id(name, top("CELL", plugin));
 		if (ginterior)
 			delete ginterior;
 		ginterior = new interior(rg);
@@ -66,7 +66,7 @@ namespace dark
 		if (ginterior)
 			delete ginterior;
 		itemfinder::clear();
-		record_with_grup_iter rg = find_record_with_grup_by_id(name, grup_iter<0>("WRLD", plugin));
+		record_with_grup rg = find_record_with_grup_by_id(name, grup_iter<0>("WRLD", plugin));
 		gworldspace = new worldspace(rg);
 		reference_factory<my_reference> factory;
 		gworldspace->build_exteriors(factory);
