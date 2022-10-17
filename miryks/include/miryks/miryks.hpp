@@ -467,6 +467,7 @@ namespace miryks
 		{
 			r = rhs.r;
 			g = rhs.g;
+			//index = rhs.index;
 		}
 	};
 
@@ -527,7 +528,7 @@ namespace miryks
 	}
 
 	template <typename T>
-	static inline record_with_grup find_record_with_grup_by_id(const char *id, T t)
+	static inline record_with_grup_iter find_record_with_grup_by_id(const char *id, T t)
 	{
 		record_with_grup_iter target;
 		target.id = id;
@@ -569,28 +570,28 @@ namespace miryks
 	extern worldspace *gworldspace;
 
 	template <typename T>
-	struct reference_factory_iter : record_iter
+	struct reference_factory : record_iter
 	{
 		cell *cell = nullptr;
-		bool fat_arrow(reference_factory_iter &target)
+		bool fat_arrow(reference_factory &target)
 		{
 			if (this->is_reference())
 			{
-				T *refer = new T(*this);
-				target.cell->add(refer);
+				T *reference = new T(*this);
+				target.cell->add(reference);
 			}
 			return false;
 		}
 	};
 
-	class cell : public record_with_grup
+	class cell : public record_with_grup_iter
 	{
 	public:
 		unsigned short flags;
 		grup persistent, temporary;
 		std::vector<reference *> references;
 		std::map<std::string, reference *> ids;
-		cell(record_with_grup rg) : record_with_grup(rg)
+		cell(record_with_grup_iter rg) : record_with_grup_iter(rg)
 		{
 			flags = 0;
 			assertc(rg.rvalid() && rg.gvalid());
@@ -643,9 +644,9 @@ namespace miryks
 		virtual ~interior()
 		{
 		}
-		interior(record_with_grup rg) : cell(rg)
+		interior(record_with_grup_iter rg) : cell(rg)
 		{
-			id = strdup(editor_id());
+			id = _strdup(editor_id());
 		}
 		virtual void unload()
 		{
@@ -656,13 +657,13 @@ namespace miryks
 		}
 	};
 
-	class worldspace : public record_with_grup
+	class worldspace : public record_with_grup_iter
 	{
 	public:
 		grup childs;
 		std::vector<exterior *> exteriors;
 		std::vector<reference *> references;
-		worldspace(record_with_grup rg) : record_with_grup(rg)
+		worldspace(record_with_grup_iter rg) : record_with_grup_iter(rg)
 		{
 			printf("world space: %s\n", this->editor_id());
 			childs = rg;

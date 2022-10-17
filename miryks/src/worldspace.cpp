@@ -38,7 +38,7 @@ namespace miryks
 				grup g = as_grup();
 				if (g.ghed().group_type == cell_children)
 				{
-					record_with_grup rg;
+					record_with_grup_iter rg;
 					rg.r = rhs.last_cell.r;
 					rg.g = g.g;
 					exterior *cell = new exterior(rg);

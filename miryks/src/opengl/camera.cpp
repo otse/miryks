@@ -30,6 +30,7 @@ void Camera::Wasd(float delta)
 	if (disabled)
 		return;
 	
+	// We have player.cpp taking over
 	return;
 		
 	auto forward = [&](float n) {
@@ -75,15 +76,11 @@ void FirstPersonCamera::Mouse(float x, float y)
 {
 	if (disabled)
 		return;
+
 	const float sensitivity = .001f;
+
 	yaw += x * sensitivity;
 	pitch += y * sensitivity;
-}
-
-void FirstPersonCamera::Update(float time)
-{
-	if (!disabled)
-		Wasd(time);
 
 	while (yaw > 2 * pif)
 		yaw -= 2 * pif;
@@ -91,6 +88,12 @@ void FirstPersonCamera::Update(float time)
 		yaw += 2 * pif;
 
 	pitch = fmaxf(-pif, fminf(0, pitch));
+}
+
+void FirstPersonCamera::Update(float time)
+{
+	if (!disabled)
+		Wasd(time);
 
 	view = mat4(1.0f);
 	view = glm::rotate(view, pitch, vec3(1, 0, 0));

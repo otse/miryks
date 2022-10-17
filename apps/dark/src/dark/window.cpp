@@ -424,7 +424,7 @@ void window_while_test()
 
 		if (player1)
 			player1->Step();
-
+			
 		cameraCur->Update(delta);
 
 		if (someDraugr)
