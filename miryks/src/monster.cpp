@@ -76,28 +76,29 @@ namespace miryks
 		if (alcove)
 		{
 			keyf = get_keyframes("anims/draugr/alcove_idle.kf");
+			keyf->loop = true;
 			alcove_idle = new animation(keyf);
 			alcove_idle->skel = skel;
-			alcove_idle->loop = true;
 			skel->anim = alcove_idle;
 			keyf = get_keyframes("anims/draugr/alcove_wake.kf");
+			keyf->loop = false;
 			animation *alcove_wake = new animation(keyf);
 			alcove_wake->skel = skel;
 			alcove_wake->ratio = 1;
-			alcove_wake->loop = false;
 			alcove_idle->next = alcove_wake;
+			alcove_wake->proceed = true;
 			keyf = get_keyframes("anims/draugr/idle.kf");
+			keyf->loop = true;
 			animation *idle = new animation(keyf);
 			idle->skel = skel;
-			idle->loop = true;
 			alcove_wake->next = idle;
 		}
 		else
 		{
 			keyf = get_keyframes("anims/draugr/_h2hidle.kf");
+			keyf->loop = true;
 			animation *idle = new animation(keyf);
 			idle->skel = skel;
-			idle->loop = true;
 			skel->anim = idle;
 		}
 		if (wearHelmet)
@@ -121,7 +122,7 @@ namespace miryks
 			}
 			else if (!wake)
 			{
-				alcove_idle->loop = false;
+				alcove_idle->proceed = true;
 				wake = true;
 			}
 		}

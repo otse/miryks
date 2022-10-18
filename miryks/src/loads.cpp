@@ -14,14 +14,19 @@ namespace miryks
 {
 	keyframes *load_keyframes_from_disk(const char *path)
 	{
-		if (nif *saved = got_ni(path))
-			return new keyframes(saved);
+		static std::map<const char *, keyframes *> saved;
+		auto has = saved.find(path);
+		if (has != saved.end())
+			return has->second;
+		//if (nif *saved = got_ni(path))
+		//	return new keyframes(saved);
 		nif *model = calloc_ni();
 		model->path = path;
 		model->buf = get_binary_file(path);
 		nif_read(model);
-		save_ni(path, model);
-		return new keyframes(model);
+		//save_ni(path, model);
+		saved[path] = new keyframes(model);
+		return saved[path];
 	}
 
 	ESP load_plugin(const char *filename, bool loadInMemory)

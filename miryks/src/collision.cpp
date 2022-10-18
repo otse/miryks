@@ -49,9 +49,28 @@ namespace miryks
 			btRigidBody *body = new btRigidBody(rbInfo);
 
 			// add the body to the dynamics world
-			//dynamicsWorld->addRigidBody(body);
+			// dynamicsWorld->addRigidBody(body);
 
 			// new orb();
+		}
+
+		void base::remove()
+		{
+			printf("going to remove collision object\n");
+			if (rigidBody)
+			{
+				delete rigidBody->getCollisionShape();
+				dynamicsWorld->removeRigidBody(rigidBody);
+				delete rigidBody;
+			}
+			return;
+			int i;
+			for (i = dynamicsWorld->getNumCollisionObjects() - 1; i >= 0; i--)
+			{
+				btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[i];
+				dynamicsWorld->removeCollisionObject(obj);
+				delete obj;
+			}
 		}
 
 		void simulate(float delta)
@@ -104,14 +123,15 @@ namespace miryks
 		{
 			if (!drawer->target)
 				return;
-			//if (drawer->target->collision)
-				visit_group_geometry(collector, drawer->target, drawer->matrix);
+			// if (drawer->target->collision)
+			visit_group_geometry(collector, drawer->target, drawer->matrix);
 		}
 
 		void visit_group_geometry(triangle_collector &collector, Group *group, mat4 left)
 		{
-			if (!group->collision) {
-				//printf("group %s has no collision\n", group->name.c_str());
+			if (!group->collision)
+			{
+				// printf("group %s has no collision\n", group->name.c_str());
 				return;
 			}
 			if (group->geometry)
@@ -153,9 +173,10 @@ namespace miryks
 			}
 
 			// add empty triangle or crash
-			//triangleMesh->addTriangle(btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f));
+			// triangleMesh->addTriangle(btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f));
 
-			collisionShape = new btBvhTriangleMeshShape(triangleMesh, true);
+			colShape = new btBvhTriangleMeshShape(triangleMesh, true);
+			collisionShapes.push_back(colShape);
 
 			btScalar mass(0.);
 
@@ -164,7 +185,7 @@ namespace miryks
 
 			btDefaultMotionState *motionState = new btDefaultMotionState(startTransform);
 
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, collisionShape, btVector3(0, 0, 0));
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, colShape, btVector3(0, 0, 0));
 			rigidBody = new btRigidBody(rbInfo);
 			rigidBody->setFriction(btScalar(1.0f));
 
@@ -226,7 +247,7 @@ namespace miryks
 			// and only synchronizes 'active' objects
 			btDefaultMotionState *myMotionState = new btDefaultMotionState(startTransform);
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, myMotionState, colShape, localInertia);
-			this->rigidBody = new btRigidBody(rbInfo);
+			rigidBody = new btRigidBody(rbInfo);
 			rigidBody->setFriction(btScalar(1.0));
 
 			dynamicsWorld->addRigidBody(rigidBody);
@@ -238,9 +259,9 @@ namespace miryks
 			// create a dynamic rigidbody
 
 			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
-			//colShape = new btCapsuleShape(25, 100);
-			colShape = new btSphereShape(btScalar(20));
-			//colShape = new btBoxShape(btVector3(30., 30, 30));
+			colShape = new btSphereShape(btScalar(half * 2));
+			colShape = new btCapsuleShape(half * 2, 100);
+			// colShape = new btBoxShape(btVector3(30., 30, 30));
 
 			collisionShapes.push_back(colShape);
 
@@ -274,9 +295,10 @@ namespace miryks
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
 
-		void capsule::gravitate() {
+		void capsule::gravitate()
+		{
 			btVector3 down = btVector3(0, 0, -100);
-			//rigidBody->applyCentralImpulse(down);
+			// rigidBody->applyCentralImpulse(down);
 
 			btTransform trans;
 			trans = rigidBody->getWorldTransform();
@@ -285,11 +307,12 @@ namespace miryks
 			btVector3 Start = position, End = (position - btVector3(0, 0, 21));
 
 			btCollisionWorld::ClosestRayResultCallback RayCallback(Start, End);
-			//RayCallback.m_collisionFilterMask = FILTER_CAMERA;
+			// RayCallback.m_collisionFilterMask = FILTER_CAMERA;
 
 			// Perform raycast
 			dynamicsWorld->rayTest(Start, End, RayCallback);
-			if(RayCallback.hasHit()) {
+			if (RayCallback.hasHit())
+			{
 				End = RayCallback.m_hitPointWorld;
 			}
 			else
@@ -298,16 +321,16 @@ namespace miryks
 			}
 		}
 
-		void capsule::step() {
+		void capsule::step()
+		{
 			btTransform trans;
 			trans = rigidBody->getWorldTransform();
 			btVector3 position = trans.getOrigin();
-			//trans.setRotation(btQuaternion(0.f, 0.f, 0.f, 1.f));
-			//rigidBody->setWorldTransform(trans);
-			rigidBody->setGravity(btVector3(0, 0, 0));
+			trans.setRotation(btQuaternion(0.f, 0.f, 0.f, 1.f));
+			rigidBody->setWorldTransform(trans);
+			//rigidBody->setGravity(btVector3(0, 0, 0));
 
-			//printf("capsule is %f %f %f\n", position.x(), position.y(), position.z());
-
+			// printf("capsule is %f %f %f\n", position.x(), position.y(), position.z());
 
 			/*if (rigidBody->getMotionState())
 			{
@@ -316,24 +339,27 @@ namespace miryks
 				rigidBody->getMotionState()->setWorldTransform(trans);
 			}*/
 
+			return;
+
 			btVector3 Start = position, End = (position - btVector3(0, 0, 21));
 
 			btCollisionWorld::ClosestRayResultCallback RayCallback(Start, End);
-			//RayCallback.m_collisionFilterMask = FILTER_CAMERA;
+			// RayCallback.m_collisionFilterMask = FILTER_CAMERA;
 
 			// Perform raycast
 			dynamicsWorld->rayTest(Start, End, RayCallback);
-			if(RayCallback.hasHit()) {
+			if (RayCallback.hasHit())
+			{
 				// printf("hit");
 				End = RayCallback.m_hitPointWorld;
 				rigidBody->setGravity(btVector3(0, 0, 0));
-				//Normal = RayCallback.m_hitNormalWorld;
+				// Normal = RayCallback.m_hitNormalWorld;
 			}
 			else
 			{
 				rigidBody->setGravity(btVector3(0, 0, -1000));
-				//btVector3 dir = btVector3(0, 0, -10);
-				//rigidBody->applyCentralImpulse(dir);
+				// btVector3 dir = btVector3(0, 0, -10);
+				// rigidBody->applyCentralImpulse(dir);
 			}
 		}
 	}

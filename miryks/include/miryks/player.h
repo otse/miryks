@@ -13,11 +13,11 @@ namespace miryks
 		animation *anim;
 		collision::capsule *capsule;
 		Group *head;
+		ModelSkinned *modelSkinned;
 		GroupDrawer *groupDrawer;
-		SkinnedMesh *body, *body2, *hands;
 		bool thirdPerson;
-		bool idle;
 		float yaw;
+		int walkstate = 0;
 		Player();
 		void Step();
 		void Move();

@@ -45,13 +45,16 @@ namespace dark
 		delete groupDrawer;
 		delete pointLight;
 		delete spotLight;
+
+		if (solid)
+			solid->remove();
 	}
 
 	void my_reference::Step()
 	{
 		if (baseObject.is_type("MSTT"))
 		{
-			if(model)
+			if (model)
 				model->Step();
 		}
 	}
@@ -124,7 +127,7 @@ namespace dark
 			printf("\ncant find form_id %s %u\n\n", hex, id);
 			return;
 		}
-		
+
 		std::vector<const char *> things = {
 			Activators,
 			Statics,
@@ -139,9 +142,8 @@ namespace dark
 			Ammo,
 			Misc,
 			Alchemy,
-			Ingredients
-		};
-		
+			Ingredients};
+
 		// horrile if statements
 		if (baseObject.is_types(things))
 		{
@@ -156,7 +158,7 @@ namespace dark
 			}
 			if (baseObject.is_type(CONT))
 			{
-				//container = new Container(baseObject);
+				// container = new Container(baseObject);
 			}
 		}
 		else if (baseObject.is_type(MSTT))
@@ -191,7 +193,7 @@ namespace dark
 
 			if (edId)
 			{
-				//printf("ligh edid %s\n", LIGH.baseId);
+				// printf("ligh edid %s\n", LIGH.baseId);
 			}
 			if (data)
 			{
@@ -210,7 +212,7 @@ namespace dark
 			if (data->flags & 0x0400)
 			{
 				light = spotLight = new spotlight;
-				//printf("data fov %f\n", data->FOV);
+				// printf("data fov %f\n", data->FOV);
 				spotLight->angle = radians(data->FOV);
 				sceneDef->spotLights.Add(spotLight);
 				printf(" spotLight ! %f \n", spotLight->angle);
@@ -231,38 +233,40 @@ namespace dark
 				light->matrix = matrix;
 			}
 
-			//point_light->decay = _j["Falloff Exponent"];
+			// point_light->decay = _j["Falloff Exponent"];
 		}
 		else
 		{
 			auto edId = baseObject.editor_id();
-			
+
 			printf("ref.cpp cant become %.4s edid %s\n", (char *)&baseObject.rhed().sgn, edId);
-			
+
 			baseObject = nullptr; // invalidate
 		}
 
 		if (model)
 		{
-			// bad 
+			// bad
 			if (baseObject.r->hed->formId != 0x32)
 			{
 				char type[50];
 				snprintf(type, 50, "%.4s", (char *)&baseObject.rhed().sgn);
-				
+
 				groupDrawer = new GroupDrawer(model->baseGroup, matrix);
 				groupDrawer->name = "(REFR)";
 				groupDrawer->name += type;
 				sceneDef->bigGroup->Add(groupDrawer);
-				solid = new miryks::collision::solid(groupDrawer);
+				if (!baseObject.is_types({MSTT, TREE}))
+					solid = new miryks::collision::solid(groupDrawer);
 				int i = 0;
 				for (auto thing : Things)
 				{
-					if (*(unsigned int *)thing == baseObject.rhed().sgn) {
+					if (*(unsigned int *)thing == baseObject.rhed().sgn)
+					{
 						groupDrawer->mask = 1 << i;
 						break;
 					}
-					i ++;
+					i++;
 				}
 			}
 		}
@@ -297,7 +301,8 @@ namespace dark
 		return l->GetDistance() < r->GetDistance();
 	}
 
-	bool my_reference::use() {
+	bool my_reference::use()
+	{
 		printf(" use %s\n", baseObject.editor_id());
 
 		/*if (baseObject.is_type(CONT) && container)
@@ -305,7 +310,7 @@ namespace dark
 		return true;
 	}
 
-	#if 1
+#if 1
 	// horrible imgui vomit
 	bool my_reference::DisplayAsItem()
 	{
@@ -316,7 +321,7 @@ namespace dark
 
 		if (groupDrawer == nullptr)
 			return false;
-		
+
 		if (!baseObject.is_types({Furniture, Books, Containers, Armor, Weapons, Ammo, Misc, Alchemy, Ingredients, Flora}))
 			return false;
 
@@ -340,27 +345,27 @@ namespace dark
 
 		vec3 projected = glm::project(original, model, projection, viewport);
 		itemfinder::projected = projected;
-		//vec3 unprojected = glm::unProject(projected, model, projection, viewport);
+		// vec3 unprojected = glm::unProject(projected, model, projection, viewport);
 
 		ImGui::SetNextWindowPos(ImVec2(width - projected.x, projected.y));
 		ImGui::SetNextWindowSize(ImVec2(400, 300));
 		ImGuiWindowFlags flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoScrollbar;
 		static bool open = true;
-		//char s[100];
+		// char s[100];
 		ImGui::Begin("##ItemThing", &open, flags);
 		ImGui::PushFont(font2);
-		//ImGui::PushStyleColor(IMGUI_FON)
-		//ImGui::TextColored(ImVec4(1, 1, 1, 1), EDID);
-		//ImGui::NewLine();
+		// ImGui::PushStyleColor(IMGUI_FON)
+		// ImGui::TextColored(ImVec4(1, 1, 1, 1), EDID);
+		// ImGui::NewLine();
 		ImGui::TextColored(ImVec4(1, 1, 1, 1), itemName);
 
 		ImGui::PopFont();
 		ImGui::End();
-		//Vec2 boo(x, y);
+		// Vec2 boo(x, y);
 
 		return true;
 	}
-	#endif
+#endif
 
 	/*
 	Matrix m = _refr->_matrix;

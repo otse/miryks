@@ -16,21 +16,23 @@ namespace miryks
 		class base
 		{
 		public:
-			btRigidBody *rigidBody;
+			btRigidBody *rigidBody = nullptr;
 			base() {}
 			btTransform get_world_transform();
 			void set_position(btVector3);
+			void remove();
 		};
 		class orb : public base
 		{
 		public:
-			btCollisionShape *colShape;
+			btCollisionShape *colShape = nullptr;
 			orb(GroupDrawer *);
 		};
 		class capsule : public base
 		{
 		public:
-			btCollisionShape *colShape;
+			float half = 10;
+			btCollisionShape *colShape = nullptr;
 			capsule(GroupDrawer *);
 			void step();
 			void gravitate();
@@ -39,7 +41,7 @@ namespace miryks
 		{
 		public:
 			btTriangleMesh *triangleMesh;
-			btCollisionShape *collisionShape;
+			btCollisionShape *colShape;
 			solid(GroupDrawer *);
 		};
 		extern btDefaultCollisionConfiguration *collisionConfiguration;

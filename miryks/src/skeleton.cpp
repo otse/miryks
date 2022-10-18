@@ -103,7 +103,7 @@ namespace miryks
 	keyframes::keyframes(nif *ni) : ni(ni)
 	{
 		loop = true;
-		repeats = true;
+		//repeats = true;
 		controllerSequence = nullptr;
 		if (ni == nullptr)
 			return;
@@ -119,11 +119,11 @@ namespace miryks
 	{
 		skel = nullptr;
 		next = nullptr;
+		proceed = false;
 		time = 0;
 		ratio = 0;
 		first = true;
 		play = true;
-		loop = false;
 		if (keyf == nullptr)
 			play = false;
 	}
@@ -140,9 +140,9 @@ namespace miryks
 
 		if (time >= keyf->controllerSequence->C->stop_time)
 		{
-			if (loop)
+			if (keyf->loop)
 				time -= keyf->controllerSequence->C->stop_time;
-			else if (next)
+			if (proceed && next)
 			{
 				skel->anim = next;
 				skel->SetFreeze();
@@ -183,7 +183,6 @@ namespace miryks
 			if (first)
 			{
 				char *name = nif_get_string(model, cbp->node_name);
-				// printf("name %s\n", name);
 				auto has = skel->bonesNamed.find(name);
 				if (has == skel->bonesNamed.end())
 				{
@@ -192,6 +191,7 @@ namespace miryks
 					boneCache.push_back(nullptr);
 					continue;
 				}
+				// printf(" animation bone cached: %s \n", name);
 				bone *bone = has->second;
 				boneCache.push_back(bone);
 			}
