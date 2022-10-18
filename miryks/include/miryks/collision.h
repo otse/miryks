@@ -31,7 +31,7 @@ namespace miryks
 		class capsule : public base
 		{
 		public:
-			float half = 10;
+			float half = 15;
 			float height = 100;
 			btCollisionShape *colShape = nullptr;
 			capsule(GroupDrawer *);
