@@ -36,7 +36,7 @@ namespace dark
 		~my_reference();
 
 		Model *model;
-		collision::solid *solid = nullptr;
+		collision::base *collider = nullptr;
 
 		// mat4 matrix, translation, rotation, scale; // mir has
 

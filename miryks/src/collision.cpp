@@ -1,3 +1,5 @@
+#include <miryks/miryks.hpp>
+
 #include <miryks/collision.h>
 
 namespace miryks
@@ -294,6 +296,23 @@ namespace miryks
 			rigidBody->setDamping(btScalar(0.99f), btScalar(0.99f));
 			rigidBody->setAngularFactor(btVector3(0.0f, 0.0f, 0.0f));
 
+			dynamicsWorld->addRigidBody(rigidBody);
+		}
+
+		box::box(record *rc, float position[3], float bounds[3]) {
+			printf("new box\n");
+			//vec3 
+			colShape = new btBoxShape(btVector3(bounds[0], bounds[1], bounds[2]));
+
+			//collisionShapes.push_back(colShape);
+			btTransform startTransform;
+			startTransform.setIdentity();
+			startTransform.setOrigin(btVector3(position[0], position[1], position[2]));
+			btScalar mass(0.f);
+			btVector3 localInertia(0, 0, 0);
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, colShape, localInertia);
+			rbInfo.m_startWorldTransform = startTransform;
+			rigidBody = new btRigidBody(rbInfo);
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
 

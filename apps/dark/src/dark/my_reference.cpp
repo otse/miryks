@@ -46,8 +46,8 @@ namespace dark
 		delete pointLight;
 		delete spotLight;
 
-		if (solid)
-			solid->remove();
+		if (collider)
+			collider->remove();
 	}
 
 	void my_reference::Step()
@@ -160,6 +160,24 @@ namespace dark
 			{
 				// container = new Container(baseObject);
 			}
+			if (baseObject.r->hed->formId == 0x21)
+			{
+				printf("big yellow collision marker\n");
+				struct XPRM {
+					float bounds[3];
+					float color[3];
+					float unknown;
+					uint32_t unknown2;
+				} *xprm;
+				xprm = data<XPRM *>("XPRM");
+				
+				auto locationalData = data<float *>("DATA");
+
+				collider = new miryks::collision::box(this, locationalData, xprm->bounds);
+				printf("xprm %s bounds %f %f %f\n", editor_id(), xprm->bounds[0] * 2, xprm->bounds[1] * 2, xprm->bounds[2] * 2);
+				
+				// this is a collision marker
+			}
 		}
 		else if (baseObject.is_type(MSTT))
 		{
@@ -257,7 +275,7 @@ namespace dark
 				groupDrawer->name += type;
 				sceneDef->bigGroup->Add(groupDrawer);
 				if (!baseObject.is_types({MSTT, TREE}))
-					solid = new miryks::collision::solid(groupDrawer);
+					collider = new miryks::collision::solid(groupDrawer);
 				int i = 0;
 				for (auto thing : Things)
 				{

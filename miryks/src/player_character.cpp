@@ -11,13 +11,8 @@ namespace miryks
 	{
 		yaw = 0;
 		thirdPerson = false;
-		race = dig_race("DraugrRace", 0);
+		race = dig_race("ImperialRace", 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
-		jaw = nullptr;
-		auto has = skel->bonesNamed.find("NPC Head [Jaw]");
-		if (has != skel->bonesNamed.end())
-			jaw = has->second;
-		modelSkinned = new ModelSkinned("actors\\draugr\\character assets\\draugrmale01.nif");
 		capsule = nullptr;
 		// skel->mixer = new animation_mixer(skel);
 		printf("player skel anam %s\n", race.data<char *>("ANAM"));
@@ -26,15 +21,34 @@ namespace miryks
 		// groupDrawer->visible = false;
 		// Place("gloomgenman");
 		anim = nullptr;
+		head = nullptr;
+		body = nullptr;
+		body2 = nullptr;
+		hands = nullptr;
 		thirdPersonCamera = new ViewerCamera;
+
 		// SetAnim("anims/character/1hm_1stp_run.kf");
 		//  SetAnim("anims/character/1hm_walkforward.kf");
 
-		groupDrawer = new GroupDrawer(modelSkinned->baseGroup, mat4(1.0));
+		groupDrawer = new GroupDrawer(nullptr, mat4(1.0));
 		groupDrawer->name = "Player";
-
+		vec3 down = vec3(0, 0, 120 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
 		groupDrawer->matrix = glm::translate(mat4(1.0), cameraCur->pos + vec3(0, 0, 100));
 		capsule = new collision::capsule(groupDrawer);
+		// body2 = new SkinnedMesh("clothes\\prisoner\\prisonerclothes_0.nif");
+		body = new SkinnedMesh("actors\\character\\character assets\\1stpersonmalebody_0.nif");
+		hands = new SkinnedMesh("actors\\character\\character assets\\1stpersonmalehands_0.nif");
+		body->skel = skel;
+		// body2->skel = skel;
+		hands->skel = skel;
+		// if (body)
+		//	groupDrawer->Add(body->groupDrawer);
+		if (body)
+			groupDrawer->Add(body->groupDrawer);
+		if (hands)
+			groupDrawer->Add(hands->groupDrawer);
+		hands->groupDrawer->matrix = glm::translate(mat4(1.0), vec3(0, 0, -30));
+		body->groupDrawer->matrix = glm::translate(mat4(1.0), vec3(0, 0, -30));
 		groupDrawer->Add(new GroupDrawer(skel->root, mat4(1.0)));
 		groupDrawer->UpdateSideways();
 		Place("gloomgenman");
@@ -62,11 +76,10 @@ namespace miryks
 	void Player::SetAnim(const char *path)
 	{
 		// if (anim)
-		// 	delete anim;
+		//	delete anim;
 		keyframes *keyf = get_keyframes(path);
-		if (anim && anim->keyf == keyf)
+		if (anim && keyf == anim->keyf)
 			return;
-		//keyf->loop = true;
 		skel->SetFreeze();
 		anim = new animation(keyf);
 		anim->skel = skel;
@@ -78,50 +91,37 @@ namespace miryks
 	{
 		if (skel)
 			skel->Step();
-		
-		if (modelSkinned)
-			modelSkinned->Step(skel);
+		if (body)
+			body->Step();
+		if (body2)
+			body2->Step();
+		if (hands)
+			hands->Step();
 
 		if (pressing_key("v"))
 		{
 			Toggle();
 		}
 
-		if (holding_key("w") && holding_key("a"))
+		if (holding_key("w"))
 		{
-			SetAnim("anims/draugr/_h2hforwardleft.kf");
-		}
-		else if (holding_key("w") && holding_key("d"))
-		{
-			SetAnim("anims/draugr/_h2hforwardright.kf");
-		}
-		else if (holding_key("w"))
-		{
-			SetAnim("anims/draugr/_h2hforward.kf");
+			SetAnim("anims/character/1st/1hm_walkforward.kf");
 		}
 		else if (holding_key("s"))
 		{
-			SetAnim("anims/draugr/_h2hbackward.kf");
-		}
-		else if (holding_key("s") && holding_key("a"))
-		{
-			SetAnim("anims/draugr/_h2hbackwardleft.kf");
-		}
-		else if (holding_key("s") && holding_key("d"))
-		{
-			SetAnim("anims/draugr/_h2hbackwardright.kf");
+			SetAnim("anims/character/1st/1hm_walkbackward.kf");
 		}
 		else if (holding_key("a"))
 		{
-			SetAnim("anims/draugr/_h2hleft.kf");
+			SetAnim("anims/character/1st/1hm_attackpower.kf");
 		}
 		else if (holding_key("d"))
 		{
-			SetAnim("anims/draugr/_h2hright.kf");
+			SetAnim("anims/character/1st/1hm_boundswordequip.kf");
 		}
-		else
+		else if (!holding_key("w") && !holding_key("s") && !holding_key("a") && !holding_key("d"))
 		{
-			SetAnim("anims/draugr/_h2hidle.kf");
+			SetAnim("anims/character/1st/1hm_idle.kf");
 		}
 		
 		/*if (holding_key("w"))
@@ -209,26 +209,17 @@ namespace miryks
 		}
 
 		//capsule->rigidBody->
-		capsule->step();
 
-		vec3 up = vec3(0, 0, 140 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
+		vec3 up = vec3(0, 0, 80 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
 		vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
-		vec3 camera = origin + up;
-		origin = origin - vec3(0, 0, capsule->half + capsule->height / 2);
+		origin += up;
 		groupDrawer->matrix = glm::translate(mat4(1.0), origin);
-		cameraCur->pos = camera;
-
-		mat4 matrix = glm::translate(mat4(1.0), origin);
-		
-		matrix = rotate(matrix, -cameraCur->yaw, vec3(0, 0, 1));
-		matrix = glm::translate(matrix, vec3(0, 10, 0));
-		matrix = matrix * jaw->matrixWorld;
-		cameraCur->pos = vec3(matrix[3]);
+		cameraCur->pos = origin;
 
 		// groupDrawer->matrix[3] = vec4(collision::bt_to_glm(capsule->get_world_transform().getOrigin()), 1);
 		// groupDrawer->matrix = glm::translate(groupDrawer->matrix, forward);
 		groupDrawer->matrix = rotate(groupDrawer->matrix, -cameraCur->yaw, vec3(0, 0, 1));
-		//groupDrawer->matrix = rotate(groupDrawer->matrix, -(cameraCur->pitch + (pif / 2)), vec3(1, 0, 0));
+		groupDrawer->matrix = rotate(groupDrawer->matrix, -(cameraCur->pitch + (pif / 2)), vec3(1, 0, 0));
 		groupDrawer->UpdateSideways();
 		/*groupDrawer->matrix = glm::translate(mat4(1.0), cameraCur->pos);
 		groupDrawer->UpdateSideways();*/
