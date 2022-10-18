@@ -13,6 +13,10 @@ namespace miryks
 		thirdPerson = false;
 		race = dig_race("DraugrRace", 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
+		jaw = nullptr;
+		auto has = skel->bonesNamed.find("NPC Head [Jaw]");
+		if (has != skel->bonesNamed.end())
+			jaw = has->second;
 		modelSkinned = new ModelSkinned("actors\\draugr\\character assets\\draugrmale01.nif");
 		capsule = nullptr;
 		// skel->mixer = new animation_mixer(skel);
@@ -206,24 +210,21 @@ namespace miryks
 		}
 
 		//capsule->rigidBody->
+		capsule->step();
 
 		vec3 up = vec3(0, 0, 140 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
 		vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
 		vec3 camera = origin + up;
-		origin = origin - vec3(0, 0, capsule->half);
+		origin = origin - vec3(0, 0, capsule->half + capsule->height / 2);
 		groupDrawer->matrix = glm::translate(mat4(1.0), origin);
 		cameraCur->pos = camera;
 
 		mat4 matrix = glm::translate(mat4(1.0), origin);
-		auto has = skel->bonesNamed.find("NPC Head [Jaw]");
-		if (has != skel->bonesNamed.end())
-		{
-			bone *bone = has->second;
-			matrix = rotate(matrix, -cameraCur->yaw, vec3(0, 0, 1));
-			matrix = glm::translate(matrix, vec3(0, 10, 0));
-			matrix = matrix * bone->matrixWorld;
-			cameraCur->pos = vec3(matrix[3]);
-		}
+		
+		matrix = rotate(matrix, -cameraCur->yaw, vec3(0, 0, 1));
+		matrix = glm::translate(matrix, vec3(0, 10, 0));
+		matrix = matrix * jaw->matrixWorld;
+		cameraCur->pos = vec3(matrix[3]);
 
 		// groupDrawer->matrix[3] = vec4(collision::bt_to_glm(capsule->get_world_transform().getOrigin()), 1);
 		// groupDrawer->matrix = glm::translate(groupDrawer->matrix, forward);

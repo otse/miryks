@@ -32,6 +32,7 @@ namespace miryks
 		{
 		public:
 			float half = 10;
+			float height = 100;
 			btCollisionShape *colShape = nullptr;
 			capsule(GroupDrawer *);
 			void step();

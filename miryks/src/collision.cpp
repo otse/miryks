@@ -260,7 +260,7 @@ namespace miryks
 
 			// btCollisionShape* colShape = new btBoxShape(btVector3(1,1,1));
 			colShape = new btSphereShape(btScalar(half * 2));
-			colShape = new btCapsuleShape(half * 2, 100);
+			colShape = new btCapsuleShape(half * 2, height);
 			// colShape = new btBoxShape(btVector3(30., 30, 30));
 
 			collisionShapes.push_back(colShape);
@@ -269,7 +269,6 @@ namespace miryks
 			btTransform startTransform;
 			startTransform.setIdentity();
 			btQuaternion q = startTransform.getRotation();
-			printf("capsule start quaternion is %f %f %f %f\n", q.x(), q.y(), q.z(), q.w());
 
 			btScalar mass(1.f);
 
@@ -282,6 +281,8 @@ namespace miryks
 
 			vec3 vec = vec3(drawer->matrix[3]);
 			startTransform.setOrigin(glm_to_bt(vec));
+			// Point shape up
+			startTransform.setRotation(btQuaternion(1.0f, 0.f, 0.f, 1.0f));
 
 			// using motionstate is recommended, it provides interpolation capabilities,
 			// and only synchronizes 'active' objects
@@ -291,6 +292,7 @@ namespace miryks
 			rigidBody = new btRigidBody(rbInfo);
 			rigidBody->setFriction(btScalar(0.5f));
 			rigidBody->setDamping(btScalar(0.99f), btScalar(0.99f));
+			rigidBody->setAngularFactor(btVector3(0.0f, 0.0f, 0.0f));
 
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
@@ -323,9 +325,14 @@ namespace miryks
 
 		void capsule::step()
 		{
+			return;
+			// Keep shape straight
 			btTransform trans;
 			trans = rigidBody->getWorldTransform();
 			btVector3 position = trans.getOrigin();
+			auto shape = rigidBody->getCollisionShape();
+			auto q = trans.getRotation();
+			//printf("capsule start quaternion is %f %f %f %f\n", q.x(), q.y(), q.z(), q.w());
 			trans.setRotation(btQuaternion(0.f, 0.f, 0.f, 1.f));
 			rigidBody->setWorldTransform(trans);
 			//rigidBody->setGravity(btVector3(0, 0, 0));

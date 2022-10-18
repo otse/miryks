@@ -11,8 +11,8 @@ namespace miryks
 		record race;
 		skeleton *skel;
 		animation *anim;
+		bone *jaw;
 		collision::capsule *capsule;
-		Group *head;
 		ModelSkinned *modelSkinned;
 		GroupDrawer *groupDrawer;
 		bool thirdPerson;
