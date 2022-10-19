@@ -21,7 +21,7 @@ project "miryks"
 	
 	filter { "configurations:Release" }
 		-- Release should be optimized
-		defines { "NDEBUG" }
+		defines { "NDEBUG", "AL_LIBTYPE_STATIC" }
 		optimize "On"
 	
 	filter {}
@@ -50,7 +50,8 @@ project "miryks"
 		"C:/New folder/lpng1637",
 		"C:/New folder/glm-0.9.9.8",
 		"C:/New folder/glfw-3.3.6/include",
-		"C:/New folder/bullet3-3.24/src"
+		"C:/New folder/bullet3-3.24/src",
+		"C:/New folder/openal-soft-1.22.2/include",
 	}
 	
 	libdirs {
@@ -59,6 +60,7 @@ project "miryks"
 		"C:/New folder/lz4-1.9.3-32/Release",
 		"C:/New folder/lpng1637-32/Release",
 		"C:/New folder/bullet3-3.24-32/lib/Release",
+		"C:/New folder/openal-soft-1.22.2-32/Release"
 	}
 
 	links {
@@ -66,6 +68,7 @@ project "miryks"
 		"zlibstatic",
 		"lz4",
 		"libpng16_static",
+		"OpenAL32.lib",
         "BulletDynamics","BulletCollision", "LinearMath", "Bullet3Common"
 	--	"zlibstatic"
 	}

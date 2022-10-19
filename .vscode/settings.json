@@ -103,6 +103,7 @@
       "qr": "cpp",
       "svd": "cpp",
       "niftypes.h": "c",
-      "random": "cpp"
+      "random": "cpp",
+      "alhelpers.h": "c"
     }
 }

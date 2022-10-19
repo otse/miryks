@@ -85,7 +85,7 @@ namespace miryks
 		get_archives()[3] = load_archive(ARCHIVE_3);
 		get_archives()[4] = load_archive(ARCHIVE_4);
 		get_archives()[5] = load_archive(ARCHIVE_5);
-		// get_archives()[6] = load_archive(ARCHIVE_6);
+		get_archives()[6] = load_archive(ARCHIVE_6);
 		// get_archives()[7] = load_archive(ARCHIVE_7);
 		get_archives()[8] = load_archive(ARCHIVE_8);
 		get_archives()[9] = load_archive(ARCHIVE_9);

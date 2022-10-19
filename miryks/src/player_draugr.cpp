@@ -1,3 +1,4 @@
+#if 0
 #include <miryks/player.h>
 #include <miryks/collision.h>
 
@@ -5,7 +6,6 @@
 #include <opengl/camera.h>
 #include <opengl/scene_graph.hpp>
 
-#if 0
 namespace miryks
 {
 	Player::Player()

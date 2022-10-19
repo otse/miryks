@@ -1,3 +1,4 @@
+#if 0
 #include <miryks/player.h>
 #include <miryks/collision.h>
 
@@ -258,3 +259,4 @@ namespace miryks
 		}
 	}
 }
+#endif
