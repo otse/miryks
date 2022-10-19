@@ -14,6 +14,11 @@ namespace miryks
 		race = dig_race("DraugrRace", 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
 		jaw = nullptr;
+		idling = false;
+		footstep1 = new sound("sound\\fx\\npc\\draugr\\foot\\walk\\l\\npc_draugr_foot_walk_01.wav");
+		footstep2 = new sound("sound\\fx\\npc\\draugr\\foot\\walk\\l\\npc_draugr_foot_walk_02.wav");
+		footstep3 = new sound("sound\\fx\\npc\\draugr\\foot\\walk\\r\\npc_draugr_foot_walk_03.wav");
+		footstep4 = new sound("sound\\fx\\npc\\draugr\\foot\\walk\\r\\npc_draugr_foot_walk_04.wav");
 		auto has = skel->bonesNamed.find("NPC Head [Jaw]");
 		if (has != skel->bonesNamed.end())
 			jaw = has->second;
@@ -66,7 +71,7 @@ namespace miryks
 		keyframes *keyf = get_keyframes(path);
 		if (anim && anim->keyf == keyf)
 			return;
-		//keyf->loop = true;
+		// keyf->loop = true;
 		skel->SetFreeze();
 		anim = new animation(keyf);
 		anim->skel = skel;
@@ -78,7 +83,7 @@ namespace miryks
 	{
 		if (skel)
 			skel->Step();
-		
+
 		if (modelSkinned)
 			modelSkinned->Step(skel);
 
@@ -86,6 +91,8 @@ namespace miryks
 		{
 			Toggle();
 		}
+
+		idling = false;
 
 		if (holding_key("w") && holding_key("a"))
 		{
@@ -121,9 +128,23 @@ namespace miryks
 		}
 		else
 		{
+			idling = true;
 			SetAnim("anims/draugr/_h2hidle.kf");
 		}
-		
+
+		if (!idling)
+		{
+			if (anim->time > 0.4 && !footstep1->is_playing())
+			{
+				footstep1->play();
+			}
+
+			if (anim->time > 0.25 && !footstep3->is_playing())
+			{
+				footstep3->play();
+			}
+		}
+
 		/*if (holding_key("w"))
 		{
 			// float x = cos(cameraCur->yaw) * 5;
@@ -164,13 +185,12 @@ namespace miryks
 			capsule->rigidBody->applyCentralImpulse(dir);
 			capsule->rigidBody->activate();
 		}
-		
+
 		capsule->step();
 		*/
 
-		//btVector3 dir = btVector3(0, 0, -10);
-		//capsule->rigidBody->applyCentralImpulse(dir);
-
+		// btVector3 dir = btVector3(0, 0, -10);
+		// capsule->rigidBody->applyCentralImpulse(dir);
 
 		float force = 20;
 
@@ -203,12 +223,12 @@ namespace miryks
 		if (pressing_key("space"))
 		{
 			btVector3 dir = btVector3(0, 0, 500);
-			//capsule->rigidBody->setLinearVelocity(dir);
+			// capsule->rigidBody->setLinearVelocity(dir);
 			capsule->rigidBody->applyCentralImpulse(dir);
 			capsule->rigidBody->activate();
 		}
 
-		//capsule->rigidBody->
+		// capsule->rigidBody->
 		capsule->step();
 
 		vec3 up = vec3(0, 0, 140 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
@@ -219,7 +239,7 @@ namespace miryks
 		cameraCur->pos = camera;
 
 		mat4 matrix = glm::translate(mat4(1.0), origin);
-		
+
 		matrix = rotate(matrix, -cameraCur->yaw, vec3(0, 0, 1));
 		matrix = glm::translate(matrix, vec3(0, 10, 0));
 		matrix = matrix * jaw->matrixWorld;
@@ -228,7 +248,7 @@ namespace miryks
 		// groupDrawer->matrix[3] = vec4(collision::bt_to_glm(capsule->get_world_transform().getOrigin()), 1);
 		// groupDrawer->matrix = glm::translate(groupDrawer->matrix, forward);
 		groupDrawer->matrix = rotate(groupDrawer->matrix, -cameraCur->yaw, vec3(0, 0, 1));
-		//groupDrawer->matrix = rotate(groupDrawer->matrix, -(cameraCur->pitch + (pif / 2)), vec3(1, 0, 0));
+		// groupDrawer->matrix = rotate(groupDrawer->matrix, -(cameraCur->pitch + (pif / 2)), vec3(1, 0, 0));
 		groupDrawer->UpdateSideways();
 		/*groupDrawer->matrix = glm::translate(mat4(1.0), cameraCur->pos);
 		groupDrawer->UpdateSideways();*/

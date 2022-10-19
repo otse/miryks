@@ -1,6 +1,7 @@
 #pragma once
 
 #include <miryks/actors.h>
+#include <miryks/sound.h>
 #include <miryks/collision_forwards.h>
 
 namespace miryks
@@ -11,6 +12,7 @@ namespace miryks
 		record race;
 		skeleton *skel;
 		animation *anim;
+		sound *footstep1, *footstep2, *footstep3, *footstep4;
 		bone *jaw;
 		ModelSkinned *modelSkinned;
 		collision::capsule *capsule;
@@ -18,6 +20,7 @@ namespace miryks
 		GroupDrawer *groupDrawer;
 		SkinnedMesh *body, *body2, *hands;
 		bool thirdPerson;
+		bool idling;
 		float yaw;
 		Player();
 		void Step();
