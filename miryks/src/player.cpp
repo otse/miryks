@@ -134,14 +134,34 @@ namespace miryks
 
 		if (!idling)
 		{
-			if (anim->time > 0.4 && !footstep1->is_playing())
+			if (anim->time > 0.6 && anim->time < 0.7 && !footstep1->is_playing() && !footstep2->is_playing())
 			{
-				footstep1->play();
+				if (((float)rand() / RAND_MAX) < 0.5 )
+				{
+					if (!footstep1->is_playing())
+						footstep1->play();
+				}
+				else
+				{
+					if (!footstep2->is_playing())
+					{
+						footstep2->play();
+					}
+				}
 			}
 
-			if (anim->time > 0.25 && !footstep3->is_playing())
+			if (anim->time > 0.1 && anim->time < 0.2 && !footstep3->is_playing() && !footstep4->is_playing())
 			{
-				footstep3->play();
+				if (((float)rand() / RAND_MAX) < 0.5)
+				{
+					if (!footstep3->is_playing())
+						footstep3->play();
+				}
+				else
+				{
+					if (!footstep4->is_playing())
+						footstep4->play();
+				}
 			}
 		}
 
