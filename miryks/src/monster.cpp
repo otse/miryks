@@ -2,6 +2,7 @@
 
 #include <miryks/actors.h>
 #include <miryks/model.h>
+#include <miryks/collision.h>
 
 #include <opengl/scene_graph.hpp>
 
@@ -11,8 +12,9 @@ namespace miryks
 {
 	Monster::Monster(const char *raceId, const char *path)
 	{
-		anim = nullptr;
 		groupDrawer = nullptr;
+		yaw = 0;
+		capsule = nullptr;
 		race = dig_race(raceId, 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
 		modelSkinned = new ModelSkinned(path);
@@ -29,7 +31,7 @@ namespace miryks
 	void Monster::SetAnim(const char *path)
 	{
 		keyframes *keyf = get_keyframes(path);
-		anim = new animation(keyf);
+		animation *anim = new animation(keyf);
 		anim->skel = skel;
 		skel->anim = anim;
 	}
@@ -64,10 +66,18 @@ namespace miryks
 	Draugr::Draugr(const char *path) : Monster("DraugrRace", path)
 	{
 		helmet = nullptr;
+		idle = nullptr;
 		alcove = false;
 		wake = false;
 		sleeping = 0;
 		wearHelmet = false;
+	}
+
+	void Draugr::SetupCollision()
+	{
+		if (capsule)
+			return;
+		capsule = new collision::capsule(vec3(groupDrawer->matrix[3]) + vec3(0, 0, 15 + 100 / 2));
 	}
 
 	void Draugr::Setup()
@@ -89,7 +99,7 @@ namespace miryks
 			alcove_wake->proceed = true;
 			keyf = get_keyframes("anims/draugr/idle.kf");
 			keyf->loop = true;
-			animation *idle = new animation(keyf);
+			idle = new animation(keyf);
 			idle->skel = skel;
 			alcove_wake->next = idle;
 		}
@@ -125,6 +135,18 @@ namespace miryks
 				alcove_idle->proceed = true;
 				wake = true;
 			}
+			else if (skel->anim == idle)
+			{
+				SetupCollision();
+			}
+		}
+		if (capsule)
+		{
+			vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
+			origin = origin - vec3(0, 0, capsule->half + capsule->height / 2);
+			//vec3 vec = vec3(drawer->matrix[3]);
+			groupDrawer->matrix[3] = vec4(origin, 1);// = glm::translate(groupDrawer->matrix, origin);
+			groupDrawer->UpdateSideways();
 		}
 	}
 

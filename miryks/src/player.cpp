@@ -39,7 +39,7 @@ namespace miryks
 		groupDrawer->name = "Player";
 
 		groupDrawer->matrix = glm::translate(mat4(1.0), cameraCur->pos + vec3(0, 0, 100));
-		capsule = new collision::capsule(groupDrawer);
+		capsule = new collision::capsule(vec3(groupDrawer->matrix[3]));
 		groupDrawer->Add(new GroupDrawer(skel->root, mat4(1.0)));
 		groupDrawer->UpdateSideways();
 		Place("gloomgenman");
@@ -136,7 +136,7 @@ namespace miryks
 		{
 			if (anim->time > 0.6 && anim->time < 0.7 && !footstep1->is_playing() && !footstep2->is_playing())
 			{
-				if (((float)rand() / RAND_MAX) < 0.5 )
+				if (((float)rand() / RAND_MAX) < 0.5)
 				{
 					if (!footstep1->is_playing())
 						footstep1->play();
@@ -212,33 +212,27 @@ namespace miryks
 		// btVector3 dir = btVector3(0, 0, -10);
 		// capsule->rigidBody->applyCentralImpulse(dir);
 
-		float force = 20;
+		float force = 17;
+		// btVector3 dir = btVector3(0.f, 0.f, 0.f);
 
-		if (holding_key("w"))
+		float x = 0;
+		float y = 0;
+
+		if (holding_key("w") && !holding_key("s"))
 		{
-			// float x = cos(cameraCur->yaw) * 5;
-			// float y = sin(cameraCur->yaw) * 5;
-			btVector3 dir = btVector3(sin(cameraCur->yaw) * force, cos(cameraCur->yaw) * force, 0);
-			capsule->rigidBody->applyCentralImpulse(dir);
-			capsule->rigidBody->activate();
+			y = 1;
 		}
-		if (holding_key("s"))
+		if (holding_key("s") && !holding_key("w"))
 		{
-			btVector3 dir = btVector3(sin(cameraCur->yaw) * -force, cos(cameraCur->yaw) * -force, 0);
-			capsule->rigidBody->applyCentralImpulse(dir);
-			capsule->rigidBody->activate();
+			y = -1;
 		}
-		if (holding_key("d"))
+		if (holding_key("d") && !holding_key("a"))
 		{
-			btVector3 dir = btVector3(cos(cameraCur->yaw) * force, sin(cameraCur->yaw) * -force, 0);
-			capsule->rigidBody->applyCentralImpulse(dir);
-			capsule->rigidBody->activate();
+			x = 1;
 		}
-		if (holding_key("a"))
+		if (holding_key("a") && !holding_key("d"))
 		{
-			btVector3 dir = btVector3(cos(cameraCur->yaw) * -force, sin(cameraCur->yaw) * force, 0);
-			capsule->rigidBody->applyCentralImpulse(dir);
-			capsule->rigidBody->activate();
+			x = -1;
 		}
 		if (pressing_key("space"))
 		{
@@ -248,13 +242,29 @@ namespace miryks
 			capsule->rigidBody->activate();
 		}
 
+		if (x || y)
+		{
+			float angle = atan2(x, y);
+			angle += cameraCur->yaw;
+
+			btVector3 dir = btVector3(sin(angle) * force, cos(angle) * force, 0);
+			capsule->rigidBody->applyCentralImpulse(dir);
+			capsule->rigidBody->activate();
+		}
+		/*
+		float angle = atan2(b[0], b[1]);
+		this.angle = angle;
+		x = speed * Math.sin(angle);
+		y = speed * Math.cos(angle);
+		*/
+
 		// capsule->rigidBody->
 		capsule->step();
 
 		vec3 up = vec3(0, 0, 140 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
 		vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
 		vec3 camera = origin + up;
-		origin = origin - vec3(0, 0, capsule->half + capsule->height / 2);
+		origin = origin - vec3(0, 0, 10 + capsule->half + capsule->height / 2);
 		groupDrawer->matrix = glm::translate(mat4(1.0), origin);
 		cameraCur->pos = camera;
 

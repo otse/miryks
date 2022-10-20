@@ -38,7 +38,7 @@ namespace miryks
 		public:
 			float half = 15;
 			float height = 100;
-			capsule(GroupDrawer *);
+			capsule(vec3);
 			void step();
 			void gravitate();
 		};

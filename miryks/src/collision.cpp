@@ -255,7 +255,7 @@ namespace miryks
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
 
-		capsule::capsule(GroupDrawer *drawer)
+		capsule::capsule(vec3 pos)
 		{
 			printf("new capsule \n");
 			// create a dynamic rigidbody
@@ -281,8 +281,7 @@ namespace miryks
 			if (isDynamic)
 				colShape->calculateLocalInertia(mass, localInertia);
 
-			vec3 vec = vec3(drawer->matrix[3]);
-			startTransform.setOrigin(glm_to_bt(vec));
+			startTransform.setOrigin(glm_to_bt(pos));
 			// Point shape up
 			startTransform.setRotation(btQuaternion(1.0f, 0.f, 0.f, 1.0f));
 
@@ -292,8 +291,8 @@ namespace miryks
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, nullptr, colShape, localInertia);
 			rbInfo.m_startWorldTransform = startTransform;
 			rigidBody = new btRigidBody(rbInfo);
-			rigidBody->setFriction(btScalar(0.5f));
-			rigidBody->setDamping(btScalar(0.99f), btScalar(0.99f));
+			rigidBody->setFriction(btScalar(0.3f));
+			rigidBody->setDamping(btScalar(0.99f), btScalar(0.0f));
 			rigidBody->setAngularFactor(btVector3(0.0f, 0.0f, 0.0f));
 
 			dynamicsWorld->addRigidBody(rigidBody);

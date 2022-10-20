@@ -1,6 +1,7 @@
 #pragma once
 
 #include <miryks/miryks.hpp>
+#include <miryks/collision_forwards.h>
 #include <miryks/model.h>
 
 namespace miryks
@@ -12,8 +13,9 @@ namespace miryks
 		SkinnedMesh *helmet2;
 		ModelSkinned *modelSkinned;
 		SkinnedMesh *skinnedMesh;
+		collision::capsule *capsule;
 		skeleton *skel;
-		animation *anim;
+		float yaw;
 		GroupDrawer *groupDrawer;
 		Monster(const char *, const char *);
 		void Place(const char *);
@@ -26,12 +28,14 @@ namespace miryks
 	public:
 		animation *alcove_idle;
 		SkinnedMesh *helmet;
+		animation *idle;
 		float sleeping;
 		bool alcove;
 		bool wake;
 		bool wearHelmet;
 		Draugr(const char *);
 		void Setup();
+		void SetupCollision();
 		virtual void Step();
 	};
 
