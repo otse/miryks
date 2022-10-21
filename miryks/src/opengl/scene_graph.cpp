@@ -6,6 +6,24 @@ int Group::drawCalls = 0;
 int GroupDrawer::num = 0;
 int GroupDrawer::masks = ~0;
 
+orientation::orientation() {
+	position = vec3(0);
+	rotation = vec3(0);
+	scale = vec3(1);
+	matrix = mat4(1.0);
+}
+
+void orientation::Compose() {
+	
+	mat4 translation = translate(mat4(1.0f), position);
+	mat4 rotation = mat4(1.0);
+	rotation = glm::rotate(rotation, -this->rotation.x, vec3(1, 0, 0));
+	rotation = glm::rotate(rotation, -this->rotation.y, vec3(0, 1, 0));
+	rotation = glm::rotate(rotation, -this->rotation.z, vec3(0, 0, 1));
+	mat4 scale = glm::scale(mat4(1.0), this->scale);
+	matrix = translation * rotation * scale;
+}
+
 Group::Group()
 {
 	id = ids++;

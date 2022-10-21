@@ -427,14 +427,14 @@ void window_while_test()
 			
 		cameraCur->Update(delta);
 
-		if (someDraugr)
-			someDraugr->Step();
+		if (draugrAlcove)
+			draugrAlcove->Step();
 
 		if (meanSkelly)
 			meanSkelly->Step();
 
-		// if (someDraugr)
-		//	someDraugr->Step();
+		// if (draugrAlcove)
+		//	draugrAlcove->Step();
 
 		for (auto mist : mists)
 			mist->Misty();
@@ -556,9 +556,9 @@ void window_while()
 		myself->Calc();
 #endif
 
-		// someDraugr
-		if (someDraugr)
-			someDraugr->Step();
+		// draugrAlcove
+		if (draugrAlcove)
+			draugrAlcove->Step();
 
 		if (meanSkelly)
 			meanSkelly->Step();

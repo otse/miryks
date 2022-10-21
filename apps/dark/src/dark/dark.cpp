@@ -96,7 +96,7 @@ namespace dark
 		}
 	}
 
-	Draugr *someDraugr = nullptr;
+	Draugr *draugrAlcove = nullptr;
 	Monster *meanSkelly = nullptr;
 }
 
@@ -130,15 +130,15 @@ int main()
 	draugrskeleton
 	draugrmale01 - 07
 	*/
-	someDraugr = new Draugr("actors\\draugr\\character assets\\draugrmale01.nif");
-	//someDraugr->SetAnim("anims/draugr/alcove_wake.kf");
-	// someDraugr->anim->keyf->repeats = false;
-	someDraugr->wearHelmet = true;
-	someDraugr->alcove = true;
-	someDraugr->Setup();
-	someDraugr->Place("gloomgendraugr");
-	// someDraugr = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
-	meanSkelly = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
+	draugrAlcove = new DraugrAlcove("actors\\draugr\\character assets\\draugrmale01.nif");
+	//draugrAlcove->SetAnim("anims/draugr/alcove_wake.kf");
+	// draugrAlcove->anim->keyf->repeats = false;
+	draugrAlcove->wearHelmet = true;
+	draugrAlcove->Setup();
+	draugrAlcove->Place("gloomgendraugr");
+	// draugrAlcove = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
+	//meanSkelly = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
+	meanSkelly = new Monster("HagravenRace", "actors\\hagraven\\character assets\\hagraven.nif");
 	//meanSkelly->SetAnim("anims/draugr/alcove_wake.kf");
 	meanSkelly->Place("gloomgenskeleton");
 	// someHuman = new Char();

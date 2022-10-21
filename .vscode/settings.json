@@ -104,6 +104,7 @@
       "svd": "cpp",
       "niftypes.h": "c",
       "random": "cpp",
-      "alhelpers.h": "c"
+      "alhelpers.h": "c",
+      "future": "cpp"
     }
 }

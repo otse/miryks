@@ -67,11 +67,10 @@ namespace dark
 
 		const unsigned int *baseId = base();
 
-		auto XSCL = data<float *>("XSCL");
+		auto xscl = data<float *>("XSCL");
+		if (xscl)
+			orientation.scale = vec3(*xscl);
 		auto locationalData = data<float *>("DATA");
-
-		if (XSCL)
-			scale = glm::scale(mat4(1.0), vec3(*XSCL));
 
 		ForLocationalData(locationalData);
 		ForBaseId(baseId);
@@ -82,17 +81,10 @@ namespace dark
 	{
 		if (!locationalData)
 			return;
-
-		vec3 pos = reinterpret_vec3(locationalData);
-		vec3 rad = reinterpret_vec3(locationalData + 3);
-
-		translation = translate(mat4(1.0f), pos);
-
-		rotation = glm::rotate(rotation, -rad.x, vec3(1, 0, 0));
-		rotation = glm::rotate(rotation, -rad.y, vec3(0, 1, 0));
-		rotation = glm::rotate(rotation, -rad.z, vec3(0, 0, 1));
-
-		matrix = translation * rotation * scale;
+		orientation.position = reinterpret_vec3(locationalData);
+		orientation.rotation = reinterpret_vec3(locationalData + 3);
+		orientation.Compose();
+		matrix = orientation.matrix;
 	}
 
 	// bad
@@ -163,19 +155,20 @@ namespace dark
 			if (baseObject.r->hed->formId == 0x21)
 			{
 				printf("big yellow collision marker\n");
-				struct XPRM {
+				struct XPRM
+				{
 					float bounds[3];
 					float color[3];
 					float unknown;
 					uint32_t unknown2;
-				} *xprm;
+				} * xprm;
 				xprm = data<XPRM *>("XPRM");
-				
+
 				auto locationalData = data<float *>("DATA");
 
 				collider = new miryks::collision::box(this, locationalData, xprm->bounds);
 				printf("xprm %s bounds %f %f %f\n", editor_id(), xprm->bounds[0] * 2, xprm->bounds[1] * 2, xprm->bounds[2] * 2);
-				
+
 				// this is a collision marker
 			}
 		}

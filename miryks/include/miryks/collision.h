@@ -37,8 +37,9 @@ namespace miryks
 		{
 		public:
 			float half = 15;
-			float height = 100;
-			capsule(vec3);
+			float height = 80;
+			capsule();
+			void make(vec3);
 			void step();
 			void gravitate();
 		};

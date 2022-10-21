@@ -540,6 +540,7 @@ namespace miryks
 	{
 	public:
 		mat4 matrix, translation, rotation, scale;
+		orientation orientation;
 		record baseObject;
 		cell *cell = nullptr;
 		reference(record rc) : record(rc)

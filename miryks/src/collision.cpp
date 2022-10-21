@@ -254,8 +254,12 @@ namespace miryks
 
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
+		
+		capsule::capsule()
+		{
+		}
 
-		capsule::capsule(vec3 pos)
+		void capsule::make(vec3 pos)
 		{
 			printf("new capsule \n");
 			// create a dynamic rigidbody

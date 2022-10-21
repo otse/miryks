@@ -13,7 +13,7 @@ namespace miryks
 	Monster::Monster(const char *raceId, const char *path)
 	{
 		groupDrawer = nullptr;
-		yaw = 0;
+		placement = nullptr;
 		capsule = nullptr;
 		race = dig_race(raceId, 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
@@ -38,16 +38,17 @@ namespace miryks
 
 	void Monster::Place(const char *name)
 	{
-		std::string str(name);
-		auto refe = ginterior->ids.find(name);
-		if (refe != ginterior->ids.end())
+		auto reference = ginterior->ids.find(name);
+		if (reference != ginterior->ids.end())
 		{
-			groupDrawer->matrix = refe->second->matrix;
+			placement = reference->second;
+			orientation = placement->orientation;
+			groupDrawer->matrix = placement->matrix;
 			groupDrawer->UpdateSideways();
 			sceneDef->bigGroup->Add(groupDrawer);
 		}
 		else
-			printf("!! cant place creature %s\n", name);
+			printf("  cant place monster at ref %s  \n", name);
 	}
 
 	void Monster::Step()
@@ -67,50 +68,55 @@ namespace miryks
 	{
 		helmet = nullptr;
 		idle = nullptr;
-		alcove = false;
+		wearHelmet = false;
+	}
+
+	DraugrAlcove::DraugrAlcove(const char *path) : Draugr(path)
+	{
 		wake = false;
 		sleeping = 0;
-		wearHelmet = false;
+		transition = 0;
 	}
 
 	void Draugr::SetupCollision()
 	{
 		if (capsule)
 			return;
-		capsule = new collision::capsule(vec3(groupDrawer->matrix[3]) + vec3(0, 0, 15 + 100 / 2));
+		capsule = new collision::capsule;
+		capsule->make(vec3(groupDrawer->matrix[3]) + vec3(0, 0, capsule->half * 2 + capsule->height / 2));
 	}
 
 	void Draugr::Setup()
 	{
 		keyframes *keyf;
-		if (alcove)
-		{
-			keyf = get_keyframes("anims/draugr/alcove_idle.kf");
-			keyf->loop = true;
-			alcove_idle = new animation(keyf);
-			alcove_idle->skel = skel;
-			skel->anim = alcove_idle;
-			keyf = get_keyframes("anims/draugr/alcove_wake.kf");
-			keyf->loop = false;
-			animation *alcove_wake = new animation(keyf);
-			alcove_wake->skel = skel;
-			alcove_wake->ratio = 1;
-			alcove_idle->next = alcove_wake;
-			alcove_wake->proceed = true;
-			keyf = get_keyframes("anims/draugr/idle.kf");
-			keyf->loop = true;
-			idle = new animation(keyf);
-			idle->skel = skel;
-			alcove_wake->next = idle;
-		}
-		else
-		{
-			keyf = get_keyframes("anims/draugr/_h2hidle.kf");
-			keyf->loop = true;
-			animation *idle = new animation(keyf);
-			idle->skel = skel;
-			skel->anim = idle;
-		}
+		keyf = get_keyframes("anims/draugr/_h2hidle.kf");
+		keyf->loop = true;
+		animation *idle = new animation(keyf);
+		idle->skel = skel;
+		skel->anim = idle;
+	}
+
+	void DraugrAlcove::Setup()
+	{
+		CreateFinish();
+		keyframes *keyf;
+		keyf = get_keyframes("anims/draugr/alcove_idle.kf");
+		keyf->loop = false;
+		alcove_idle = new animation(keyf);
+		alcove_idle->skel = skel;
+		skel->anim = alcove_idle;
+		keyf = get_keyframes("anims/draugr/alcove_wake.kf");
+		keyf->loop = false;
+		alcove_wake = new animation(keyf);
+		alcove_wake->skel = skel;
+		alcove_wake->ratio = 1;
+		alcove_wake->proceed = true;
+		alcove_idle->next = alcove_wake;
+		keyf = get_keyframes("anims/draugr/idle.kf");
+		keyf->loop = true;
+		idle = new animation(keyf);
+		idle->skel = skel;
+		alcove_wake->next = idle;
 		if (wearHelmet)
 		{
 			helmet = new SkinnedMesh("actors\\draugr\\character assets\\helmet03.nif");
@@ -119,33 +125,83 @@ namespace miryks
 		}
 	}
 
+	void DraugrAlcove::CreateFinish()
+	{
+		auto refe = ginterior->ids.find("gloomgendraugr2");
+		if (refe != ginterior->ids.end())
+		{
+			printf("got end marker");
+			end_marker = refe->second;
+			// finish = refe->second->matrix;
+		}
+	}
+
 	void Draugr::Step()
 	{
 		Monster::Step();
 		if (helmet)
 			helmet->Step();
-		if (alcove)
+	}
+
+	float easeInOutCirc(float t)
+	{
+
+		float scaledTime = t * 2;
+		float scaledTime1 = scaledTime - 2;
+
+		if (scaledTime < 1)
 		{
-			if (sleeping < 1)
-			{
-				sleeping += delta / 5; // 5 seconds
-			}
-			else if (!wake)
-			{
-				alcove_idle->proceed = true;
-				wake = true;
-			}
-			else if (skel->anim == idle)
-			{
-				SetupCollision();
-			}
+			return -0.5 * (sqrt(1 - scaledTime * scaledTime) - 1);
 		}
+
+		return 0.5 * (sqrt(1 - scaledTime1 * scaledTime1) + 1);
+	}
+
+	float easeInOutQuad(float t)
+	{
+		return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+	}
+	float easeInOutQuart(float t)
+	{
+		auto t1 = t - 1;
+		return t < 0.5 ? 8 * t * t * t * t : 1 - 8 * t1 * t1 * t1 * t1;
+	}
+
+	void DraugrAlcove::Step()
+	{
+		Draugr::Step();
+
+		if (sleeping < 1)
+		{
+			sleeping += delta / 6; // 5 seconds ?
+		}
+		else if (!wake)
+		{
+			alcove_idle->proceed = true;
+			wake = true;
+		}
+		else if (skel->anim == alcove_wake)
+		{
+			transition += delta / 3.f;
+			if (transition > 1)
+				transition = 1;
+			float easing = easeInOutQuart(transition);
+			orientation.position = glm::mix(placement->orientation.position, end_marker->orientation.position, easing);
+			orientation.Compose();
+			groupDrawer->matrix = orientation.matrix;
+			groupDrawer->UpdateSideways();
+		}
+		else if (skel->anim == idle)
+		{
+			SetupCollision();
+		}
+
 		if (capsule)
 		{
 			vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
-			origin = origin - vec3(0, 0, capsule->half + capsule->height / 2);
-			//vec3 vec = vec3(drawer->matrix[3]);
-			groupDrawer->matrix[3] = vec4(origin, 1);// = glm::translate(groupDrawer->matrix, origin);
+			origin = origin - vec3(0, 0, capsule->half * 2 + capsule->height / 2);
+			// vec3 vec = vec3(drawer->matrix[3]);
+			groupDrawer->matrix[3] = vec4(origin, 1); // = glm::translate(groupDrawer->matrix, origin);
 			groupDrawer->UpdateSideways();
 		}
 	}

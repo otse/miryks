@@ -17,6 +17,14 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
 
+struct orientation
+{
+	orientation();
+	void Compose();
+	vec3 rotation, position, scale;
+	mat4 matrix;
+};
+
 struct Group
 {
 	static int ids, num, drawCalls;

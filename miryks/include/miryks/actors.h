@@ -9,15 +9,16 @@ namespace miryks
 	class Monster
 	{
 	public:
+		Monster(const char *, const char *);
 		record race;
+		reference *placement;
+		skeleton *skel;
+		orientation orientation;
 		SkinnedMesh *helmet2;
 		ModelSkinned *modelSkinned;
 		SkinnedMesh *skinnedMesh;
 		collision::capsule *capsule;
-		skeleton *skel;
-		float yaw;
 		GroupDrawer *groupDrawer;
-		Monster(const char *, const char *);
 		void Place(const char *);
 		void SetAnim(const char *);
 		virtual void Step();
@@ -26,17 +27,28 @@ namespace miryks
 	class Draugr : public Monster
 	{
 	public:
-		animation *alcove_idle;
+		Draugr(const char *);
 		SkinnedMesh *helmet;
 		animation *idle;
-		float sleeping;
-		bool alcove;
-		bool wake;
 		bool wearHelmet;
-		Draugr(const char *);
-		void Setup();
-		void SetupCollision();
+		virtual void Setup();
 		virtual void Step();
+		void SetupCollision();
+	};
+
+	class DraugrAlcove : public Draugr
+	{
+	public:
+		DraugrAlcove(const char *);
+		reference *end_marker;
+		animation *alcove_idle;
+		animation *alcove_wake;
+		float sleeping;
+		float transition;
+		bool wake;
+		virtual void Setup();
+		virtual void Step();
+		void CreateFinish();
 	};
 
 	class Char
