@@ -133,7 +133,7 @@ int main()
 	draugrAlcove = new DraugrAlcove("actors\\draugr\\character assets\\draugrmale01.nif");
 	//draugrAlcove->SetAnim("anims/draugr/alcove_wake.kf");
 	// draugrAlcove->anim->keyf->repeats = false;
-	draugrAlcove->wearHelmet = true;
+	draugrAlcove->wearHelmet = false;
 	draugrAlcove->Setup();
 	draugrAlcove->Place("gloomgendraugr");
 	// draugrAlcove = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");

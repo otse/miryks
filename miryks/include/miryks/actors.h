@@ -11,7 +11,7 @@ namespace miryks
 	public:
 		Monster(const char *, const char *);
 		record race;
-		reference *placement;
+		reference *start_marker;
 		skeleton *skel;
 		orientation orientation;
 		SkinnedMesh *helmet2;

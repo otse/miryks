@@ -13,7 +13,7 @@ namespace miryks
 	Monster::Monster(const char *raceId, const char *path)
 	{
 		groupDrawer = nullptr;
-		placement = nullptr;
+		start_marker = nullptr;
 		capsule = nullptr;
 		race = dig_race(raceId, 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
@@ -41,9 +41,9 @@ namespace miryks
 		auto reference = ginterior->ids.find(name);
 		if (reference != ginterior->ids.end())
 		{
-			placement = reference->second;
-			orientation = placement->orientation;
-			groupDrawer->matrix = placement->matrix;
+			start_marker = reference->second;
+			orientation = start_marker->orientation;
+			groupDrawer->matrix = start_marker->matrix;
 			groupDrawer->UpdateSideways();
 			sceneDef->bigGroup->Add(groupDrawer);
 		}
@@ -143,24 +143,16 @@ namespace miryks
 			helmet->Step();
 	}
 
-	float easeInOutCirc(float t)
-	{
-
-		float scaledTime = t * 2;
-		float scaledTime1 = scaledTime - 2;
-
-		if (scaledTime < 1)
-		{
-			return -0.5 * (sqrt(1 - scaledTime * scaledTime) - 1);
-		}
-
-		return 0.5 * (sqrt(1 - scaledTime1 * scaledTime1) + 1);
-	}
-
 	float easeInOutQuad(float t)
 	{
 		return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
 	}
+
+	float easeInOutCubic(float t)
+	{
+		return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+	}
+
 	float easeInOutQuart(float t)
 	{
 		auto t1 = t - 1;
@@ -185,8 +177,8 @@ namespace miryks
 			transition += delta / 3.f;
 			if (transition > 1)
 				transition = 1;
-			float easing = easeInOutQuart(transition);
-			orientation.position = glm::mix(placement->orientation.position, end_marker->orientation.position, easing);
+			float easing = easeInOutCubic(transition);
+			orientation.position = glm::mix(start_marker->orientation.position, end_marker->orientation.position, easing);
 			orientation.Compose();
 			groupDrawer->matrix = orientation.matrix;
 			groupDrawer->UpdateSideways();
