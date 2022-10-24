@@ -66,6 +66,7 @@ namespace miryks
 				dynamicsWorld->removeRigidBody(rigidBody);
 				delete rigidBody->getCollisionShape();
 				delete rigidBody;
+				delete this;
 			}
 			return;
 			int i;
