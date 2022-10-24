@@ -189,7 +189,7 @@ namespace miryks
 
 		if (capsule && capsule->active)
 		{
-			vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
+			vec3 origin = collision::vec_to_vec(capsule->get_world_transform().getOrigin());
 			origin = origin - vec3(0, 0, capsule->half * 2 + capsule->height / 2);
 			// vec3 vec = vec3(drawer->matrix[3]);
 			groupDrawer->matrix[3] = vec4(origin, 1); // = glm::translate(groupDrawer->matrix, origin);

@@ -270,7 +270,7 @@ namespace dark
 				if (!baseObject.is_types({MSTT, TREE}))
 				{
 					if (baseObject.is_types({MISC}))
-						collider = new miryks::collision::movable(groupDrawer);
+						collider = new miryks::collision::movable_box(groupDrawer);
 					else
 						collider = new miryks::collision::solid(groupDrawer);
 				}

@@ -265,7 +265,7 @@ namespace miryks
 		capsule->step();
 
 		vec3 up = vec3(0, 0, 140 * ONE_CENTIMETER_IN_SKYRIM_UNITS);
-		vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
+		vec3 origin = collision::vec_to_vec(capsule->get_world_transform().getOrigin());
 		vec3 camera = origin + up;
 		origin = origin - vec3(0, 0, capsule->half * 2 + capsule->height / 2);
 		groupDrawer->matrix = glm::translate(mat4(1.0), origin);

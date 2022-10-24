@@ -15,15 +15,21 @@ namespace miryks
 	{
 		void init();
 		void simulate(float);
-		
-		btVector3 glm_to_bt(vec3);
-		vec3 bt_to_glm(btVector3);
+
+		btVector3 vec_to_vec(vec3);
+		vec3 vec_to_vec(btVector3);
+
+		btQuaternion quat_to_quat(quat);
+		quat quat_to_quat(btQuaternion);
+
+		btMatrix3x3 mat3_to_mat3(mat3);
+		mat3 mat3_to_mat3(btMatrix3x3);
 
 		class base;
 		class box;
 		class orb;
 		class capsule;
-		class movable;
+		class movable_box;
 		class solid;
 		extern std::vector<base *> objects;
 		class base
@@ -32,6 +38,7 @@ namespace miryks
 			btCollisionShape *colShape = nullptr;
 			btRigidBody *rigidBody = nullptr;
 			base() {}
+			~base();
 			btTransform get_world_transform();
 			void set_position(btVector3);
 			void remove();
@@ -59,12 +66,11 @@ namespace miryks
 			void gravitate();
 			virtual void step();// {};
 		};
-		class movable : public base
+		class movable_box : public base
 		{
 		public:
-			GroupDrawer *drawer;
-			btTriangleMesh *triangleMesh;
-			movable(GroupDrawer *);
+			GroupDrawer *drawer = nullptr;
+			movable_box(GroupDrawer *);
 			virtual void step();
 		};
 		class solid : public base

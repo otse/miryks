@@ -63,8 +63,8 @@ namespace miryks
 			printf("going to remove collision object\n");
 			if (rigidBody)
 			{
-				delete rigidBody->getCollisionShape();
 				dynamicsWorld->removeRigidBody(rigidBody);
+				delete rigidBody->getCollisionShape();
 				delete rigidBody;
 			}
 			return;
@@ -183,9 +183,9 @@ namespace miryks
 			for (auto &t : collector.triangles)
 			{
 				triangleMesh->addTriangle(
-					glm_to_bt(t.a),
-					glm_to_bt(t.b),
-					glm_to_bt(t.c));
+					vec_to_vec(t.a),
+					vec_to_vec(t.b),
+					vec_to_vec(t.c));
 			}
 
 			// add empty triangle or crash
@@ -208,84 +208,122 @@ namespace miryks
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
 
-		void movable::step()
+		void movable_box::step()
 		{
-			// get Aabb
-			//
 			auto bound = dynamic_cast<GroupBounded *>(drawer->target);
 			btTransform trans;
 			rigidBody->getMotionState()->getWorldTransform(trans);
-			vec3 vec = bt_to_glm(trans.getOrigin());
-			if (bound)
-				vec -= bound->aabb.center();
-			drawer->matrix = translate(mat4(1.0), vec);
-			// drawer->matrix[3] = vec4(bt_to_glm(trans.getOrigin()), 1);
+			quat q = quat_to_quat(trans.getRotation());
+			vec3 vec = vec_to_vec(trans.getOrigin());
+			mat4 matrix;
+			mat4 translation = glm::translate(mat4(1.0f), vec);
+			mat4 rotation = mat4(q);
+			matrix = translation * rotation;
+			matrix = translate(matrix, -bound->aabb.center());
+			//drawer->matrix[3] = vec4(vec_to_vec(trans.getOrigin()), 1);
+			drawer->matrix = matrix;
 			drawer->UpdateSideways();
 		}
 
-		movable::movable(GroupDrawer *drawer)
+		base::~base()
 		{
+			vector_safe_remove<base *>(this, objects);
+		}
+
+		movable_box::movable_box(GroupDrawer *drawer)
+		{
+			auto bound = dynamic_cast<GroupBounded *>(drawer->target);
+
+			if (!bound)
+				return;
+
+			Aabb &aabb = bound->aabb;
 			this->drawer = drawer;
 			objects.push_back(this);
 
-			triangleMesh = new btTriangleMesh();
+			vec3 halfExtents = aabb.max - aabb.center();
 
-			triangle_collector collector;
-
-			start_visit_dynamic(collector, drawer);
-
-			if (!collector.triangles.size())
-				return;
-
-			for (auto &t : collector.triangles)
-			{
-				triangleMesh->addTriangle(
-					glm_to_bt(t.a),
-					glm_to_bt(t.b),
-					glm_to_bt(t.c));
-			}
-
-			// add empty triangle or crash
-			// triangleMesh->addTriangle(btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f));
-
-			colShape = new btBvhTriangleMeshShape(triangleMesh, true);
-			colShape = new btSphereShape(btScalar(30));
+			btVector3 vec = btVector3(halfExtents.x, halfExtents.y, halfExtents.z);
+			colShape = new btBoxShape(vec);
 
 			collisionShapes.push_back(colShape);
 
-			btScalar mass(1.f);
+			btScalar mass(0.1f);
+
+			bool isDynamic = mass != 0.f;
+
+			btVector3 localInertia(0, 0, 0);
+			if (isDynamic)
+				colShape->calculateLocalInertia(mass, localInertia);
 
 			btTransform startTransform;
 			startTransform.setIdentity();
-			startTransform.setOrigin(glm_to_bt(vec3(drawer->matrix[3])));
+			startTransform.setOrigin(vec_to_vec(vec3(drawer->matrix[3])));
 
 			btDefaultMotionState *motionState = new btDefaultMotionState(startTransform);
 
-			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, colShape, btVector3(0, 0, 0));
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, colShape, localInertia);
 			rigidBody = new btRigidBody(rbInfo);
 			rigidBody->setFriction(btScalar(0.5f));
-			rigidBody->setGravity(btVector3(0, 0, 0));
-			rigidBody->setDamping(btScalar(0.5), btScalar(0.5));
+			// rigidBody->setGravity(btVector3(0, 0, 0));
+			rigidBody->setDamping(btScalar(0.2f), btScalar(0.0f));
 
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
 
-		btVector3 glm_to_bt(vec3 vec)
+		btVector3 vec_to_vec(vec3 vec)
 		{
 			btVector3 btVec;
-			btVec[0] = vec.x;
-			btVec[1] = vec.y;
-			btVec[2] = vec.z;
+			btVec[0] = vec[0];
+			btVec[1] = vec[1];
+			btVec[2] = vec[2];
 			return btVec;
 		}
 
-		vec3 bt_to_glm(btVector3 btVec)
+		vec3 vec_to_vec(btVector3 btVec)
 		{
 			vec3 vec;
-			vec.x = btVec[0];
-			vec.y = btVec[1];
-			vec.z = btVec[2];
+			vec[0] = btVec[0];
+			vec[1] = btVec[1];
+			vec[2] = btVec[2];
 			return vec;
+		}
+
+		btQuaternion quat_to_quat(quat a)
+		{
+			btQuaternion b;
+			b[0] = a[0];
+			b[1] = a[1];
+			b[2] = a[2];
+			b[3] = a[3];
+			return b;
+		}
+
+		quat quat_to_quat(btQuaternion a)
+		{
+			quat b;
+			b[0] = a[0];
+			b[1] = a[1];
+			b[2] = a[2];
+			b[3] = a[3];
+			return b;
+		}
+
+		mat3 mat3_to_mat3(btMatrix3x3 a)
+		{
+			mat3 b = mat3(1.0);
+			b[0] = vec_to_vec(a.getRow(0));
+			b[3] = vec_to_vec(a.getRow(1));
+			b[6] = vec_to_vec(a.getRow(2));
+			/*b[1] = a[1];
+			b[2] = a[2];
+			b[3] = a[3];
+			b[4] = a[4];
+			b[5] = a[5];
+			b[6] = a[6];
+			b[7] = a[7];
+			b[8] = a[8];*/
+			return b;
 		}
 
 		void base::set_position(btVector3 vec)
@@ -319,7 +357,7 @@ namespace miryks
 				colShape->calculateLocalInertia(mass, localInertia);
 
 			vec3 vec = vec3(drawer->matrix[3]);
-			startTransform.setOrigin(glm_to_bt(vec));
+			startTransform.setOrigin(vec_to_vec(vec));
 
 			// using motionstate is recommended, it provides interpolation capabilities,
 			// and only synchronizes 'active' objects
@@ -338,7 +376,7 @@ namespace miryks
 		void capsule::set_position(vec3 in)
 		{
 			in += vec3(0, 0, half * 2 + height / 2);
-			btVector3 convert = glm_to_bt(in);
+			btVector3 convert = vec_to_vec(in);
 			btTransform trans;
 			trans = rigidBody->getWorldTransform();
 			trans.setOrigin(convert);
@@ -372,7 +410,7 @@ namespace miryks
 			if (isDynamic)
 				colShape->calculateLocalInertia(mass, localInertia);
 
-			startTransform.setOrigin(glm_to_bt(pos));
+			startTransform.setOrigin(vec_to_vec(pos));
 			// Point shape up
 			startTransform.setRotation(btQuaternion(1.0f, 0.f, 0.f, 1.0f));
 
