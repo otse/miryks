@@ -20,7 +20,7 @@ GLFWwindow *window = nullptr;
 static bool cursorShowing = false;
 static bool hideOverlays = true;
 static bool f10 = false;
-static bool useFbo = false;
+static bool useFbo = true;
 static bool wireframe = false;
 
 void setupImgui();

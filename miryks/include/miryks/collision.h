@@ -13,6 +13,19 @@ namespace miryks
 {
 	namespace collision
 	{
+		void init();
+		void simulate(float);
+		
+		btVector3 glm_to_bt(vec3);
+		vec3 bt_to_glm(btVector3);
+
+		class base;
+		class box;
+		class orb;
+		class capsule;
+		class movable;
+		class solid;
+		extern std::vector<base *> objects;
 		class base
 		{
 		public:
@@ -22,6 +35,7 @@ namespace miryks
 			btTransform get_world_transform();
 			void set_position(btVector3);
 			void remove();
+			virtual void step() {};
 		};
 		class box : public base
 		{
@@ -38,10 +52,20 @@ namespace miryks
 		public:
 			float half = 15;
 			float height = 80;
+			bool active = true;
 			capsule();
 			void make(vec3);
-			void step();
+			void set_position(vec3);
 			void gravitate();
+			virtual void step();// {};
+		};
+		class movable : public base
+		{
+		public:
+			GroupDrawer *drawer;
+			btTriangleMesh *triangleMesh;
+			movable(GroupDrawer *);
+			virtual void step();
 		};
 		class solid : public base
 		{
@@ -54,9 +78,5 @@ namespace miryks
 		extern btSequentialImpulseConstraintSolver *solver;
 		extern btDiscreteDynamicsWorld *dynamicsWorld;
 		extern btAlignedObjectArray<btCollisionShape *> collisionShapes;
-		void init();
-		void simulate(float);
-		btVector3 glm_to_bt(vec3 &);
-		vec3 bt_to_glm(btVector3 &);
 	}
 }

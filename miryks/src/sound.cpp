@@ -22,39 +22,67 @@ namespace miryks
 		char *sound_data;
 	};
 
+	struct save {
+		ALuint buffer;
+	};
+
 	wav_file load_wav_file(RES);
+
+	static ALuint make_or_get(const char *path) {
+		static std::map<const char *, save> saves;
+		auto find = saves.find(path);
+		if (find == saves.end())
+		{
+			save save;
+
+			RES res = bsa_find_more(path, 0x8);
+			if (!res)
+			{
+				printf(" bsa find more no such wav \n");
+				return 0;
+			}
+			bsa_read(res);
+			wav_file wav = load_wav_file(res);
+
+			ALenum format;
+			if (wav.channels == 1 && wav.bits_per_sample == 8)
+				format = AL_FORMAT_MONO8;
+			else if (wav.channels == 1 && wav.bits_per_sample == 16)
+				format = AL_FORMAT_MONO16;
+			else if (wav.channels == 2 && wav.bits_per_sample == 8)
+				format = AL_FORMAT_STEREO8;
+			else if (wav.channels == 2 && wav.bits_per_sample == 16)
+				format = AL_FORMAT_STEREO16;
+
+			alGenBuffers(1, &save.buffer);
+			alBufferData(save.buffer, format, wav.sound_data, wav.size_of_data, wav.sample_rate);
+			
+			saves.emplace(path, save);
+			return save.buffer;
+		}
+		else
+		{
+			save &save = find->second;
+			return save.buffer;
+		}
+	}
 
 	sound::sound(const char *path)
 	{
-		RES res = bsa_find_more(path, 0x8);
-		if (!res)
-			printf(" bsa find more no such wav \n");
-		bsa_read(res);
-		wav_file wav = load_wav_file(res);
-
-		ALenum format;
-		if (wav.channels == 1 && wav.bits_per_sample == 8)
-			format = AL_FORMAT_MONO8;
-		else if (wav.channels == 1 && wav.bits_per_sample == 16)
-			format = AL_FORMAT_MONO16;
-		else if (wav.channels == 2 && wav.bits_per_sample == 8)
-			format = AL_FORMAT_STEREO8;
-		else if (wav.channels == 2 && wav.bits_per_sample == 16)
-			format = AL_FORMAT_STEREO16;
-
-		alGenBuffers(1, &buffer);
-		alBufferData(buffer, format, wav.sound_data, wav.size_of_data, wav.sample_rate);
-	}
-
-	void sound::play() {
+		buffer = make_or_get(path);
 		alGenSources(1, &source);
 		alSourcei(source, AL_BUFFER, buffer);
+	}
+
+	void sound::play()
+	{
 		alSourcef(source, AL_GAIN, 1);
 		alSourcef(source, AL_PITCH, 1);
 		alSourcePlay(source);
 	}
-	
-	bool sound::is_playing() {
+
+	bool sound::is_playing()
+	{
 		ALint state;
 		alGetSourcei(source, AL_SOURCE_STATE, &state);
 		return state == AL_PLAYING;
@@ -78,7 +106,6 @@ namespace miryks
 		// SF_INFO sfinfo;
 		sound aware("sound\\fx\\npc\\draugr\\aware\\npc_draugr_aware_01.wav");
 		aware.play();
-
 	};
 
 	wav_file load_wav_file(RES res)

@@ -9,6 +9,7 @@ namespace miryks {
 	public:
 		unsigned int buffer = 0;
 		unsigned int source = 0;
+		//float gain = 1;
 		sound(const char *);
 		void play();
 		bool is_playing();

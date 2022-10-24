@@ -51,6 +51,14 @@ namespace miryks
 			printf("  cant place monster at ref %s  \n", name);
 	}
 
+	void DraugrAlcove::Place(const char *name)
+	{
+		Monster::Place(name);
+		auto reference = ginterior->ids.find((std::string(start_marker->editor_id()) + "2").c_str());
+		if (reference != ginterior->ids.end())
+			end_marker = reference->second;
+	}
+
 	void Monster::Step()
 	{
 		if (skel)
@@ -83,7 +91,8 @@ namespace miryks
 		if (capsule)
 			return;
 		capsule = new collision::capsule;
-		capsule->make(vec3(groupDrawer->matrix[3]) + vec3(0, 0, capsule->half * 2 + capsule->height / 2));
+		capsule->active = false;
+		capsule->make(orientation.position + vec3(0, 0, capsule->half * 2 + capsule->height / 2));
 	}
 
 	void Draugr::Setup()
@@ -94,11 +103,17 @@ namespace miryks
 		animation *idle = new animation(keyf);
 		idle->skel = skel;
 		skel->anim = idle;
+		if (wearHelmet)
+		{
+			helmet = new SkinnedMesh("actors\\draugr\\character assets\\helmet03.nif");
+			helmet->skel = skel;
+			groupDrawer->Add(helmet->groupDrawer);
+		}
 	}
 
 	void DraugrAlcove::Setup()
 	{
-		CreateFinish();
+		SetupCollision();
 		keyframes *keyf;
 		keyf = get_keyframes("anims/draugr/alcove_idle.kf");
 		keyf->loop = false;
@@ -117,23 +132,7 @@ namespace miryks
 		idle = new animation(keyf);
 		idle->skel = skel;
 		alcove_wake->next = idle;
-		if (wearHelmet)
-		{
-			helmet = new SkinnedMesh("actors\\draugr\\character assets\\helmet03.nif");
-			helmet->skel = skel;
-			groupDrawer->Add(helmet->groupDrawer);
-		}
-	}
-
-	void DraugrAlcove::CreateFinish()
-	{
-		auto refe = ginterior->ids.find("gloomgendraugr2");
-		if (refe != ginterior->ids.end())
-		{
-			printf("got end marker");
-			end_marker = refe->second;
-			// finish = refe->second->matrix;
-		}
+		
 	}
 
 	void Draugr::Step()
@@ -174,7 +173,7 @@ namespace miryks
 		}
 		else if (skel->anim == alcove_wake)
 		{
-			transition += delta / 3.f;
+			transition += delta / alcove_wake->keyf->controllerSequence->C->stop_time;
 			if (transition > 1)
 				transition = 1;
 			float easing = easeInOutCubic(transition);
@@ -185,16 +184,20 @@ namespace miryks
 		}
 		else if (skel->anim == idle)
 		{
-			SetupCollision();
+			capsule->active = true;
 		}
 
-		if (capsule)
+		if (capsule && capsule->active)
 		{
 			vec3 origin = collision::bt_to_glm(capsule->get_world_transform().getOrigin());
 			origin = origin - vec3(0, 0, capsule->half * 2 + capsule->height / 2);
 			// vec3 vec = vec3(drawer->matrix[3]);
 			groupDrawer->matrix[3] = vec4(origin, 1); // = glm::translate(groupDrawer->matrix, origin);
 			groupDrawer->UpdateSideways();
+		}
+		else if (capsule)
+		{
+			capsule->set_position(orientation.position);
 		}
 	}
 

@@ -19,8 +19,8 @@ namespace miryks
 		SkinnedMesh *skinnedMesh;
 		collision::capsule *capsule;
 		GroupDrawer *groupDrawer;
-		void Place(const char *);
 		void SetAnim(const char *);
+		virtual void Place(const char *);
 		virtual void Step();
 	};
 
@@ -46,9 +46,9 @@ namespace miryks
 		float sleeping;
 		float transition;
 		bool wake;
+		virtual void Place(const char *);
 		virtual void Setup();
 		virtual void Step();
-		void CreateFinish();
 	};
 
 	class Char

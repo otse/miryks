@@ -105,6 +105,7 @@
       "niftypes.h": "c",
       "random": "cpp",
       "alhelpers.h": "c",
-      "future": "cpp"
+      "future": "cpp",
+      "bitset": "cpp"
     }
 }

@@ -122,7 +122,7 @@ int main()
 	//yagrum_queue("Press ESC to leave the bucket-viewer", 5, true);
 	// refs_init();
 	// load_world_space();
-#if 1
+
 	load_interior("GloomGen", 5, true);
 	//load_interior("HighHrothgar", 0, true);
 	//place_at_level_start();
@@ -130,6 +130,7 @@ int main()
 	draugrskeleton
 	draugrmale01 - 07
 	*/
+	#if 1
 	draugrAlcove = new DraugrAlcove("actors\\draugr\\character assets\\draugrmale01.nif");
 	//draugrAlcove->SetAnim("anims/draugr/alcove_wake.kf");
 	// draugrAlcove->anim->keyf->repeats = false;
@@ -141,11 +142,13 @@ int main()
 	meanSkelly = new Monster("HagravenRace", "actors\\hagraven\\character assets\\hagraven.nif");
 	//meanSkelly->SetAnim("anims/draugr/alcove_wake.kf");
 	meanSkelly->Place("gloomgenskeleton");
+	#endif
 	// someHuman = new Char();
 	// someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");
 	// someHuman->Place("gloomgenman");
-#endif
+
 	// someHuman->SetAnim("anims/character/1hm_idle.kf");
 	player1 = new Player();
+	place_at_level_start();
 	window_while_test();
 }

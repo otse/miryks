@@ -43,7 +43,9 @@ namespace miryks
 		capsule->make(vec3(groupDrawer->matrix[3]) + vec3(0, 0, capsule->half * 2 + capsule->height / 2));
 		groupDrawer->Add(new GroupDrawer(skel->root, mat4(1.0)));
 		groupDrawer->UpdateSideways();
-		Place("gloomgenman");
+		sceneDef->bigGroup->Add(groupDrawer);
+
+		//Place("gloomgenman");
 	}
 
 	void Player::Place(const char *q)
@@ -103,13 +105,9 @@ namespace miryks
 		{
 			SetAnim("anims/draugr/_h2hforwardright.kf");
 		}
-		else if (holding_key("w"))
+		else if (holding_key("w") && !holding_key("s"))
 		{
 			SetAnim("anims/draugr/_h2hforward.kf");
-		}
-		else if (holding_key("s"))
-		{
-			SetAnim("anims/draugr/_h2hbackward.kf");
 		}
 		else if (holding_key("s") && holding_key("a"))
 		{
@@ -119,11 +117,15 @@ namespace miryks
 		{
 			SetAnim("anims/draugr/_h2hbackwardright.kf");
 		}
-		else if (holding_key("a"))
+		else if (holding_key("s") && !holding_key("w"))
+		{
+			SetAnim("anims/draugr/_h2hbackward.kf");
+		}
+		else if (holding_key("a") && !holding_key("d"))
 		{
 			SetAnim("anims/draugr/_h2hleft.kf");
 		}
-		else if (holding_key("d"))
+		else if (holding_key("d") && !holding_key("a"))
 		{
 			SetAnim("anims/draugr/_h2hright.kf");
 		}
@@ -288,7 +290,8 @@ namespace miryks
 
 	void Player::Teleport()
 	{
-		capsule->set_position(collision::glm_to_bt(cameraCur->pos));
+		printf("Teleport\n");
+		capsule->set_position(cameraCur->pos);
 	}
 
 	void Player::Move()

@@ -6,6 +6,8 @@ namespace miryks
 {
 	namespace collision
 	{
+		std::vector<base *> objects;
+
 		btDefaultCollisionConfiguration *collisionConfiguration;
 		btCollisionDispatcher *dispatcher;
 		btSequentialImpulseConstraintSolver *solver;
@@ -93,6 +95,11 @@ namespace miryks
 					trans = obj->getWorldTransform();
 				}
 			}
+
+			for (auto base : objects)
+			{
+				base->step();
+			}
 		}
 
 		btTransform base::get_world_transform()
@@ -127,6 +134,13 @@ namespace miryks
 				return;
 			// if (drawer->target->collision)
 			visit_group_geometry(collector, drawer->target, drawer->matrix);
+		}
+
+		void start_visit_dynamic(triangle_collector &collector, GroupDrawer *drawer)
+		{
+			if (!drawer->target)
+				return;
+			visit_group_geometry(collector, drawer->target, mat4(1.0));
 		}
 
 		void visit_group_geometry(triangle_collector &collector, Group *group, mat4 left)
@@ -194,7 +208,69 @@ namespace miryks
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
 
-		btVector3 glm_to_bt(vec3 &vec)
+		void movable::step()
+		{
+			// get Aabb
+			//
+			auto bound = dynamic_cast<GroupBounded *>(drawer->target);
+			btTransform trans;
+			rigidBody->getMotionState()->getWorldTransform(trans);
+			vec3 vec = bt_to_glm(trans.getOrigin());
+			if (bound)
+				vec -= bound->aabb.center();
+			drawer->matrix = translate(mat4(1.0), vec);
+			// drawer->matrix[3] = vec4(bt_to_glm(trans.getOrigin()), 1);
+			drawer->UpdateSideways();
+		}
+
+		movable::movable(GroupDrawer *drawer)
+		{
+			this->drawer = drawer;
+			objects.push_back(this);
+
+			triangleMesh = new btTriangleMesh();
+
+			triangle_collector collector;
+
+			start_visit_dynamic(collector, drawer);
+
+			if (!collector.triangles.size())
+				return;
+
+			for (auto &t : collector.triangles)
+			{
+				triangleMesh->addTriangle(
+					glm_to_bt(t.a),
+					glm_to_bt(t.b),
+					glm_to_bt(t.c));
+			}
+
+			// add empty triangle or crash
+			// triangleMesh->addTriangle(btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f), btVector3(0.f, 0.f, 0.f));
+
+			colShape = new btBvhTriangleMeshShape(triangleMesh, true);
+			colShape = new btSphereShape(btScalar(30));
+
+			collisionShapes.push_back(colShape);
+
+			btScalar mass(1.f);
+
+			btTransform startTransform;
+			startTransform.setIdentity();
+			startTransform.setOrigin(glm_to_bt(vec3(drawer->matrix[3])));
+
+			btDefaultMotionState *motionState = new btDefaultMotionState(startTransform);
+
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, motionState, colShape, btVector3(0, 0, 0));
+			rigidBody = new btRigidBody(rbInfo);
+			rigidBody->setFriction(btScalar(0.5f));
+			rigidBody->setGravity(btVector3(0, 0, 0));
+			rigidBody->setDamping(btScalar(0.5), btScalar(0.5));
+
+			dynamicsWorld->addRigidBody(rigidBody);
+		}
+
+		btVector3 glm_to_bt(vec3 vec)
 		{
 			btVector3 btVec;
 			btVec[0] = vec.x;
@@ -203,7 +279,7 @@ namespace miryks
 			return btVec;
 		}
 
-		vec3 bt_to_glm(btVector3 &btVec)
+		vec3 bt_to_glm(btVector3 btVec)
 		{
 			vec3 vec;
 			vec.x = btVec[0];
@@ -254,9 +330,20 @@ namespace miryks
 
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
-		
+
 		capsule::capsule()
 		{
+		}
+
+		void capsule::set_position(vec3 in)
+		{
+			in += vec3(0, 0, half * 2 + height / 2);
+			btVector3 convert = glm_to_bt(in);
+			btTransform trans;
+			trans = rigidBody->getWorldTransform();
+			trans.setOrigin(convert);
+			rigidBody->setWorldTransform(trans);
+			rigidBody->activate();
 		}
 
 		void capsule::make(vec3 pos)
@@ -302,12 +389,13 @@ namespace miryks
 			dynamicsWorld->addRigidBody(rigidBody);
 		}
 
-		box::box(record *rc, float position[3], float bounds[3]) {
+		box::box(record *rc, float position[3], float bounds[3])
+		{
 			printf("new box\n");
-			//vec3 
+			// vec3
 			colShape = new btBoxShape(btVector3(bounds[0], bounds[1], bounds[2]));
 
-			//collisionShapes.push_back(colShape);
+			// collisionShapes.push_back(colShape);
 			btTransform startTransform;
 			startTransform.setIdentity();
 			startTransform.setOrigin(btVector3(position[0], position[1], position[2]));
@@ -354,10 +442,10 @@ namespace miryks
 			btVector3 position = trans.getOrigin();
 			auto shape = rigidBody->getCollisionShape();
 			auto q = trans.getRotation();
-			//printf("capsule start quaternion is %f %f %f %f\n", q.x(), q.y(), q.z(), q.w());
+			// printf("capsule start quaternion is %f %f %f %f\n", q.x(), q.y(), q.z(), q.w());
 			trans.setRotation(btQuaternion(0.f, 0.f, 0.f, 1.f));
 			rigidBody->setWorldTransform(trans);
-			//rigidBody->setGravity(btVector3(0, 0, 0));
+			// rigidBody->setGravity(btVector3(0, 0, 0));
 
 			// printf("capsule is %f %f %f\n", position.x(), position.y(), position.z());
 

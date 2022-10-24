@@ -268,7 +268,12 @@ namespace dark
 				groupDrawer->name += type;
 				sceneDef->bigGroup->Add(groupDrawer);
 				if (!baseObject.is_types({MSTT, TREE}))
-					collider = new miryks::collision::solid(groupDrawer);
+				{
+					if (baseObject.is_types({MISC}))
+						collider = new miryks::collision::movable(groupDrawer);
+					else
+						collider = new miryks::collision::solid(groupDrawer);
+				}
 				int i = 0;
 				for (auto thing : Things)
 				{
