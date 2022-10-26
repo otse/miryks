@@ -146,7 +146,10 @@ namespace dark
 			}
 			else
 			{
+				if (baseObject.is_type({MISC}))
+					global_no_dust = true;
 				model = create_simple_model_from_modl(modl);
+				global_no_dust = false;
 			}
 			if (baseObject.is_type(CONT))
 			{

@@ -38,6 +38,8 @@ namespace miryks
 	class animation;
 	class skeleton;
 
+	extern bool global_no_dust;
+
 	class Model
 	{
 	public:

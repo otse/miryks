@@ -82,7 +82,7 @@ namespace miryks
 		{
 			dynamicsWorld->stepSimulation(delta, 10);
 
-			for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
+			/*for (int j = dynamicsWorld->getNumCollisionObjects() - 1; j >= 0; j--)
 			{
 				btCollisionObject *obj = dynamicsWorld->getCollisionObjectArray()[j];
 				btRigidBody *body = btRigidBody::upcast(obj);
@@ -95,7 +95,7 @@ namespace miryks
 				{
 					trans = obj->getWorldTransform();
 				}
-			}
+			}*/
 
 			for (auto base : objects)
 			{
@@ -259,7 +259,12 @@ namespace miryks
 
 			btTransform startTransform;
 			startTransform.setIdentity();
-			startTransform.setOrigin(vec_to_vec(vec3(drawer->matrix[3])));
+
+			vec3 start = vec3(drawer->matrix[3]);
+			quat qua = quat(drawer->matrix);
+			start += bound->aabb.center();
+			startTransform.setOrigin(vec_to_vec(start));
+			startTransform.setRotation(quat_to_quat(qua));
 
 			btDefaultMotionState *motionState = new btDefaultMotionState(startTransform);
 

@@ -139,9 +139,9 @@ int main()
 	draugrAlcove->Place("gloomgendraugr");
 	// draugrAlcove = new Monster("DraugrRace", "actors\\dlc02\\hulkingdraugr\\hulkingdraugr.nif");
 	//meanSkelly = new Monster("DraugrRace", "actors\\draugr\\character assets\\draugrskeleton.nif");
-	meanSkelly = new Monster("HagravenRace", "actors\\hagraven\\character assets\\hagraven.nif");
+	//meanSkelly = new Monster("HagravenRace", "actors\\hagraven\\character assets\\hagraven.nif");
 	//meanSkelly->SetAnim("anims/draugr/alcove_wake.kf");
-	meanSkelly->Place("gloomgenskeleton");
+	//meanSkelly->Place("gloomgenskeleton");
 	#endif
 	// someHuman = new Char();
 	// someHuman->SetAnim("anims/character/idlewarmhands_crouched.kf");

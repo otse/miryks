@@ -13,6 +13,8 @@ namespace miryks
 {
 	std::vector<Model *> mists;
 
+	extern bool global_no_dust = false;
+
 	Model::Model()
 	{
 		baseGroup = new GroupBounded();
@@ -204,7 +206,7 @@ namespace miryks
 			material->specular *= block->B->specular_strength;
 			material->opacity = block->B->alpha;
 			material->glossiness = block->B->glossiness;
-			if (!(block->B->shader_flags_1 & 0x00000002))
+			if (!(block->B->shader_flags_1 & 0x00000002) && !global_no_dust) // skinned
 				material->dust = true;
 			if (block->B->shader_flags_1 & 0x00001000)
 				material->modelSpaceNormals = true;
