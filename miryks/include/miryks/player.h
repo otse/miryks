@@ -21,6 +21,7 @@ namespace miryks
 		SkinnedMesh *body, *body2, *hands;
 		bool thirdPerson;
 		bool idling;
+		bool attacking;
 		float yaw;
 		Player();
 		void Step();

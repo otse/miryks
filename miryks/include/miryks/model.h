@@ -39,6 +39,7 @@ namespace miryks
 	class skeleton;
 
 	extern bool global_no_dust;
+	extern bool global_is_cobweb;
 
 	class Model
 	{

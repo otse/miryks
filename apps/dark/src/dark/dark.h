@@ -26,7 +26,7 @@ namespace dark
 
 	void init_dark();
 	void loop();
-
+	
 	extern Draugr *draugrAlcove;
 	extern Monster *meanSkelly;
 }

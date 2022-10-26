@@ -15,6 +15,7 @@ namespace miryks
 		skel = new skeleton(race.data<char *>("ANAM"));
 		jaw = nullptr;
 		idling = false;
+		attacking = false;
 		footstep1 = new sound("sound\\fx\\npc\\draugr\\foot\\walk\\l\\npc_draugr_foot_walk_01.wav");
 		footstep2 = new sound("sound\\fx\\npc\\draugr\\foot\\walk\\l\\npc_draugr_foot_walk_02.wav");
 		footstep3 = new sound("sound\\fx\\npc\\draugr\\foot\\walk\\r\\npc_draugr_foot_walk_03.wav");
@@ -45,7 +46,7 @@ namespace miryks
 		groupDrawer->UpdateSideways();
 		sceneDef->bigGroup->Add(groupDrawer);
 
-		//Place("gloomgenman");
+		// Place("gloomgenman");
 	}
 
 	void Player::Place(const char *q)
@@ -97,42 +98,63 @@ namespace miryks
 
 		idling = false;
 
-		if (holding_key("w") && holding_key("a"))
+		if (attacking && anim->finished)
 		{
-			SetAnim("anims/draugr/_h2hforwardleft.kf");
+			attacking = false;
 		}
-		else if (holding_key("w") && holding_key("d"))
+
+		if (!attacking)
 		{
-			SetAnim("anims/draugr/_h2hforwardright.kf");
-		}
-		else if (holding_key("w") && !holding_key("s"))
-		{
-			SetAnim("anims/draugr/_h2hforward.kf");
-		}
-		else if (holding_key("s") && holding_key("a"))
-		{
-			SetAnim("anims/draugr/_h2hbackwardleft.kf");
-		}
-		else if (holding_key("s") && holding_key("d"))
-		{
-			SetAnim("anims/draugr/_h2hbackwardright.kf");
-		}
-		else if (holding_key("s") && !holding_key("w"))
-		{
-			SetAnim("anims/draugr/_h2hbackward.kf");
-		}
-		else if (holding_key("a") && !holding_key("d"))
-		{
-			SetAnim("anims/draugr/_h2hleft.kf");
-		}
-		else if (holding_key("d") && !holding_key("a"))
-		{
-			SetAnim("anims/draugr/_h2hright.kf");
-		}
-		else
-		{
-			idling = true;
-			SetAnim("anims/draugr/_h2hidle.kf");
+			if (states::lclick)
+			{
+				attacking = true;
+				// 2hmattackc
+				SetAnim("anims/draugr/h2hattacklefta.kf");
+				anim->keyf->loop = false;
+			}
+			else if (states::rclick)
+			{
+				attacking = true;
+				SetAnim("anims/draugr/h2hattackrighta.kf");
+				anim->keyf->loop = false;
+			}
+			else if (holding_key("w") && holding_key("a"))
+			{
+				SetAnim("anims/draugr/_h2hforwardleft.kf");
+			}
+			else if (holding_key("w") && holding_key("d"))
+			{
+				SetAnim("anims/draugr/_h2hforwardright.kf");
+			}
+			else if (holding_key("w") && !holding_key("s"))
+			{
+				SetAnim("anims/draugr/_h2hforward.kf");
+			}
+			else if (holding_key("s") && holding_key("a"))
+			{
+				SetAnim("anims/draugr/_h2hbackwardleft.kf");
+			}
+			else if (holding_key("s") && holding_key("d"))
+			{
+				SetAnim("anims/draugr/_h2hbackwardright.kf");
+			}
+			else if (holding_key("s") && !holding_key("w"))
+			{
+				SetAnim("anims/draugr/_h2hbackward.kf");
+			}
+			else if (holding_key("a") && !holding_key("d"))
+			{
+				SetAnim("anims/draugr/_h2hleft.kf");
+			}
+			else if (holding_key("d") && !holding_key("a"))
+			{
+				SetAnim("anims/draugr/_h2hright.kf");
+			}
+			else
+			{
+				idling = true;
+				SetAnim("anims/draugr/_h2hidle.kf");
+			}
 		}
 
 		if (!idling)

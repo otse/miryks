@@ -45,6 +45,20 @@ static void cursorPosCallback(GLFWwindow *window, double x, double y)
 	y2 = y;
 }
 
+static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT)
+	if (action == GLFW_PRESS)
+	states::lclick = 1;
+	else //if (action == GLFW_RELEASE)
+	states::lclick = 0;
+	if (button == GLFW_MOUSE_BUTTON_RIGHT)
+	if (action == GLFW_PRESS)
+	states::rclick = 1;
+	else //if (action == GLFW_RELEASE)
+	states::rclick = 0;
+}
+
 void dark::init_dark()
 {
 	// miryks::hooks::some_behavior = [](int a) { return false; };
@@ -70,6 +84,8 @@ void dark::init_dark()
 	glfwMakeContextCurrent(window);
 
 	glfwSetCursorPosCallback(window, cursorPosCallback);
+
+	glfwSetMouseButtonCallback(window, mouseButtonCallback);
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
@@ -342,7 +358,8 @@ static void handle_my_keys()
 			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		}
 	}
-	else if (pressing_key("f8")) {
+	else if (pressing_key("f8"))
+	{
 		if (ginterior)
 		{
 			delete ginterior;
@@ -424,7 +441,7 @@ void window_while_test()
 
 		if (player1)
 			player1->Step();
-			
+
 		cameraCur->Update(delta);
 
 		if (draugrAlcove)
@@ -458,6 +475,9 @@ void window_while_test()
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			quad.Draw(renderTargetDef);
 		}
+
+		states::lclick = false;
+		states::rclick = false;
 
 		imgui_calls();
 

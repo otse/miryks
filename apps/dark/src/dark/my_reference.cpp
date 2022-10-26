@@ -146,10 +146,13 @@ namespace dark
 			}
 			else
 			{
-				if (baseObject.is_type({MISC}))
+				if (baseObject.is_types({Misc, Alchemy, Armor, Weapons, Ingredients}))
 					global_no_dust = true;
+				if (strstr(baseObject.editor_id(), "cobweb"))
+					global_is_cobweb = true;
 				model = create_simple_model_from_modl(modl);
 				global_no_dust = false;
+				global_is_cobweb = false;
 			}
 			if (baseObject.is_type(CONT))
 			{
@@ -272,7 +275,7 @@ namespace dark
 				sceneDef->bigGroup->Add(groupDrawer);
 				if (!baseObject.is_types({MSTT, TREE}))
 				{
-					if (baseObject.is_types({MISC}))
+					if (baseObject.is_types({Misc, Alchemy, Armor, Weapons, Ingredients}))
 						collider = new miryks::collision::movable_box(groupDrawer);
 					else
 						collider = new miryks::collision::solid(groupDrawer);

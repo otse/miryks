@@ -17,6 +17,11 @@ namespace miryks
 		void (*load_world_space)(const char *, int, bool) = 0;
 	}
 
+	namespace states
+	{
+		extern int lclick = 0, rclick = 0;
+	}
+
 	std::string installed_path;
 
 	std::map<const char *, nif *> nis;

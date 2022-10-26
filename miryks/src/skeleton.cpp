@@ -120,6 +120,7 @@ namespace miryks
 		skel = nullptr;
 		next = nullptr;
 		proceed = false;
+		finished = false;
 		time = 0;
 		ratio = 0;
 		first = true;
@@ -142,6 +143,8 @@ namespace miryks
 		{
 			if (keyf->loop)
 				time -= keyf->controllerSequence->C->stop_time;
+			else
+				finished = true;
 			if (proceed && next)
 			{
 				skel->anim = next;

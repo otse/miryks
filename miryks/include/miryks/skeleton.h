@@ -75,6 +75,7 @@ namespace miryks
 		bool first;
 		bool play;
 		bool proceed;
+		bool finished;
 		float time;
 		float ratio;
 		animation *next;

@@ -14,6 +14,7 @@ namespace miryks
 	std::vector<Model *> mists;
 
 	extern bool global_no_dust = false;
+	extern bool global_is_cobweb = false;
 
 	Model::Model()
 	{
@@ -136,8 +137,10 @@ namespace miryks
 		group->geometry = geometry;
 		geometry->material->src = &simple;
 		const char *name = nif_get_string(rd->ni, block->common->F->name);
-		if (strstr(name, "Marker"))
+		if (strstr(name, "Marker")) {
+			group->collision = false;
 			return;
+		}
 		if (!block->infos->num_vertices)
 			return;
 		if (!block->vertex_data_all && !block->vertex_data_no_clr)
@@ -272,6 +275,9 @@ namespace miryks
 				material->zwrite = true;
 			if (block->B->shader_flags_2 & 0x00000010)
 				material->doubleSided = true;
+			if (global_is_cobweb)
+				material->defines += "#define COBWEB\n";
+
 		}
 		vector_safe_add(model, mists);
 		//mists.push_back(model);

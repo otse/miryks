@@ -45,9 +45,14 @@ namespace miryks
 
 	namespace hooks
 	{
-		extern bool (*hooks_some_behavior)(int);
-		extern void (*load_interior)(const char *, int, bool);
-		extern void (*load_world_space)(const char *, int, bool);
+	extern bool (*hooks_some_behavior)(int);
+	extern void (*load_interior)(const char *, int, bool);
+	extern void (*load_world_space)(const char *, int, bool);
+	}
+
+	namespace states
+	{
+	extern int lclick, rclick;
 	}
 
 	BSA load_archive(const char *);
