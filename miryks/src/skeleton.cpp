@@ -19,7 +19,6 @@ namespace miryks
 	skeleton::skeleton()
 	{
 		anim = nullptr;
-		mixer = nullptr;
 		model = nullptr;
 		bones[-1] = new bone();
 	}

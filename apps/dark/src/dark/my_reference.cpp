@@ -68,8 +68,9 @@ namespace dark
 		const unsigned int *baseId = base();
 
 		auto xscl = data<float *>("XSCL");
-		if (xscl)
+		if (xscl) {
 			orientation.scale = vec3(*xscl);
+		}
 		auto locationalData = data<float *>("DATA");
 
 		ForLocationalData(locationalData);
@@ -272,6 +273,7 @@ namespace dark
 				groupDrawer = new GroupDrawer(model->baseGroup, matrix);
 				groupDrawer->name = "(REFR)";
 				groupDrawer->name += type;
+				groupDrawer->scale = orientation.scale.x;
 				sceneDef->bigGroup->Add(groupDrawer);
 				if (!baseObject.is_types({MSTT, TREE}))
 				{

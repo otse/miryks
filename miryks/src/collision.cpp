@@ -60,7 +60,7 @@ namespace miryks
 
 		void base::remove()
 		{
-			printf("going to remove collision object\n");
+			//printf("going to remove collision object\n");
 			if (rigidBody)
 			{
 				dynamicsWorld->removeRigidBody(rigidBody);
@@ -219,7 +219,9 @@ namespace miryks
 			mat4 matrix;
 			mat4 translation = glm::translate(mat4(1.0f), vec);
 			mat4 rotation = mat4(q);
-			matrix = translation * rotation;
+			mat4 scale = glm::scale(mat4(1.0), vec3(drawer->scale));
+			matrix = translation * rotation * scale;
+			// todo we cancel scale like this
 			matrix = translate(matrix, -bound->aabb.center());
 			//drawer->matrix[3] = vec4(vec_to_vec(trans.getOrigin()), 1);
 			drawer->matrix = matrix;

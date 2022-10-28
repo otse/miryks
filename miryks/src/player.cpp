@@ -11,6 +11,7 @@ namespace miryks
 	{
 		yaw = 0;
 		thirdPerson = false;
+		headBobbing = true;
 		race = dig_race("DraugrRace", 0);
 		skel = new skeleton(race.data<char *>("ANAM"));
 		jaw = nullptr;
@@ -94,6 +95,11 @@ namespace miryks
 		if (pressing_key("v"))
 		{
 			Toggle();
+		}
+
+		if (pressing_key("b"))
+		{
+			ToggleHeadBobbing();
 		}
 
 		idling = false;
@@ -300,7 +306,10 @@ namespace miryks
 
 		matrix = rotate(matrix, -cameraCur->yaw, vec3(0, 0, 1));
 		matrix = glm::translate(matrix, vec3(0, 10, 0));
-		matrix = matrix * jaw->matrixWorld;
+		if (headBobbing)
+			matrix = matrix * jaw->matrixWorld;
+		else
+			matrix = matrix * jaw->rest;
 		cameraCur->pos = vec3(matrix[3]);
 
 		// groupDrawer->matrix[3] = vec4(collision::bt_to_glm(capsule->get_world_transform().getOrigin()), 1);
@@ -321,6 +330,11 @@ namespace miryks
 
 	void Player::Move()
 	{
+	}
+
+	void Player::ToggleHeadBobbing()
+	{
+		headBobbing = !headBobbing;
 	}
 
 	void Player::Toggle()

@@ -277,6 +277,7 @@ static void capture_keys()
 		  {GLFW_KEY_R, "r"},
 		  {GLFW_KEY_F, "f"},
 		  {GLFW_KEY_V, "v"},
+		  {GLFW_KEY_B, "b"},
 		  {GLFW_KEY_E, "e"},
 		  {GLFW_KEY_H, "h"},
 		  {GLFW_KEY_LEFT_CONTROL, "lctrl"},

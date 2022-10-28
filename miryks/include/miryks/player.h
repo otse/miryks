@@ -20,6 +20,7 @@ namespace miryks
 		GroupDrawer *groupDrawer;
 		SkinnedMesh *body, *body2, *hands;
 		bool thirdPerson;
+		bool headBobbing;
 		bool idling;
 		bool attacking;
 		float yaw;
@@ -30,6 +31,7 @@ namespace miryks
 		void Place(const char *);
 		void Teleport();
 		void Toggle();
+		void ToggleHeadBobbing();
 
 		ViewerCamera *thirdPersonCamera;
 	};
