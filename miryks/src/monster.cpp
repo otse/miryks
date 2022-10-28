@@ -164,7 +164,7 @@ namespace miryks
 
 		if (sleeping < 1)
 		{
-			sleeping += delta / 6; // 5 seconds ?
+			sleeping += delta / 5; // 5 seconds ?
 		}
 		else if (!wake)
 		{
