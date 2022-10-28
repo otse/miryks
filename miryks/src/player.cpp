@@ -157,7 +157,7 @@ namespace miryks
 			}
 		}
 
-		if (!idling)
+		if (!idling && !attacking)
 		{
 			if (anim->time > 0.6 && anim->time < 0.7 && !footstep1->is_playing() && !footstep2->is_playing())
 			{
@@ -238,6 +238,9 @@ namespace miryks
 		// capsule->rigidBody->applyCentralImpulse(dir);
 
 		float force = 17;
+
+		if (attacking)
+			force /= 3;
 		// btVector3 dir = btVector3(0.f, 0.f, 0.f);
 
 		float x = 0;

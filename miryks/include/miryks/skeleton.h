@@ -10,7 +10,6 @@ namespace miryks
 {
 	class bone;
 	class animation;
-	class animation_mixer;
 	class keyframes;
 
 	keyframes *get_keyframes(const char *);
@@ -23,7 +22,6 @@ namespace miryks
 		nif *model;
 		bone *baseBone, *root;
 		animation *anim;
-		animation_mixer *mixer;
 		skeleton();
 		skeleton(const char *);
 		~skeleton();
