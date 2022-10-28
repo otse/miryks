@@ -104,8 +104,10 @@ namespace miryks
 		alListenerfv(AL_ORIENTATION, listenerOri);*/
 
 		// SF_INFO sfinfo;
-		sound aware("sound\\fx\\npc\\draugr\\aware\\npc_draugr_aware_01.wav");
-		aware.play();
+		//sound aware("sound\\fx\\npc\\draugr\\aware\\npc_draugr_aware_01.wav");
+		//aware.play();
+		sound menu("sound\\fx\\ui\\ui_menu_ok.wav");
+		menu.play();
 	};
 
 	wav_file load_wav_file(RES res)

@@ -29,6 +29,8 @@ namespace dark
 	
 	extern Draugr *draugrAlcove;
 	extern Monster *meanSkelly;
+
+	extern bool usePostProcessing;
 }
 
 void hero_menu();

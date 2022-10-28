@@ -1,6 +1,7 @@
 #pragma once
 
 #include <miryks/miryks.hpp>
+#include <miryks/sound.h>
 #include <miryks/collision_forwards.h>
 #include <miryks/model.h>
 
@@ -13,6 +14,7 @@ namespace miryks
 		record race;
 		reference *start_marker;
 		skeleton *skel;
+		sound *alcoveexit;
 		orientation orientation;
 		SkinnedMesh *helmet2;
 		ModelSkinned *modelSkinned;

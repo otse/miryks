@@ -30,6 +30,8 @@ bool holding_key(const char *id)
 
 namespace dark
 {
+	bool usePostProcessing = true;
+
 	std::map<const char *, int> keys;
 
 	void darkassert(bool e)
@@ -71,6 +73,7 @@ namespace dark
 		gworldspace = new worldspace(rg);
 		reference_factory<my_reference> factory;
 		gworldspace->build_exteriors(factory);
+		usePostProcessing = false;
 		//if (place)
 		//	place_at_level_start();
 	}

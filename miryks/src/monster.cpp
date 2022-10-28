@@ -84,6 +84,7 @@ namespace miryks
 		wake = false;
 		sleeping = 0;
 		transition = 0;
+		alcoveexit = new sound("sound\\fx\\npc\\draugr\\alcoveexit\\a\\npc_draugr_alcoveexit_a_02.wav");
 	}
 
 	void Draugr::SetupCollision()
@@ -132,7 +133,6 @@ namespace miryks
 		idle = new animation(keyf);
 		idle->skel = skel;
 		alcove_wake->next = idle;
-		
 	}
 
 	void Draugr::Step()
@@ -173,6 +173,8 @@ namespace miryks
 		}
 		else if (skel->anim == alcove_wake)
 		{
+			if (alcove_wake->time >= 1.5 && !alcoveexit->is_playing())
+				alcoveexit->play();
 			transition += delta / alcove_wake->keyf->controllerSequence->C->stop_time;
 			if (transition > 1)
 				transition = 1;

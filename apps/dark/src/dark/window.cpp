@@ -20,7 +20,6 @@ GLFWwindow *window = nullptr;
 static bool cursorShowing = false;
 static bool hideOverlays = true;
 static bool f10 = false;
-static bool useFbo = true;
 static bool wireframe = false;
 
 void setupImgui();
@@ -205,7 +204,8 @@ static void toggle_debug()
 
 static void toggle_fbo()
 {
-	useFbo = !useFbo;
+	using namespace dark;
+	usePostProcessing = !usePostProcessing;
 }
 
 static void handle_esc()
@@ -419,7 +419,7 @@ void window_while_test()
 		glViewport(0, 0, width, height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		if (useFbo)
+		if (dark::usePostProcessing)
 			renderTargetDef->Bind();
 		else
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -471,7 +471,7 @@ void window_while_test()
 
 		Material::Unuse(nullptr, nullptr);
 
-		if (useFbo)
+		if (dark::usePostProcessing)
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			quad.Draw(renderTargetDef);
@@ -545,7 +545,7 @@ void window_while()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, width, height);
 
-		if (useFbo)
+		if (usePostProcessing)
 		{
 			renderTargetDef->Bind();
 		}
@@ -605,7 +605,7 @@ void window_while()
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-		if (useFbo)
+		if (usePostProcessing)
 		{
 			quad.Draw(renderTargetDef);
 		}
