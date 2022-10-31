@@ -47,15 +47,15 @@ static void cursorPosCallback(GLFWwindow *window, double x, double y)
 static void mouseButtonCallback(GLFWwindow *window, int button, int action, int mods)
 {
 	if (button == GLFW_MOUSE_BUTTON_LEFT)
-	if (action == GLFW_PRESS)
-	states::lclick = 1;
-	else //if (action == GLFW_RELEASE)
-	states::lclick = 0;
+		if (action == GLFW_PRESS)
+			states::lclick = 1;
+		else // if (action == GLFW_RELEASE)
+			states::lclick = 0;
 	if (button == GLFW_MOUSE_BUTTON_RIGHT)
-	if (action == GLFW_PRESS)
-	states::rclick = 1;
-	else //if (action == GLFW_RELEASE)
-	states::rclick = 0;
+		if (action == GLFW_PRESS)
+			states::rclick = 1;
+		else // if (action == GLFW_RELEASE)
+			states::rclick = 0;
 }
 
 void dark::init_dark()
@@ -133,6 +133,22 @@ void imgui_calls()
 	}
 }
 
+static void toggle_windowed_and_borderless()
+{
+	static bool fs = true;
+	fs = !fs;
+	if (fs)
+	{
+		borderless();
+	}
+	else
+	{
+		width = 1920;
+		height = 1080;
+		windowed();
+	}
+}
+
 void windowed()
 {
 	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
@@ -147,12 +163,8 @@ void windowed()
 		vidMode->width / 2 - width / 2,
 		vidMode->height / 2 - height / 2);
 
-	glfwSwapInterval(1);
-
 	delete renderTargetDef;
 	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
-
-	printf("after windowed code\n");
 }
 
 void borderless()
@@ -160,29 +172,17 @@ void borderless()
 	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode *vidMode = glfwGetVideoMode(monitor);
 
-	if (window)
-		glfwDestroyWindow(window);
-
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
 
 	width = vidMode->width;
 	height = vidMode->height;
 
-	window = glfwCreateWindow(width, height, "dark", NULL, NULL);
-
 	glfwSetWindowPos(window, 0, 0);
 
-	glfwMakeContextCurrent(window);
+	glfwSetWindowSize(window, width, height);
 
-	glfwSetCursorPosCallback(window, cursorPosCallback);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
-	if (glfwRawMouseMotionSupported())
-		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-
-	glfwSwapInterval(1);
+	delete renderTargetDef;
+	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
 }
 
 static void toggle_debug()
@@ -213,22 +213,6 @@ static void handle_esc()
 	//	Cont::Hide();
 	else
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
-}
-
-static void toggle_windowed()
-{
-	// static bool fs = true;
-	// fs = !fs;
-	// if (fs)
-	//{
-	//	borderless();
-	// }
-	// else
-	{
-		width = 1024;
-		height = 768;
-		windowed();
-	}
 }
 
 static void capture_keys()
@@ -293,8 +277,8 @@ void setupImgui()
 	IM_ASSERT(font3 != NULL);
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	//ImGui_ImplGlfw_Shutdown();
-	//ImGui_ImplGlfw_InitForOpenGL(window, true);
+	// ImGui_ImplGlfw_Shutdown();
+	// ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 }
 
@@ -378,8 +362,7 @@ static void handle_my_keys()
 	// third_person();
 	else if (holding_key("lalt") && pressing_key("enter"))
 	{
-		printf("going windowed\n");
-		toggle_windowed();
+		toggle_windowed_and_borderless();
 	}
 }
 
