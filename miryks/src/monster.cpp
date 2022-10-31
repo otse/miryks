@@ -179,7 +179,10 @@ namespace miryks
 			if (transition > 1)
 				transition = 1;
 			float easing = easeInOutCubic(transition);
-			orientation.position = glm::mix(start_marker->orientation.position, end_marker->orientation.position, easing);
+			orientation.position = glm::mix(
+				start_marker->orientation.position,
+				end_marker->orientation.position,
+				easing);
 			orientation.Compose();
 			groupDrawer->matrix = orientation.matrix;
 			groupDrawer->UpdateSideways();

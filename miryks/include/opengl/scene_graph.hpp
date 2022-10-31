@@ -68,7 +68,6 @@ struct GroupDrawer : Group
 	static int num, masks;
 	int mask;
 	// float scale is a quick collision-matrix fix
-	float scale = 1;
 	//orientation orientation;
 	AABB aabb, obb;
 	Group *const target;

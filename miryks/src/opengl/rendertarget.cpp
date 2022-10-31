@@ -69,6 +69,9 @@ void RenderTarget::Bind()
 
 RenderTarget::~RenderTarget()
 {
+	glDeleteFramebuffers(1, &fbo);
+	glDeleteRenderbuffers(1, &rbo);
+	glDeleteTextures(1, &texture);
 }
 
 Quadt::Quadt()

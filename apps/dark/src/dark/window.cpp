@@ -138,22 +138,9 @@ void windowed()
 	GLFWmonitor *monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode *vidMode = glfwGetVideoMode(monitor);
 
-	if (window)
-		glfwDestroyWindow(window);
+	glfwSetWindowSize(window, width, height);
 
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
-
-	window = glfwCreateWindow(width, height, "dark", NULL, NULL);
-
-	glfwMakeContextCurrent(window);
-
-	glfwSetCursorPosCallback(window, cursorPosCallback);
-
-	if (glfwRawMouseMotionSupported())
-		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
 
 	glfwSetWindowPos(
 		window,
@@ -161,6 +148,11 @@ void windowed()
 		vidMode->height / 2 - height / 2);
 
 	glfwSwapInterval(1);
+
+	delete renderTargetDef;
+	renderTargetDef = new RenderTarget(width, height, GL_RGB, GL_FLOAT);
+
+	printf("after windowed code\n");
 }
 
 void borderless()
@@ -301,6 +293,8 @@ void setupImgui()
 	IM_ASSERT(font3 != NULL);
 	ImGui::StyleColorsDark();
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	//ImGui_ImplGlfw_Shutdown();
+	//ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init();
 }
 

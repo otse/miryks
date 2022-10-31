@@ -273,7 +273,7 @@ namespace dark
 				groupDrawer = new GroupDrawer(model->baseGroup, matrix);
 				groupDrawer->name = "(REFR)";
 				groupDrawer->name += type;
-				groupDrawer->scale = orientation.scale.x;
+				//groupDrawer->scale = orientation.scale.x;
 				sceneDef->bigGroup->Add(groupDrawer);
 				if (!baseObject.is_types({MSTT, TREE}))
 				{
