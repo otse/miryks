@@ -1,6 +1,6 @@
 # Skyrim Engine
 
-A mod and renderer for skyrim, it uses the three.js scene graph and shaders.
+This is best described as a Skyrim renderer. It is based on the three.js scene graph and shaders. The main branch anniversary-edition is a bit of a misnomer as it is not a requirement of this "mod."
 
 It has an engine / app separation. Use the source freely in your endeavors. See the branches for legendary-edition.
 
